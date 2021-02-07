@@ -60,29 +60,29 @@ public class SchedulersManager {
     }
 
 
-    public static <T> Future<? extends T> scheduleFixedRate(ExceptionCallable<? extends T> task, Duration period) {
-        return scheduleFixedRate(task(task), period);
+    public static <T> void scheduleFixedRate(ExceptionCallable<? extends T> task, Duration period) {
+        scheduleFixedRate(task(task), period);
     }
 
-    public static <T> Future<? extends T> scheduleFixedRate(ExceptionCallable<? extends T> task, LocalDateTime startTime, Duration period) {
-        return scheduleFixedRate(task(task), startTime, period);
-    }
-
-
-    public static Future<?> scheduleFixedRate(ExceptionRunnable task, Duration duration) {
-        return scheduleFixedRate(task(task), duration);
-    }
-
-    public static Future<?> scheduleFixedRate(ExceptionRunnable task, LocalDateTime triggerTime, Duration duration) {
-        return scheduleFixedRate(task(task), triggerTime, duration);
+    public static <T> void scheduleFixedRate(ExceptionCallable<? extends T> task, LocalDateTime startTime, Duration period) {
+        scheduleFixedRate(task(task), startTime, period);
     }
 
 
-    public static <T> Future<? extends T> scheduleFixedRate(CallableTask<? extends T> task, Duration period) {
-        return scheduleFixedRate(task, now(), period);
+    public static void scheduleFixedRate(ExceptionRunnable task, Duration duration) {
+        scheduleFixedRate(task(task), duration);
     }
 
-    public static <T> Future<? extends T> scheduleFixedRate(CallableTask<? extends T> task, LocalDateTime startTime, Duration period) {
+    public static void scheduleFixedRate(ExceptionRunnable task, LocalDateTime triggerTime, Duration duration) {
+        scheduleFixedRate(task(task), triggerTime, duration);
+    }
+
+
+    public static <T> void scheduleFixedRate(CallableTask<? extends T> task, Duration period) {
+        scheduleFixedRate(task, now(), period);
+    }
+
+    public static <T> void scheduleFixedRate(CallableTask<? extends T> task, LocalDateTime startTime, Duration period) {
         PeriodicCallableTask<T> periodicTask = PeriodicCallableTask.<T>builder()
                 .delegate(task)
                 .startTime(startTime)
@@ -90,15 +90,15 @@ public class SchedulersManager {
                 .mode(FIXED)
                 .build();
         getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
-        return periodicExecutor().submit(periodicTask);
+        periodicExecutor().submit(periodicTask);
     }
 
 
-    public static Future<?> scheduleFixedRate(RunnableTask task, Duration period) {
-        return scheduleFixedRate(task, now(), period);
+    public static void scheduleFixedRate(RunnableTask task, Duration period) {
+        scheduleFixedRate(task, now(), period);
     }
 
-    public static Future<?> scheduleFixedRate(RunnableTask task, LocalDateTime startTime, Duration period) {
+    public static void scheduleFixedRate(RunnableTask task, LocalDateTime startTime, Duration period) {
         PeriodicRunnableTask periodicTask = PeriodicRunnableTask.builder()
                 .delegate(task)
                 .startTime(startTime)
@@ -106,33 +106,33 @@ public class SchedulersManager {
                 .mode(FIXED)
                 .build();
         getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
-        return periodicExecutor().execute(periodicTask);
+        periodicExecutor().execute(periodicTask);
     }
 
 
-    public static Future<?> scheduleDelayed(ExceptionRunnable task, Duration delay) {
-        return scheduleDelayed(task(task), delay);
+    public static void scheduleDelayed(ExceptionRunnable task, Duration delay) {
+        scheduleDelayed(task(task), delay);
     }
 
-    public static Future<?> scheduleDelayed(ExceptionRunnable task, LocalDateTime triggerTime, Duration delay) {
-        return scheduleDelayed(task(task), triggerTime, delay);
-    }
-
-
-    public static <T> Future<? extends T> scheduleDelayed(ExceptionCallable<? extends T> task, Duration delay) {
-        return scheduleDelayed(task(task), delay);
-    }
-
-    public static <T> Future<? extends T> scheduleDelayed(ExceptionCallable<? extends T> task, LocalDateTime startTime, Duration delay) {
-        return scheduleDelayed(task(task), startTime, delay);
+    public static void scheduleDelayed(ExceptionRunnable task, LocalDateTime triggerTime, Duration delay) {
+        scheduleDelayed(task(task), triggerTime, delay);
     }
 
 
-    public static Future<?> scheduleDelayed(RunnableTask task, Duration period) {
-        return scheduleDelayed(task, now(), period);
+    public static <T> void scheduleDelayed(ExceptionCallable<? extends T> task, Duration delay) {
+        scheduleDelayed(task(task), delay);
     }
 
-    public static Future<?> scheduleDelayed(RunnableTask task, LocalDateTime startTime, Duration period) {
+    public static <T> void scheduleDelayed(ExceptionCallable<? extends T> task, LocalDateTime startTime, Duration delay) {
+        scheduleDelayed(task(task), startTime, delay);
+    }
+
+
+    public static void scheduleDelayed(RunnableTask task, Duration period) {
+        scheduleDelayed(task, now(), period);
+    }
+
+    public static void scheduleDelayed(RunnableTask task, LocalDateTime startTime, Duration period) {
         PeriodicRunnableTask periodicTask = PeriodicRunnableTask.builder()
                 .delegate(task)
                 .startTime(startTime)
@@ -140,15 +140,15 @@ public class SchedulersManager {
                 .mode(DELAYED)
                 .build();
         getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
-        return periodicExecutor().execute(periodicTask);
+        periodicExecutor().execute(periodicTask);
     }
 
 
-    public static <T> Future<? extends T> scheduleDelayed(CallableTask<? extends T> task, Duration period) {
-        return scheduleDelayed(task, now(), period);
+    public static <T> void scheduleDelayed(CallableTask<? extends T> task, Duration period) {
+        scheduleDelayed(task, now(), period);
     }
 
-    public static <T> Future<? extends T> scheduleDelayed(CallableTask<? extends T> task, LocalDateTime startTime, Duration period) {
+    public static <T> void scheduleDelayed(CallableTask<? extends T> task, LocalDateTime startTime, Duration period) {
         PeriodicCallableTask<T> periodicTask = PeriodicCallableTask.<T>builder()
                 .delegate(task)
                 .startTime(startTime)
@@ -156,12 +156,12 @@ public class SchedulersManager {
                 .mode(DELAYED)
                 .build();
         getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
-        return periodicExecutor().submit(periodicTask);
+        periodicExecutor().submit(periodicTask);
     }
 
 
     public static boolean hasTask(String taskId) {
-        return periodicExecutor().hasTask(taskId).get();
+        return periodicExecutor().hasTask(taskId);
     }
 
     public static boolean cancelTask(String taskId) {

@@ -40,7 +40,7 @@ class DeferredEventObserver {
         observe();
     }
 
-    <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> task, LocalDateTime triggerTime) {
+    <EventResultType> ForkJoinTask<? extends EventResultType> addEvent(Callable<? extends EventResultType> task, LocalDateTime triggerTime) {
         if (deferredEvents.size() + 1 > configuration.getEventsQueueMaxSize()) {
             return forceExecuteEvent(task);
         }
@@ -75,7 +75,9 @@ class DeferredEventObserver {
         try {
             while (nonNull(currentEvent = deferredEvents.take())) {
                 try {
-                    ForkJoinTask<?> task = getTaskFromEvent(currentEvent).fork();
+                    ForkJoinTask<?> task = getTaskFromEvent(currentEvent);
+                    if (task.isCancelled()) continue;
+                    task = task.fork();
                     DeferredEvent<?> nextEvent;
                     if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime() && !task.isCancelled()) {
                         task.join();

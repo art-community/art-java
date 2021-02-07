@@ -29,12 +29,12 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     }
 
     @Override
-    public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
+    public <EventResultType> ForkJoinTask<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
         return observer.addEvent(eventTask, triggerTime);
     }
 
     @Override
-    public Future<?> execute(Runnable task, LocalDateTime triggerTime) {
+    public ForkJoinTask<?> execute(Runnable task, LocalDateTime triggerTime) {
         return submit(() -> {
             task.run();
             return null;
