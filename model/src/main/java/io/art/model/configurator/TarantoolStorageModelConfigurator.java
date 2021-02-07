@@ -1,6 +1,5 @@
 package io.art.model.configurator;
 
-import io.art.model.implementation.storage.TarantoolIndexModel;
 import io.art.model.implementation.storage.TarantoolSortMethodModel;
 import io.art.model.implementation.storage.TarantoolSpaceModel;
 import lombok.Getter;
