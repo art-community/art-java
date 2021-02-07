@@ -48,6 +48,11 @@ public class Property<T> implements Supplier<T> {
     }
 
 
+    public Property<T> created(Consumer<T> consumer) {
+        disposable.created(consumer);
+        return this;
+    }
+
     public Property<T> initialized(Consumer<T> consumer) {
         disposable.initialized(consumer);
         return this;
@@ -74,19 +79,16 @@ public class Property<T> implements Supplier<T> {
     }
 
     public Property<T> listenProperties(Property<?>... others) {
-        stream(others).forEach(other -> other
-                .initialized(value -> initialize())
-                .cleared(value -> clear())
-                .changed(value -> refresh()));
+        stream(others).forEach(other -> other.cleared(value -> clear()).changed(value -> refresh()));
         return this;
     }
 
     public Property<T> listenConsumer(Supplier<ChangesConsumer> listener) {
-        return initialized(ignore -> listener.get().consume(this));
+        return created(ignore -> listener.get().consume(this));
     }
 
     public Property<T> listen(Supplier<ChangesListener> listener) {
-        return initialized(ignore -> listener.get().consume(this));
+        return created(ignore -> listener.get().consume(this));
     }
 
 

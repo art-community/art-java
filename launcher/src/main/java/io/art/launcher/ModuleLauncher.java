@@ -46,6 +46,7 @@ import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.core.singleton.SingletonsRegistry.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -64,24 +65,24 @@ public class ModuleLauncher {
             ConfiguratorModule configurator = new ConfiguratorModule();
             ModuleCustomizer moduleCustomizer = model.getCustomizer();
             UnaryOperator<ConfiguratorCustomizer> configuratorCustomizer = moduleCustomizer.configurator();
-            UnaryOperator<ValueCustomizer> valueCustomizer = moduleCustomizer.value();
-            UnaryOperator<LoggingCustomizer> loggingCustomizer = moduleCustomizer.logging();
-            UnaryOperator<ServerCustomizer> serverCustomizer = moduleCustomizer.server();
-            UnaryOperator<CommunicatorCustomizer> communicatorCustomizer = moduleCustomizer.communicator();
+            UnaryOperator<ValueCustomizer> value = moduleCustomizer.value();
+            UnaryOperator<LoggingCustomizer> logging = moduleCustomizer.logging();
+            UnaryOperator<ServerCustomizer> server = moduleCustomizer.server();
+            UnaryOperator<CommunicatorCustomizer> communicator = moduleCustomizer.communicator();
             UnaryOperator<RsocketCustomizer> rsocket = moduleCustomizer.rsocket();
             ModuleInitializerRegistry modules = new ModuleInitializerRegistry();
             ModuleConfiguringState state = new ModuleConfiguringState(configurator.configure(), model);
             modules
-                    .put(() -> configurator, module -> configurator(module, configuratorCustomizer.apply(new ConfiguratorCustomizer())))
-                    .put(ValueModule::new, module -> value(module, state, valueCustomizer.apply(new ValueCustomizer())))
-                    .put(LoggingModule::new, module -> logging(module, state, loggingCustomizer.apply(new LoggingCustomizer())))
+                    .put(() -> configurator, module -> configurator(module, singleton(ConfiguratorCustomizer.class, () -> configuratorCustomizer.apply(new ConfiguratorCustomizer()))))
+                    .put(ValueModule::new, module -> value(module, state, singleton(ValueCustomizer.class, () -> value.apply(new ValueCustomizer()))))
+                    .put(LoggingModule::new, module -> logging(module, state, singleton(LoggingCustomizer.class, () -> logging.apply(new LoggingCustomizer()))))
                     .put(SchedulerModule::new, module -> scheduler(module, state))
                     .put(JsonModule::new, module -> json(module, state))
                     .put(YamlModule::new, module -> yaml(module, state))
                     .put(XmlModule::new, module -> xml(module, state))
-                    .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(new ServerCustomizer(module))))
-                    .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(new CommunicatorCustomizer())))
-                    .put(RsocketModule::new, module -> rsocket(module, state, rsocket.apply(new RsocketCustomizer(module))))
+                    .put(ServerModule::new, module -> server(module, state, singleton(ServerCustomizer.class, () -> server.apply(new ServerCustomizer(module)))))
+                    .put(CommunicatorModule::new, module -> communicator(module, state, singleton(CommunicatorCustomizer.class, () -> communicator.apply(new CommunicatorCustomizer()))))
+                    .put(RsocketModule::new, module -> rsocket(module, state, singleton(RsocketCustomizer.class, () -> rsocket.apply(new RsocketCustomizer(module)))))
                     .put(TarantoolModule::new, module -> tarantool(module, state));
             LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
             ContextConfiguration contextConfiguration = ContextConfiguration.builder()

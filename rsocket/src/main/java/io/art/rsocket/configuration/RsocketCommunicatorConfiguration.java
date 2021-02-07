@@ -25,7 +25,7 @@ import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.configuration.RsocketConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static java.util.Objects.*;
+import static java.util.Optional.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
@@ -33,9 +33,10 @@ public class RsocketCommunicatorConfiguration {
     private ImmutableMap<String, RsocketConnectorConfiguration> connectorConfigurations;
 
     public boolean isLogging(String connectorId) {
-        RsocketConnectorConfiguration configuration = connectorConfigurations.get(connectorId);
-        if (isNull(configuration)) return defaultConnectorConfiguration.isLogging();
-        return configuration.isLogging();
+        return ofNullable(connectorConfigurations)
+                .map(configurations -> configurations.get(connectorId))
+                .map(RsocketConnectorConfiguration::isLogging)
+                .orElseGet(() -> let(defaultConnectorConfiguration, RsocketConnectorConfiguration::isLogging, false));
     }
 
     public static RsocketCommunicatorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {

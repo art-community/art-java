@@ -23,6 +23,11 @@ public class LazyProperty<T> implements Supplier<T> {
         return disposable.initialized();
     }
 
+    public LazyProperty<T> created(Consumer<T> consumer) {
+        disposable.created(consumer);
+        return this;
+    }
+
     public LazyProperty<T> initialized(Consumer<T> consumer) {
         disposable.initialized(consumer);
         return this;

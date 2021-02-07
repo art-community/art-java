@@ -211,8 +211,6 @@ public class RsocketConnectorConfiguration {
                 break;
         }
 
-        listener.produce();
-        loggingListener.produce();
         return configuration;
     }
 }

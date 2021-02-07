@@ -12,6 +12,10 @@ public class ServerModuleRefresher implements ModuleRefresher {
     private final ChangesListener serverLoggingListener = changesListener();
     private final Consumer consumer = new Consumer();
 
+    public void produce() {
+        serverLoggingListener.produce();
+    }
+
     @Getter
     @Accessors(fluent = true)
     public class Consumer {

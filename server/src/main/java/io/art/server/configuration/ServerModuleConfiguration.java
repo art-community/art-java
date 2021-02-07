@@ -103,6 +103,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
                     .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                     .orElse(emptyImmutableMap());
+            configuration.refresher.produce();
             return this;
         }
 

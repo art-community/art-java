@@ -44,7 +44,6 @@ public class ServiceConfiguration {
         configuration.validating = orElse(source.getBool(VALIDATING_KEY), true);
         configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
         configuration.methods = source.getNestedMap(METHODS_KEY, ServiceMethodConfiguration::from);
-        loggingListener.produce();
         return configuration;
     }
 }

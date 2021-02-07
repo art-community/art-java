@@ -60,6 +60,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(communicator -> RsocketCommunicatorConfiguration.from(configuration.refresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
             configuration.serverConfiguration = orElse(configuration.serverConfiguration, RsocketServerConfiguration::defaults);
+
+            configuration.refresher.produce();
             return this;
         }
 

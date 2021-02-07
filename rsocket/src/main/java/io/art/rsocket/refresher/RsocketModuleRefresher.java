@@ -16,6 +16,14 @@ public class RsocketModuleRefresher implements ModuleRefresher {
     private final ChangesListenerRegistry connectorLoggingListeners = changesListenerRegistry();
     private final Consumer consumer = new Consumer();
 
+    public RsocketModuleRefresher produce() {
+        serverListener.produce();
+        serverLoggingListener.produce();
+        connectorListeners.produce();
+        connectorLoggingListeners.produce();
+        return this;
+    }
+
     @Getter
     @Accessors(fluent = true)
     public class Consumer {

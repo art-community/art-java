@@ -110,8 +110,6 @@ public class RsocketServerConfiguration {
 
         configuration.services = source.getNestedMap(SERVICES_KEY, service -> RsocketServiceConfiguration.from(configuration, service));
 
-        serverListener.produce();
-        serverLoggingListener.produce();
         return configuration;
     }
 }

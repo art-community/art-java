@@ -27,6 +27,11 @@ public class ChangesListenerRegistry {
         return putIfAbsent(listeners, id, ChangesListener::changesListener);
     }
 
+    public ChangesListenerRegistry produce() {
+        listeners.values().forEach(ChangesListener::produce);
+        return this;
+    }
+
     public static ChangesListenerRegistry changesListenerRegistry() {
         return new ChangesListenerRegistry();
     }

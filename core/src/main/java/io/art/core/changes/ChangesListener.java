@@ -40,12 +40,16 @@ public class ChangesListener {
     }
 
     public ChangesListener produce() {
+        if (values.isEmpty()) return this;
+
         if (created.compareAndSet(false, true)) {
             return this;
         }
+
         if (pending.compareAndSet(true, false)) {
             consumers.forEach(Runnable::run);
         }
+
         index.set(0);
         return this;
     }

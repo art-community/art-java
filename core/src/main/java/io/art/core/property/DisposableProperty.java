@@ -17,7 +17,8 @@ public class DisposableProperty<T> implements Supplier<T> {
     private volatile T value;
     private final Supplier<T> loader;
     private final AtomicBoolean initialized = new AtomicBoolean();
-    private final Queue<Consumer<T>> initializeConsumers = queue();
+    private final Queue<Consumer<T>> creationConsumers = queue();
+    private final List<Consumer<T>> initializeConsumers = linkedList();
     private final List<Consumer<T>> disposeConsumers = linkedList();
 
 
@@ -26,6 +27,11 @@ public class DisposableProperty<T> implements Supplier<T> {
         return this;
     }
 
+
+    public DisposableProperty<T> created(Consumer<T> consumer) {
+        creationConsumers.add(consumer);
+        return this;
+    }
 
     public DisposableProperty<T> initialized(Consumer<T> consumer) {
         initializeConsumers.add(consumer);
@@ -48,12 +54,11 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public void dispose() {
-        if (disposed()) return;
-        while (nonNull(this.value)) {
+        while (nonNull(value)) {
             if (this.initialized.compareAndSet(true, false)) {
-                T current = this.value;
+                T current = value;
+                value = null;
                 disposeConsumers.forEach(consumer -> consumer.accept(current));
-                this.value = null;
             }
         }
     }
@@ -61,13 +66,14 @@ public class DisposableProperty<T> implements Supplier<T> {
 
     @Override
     public T get() {
-        while (isNull(this.value)) {
+        while (isNull(value)) {
             if (this.initialized.compareAndSet(false, true)) {
-                this.value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-                erase(initializeConsumers, consumer -> consumer.accept(value));
+                value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
+                erase(creationConsumers, consumer -> consumer.accept(value));
+                initializeConsumers.forEach(consumer -> consumer.accept(value));
             }
         }
-        return this.value;
+        return value;
     }
 
     @Override
