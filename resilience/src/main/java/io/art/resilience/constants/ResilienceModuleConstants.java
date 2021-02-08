@@ -20,6 +20,8 @@ package io.art.resilience.constants;
 
 public interface ResilienceModuleConstants {
     interface ConfigurationKeys {
+        String RESILIENCE_SECTION = "resilience";
+
         String CIRCUIT_BREAKER_KEY = "circuitBreaker";
         String CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD_KEY = "circuitBreaker.failureRateThreshold";
         String CIRCUIT_BREAKER_PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE_KEY = "circuitBreaker.permittedNumberOfCallsInHalfOpenState";

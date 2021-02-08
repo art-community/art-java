@@ -44,6 +44,7 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.resilience.module.ResilienceModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
 
 public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Object>> {
@@ -56,12 +57,13 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
         communicatorAction = communicatorAction(action.getCommunicatorId(), action.getActionId());
         this.resilienceConfiguration = property(resilienceConfiguration(communicatorAction)).listenConsumer(() -> configuration()
                 .getConsumer()
-                .deactivationConsumer());
+                .resilienceConsumer());
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
-        ResilienceConfiguration configuration = this.resilienceConfiguration.get();
+        ResilienceConfiguration configuration = resilienceConfiguration.get();
+
         RetryConfig retry = configuration.getRetry();
         RateLimiterConfig rateLimiter = configuration.getRateLimiter();
         TimeLimiterConfig timeLimiter = configuration.getTimeLimiter();
@@ -90,9 +92,8 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
             decorated = RetryOperator.of(retry(communicatorAction.toString(), retry)).apply(input);
         }
 
-        return Flux.from(decorated);
+        return from(decorated);
     }
-
 
     private CommunicatorModuleConfiguration configuration() {
         return communicatorModule().configuration();

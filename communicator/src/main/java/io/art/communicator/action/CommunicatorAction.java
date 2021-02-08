@@ -75,20 +75,20 @@ public class CommunicatorAction implements Managed {
     private final MethodProcessingMode outputMode;
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
-            new CommunicatorResilienceDecorator(this)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
             new CommunicatorLoggingDecorator(this, INPUT),
+            new CommunicatorResilienceDecorator(this),
             new CommunicatorDeactivationDecorator(this)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
-            new CommunicatorResilienceDecorator(this)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
             new CommunicatorLoggingDecorator(this, OUTPUT),
+            new CommunicatorResilienceDecorator(this),
             new CommunicatorDeactivationDecorator(this)
     );
 

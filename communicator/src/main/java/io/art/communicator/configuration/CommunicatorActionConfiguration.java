@@ -28,6 +28,7 @@ import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.RESILIENCE_SECTION;
 
 @Getter
 public class CommunicatorActionConfiguration {
@@ -45,6 +46,7 @@ public class CommunicatorActionConfiguration {
         configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
         configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
+        configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
         return configuration;
     }
 }

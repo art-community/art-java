@@ -22,11 +22,13 @@ import io.art.communicator.refresher.*;
 import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
+import io.art.resilience.configuration.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
 
 @Getter
 public class CommunicatorProxyConfiguration {
@@ -35,6 +37,7 @@ public class CommunicatorProxyConfiguration {
     private Scheduler scheduler;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
     private ImmutableMap<String, String> connectors;
+    private ResilienceConfiguration resilienceConfiguration;
 
     public static CommunicatorProxyConfiguration from(CommunicatorModuleRefresher refresher, ConfigurationSource source) {
         CommunicatorProxyConfiguration configuration = new CommunicatorProxyConfiguration();
@@ -45,6 +48,7 @@ public class CommunicatorProxyConfiguration {
         configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
         configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
+        configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
         return configuration;
     }
 }
