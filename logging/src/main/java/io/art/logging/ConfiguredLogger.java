@@ -16,7 +16,7 @@ public class ConfiguredLogger extends Logger {
     private final BiFunction<Level, String, String> messageDecorator;
 
     public ConfiguredLogger(String name, LoggingModuleConfiguration configuration) {
-        super(LoggerContext.getContext(), name, LogManager.getLogger().getMessageFactory());
+        super(LoggerContext.getContext(), name, LogManager.getLogger(LoggingModule.class.getName()).getMessageFactory());
         this.configuration = configuration;
         messageDecorator = !configuration.getEnabled()
                 ? emptyBiFunction()
