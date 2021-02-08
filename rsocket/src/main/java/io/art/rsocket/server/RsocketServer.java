@@ -79,7 +79,8 @@ public class RsocketServer implements Server {
         RsocketServerConfiguration configuration = this.configuration.getServerConfiguration();
         TransportMode transportMode = configuration.getTransport();
         int fragmentationMtu = configuration.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createAcceptor).fragment(configuration.getMaxInboundPayloadSize());
+        RSocketServer server = RSocketServer.create(this::createAcceptor)
+                .maxInboundPayloadSize(configuration.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
