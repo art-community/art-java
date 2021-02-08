@@ -21,7 +21,6 @@ package io.art.logging;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModuleConstants.*;
@@ -36,6 +35,7 @@ import static org.apache.logging.log4j.core.util.Constants.*;
 import static reactor.util.Loggers.*;
 import java.net.*;
 import java.nio.file.*;
+import org.apache.logging.log4j.core.Logger;
 
 @Getter
 public class LoggingModule implements StatelessModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator> {
