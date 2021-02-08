@@ -21,6 +21,7 @@ package io.art.model.configurator;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.model.implementation.communicator.*;
 import lombok.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
@@ -29,7 +30,7 @@ import java.util.function.*;
 public class RsocketCommunicatorModelConfigurator {
     private final String id;
     private final Class<?> proxyClass;
-    private final Function<CommunicatorActionBuilder, CommunicatorActionBuilder> decorator;
+    private final Function<CommunicatorActionBuilder, CommunicatorActionBuilder> decorator = identity();
     private String targetServiceId;
     private String targetMethodId;
 
