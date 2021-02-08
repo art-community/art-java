@@ -12,10 +12,12 @@ inline fun <reified T> schedule(startTime: LocalDateTime, task: Callable<T>) = S
 
 inline fun <reified T> schedule(task: Callable<T>) = SchedulersManager.schedule(task, now())!!
 
+
 inline fun <reified T> scheduleFixedRate(startTime: LocalDateTime, period: Duration, task: ExceptionCallable<out T>) = SchedulersManager.scheduleFixedRate(task, startTime, period)
 
-inline fun <reified T> scheduleDelayed(startTime: LocalDateTime, period: Duration, task: ExceptionCallable<out T>) = SchedulersManager.scheduleDelayed(task, startTime, period)
-
 inline fun <reified T> scheduleFixedRate(period: Duration, task: ExceptionCallable<out T>) = SchedulersManager.scheduleFixedRate(task, now(), period)
+
+
+inline fun <reified T> scheduleDelayed(startTime: LocalDateTime, period: Duration, task: ExceptionCallable<out T>) = SchedulersManager.scheduleDelayed(task, startTime, period)
 
 inline fun <reified T> scheduleDelayed(period: Duration, task: ExceptionCallable<out T>) = SchedulersManager.scheduleDelayed(task, now(), period)
