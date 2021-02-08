@@ -19,10 +19,13 @@
 package io.art.rsocket.constants;
 
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.rsocket.util.*;
 import lombok.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
+    public static final EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
+
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
@@ -65,11 +68,13 @@ public interface RsocketModuleConstants {
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
-        String DEFAULT_DATA_FORMAT_KEY = "defaults.dataFormat";
-        String DEFAULT_META_DATA_FORMAT_KEY = "defaults.metaDataFormat";
-        String DEFAULT_SERVICE_ID_KEY = "defaults.serviceId";
-        String DEFAULT_METHOD_ID_KEY = "defaults.methodId";
+        String DEFAULT_SECTION = "default";
+        String DATA_FORMAT_KEY = "dataFormat";
+        String META_DATA_FORMAT_KEY = "metaDataFormat";
+        String SERVICE_ID_KEY = "serviceId";
+        String METHOD_ID_KEY = "methodId";
 
+        String TRANSPORT_SECTION = "transport";
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.port";
         String TRANSPORT_HOST_KEY = "transport.host";
@@ -175,8 +180,13 @@ public interface RsocketModuleConstants {
         private final String decoder;
 
         public static PayloadDecoderMode rsocketPayloadDecoder(String decoder) {
+            return rsocketPayloadDecoder(decoder, DEFAULT);
+        }
+
+        public static PayloadDecoderMode rsocketPayloadDecoder(String decoder, PayloadDecoderMode fallback) {
             if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
-            return DEFAULT;
+            if (DEFAULT.decoder.equalsIgnoreCase(decoder)) return DEFAULT;
+            return fallback;
         }
     }
 

@@ -21,6 +21,7 @@ package io.art.core.configuration;
 import io.art.core.collection.*;
 import io.art.core.context.*;
 import io.art.core.network.provider.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.core.constants.ContextConstants.*;
 import static java.nio.charset.StandardCharsets.*;
@@ -36,14 +37,21 @@ import java.time.*;
 import java.util.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class ContextConfiguration {
-    private final String mainModuleId;
+    @Builder.Default
+    private final String mainModuleId = DEFAULT_MAIN_MODULE_ID;
+    @Builder.Default
     private final Charset charset = UTF_8;
+    @Builder.Default
     private final String primaryIpAddress = IpAddressProvider.getIpAddress();
+    @Builder.Default
     private final ImmutableMap<String, String> ipAddresses = IpAddressProvider.getIpAddresses();
+    @Builder.Default
     private final Locale locale = getDefault(FORMAT);
+    @Builder.Default
     private final ZoneId zoneId = systemDefault();
+    @Builder.Default
     private final String moduleJarName = ofNullable(Context.class.getProtectionDomain())
             .map(ProtectionDomain::getCodeSource)
             .map(CodeSource::getLocation)
@@ -51,4 +59,8 @@ public class ContextConfiguration {
             .map(File::new)
             .map(File::getPath)
             .orElse(DEFAULT_MODULE_JAR);
+    private final Runnable onLoad;
+    private final Runnable onUnload;
+    private final Runnable beforeReload;
+    private final Runnable afterReload;
 }

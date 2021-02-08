@@ -21,18 +21,18 @@ package io.art.communicator.module;
 import io.art.communicator.configuration.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.proxy.*;
+import io.art.communicator.refresher.*;
 import io.art.communicator.state.*;
 import io.art.core.caster.*;
 import io.art.core.module.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorModuleConfiguration.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ExceptionMessages.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingMessages.COMMUNICATOR_REGISTRATION_MESSAGE;
-import static io.art.core.constants.StringConstants.NEW_LINE;
+import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingMessages.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.StringExtensions.toCommaDelimitedString;
-import static io.art.core.extensions.StringExtensions.toDelimitedString;
-import static io.art.core.factory.SetFactory.set;
+import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.SetFactory.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -40,7 +40,8 @@ import java.util.*;
 @Getter
 public class CommunicatorModule implements StatefulModule<CommunicatorModuleConfiguration, Configurator, CommunicatorModuleState> {
     private final String id = CommunicatorModule.class.getSimpleName();
-    private final CommunicatorModuleConfiguration configuration = new CommunicatorModuleConfiguration();
+    private final CommunicatorModuleRefresher refresher = new CommunicatorModuleRefresher();
+    private final CommunicatorModuleConfiguration configuration = new CommunicatorModuleConfiguration(refresher);
     private final Configurator configurator = new Configurator(configuration);
     private final CommunicatorModuleState state = new CommunicatorModuleState();
     @Getter(lazy = true, value = PRIVATE)
@@ -63,6 +64,7 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
                 .map(Caster::<T>cast)
                 .orElseThrow(() -> new CommunicatorModuleException(format(COMMUNICATOR_WAS_NOT_REGISTERED, id)));
     }
+
     @Override
     public String print() {
         Set<String> messages = set();

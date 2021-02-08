@@ -18,21 +18,22 @@
 
 package io.art.core.module;
 
+import io.art.core.context.*;
 import static io.art.core.constants.StringConstants.*;
 
 public interface Module {
     String getId();
 
-    default void onLoad() {
+    default void onLoad(Context.Service contextService) {
     }
 
-    default void onUnload() {
+    default void onUnload(Context.Service contextService) {
     }
 
-    default void beforeReload() {
+    default void beforeReload(Context.Service contextService) {
     }
 
-    default void afterReload() {
+    default void afterReload(Context.Service contextService) {
     }
 
     default String print() {

@@ -20,13 +20,10 @@ package io.art.model.configurator;
 
 import io.art.model.constants.ModelConstants.*;
 import io.art.model.implementation.server.*;
-import io.art.server.decorator.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
@@ -38,7 +35,7 @@ public class RsocketServiceModelConfigurator {
     private final String id;
     private final ConfiguratorScope scope;
     private final Map<String, RsocketServiceMethodModelConfigurator> methods = map();
-    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> classDecorator = (id, builder) -> builder;
+    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> serviceDecorator = (id, builder) -> builder;
 
     public RsocketServiceModelConfigurator method(String id) {
         return method(id, UnaryOperator.identity());
@@ -49,21 +46,9 @@ public class RsocketServiceModelConfigurator {
         return this;
     }
 
-    public RsocketServiceModelConfigurator logging() {
-        return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), INPUT))
-                .outputDecorator(new ServiceLoggingDecorator(serviceMethod(id, method), OUTPUT)));
-    }
-
-    public RsocketServiceModelConfigurator deactivation() {
-        return decorate((method, builder) -> builder
-                .inputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method)))
-                .outputDecorator(new ServiceDeactivationDecorator(serviceMethod(id, method))));
-    }
-
     private RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
-        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.classDecorator;
-        classDecorator = (method, builder) -> {
+        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.serviceDecorator;
+        serviceDecorator = (method, builder) -> {
             builder = current.apply(method, builder);
             return decorator.apply(method, builder);
         };
@@ -72,8 +57,11 @@ public class RsocketServiceModelConfigurator {
 
     RsocketServiceModel configure() {
         return RsocketServiceModel.builder()
-                .classDecorator(classDecorator)
-                .methods(methods.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().configure())))
+                .serviceDecorator(serviceDecorator)
+                .methods(methods
+                        .entrySet()
+                        .stream()
+                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().configure())))
                 .scope(scope)
                 .id(id)
                 .serviceClass(serviceClass)

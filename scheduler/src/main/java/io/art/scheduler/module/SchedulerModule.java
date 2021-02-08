@@ -18,6 +18,7 @@
 
 package io.art.scheduler.module;
 
+import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.executor.periodic.*;
@@ -54,26 +55,26 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     }
 
     @Override
-    public void onLoad() {
+    public void onLoad(Context.Service contextService) {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
-        scheduleDelayed(task(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
+        scheduleDelayed(task(REFRESHER_TASK, contextService::reload), now().plus(duration), duration);
     }
 
     @Override
-    public void beforeReload() {
-        periodicExecutor().cancelPeriodicTask(REFRESHER_TASK);
+    public void beforeReload(Context.Service contextService) {
+        cancelTask(REFRESHER_TASK);
     }
 
     @Override
-    public void afterReload() {
+    public void afterReload(Context.Service contextService) {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
-        scheduleDelayed(task(REFRESHER_TASK, context()::reload), now().plus(duration), duration);
+        scheduleDelayed(task(REFRESHER_TASK, contextService::reload), now().plus(duration), duration);
     }
 
     @Override
-    public void onUnload() {
+    public void onUnload(Context.Service contextService) {
         configuration.getDeferredExecutor().shutdown();
         configuration.getPeriodicExecutor().shutdown();
     }

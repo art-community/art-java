@@ -22,12 +22,13 @@ import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.core.source.ConfigurationSource.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.ifNotEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static java.util.Comparator.*;
@@ -35,7 +36,7 @@ import static java.util.Comparator.*;
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
-    private ImmutableMap<CustomConfigurationModel, ?> customConfigurations = emptyImmutableMap();
+    private ImmutableMap<CustomConfigurationModel, Property<?>> customConfigurations = emptyImmutableMap();
 
     @Getter(lazy = true)
     private final ConfigurationSource delegate = new DelegateConfigurationSource(orderedSources());
@@ -57,7 +58,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     }
 
     public <T> T getCustomConfiguration(CustomConfigurationModel modelClass) {
-        return cast(customConfigurations.get(modelClass));
+        return cast(customConfigurations.get(modelClass).get());
     }
 
     @RequiredArgsConstructor

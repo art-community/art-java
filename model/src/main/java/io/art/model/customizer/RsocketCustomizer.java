@@ -20,7 +20,7 @@ package io.art.model.customizer;
 
 import io.art.core.annotation.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.listener.*;
+import io.art.rsocket.refresher.*;
 import io.art.rsocket.module.*;
 import lombok.*;
 

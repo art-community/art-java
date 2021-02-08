@@ -21,7 +21,7 @@ package io.art.rsocket.manager;
 
 import io.art.communicator.action.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.listener.*;
+import io.art.rsocket.refresher.*;
 import io.art.rsocket.server.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -29,7 +29,6 @@ import reactor.core.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static lombok.AccessLevel.*;
 
@@ -72,8 +71,6 @@ public class RsocketManager {
         if (rsocket.isDisposed()) {
             return;
         }
-        getLogger().info(RSOCKET_DISPOSING);
         ignoreException(rsocket::dispose, getLogger()::error);
     }
 }
-

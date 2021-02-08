@@ -19,21 +19,28 @@
 package io.art.communicator.action;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.decorator.*;
+import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
+import io.art.communicator.mapper.*;
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
+import static io.art.communicator.mapper.CommunicatorExceptionMapper.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.managed.DisposableValue.*;
+import static io.art.core.constants.MethodDecoratorScope.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
@@ -46,9 +53,11 @@ import java.util.function.*;
 @UsedByGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CommunicatorAction implements Managed {
+    @Getter
     @EqualsAndHashCode.Include
     private final String communicatorId;
 
+    @Getter
     @EqualsAndHashCode.Include
     private final String actionId;
 
@@ -62,10 +71,32 @@ public class CommunicatorAction implements Managed {
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
 
     @Getter
+    @Builder.Default
+    private final CommunicatorExceptionMapper exceptionMapper = communicatorThrowableExceptionMapper();
+
+    @Getter
     private final MethodProcessingMode inputMode;
 
     @Getter
     private final MethodProcessingMode outputMode;
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
+            new CommunicatorLoggingDecorator(this, INPUT),
+            new CommunicatorResilienceDecorator(this),
+            new CommunicatorDeactivationDecorator(this)
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
+    );
+
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
+            new CommunicatorLoggingDecorator(this, OUTPUT),
+            new CommunicatorResilienceDecorator(this),
+            new CommunicatorDeactivationDecorator(this)
+    );
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -79,15 +110,15 @@ public class CommunicatorAction implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Object>, Object> adoptOutput = adoptOutput();
 
-    private final DisposableValue<CommunicatorModuleConfiguration> moduleConfiguration = disposable(this::moduleConfiguration);
-    private final DisposableValue<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = disposable(this::communicatorConfiguration);
+    @Getter(lazy = true, value = PRIVATE)
+    private final CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
 
+    private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
 
     private final CommunicatorActionImplementation implementation;
 
     @Override
     public void initialize() {
-        moduleConfiguration.initialize();
         communicatorConfiguration.initialize();
         implementation.initialize();
     }
@@ -96,7 +127,6 @@ public class CommunicatorAction implements Managed {
     public void dispose() {
         implementation.dispose();
         communicatorConfiguration.dispose();
-        moduleConfiguration.dispose();
     }
 
     public <T> T communicate() {
@@ -104,10 +134,7 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate(Object input) {
-        Scheduler scheduler = communicatorConfiguration.get()
-                .map(CommunicatorProxyConfiguration::getScheduler)
-                .orElseGet(moduleConfiguration.get()::getScheduler);
-        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(scheduler)));
+        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(getConfiguration().getScheduler(communicatorId, actionId))));
     }
 
     private Flux<Value> deferredCommunicate(Object input) {
@@ -121,23 +148,55 @@ public class CommunicatorAction implements Managed {
 
     private Flux<Value> mapInput(Object input) {
         Flux<Object> inputFlux = getAdoptInput().apply(input);
+        for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
+            inputFlux = inputFlux.transform(decorator);
+        }
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
+            inputFlux = inputFlux.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
         }
         return inputFlux.map(value -> inputMapper.map(cast(value)));
     }
 
     private Object mapOutput(Flux<Value> output) {
-        Flux<Object> mappedOutput = output.map(value -> outputMapper.map(cast(value)));
-        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            mappedOutput = mappedOutput.transform(decorator);
+        Flux<Object> outputFlux = output.map(this::mapOutput);
+        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
+            outputFlux = outputFlux.transform(decorator);
         }
-        return getAdoptOutput().apply(mappedOutput);
+        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            outputFlux = outputFlux.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
+            outputFlux = outputFlux.transform(decorator);
+        }
+        return getAdoptOutput().apply(outputFlux);
+    }
+
+    private Object mapOutput(Value value) {
+        if (exceptionMapper.getFilter().apply(value)) {
+            Throwable throwable = exceptionMapper.getMapper().map(cast(value));
+            if (throwable instanceof Error) {
+                throw (Error) throwable;
+            }
+            if (throwable instanceof RuntimeException) {
+                throw (RuntimeException) throwable;
+            }
+            throw new CommunicationException(throwable);
+        }
+        return outputMapper.map(cast(value));
     }
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = error(exception);
+        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
+            errorOutput = errorOutput.transform(decorator);
+        }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            errorOutput = errorOutput.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
         }
         return cast(errorOutput);
@@ -160,7 +219,7 @@ public class CommunicatorAction implements Managed {
         if (isNull(outputMode)) throw new ImpossibleSituationException();
         switch (outputMode) {
             case BLOCKING:
-                return input -> input.next().block();
+                return output -> output.next().block();
             case MONO:
                 return Flux::next;
             case FLUX:
@@ -171,10 +230,6 @@ public class CommunicatorAction implements Managed {
     }
 
     private Optional<CommunicatorProxyConfiguration> communicatorConfiguration() {
-        return ofNullable(moduleConfiguration.get().getConfigurations().get(communicatorId));
-    }
-
-    private CommunicatorModuleConfiguration moduleConfiguration() {
-        return communicatorModule().configuration();
+        return ofNullable(getConfiguration().getConfigurations().get(communicatorId));
     }
 }

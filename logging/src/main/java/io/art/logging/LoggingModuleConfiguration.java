@@ -28,8 +28,9 @@ import static java.lang.System.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
-    private boolean colored = false;
-    private boolean asynchronous = false;
+    private Boolean enabled;
+    private Boolean colored;
+    private Boolean asynchronous;
     private String configurationPath;
 
     @RequiredArgsConstructor
@@ -38,16 +39,18 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.colored = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(COLORED_KEY)), false);
-            configuration.asynchronous = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ASYNCHRONOUS_KEY)), false);
+            configuration.enabled = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ENABLED_KEY)), true);
+            configuration.colored = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(COLORED_KEY)), true);
+            configuration.asynchronous = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ASYNCHRONOUS_KEY)), true);
             configuration.configurationPath = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getString(CONFIGURATION_PATH_KEY)), getProperty(LOG42_CONFIGURATION_FILE_PROPERTY));
             return this;
         }
 
         @Override
         public Configurator override(LoggingModuleConfiguration configuration) {
-            this.configuration.asynchronous = configuration.isAsynchronous();
-            this.configuration.colored = configuration.isColored();
+            apply(configuration.getEnabled(), enabled -> this.configuration.enabled = enabled);
+            apply(configuration.getColored(), colored -> this.configuration.colored = colored);
+            apply(configuration.getAsynchronous(), asynchronous -> this.configuration.asynchronous = asynchronous);
             apply(configuration.getConfigurationPath(), path -> this.configuration.configurationPath = path);
             return this;
         }

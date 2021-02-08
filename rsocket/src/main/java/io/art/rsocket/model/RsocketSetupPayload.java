@@ -19,6 +19,7 @@
 package io.art.rsocket.model;
 
 import io.art.core.model.*;
+import io.art.rsocket.payload.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
@@ -33,10 +34,21 @@ import static io.art.value.mapping.ServiceMethodMapping.*;
 
 @Value
 @Builder(toBuilder = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketSetupPayload {
+    @EqualsAndHashCode.Include
     DataFormat dataFormat;
+    @EqualsAndHashCode.Include
     DataFormat metadataFormat;
+    @EqualsAndHashCode.Include
     ServiceMethodIdentifier serviceMethod;
+
+    @Getter(lazy = true)
+    RsocketPayloadWriter writer = new RsocketPayloadWriter(this);
+
+    @Getter(lazy = true)
+    RsocketPayloadReader reader = new RsocketPayloadReader(this);
+
 
     public Entity toEntity() {
         EntityBuilder entityBuilder = entityBuilder()

@@ -24,7 +24,10 @@ import io.art.core.extensions.*;
 import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
+import static java.util.Objects.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
@@ -33,13 +36,20 @@ import java.util.function.*;
 public interface ConfigurationSource {
     String getSection();
 
+    default String getParent() {
+        String section = emptyIfNull(getSection());
+        return section.substring(section.lastIndexOf(DOT) + 1);
+    }
+
     ModuleConfigurationSourceType getType();
 
     ImmutableSet<String> getKeys();
 
     NestedConfiguration getNested(String path);
 
-    boolean has(String path);
+    default boolean has(String path) {
+        return nonNull(getNested(path));
+    }
 
     default void refresh() {
 

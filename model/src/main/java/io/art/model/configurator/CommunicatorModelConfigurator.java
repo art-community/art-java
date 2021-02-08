@@ -33,7 +33,7 @@ public class CommunicatorModelConfigurator {
     private final ImmutableSet.Builder<RsocketCommunicatorModelConfigurator> rsocketCommunicators = immutableSetBuilder();
 
     public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass) {
-        rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity()));
+        rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass));
         return this;
     }
 
@@ -42,7 +42,7 @@ public class CommunicatorModelConfigurator {
         streamOf(configurators)
                 .map(configurator -> (Function<RsocketCommunicatorModelConfigurator, RsocketCommunicatorModelConfigurator>) configurator)
                 .reduce(Function::andThen)
-                .map(configurator -> configurator.apply(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass, identity())))
+                .map(configurator -> configurator.apply(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass)))
                 .ifPresent(rsocketCommunicators::add);
         return this;
     }

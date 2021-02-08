@@ -18,6 +18,7 @@
 
 package io.art.resilience.module;
 
+import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.resilience.configuration.*;
 import io.art.resilience.state.*;
@@ -28,7 +29,7 @@ import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.*;
 
 @Getter
 public class ResilienceModule implements StatefulModule<ResilienceModuleConfiguration, ResilienceModuleConfiguration.Configurator, ResilienceModuleState> {
@@ -59,22 +60,17 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     }
 
     public static RateLimiter rateLimiter(String id, RateLimiterConfig config) {
-        RateLimiter rateLimiter = resilienceModule()
+        return resilienceModule()
                 .state()
                 .getRateLimiters()
                 .rateLimiter(id, config);
-        rateLimiter.changeLimitForPeriod(config.getLimitForPeriod());
-        rateLimiter.changeTimeoutDuration(config.getTimeoutDuration());
-        return rateLimiter;
     }
 
     public static Bulkhead bulkhead(String id, BulkheadConfig config) {
-        Bulkhead bulkhead = resilienceModule()
+        return resilienceModule()
                 .state()
                 .getBulkheads()
                 .bulkhead(id, config);
-        bulkhead.changeConfig(config);
-        return bulkhead;
     }
 
     public static TimeLimiter timeLimiter(String id, TimeLimiterConfig config) {
@@ -82,5 +78,10 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
                 .state()
                 .getTimeLimiters()
                 .timeLimiter(id, config);
+    }
+
+    @Override
+    public void beforeReload(Context.Service contextService) {
+        state.reset();
     }
 }

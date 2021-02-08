@@ -14,13 +14,13 @@ public interface ServiceModel {
 
     ConfiguratorScope getScope();
 
-    BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> getClassDecorator();
+    BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> getServiceDecorator();
 
     ImmutableMap<String, RsocketServiceMethodModel> getMethods();
 
     default ServiceMethodSpecificationBuilder implement(String id, ServiceMethodSpecificationBuilder current) {
         if (getScope() == CLASS) {
-            return let(getClassDecorator(), decorator -> decorator.apply(id, current));
+            return let(getServiceDecorator(), decorator -> decorator.apply(id, current));
         }
         return let(getMethods().get(id), methodModel -> methodModel.implement(current));
     }

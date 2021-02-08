@@ -117,4 +117,11 @@ public final class CollectionExtensions {
         }
         return current;
     }
+
+    public static <T> void erase(Queue<T> queue, Consumer<T> elementConsumer) {
+        T element;
+        while (nonNull(element = queue.poll())) {
+            elementConsumer.accept(element);
+        }
+    }
 }

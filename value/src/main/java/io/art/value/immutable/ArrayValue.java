@@ -20,7 +20,7 @@ package io.art.value.immutable;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import io.art.value.mapper.*;
@@ -32,7 +32,7 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.core.managed.LazyValue.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
@@ -51,7 +51,7 @@ public class ArrayValue implements Value {
     private final ValueType type = ARRAY;
     private final Map<Integer, ?> mappedValueCache = concurrentMap();
     private final Function<Integer, ? extends Value> valueProvider;
-    private final LazyValue<Integer> size;
+    private final LazyProperty<Integer> size;
 
     public int size() {
         return size.get();
@@ -225,7 +225,7 @@ public class ArrayValue implements Value {
 
     private class ProxyList<T> implements List<T>, ImmutableArray<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<List<T>> evaluated;
+        private final LazyProperty<List<T>> evaluated;
 
         public ProxyList(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
@@ -296,7 +296,7 @@ public class ArrayValue implements Value {
 
             @Override
             public void add(T t) {
-                throw new NotImplementedException("iterator.register");
+                throw new NotImplementedException("iterator.emit");
             }
         }
 
@@ -335,7 +335,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new NotImplementedException("register");
+            throw new NotImplementedException("emit");
         }
 
         @Override
@@ -405,7 +405,7 @@ public class ArrayValue implements Value {
 
         @Override
         public void add(int index, T element) {
-            throw new NotImplementedException("register");
+            throw new NotImplementedException("emit");
         }
 
         @Override
@@ -459,7 +459,7 @@ public class ArrayValue implements Value {
 
     private class ProxySet<T> implements Set<T>, ImmutableSet<T> {
         private final ValueToModelMapper<T, ? extends Value> mapper;
-        private final LazyValue<Set<T>> evaluated;
+        private final LazyProperty<Set<T>> evaluated;
 
         public ProxySet(ValueToModelMapper<T, ? extends Value> mapper) {
             this.mapper = mapper;
@@ -522,7 +522,7 @@ public class ArrayValue implements Value {
 
         @Override
         public boolean add(T element) {
-            throw new NotImplementedException("register");
+            throw new NotImplementedException("emit");
         }
 
         @Override

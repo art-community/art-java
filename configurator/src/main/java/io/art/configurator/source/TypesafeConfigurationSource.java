@@ -97,9 +97,4 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
     public ImmutableSet<String> getKeys() {
         return immutableSetOf(typesafeConfiguration.root().keySet());
     }
-
-    @Override
-    public boolean has(String path) {
-        return typesafeConfiguration.hasPath(path);
-    }
 }

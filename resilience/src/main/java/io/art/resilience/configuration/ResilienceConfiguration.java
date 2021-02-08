@@ -18,6 +18,7 @@
 
 package io.art.resilience.configuration;
 
+import io.art.core.changes.*;
 import io.art.core.source.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
@@ -42,7 +43,7 @@ public class ResilienceConfiguration {
     private final BulkheadConfig bulkhead;
     private final TimeLimiterConfig timeLimiter;
 
-    public static ResilienceConfiguration from(ConfigurationSource source) {
+    public static ResilienceConfiguration from(ChangesListener listener, ConfigurationSource source) {
         ResilienceConfigurationBuilder builder = ResilienceConfiguration.builder();
         boolean hasRetry = source.has(RETRY_KEY);
         boolean hasCircuitBreaker = source.has(CIRCUIT_BREAKER_KEY);

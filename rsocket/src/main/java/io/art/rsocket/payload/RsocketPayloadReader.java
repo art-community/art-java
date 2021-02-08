@@ -19,22 +19,27 @@
 package io.art.rsocket.payload;
 
 import io.art.core.exception.*;
-import io.art.value.constants.ValueModuleConstants.*;
 import io.art.rsocket.model.*;
+import io.art.value.constants.ValueModuleConstants.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
 import static io.art.json.descriptor.JsonReader.*;
 import static io.art.message.pack.descriptor.MessagePackReader.*;
 import static io.art.protobuf.descriptor.ProtobufReader.*;
-import static io.art.rsocket.model.RsocketPayloadValue.emptyRsocketPayload;
+import static io.art.rsocket.model.RsocketPayloadValue.*;
 import static io.art.xml.descriptor.XmlReader.*;
-import static io.art.yaml.descriptor.YamlReader.readYaml;
+import static io.art.yaml.descriptor.YamlReader.*;
 
 @RequiredArgsConstructor
 public class RsocketPayloadReader {
     private final DataFormat dataFormat;
     private final DataFormat metaDataFormat;
+
+    public RsocketPayloadReader(RsocketSetupPayload setupPayload) {
+        this.dataFormat = setupPayload.getDataFormat();
+        this.metaDataFormat = setupPayload.getMetadataFormat();
+    }
 
     public RsocketPayloadValue readPayloadData(Payload payload) {
         ByteBuf data = payload.sliceData();
