@@ -63,7 +63,11 @@ class ServerModelConfiguratorExtension(val delegate: ServerModelConfigurator) {
 class CommunicatorModelConfiguratorExtension(val delegate: CommunicatorModelConfigurator) {
     fun rsocket(communicator: KClass<*>): RsocketCommunicatorModelConfiguratorExtension {
         lateinit var extension: RsocketCommunicatorModelConfiguratorExtension
-        delegate.rsocket(communicator.java, { configurator -> configurator.apply { extension = RsocketCommunicatorModelConfiguratorExtension(configurator) } })
+        delegate.rsocket(communicator.java, { configurator ->
+            configurator.apply {
+                extension = RsocketCommunicatorModelConfiguratorExtension(configurator)
+            }
+        })
         return extension
     }
 
