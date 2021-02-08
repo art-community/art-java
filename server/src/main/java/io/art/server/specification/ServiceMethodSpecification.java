@@ -74,19 +74,19 @@ public class ServiceMethodSpecification {
     private final ServiceMethodImplementation implementation;
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
-            new ServiceLoggingDecorator(this, INPUT)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
+            new ServiceLoggingDecorator(this, INPUT),
             new ServiceDeactivationDecorator(this),
             new ServiceStateDecorator(this)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
-            new ServiceLoggingDecorator(this, OUTPUT)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
+            new ServiceLoggingDecorator(this, OUTPUT),
             new ServiceDeactivationDecorator(this)
     );
 

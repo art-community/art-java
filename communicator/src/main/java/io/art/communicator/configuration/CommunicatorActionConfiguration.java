@@ -22,6 +22,7 @@ import io.art.communicator.refresher.*;
 import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
+import io.art.resilience.configuration.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
@@ -33,6 +34,7 @@ public class CommunicatorActionConfiguration {
     private boolean logging;
     private boolean deactivated;
     private Scheduler scheduler;
+    private ResilienceConfiguration resilienceConfiguration;
     private ImmutableMap<String, String> connectors;
 
     public static CommunicatorActionConfiguration from(CommunicatorModuleRefresher refresher, ConfigurationSource source) {

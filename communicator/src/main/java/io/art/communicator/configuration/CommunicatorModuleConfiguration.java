@@ -24,6 +24,7 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
+import io.art.resilience.configuration.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
@@ -60,6 +61,12 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
         CommunicatorProxyConfiguration proxyConfiguration = configurations.get(id.getCommunicatorId());
         return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
+    }
+
+    public ResilienceConfiguration getResilienceConfiguration(CommunicatorActionIdentifier id) {
+        return getActionConfiguration(id)
+                .map(CommunicatorActionConfiguration::getResilienceConfiguration)
+                .orElse(ResilienceConfiguration.builder().build());
     }
 
     public boolean isLogging(CommunicatorActionIdentifier identifier) {
