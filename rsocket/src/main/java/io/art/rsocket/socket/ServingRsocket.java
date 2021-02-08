@@ -72,14 +72,14 @@ public class ServingRsocket implements RSocket {
             ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
             if (nonNull(serviceMethodId)) {
                 setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
-                specification = initializeSpecification(serviceMethodId);
+                specification = findSpecification(serviceMethodId);
                 return;
             }
         }
         ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
         if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
-            specification = initializeSpecification(defaultServiceMethod);
+            specification = findSpecification(defaultServiceMethod);
             return;
         }
         throw new ImpossibleSituationException();
@@ -127,7 +127,7 @@ public class ServingRsocket implements RSocket {
         moduleState.removeRequester(this);
     }
 
-    private ServiceMethodSpecification initializeSpecification(ServiceMethodIdentifier serviceMethodId) {
+    private ServiceMethodSpecification findSpecification(ServiceMethodIdentifier serviceMethodId) {
         return specifications()
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
