@@ -34,6 +34,9 @@ public class ModuleModelConfigurator {
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
     private final StorageModelConfigurator storage = new StorageModelConfigurator();
     private Runnable onLoad = emptyRunnable();
+    private Runnable onUnload = emptyRunnable();
+    private Runnable beforeReload = emptyRunnable();
+    private Runnable afterReload = emptyRunnable();
 
     public ModuleModelConfigurator value(UnaryOperator<ValueModelConfigurator> value) {
         value.apply(this.value);
@@ -69,6 +72,33 @@ public class ModuleModelConfigurator {
         return this;
     }
 
+    public ModuleModelConfigurator onUnload(Runnable action) {
+        Runnable current = this.onUnload;
+        this.onUnload = () -> {
+            current.run();
+            action.run();
+        };
+        return this;
+    }
+
+    public ModuleModelConfigurator beforeReload(Runnable action) {
+        Runnable current = this.beforeReload;
+        this.beforeReload = () -> {
+            current.run();
+            action.run();
+        };
+        return this;
+    }
+
+    public ModuleModelConfigurator afterReload(Runnable action) {
+        Runnable current = this.afterReload;
+        this.afterReload = () -> {
+            current.run();
+            action.run();
+        };
+        return this;
+    }
+
     public ModuleModel configure() {
         return ModuleModel.builder()
                 .mainModuleId(moduleId)
@@ -78,6 +108,9 @@ public class ModuleModelConfigurator {
                 .communicatorModel(communicator.configure())
                 .storageModel(storage.configure())
                 .onLoad(onLoad)
+                .onUnload(onUnload)
+                .beforeReload(beforeReload)
+                .afterReload(afterReload)
                 .build();
     }
 

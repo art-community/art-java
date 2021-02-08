@@ -18,23 +18,25 @@
 
 package io.art.scheduler.executor.periodic;
 
+import io.art.scheduler.model.*;
 import lombok.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.PeriodicTaskMode.*;
 import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 class RepeatableRunnable implements Runnable {
-    private final Runnable action;
     private final Supplier<Boolean> predicate;
     private final Consumer<LocalDateTime> repeat;
+    private final PeriodicRunnableTask periodicTask;
 
     @Override
     public void run() {
+        if (!predicate.get()) return;
         LocalDateTime now = now();
-        if (predicate.get()) {
-            action.run();
-        }
-        repeat.accept(now);
+        periodicTask.getDelegate().getAction().accept(periodicTask.getDelegate().getId());
+        if (periodicTask.getMode() == FIXED) repeat.accept(now);
+        if (periodicTask.getMode() == DELAYED) repeat.accept(now());
     }
 }

@@ -115,12 +115,6 @@ public class YamlConfigurationSource implements NestedConfiguration {
         return stream(((Iterable<String>) configuration::fieldNames).spliterator(), false).collect(immutableSetCollector());
     }
 
-    @Override
-    public boolean has(String path) {
-        JsonNode nodeType = getYamlConfigNode(path);
-        return nodeType.isNull() && !nodeType.isMissingNode();
-    }
-
     private JsonNode getYamlConfigNode(String path) {
         JsonNode yamlConfig = configuration;
         JsonNode node = yamlConfig.path(path);

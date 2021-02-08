@@ -20,13 +20,19 @@ package io.art.model.customizer;
 
 import io.art.core.annotation.*;
 import io.art.server.configuration.*;
+import io.art.server.module.*;
+import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import lombok.*;
 
+@Getter
 @UsedByGenerator
 public class ServerCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
+    private final Custom configuration;
+
+    public ServerCustomizer(ServerModule module) {
+        this.configuration = new ServerCustomizer.Custom(module.getRefresher());
+    }
 
     public ServerCustomizer registry(ServiceSpecificationRegistry registry) {
         configuration.registry = registry;
@@ -36,5 +42,9 @@ public class ServerCustomizer {
     @Getter
     private static class Custom extends ServerModuleConfiguration {
         private ServiceSpecificationRegistry registry;
+
+        public Custom(ServerModuleRefresher refresher) {
+            super(refresher);
+        }
     }
 }

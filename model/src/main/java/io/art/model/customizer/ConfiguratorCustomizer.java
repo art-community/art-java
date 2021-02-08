@@ -23,6 +23,7 @@ import io.art.configurator.custom.*;
 import io.art.configurator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import lombok.*;
 import static java.util.Objects.isNull;
@@ -44,6 +45,6 @@ public class ConfiguratorCustomizer {
     @Getter
     @RequiredArgsConstructor
     private static class Custom extends ConfiguratorModuleConfiguration {
-        private final ImmutableMap<CustomConfigurationModel, ?> customConfigurations;
+        private final ImmutableMap<CustomConfigurationModel, Property<?>> customConfigurations;
     }
 }

@@ -68,73 +68,55 @@ public class ModuleLauncher {
         if (LAUNCHED.compareAndSet(false, true)) {
             ConfiguratorModule configurator = new ConfiguratorModule();
             ModuleCustomizer moduleCustomizer = model.getCustomizer();
-            UnaryOperator<ConfiguratorCustomizer> configuratorCustomizer = moduleCustomizer.configurator();
-            UnaryOperator<ValueCustomizer> valueCustomizer = moduleCustomizer.value();
-            UnaryOperator<LoggingCustomizer> loggingCustomizer = moduleCustomizer.logging();
-            UnaryOperator<ServerCustomizer> serverCustomizer = moduleCustomizer.server();
-            UnaryOperator<CommunicatorCustomizer> communicatorCustomizer = moduleCustomizer.communicator();
-            UnaryOperator<RsocketCustomizer> rsocket = moduleCustomizer.rsocket();
-            UnaryOperator<StorageCustomizer> storageCustomizer = moduleCustomizer.storage();
-            ImmutableMap.Builder<ModuleFactory, ModuleDecorator> modules = immutableMapBuilder();
+            UnaryOperator<ConfiguratorCustomizer> customizeConfigurator = moduleCustomizer.configurator();
+            UnaryOperator<ValueCustomizer> customizeValue = moduleCustomizer.value();
+            UnaryOperator<LoggingCustomizer> customizeLogging = moduleCustomizer.logging();
+            UnaryOperator<ServerCustomizer> customizeServer = moduleCustomizer.server();
+            UnaryOperator<CommunicatorCustomizer> customizeCommunicator = moduleCustomizer.communicator();
+            UnaryOperator<RsocketCustomizer> customizeRsocket = moduleCustomizer.rsocket();
+            UnaryOperator<StorageCustomizer> customizeStorage = moduleCustomizer.storage();
+            ModuleInitializerRegistry modules = new ModuleInitializerRegistry();
             ModuleConfiguringState state = new ModuleConfiguringState(configurator.configure(), model);
+
+            ConfiguratorCustomizer configuratorCustomizer = singleton(ConfiguratorCustomizer.class, () -> customizeConfigurator.apply(new ConfiguratorCustomizer()));
+            ValueCustomizer valueCustomizer = singleton(ValueCustomizer.class, () -> customizeValue.apply(new ValueCustomizer()));
+            LoggingCustomizer loggingCustomizer = singleton(LoggingCustomizer.class, () -> customizeLogging.apply(new LoggingCustomizer()));
+            Function<ServerModule, ServerCustomizer> serverCustomizer = module ->
+                    singleton(ServerCustomizer.class, () -> customizeServer.apply(new ServerCustomizer(module)));
+            Function<CommunicatorModule, CommunicatorCustomizer> communicatorCustomizer = module ->
+                    singleton(CommunicatorCustomizer.class, () -> customizeCommunicator.apply(new CommunicatorCustomizer(module)));
+            Function<RsocketModule, RsocketCustomizer> rsocketCustomizer = module ->
+                    singleton(RsocketCustomizer.class, () -> customizeRsocket.apply(new RsocketCustomizer(module)));
+
             modules
-                    .put(
-                            () -> configurator,
-                            module -> configurator(cast(module), configuratorCustomizer.apply(new ConfiguratorCustomizer()))
-                    )
-                    .put(
-                            ValueModule::new,
-                            module -> value(cast(module), state, valueCustomizer.apply(new ValueCustomizer()))
-                    )
-                    .put(
-                            LoggingModule::new,
-                            module -> logging(cast(module), state, loggingCustomizer.apply(new LoggingCustomizer()))
-                    )
-                    .put(
-                            SchedulerModule::new,
-                            module -> scheduler(cast(module), state)
-                    )
-                    .put(
-                            JsonModule::new,
-                            module -> json(cast(module), state)
-                    )
-                    .put(
-                            YamlModule::new,
-                            module -> yaml(cast(module), state)
-                    )
-                    .put(
-                            XmlModule::new,
-                            module -> xml(cast(module), state)
-                    )
-                    .put(
-                            ServerModule::new,
-                            module -> server(cast(module), state, serverCustomizer.apply(new ServerCustomizer()))
-                    )
-                    .put(
-                            CommunicatorModule::new,
-                            module -> communicator(cast(module), state, communicatorCustomizer.apply(new CommunicatorCustomizer()))
-                    )
-                    .put(
-                            RsocketModule::new,
-                            module -> rsocket(cast(module), state, rsocket.apply(new RsocketCustomizer(cast(module))))
-                    )
-                    .put(
-                            TarantoolModule::new,
-                            module -> tarantool(cast(module), state)
-                    )
-                    .put(
-                            StorageModule::new,
-                            module -> storage(cast(module), state, storageCustomizer.apply(new StorageCustomizer()))
-                    );
-            LazyValue<Logger> logger = lazy(() -> logger(Context.class));
-            initialize(new ContextConfiguration(model.getMainModuleId()), modules.build(), message -> logger.get().info(message));
+                    .put(() -> configurator, module -> configurator(module, configuratorCustomizer))
+                    .put(ValueModule::new, module -> value(module, state, valueCustomizer))
+                    .put(LoggingModule::new, module -> logging(module, state, loggingCustomizer))
+                    .put(SchedulerModule::new, module -> scheduler(module, state))
+                    .put(JsonModule::new, module -> json(module, state))
+                    .put(YamlModule::new, module -> yaml(module, state))
+                    .put(XmlModule::new, module -> xml(module, state))
+                    .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(module)))
+                    .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(module)))
+                    .put(RsocketModule::new, module -> rsocket(module, state, rsocketCustomizer.apply(module)))
+                    .put(TarantoolModule::new, module -> tarantool(module, state))
+                    .put(StorageModule::new, module -> storage(module, state, storageCustomizer.apply(module)));
+
+            LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
+            ContextConfiguration contextConfiguration = ContextConfiguration.builder()
+                    .onUnload(model.getOnUnload())
+                    .onLoad(model.getOnLoad())
+                    .beforeReload(model.getBeforeReload())
+                    .afterReload(model.getAfterReload())
+                    .mainModuleId(model.getMainModuleId())
+                    .build();
+            initialize(contextConfiguration, modules.get(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
-            apply(model.getOnLoad(), Runnable::run);
             if (needBlock()) block();
         }
     }
 
-    private static Module configurator(ConfiguratorModule configuratorModule, ConfiguratorCustomizer configuratorCustomizer) {
+    private static ConfiguratorModule configurator(ConfiguratorModule configuratorModule, ConfiguratorCustomizer configuratorCustomizer) {
         ofNullable(configuratorCustomizer)
                 .ifPresent(customizer -> configuratorModule
                         .configure(configurator -> configurator

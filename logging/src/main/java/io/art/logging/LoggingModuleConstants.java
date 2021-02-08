@@ -27,13 +27,14 @@ public interface LoggingModuleConstants {
     interface ConfigurationKeys {
         String LOGGING_SECTION = "logging";
         String COLORED_KEY = "colored";
+        String ENABLED_KEY = "enabled";
         String ASYNCHRONOUS_KEY = "asynchronous";
         String CONFIGURATION_PATH_KEY = "configuration.path";
     }
 
     interface LoggingParameters {
         String LOG_TIMESTAMP = "logTimestamp";
-        String MODULES_KEY = "modules";
+        String MODULES_KEY = "get";
         String SERVICES_KEY = "services";
         String PROTOCOL_KEY = "protocol";
         String TRACE_ID_KEY = "traceId";

@@ -8,4 +8,5 @@ public interface CompilerSuppressingWarnings {
     String UNUSED_RETURN_VALUE = "UnusedReturnValue";
     String CONSTANT_CONDITIONS =  "ConstantConditions";
     String UNUSED =  "unused";
+    String UNCHECKED_CAST =  "UNCHECKED_CAST";
 }

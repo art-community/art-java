@@ -18,8 +18,6 @@
 
 package io.art.scheduler.executor.deferred;
 
-import static java.lang.Integer.*;
-import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.concurrent.*;
 
@@ -30,31 +28,17 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
         observer = new DeferredEventObserver(configuration);
     }
 
-    public static DeferredExecutorBuilder builder() {
-        return new DeferredExecutorBuilder();
-    }
-
     @Override
-    public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
+    public <EventResultType> ForkJoinTask<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
         return observer.addEvent(eventTask, triggerTime);
     }
 
     @Override
-    public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask) {
-        return submit(eventTask, now());
-    }
-
-    @Override
-    public Future<?> execute(Runnable task, LocalDateTime triggerTime) {
+    public ForkJoinTask<?> execute(Runnable task, LocalDateTime triggerTime) {
         return submit(() -> {
             task.run();
             return null;
         }, triggerTime);
-    }
-
-    @Override
-    public Future<?> execute(Runnable command) {
-        return execute(command, now());
     }
 
     @Override
@@ -65,10 +49,5 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Override
     public void clear() {
         observer.clear();
-    }
-
-    static class DeferredExecutorConstants {
-        static final int DEFAULT_MAX_QUEUE_SIZE = MAX_VALUE - 8;
-        static final int DEFAULT_SHUTDOWN_TIMEOUT = 60 * 1000;
     }
 }

@@ -28,10 +28,10 @@ import java.time.*;
 
 @Getter
 public class SchedulerModuleConfiguration implements ModuleConfiguration {
-    private final DeferredExecutor deferredExecutor = DeferredExecutorImplementation.builder()
+    private final DeferredExecutor deferredExecutor = DeferredExecutor.builder()
             .withExceptionHandler(new DeferredExecutorExceptionHandler())
             .build();
-    private final PeriodicExecutor periodicExecutor = new PeriodicExecutor(DeferredExecutorImplementation.builder()
+    private final PeriodicExecutor periodicExecutor = new PeriodicExecutor(DeferredExecutor.builder()
             .withExceptionHandler(new DeferredExecutorExceptionHandler())
             .build());
     private Duration refreshDuration;
@@ -42,7 +42,7 @@ public class SchedulerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.refreshDuration = source.getDuration(CONFIGURATION_REFRESH_DURATION);
+            configuration.refreshDuration = source.getDuration(CONFIGURATOR_REFRESH_DURATION);
             return this;
         }
     }

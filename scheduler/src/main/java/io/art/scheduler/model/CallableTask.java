@@ -25,5 +25,5 @@ import java.util.function.*;
 @AllArgsConstructor
 public class CallableTask<T> {
     private final String id;
-    private final Function<String, T> callable;
+    private final Function<String, T> action;
 }

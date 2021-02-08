@@ -18,12 +18,15 @@
 
 package io.art.server.decorator;
 
-import io.art.core.managed.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
+import io.art.server.configuration.*;
+import io.art.server.specification.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import reactor.core.publisher.*;
-import static io.art.core.managed.DisposableValue.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.server.module.ServerModule.*;
 import static lombok.AccessLevel.*;
@@ -32,19 +35,26 @@ import java.util.function.*;
 public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceDeactivationDecorator.class);
-    private final DisposableValue<UnaryOperator<Flux<Object>>> decorator = disposable(this::createDecorator);
-    private final Supplier<Boolean> enabled;
+    private final Property<Boolean> enabled;
 
-    public ServiceDeactivationDecorator(ServiceMethodIdentifier serviceMethodId) {
-        this.enabled = () -> serverModule().configuration().isDeactivated(serviceMethodId);
+    public ServiceDeactivationDecorator(ServiceMethodSpecification specification) {
+        ServiceMethodIdentifier serviceMethodId = serviceMethod(specification.getServiceId(), specification.getMethodId());
+        this.enabled = property(enabled(serviceMethodId)).listenConsumer(() -> configuration()
+                .getConsumer()
+                .deactivationConsumer());
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
-        return decorator.get().apply(input);
+        return input.filter(ignored -> enabled.get());
     }
 
-    private UnaryOperator<Flux<Object>> createDecorator() {
-        return input -> input.filter(ignored -> enabled.get());
+
+    private ServerModuleConfiguration configuration() {
+        return serverModule().configuration();
+    }
+
+    private Supplier<Boolean> enabled(ServiceMethodIdentifier serviceMethodId) {
+        return () -> !configuration().isDeactivated(serviceMethodId);
     }
 }

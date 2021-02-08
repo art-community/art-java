@@ -22,7 +22,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
-import io.art.core.managed.*;
+import io.art.core.property.*;
 import io.art.value.builder.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
@@ -37,7 +37,7 @@ import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
-import static io.art.core.managed.LazyValue.lazy;
+import static io.art.core.property.LazyProperty.lazy;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
@@ -204,7 +204,7 @@ public class Entity implements Value {
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
         T cached = cast(mappedValueCache.get(key));
         if (nonNull(cached)) return cached;
-        Value value = orElse(get(key), type::getDefaultValue);
+        Value value = orElse(get(key), type::defaultValue);
         cached = mapper.map(cast(value));
         mappedValueCache.put(key, cast(cached));
         return cached;
@@ -277,8 +277,8 @@ public class Entity implements Value {
     private class ProxyMap<K, V> implements Map<K, V>, ImmutableMap<K, V> {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
-        private final LazyValue<Map<K, V>> evaluated;
-        private final LazyValue<Set<K>> evaluatedFields;
+        private final LazyProperty<Map<K, V>> evaluated;
+        private final LazyProperty<Set<K>> evaluatedFields;
 
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;

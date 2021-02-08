@@ -25,19 +25,19 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 
-@Getter
+@Value
 @RequiredArgsConstructor
 public class RsocketKeepAliveConfiguration {
-    private final Duration interval;
-    private final Duration maxLifeTime;
+    Duration interval;
+    Duration maxLifeTime;
 
-    public static RsocketKeepAliveConfiguration from(ConfigurationSource source) {
+    public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source) {
         Duration interval = orElse(source.getDuration(INTERVAL_KEY), DEFAULT_KEEP_ALIVE_INTERVAL);
         Duration maxLifeTime = orElse(source.getDuration(MAX_LIFE_TIME_KEY), DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME);
         return new RsocketKeepAliveConfiguration(interval, maxLifeTime);
     }
 
-    public static RsocketKeepAliveConfiguration from(ConfigurationSource source, RsocketKeepAliveConfiguration defaultKeepAlive) {
+    public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source, RsocketKeepAliveConfiguration defaultKeepAlive) {
         Duration interval = orElse(source.getDuration(INTERVAL_KEY), defaultKeepAlive.interval);
         Duration maxLifeTime = orElse(source.getDuration(MAX_LIFE_TIME_KEY), defaultKeepAlive.maxLifeTime);
         return new RsocketKeepAliveConfiguration(interval, maxLifeTime);

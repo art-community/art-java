@@ -25,6 +25,7 @@ import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
+import io.art.core.context.*;
 import io.art.core.file.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -74,7 +75,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     }
 
     @Override
-    public void beforeReload() {
+    public void beforeReload(Context.Service contextService) {
         orderedSources().forEach(ConfigurationSource::refresh);
     }
 

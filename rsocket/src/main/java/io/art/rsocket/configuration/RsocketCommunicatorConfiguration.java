@@ -19,65 +19,30 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.collection.*;
-import io.art.core.model.*;
 import io.art.core.source.*;
-import io.art.value.constants.ValueModuleConstants.*;
-import io.rsocket.core.*;
-import io.rsocket.frame.decoder.*;
+import io.art.rsocket.refresher.*;
 import lombok.*;
-import reactor.util.retry.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.rsocket.configuration.RsocketConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
-import static io.rsocket.frame.FrameLengthCodec.*;
-import static java.util.Objects.*;
+import static java.util.Optional.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
-    private boolean logging;
-    private int fragmentationMtu;
-    private Resume resume;
-    private Retry reconnect;
-    private PayloadDecoder payloadDecoder;
-    private int maxInboundPayloadSize;
-    private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
-    private ServiceMethodIdentifier defaultServiceMethod;
-    private RsocketKeepAliveConfiguration keepAliveConfiguration;
-    private ImmutableMap<String, RsocketConnectorConfiguration> connectors;
+    private RsocketConnectorConfiguration defaultConnectorConfiguration;
+    private ImmutableMap<String, RsocketConnectorConfiguration> connectorConfigurations;
 
     public boolean isLogging(String connectorId) {
-        RsocketConnectorConfiguration configuration = connectors.get(connectorId);
-        if (isNull(configuration)) return logging;
-        return configuration.isLogging();
+        return ofNullable(connectorConfigurations)
+                .map(configurations -> configurations.get(connectorId))
+                .map(RsocketConnectorConfiguration::isLogging)
+                .orElseGet(() -> let(defaultConnectorConfiguration, RsocketConnectorConfiguration::isLogging, false));
     }
 
-    public static RsocketCommunicatorConfiguration from(ConfigurationSource source) {
+    public static RsocketCommunicatorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();
-
-        String serviceId = source.getString(DEFAULT_SERVICE_ID_KEY);
-        String methodId = source.getString(DEFAULT_METHOD_ID_KEY);
-
-        if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
-            configuration.defaultServiceMethod = serviceMethod(serviceId, methodId);
-        }
-
-        configuration.defaultDataFormat = dataFormat(source.getString(DEFAULT_DATA_FORMAT_KEY), JSON);
-        configuration.defaultMetaDataFormat = dataFormat(source.getString(DEFAULT_META_DATA_FORMAT_KEY), JSON);
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), false);
-        configuration.fragmentationMtu = orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0);
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK);
-        configuration.resume = source.getNested(RESUME_SECTION, RsocketResumeConfigurator::from);
-        configuration.reconnect = source.getNested(RECONNECT_SECTION, RsocketRetryConfigurator::from);
-        configuration.keepAliveConfiguration = source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::from);
-        configuration.payloadDecoder = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT
-                ? PayloadDecoder.DEFAULT
-                : PayloadDecoder.ZERO_COPY;
-
-        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketConnectorConfiguration.from(configuration, connector));
+        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketConnectorConfiguration::rsocketConnector, defaults());
+        configuration.connectorConfigurations = source.getNestedMap(CONNECTORS_KEY, connector -> rsocketConnector(refresher, configuration.defaultConnectorConfiguration, connector));
         return configuration;
     }
 }

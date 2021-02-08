@@ -47,7 +47,7 @@ public class LoggingCustomizer {
 
     @Getter
     private static class Custom extends LoggingModuleConfiguration {
-        private boolean colored = true;
-        private boolean asynchronous = false;
+        private Boolean colored;
+        private Boolean asynchronous;
     }
 }

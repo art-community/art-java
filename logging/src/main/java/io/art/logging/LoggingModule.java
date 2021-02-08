@@ -18,17 +18,12 @@
 
 package io.art.logging;
 
+import io.art.core.context.*;
 import io.art.core.module.*;
 import lombok.*;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.*;
 import org.apache.logging.log4j.core.async.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.printer.ColoredPrinter.printer;
 import static io.art.logging.LoggingModuleConstants.*;
-import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.ASYNCHRONOUS_KEY;
-import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.COLORED_KEY;
 import static io.art.logging.LoggingModuleConstants.LoggingMessages.*;
 import static java.lang.System.*;
 import static java.text.MessageFormat.*;
@@ -40,6 +35,7 @@ import static org.apache.logging.log4j.core.util.Constants.*;
 import static reactor.util.Loggers.*;
 import java.net.*;
 import java.nio.file.*;
+import org.apache.logging.log4j.core.Logger;
 
 @Getter
 public class LoggingModule implements StatelessModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator> {
@@ -54,7 +50,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     @Override
-    public void onLoad() {
+    public void onLoad(Context.Service contextService) {
         getLogManager().reset();
 
         boolean fromFile = ofNullable(configuration.getConfigurationPath())
@@ -62,8 +58,9 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
                 .map(path -> path.toFile().exists())
                 .orElse(false);
 
+        Logger logger = currentLogger();
         if (fromFile) {
-            currentLogger().info(format(CONFIGURE_FROM_FILE, configuration.getConfigurationPath()));
+            logger.info(format(CONFIGURE_FROM_FILE, configuration.getConfigurationPath()));
             return;
         }
 
@@ -72,34 +69,39 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
         boolean fromClasspath = nonNull(source = loader.getResource(LOG4J2_YML_FILE)) || nonNull(source = loader.getResource(LOG4J2_YAML_FILE));
 
         if (fromClasspath) {
-            currentLogger().info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
+            logger.info(format(CONFIGURE_FROM_CLASSPATH, source.getFile()));
         }
 
         useCustomLoggers(name -> new ReactorLogger(currentLogger(name)));
 
-        if (configuration.isAsynchronous()) {
-            currentLogger().info(USE_ASYNCHRONOUS_LOGGING);
+        if (configuration.getAsynchronous()) {
+            logger.info(USE_ASYNCHRONOUS_LOGGING);
             setProperty(LOG4J_CONTEXT_SELECTOR, AsyncLoggerContextSelector.class.getName());
         }
     }
 
-    private Logger currentLogger() {
-        return configuration.isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger(LoggingModule.class);
+    @Override
+    public void afterReload(Context.Service contextService) {
+        getLogManager().reset();
     }
 
-    private Logger currentLogger(String topic) {
-        return configuration.isColored() ? new ColoredLogger(topic) : LogManager.getLogger(topic);
+    public Logger currentLogger() {
+        return currentLogger(LoggingModule.class.getName());
+    }
+
+    public Logger currentLogger(String topic) {
+        return new ConfiguredLogger(topic, configuration);
     }
 
     public static Logger logger() {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(LoggingModule.class.getName()) : LogManager.getLogger();
-    }
-
-    public static Logger logger(String topic) {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(topic) : LogManager.getLogger(topic);
+        return logger(LoggingModule.class);
     }
 
     public static Logger logger(Class<?> topicClass) {
-        return loggingModule().configuration().isColored() ? new ColoredLogger(topicClass.getName()) : LogManager.getLogger(topicClass);
+        return logger(topicClass.getName());
+    }
+
+    public static Logger logger(String topic) {
+        return new ConfiguredLogger(topic, loggingModule().configuration());
     }
 }

@@ -32,6 +32,6 @@ public class RsocketServiceModel implements ServiceModel {
     private final Class<?> serviceClass;
     private final String id;
     private final ConfiguratorScope scope;
-    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> classDecorator;
+    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> serviceDecorator;
     private final ImmutableMap<String, RsocketServiceMethodModel> methods;
 }

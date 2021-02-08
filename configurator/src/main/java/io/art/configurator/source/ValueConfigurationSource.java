@@ -91,13 +91,4 @@ public class ValueConfigurationSource implements NestedConfiguration {
         }
         return asEntity(value).asMap().keySet().stream().map(toString::map).collect(immutableSetCollector());
     }
-
-    @Override
-    public boolean has(String path) {
-        if (!isEntity(value)) {
-            return false;
-        }
-        return nonNull(asEntity(value).find(path));
-    }
-
 }

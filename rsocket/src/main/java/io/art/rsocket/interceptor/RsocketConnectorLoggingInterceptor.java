@@ -18,31 +18,43 @@
 
 package io.art.rsocket.interceptor;
 
+import io.art.core.property.*;
+import io.art.rsocket.configuration.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
-import io.rsocket.util.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
-@RequiredArgsConstructor
 public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketConnectorLoggingInterceptor.class);
+
     private final String connectorId;
+    private final Property<Boolean> enabled;
+
+    public RsocketConnectorLoggingInterceptor(String connectorId) {
+        this.connectorId = connectorId;
+        enabled = property(this::enabled).listenConsumer(() -> configuration()
+                .getConsumer()
+                .connectorLoggingConsumers()
+                .consumerFor(connectorId));
+    }
 
     @Override
     public RSocket apply(RSocket rsocket) {
-        if (!enabled()) {
-            return new RSocketProxy(rsocket);
-        }
-        return new RsocketLoggingProxy(getLogger(), rsocket);
+        return new RsocketLoggingProxy(getLogger(), rsocket, enabled);
     }
 
     private boolean enabled() {
-        return let(rsocketModule().configuration().getCommunicatorConfiguration(), configuration -> configuration.isLogging(connectorId), false);
+        return let(configuration().getCommunicatorConfiguration(), configuration -> configuration.isLogging(connectorId), false);
+    }
+
+    private RsocketModuleConfiguration configuration() {
+        return rsocketModule().configuration();
     }
 }

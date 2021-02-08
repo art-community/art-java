@@ -1,6 +1,10 @@
 package io.art.core.collection;
 
+import io.art.core.factory.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.SetFactory.immutableSetOf;
+import static io.art.core.factory.SetFactory.setOf;
 import static java.util.Spliterator.*;
 import java.util.*;
 import java.util.function.*;
@@ -38,6 +42,22 @@ public interface ImmutableCollection<T> extends Iterable<T> {
 
     default Stream<T> parallelStream() {
         return StreamSupport.stream(spliterator(), true);
+    }
+
+    default ImmutableSet<T> asSet() {
+        return immutableSetOf(this);
+    }
+
+    default ImmutableArray<T> asArray() {
+        return immutableArrayOf(this);
+    }
+
+    default Set<T> asMutableSet() {
+        return setOf(asSet());
+    }
+
+    default List<T> asMutableArray() {
+        return dynamicArrayOf(asArray());
     }
 
     @Override

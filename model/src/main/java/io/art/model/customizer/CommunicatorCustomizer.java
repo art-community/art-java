@@ -19,14 +19,20 @@
 package io.art.model.customizer;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.module.*;
+import io.art.communicator.refresher.*;
 import io.art.communicator.registry.*;
 import io.art.core.annotation.*;
 import lombok.*;
 
+@Getter
 @UsedByGenerator
 public class CommunicatorCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
+    private final Custom configuration;
+
+    public CommunicatorCustomizer(CommunicatorModule module) {
+        this.configuration = new CommunicatorCustomizer.Custom(module.getRefresher());
+    }
 
     public CommunicatorCustomizer registry(CommunicatorProxyRegistry registry) {
         configuration.registry = registry;
@@ -36,5 +42,9 @@ public class CommunicatorCustomizer {
     @Getter
     private static class Custom extends CommunicatorModuleConfiguration {
         private CommunicatorProxyRegistry registry;
+
+        public Custom(CommunicatorModuleRefresher refresher) {
+            super(refresher);
+        }
     }
 }

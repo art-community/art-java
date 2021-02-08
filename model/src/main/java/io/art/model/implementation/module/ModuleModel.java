@@ -18,7 +18,6 @@
 
 package io.art.model.implementation.module;
 
-import io.art.configurator.module.*;
 import io.art.model.customizer.*;
 import io.art.model.implementation.communicator.*;
 import io.art.model.implementation.configurator.*;
@@ -38,6 +37,9 @@ public class ModuleModel {
     private final CommunicatorModuleModel communicatorModel;
     private final StorageModuleModel storageModel;
     private final Runnable onLoad;
+    private final Runnable onUnload;
+    private final Runnable beforeReload;
+    private final Runnable afterReload;
 
     @Builder.Default
     private ModuleCustomizer customizer = new ModuleCustomizer();
