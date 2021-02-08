@@ -123,31 +123,31 @@ public class ServiceMethodSpecification {
     }
 
     private Object mapInput(Flux<Value> input) {
-        Flux<Object> mappedInput = input.map(value -> inputMapper.map(cast(value)));
+        Flux<Object> inputFlux = input.map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
-            mappedInput = mappedInput.transform(decorator);
+            inputFlux = inputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
-            mappedInput = mappedInput.transform(decorator);
+            inputFlux = inputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
-            mappedInput = mappedInput.transform(decorator);
+            inputFlux = inputFlux.transform(decorator);
         }
-        return getAdoptInput().apply(mappedInput);
+        return getAdoptInput().apply(inputFlux);
     }
 
     private Flux<Value> mapOutput(Object output) {
-        Flux<Object> mappedOutput = let(output, getAdoptOutput(), Flux.empty());
+        Flux<Object> outputFlux = let(output, getAdoptOutput(), Flux.empty());
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
-            mappedOutput = mappedOutput.transform(decorator);
+            outputFlux = outputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            mappedOutput = mappedOutput.transform(decorator);
+            outputFlux = outputFlux.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
-            mappedOutput = mappedOutput.transform(decorator);
+            outputFlux = outputFlux.transform(decorator);
         }
-        return mappedOutput
+        return outputFlux
                 .map(value -> (Value) outputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, this::mapException);
     }

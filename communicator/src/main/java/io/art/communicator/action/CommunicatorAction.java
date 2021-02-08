@@ -172,7 +172,13 @@ public class CommunicatorAction implements Managed {
 
     private Flux<Value> mapException(Throwable exception) {
         Flux<Object> errorOutput = error(exception);
+        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
+            errorOutput = errorOutput.transform(decorator);
+        }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+            errorOutput = errorOutput.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
         }
         return cast(errorOutput);
@@ -195,7 +201,7 @@ public class CommunicatorAction implements Managed {
         if (isNull(outputMode)) throw new ImpossibleSituationException();
         switch (outputMode) {
             case BLOCKING:
-                return input -> input.next().block();
+                return output -> output.next().block();
             case MONO:
                 return Flux::next;
             case FLUX:

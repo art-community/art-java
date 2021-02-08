@@ -55,6 +55,6 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
     }
 
     private Supplier<Boolean> enabled(ServiceMethodIdentifier serviceMethodId) {
-        return () -> configuration().isDeactivated(serviceMethodId);
+        return () -> !configuration().isDeactivated(serviceMethodId);
     }
 }

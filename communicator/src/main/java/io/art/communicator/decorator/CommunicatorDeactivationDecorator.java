@@ -55,6 +55,6 @@ public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Obj
     }
 
     private Supplier<Boolean> enabled(CommunicatorActionIdentifier communicatorAction) {
-        return () -> configuration().isDeactivated(communicatorAction);
+        return () -> !configuration().isDeactivated(communicatorAction);
     }
 }
