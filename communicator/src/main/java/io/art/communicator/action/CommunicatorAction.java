@@ -20,7 +20,9 @@ package io.art.communicator.action;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.decorator.*;
+import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
+import io.art.communicator.mapper.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
@@ -33,6 +35,7 @@ import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
+import static io.art.communicator.mapper.CommunicatorExceptionMapper.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -67,6 +70,10 @@ public class CommunicatorAction implements Managed {
 
     @Getter
     private final ValueToModelMapper<?, ? extends Value> outputMapper;
+
+    @Getter
+    @Builder.Default
+    private final CommunicatorExceptionMapper exceptionMapper = communicatorThrowableExceptionMapper();
 
     @Getter
     private final MethodProcessingMode inputMode;
@@ -159,7 +166,7 @@ public class CommunicatorAction implements Managed {
     }
 
     private Object mapOutput(Flux<Value> output) {
-        Flux<Object> outputFlux = output.map(value -> outputMapper.map(cast(value)));
+        Flux<Object> outputFlux = output.map(this::mapOutput);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
@@ -170,6 +177,20 @@ public class CommunicatorAction implements Managed {
             outputFlux = outputFlux.transform(decorator);
         }
         return getAdoptOutput().apply(outputFlux);
+    }
+
+    private Object mapOutput(Value value) {
+        if (exceptionMapper.getFilter().apply(value)) {
+            Throwable throwable = exceptionMapper.getMapper().map(cast(value));
+            if (throwable instanceof Error) {
+                throw (Error) throwable;
+            }
+            if (throwable instanceof RuntimeException) {
+                throw (RuntimeException) throwable;
+            }
+            throw new CommunicationException(throwable);
+        }
+        return outputMapper.map(cast(value));
     }
 
     private Flux<Value> mapException(Throwable exception) {
