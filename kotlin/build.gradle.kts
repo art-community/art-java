@@ -11,4 +11,8 @@ dependencies {
     implementation(project(":xml"))
     implementation(project(":core"))
     implementation(project(":logging"))
+    implementation(project(":scheduler"))
+    implementation(project(":server"))
+    implementation(project(":communicator"))
+    implementation(project(":configurator"))
 }

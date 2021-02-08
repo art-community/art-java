@@ -41,20 +41,20 @@ public class SchedulersManager {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(SchedulersManager.class);
 
-    public static <T> Future<? extends T> schedule(Callable<? extends T> task) {
+    public static <T> ForkJoinTask<? extends T> schedule(Callable<? extends T> task) {
         return deferredExecutor().submit(task, now());
     }
 
-    public static <T> Future<? extends T> schedule(Callable<? extends T> task, LocalDateTime startTime) {
+    public static <T> ForkJoinTask<? extends T> schedule(Callable<? extends T> task, LocalDateTime startTime) {
         getLogger().info(format(DEFERRED_TASK_SUBMITTED, startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT)));
         return deferredExecutor().submit(task, startTime);
     }
 
-    public static Future<?> schedule(Runnable task) {
+    public static ForkJoinTask<?> schedule(Runnable task) {
         return deferredExecutor().execute(task, now());
     }
 
-    public static Future<?> schedule(Runnable task, LocalDateTime startTime) {
+    public static ForkJoinTask<?> schedule(Runnable task, LocalDateTime startTime) {
         getLogger().info(format(DEFERRED_TASK_SUBMITTED, startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT)));
         return deferredExecutor().execute(task, startTime);
     }
