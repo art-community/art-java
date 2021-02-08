@@ -82,9 +82,9 @@ class CommunicatorModelConfiguratorExtension(val delegate: CommunicatorModelConf
 
         infix fun to(targetService: Class<*>) = to(targetService.simpleName)
 
-        infix fun to(targetServiceId: String) = delegate.to(targetServiceId).let { this }
+        infix fun to(targetServiceId: String) = delegate.to(targetServiceId)
 
-        infix fun overrideMethod(id: String) = delegate.overrideMethod(id).let { this }
+        infix fun overrideMethod(id: String) = delegate.overrideMethod(id)
     }
 }
 
