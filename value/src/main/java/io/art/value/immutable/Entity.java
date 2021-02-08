@@ -204,7 +204,7 @@ public class Entity implements Value {
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
         T cached = cast(mappedValueCache.get(key));
         if (nonNull(cached)) return cached;
-        Value value = orElse(get(key), type::getDefaultValue);
+        Value value = orElse(get(key), type::defaultValue);
         cached = mapper.map(cast(value));
         mappedValueCache.put(key, cast(cached));
         return cached;

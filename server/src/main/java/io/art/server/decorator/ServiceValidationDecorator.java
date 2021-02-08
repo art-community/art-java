@@ -48,9 +48,8 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final LazyProperty<Boolean> hasInput;
 
     public ServiceValidationDecorator(ServiceMethodIdentifier serviceMethod) {
-        ServerModuleRefresher.Consumer consumer = configuration().getConsumer();
-        enabled = property(() -> configuration().isValidating(serviceMethod)).listenConsumer(consumer::validationConsumer);
-        deactivated = property(() -> configuration().isLogging(serviceMethod)).listenConsumer(consumer::loggingConsumer);
+        enabled = property(() -> configuration().isValidating(serviceMethod)).listenConsumer(() -> consumer().validationConsumer());
+        deactivated = property(() -> configuration().isLogging(serviceMethod)).listenConsumer(() -> consumer().loggingConsumer());
         hasInput = lazy(() -> hasInput(serviceMethod));
     }
 
@@ -77,6 +76,10 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
 
     private boolean disabled() {
         return !enabled.get() || deactivated.get() || !hasInput.get();
+    }
+
+    private ServerModuleRefresher.Consumer consumer() {
+        return configuration().getConsumer();
     }
 
     private ServerModuleConfiguration configuration() {

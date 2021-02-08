@@ -20,6 +20,7 @@ package io.art.value.constants;
 
 import io.art.core.collection.*;
 import io.art.value.exception.*;
+import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
@@ -74,16 +75,34 @@ public interface ValueModuleConstants {
         @Getter
         @AllArgsConstructor
         public enum PrimitiveType {
-            STRING(DEFAULT_STRING_PRIMITIVE),
-            LONG(DEFAULT_LONG_PRIMITIVE),
-            DOUBLE(DEFAULT_DOUBLE_PRIMITIVE),
-            FLOAT(DEFAULT_FLOAT_PRIMITIVE),
-            INT(DEFAULT_INT_PRIMITIVE),
-            BOOL(DEFAULT_BOOL_PRIMITIVE),
-            BYTE(DEFAULT_BYTE_PRIMITIVE);
+            STRING,
+            LONG,
+            DOUBLE,
+            FLOAT,
+            INT,
+            BOOL,
+            BYTE;
 
-            private final Primitive defaultValue;
-
+            public Primitive defaultValue() {
+                switch (this) {
+                    case STRING:
+                        return DEFAULT_STRING_PRIMITIVE;
+                    case LONG:
+                        return DEFAULT_LONG_PRIMITIVE;
+                    case DOUBLE:
+                        return DEFAULT_DOUBLE_PRIMITIVE;
+                    case INT:
+                        return DEFAULT_INT_PRIMITIVE;
+                    case BOOL:
+                        return DEFAULT_BOOL_PRIMITIVE;
+                    case BYTE:
+                        return DEFAULT_BYTE_PRIMITIVE;
+                    case FLOAT:
+                        return DEFAULT_FLOAT_PRIMITIVE;
+                    default:
+                        throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, this));
+                }
+            }
             public static ValueType asValueType(PrimitiveType primitiveType) {
                 switch (primitiveType) {
                     case STRING:
