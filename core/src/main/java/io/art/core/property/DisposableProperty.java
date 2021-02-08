@@ -18,7 +18,7 @@ public class DisposableProperty<T> implements Supplier<T> {
     private final Supplier<T> loader;
     private final AtomicBoolean initialized = new AtomicBoolean();
     private final Queue<Consumer<T>> creationConsumers = queue();
-    private final List<Consumer<T>> initializeConsumers = linkedList();
+    private final List<Consumer<T>> initializationConsumers = linkedList();
     private final List<Consumer<T>> disposeConsumers = linkedList();
 
 
@@ -34,7 +34,7 @@ public class DisposableProperty<T> implements Supplier<T> {
     }
 
     public DisposableProperty<T> initialized(Consumer<T> consumer) {
-        initializeConsumers.add(consumer);
+        initializationConsumers.add(consumer);
         return this;
     }
 
@@ -70,7 +70,7 @@ public class DisposableProperty<T> implements Supplier<T> {
             if (this.initialized.compareAndSet(false, true)) {
                 value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
                 erase(creationConsumers, consumer -> consumer.accept(value));
-                initializeConsumers.forEach(consumer -> consumer.accept(value));
+                initializationConsumers.forEach(consumer -> consumer.accept(value));
             }
         }
         return value;

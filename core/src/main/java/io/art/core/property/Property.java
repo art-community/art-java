@@ -3,6 +3,7 @@ package io.art.core.property;
 import io.art.core.changes.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
@@ -12,9 +13,11 @@ import java.util.function.*;
 public class Property<T> implements Supplier<T> {
     private volatile DisposableProperty<T> disposable;
     private final Consumer<T> disposer;
-    private final List<Consumer<T>> changeConsumers = linkedList();
-    private final List<Consumer<T>> clearConsumers = linkedList();
     private final List<Predicate<T>> predicates = linkedList();
+    private final List<Consumer<T>> changeConsumers = linkedList();
+    private final List<Consumer<T>> disposeConsumers = linkedList();
+    private final Queue<Consumer<T>> creationConsumers = queue();
+    private final List<Consumer<T>> initializationConsumers = linkedList();
 
     public Property(Supplier<T> loader, Consumer<T> disposer) {
         disposable = DisposableProperty.disposable(loader, disposer);
@@ -49,16 +52,19 @@ public class Property<T> implements Supplier<T> {
 
 
     public Property<T> created(Consumer<T> consumer) {
+        creationConsumers.add(consumer);
         disposable.created(consumer);
         return this;
     }
 
     public Property<T> initialized(Consumer<T> consumer) {
+        initializationConsumers.add(consumer);
         disposable.initialized(consumer);
         return this;
     }
 
     public Property<T> disposed(Consumer<T> consumer) {
+        disposeConsumers.add(consumer);
         disposable.disposed(consumer);
         return this;
     }
@@ -68,18 +74,13 @@ public class Property<T> implements Supplier<T> {
         return this;
     }
 
-    public Property<T> cleared(Consumer<T> consumer) {
-        clearConsumers.add(consumer);
-        return this;
-    }
-
     public Property<T> prevent(Predicate<T> predicate) {
         predicates.add(predicate);
         return this;
     }
 
     public Property<T> listenProperties(Property<?>... others) {
-        stream(others).forEach(other -> other.cleared(value -> clear()).changed(value -> refresh()));
+        stream(others).forEach(other -> other.disposed(value -> dispose()).changed(value -> refresh()));
         return this;
     }
 
@@ -100,13 +101,10 @@ public class Property<T> implements Supplier<T> {
             return this;
         }
         disposable = DisposableProperty.disposable(() -> newValue, disposer);
+        creationConsumers.forEach(disposable::created);
+        initializationConsumers.forEach(disposable::initialized);
+        disposeConsumers.forEach(disposable::disposed);
         changeConsumers.forEach(consumer -> consumer.accept(newValue));
-        return this;
-    }
-
-    public Property<T> clear() {
-        clearConsumers.forEach(consumer -> consumer.accept(get()));
-        dispose();
         return this;
     }
 
