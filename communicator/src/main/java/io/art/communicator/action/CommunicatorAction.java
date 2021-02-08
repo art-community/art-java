@@ -34,7 +34,6 @@ import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import static io.art.communicator.mapper.CommunicatorExceptionMapper.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
@@ -135,11 +134,7 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate(Object input) {
-        Scheduler scheduler = communicatorConfiguration
-                .get()
-                .map(CommunicatorProxyConfiguration::getScheduler)
-                .orElseGet(getConfiguration()::getScheduler);
-        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(scheduler)));
+        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(getConfiguration().getScheduler(communicatorId, actionId))));
     }
 
     private Flux<Value> deferredCommunicate(Object input) {

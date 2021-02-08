@@ -26,13 +26,11 @@ import io.art.core.exception.*;
 import io.art.server.configuration.*;
 import io.art.server.decorator.*;
 import io.art.server.implementation.*;
-import io.art.server.model.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
@@ -106,11 +104,7 @@ public class ServiceMethodSpecification {
     private final ServerModuleConfiguration configuration = serverModule().configuration();
 
     public Flux<Value> serve(Flux<Value> input) {
-        Scheduler scheduler = getConfiguration()
-                .getMethodConfiguration(serviceId, methodId)
-                .map(ServiceMethodConfiguration::getScheduler)
-                .orElseGet(getConfiguration()::getScheduler);
-        return defer(() -> deferredServe(input)).subscribeOn(scheduler);
+        return defer(() -> deferredServe(input)).subscribeOn(getConfiguration().getScheduler(serviceId, methodId));
     }
 
     private Flux<Value> deferredServe(Flux<Value> input) {

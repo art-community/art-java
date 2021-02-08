@@ -51,6 +51,14 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     @Getter
     private Scheduler scheduler;
 
+    public Scheduler getScheduler(String serviceId, String methodId) {
+        return getMethodConfiguration(serviceId, methodId)
+                .map(ServiceMethodConfiguration::getScheduler)
+                .orElseGet(() -> ofNullable(configurations.get(serviceId))
+                        .map(ServiceConfiguration::getScheduler)
+                        .orElse(scheduler));
+    }
+
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(String serviceId, String methodId) {
         return ofNullable(configurations.get(serviceId)).map(configuration -> configuration.getMethods().get(methodId));
     }
