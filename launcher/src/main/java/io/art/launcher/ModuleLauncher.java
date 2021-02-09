@@ -21,10 +21,8 @@ package io.art.launcher;
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.annotation.*;
-import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.context.*;
-import io.art.core.managed.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.json.module.*;
@@ -37,17 +35,19 @@ import io.art.rocks.db.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
-import io.art.storage.module.StorageModule;
+import io.art.storage.module.*;
 import io.art.tarantool.module.*;
 import io.art.value.module.*;
 import io.art.xml.module.*;
 import io.art.yaml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-import static io.art.core.caster.Caster.*;
+
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -58,8 +58,6 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -89,6 +87,8 @@ public class ModuleLauncher {
                     singleton(CommunicatorCustomizer.class, () -> customizeCommunicator.apply(new CommunicatorCustomizer(module)));
             Function<RsocketModule, RsocketCustomizer> rsocketCustomizer = module ->
                     singleton(RsocketCustomizer.class, () -> customizeRsocket.apply(new RsocketCustomizer(module)));
+            Function<StorageModule, StorageCustomizer> storageCustomizer = module -> 
+                    singleton(StorageModule.class, () -> customizeStorage.apply(new StorageCustomizer()));
 
             modules
                     .put(() -> configurator, module -> configurator(module, configuratorCustomizer))

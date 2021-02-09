@@ -7,13 +7,16 @@ import io.art.tarantool.instance.*;
 import io.art.tarantool.module.client.*;
 import io.art.tarantool.module.state.*;
 import lombok.*;
+
+import java.util.*;
+
 import static io.art.core.context.Context.*;
 import static io.art.tarantool.configuration.TarantoolModuleConfiguration.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 
 @Getter
 public class TarantoolModule implements StatefulModule<TarantoolModuleConfiguration, Configurator, TarantoolModuleState> {

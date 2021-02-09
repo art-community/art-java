@@ -1,16 +1,16 @@
 package io.art.storage.registry;
 
-import io.art.core.managed.LazyValue;
-import io.art.storage.space.Space;
+import io.art.core.property.*;
+import io.art.storage.space.*;
 
-import java.util.Map;
-import java.util.function.Supplier;
+import java.util.*;
+import java.util.function.*;
 
-import static io.art.core.factory.MapFactory.map;
-import static io.art.core.managed.LazyValue.lazy;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.property.LazyProperty.*;
 
 public class StorageSpacesRegistry {
-    private final Map<String, LazyValue<Space<?,?>>> spaces = map();
+    private final Map<String, LazyProperty<Space<?,?>>> spaces = map();
 
     public void register(String id, Supplier<Space<?, ?>> supplier){
         spaces.put(id, lazy(supplier));

@@ -6,6 +6,7 @@ import io.art.storage.configuration.StorageModuleConfiguration;
 import io.art.storage.registry.StorageSpacesRegistry;
 import lombok.Getter;
 
+@Getter
 @UsedByGenerator
 public class StorageCustomizer {
     @Getter
