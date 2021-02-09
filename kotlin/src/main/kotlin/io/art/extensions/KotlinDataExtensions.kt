@@ -1,4 +1,4 @@
-package io.art.kotlin
+package io.art.extensions
 
 import io.art.json.descriptor.JsonReader.readJson
 import io.art.message.pack.descriptor.MessagePackReader.readMessagePack

@@ -1,4 +1,4 @@
-package io.art.kotlin
+package io.art.extensions
 
 import io.art.configurator.module.ConfiguratorModule.configuration
 import kotlin.reflect.KClass

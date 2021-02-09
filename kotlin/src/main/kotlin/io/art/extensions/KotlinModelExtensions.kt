@@ -1,4 +1,4 @@
-package io.art.kotlin
+package io.art.extensions
 
 import io.art.model.configurator.*
 import java.lang.reflect.Type

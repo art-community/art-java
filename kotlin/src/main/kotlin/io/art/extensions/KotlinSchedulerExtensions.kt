@@ -1,4 +1,4 @@
-package io.art.kotlin
+package io.art.extensions
 
 import io.art.core.callable.ExceptionCallable
 import io.art.scheduler.manager.SchedulersManager

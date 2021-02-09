@@ -1,4 +1,4 @@
-package io.art.kotlin
+package io.art.extensions
 
 import io.art.communicator.module.CommunicatorModule.communicator
 import kotlin.reflect.KClass
