@@ -28,15 +28,6 @@ import java.util.function.*;
 
 @UtilityClass
 public class ExceptionWrapper {
-    @SneakyThrows
-    public static void wrapException(Runnable action) {
-        action.run();
-    }
-
-    @SneakyThrows
-    public static <T> T wrapException(Callable<T> action) {
-        return action.call();
-    }
 
     public static void ignoreException(ExceptionRunnable action) {
         try {
@@ -71,7 +62,17 @@ public class ExceptionWrapper {
         }
     }
 
-    public static void wrapException(Runnable action, ExceptionFactory<?> exceptionFactory) {
+    @SneakyThrows
+    public static void wrapExceptionRun(Runnable action) {
+        action.run();
+    }
+
+    @SneakyThrows
+    public static <T> T wrapExceptionCall(Callable<T> action) {
+        return action.call();
+    }
+
+    public static void wrapExceptionRun(Runnable action, ExceptionFactory<? extends Throwable> exceptionFactory) {
         try {
             action.run();
         } catch (Throwable throwable) {
@@ -79,20 +80,11 @@ public class ExceptionWrapper {
         }
     }
 
-    public static <T> T wrapException(Callable<T> action, ExceptionFactory<?> exceptionFactory) {
+    public static <T, E extends RuntimeException> T wrapExceptionCall(Callable<T> action, ExceptionFactory<E> exceptionFactory) {
         try {
             return action.call();
         } catch (Throwable throwable) {
             throw exceptionFactory.create(throwable);
-        }
-    }
-
-    public static <T> T wrapException(Callable<T> action, Consumer<Throwable> exceptionFactory) {
-        try {
-            return action.call();
-        } catch (Throwable throwable) {
-            exceptionFactory.accept(throwable);
-            return null;
         }
     }
 }
