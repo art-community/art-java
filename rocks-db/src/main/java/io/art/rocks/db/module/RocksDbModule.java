@@ -24,12 +24,12 @@ import io.art.rocks.db.configuration.*;
 import io.art.rocks.db.state.*;
 import lombok.*;
 import org.rocksdb.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.core.wrapper.ExceptionWrapper.wrapExceptionCall;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
-import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static org.rocksdb.RocksDB.*;
 
@@ -48,20 +48,16 @@ public class RocksDbModule implements StatefulModule<RocksDbModuleConfiguration,
     }
 
     @Override
-    @SneakyThrows
     public void onLoad(Context.Service contextService) {
-        loadLibrary();
-        String path = configuration.getPath();
-        createDirectories(get(path));
-        state = new RocksDbModuleState(lazy(() -> wrapExceptionCall(() -> open(configuration.getOptions(), path))));
+        state = new RocksDbModuleState(lazy(() -> wrapExceptionCall(() -> {
+            loadLibrary();
+            createDirectories(get(configuration.getPath()));
+            return open(configuration.getOptions(), configuration.getPath());
+        })));
     }
 
     @Override
     public void onUnload(Context.Service contextService) {
-        if (isNull(state)) return;
-        RocksDB db = state.db();
-        if (nonNull(db)) {
-            db.close();
-        }
+        apply(state, state -> apply(state.db(), RocksDB::close));
     }
 }
