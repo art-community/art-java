@@ -24,6 +24,9 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static io.art.rocks.db.storage.RocksDbPrimitiveStorage.*;
+import static java.lang.Double.*;
+import static java.lang.Integer.*;
+import static java.lang.Long.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -277,7 +280,7 @@ public class RocksDbArraysStorage {
         if (isEmpty(strings)) return EMPTY_INTS;
         int[] values = new int[strings.length];
         for (int i = 0; i < strings.length; i++) {
-            values[i] = Integer.valueOf(strings[i]);
+            values[i] = parseInt(strings[i]);
         }
         return values;
     }
@@ -294,7 +297,7 @@ public class RocksDbArraysStorage {
         if (isEmpty(strings)) return EMPTY_DOUBLES;
         double[] values = new double[strings.length];
         for (int i = 0; i < strings.length; i++) {
-            values[i] = Double.valueOf(strings[i]);
+            values[i] = parseDouble(strings[i]);
         }
         return values;
     }
@@ -330,7 +333,7 @@ public class RocksDbArraysStorage {
         if (isEmpty(strings)) return EMPTY_LONGS;
         long[] values = new long[strings.length];
         for (int i = 0; i < strings.length; i++) {
-            values[i] = Long.valueOf(strings[i]);
+            values[i] = parseLong(strings[i]);
         }
         return values;
     }
