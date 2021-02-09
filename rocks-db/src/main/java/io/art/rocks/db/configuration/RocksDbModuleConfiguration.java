@@ -18,33 +18,37 @@
 
 package io.art.rocks.db.configuration;
 
+import io.art.core.module.*;
+import io.art.core.source.*;
 import lombok.*;
 import org.rocksdb.*;
-import io.art.core.module.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.DefaultOptions.*;
 import java.io.*;
 
-public interface RocksDbModuleConfiguration extends ModuleConfiguration {
-    String getPath();
+@Getter
+public class RocksDbModuleConfiguration implements ModuleConfiguration {
+    private String path;
+    private boolean logging;
+    private Options options;
 
-    Options getOptions();
+    @RequiredArgsConstructor
+    public static class Configurator implements ModuleConfigurator<RocksDbModuleConfiguration, Configurator> {
+        private final RocksDbModuleConfiguration configuration;
 
-    boolean isEnableTracing();
-
-    RocksDbModuleDefaultConfiguration DEFAULT_CONFIGURATION = new RocksDbModuleDefaultConfiguration();
-
-	@Getter
-	class RocksDbModuleDefaultConfiguration implements RocksDbModuleConfiguration {
-        private final String path = new File(DEFAULT_PATH_TO_DB).getAbsolutePath();
-        private final boolean enableTracing = false;
-        private final Options options = new Options()
-                .setMergeOperatorName(DEFAULT_MERGE_OPERATOR)
-                .useCappedPrefixExtractor(DEFAULT_KEY_PREFIX_BYTES)
-                .optimizeUniversalStyleCompaction()
-                .setCreateIfMissing(true)
-                .setAllowConcurrentMemtableWrite(false)
-                .setMaxOpenFiles(-1)
-                .setCreateMissingColumnFamilies(true);
+        @Override
+        public Configurator from(ConfigurationSource source) {
+            configuration.path = new File(DEFAULT_PATH_TO_DB).getAbsolutePath();
+            configuration.logging = false;
+            configuration.options = new Options()
+                    .setMergeOperatorName(DEFAULT_MERGE_OPERATOR)
+                    .useCappedPrefixExtractor(DEFAULT_KEY_PREFIX_BYTES)
+                    .optimizeUniversalStyleCompaction()
+                    .setCreateIfMissing(true)
+                    .setAllowConcurrentMemtableWrite(false)
+                    .setMaxOpenFiles(-1)
+                    .setCreateMissingColumnFamilies(true);
+            return this;
+        }
     }
 }

@@ -31,6 +31,7 @@ import io.art.model.customizer.*;
 import io.art.model.implementation.communicator.*;
 import io.art.model.implementation.module.*;
 import io.art.model.implementation.server.*;
+import io.art.rocks.db.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
@@ -94,7 +95,8 @@ public class ModuleLauncher {
                     .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(module)))
                     .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(module)))
                     .put(RsocketModule::new, module -> rsocket(module, state, rsocketCustomizer.apply(module)))
-                    .put(TarantoolModule::new, module -> tarantool(module, state));
+                    .put(TarantoolModule::new, module -> tarantool(module, state))
+                    .put(RocksDbModule::new, module -> rocksDb(module, state));
 
             LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
             ContextConfiguration contextConfiguration = ContextConfiguration.builder()
@@ -192,6 +194,11 @@ public class ModuleLauncher {
     private static TarantoolModule tarantool(TarantoolModule tarantool, ModuleConfiguringState state) {
         tarantool.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
         return tarantool;
+    }
+
+    private static RocksDbModule rocksDb(RocksDbModule rocksDb, ModuleConfiguringState state) {
+        rocksDb.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
+        return rocksDb;
     }
 
     private static boolean needBlock() {

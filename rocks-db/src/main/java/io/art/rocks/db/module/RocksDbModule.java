@@ -18,57 +18,48 @@
 
 package io.art.rocks.db.module;
 
+import io.art.core.context.*;
+import io.art.core.module.*;
+import io.art.rocks.db.configuration.*;
+import io.art.rocks.db.state.*;
 import lombok.*;
 import org.rocksdb.*;
-import io.art.core.module.Module;
-import io.art.rocks.db.configuration.*;
-import io.art.rocks.db.exception.*;
-import io.art.rocks.db.state.*;
+import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
+import static io.art.core.wrapper.ExceptionWrapper.wrapExceptionCall;
+import static java.nio.file.Files.*;
+import static java.nio.file.Paths.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static org.rocksdb.RocksDB.*;
-import static io.art.core.context.Context.*;
-import static io.art.rocks.db.configuration.RocksDbModuleConfiguration.*;
-import static io.art.rocks.db.constants.RocksDbExceptionMessages.*;
-import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
 
 
 @Getter
-public class RocksDbModule implements Module<RocksDbModuleConfiguration, RocksDbModuleState> {
+public class RocksDbModule implements StatefulModule<RocksDbModuleConfiguration, RocksDbModuleConfiguration.Configurator, RocksDbModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final RocksDbModuleConfiguration rocksDbModule = context().getModule(ROCKS_DB_MODULE_ID, RocksDbModule::new);
-    @Getter(lazy = true, value = PRIVATE)
-    private static final RocksDbModuleState rocksDbModuleState = context().getModuleState(ROCKS_DB_MODULE_ID, RocksDbModule::new);
-    private final String id = ROCKS_DB_MODULE_ID;
-    private final RocksDbModuleConfiguration defaultConfiguration = DEFAULT_CONFIGURATION;
+    private static final StatefulModuleProxy<RocksDbModuleConfiguration, RocksDbModuleState> rocksDbModule = context().getStatefulModule(RocksDbModule.class.getSimpleName());
+    private final String id = RocksDbModule.class.getSimpleName();
+    private final RocksDbModuleConfiguration configuration = new RocksDbModuleConfiguration();
+    private final RocksDbModuleConfiguration.Configurator configurator = new RocksDbModuleConfiguration.Configurator(configuration);
     private RocksDbModuleState state;
 
-    public static RocksDbModuleConfiguration rocksDbModule() {
-        if (contextIsNotReady()) {
-            return DEFAULT_CONFIGURATION;
-        }
+    public static StatefulModuleProxy<RocksDbModuleConfiguration, RocksDbModuleState> rocksDbModule() {
         return getRocksDbModule();
     }
 
-    public static RocksDbModuleState rocksDbModuleState() {
-        return getRocksDbModuleState();
-    }
-
     @Override
-    public void onLoad() {
+    @SneakyThrows
+    public void onLoad(Context.Service contextService) {
         loadLibrary();
-        try {
-            state = new RocksDbModuleState(open(rocksDbModule().getOptions(), rocksDbModule().getPath()));
-        } catch (RocksDBException throwable) {
-            throw new RocksDbOperationException(OPEN_ERROR, throwable);
-        }
+        String path = configuration.getPath();
+        createDirectories(get(path));
+        state = new RocksDbModuleState(lazy(() -> wrapExceptionCall(() -> open(configuration.getOptions(), path))));
     }
 
     @Override
-    public void beforeUnload() {
-        RocksDbModuleState state = rocksDbModuleState();
+    public void onUnload(Context.Service contextService) {
         if (isNull(state)) return;
-        RocksDB db = state.getDb();
+        RocksDB db = state.db();
         if (nonNull(db)) {
             db.close();
         }

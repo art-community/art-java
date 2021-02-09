@@ -19,19 +19,16 @@
 package io.art.rocks.db.bucket;
 
 import lombok.*;
-import static io.art.core.factory.ArrayFactory.dynamicArrayOf;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @Getter
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PRIVATE)
 public class Bucket {
     private final String name;
-    private List<String> keys = dynamicArrayOf();
-
-    public static Bucket bucket(String name) {
-        return new Bucket(name);
-    }
+    private final List<String> keys = dynamicArrayOf();
 
     public Bucket addKey(String key) {
         keys.add(key);
@@ -44,5 +41,9 @@ public class Bucket {
             key.append(ROCKS_DB_KEY_DELIMITER).append(bucketIdentifier);
         }
         return key.toString();
+    }
+
+    public static Bucket bucket(String name) {
+        return new Bucket(name);
     }
 }
