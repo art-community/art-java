@@ -18,12 +18,16 @@
 
 package io.art.rocks.db.state;
 
+import io.art.core.module.*;
+import io.art.core.property.*;
 import lombok.*;
 import org.rocksdb.*;
-import io.art.core.module.*;
 
-@Getter
 @AllArgsConstructor
 public class RocksDbModuleState implements ModuleState {
-    private final RocksDB db;
+    private final LazyProperty<RocksDB> db;
+
+    public RocksDB db() {
+        return db.get();
+    }
 }
