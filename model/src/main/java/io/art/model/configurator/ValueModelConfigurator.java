@@ -6,15 +6,15 @@ import java.lang.reflect.*;
 import java.util.*;
 
 public class ValueModelConfigurator {
-    private final Set<Type> customTypes = set();
+    private final Set<Type> mappedTypes = set();
 
-    public  ValueModelConfigurator model(Type type) {
-        customTypes.add(type);
+    public  ValueModelConfigurator mapping(Type type) {
+        mappedTypes.add(type);
         return this;
     }
 
     ValueModuleModel configure() {
-        return new ValueModuleModel(immutableSetOf(customTypes));
+        return new ValueModuleModel(immutableSetOf(mappedTypes));
     }
 
 }

@@ -29,9 +29,8 @@ import java.util.function.*;
 @Getter
 @Builder
 public class RsocketServiceModel implements ServiceModel {
-    private final Class<?> serviceClass;
     private final String id;
-    private final ConfiguratorScope scope;
+    private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> serviceDecorator;
-    private final ImmutableMap<String, RsocketServiceMethodModel> methods;
+    private final ImmutableMap<String, ServiceMethodModel> methods;
 }

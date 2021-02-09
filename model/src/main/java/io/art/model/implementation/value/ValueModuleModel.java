@@ -7,5 +7,5 @@ import java.lang.reflect.*;
 @Getter
 @RequiredArgsConstructor
 public class ValueModuleModel {
-    private final ImmutableSet<Type> customTypes;
+    private final ImmutableSet<Type> mappedTypes;
 }

@@ -6,6 +6,8 @@ import java.util.function.*;
 public interface ServiceMethodModel {
     String getId();
 
+    String getName();
+
     Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> getDecorator();
 
     default ServiceMethodSpecificationBuilder implement(ServiceMethodSpecificationBuilder builder) {
