@@ -33,4 +33,5 @@ dependencies {
     implementation(project(":rsocket"))
     implementation(project(":tarantool"))
     implementation(project(":storage"))
+    implementation(project(":rocks-db"))
 }

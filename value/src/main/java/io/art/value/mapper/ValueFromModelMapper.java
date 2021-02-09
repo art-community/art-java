@@ -18,6 +18,7 @@
 
 package io.art.value.mapper;
 
+import io.art.core.caster.*;
 import io.art.value.immutable.*;
 import java.io.*;
 
@@ -39,7 +40,7 @@ public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
     interface XmlFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
     }
 
-    static <V extends Value> ValueFromModelMapper<V, V> identity() {
-        return value -> value;
+    static <V1 extends Value, V2 extends Value> ValueFromModelMapper<V1, V2> identity() {
+        return Caster::cast;
     }
 }

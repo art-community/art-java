@@ -49,7 +49,7 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
 
     public ServiceValidationDecorator(ServiceMethodIdentifier serviceMethod) {
         enabled = property(() -> configuration().isValidating(serviceMethod)).listenConsumer(() -> consumer().validationConsumer());
-        deactivated = property(() -> configuration().isLogging(serviceMethod)).listenConsumer(() -> consumer().loggingConsumer());
+        deactivated = property(() -> configuration().isDeactivated(serviceMethod)).listenConsumer(() -> consumer().deactivationConsumer());
         hasInput = lazy(() -> hasInput(serviceMethod));
     }
 

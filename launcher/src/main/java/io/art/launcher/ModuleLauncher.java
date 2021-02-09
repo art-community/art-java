@@ -26,13 +26,14 @@ import io.art.core.configuration.*;
 import io.art.core.context.*;
 import io.art.core.managed.*;
 import io.art.core.module.*;
-import io.art.core.module.Module;
+import io.art.core.property.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
 import io.art.model.implementation.communicator.*;
 import io.art.model.implementation.module.*;
 import io.art.model.implementation.server.*;
+import io.art.rocks.db.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
@@ -50,7 +51,8 @@ import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
-import static io.art.core.managed.LazyValue.*;
+import static io.art.core.property.LazyProperty.*;
+import static io.art.core.singleton.SingletonsRegistry.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -100,6 +102,7 @@ public class ModuleLauncher {
                     .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(module)))
                     .put(RsocketModule::new, module -> rsocket(module, state, rsocketCustomizer.apply(module)))
                     .put(TarantoolModule::new, module -> tarantool(module, state))
+                    .put(RocksDbModule::new, module -> rocksDb(module, state))
                     .put(StorageModule::new, module -> storage(module, state, storageCustomizer.apply(module)));
 
             LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
@@ -207,6 +210,11 @@ public class ModuleLauncher {
         }
         storage.configure(configurator -> configurator.override(storageCustomizer.getConfiguration()));
         return storage;
+    }
+
+    private static RocksDbModule rocksDb(RocksDbModule rocksDb, ModuleConfiguringState state) {
+        rocksDb.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
+        return rocksDb;
     }
 
     private static boolean needBlock() {
