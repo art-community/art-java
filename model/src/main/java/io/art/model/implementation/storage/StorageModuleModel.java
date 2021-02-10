@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class StorageModuleModel {
     private final ImmutableMap<String, TarantoolSpaceModel> tarantoolSpaces;
 
-    public Supplier<Space<?,?>> implement(String id, Function<?, Space<?,?>> generatedSpaceBuilder) {
+    public <C, K, V> Supplier<Space<K, V>> implement(String id, Function<C, ? extends Space<K, V>> generatedSpaceBuilder) {
         return getStorages().get(id).implement(generatedSpaceBuilder);
     }
 

@@ -51,7 +51,7 @@ public class TarantoolInstance {
 
     @Builder(builderMethodName = "spaceBuilder")
     public <T, K> TarantoolSpace<T, K> space(String space,
-                                             Function<Optional<Value>, Optional<T>> toModelMapper,
+                                             Function<Value, T> toModelMapper,
                                              Function<T, Value> fromModelMapper,
                                              Function<K, Value> keyMapper){
         return cast(TarantoolSpaceImplementation.builder()

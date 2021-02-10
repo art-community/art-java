@@ -15,5 +15,5 @@ public interface SpaceModel {
 
     Class<?> getBasicSpaceInterface();
 
-    Supplier<Space<?,?>> implement(Function<?, Space<?,?>> generatedSpaceBuilder);
+    <C, K, V> Supplier<Space<K, V>> implement(Function<C, ? extends Space<K, V>> generatedSpaceBuilder);
 }

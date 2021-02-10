@@ -9,6 +9,7 @@ import io.art.tarantool.model.record.*;
 import io.art.tarantool.model.transaction.dependency.*;
 import io.art.tarantool.transaction.*;
 import io.art.value.immutable.Value;
+import io.art.value.mapper.*;
 import lombok.Builder;
 import lombok.*;
 
@@ -37,19 +38,18 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
     @Builder
     public TarantoolSpaceImplementation(String space,
                           TarantoolTransactionManager transactionManager,
-                          Function<Optional<Value>, Optional<T>> toModelMapper,
-                          Function<T, Value> fromModelMapper,
-                          Function<K, Value> keyMapper){
+                          ValueToModelMapper<T, ? extends Value> toModelMapper,
+                          ValueFromModelMapper<T, ? extends Value> fromModelMapper,
+                          ValueFromModelMapper<K, ? extends Value> keyMapper){
         this.space = space;
         this.transactionManager = transactionManager;
-        this.toModelMapper = toModelMapper;
-        this.fromModelMapper = fromModelMapper;
-        this.keyMapper = keyMapper;
+        this.toModelMapper = (optional) -> optional.map((value) -> toModelMapper.map(cast(value)));
+        this.fromModelMapper = fromModelMapper::map;
+        this.keyMapper = keyMapper::map;
         selectToModelMapper = response -> toValuesArray(response).map(values -> values.stream()
-                .map(entry -> toModelMapper.apply(Optional.of(entry)).get())
+                .map(entry -> this.toModelMapper.apply(Optional.of(entry)).get())
                 .collect(immutableArrayCollector()));
     }
-
 
     public TarantoolRecord<T> get(K key){
         return cast(transactionManager.callRO(GET, response -> toModelMapper.apply(toValue(response)), space,
@@ -75,12 +75,20 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
     }
 
 
-    public SelectRequest select(Value request){
-        return new SelectRequest(request);
+    public SelectRequest select(K request){
+        return new SelectRequest(keyMapper.apply(request));
     }
 
     public SelectRequest select(TarantoolTransactionDependency requestDependency){
         return new SelectRequest(requestDependency);
+    }
+
+    public SelectRequest select(String index, Value request){
+        return new SelectRequest(request).index(index);
+    }
+
+    public SelectRequest select(String index, TarantoolTransactionDependency requestDependency){
+        return new SelectRequest(requestDependency).index(index);
     }
 
 
@@ -199,7 +207,7 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
             this.request = requestDependency.get();
         }
 
-        public SelectRequest index(String index) {
+        private  SelectRequest index(String index) {
             this.index = index;
             return this;
         }

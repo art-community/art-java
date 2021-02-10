@@ -19,8 +19,10 @@ public interface TarantoolSpace<T, K> extends Space<T, K> {
 
     TarantoolRecord<ImmutableArray<T>> getAll();
 
-    SelectRequest select(Value request);
+    SelectRequest select(K request);
     SelectRequest select(TarantoolTransactionDependency requestDependency);
+    SelectRequest select(String index, Value request);
+    SelectRequest select(String index, TarantoolTransactionDependency requestDependency);
 
     TarantoolRecord<T> delete(K key);
     TarantoolRecord<T> delete(TarantoolTransactionDependency keyDependency);

@@ -1,7 +1,7 @@
 package io.art.model.implementation.storage;
 
 import io.art.storage.space.Space;
-import io.art.tarantool.space.TarantoolSpace;
+import io.art.tarantool.space.*;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +34,11 @@ public class TarantoolSpaceModel implements SpaceModel {
     }
 
     @Override
-    public Supplier<Space<?, ?>> implement(Function<?, Space<?, ?>> generatedSpaceBuilder) {
-        return () -> generatedSpaceBuilder.apply(cast(tarantoolInstance(cluster).getTransactionManager()));
+    public <C, K, V> Supplier<Space<K, V>> implement(Function<C, ? extends Space<K, V>> generatedSpaceBuilder) {
+        return () -> {
+            TarantoolSpaceImplementation<K,V> space = cast(generatedSpaceBuilder.apply(cast(tarantoolInstance(cluster).getTransactionManager())));
+            space.setBucketIdGenerator(cast(bucketIdGenerator));
+            return space;
+        };
     }
 }
