@@ -21,6 +21,7 @@ package io.art.model.configurator;
 import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.model.implementation.communicator.*;
+import io.art.rsocket.communicator.*;
 import io.art.rsocket.communicator.RsocketCommunicatorAction.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -74,7 +75,8 @@ public class RsocketCommunicatorActionModelConfigurator {
     public RsocketCommunicatorActionModelConfigurator implement(Function<RsocketCommunicatorActionBuilder, RsocketCommunicatorActionBuilder> implementor) {
         return decorate(builder -> {
             CommunicatorAction current = builder.build();
-            return current.toBuilder().implementation(implementor.apply(cast(current.getImplementation())).build());
+            RsocketCommunicatorAction implementation = cast(current.getImplementation());
+            return current.toBuilder().implementation(implementor.apply(implementation.toBuilder()).build());
         });
     }
 

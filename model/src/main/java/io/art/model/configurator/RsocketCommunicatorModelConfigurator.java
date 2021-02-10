@@ -18,9 +18,13 @@
 
 package io.art.model.configurator;
 
+import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.model.implementation.communicator.*;
+import io.art.rsocket.communicator.*;
+import io.art.rsocket.communicator.RsocketCommunicatorAction.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
@@ -70,6 +74,14 @@ public class RsocketCommunicatorModelConfigurator {
             return decorator.apply(method, builder);
         };
         return this;
+    }
+
+    public RsocketCommunicatorModelConfigurator implement(BiFunction<String, RsocketCommunicatorActionBuilder, RsocketCommunicatorActionBuilder> implementor) {
+        return decorate((id, builder) -> {
+            CommunicatorAction action = builder.build();
+            RsocketCommunicatorAction implementation = cast(action.getImplementation());
+            return builder.implementation(implementor.apply(id, implementation.toBuilder()).build());
+        });
     }
 
     RsocketCommunicatorModel configure() {

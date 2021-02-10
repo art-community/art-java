@@ -59,7 +59,7 @@ import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
-@Builder
+@Builder(toBuilder = true)
 public class RsocketCommunicatorAction implements CommunicatorActionImplementation {
     private final CommunicatorActionIdentifier communicatorActionId;
 
