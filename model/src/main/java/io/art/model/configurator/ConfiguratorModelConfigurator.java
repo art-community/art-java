@@ -3,14 +3,15 @@ package io.art.model.configurator;
 import io.art.configurator.model.*;
 import io.art.model.implementation.configurator.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
 public class ConfiguratorModelConfigurator {
     private final Set<CustomConfigurationModel> customConfigurations = set();
 
-    public ConfiguratorModelConfigurator configuration(Class<?> model) {
-        customConfigurations.add(new CustomConfigurationModel(EMPTY_STRING, model));
+    public ConfiguratorModelConfigurator configuration(Class<?>... models) {
+        streamOf(models).forEach(model -> customConfigurations.add(new CustomConfigurationModel(EMPTY_STRING, model)));
         return this;
     }
 
