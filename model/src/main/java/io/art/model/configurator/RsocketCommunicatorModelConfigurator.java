@@ -18,21 +18,36 @@
 
 package io.art.model.configurator;
 
+import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.model.implementation.communicator.*;
+import io.art.rsocket.communicator.*;
+import io.art.rsocket.communicator.RsocketCommunicatorAction.*;
 import lombok.*;
-import static java.util.function.Function.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
+import java.util.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
-@RequiredArgsConstructor(access = PACKAGE)
 public class RsocketCommunicatorModelConfigurator {
-    private final String id;
-    private final Class<?> proxyClass;
-    private final Function<CommunicatorActionBuilder, CommunicatorActionBuilder> decorator = identity();
+    private final Class<?> communicatorInterface;
+    private final Map<String, RsocketCommunicatorActionModelConfigurator> actions = map();
+    private String id;
     private String targetServiceId;
-    private String targetMethodId;
+    private BiFunction<String, CommunicatorActionBuilder, CommunicatorActionBuilder> decorator = (id, builder) -> builder;
+
+    public RsocketCommunicatorModelConfigurator(Class<?> communicatorInterface) {
+        this.communicatorInterface = communicatorInterface;
+        this.id = communicatorInterface.getSimpleName();
+    }
+
+    public RsocketCommunicatorModelConfigurator id(String id) {
+        this.id = id;
+        return this;
+    }
 
     public RsocketCommunicatorModelConfigurator to(Class<?> targetService) {
         return to(targetService.getSimpleName());
@@ -43,18 +58,42 @@ public class RsocketCommunicatorModelConfigurator {
         return this;
     }
 
-    public RsocketCommunicatorModelConfigurator overrideMethod(String id) {
-        this.targetMethodId = id;
+    public RsocketCommunicatorModelConfigurator action(String name) {
+        return action(name, UnaryOperator.identity());
+    }
+
+    public RsocketCommunicatorModelConfigurator action(String name, UnaryOperator<RsocketCommunicatorActionModelConfigurator> configurator) {
+        actions.putIfAbsent(name, configurator.apply(new RsocketCommunicatorActionModelConfigurator(name)));
         return this;
+    }
+
+    public RsocketCommunicatorModelConfigurator decorate(BiFunction<String, CommunicatorActionBuilder, CommunicatorActionBuilder> decorator) {
+        BiFunction<String, CommunicatorActionBuilder, CommunicatorActionBuilder> current = this.decorator;
+        this.decorator = (method, builder) -> {
+            builder = current.apply(method, builder);
+            return decorator.apply(method, builder);
+        };
+        return this;
+    }
+
+    public RsocketCommunicatorModelConfigurator implement(BiFunction<String, RsocketCommunicatorActionBuilder, RsocketCommunicatorActionBuilder> implementor) {
+        return decorate((id, builder) -> {
+            CommunicatorAction action = builder.build();
+            RsocketCommunicatorAction implementation = cast(action.getImplementation());
+            return builder.implementation(implementor.apply(id, implementation.toBuilder()).build());
+        });
     }
 
     RsocketCommunicatorModel configure() {
         return RsocketCommunicatorModel.builder()
                 .id(id)
-                .proxyClass(proxyClass)
+                .communicatorInterface(communicatorInterface)
                 .targetServiceId(targetServiceId)
-                .targetMethodId(targetMethodId)
                 .decorator(decorator)
+                .actions(actions
+                        .entrySet()
+                        .stream()
+                        .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .build();
     }
 }

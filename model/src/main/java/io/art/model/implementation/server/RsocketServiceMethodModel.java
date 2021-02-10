@@ -26,5 +26,6 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class RsocketServiceMethodModel implements ServiceMethodModel {
     private final String id;
+    private final String name;
     private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
 }

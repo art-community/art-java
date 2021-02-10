@@ -19,6 +19,7 @@
 package io.art.model.configurator;
 
 import io.art.core.collection.*;
+import io.art.core.operator.*;
 import io.art.model.implementation.communicator.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -32,17 +33,16 @@ import java.util.function.*;
 public class CommunicatorModelConfigurator {
     private final ImmutableSet.Builder<RsocketCommunicatorModelConfigurator> rsocketCommunicators = immutableSetBuilder();
 
-    public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass) {
-        rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass));
+    public final CommunicatorModelConfigurator rsocket(Class<?> communicatorInterface) {
+        rsocketCommunicators.add(new RsocketCommunicatorModelConfigurator(communicatorInterface));
         return this;
     }
 
     @SafeVarargs
-    public final CommunicatorModelConfigurator rsocket(Class<?> proxyClass, UnaryOperator<RsocketCommunicatorModelConfigurator>... configurators) {
+    public final CommunicatorModelConfigurator rsocket(Class<?> communicatorInterface, UnaryOperator<RsocketCommunicatorModelConfigurator>... configurators) {
         streamOf(configurators)
-                .map(configurator -> (Function<RsocketCommunicatorModelConfigurator, RsocketCommunicatorModelConfigurator>) configurator)
-                .reduce(Function::andThen)
-                .map(configurator -> configurator.apply(new RsocketCommunicatorModelConfigurator(proxyClass.getSimpleName(), proxyClass)))
+                .reduce(Operators::andThen)
+                .map(configurator -> configurator.apply(new RsocketCommunicatorModelConfigurator(communicatorInterface)))
                 .ifPresent(rsocketCommunicators::add);
         return this;
     }

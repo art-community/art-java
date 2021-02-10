@@ -49,8 +49,8 @@ import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
-@Builder
 @UsedByGenerator
+@Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CommunicatorAction implements Managed {
     @Getter
@@ -115,6 +115,7 @@ public class CommunicatorAction implements Managed {
 
     private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
 
+    @Getter
     private final CommunicatorActionImplementation implementation;
 
     @Override

@@ -19,24 +19,35 @@
 package io.art.model.implementation.communicator;
 
 import io.art.communicator.action.CommunicatorAction.*;
-import io.art.core.model.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.art.communicator.constants.*;
+import io.art.core.collection.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
+import java.util.*;
 import java.util.function.*;
 
 public interface CommunicatorModel {
     String getId();
 
+    Class<?> getCommunicatorInterface();
+
     String getTargetServiceId();
 
-    String getTargetMethodId();
+    CommunicatorModuleConstants.CommunicatorProtocol getProtocol();
 
-    Class<?> getProxyClass();
+    BiFunction<String, CommunicatorActionBuilder, CommunicatorActionBuilder> getDecorator();
 
-    CommunicatorProtocol getProtocol();
+    ImmutableMap<String, CommunicatorActionModel> getActions();
 
-    Function<CommunicatorActionBuilder, CommunicatorActionBuilder> getDecorator();
+    default Optional<CommunicatorActionModel> getActionByName(String name) {
+        return getActions().values().stream().filter(action -> action.getName().equals(name)).findFirst();
+    }
 
-    default CommunicatorActionBuilder implement(CommunicatorActionBuilder builder) {
-        return getDecorator().apply(builder);
+    default CommunicatorActionBuilder implement(String id, CommunicatorActionBuilder current) {
+        ImmutableMap<String, CommunicatorActionModel> actions = getActions();
+        if (isEmpty(actions)) {
+            return let(getDecorator(), decorator -> decorator.apply(id, current));
+        }
+        return let(actions.get(id), methodModel -> methodModel.implement(current));
     }
 }

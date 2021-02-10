@@ -18,7 +18,6 @@
 
 package io.art.model.configurator;
 
-import io.art.model.constants.ModelConstants.*;
 import io.art.model.implementation.server.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
@@ -29,26 +28,34 @@ import java.util.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
-@RequiredArgsConstructor(access = PACKAGE)
 public class RsocketServiceModelConfigurator {
+    private String id;
     private final Class<?> serviceClass;
-    private final String id;
-    private final ConfiguratorScope scope;
     private final Map<String, RsocketServiceMethodModelConfigurator> methods = map();
-    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> serviceDecorator = (id, builder) -> builder;
+    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
 
-    public RsocketServiceModelConfigurator method(String id) {
-        return method(id, UnaryOperator.identity());
+    public RsocketServiceModelConfigurator(Class<?> serviceClass) {
+        this.serviceClass = serviceClass;
+        this.id = serviceClass.getSimpleName();
     }
 
-    public RsocketServiceModelConfigurator method(String id, UnaryOperator<RsocketServiceMethodModelConfigurator> configurator) {
-        methods.putIfAbsent(id, configurator.apply(new RsocketServiceMethodModelConfigurator(this, id)));
+    public RsocketServiceModelConfigurator id(String id) {
+        this.id = id;
         return this;
     }
 
-    private RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
-        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.serviceDecorator;
-        serviceDecorator = (method, builder) -> {
+    public RsocketServiceModelConfigurator method(String name) {
+        return method(name, UnaryOperator.identity());
+    }
+
+    public RsocketServiceModelConfigurator method(String name, UnaryOperator<RsocketServiceMethodModelConfigurator> configurator) {
+        methods.putIfAbsent(name, configurator.apply(new RsocketServiceMethodModelConfigurator(name)));
+        return this;
+    }
+
+    public RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
+        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.decorator;
+        this.decorator = (method, builder) -> {
             builder = current.apply(method, builder);
             return decorator.apply(method, builder);
         };
@@ -57,14 +64,13 @@ public class RsocketServiceModelConfigurator {
 
     RsocketServiceModel configure() {
         return RsocketServiceModel.builder()
-                .serviceDecorator(serviceDecorator)
+                .id(id)
+                .serviceClass(serviceClass)
+                .decorator(decorator)
                 .methods(methods
                         .entrySet()
                         .stream()
-                        .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().configure())))
-                .scope(scope)
-                .id(id)
-                .serviceClass(serviceClass)
+                        .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .build();
     }
 }

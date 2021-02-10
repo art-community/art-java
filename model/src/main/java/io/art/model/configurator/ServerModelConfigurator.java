@@ -19,11 +19,11 @@
 package io.art.model.configurator;
 
 import io.art.core.collection.*;
+import io.art.core.operator.*;
 import io.art.model.implementation.server.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.model.constants.ModelConstants.ConfiguratorScope.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
@@ -31,26 +31,15 @@ public class ServerModelConfigurator {
     private final ImmutableSet.Builder<RsocketServiceModelConfigurator> rsocketServices = immutableSetBuilder();
 
     public final ServerModelConfigurator rsocket(Class<?> service) {
-        rsocketServices.add(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS));
+        rsocketServices.add(new RsocketServiceModelConfigurator(service));
         return this;
     }
 
     @SafeVarargs
     public final ServerModelConfigurator rsocket(Class<?> service, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
         streamOf(configurators)
-                .map(configurator -> (Function<RsocketServiceModelConfigurator, RsocketServiceModelConfigurator>) configurator)
-                .reduce(Function::andThen)
-                .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service, service.getSimpleName(), CLASS)))
-                .ifPresent(rsocketServices::add);
-        return this;
-    }
-
-    @SafeVarargs
-    public final ServerModelConfigurator rsocket(Class<?> service, String method, UnaryOperator<RsocketServiceModelConfigurator>... configurators) {
-        streamOf(configurators)
-                .map(configurator -> (Function<RsocketServiceModelConfigurator, RsocketServiceModelConfigurator>) configurator)
-                .reduce(Function::andThen)
-                .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service, service.getSimpleName(), METHOD).method(method)))
+                .reduce(Operators::andThen)
+                .map(configurator -> configurator.apply(new RsocketServiceModelConfigurator(service)))
                 .ifPresent(rsocketServices::add);
         return this;
     }

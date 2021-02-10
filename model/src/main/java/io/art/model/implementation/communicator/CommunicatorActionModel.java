@@ -16,18 +16,26 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation.server;
+package io.art.model.implementation.communicator;
 
-import io.art.core.collection.*;
-import io.art.server.specification.ServiceMethodSpecification.*;
-import lombok.*;
+import io.art.communicator.action.CommunicatorAction.*;
+import static io.art.communicator.constants.CommunicatorModuleConstants.*;
 import java.util.function.*;
 
-@Getter
-@Builder
-public class RsocketServiceModel implements ServiceModel {
-    private final String id;
-    private final Class<?> serviceClass;
-    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
-    private final ImmutableMap<String, ServiceMethodModel> methods;
+public interface CommunicatorActionModel {
+    String getId();
+
+    String getName();
+
+    String getTargetServiceId();
+
+    String getTargetMethodId();
+
+    CommunicatorProtocol getProtocol();
+
+    Function<CommunicatorActionBuilder, CommunicatorActionBuilder> getDecorator();
+
+    default CommunicatorActionBuilder implement(CommunicatorActionBuilder builder) {
+        return getDecorator().apply(builder);
+    }
 }

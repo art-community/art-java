@@ -20,9 +20,4 @@ package io.art.model.constants;
 
 public interface ModelConstants {
     String DEFAULT_MODULE_ID = "module";
-
-    enum ConfiguratorScope {
-        CLASS,
-        METHOD
-    }
 }

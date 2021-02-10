@@ -26,18 +26,27 @@ import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
-@RequiredArgsConstructor(access = PACKAGE)
 public class RsocketServiceMethodModelConfigurator {
-    private final RsocketServiceModelConfigurator serviceModelConfigurator;
-    private final String id;
+    private final String name;
+    private String id;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
-    private RsocketServiceMethodModelConfigurator decorate(Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
+    public RsocketServiceMethodModelConfigurator(String name) {
+        this.name = name;
+        this.id = name;
+    }
+
+    public RsocketServiceMethodModelConfigurator id(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public RsocketServiceMethodModelConfigurator decorate(Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         this.decorator = decorator.andThen(decorator);
         return this;
     }
 
     RsocketServiceMethodModel configure() {
-        return new RsocketServiceMethodModel(id, decorator);
+        return new RsocketServiceMethodModel(id, name, decorator);
     }
 }
