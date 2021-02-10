@@ -28,14 +28,20 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class ModuleModelConfigurator {
     private final String moduleId;
-    private final ValueModelConfigurator value = new ValueModelConfigurator();
     private final ConfiguratorModelConfigurator configurator = new ConfiguratorModelConfigurator();
+    private final ValueModelConfigurator value = new ValueModelConfigurator();
     private final ServerModelConfigurator server = new ServerModelConfigurator();
     private final CommunicatorModelConfigurator communicator = new CommunicatorModelConfigurator();
     private Runnable onLoad = emptyRunnable();
     private Runnable onUnload = emptyRunnable();
     private Runnable beforeReload = emptyRunnable();
     private Runnable afterReload = emptyRunnable();
+
+
+    public ModuleModelConfigurator configure(UnaryOperator<ConfiguratorModelConfigurator> configurator) {
+        configurator.apply(this.configurator);
+        return this;
+    }
 
     public ModuleModelConfigurator value(UnaryOperator<ValueModelConfigurator> value) {
         value.apply(this.value);
@@ -49,11 +55,6 @@ public class ModuleModelConfigurator {
 
     public ModuleModelConfigurator communicate(UnaryOperator<CommunicatorModelConfigurator> communicator) {
         communicator.apply(this.communicator);
-        return this;
-    }
-
-    public ModuleModelConfigurator configure(UnaryOperator<ConfiguratorModelConfigurator> configurator) {
-        configurator.apply(this.configurator);
         return this;
     }
 
@@ -96,8 +97,8 @@ public class ModuleModelConfigurator {
     public ModuleModel configure() {
         return ModuleModel.builder()
                 .mainModuleId(moduleId)
-                .valueModel(value.configure())
                 .configuratorModel(configurator.configure())
+                .valueModel(value.configure())
                 .serverModel(server.configure())
                 .communicatorModel(communicator.configure())
                 .onLoad(onLoad)

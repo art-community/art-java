@@ -132,7 +132,8 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     private void configureInterceptors(RsocketConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
         String connectorId = connectorConfiguration.getConnectorId();
-        registry.forResponder(new RsocketConnectorLoggingInterceptor(connectorId)).forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
+        registry.forResponder(new RsocketConnectorLoggingInterceptor(connectorId))
+                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
     }
 
     private void disposeClient(RSocketClient rsocket) {

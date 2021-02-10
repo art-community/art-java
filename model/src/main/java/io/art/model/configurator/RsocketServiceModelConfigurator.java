@@ -32,7 +32,7 @@ public class RsocketServiceModelConfigurator {
     private String id;
     private final Class<?> serviceClass;
     private final Map<String, RsocketServiceMethodModelConfigurator> methods = map();
-    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> serviceDecorator = (id, builder) -> builder;
+    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
 
     public RsocketServiceModelConfigurator(Class<?> serviceClass) {
         this.serviceClass = serviceClass;
@@ -54,8 +54,8 @@ public class RsocketServiceModelConfigurator {
     }
 
     public RsocketServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
-        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.serviceDecorator;
-        serviceDecorator = (method, builder) -> {
+        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.decorator;
+        this.decorator = (method, builder) -> {
             builder = current.apply(method, builder);
             return decorator.apply(method, builder);
         };
@@ -66,7 +66,7 @@ public class RsocketServiceModelConfigurator {
         return RsocketServiceModel.builder()
                 .id(id)
                 .serviceClass(serviceClass)
-                .serviceDecorator(serviceDecorator)
+                .decorator(decorator)
                 .methods(methods
                         .entrySet()
                         .stream()

@@ -19,11 +19,8 @@
 package io.art.model.implementation.server;
 
 import io.art.core.collection.*;
-import io.art.model.constants.ModelConstants.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.model.constants.ModelConstants.ConfiguratorScope.*;
 import java.util.function.*;
 
 @Getter
@@ -31,6 +28,6 @@ import java.util.function.*;
 public class RsocketServiceModel implements ServiceModel {
     private final String id;
     private final Class<?> serviceClass;
-    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> serviceDecorator;
+    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, ServiceMethodModel> methods;
 }

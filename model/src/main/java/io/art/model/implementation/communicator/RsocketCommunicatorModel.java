@@ -20,6 +20,7 @@ package io.art.model.implementation.communicator;
 
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import java.util.function.*;
@@ -28,9 +29,9 @@ import java.util.function.*;
 @Builder
 public class RsocketCommunicatorModel implements CommunicatorModel {
     private final String id;
-    private final Class<?> proxyClass;
+    private final Class<?> communicatorInterface;
     private final String targetServiceId;
-    private final String targetMethodId;
+    private final BiFunction<String, CommunicatorActionBuilder, CommunicatorActionBuilder> decorator;
+    private final ImmutableMap<String, CommunicatorActionModel> actions;
     private final CommunicatorProtocol protocol = RSOCKET;
-    private final Function<CommunicatorActionBuilder, CommunicatorActionBuilder> decorator;
 }
