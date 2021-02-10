@@ -42,10 +42,6 @@ import io.art.xml.module.*;
 import io.art.yaml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
-
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
-
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
@@ -58,6 +54,8 @@ import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -87,7 +85,7 @@ public class ModuleLauncher {
                     singleton(CommunicatorCustomizer.class, () -> customizeCommunicator.apply(new CommunicatorCustomizer(module)));
             Function<RsocketModule, RsocketCustomizer> rsocketCustomizer = module ->
                     singleton(RsocketCustomizer.class, () -> customizeRsocket.apply(new RsocketCustomizer(module)));
-            Function<StorageModule, StorageCustomizer> storageCustomizer = module -> 
+            Function<StorageModule, StorageCustomizer> storageCustomizer = module ->
                     singleton(StorageModule.class, () -> customizeStorage.apply(new StorageCustomizer()));
 
             modules
