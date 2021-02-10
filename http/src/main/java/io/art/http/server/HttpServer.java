@@ -66,11 +66,10 @@ public class HttpServer implements Server {
     }
 
     private DisposableServer createServer() {
-        HttpServerConfiguration configuration = this.configuration.getServerConfiguration();
-        reactor.netty.http.server.HttpServer server = configuration.getHttpServer()
-                .route(routes -> new HttpRouter(routes, configuration));
+        reactor.netty.http.server.HttpServer server = configuration.getServerConfiguration().getHttpServer()
+                .route(routes -> new HttpRouter(routes, configuration.getServerConfiguration()));
         Mono<? extends DisposableServer> bind = server.bind();
-        if (configuration.isLogging()) {
+        if (configuration.getServerConfiguration().isLogging()) {
             bind = bind
                     .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));

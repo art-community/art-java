@@ -23,7 +23,10 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.collector.MapCollector.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.server.specification.ServiceMethodSpecification.*;
+import java.util.*;
 import java.util.Map.*;
 
 @Getter
@@ -32,11 +35,16 @@ public class ServerModuleModel {
     @Builder.Default
     private final ImmutableMap<String, RsocketServiceModel> rsocketServices = emptyImmutableMap();
 
+    @Builder.Default
+    private final ImmutableMap<String, HttpServiceModel> httpServices = emptyImmutableMap();
+
     public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
         return let(getServices().get(serviceId), service -> service.implement(methodId, current), current);
     }
 
     public ImmutableMap<String, ServiceModel> getServices() {
-        return rsocketServices.entrySet().stream().collect(immutableMapCollector(Entry::getKey, Entry::getValue));
+        Map<String, ServiceModel> services = rsocketServices.entrySet().stream().collect(mapCollector(Entry::getKey, Entry::getValue));
+        services.putAll(httpServices.entrySet().stream().collect(mapCollector(Entry::getKey, Entry::getValue)));
+        return immutableMapOf(services);
     }
 }

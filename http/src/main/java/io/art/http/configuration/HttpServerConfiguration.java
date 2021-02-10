@@ -35,6 +35,7 @@ import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 
 @Getter
+@Builder(toBuilder = true)
 public class HttpServerConfiguration {
     private HttpServer httpServer;
     private ImmutableMap<String, HttpServiceConfiguration> services;
@@ -45,16 +46,17 @@ public class HttpServerConfiguration {
     private DataFormat defaultMetaDataFormat;
 
     public static HttpServerConfiguration defaults() {
-        HttpServerConfiguration configuration = new HttpServerConfiguration();
+        HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
         configuration.defaultDataFormat = JSON;
         configuration.defaultMetaDataFormat = JSON;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
+        configuration.httpServer = HttpServer.create().port(DEFAULT_PORT);
         return configuration;
     }
 
     public static HttpServerConfiguration from(HttpModuleRefresher refresher, ConfigurationSource source) {
-        HttpServerConfiguration configuration = new HttpServerConfiguration();
+        HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
 
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();

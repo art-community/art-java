@@ -16,13 +16,18 @@
  * limitations under the License.
  */
 
-dependencies {
-    implementation(project(":configurator"))
-    implementation(project(":rsocket"))
-    implementation(project(":logging"))
-    implementation(project(":core"))
-    implementation(project(":value"))
-    implementation(project(":server"))
-    implementation(project(":communicator"))
-    implementation(project(":http"))
+package io.art.model.implementation.server;
+
+import io.art.core.collection.*;
+import io.art.server.specification.ServiceMethodSpecification.*;
+import lombok.*;
+import java.util.function.*;
+
+@Getter
+@Builder
+public class HttpServiceModel implements ServiceModel {
+    private final String id;
+    private final Class<?> serviceClass;
+    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+    private final ImmutableMap<String, ServiceMethodModel> methods;
 }

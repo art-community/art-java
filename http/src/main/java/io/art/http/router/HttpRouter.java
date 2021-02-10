@@ -32,6 +32,7 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.util.context.*;
+import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
 import static io.art.http.module.HttpModule.*;
@@ -39,6 +40,7 @@ import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
 import static io.art.http.state.HttpModuleState.HttpThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
+import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.handler.codec.http.HttpMethod.*;
@@ -70,8 +72,8 @@ public class HttpRouter {
         InetSocketAddress remoteAddress = request.remoteAddress();
         String contentType = headers.get(CONTENT_TYPE);
         String acceptType = headers.get(ACCEPT);
-        DataFormat inputDataFormat = fromMimeType(MimeType.valueOf(contentType));
-        DataFormat outputDataFormat = fromMimeType(MimeType.valueOf(acceptType));
+        DataFormat inputDataFormat = fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON);
+        DataFormat outputDataFormat = fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON);
         return response.send(specification.serve(request.receiveContent()
                 .map(content -> readPayloadData(inputDataFormat, content.content()))
                 .map(HttpPayloadValue::getValue))

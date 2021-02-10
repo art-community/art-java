@@ -25,6 +25,8 @@ import io.art.core.configuration.*;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
+import io.art.http.configuration.*;
+import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
 import io.art.model.customizer.*;
@@ -43,16 +45,21 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
+import static io.art.core.constants.StringConstants.SLASH;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.singleton.SingletonsRegistry.*;
+import static io.art.http.module.HttpModule.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static io.netty.handler.codec.http.HttpMethod.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -71,6 +78,7 @@ public class ModuleLauncher {
             UnaryOperator<ServerCustomizer> customizeServer = moduleCustomizer.server();
             UnaryOperator<CommunicatorCustomizer> customizeCommunicator = moduleCustomizer.communicator();
             UnaryOperator<RsocketCustomizer> customizeRsocket = moduleCustomizer.rsocket();
+            UnaryOperator<HttpCustomizer> customizeHttp = moduleCustomizer.http();
             ModuleInitializerRegistry modules = new ModuleInitializerRegistry();
             ModuleConfiguringState state = new ModuleConfiguringState(configurator.configure(), model);
 
@@ -83,6 +91,8 @@ public class ModuleLauncher {
                     singleton(CommunicatorCustomizer.class, () -> customizeCommunicator.apply(new CommunicatorCustomizer(module)));
             Function<RsocketModule, RsocketCustomizer> rsocketCustomizer = module ->
                     singleton(RsocketCustomizer.class, () -> customizeRsocket.apply(new RsocketCustomizer(module)));
+            Function<HttpModule, HttpCustomizer> httpCustomizer = module ->
+                    singleton(HttpCustomizer.class, () -> customizeHttp.apply(new HttpCustomizer(module)));
 
             modules
                     .put(() -> configurator, module -> configurator(module, configuratorCustomizer))
@@ -95,6 +105,7 @@ public class ModuleLauncher {
                     .put(ServerModule::new, module -> server(module, state, serverCustomizer.apply(module)))
                     .put(CommunicatorModule::new, module -> communicator(module, state, communicatorCustomizer.apply(module)))
                     .put(RsocketModule::new, module -> rsocket(module, state, rsocketCustomizer.apply(module)))
+                    .put(HttpModule::new, module -> http(module, state, httpCustomizer.apply(module)))
                     .put(TarantoolModule::new, module -> tarantool(module, state))
                     .put(RocksDbModule::new, module -> rocksDb(module, state));
 
@@ -191,6 +202,36 @@ public class ModuleLauncher {
         return rsocket;
     }
 
+    private static HttpModule http(HttpModule http, ModuleConfiguringState state, HttpCustomizer httpCustomizer) {
+        ServerModuleModel serverModel = state.getModel().getServerModel();
+        CommunicatorModuleModel communicatorModel = state.getModel().getCommunicatorModel();
+        if (isNotEmpty(let(serverModel, ServerModuleModel::getHttpServices))) {
+            httpCustomizer.services(ServerModule.serverModule().configuration()
+                    .getRegistry()
+                    .getServices()
+                    .entrySet()
+                    .stream()
+                    .collect(immutableMapCollector(Map.Entry::getKey, service -> HttpServiceConfiguration.builder()
+                            .methods(service
+                                    .getValue()
+                                    .getMethods()
+                                    .entrySet()
+                                    .stream()
+                                    .collect(immutableMapCollector(Map.Entry::getKey, method -> HttpMethodConfiguration.builder()
+                                            .path(SLASH + method.getKey())
+                                            .method(GET)
+                                            .build())))
+                            .build()))).activateServer();
+        }
+//        if (isNotEmpty(let(communicatorModel, CommunicatorModuleModel::getCommunicators))) {
+//            httpCustomizer.activateCommunicator();
+//        }
+        http.configure(configurator -> configurator
+                .from(state.getConfigurator().orderedSources())
+                .override(httpCustomizer.getConfiguration()));
+        return http;
+    }
+
     private static TarantoolModule tarantool(TarantoolModule tarantool, ModuleConfiguringState state) {
         tarantool.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
         return tarantool;
@@ -202,6 +243,8 @@ public class ModuleLauncher {
     }
 
     private static boolean needBlock() {
-        return rsocketModule().configuration().isActivateServer();
+        boolean rsocket = rsocketModule().configuration().isActivateServer();
+        boolean http = httpModule().configuration().isActivateServer();
+        return rsocket || http;
     }
 }

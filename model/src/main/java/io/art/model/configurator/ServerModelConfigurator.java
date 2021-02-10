@@ -29,6 +29,7 @@ import java.util.function.*;
 
 public class ServerModelConfigurator {
     private final ImmutableSet.Builder<RsocketServiceModelConfigurator> rsocketServices = immutableSetBuilder();
+    private final ImmutableSet.Builder<HttpServiceModelConfigurator> httpServices = immutableSetBuilder();
 
     public final ServerModelConfigurator rsocket(Class<?> service) {
         rsocketServices.add(new RsocketServiceModelConfigurator(service));
@@ -44,11 +45,32 @@ public class ServerModelConfigurator {
         return this;
     }
 
+    public final ServerModelConfigurator http(Class<?> service) {
+        httpServices.add(new HttpServiceModelConfigurator(service));
+        return this;
+    }
+
+    @SafeVarargs
+    public final ServerModelConfigurator http(Class<?> service, UnaryOperator<HttpServiceModelConfigurator>... configurators) {
+        streamOf(configurators)
+                .reduce(Operators::andThen)
+                .map(configurator -> configurator.apply(new HttpServiceModelConfigurator(service)))
+                .ifPresent(httpServices::add);
+        return this;
+    }
+
     ServerModuleModel configure() {
         ImmutableMap<String, RsocketServiceModel> rsocketServices = this.rsocketServices.build()
                 .stream()
                 .map(RsocketServiceModelConfigurator::configure)
                 .collect(immutableMapCollector(RsocketServiceModel::getId, identity()));
-        return ServerModuleModel.builder().rsocketServices(rsocketServices).build();
+        ImmutableMap<String, HttpServiceModel> httpServices = this.httpServices.build()
+                .stream()
+                .map(HttpServiceModelConfigurator::configure)
+                .collect(immutableMapCollector(HttpServiceModel::getId, identity()));
+        return ServerModuleModel.builder()
+                .rsocketServices(rsocketServices)
+                .httpServices(httpServices)
+                .build();
     }
 }

@@ -34,6 +34,7 @@ import static io.art.core.constants.StringConstants.WILDCARD;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.handler.ExceptionHandler.*;
 import static java.lang.Float.*;
 import static java.lang.String.*;
 import static java.nio.charset.Charset.*;
@@ -143,6 +144,10 @@ public class MimeType implements Comparable<MimeType> {
         }
         while (index < value.length());
         return mimeType(type, subtype, parameters);
+    }
+
+    public static MimeType valueOf(String value, MimeType fallback) {
+        return handleException(exception -> fallback).call(() -> MimeType.valueOf(value));
     }
 
     private static void checkToken(String token) {

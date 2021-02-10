@@ -21,18 +21,18 @@ package io.art.http.configuration;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
-import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.PATH_KEY;
+import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder(toBuilder = true)
 public class HttpServiceConfiguration {
     private ImmutableMap<String, HttpMethodConfiguration> methods;
     private String path;
     private final HttpServerConfiguration serverConfiguration;
 
     public static HttpServiceConfiguration from(HttpServerConfiguration serverConfiguration, ConfigurationSource source) {
-        HttpServiceConfiguration configuration = new HttpServiceConfiguration(serverConfiguration);
+        HttpServiceConfiguration configuration = HttpServiceConfiguration.builder().build();
         configuration.methods = source.getNestedMap(METHODS_KEY, method -> HttpMethodConfiguration.from(configuration, method));
         configuration.path = source.getString(PATH_KEY);
         return configuration;

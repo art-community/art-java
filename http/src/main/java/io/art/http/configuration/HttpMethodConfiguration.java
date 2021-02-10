@@ -24,13 +24,13 @@ import lombok.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder(toBuilder = true)
 public class HttpMethodConfiguration {
     private String path;
     private HttpMethod method;
 
     public static HttpMethodConfiguration from(HttpServiceConfiguration serviceConfiguration, ConfigurationSource source) {
-        HttpMethodConfiguration configuration = new HttpMethodConfiguration();
+        HttpMethodConfiguration configuration = HttpMethodConfiguration.builder().build();
         configuration.path = source.getString(PATH_KEY);
         configuration.method = HttpMethod.valueOf(source.getString(METHOD_KEY).toUpperCase());
         return configuration;
