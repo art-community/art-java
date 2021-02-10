@@ -2,7 +2,6 @@ package io.art.model.implementation.storage;
 
 import io.art.storage.space.Space;
 import io.art.tarantool.space.*;
-import io.art.tarantool.transaction.TarantoolTransactionManager;
 import lombok.Builder;
 import lombok.Getter;
 
