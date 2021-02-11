@@ -194,7 +194,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
                         .map(RsocketPayloadValue::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
-                        .requestChannel(input.map(writer::writePayloadData))
+                        .requestChannel(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD))
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);

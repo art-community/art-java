@@ -81,28 +81,28 @@ public class JsonWriter {
                     writeArray(generator, asArray(value));
                     return;
                 case BINARY:
-                    outputStream.write(Arrays.toString(asBinary(value).getContent()).getBytes());
+                    generator.writeBinary(asBinary(value).getContent());
                     return;
                 case STRING:
-                    outputStream.write(asPrimitive(value).getString().getBytes());
+                    generator.writeString(asPrimitive(value).getString());
                     return;
                 case LONG:
-                    outputStream.write(asPrimitive(value).getLong().toString().getBytes());
+                    generator.writeNumber(asPrimitive(value).getLong());
                     return;
                 case DOUBLE:
-                    outputStream.write(asPrimitive(value).getDouble().toString().getBytes());
+                    generator.writeNumber(asPrimitive(value).getDouble());
                     return;
                 case FLOAT:
-                    outputStream.write(asPrimitive(value).getFloat().toString().getBytes());
+                    generator.writeNumber(asPrimitive(value).getFloat());
                     return;
                 case INT:
-                    outputStream.write(asPrimitive(value).getInt().toString().getBytes());
+                    generator.writeNumber(asPrimitive(value).getInt());
                     return;
                 case BOOL:
-                    outputStream.write(asPrimitive(value).getBool().toString().getBytes());
+                    generator.writeBoolean(asPrimitive(value).getBool());
                     return;
                 case BYTE:
-                    outputStream.write(asPrimitive(value).getByte().toString().getBytes());
+                    generator.writeNumber(asPrimitive(value).getByte());
             }
         } catch (IOException ioException) {
             throw new JsonException(ioException);
