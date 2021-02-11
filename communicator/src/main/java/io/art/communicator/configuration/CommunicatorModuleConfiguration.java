@@ -26,9 +26,7 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.*;
-import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -48,8 +46,6 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, CommunicatorProxyConfiguration> configurations = emptyImmutableMap();
     @Getter
     private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
-    @Getter
-    private Scheduler scheduler;
 
 
     public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
@@ -57,14 +53,6 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         Optional<String> connectorId = ofNullable(proxyConfiguration).map(configuration -> configuration.getConnectors().get(protocol));
         if (connectorId.isPresent()) return connectorId;
         return getActionConfiguration(id).map(configuration -> configuration.getConnectors().get(protocol));
-    }
-
-    public Scheduler getScheduler(String communicatorId, String actionId) {
-        return getActionConfiguration(CommunicatorActionIdentifier.communicatorAction(communicatorId, actionId))
-                .map(CommunicatorActionConfiguration::getScheduler)
-                .orElseGet(() -> ofNullable(getConfigurations().get(communicatorId))
-                        .map(CommunicatorProxyConfiguration::getScheduler)
-                        .orElse(scheduler));
     }
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
@@ -116,7 +104,6 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
                     .map(communicator -> communicator.getNestedMap(PROXIES_SECTION, proxy -> CommunicatorProxyConfiguration.from(configuration.refresher, proxy)))
                     .orElse(emptyImmutableMap());

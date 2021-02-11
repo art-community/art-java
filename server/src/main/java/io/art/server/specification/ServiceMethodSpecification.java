@@ -34,8 +34,10 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
+import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.server.module.ServerModule.*;
+import static java.lang.Integer.MAX_VALUE;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
@@ -95,28 +97,41 @@ public class ServiceMethodSpecification {
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Object>, Object> adoptInput = adoptInput();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
+    private final Function<Flux<Value>, Flux<Value>> execution = execution();
 
     @Getter(lazy = true, value = PRIVATE)
     private final ServerModuleConfiguration configuration = serverModule().configuration();
 
     public Flux<Value> serve(Flux<Value> input) {
-        return defer(() -> deferredServe(input)).subscribeOn(getConfiguration().getScheduler(serviceId, methodId));
+        return execution().apply(input);
     }
 
-    private Flux<Value> deferredServe(Flux<Value> input) {
-        try {
-            Object output = implementation.execute(mapInput(input));
-            return mapOutput(output);
-        } catch (Throwable throwable) {
-            return mapException(throwable);
+    private Function<Flux<Value>, Flux<Value>> execution() {
+        if (isNull(inputMode)) throw new ImpossibleSituationException();
+        switch (inputMode) {
+            case BLOCKING:
+                return input -> orElse(input, Flux.<Value>empty())
+                        .transform(this::mapInput)
+                        .flatMap(payload -> mapOutput(implementation.execute(payload)))
+                        .switchIfEmpty(defer(() -> mapOutput(implementation.execute(null))))
+                        .onErrorResume(Throwable.class, this::mapException);
+            case MONO:
+                return input -> orElse(input, Flux.<Value>empty())
+                        .transformDeferred(this::mapInput)
+                        .next()
+                        .transformDeferred(mono -> mapOutput(implementation.execute(mono)))
+                        .flux()
+                        .onErrorResume(Throwable.class, this::mapException);
+            case FLUX:
+                return input -> orElse(input, Flux.<Value>empty())
+                        .transformDeferred(this::mapInput)
+                        .transformDeferred(mono -> mapOutput(implementation.execute(mono)))
+                        .onErrorResume(Throwable.class, this::mapException);
         }
+        throw new ImpossibleSituationException();
     }
 
-    private Object mapInput(Flux<Value> input) {
+    private Flux<Object> mapInput(Flux<Value> input) {
         Flux<Object> inputFlux = input.map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
@@ -127,11 +142,11 @@ public class ServiceMethodSpecification {
         for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
         }
-        return getAdoptInput().apply(inputFlux);
+        return inputFlux;
     }
 
     private Flux<Value> mapOutput(Object output) {
-        Flux<Object> outputFlux = let(output, getAdoptOutput(), Flux.empty());
+        Flux<Object> outputFlux = adoptFlux(outputMode, output);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
@@ -141,13 +156,11 @@ public class ServiceMethodSpecification {
         for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
-        return outputFlux
-                .map(value -> (Value) outputMapper.map(cast(value)))
-                .onErrorResume(Throwable.class, this::mapException);
+        return outputFlux.map(value -> outputMapper.map(cast(value)));
     }
 
     private Flux<Value> mapException(Throwable exception) {
-        Flux<Object> errorOutput = Flux.error(exception);
+        Flux<Object> errorOutput = error(exception);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
         }
@@ -158,39 +171,8 @@ public class ServiceMethodSpecification {
             errorOutput = errorOutput.transform(decorator);
         }
         return errorOutput
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
+                .onErrorResume(Throwable.class, throwable -> just(exceptionMapper.map(throwable)))
                 .map(Caster::cast);
 
-    }
-
-    private Function<Flux<Object>, Object> adoptInput() {
-        if (isNull(inputMode)) {
-            throw new ImpossibleSituationException();
-        }
-        switch (inputMode) {
-            case BLOCKING:
-                return input -> input.next().block();
-            case MONO:
-                return Flux::next;
-            case FLUX:
-                return Caster::cast;
-            default:
-                throw new ImpossibleSituationException();
-        }
-    }
-
-    private Function<Object, Flux<Object>> adoptOutput() {
-        if (isNull(outputMode)) {
-            throw new ImpossibleSituationException();
-        }
-        switch (outputMode) {
-            case BLOCKING:
-                return Flux::just;
-            case MONO:
-            case FLUX:
-                return output -> Flux.from(cast(output));
-            default:
-                throw new ImpossibleSituationException();
-        }
     }
 }
