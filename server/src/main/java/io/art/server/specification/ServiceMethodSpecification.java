@@ -111,10 +111,9 @@ public class ServiceMethodSpecification {
         return defer(() -> deferredServe(input)).subscribeOn(getScheduler());
     }
 
-
     private Flux<Value> deferredServe(Flux<Value> input) {
         try {
-            return mapOutput(implementation.execute(mapInput(input)));
+            return mapOutput(implementation.serve(mapInput(input)));
         } catch (Throwable throwable) {
             return mapException(throwable);
         }

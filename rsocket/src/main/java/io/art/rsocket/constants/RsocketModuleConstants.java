@@ -21,10 +21,12 @@ package io.art.rsocket.constants;
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import io.rsocket.util.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
     public static final EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
+    public static final Mono<EmptyPayload> EMPTY_PAYLOAD_MONO = Mono.just(EmptyPayload.INSTANCE);
 
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";

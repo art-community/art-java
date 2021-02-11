@@ -73,7 +73,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
             .connectorConsumers()
             .consumerFor(connectorConfiguration().getConnectorId()));
 
-    private final Property<Function<Flux<Value>, Flux<Value>>> execution = property(this::execution)
+    private final Property<Function<Flux<Value>, Flux<Value>>> communication = property(this::communication)
             .listenProperties(client);
 
     private final Property<RsocketSetupPayload> setupPayload = property(this::setupPayload)
@@ -91,7 +91,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
-        return execution.get().apply(input);
+        return communication.get().apply(input);
     }
 
     private RSocketClient createClient() {
@@ -172,7 +172,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
                 .build();
     }
 
-    private Function<Flux<Value>, Flux<Value>> execution() {
+    private Function<Flux<Value>, Flux<Value>> communication() {
         RsocketPayloadWriter writer = setupPayload.get().getWriter();
         RsocketPayloadReader reader = setupPayload.get().getReader();
         RSocketClient client = this.client.get();
@@ -194,7 +194,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
                         .map(RsocketPayloadValue::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
-                        .requestChannel(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD))
+                        .requestChannel(input.map(writer::writePayloadData).switchIfEmpty(EMPTY_PAYLOAD_MONO))
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
