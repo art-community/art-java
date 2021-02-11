@@ -113,13 +113,13 @@ public class ServiceMethodSpecification {
 
     private Flux<Value> deferredServe(Flux<Value> input) {
         try {
-            return mapOutput(implementation.serve(mapInput(input)));
+            return transformOutput(implementation.serve(transformInput(input)));
         } catch (Throwable throwable) {
-            return mapException(throwable);
+            return transformException(throwable);
         }
     }
 
-    private Object mapInput(Flux<Value> input) {
+    private Object transformInput(Flux<Value> input) {
         Flux<Object> inputFlux = input.map(value -> inputMapper.map(cast(value)));
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
@@ -133,7 +133,7 @@ public class ServiceMethodSpecification {
         return getAdoptInput().apply(inputFlux);
     }
 
-    private Flux<Value> mapOutput(Object output) {
+    private Flux<Value> transformOutput(Object output) {
         Flux<Object> outputFlux = let(output, getAdoptOutput(), Flux.empty());
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
@@ -146,10 +146,10 @@ public class ServiceMethodSpecification {
         }
         return outputFlux
                 .map(value -> (Value) outputMapper.map(cast(value)))
-                .onErrorResume(Throwable.class, this::mapException);
+                .onErrorResume(Throwable.class, this::transformException);
     }
 
-    private Flux<Value> mapException(Throwable exception) {
+    private Flux<Value> transformException(Throwable exception) {
         Flux<Object> errorOutput = Flux.error(exception);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);

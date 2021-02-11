@@ -143,15 +143,15 @@ public class CommunicatorAction implements Managed {
 
     private Flux<Object> deferredCommunicate(Object input) {
         try {
-            return let(input, this::mapInput, Flux.<Value>empty())
+            return let(input, this::transformInput, Flux.<Value>empty())
                     .transform(implementation::communicate)
-                    .transform(this::mapOutput);
+                    .transform(this::transformOutput);
         } catch (Throwable throwable) {
             return mapException(throwable);
         }
     }
 
-    private Flux<Value> mapInput(Object input) {
+    private Flux<Value> transformInput(Object input) {
         Flux<Object> inputFlux = getAdoptInput().apply(input);
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
@@ -165,8 +165,8 @@ public class CommunicatorAction implements Managed {
         return inputFlux.map(value -> inputMapper.map(cast(value)));
     }
 
-    private Flux<Object> mapOutput(Flux<Value> output) {
-        Flux<Object> outputFlux = output.map(this::mapOutput);
+    private Flux<Object> transformOutput(Flux<Value> output) {
+        Flux<Object> outputFlux = output.map(this::transformOutput);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
@@ -179,7 +179,7 @@ public class CommunicatorAction implements Managed {
         return outputFlux;
     }
 
-    private Object mapOutput(Value value) {
+    private Object transformOutput(Value value) {
         if (exceptionMapper.getFilter().apply(value)) {
             Throwable throwable = exceptionMapper.getMapper().map(cast(value));
             if (throwable instanceof Error) {
