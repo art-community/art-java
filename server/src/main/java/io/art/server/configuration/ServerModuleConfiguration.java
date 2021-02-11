@@ -26,9 +26,11 @@ import io.art.server.model.*;
 import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import lombok.*;
+import reactor.core.scheduler.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -44,9 +46,18 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
-
     @Getter
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
+    @Getter
+    private Scheduler scheduler;
+
+    public Scheduler getScheduler(String serviceId, String methodId) {
+        return getMethodConfiguration(serviceId, methodId)
+                .map(ServiceMethodConfiguration::getScheduler)
+                .orElseGet(() -> ofNullable(configurations.get(serviceId))
+                        .map(ServiceConfiguration::getScheduler)
+                        .orElse(scheduler));
+    }
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(String serviceId, String methodId) {
         return ofNullable(configurations.get(serviceId)).map(configuration -> configuration.getMethods().get(methodId));
@@ -96,6 +107,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
+            configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
                     .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                     .orElse(emptyImmutableMap());

@@ -34,20 +34,18 @@ import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import static io.art.communicator.mapper.CommunicatorExceptionMapper.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import static java.util.concurrent.Executors.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.*;
-import static reactor.core.scheduler.Schedulers.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -107,10 +105,13 @@ public class CommunicatorAction implements Managed {
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
+    private final Function<Object, Flux<Object>> adoptInput = adoptInput();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Object> execution = execution();
+    private final Function<Flux<Object>, Object> adoptOutput = adoptOutput();
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
 
     private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
 
@@ -134,37 +135,20 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate(Object input) {
-        return cast(getExecution().apply(input));
+        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(getConfiguration().getScheduler(communicatorId, actionId))));
     }
 
-    private Function<Object, Object> execution() {
-        if (isNull(outputMode)) throw new ImpossibleSituationException();
-        Scheduler blockingScheduler = newSingle(defaultThreadFactory());
-        switch (outputMode) {
-            case BLOCKING:
-                return input -> mapInput(input)
-                        .transformDeferred(implementation::communicate)
-                        .subscribeOn(blockingScheduler)
-                        .transform(this::mapOutput)
-                        .onErrorResume(this::mapException)
-                        .blockFirst();
-            case MONO:
-                return input -> mapInput(input)
-                        .transform(implementation::communicate)
-                        .transform(this::mapOutput)
-                        .onErrorResume(this::mapException)
-                        .last();
-            case FLUX:
-                return input -> mapInput(input)
-                        .transform(implementation::communicate)
-                        .transform(this::mapOutput)
-                        .onErrorResume(this::mapException);
+    private Flux<Value> deferredCommunicate(Object input) {
+        try {
+            Flux<Value> output = implementation.communicate(let(input, this::mapInput, empty()));
+            return orElse(output, empty());
+        } catch (Throwable throwable) {
+            return mapException(throwable);
         }
-        throw new ImpossibleSituationException();
     }
 
     private Flux<Value> mapInput(Object input) {
-        Flux<Object> inputFlux = adoptFlux(inputMode, input);
+        Flux<Object> inputFlux = getAdoptInput().apply(input);
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
         }
@@ -177,7 +161,7 @@ public class CommunicatorAction implements Managed {
         return inputFlux.map(value -> inputMapper.map(cast(value)));
     }
 
-    private Flux<Object> mapOutput(Flux<Value> output) {
+    private Object mapOutput(Flux<Value> output) {
         Flux<Object> outputFlux = output.map(this::mapOutput);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
@@ -188,7 +172,7 @@ public class CommunicatorAction implements Managed {
         for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
-        return outputFlux;
+        return getAdoptOutput().apply(outputFlux);
     }
 
     private Object mapOutput(Value value) {
@@ -217,6 +201,33 @@ public class CommunicatorAction implements Managed {
             errorOutput = errorOutput.transform(decorator);
         }
         return cast(errorOutput);
+    }
+
+    private Function<Object, Flux<Object>> adoptInput() {
+        if (isNull(inputMode)) throw new ImpossibleSituationException();
+        switch (inputMode) {
+            case BLOCKING:
+                return Flux::just;
+            case MONO:
+            case FLUX:
+                return input -> from(cast(input));
+            default:
+                throw new ImpossibleSituationException();
+        }
+    }
+
+    private Function<Flux<Object>, Object> adoptOutput() {
+        if (isNull(outputMode)) throw new ImpossibleSituationException();
+        switch (outputMode) {
+            case BLOCKING:
+                return output -> output.next().block();
+            case MONO:
+                return Flux::next;
+            case FLUX:
+                return output -> output;
+            default:
+                throw new ImpossibleSituationException();
+        }
     }
 
     private Optional<CommunicatorProxyConfiguration> communicatorConfiguration() {
