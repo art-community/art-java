@@ -73,7 +73,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
             .connectorConsumers()
             .consumerFor(connectorConfiguration().getConnectorId()));
 
-    private final Property<Function<Flux<Value>, Flux<Value>>> communicate = property(this::adoptCommunicate)
+    private final Property<Function<Flux<Value>, Flux<Value>>> execution = property(this::execution)
             .listenProperties(client);
 
     private final Property<RsocketSetupPayload> setupPayload = property(this::setupPayload)
@@ -91,7 +91,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     @Override
     public Flux<Value> communicate(Flux<Value> input) {
-        return communicate.get().apply(input);
+        return execution.get().apply(input);
     }
 
     private RSocketClient createClient() {
@@ -172,7 +172,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
                 .build();
     }
 
-    private Function<Flux<Value>, Flux<Value>> adoptCommunicate() {
+    private Function<Flux<Value>, Flux<Value>> execution() {
         RsocketPayloadWriter writer = setupPayload.get().getWriter();
         RsocketPayloadReader reader = setupPayload.get().getReader();
         RSocketClient client = this.client.get();

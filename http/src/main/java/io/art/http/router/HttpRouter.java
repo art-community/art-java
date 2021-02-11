@@ -74,10 +74,12 @@ public class HttpRouter {
         String acceptType = headers.get(ACCEPT);
         DataFormat inputDataFormat = fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON);
         DataFormat outputDataFormat = fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON);
-        return response.send(specification.serve(request.receiveContent()
+        return request.receiveContent()
                 .map(content -> readPayloadData(inputDataFormat, content.content()))
-                .map(HttpPayloadValue::getValue))
-                .map(output -> writePayloadData(outputDataFormat, output)))
+                .map(HttpPayloadValue::getValue)
+                .transform(specification::serve)
+                .map(output -> writePayloadData(outputDataFormat, output))
+                .transform(response::send)
                 .then();
     }
 

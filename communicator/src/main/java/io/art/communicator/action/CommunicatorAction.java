@@ -34,6 +34,7 @@ import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.communicator.mapper.CommunicatorExceptionMapper.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
@@ -118,6 +119,9 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final CommunicatorActionImplementation implementation;
 
+    @Getter(lazy = true, value = PRIVATE)
+    private final Scheduler scheduler = getConfiguration().getScheduler(communicatorId, actionId);
+
     @Override
     public void initialize() {
         communicatorConfiguration.initialize();
@@ -135,7 +139,7 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate(Object input) {
-        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(getConfiguration().getScheduler(communicatorId, actionId))));
+        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(getScheduler())));
     }
 
     private Flux<Value> deferredCommunicate(Object input) {

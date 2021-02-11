@@ -31,6 +31,7 @@ import io.art.value.mapper.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
@@ -103,14 +104,17 @@ public class ServiceMethodSpecification {
     @Getter(lazy = true, value = PRIVATE)
     private final ServerModuleConfiguration configuration = serverModule().configuration();
 
+    @Getter(lazy = true, value = PRIVATE)
+    private final Scheduler scheduler = getConfiguration().getScheduler(serviceId, methodId);
+
     public Flux<Value> serve(Flux<Value> input) {
-        return defer(() -> deferredServe(input)).subscribeOn(getConfiguration().getScheduler(serviceId, methodId));
+        return defer(() -> deferredServe(input)).subscribeOn(getScheduler());
     }
+
 
     private Flux<Value> deferredServe(Flux<Value> input) {
         try {
-            Object output = implementation.execute(mapInput(input));
-            return mapOutput(output);
+            return mapOutput(implementation.execute(mapInput(input)));
         } catch (Throwable throwable) {
             return mapException(throwable);
         }
