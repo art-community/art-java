@@ -27,6 +27,10 @@ import org.rocksdb.*;
 public class RocksDbModuleState implements ModuleState {
     private final LazyProperty<RocksDB> db;
 
+    public boolean initialized() {
+        return db.initialized();
+    }
+
     public RocksDB db() {
         return db.get();
     }
