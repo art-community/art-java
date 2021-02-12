@@ -9,6 +9,7 @@ import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
 import io.art.tarantool.module.client.TarantoolClusterClient;
 import io.art.value.immutable.Value;
+import io.art.value.mapper.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
@@ -21,7 +22,6 @@ import static io.art.core.caster.Caster.cast;
 import static io.art.core.constants.EmptyFunctions.emptyFunction;
 import static io.art.logging.LoggingModule.logger;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static java.util.function.Function.identity;
 import static lombok.AccessLevel.PRIVATE;
 
 public class TarantoolInstance {
@@ -43,9 +43,9 @@ public class TarantoolInstance {
         return cast(TarantoolSpaceImplementation.builder()
                 .space(space)
                 .transactionManager(transactionManager)
-                .fromModelMapper(cast(identity()))
-                .toModelMapper(cast(identity()))
-                .keyMapper(cast(identity()))
+                .fromModelMapper(cast(ValueFromModelMapper.identity()))
+                .toModelMapper(cast(ValueToModelMapper.identity()))
+                .keyMapper(cast(ValueFromModelMapper.identity()))
                 .build());
     }
 

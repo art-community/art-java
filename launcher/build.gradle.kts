@@ -34,3 +34,4 @@ dependencies {
     implementation(project(":tarantool"))
     implementation(project(":rocks-db"))
     implementation(project(":storage"))
+}
