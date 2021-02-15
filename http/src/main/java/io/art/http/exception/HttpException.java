@@ -16,22 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.rocks.db.state;
+package io.art.http.exception;
 
-import io.art.core.module.*;
-import io.art.core.property.*;
-import lombok.*;
-import org.rocksdb.*;
-
-@AllArgsConstructor
-public class RocksDbModuleState implements ModuleState {
-    private final LazyProperty<RocksDB> db;
-
-    public boolean initialized() {
-        return db.initialized();
-    }
-
-    public RocksDB db() {
-        return db.get();
+public class HttpException extends RuntimeException {
+    public HttpException(String message) {
+        super(message);
     }
 }

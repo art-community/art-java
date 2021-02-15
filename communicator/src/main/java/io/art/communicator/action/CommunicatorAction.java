@@ -34,6 +34,7 @@ import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import static io.art.communicator.mapper.CommunicatorExceptionMapper.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
@@ -44,7 +45,6 @@ import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
@@ -118,6 +118,9 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final CommunicatorActionImplementation implementation;
 
+    @Getter(lazy = true, value = PRIVATE)
+    private final Scheduler scheduler = getConfiguration().getScheduler(communicatorId, actionId);
+
     @Override
     public void initialize() {
         communicatorConfiguration.initialize();
@@ -135,19 +138,20 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate(Object input) {
-        return cast(mapOutput(defer(() -> deferredCommunicate(input)).subscribeOn(getConfiguration().getScheduler(communicatorId, actionId))));
+        return cast(getAdoptOutput().apply(defer(() -> deferredCommunicate(input)).subscribeOn(getScheduler())));
     }
 
-    private Flux<Value> deferredCommunicate(Object input) {
+    private Flux<Object> deferredCommunicate(Object input) {
         try {
-            Flux<Value> output = implementation.communicate(let(input, this::mapInput, empty()));
-            return orElse(output, empty());
+            return let(input, this::transformInput, Flux.<Value>empty())
+                    .transform(implementation::communicate)
+                    .transform(this::transformOutput);
         } catch (Throwable throwable) {
             return mapException(throwable);
         }
     }
 
-    private Flux<Value> mapInput(Object input) {
+    private Flux<Value> transformInput(Object input) {
         Flux<Object> inputFlux = getAdoptInput().apply(input);
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             inputFlux = inputFlux.transform(decorator);
@@ -161,8 +165,8 @@ public class CommunicatorAction implements Managed {
         return inputFlux.map(value -> inputMapper.map(cast(value)));
     }
 
-    private Object mapOutput(Flux<Value> output) {
-        Flux<Object> outputFlux = output.map(this::mapOutput);
+    private Flux<Object> transformOutput(Flux<Value> output) {
+        Flux<Object> outputFlux = output.map(this::transformOutput);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
@@ -172,10 +176,10 @@ public class CommunicatorAction implements Managed {
         for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             outputFlux = outputFlux.transform(decorator);
         }
-        return getAdoptOutput().apply(outputFlux);
+        return outputFlux;
     }
 
-    private Object mapOutput(Value value) {
+    private Object transformOutput(Value value) {
         if (exceptionMapper.getFilter().apply(value)) {
             Throwable throwable = exceptionMapper.getMapper().map(cast(value));
             if (throwable instanceof Error) {
@@ -189,7 +193,7 @@ public class CommunicatorAction implements Managed {
         return outputMapper.map(cast(value));
     }
 
-    private Flux<Value> mapException(Throwable exception) {
+    private Flux<Object> mapException(Throwable exception) {
         Flux<Object> errorOutput = error(exception);
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
@@ -200,7 +204,7 @@ public class CommunicatorAction implements Managed {
         for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
             errorOutput = errorOutput.transform(decorator);
         }
-        return cast(errorOutput);
+        return errorOutput;
     }
 
     private Function<Object, Flux<Object>> adoptInput() {

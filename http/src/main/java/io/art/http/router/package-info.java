@@ -16,22 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rocks.db.state;
+@NonNullApi
+package io.art.http.router;
 
-import io.art.core.module.*;
-import io.art.core.property.*;
-import lombok.*;
-import org.rocksdb.*;
-
-@AllArgsConstructor
-public class RocksDbModuleState implements ModuleState {
-    private final LazyProperty<RocksDB> db;
-
-    public boolean initialized() {
-        return db.initialized();
-    }
-
-    public RocksDB db() {
-        return db.get();
-    }
-}
+import reactor.util.annotation.*;

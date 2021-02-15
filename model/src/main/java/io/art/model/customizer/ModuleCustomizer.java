@@ -35,5 +35,6 @@ public class ModuleCustomizer {
     private UnaryOperator<CommunicatorCustomizer> communicator = identity();
     private UnaryOperator<ValueCustomizer> value = identity();
     private UnaryOperator<RsocketCustomizer> rsocket = identity();
+    private UnaryOperator<HttpCustomizer> http = identity();
     private UnaryOperator<StorageCustomizer> storage = identity();
 }

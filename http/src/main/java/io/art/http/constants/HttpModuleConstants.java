@@ -16,53 +16,48 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.constants;
+package io.art.http.constants;
 
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
-import io.rsocket.util.*;
 import lombok.*;
-import reactor.core.publisher.*;
 import java.time.*;
 
-public interface RsocketModuleConstants {
-    public static final EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
-    public static final Mono<EmptyPayload> EMPTY_PAYLOAD_MONO = Mono.just(EmptyPayload.INSTANCE);
-
+public interface HttpModuleConstants {
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
-        String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
+        String CONFIGURATION_PARAMETER_NOT_EXISTS = "HTTP configuration parameter does not exists: ''{0}''";
     }
 
     interface LoggingMessages {
-        String RSOCKET_DISPOSING = "Disposing RSocket";
-        String SERVER_STARTED = "RSocket server started";
-        String SERVER_STOPPED = "RSocket server stopped";
-        String COMMUNICATOR_STARTED = "RSocket communicator started\nConnector: {0}\nSetup payload: {1}";
-        String COMMUNICATOR_STOPPED = "RSocket communicator stopped\nConnector: {0}\nSetup payload: {1}";
+        String HTTP_DISPOSING = "Disposing HTTP";
+        String SERVER_STARTED = "HTTP server started";
+        String SERVER_STOPPED = "HTTP server stopped";
+        String COMMUNICATOR_STARTED = "HTTP communicator started\nConnector: {0}\nSetup payload: {1}";
+        String COMMUNICATOR_STOPPED = "HTTP communicator stopped\nConnector: {0}\nSetup payload: {1}";
 
-        String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
-        String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
-        String FIRE_AND_FORGET_EXCEPTION_LOG = "RSocket fireAndForget() failed\nException:\n{0}";
+        String FIRE_AND_FORGET_REQUEST_LOG = "HTTP executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
+        String FIRE_AND_FORGET_RESPONSE_LOG = "HTTP fireAndForget() completed";
+        String FIRE_AND_FORGET_EXCEPTION_LOG = "HTTP fireAndForget() failed\nException:\n{0}";
 
-        String METADATA_PUSH_REQUEST_LOG = "RSocket executing metadataPush().Data:\n{0}\nMetadata:\n{1}";
-        String METADATA_PUSH_RESPONSE_LOG = "RSocket metadataPush() completed";
-        String METADATA_PUSH_EXCEPTION_LOG = "RSocket metadataPush() failed\nException:\n{0}";
+        String METADATA_PUSH_REQUEST_LOG = "HTTP executing metadataPush().Data:\n{0}\nMetadata:\n{1}";
+        String METADATA_PUSH_RESPONSE_LOG = "HTTP metadataPush() completed";
+        String METADATA_PUSH_EXCEPTION_LOG = "HTTP metadataPush() failed\nException:\n{0}";
 
-        String REQUEST_RESPONSE_REQUEST_LOG = "RSocket executing requestResponse()\nData:\n{0}\nMetadata:\n{1}";
-        String RESPONSE_RESPONSE_LOG = "RSocket requestResponse() completed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_RESPONSE_EXCEPTION_LOG = "RSocket requestResponse() failed\nException:\n{0}";
+        String REQUEST_RESPONSE_REQUEST_LOG = "HTTP executing requestResponse()\nData:\n{0}\nMetadata:\n{1}";
+        String RESPONSE_RESPONSE_LOG = "HTTP requestResponse() completed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_RESPONSE_EXCEPTION_LOG = "HTTP requestResponse() failed\nException:\n{0}";
 
-        String REQUEST_STREAM_REQUEST_LOG = "RSocket executing requestStream()\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_STREAM_RESPONSE_LOG = "RSocket requestStream() processed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_STREAM_EXCEPTION_LOG = "RSocket requestStream() failed\nException:\n{0}";
+        String REQUEST_STREAM_REQUEST_LOG = "HTTP executing requestStream()\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_STREAM_RESPONSE_LOG = "HTTP requestStream() processed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_STREAM_EXCEPTION_LOG = "HTTP requestStream() failed\nException:\n{0}";
 
-        String REQUEST_CHANNEL_REQUEST_LOG = "RSocket requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed\nException:\n{0}";
+        String REQUEST_CHANNEL_REQUEST_LOG = "HTTP requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_CHANNEL_RESPONSE_LOG = "HTTP requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
+        String REQUEST_CHANNEL_EXCEPTION_LOG = "HTTP requestChannel() failed\nException:\n{0}";
     }
 
     interface ConfigurationKeys {
-        String RSOCKET_SECTION = "rsocket";
+        String HTTP_SECTION = "http";
         String SERVER_SECTION = "server";
         String COMMUNICATOR_SECTION = "communicator";
         String RESUME_SECTION = "produce";
@@ -90,9 +85,6 @@ public interface RsocketModuleConstants {
         String LOGGING_KEY = "logging";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
 
-        String CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "cleanupStoreOnKeepAlive";
-        String SESSION_DURATION_KEY = "sessionDuration";
-        String STREAM_TIMEOUT_KEY = "streamTimeout";
         String POLICY_KEY = "policy";
         String BACKOFF_MAX_ATTEMPTS_KEY = "backoff.maxAttempts";
         String BACKOFF_MIN_BACKOFF_KEY = "backoff.minBackoff";
@@ -108,10 +100,13 @@ public interface RsocketModuleConstants {
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
         String CONNECTORS_KEY = "connectors";
+
+        String PATH_KEY = "path";
+        String METHOD_KEY = "method";
     }
 
     interface ContextKeys {
-        String REQUESTER_RSOCKET_KEY = "requesterRsocket";
+        String REQUESTER_HTTP_KEY = "requesterHttp";
         String SETUP_PAYLOAD_KEY = "setupPayload";
     }
 
@@ -121,9 +116,7 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_RETRY_FIXED_DELAY = Duration.ofSeconds(1);
         int DEFAULT_RETRY_MAX = 1;
         int DEFAULT_RETRY_MAX_IN_ROW = 1;
-        int DEFAULT_PORT = 9000;
-        Duration DEFAULT_RESUME_SESSION_DURATION = Duration.ofHours(1);
-        Duration DEFAULT_RESUME_STREAM_TIMEOUT = Duration.ofHours(1);
+        int DEFAULT_PORT = 80;
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
     }
@@ -131,25 +124,6 @@ public interface RsocketModuleConstants {
     interface Fields {
         String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
         String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
-    }
-
-    @Getter
-    @AllArgsConstructor
-    enum TransportMode {
-        TCP("tcp"),
-        WS("ws");
-
-        private final String transport;
-
-        public static TransportMode rsocketTransport(String transport) {
-            return rsocketTransport(transport, TCP);
-        }
-
-        public static TransportMode rsocketTransport(String transport, TransportMode fallback) {
-            if (TCP.transport.equalsIgnoreCase(transport)) return TCP;
-            if (WS.transport.equalsIgnoreCase(transport)) return WS;
-            return fallback;
-        }
     }
 
     @Getter
@@ -163,7 +137,7 @@ public interface RsocketModuleConstants {
 
         private final String policy;
 
-        public static RetryPolicy rsocketRetryPolicy(String policy, RetryPolicy fallback) {
+        public static RetryPolicy httpRetryPolicy(String policy, RetryPolicy fallback) {
             if (BACKOFF.policy.equalsIgnoreCase(policy)) return BACKOFF;
             if (FIXED_DELAY.policy.equalsIgnoreCase(policy)) return FIXED_DELAY;
             if (MAX.policy.equalsIgnoreCase(policy)) return MAX;
@@ -181,11 +155,11 @@ public interface RsocketModuleConstants {
 
         private final String decoder;
 
-        public static PayloadDecoderMode rsocketPayloadDecoder(String decoder) {
-            return rsocketPayloadDecoder(decoder, DEFAULT);
+        public static PayloadDecoderMode httpPayloadDecoder(String decoder) {
+            return httpPayloadDecoder(decoder, DEFAULT);
         }
 
-        public static PayloadDecoderMode rsocketPayloadDecoder(String decoder, PayloadDecoderMode fallback) {
+        public static PayloadDecoderMode httpPayloadDecoder(String decoder, PayloadDecoderMode fallback) {
             if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
             if (DEFAULT.decoder.equalsIgnoreCase(decoder)) return DEFAULT;
             return fallback;
@@ -202,10 +176,9 @@ public interface RsocketModuleConstants {
 
     @Getter
     @AllArgsConstructor
-    enum RsocketProtocol implements CommunicatorProtocol {
-        RSOCKET("rsocket");
+    enum HttpProtocol implements CommunicatorProtocol {
+        HTTP("http");
 
         String protocol;
-
     }
 }

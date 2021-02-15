@@ -31,6 +31,8 @@ dependencies {
     implementation(project(":server"))
     implementation(project(":communicator"))
     implementation(project(":rsocket"))
+    implementation(project(":http"))
+    implementation(project(":http"))
     implementation(project(":tarantool"))
     implementation(project(":rocks-db"))
     implementation(project(":storage"))

@@ -16,22 +16,18 @@
  * limitations under the License.
  */
 
-package io.art.rocks.db.state;
+package io.art.model.implementation.server;
 
-import io.art.core.module.*;
-import io.art.core.property.*;
+import io.art.core.collection.*;
+import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
-import org.rocksdb.*;
+import java.util.function.*;
 
-@AllArgsConstructor
-public class RocksDbModuleState implements ModuleState {
-    private final LazyProperty<RocksDB> db;
-
-    public boolean initialized() {
-        return db.initialized();
-    }
-
-    public RocksDB db() {
-        return db.get();
-    }
+@Getter
+@Builder
+public class HttpServiceModel implements ServiceModel {
+    private final String id;
+    private final Class<?> serviceClass;
+    private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+    private final ImmutableMap<String, ServiceMethodModel> methods;
 }

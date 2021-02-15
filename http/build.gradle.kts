@@ -17,14 +17,25 @@
  */
 
 dependencies {
-    implementation(project(":configurator"))
-    implementation(project(":rsocket"))
-    implementation(project(":logging"))
+    val nettyVersion: String by project
+    val reactorNettyVersion: String by project
+
     implementation(project(":core"))
     implementation(project(":value"))
+    implementation(project(":logging"))
     implementation(project(":server"))
     implementation(project(":communicator"))
-    implementation(project(":tarantool"))
-    implementation(project(":storage"))
-    implementation(project(":http"))
+    implementation(project(":protobuf"))
+    implementation(project(":json"))
+    implementation(project(":yaml"))
+    implementation(project(":xml"))
+    implementation(project(":message-pack"))
+
+    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
+            .exclude("org.slf4j")
+
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("org.slf4j")
 }

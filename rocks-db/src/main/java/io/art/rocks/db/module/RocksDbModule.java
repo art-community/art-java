@@ -20,12 +20,14 @@ package io.art.rocks.db.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.operator.*;
 import io.art.rocks.db.configuration.*;
 import io.art.rocks.db.state.*;
 import lombok.*;
 import org.rocksdb.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.operator.Operators.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.nio.file.Files.*;
@@ -58,6 +60,6 @@ public class RocksDbModule implements StatefulModule<RocksDbModuleConfiguration,
 
     @Override
     public void onUnload(Context.Service contextService) {
-        apply(state, state -> apply(state.db(), RocksDB::close));
+        applyIf(state, RocksDbModuleState::initialized, state -> apply(state.db(), RocksDB::close));
     }
 }

@@ -52,7 +52,7 @@ public class ServiceMethodImplementation {
         return new ServiceMethodImplementation(serviceMethod(serviceId, methodId), function);
     }
 
-    public Object execute(Object request) {
+    public Object serve(Object request) {
         return functor.apply(cast(request));
     }
 }
