@@ -11,6 +11,11 @@ public class ChangesProducer {
         return this;
     }
 
+    public ChangesProducer dispose() {
+        listener.dispose();
+        return this;
+    }
+
     public <T> T emit(T value) {
         return listener.emit(value);
     }

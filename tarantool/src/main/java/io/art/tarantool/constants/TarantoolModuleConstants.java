@@ -55,7 +55,7 @@ public interface TarantoolModuleConstants {
     }
 
     interface ExceptionMessages {
-        String CONFIGURATION_IS_NULL = "Tarantool ''{0}'' configuration is null. Please specify it.";
+        String CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'', instance ''{1}'' configuration is null. Please specify it.";
         String CLUSTER_CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'' configuration is null. Please specify it.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''.";
         String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";

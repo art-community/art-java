@@ -18,7 +18,8 @@ public class ChangesListener {
     private final ReentrantLock lock = new ReentrantLock();
     private final AtomicBoolean created = new AtomicBoolean();
     private final AtomicBoolean pending = new AtomicBoolean();
-    private final List<Runnable> consumers = copyOnWriteList();
+    private final List<Runnable> changeConsumers = copyOnWriteList();
+    private final List<Runnable> disposeConsumers = copyOnWriteList();
     private final List<Object> values = copyOnWriteList();
 
     @Getter
@@ -47,20 +48,34 @@ public class ChangesListener {
         }
 
         if (pending.compareAndSet(true, false)) {
-            consumers.forEach(Runnable::run);
+            changeConsumers.forEach(Runnable::run);
         }
 
         index.set(0);
         return this;
     }
 
+    public ChangesListener dispose(){
+        values.clear();
+        pending.set(false);
+        created.set(false);
+        disposeConsumers.forEach(Runnable::run);
+        return this;
+    }
+
     public ChangesListener consume(Runnable action) {
-        consumers.add(action);
+        return consume(action, action);
+    }
+
+    public ChangesListener consume(Runnable onChange, Runnable onDispose){
+        changeConsumers.add(onChange);
+        disposeConsumers.add(onDispose);
         return this;
     }
 
     public <T> Property<T> consume(Property<T> property) {
-        consumers.add(property::refresh);
+        changeConsumers.add(property::refresh);
+        disposeConsumers.add(property::dispose);
         return property;
     }
 

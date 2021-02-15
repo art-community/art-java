@@ -4,12 +4,12 @@ import io.art.core.local.ThreadLocalValue;
 import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.record.TarantoolSingleRecord;
 import io.art.tarantool.model.record.TarantoolTransactionRecord;
-import io.art.tarantool.module.client.TarantoolClusterClient;
+import io.art.tarantool.module.connection.client.TarantoolCluster;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
+import java.util.function.*;
 
 import static io.art.core.factory.ListFactory.linkedList;
 import static io.art.core.local.ThreadLocalValue.threadLocal;
@@ -17,10 +17,10 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRAN
 import static io.art.tarantool.model.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 
 public class TarantoolTransactionManager {
-    private final TarantoolClusterClient client;
+    private final Supplier<TarantoolCluster> client;
     private final ThreadLocalValue<State> state = threadLocal(State::new);
 
-    public TarantoolTransactionManager(TarantoolClusterClient client){
+    public TarantoolTransactionManager(Supplier<TarantoolCluster> client){
         this.client = client;
     }
 
@@ -74,7 +74,7 @@ public class TarantoolTransactionManager {
     }
 
     private CompletableFuture<List<?>> call(String function, Object... args){
-        return state().isRWTransaction ? client.callRW(function, args) : client.callRO(function, args);
+        return state().isRWTransaction ? client.get().callRW(function, args) : client.get().callRO(function, args);
     }
 
     private void clearTransaction(){

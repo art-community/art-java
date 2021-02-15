@@ -12,6 +12,11 @@ public class ChangesConsumer {
         return this;
     }
 
+    public ChangesConsumer consume(Runnable onChange, Runnable onDispose){
+        listener.consume(onChange, onDispose);
+        return this;
+    }
+
     public <T> Property<T> consume(Property<T> value) {
         listener.consume(value);
         return value;

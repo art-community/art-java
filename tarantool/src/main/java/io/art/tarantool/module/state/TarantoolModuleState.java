@@ -1,41 +1,28 @@
 package io.art.tarantool.module.state;
 
 
-import io.art.core.module.ModuleState;
-import io.art.tarantool.module.client.TarantoolClusterClient;
-import io.tarantool.driver.ClusterTarantoolClient;
-import io.tarantool.driver.api.TarantoolClient;
+import io.art.core.module.*;
+import io.art.tarantool.module.connection.client.*;
+import io.art.tarantool.module.connection.registry.*;
+import io.art.tarantool.module.refresher.*;
+import io.tarantool.driver.api.*;
 
-import java.util.Map;
-import java.util.Optional;
-
-import static io.art.core.factory.MapFactory.map;
-import static java.util.Objects.isNull;
-import static java.util.Optional.empty;
-import static java.util.Optional.ofNullable;
+import java.util.function.*;
 
 public class TarantoolModuleState implements ModuleState {
-    private final Map<String, TarantoolClusterClient> activeClusters = map();
-    private final Map<String, Map<String, TarantoolClient>> activeClients = map();
+    private final TarantoolClusterRegistry clusters;
+    private final TarantoolClientRegistry clients;
 
-
-    public Optional<TarantoolClusterClient> getClusterClient(String clusterId){
-        return ofNullable(activeClusters.get(clusterId));
+    public TarantoolModuleState(TarantoolModuleRefresher.Consumer changes){
+        clusters = new TarantoolClusterRegistry(changes.clusterConsumers());
+        clients = new TarantoolClientRegistry(changes.clientConsumers());
     }
 
-    public void registerClusterClient(String clusterId, TarantoolClusterClient client){
-        activeClusters.put(clusterId, client);
+    public Supplier<TarantoolCluster> getCluster(String clusterId){
+        return clusters.get(clusterId);
     }
 
-    public Optional<TarantoolClient> getClient(String clusterId, String clientId){
-        if (isNull(activeClients.get(clusterId))) return empty();
-        return ofNullable(activeClients.get(clusterId).get(clientId));
+    public Supplier<TarantoolClient> getClient(String clusterId, String clientId){
+        return clients.get(clusterId, clientId);
     }
-
-    public void registerClient(String clusterId, String clientId, TarantoolClient client){
-        if (isNull(activeClients.get(clusterId))) activeClients.put(clusterId, map());
-        activeClients.get(clusterId).put(clientId, client);
-    }
-
-
 }

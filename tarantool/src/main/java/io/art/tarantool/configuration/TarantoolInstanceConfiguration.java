@@ -1,12 +1,14 @@
 package io.art.tarantool.configuration;
 
 import io.art.core.source.ConfigurationSource;
-import lombok.Getter;
+import lombok.*;
+
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 
 @Getter
+@EqualsAndHashCode
 public class TarantoolInstanceConfiguration {
     private String host;
     private int port;

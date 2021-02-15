@@ -7,19 +7,17 @@ import io.art.tarantool.space.*;
 import io.art.tarantool.transaction.TarantoolTransactionManager;
 import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.mapping.TarantoolResponseMapping;
-import io.art.tarantool.module.client.TarantoolClusterClient;
+import io.art.tarantool.module.connection.client.TarantoolCluster;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.Builder;
 import lombok.Getter;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.*;
 
 import static io.art.core.caster.Caster.cast;
-import static io.art.core.constants.EmptyFunctions.emptyFunction;
 import static io.art.logging.LoggingModule.logger;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static lombok.AccessLevel.PRIVATE;
@@ -31,7 +29,7 @@ public class TarantoolInstance {
     private final TarantoolTransactionManager transactionManager;
 
 
-    public TarantoolInstance(TarantoolClusterClient client){
+    public TarantoolInstance(Supplier<TarantoolCluster> client){
         transactionManager = new TarantoolTransactionManager(client);
     }
 

@@ -6,10 +6,6 @@ import lombok.*;
 public class ChangesProducerRegistry {
     private final ChangesListenerRegistry listeners;
 
-    public ChangesProducer countProducer() {
-        return listeners.getCountListener().producer();
-    }
-
     public ChangesProducer producerFor(String id) {
         return listeners.listenerFor(id).producer();
     }

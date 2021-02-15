@@ -1,4 +1,4 @@
-package io.art.tarantool.module.client.connector;
+package io.art.tarantool.module.connection.client.connector;
 
 import io.tarantool.driver.StandaloneTarantoolClient;
 import io.tarantool.driver.TarantoolClientConfig;
