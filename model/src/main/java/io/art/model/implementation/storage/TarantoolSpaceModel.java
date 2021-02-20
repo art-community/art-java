@@ -36,7 +36,7 @@ public class TarantoolSpaceModel implements SpaceModel {
     public <C, K, V> Supplier<Space<K, V>> implement(Function<C, ? extends Space<K, V>> generatedSpaceBuilder) {
         return () -> {
             TarantoolSpaceImplementation<K,V> space = cast(generatedSpaceBuilder.apply(cast(tarantoolInstance(cluster).getTransactionManager())));
-            space.setBucketIdGenerator(cast(bucketIdGenerator));
+            space.bucketIdGenerator(cast(bucketIdGenerator));
             return space;
         };
     }

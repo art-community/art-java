@@ -66,6 +66,7 @@ public interface TarantoolModuleConstants {
         String TRANSACTION_FAILED = "Transaction failed with error message: ''{0}''";
         String GET_RESULT_OF_NOT_COMMITTED_TRANSACTION = "Attempt to get result of not committed transaction. Commit first.";
         String ILLEGAL_TRANSACTION_DEPENDENCY_USAGE = "Attempt to use transaction dependency outside of transaction. Use response data using get() instead.";
+        String ATTEMPT_OF_NESTED_TRANSACTION = "Illegal attempt to begin nested transaction. Cluster is already in another transaction.";
     }
 
     interface LoggingMessages {

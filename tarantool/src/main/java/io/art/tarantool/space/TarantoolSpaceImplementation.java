@@ -1,8 +1,6 @@
 package io.art.tarantool.space;
 
 import io.art.core.collection.*;
-import io.art.core.factory.*;
-import io.art.tarantool.constants.*;
 import io.art.tarantool.model.mapping.*;
 import io.art.tarantool.model.operation.*;
 import io.art.tarantool.model.record.*;
@@ -11,7 +9,6 @@ import io.art.tarantool.transaction.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.Builder;
-import lombok.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -20,8 +17,10 @@ import java.util.stream.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.constants.EmptyFunctions.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
 import static io.art.tarantool.model.mapping.TarantoolResponseMapping.*;
 
@@ -32,7 +31,6 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
     private final Function<T, Value> fromModelMapper;
     private final Function<K, Value> keyMapper;
     private final Function<List<?>, Optional<?>> selectToModelMapper;
-    @Setter
     private Function<T, Long> bucketIdGenerator = emptyFunction();
 
     @Builder
@@ -103,13 +101,13 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
 
 
     public TarantoolRecord<T> insert(T data){
-        return cast(transactionManager.callRW(INSERT, response -> toModelMapper.apply(toValue(response)), space,
-                dataTuple(fromModelMapper.apply(data)), bucketIdGenerator.apply(data)));
+        return cast(transactionManager.callRW(INSERT, response -> toModelMapper.apply(toValue(response)),
+                space, dataTuple(fromModelMapper.apply(data)), bucketIdGenerator.apply(data)));
     }
 
     public TarantoolRecord<T> insert(TarantoolTransactionDependency dataDependency){
-        return cast(transactionManager.callRW(INSERT, response -> toModelMapper.apply(toValue(response)), space,
-                dataDependency.get()));
+        return cast(transactionManager.callRW(INSERT, response -> toModelMapper.apply(toValue(response)),
+                space, dataDependency.get()));
     }
 
 
@@ -192,6 +190,10 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
 
     public void cancelTransaction(){
         transactionManager.cancel();
+    }
+
+    public void bucketIdGenerator(Function<T, Long> generator){
+        this.bucketIdGenerator = generator;
     }
 
     public class SelectRequest {

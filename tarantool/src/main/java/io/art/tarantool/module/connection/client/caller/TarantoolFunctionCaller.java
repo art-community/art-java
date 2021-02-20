@@ -18,19 +18,7 @@ public class TarantoolFunctionCaller {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolFunctionCaller.class);
 
-
-    public static List<?> call(TarantoolClient client, String function, Object... args){
-        try{
-            List<?> result = asynchronousCall(client, function, args).get();
-            logInfo(format(CALLED_FUNCTION, function, result.toString()));
-            return result;
-        } catch (Throwable throwable){
-            getLogger().error(format(FAILED_FUNCTION, function));
-            throw new TarantoolDaoException(format(FAILED_FUNCTION, function), throwable);
-        }
-    }
-
-    public static CompletableFuture<List<?>> asynchronousCall(TarantoolClient client, String function, Object... args){
+    public static CompletableFuture<List<?>> call(TarantoolClient client, String function, Object... args){
         try {
             logInfo(format(CALLING_FUNCTION, function));
             return client.call(function, args);

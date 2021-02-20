@@ -33,11 +33,11 @@ public class TarantoolCluster {
     }
 
     public CompletableFuture<List<?>> callRW(String function, Object... args){
-        return asynchronousCall(readWriteBalancer.select().get(), function, args);
+        return call(readWriteBalancer.select().get(), function, args);
     }
 
     public CompletableFuture<List<?>> callRO(String function, Object... args){
-        return asynchronousCall(readOnlyBalancer.select().get(), function, args);
+        return call(readOnlyBalancer.select().get(), function, args);
     }
 
     private void getAllClients(TarantoolClusterConfiguration configuration){

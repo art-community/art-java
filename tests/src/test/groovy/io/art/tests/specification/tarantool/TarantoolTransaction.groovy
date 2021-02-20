@@ -1,22 +1,21 @@
 
 package io.art.tests.specification.tarantool
 
-import io.art.tarantool.space.TarantoolSpace
 import io.art.tarantool.instance.TarantoolInstance
-import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
+import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
-import static io.art.model.configurator.ModuleModelConfigurator.*;
+import static io.art.model.configurator.ModuleModelConfigurator.module
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.tarantool.configuration.space.TarantoolSpaceFormat.tarantoolSpaceFormat
 import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantoolSpaceIndex
-import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.NUMBER
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.STRING
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.UNSIGNED
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
+import static io.art.tarantool.model.operation.TarantoolUpdateFieldOperation.assigment
 import static io.art.tarantool.module.TarantoolModule.tarantoolInstance
 import static io.art.value.factory.PrimitivesFactory.intPrimitive
 import static io.art.value.factory.PrimitivesFactory.stringPrimitive
@@ -37,7 +36,7 @@ class TarantoolTransaction extends Specification {
         TarantoolSpace space = db.space(spaceName)
 
         Value data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
+                .put("id", intPrimitive(null))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
@@ -45,13 +44,14 @@ class TarantoolTransaction extends Specification {
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
         db.formatSpace(spaceName, tarantoolSpaceFormat()
-                .field("id", NUMBER, false)
+                .field("id", UNSIGNED, false)
                 .field("data", STRING, false))
         db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
-                .unique(true))
+                .unique(true)
+                .sequence())
         db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
                 .part('data')
                 .ifNotExists(true)
@@ -59,29 +59,20 @@ class TarantoolTransaction extends Specification {
 
 
         when:
-        db.beginTransaction()
+        space.beginTransaction()
         def result1 = space.insert(data)
-        def result2 = space.autoIncrement(data)
-        db.commitTransaction()
+        space.insert(data)
+        space.insert(data)
+        def result2 = space.insert(data)
+        space.commitTransaction()
 
         then:
-        ((Entity) result1.get()).get('id') == intPrimitive(3) &&
+        ((Entity) result1.get()).get('id') == intPrimitive(1) &&
                 ((Entity) result2.get()).get('id') == intPrimitive(4)
 
-
         when:
         db.beginTransaction()
-        result1 = space.autoIncrement(data)
-        result2 = space.autoIncrement(result1.useResult())
-        db.commitTransaction()
-
-        then:
-        ((Entity) result1.get()).get('id') == intPrimitive(5) &&
-                ((Entity) result2.get()).get('id') == intPrimitive(6)
-
-        when:
-        db.beginTransaction()
-        result1 = space.autoIncrement(data)
+        result1 = space.insert(data)
         result2 = space.select(result1.useResultField('data'))
                 .index('data')
                 .execute()
@@ -96,24 +87,20 @@ class TarantoolTransaction extends Specification {
 
     }
 
-    def "Routers transaction"() {
+    def "Routers transaction1"() {
         setup:
         def clusterId = "routers"
-        def spaceName = "r_tx"
-
+        def spaceName = 'r_tx_ez'
 
         def db = tarantoolInstance(clusterId)
         def space = db.space(spaceName)
-
-
+        space.bucketIdGenerator({ignore -> (long) 99})
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(3))
-                .put("bucket_id", intPrimitive(99))
+                .put("id", intPrimitive(null))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
-        Value request = intPrimitive(3)
 
         db.createSpace(spaceName, tarantoolSpaceConfig()
                 .ifNotExists(true))
@@ -124,23 +111,78 @@ class TarantoolTransaction extends Specification {
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
-                .unique(true))
+                .unique(true)
+                .sequence())
         db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
                 .part(2)
                 .unique(false))
 
 
         when:
-        def spaces = db.listSpaces()
-        def indices = space.listIndices()
+        space.beginTransaction(space.bucketOf(data))
+        def result1 = space.insert(data)
+        space.insert(data)
+        space.insert(data)
+        def result2 = space.insert(data)
+        space.commitTransaction()
+
         then:
-        spaces.get().contains(spaceName) && indices.get().contains("primary")
+        ((Entity) result1.get()).get('id') == intPrimitive(1) &&
+                ((Entity) result2.get()).get('id') == intPrimitive(4)
+
+        when:
+        db.beginTransaction(space.bucketOf(data))
+        result1 = space.insert(data)
+        result2 = space.get(result1.useResultField('id'))
+        db.commitTransaction()
+        result1.synchronize()
+        then:
+        ((Entity) result2.get()).get('id') == ((Entity) result1.get()).get('id')
+
+
+        cleanup:
+        db.dropSpace(spaceName)
+
+    }
+
+    def "Routers transaction2"() {
+        setup:
+        def clusterId = "routers"
+        def spaceName = "r_tx"
+
+
+        def db = tarantoolInstance(clusterId)
+        def space = db.space(spaceName)
+        space.bucketIdGenerator({ignore -> (long) 99})
+
+
+
+        Entity data = Entity.entityBuilder()
+                .put("id", intPrimitive(3))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+        db.createSpace(spaceName, tarantoolSpaceConfig()
+                .ifNotExists(true))
+        db.formatSpace(spaceName, tarantoolSpaceFormat()
+                .field("id", UNSIGNED, false)
+                .field("bucket_id", UNSIGNED))
+        db.createIndex(spaceName, "primary", tarantoolSpaceIndex()
+                .type(TarantoolIndexType.TREE)
+                .part("id")
+                .ifNotExists(true)
+                .unique(true)
+                .sequence())
+        db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
+                .part(2)
+                .unique(false))
 
 
         when:
-        db.beginTransaction()
+        db.beginTransaction(space.bucketOf(data))
         def response1 = space.insert(data)
-        def response2 = space.get(request)
+        def response2 = space.get(intPrimitive(3))
         db.commitTransaction()
         response1.get()
         then:
@@ -148,19 +190,23 @@ class TarantoolTransaction extends Specification {
 
 
         when:
-        db.beginTransaction()
-        response1 = space.autoIncrement(data)
-        space.autoIncrement(response1.useResult())
-        space.autoIncrement(response1.useResult())
+        data = Entity.entityBuilder()
+                .put("id", intPrimitive(null))
+                .put("data", stringPrimitive("testData"))
+                .put("anotherData", stringPrimitive("another data"))
+                .build()
+
+        db.beginTransaction(space.bucketOf(data))
+        space.insert(data)
+        space.insert(data)
+        space.insert(data)
         db.commitTransaction()
         db.renameSpace(spaceName, spaceName = "r_tx2")
-        data = Entity.entityBuilder()
-                .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
-                .put("data", stringPrimitive("testData"))
-                .build()
+
         space = db.space(spaceName)
-        space.autoIncrement(data)
+        space.bucketIdGenerator({ignore -> (long) 99})
+
+        space.insert(data)
         then:
         def len = space.len()
         sleep(synchronizationTimeout)
@@ -170,11 +216,10 @@ class TarantoolTransaction extends Specification {
         when:
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("another data"))
                 .build()
 
-        db.beginTransaction()
+        db.beginTransaction(space.bucketOf(data))
         space.put(data)
         response1 = space.get(intPrimitive(7))
         db.commitTransaction()
@@ -187,7 +232,7 @@ class TarantoolTransaction extends Specification {
         when:
         Value key = intPrimitive(7)
 
-        db.beginTransaction()
+        db.beginTransaction(space.bucketOf(data))
         response1 = space.delete(key)
         response2 = space.get(key)
         db.commitTransaction()
@@ -197,9 +242,11 @@ class TarantoolTransaction extends Specification {
 
 
         when:
-        db.beginTransaction()
+        db.beginTransaction(space.bucketOf(data))
         space.put(data)
-        space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
+        space.update(key,
+                assigment(2, 'data', stringPrimitive("temp")),
+                assigment(2, 'data', stringPrimitive("another")))
         response1 = space.get(key)
         db.commitTransaction()
         response1.synchronize()
@@ -208,11 +255,10 @@ class TarantoolTransaction extends Specification {
         ((Entity)response1.get()).get("data") == stringPrimitive("another")
 
         when:
-        db.beginTransaction()
+        db.beginTransaction(space.bucketOf(data))
         space.put(data)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data)
@@ -221,13 +267,6 @@ class TarantoolTransaction extends Specification {
         response1.synchronize()
         then:
         response1.get() == data
-
-        when:
-        space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
-        space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
-        sleep(synchronizationTimeout)
-        then:
-        space.get(request).isPresent() && space.get(intPrimitive(8)).isPresent()
 
         cleanup:
         db.dropSpace(spaceName)
