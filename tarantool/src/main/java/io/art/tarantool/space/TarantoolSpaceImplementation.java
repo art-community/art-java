@@ -211,7 +211,7 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
             this.request = requestDependency.get();
         }
 
-        private  SelectRequest index(String index) {
+        private SelectRequest index(String index) {
             this.index = index;
             return this;
         }
@@ -226,15 +226,20 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
             return this;
         }
 
-//        public SelectRequest filterBy(Long field, Object value, String comparator){
-//            filters.add(cast(linkedListOf(field, value, comparator)));
-//            return this;
-//        }
-//
-//        public SelectRequest sortBy(Long field, String comparator){
-//            sortMethod = linkedListOf(field, comparator);
-//            return this;
-//        }
+        public SelectRequest filter(TarantoolFilterOperation operation){
+            stream.add(operation.build());
+            return this;
+        }
+
+        public SelectRequest sortBy(TarantoolSortOperation comparator){
+            stream.add(comparator.build());
+            return this;
+        }
+
+        public SelectRequest distinct(Long fieldNumber){
+            stream.add(linkedListOf(DISTINCT, fieldNumber));
+            return this;
+        }
 
         public SelectRequest iterator(TarantoolIndexIterator iterator){
             this.iterator = iterator.toString();

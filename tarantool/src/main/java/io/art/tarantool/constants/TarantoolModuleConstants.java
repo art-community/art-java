@@ -107,7 +107,28 @@ public interface TarantoolModuleConstants {
     interface SelectOptions{
         String LIMIT = "limit";
         String OFFSET = "offset";
+        String FILTER = "filter";
+        String SORT = "sort";
+        String DISTINCT = "distinct";
+    }
 
+    interface SelectFilters{
+        String EQUALS = "art.core.stream.filters.equals";
+        String NOT_EQUALS = "art.core.stream.filters.notEquals";
+        String MORE = "art.core.stream.filters.more";
+        String LESS = "art.core.stream.filters.less";
+        String IN_RANGE = "art.core.stream.filters.inRange";
+        String MOT_IN_RANGE = "art.core.stream.filters.notInRange";
+
+        String LIKE = "art.core.stream.filters.like";
+        String STARTS_WITH = "art.core.stream.filters.startsWith";
+        String ENDS_WITH = "art.core.stream.filters.endsWith";
+        String CONTAINS = "art.core.stream.filters.contains";
+    }
+
+    interface SelectSortComparator {
+        String DESCENDING = "art.core.stream.comparators.greater";
+        String ASCENDING = "art.core.stream.comparators.less";
     }
 
     enum TarantoolFieldType {

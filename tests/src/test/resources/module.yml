@@ -1,5 +1,5 @@
 tarantool:
-  logging: true
+  logging: false
   clusters:
     routers:
       instances:
