@@ -19,7 +19,6 @@ public class TarantoolStorageModelConfigurator {
     private final Class<?> spaceModelClass;
     private final Class<?> primaryKeyClass;
     private final Map<String, Class<?>> searchers = map();
-    private final Map<String, TarantoolSortMethodModel> sorters = map();
     private Function<?, Long> bucketIdGenerator = emptyFunction();
 
     public TarantoolStorageModelConfigurator(String space, Class<?> spaceModelClass, Class<?> primaryKeyClass){
@@ -43,11 +42,6 @@ public class TarantoolStorageModelConfigurator {
         return this;
     }
 
-    public TarantoolStorageModelConfigurator sortBy(String sorterName, TarantoolSortMethodModel sorterModel){
-        sorters.put(sorterName, sorterModel);
-        return this;
-    }
-
     TarantoolSpaceModel configure() {
         return TarantoolSpaceModel.builder()
                 .cluster(cluster)
@@ -55,7 +49,6 @@ public class TarantoolStorageModelConfigurator {
                 .spaceModelClass(spaceModelClass)
                 .primaryKeyClass(primaryKeyClass)
                 .searchers(searchers)
-                .sorters(sorters)
                 .bucketIdGenerator(bucketIdGenerator)
                 .build();
     }

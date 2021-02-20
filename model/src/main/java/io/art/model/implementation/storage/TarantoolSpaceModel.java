@@ -20,7 +20,6 @@ public class TarantoolSpaceModel implements SpaceModel {
     private final Class<?> spaceModelClass;
     private final Class<?> primaryKeyClass;
     private final Map<String, Class<?>> searchers;
-    private final Map<String, TarantoolSortMethodModel> sorters;
     private final Function<?, Long> bucketIdGenerator;
 
     public String getId(){
