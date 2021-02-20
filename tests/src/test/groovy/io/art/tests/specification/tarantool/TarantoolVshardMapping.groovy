@@ -35,12 +35,12 @@ class TarantoolVshardMapping extends Specification {
 
         TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
+        space.bucketIdGenerator({ ignored -> 99 })
 
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(1))
-                .put("bucket_id", intPrimitive(99))
+                .put("id", intPrimitive(null))
                 .put("data", stringPrimitive("data"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
@@ -54,7 +54,8 @@ class TarantoolVshardMapping extends Specification {
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
-                .unique(true))
+                .unique(true)
+                .sequence())
         db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
                 .part(2)
                 .unique(false))
@@ -62,20 +63,16 @@ class TarantoolVshardMapping extends Specification {
 
         when:
         for (int i = 0; i<testOpsCount; i++){
-            space.autoIncrement(data)
+            space.insert(data)
         }
 
         db.createIndex(spaceName, 'data', tarantoolSpaceIndex()
                 .part(3)
                 .unique(false))
-        sleep(synchronizationTimeout*10)
 
-        def response = space.select(stringPrimitive('data'))
-                .index('data')
-                .get()
-        int succeeded = response.size()
         then:
-        (succeeded == testOpsCount)
+        sleep(1000)
+        (space.select('data', stringPrimitive('data')).get().size() == testOpsCount)
 
         cleanup:
         db.dropSpace(spaceName)
@@ -88,12 +85,11 @@ class TarantoolVshardMapping extends Specification {
 
         TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
-
+        space.bucketIdGenerator({ ignored -> 99 })
 
 
         Entity data = Entity.entityBuilder()
-                .put("id", intPrimitive(1))
-                .put("bucket_id", intPrimitive(99))
+                .put("id", intPrimitive(null))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
@@ -107,7 +103,8 @@ class TarantoolVshardMapping extends Specification {
                 .type(TarantoolIndexType.TREE)
                 .part("id")
                 .ifNotExists(true)
-                .unique(true))
+                .unique(true)
+                .sequence())
         db.createIndex(spaceName, 'bucket_id', tarantoolSpaceIndex()
                 .part(2)
                 .unique(false))
@@ -116,7 +113,7 @@ class TarantoolVshardMapping extends Specification {
 
         int succeeded = 0
         for (int i = 0; i<testOpsCount; i++){
-            space.autoIncrement(data)
+            space.insert(data)
             sleep(synchronizationTimeout)
             if (space.get(intPrimitive(i+1)).isPresent()) succeeded++
         }

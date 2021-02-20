@@ -1,6 +1,7 @@
 
 package io.art.tests.specification.tarantool
 
+import io.art.core.caster.Caster
 import io.art.tarantool.space.TarantoolSpace
 import io.art.value.immutable.Entity
 import io.art.value.immutable.Value
@@ -16,6 +17,7 @@ import static io.art.tarantool.configuration.space.TarantoolSpaceIndex.tarantool
 import static io.art.tarantool.configuration.space.TarantoolSpaceConfig.tarantoolSpaceConfig
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexType
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolFieldType.*
+import static io.art.tarantool.model.operation.TarantoolUpdateFieldOperation.assigment
 import static io.art.value.factory.PrimitivesFactory.*
 import static io.art.tarantool.module.TarantoolModule.*
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolIndexIterator;
@@ -148,7 +150,8 @@ class Tarantool extends Specification {
         when:
         space.put(data)
         space.update(intPrimitive(7),
-                TarantoolUpdateFieldOperation.assigment(2, 'data', stringPrimitive("another")))
+                assigment(2, 'data', stringPrimitive("temp")),
+                assigment(2, 'data', stringPrimitive("another")))
         sleep(synchronizationTimeout)
         then:
         (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
@@ -183,11 +186,12 @@ class Tarantool extends Specification {
         TarantoolInstance db = tarantoolInstance(clusterId)
         TarantoolSpace space = db.space(spaceName)
         createShardedSpace(db, spaceName)
+        space.bucketIdGenerator({ ignore -> 99 })
+
 
 
         Entity data = Entity.entityBuilder()
                 .put("id", intPrimitive(null))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
@@ -217,10 +221,10 @@ class Tarantool extends Specification {
         db.renameSpace(spaceName, spaceName = "r_crud2")
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .build()
         space = db.space(spaceName)
+        space.bucketIdGenerator({ ignored -> 99 })
         space.insert(data)
         then:
         sleep(synchronizationTimeout)
@@ -236,10 +240,10 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(7)
         sleep(synchronizationTimeout)
-        Value response = space.select(request).get().get(0)
+        Entity response = Caster.cast(space.select(request).get().get(0))
         then:
         true
-        response == data
+        response.get('data') == stringPrimitive("testData")
 
 
         when:
@@ -252,7 +256,6 @@ class Tarantool extends Specification {
         when:
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("another data"))
                 .build()
         space.put(data)
@@ -265,7 +268,8 @@ class Tarantool extends Specification {
         Value key = intPrimitive(7)
         space.delete(key).synchronize()
         then:
-        space.get(request).isEmpty()
+        sleep(synchronizationTimeout)
+        space.get(key).isEmpty()
 
 
         when:
@@ -273,14 +277,14 @@ class Tarantool extends Specification {
         sleep(synchronizationTimeout)
         space.update(key, TarantoolUpdateFieldOperation.assigment(3, 'data', stringPrimitive("another")))
         then:
-        (space.get(request).get() as Entity).get("data") == stringPrimitive("another")
+        sleep(synchronizationTimeout)
+        (space.get(intPrimitive(7)).get() as Entity).get("data") == stringPrimitive("another")
 
         when:
         space.put(data)
         sleep(synchronizationTimeout)
         data = Entity.entityBuilder()
                 .put("id", intPrimitive(7))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("something"))
                 .build()
         space.replace(data).synchronize()
@@ -290,9 +294,9 @@ class Tarantool extends Specification {
         when:
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
         space.upsert(data, TarantoolUpdateFieldOperation.addition(1, 1))
-        sleep(synchronizationTimeout)
         then:
-        space.get(request).isPresent() && space.get(intPrimitive(8)).isPresent()
+        sleep(synchronizationTimeout)
+        space.get(intPrimitive(7)).isPresent() && space.get(intPrimitive(8)).isPresent()
 
         cleanup:
         db.dropSpace(spaceName)
@@ -306,11 +310,11 @@ class Tarantool extends Specification {
         TarantoolSpace space = db.space(spaceName)
         createShardedSpace(db, spaceName)
         db.createIndex(spaceName, "dataIndex", tarantoolSpaceIndex().unique(false).part(3))
+        space.bucketIdGenerator({ ignore -> 99 })
 
 
         Entity data = Entity.entityBuilder()
                 .put("id", intPrimitive(null))
-                .put("bucket_id", intPrimitive(99))
                 .put("data", stringPrimitive("testData"))
                 .put("anotherData", stringPrimitive("another data"))
                 .build()
@@ -323,7 +327,8 @@ class Tarantool extends Specification {
         space.insert(data)
         space.insert(data)
         sleep(synchronizationTimeout)
-        def response = space.select(intPrimitive(5)).index("primary")
+        def response = space.select(intPrimitive(5))
+                .index("primary")
                 .iterator(TarantoolIndexIterator.EQ)
                 .execute().synchronize()
         then:
