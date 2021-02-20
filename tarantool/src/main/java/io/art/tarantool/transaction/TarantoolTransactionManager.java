@@ -1,6 +1,7 @@
 package io.art.tarantool.transaction;
 
 import io.art.core.local.ThreadLocalValue;
+import io.art.tarantool.exception.*;
 import io.art.tarantool.model.record.TarantoolRecord;
 import io.art.tarantool.model.record.TarantoolSingleRecord;
 import io.art.tarantool.model.record.TarantoolTransactionRecord;
@@ -13,6 +14,7 @@ import java.util.function.*;
 
 import static io.art.core.factory.ListFactory.linkedList;
 import static io.art.core.local.ThreadLocalValue.threadLocal;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.ATTEMPT_OF_NESTED_TRANSACTION;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.TRANSACTION;
 import static io.art.tarantool.model.transaction.operation.TarantoolTransactionOperation.tarantoolTransactionOperation;
 
@@ -25,6 +27,7 @@ public class TarantoolTransactionManager {
     }
 
     public void begin(){
+        if (state().activeTransaction) throw new TarantoolTransactionException(ATTEMPT_OF_NESTED_TRANSACTION);
         state().activeTransaction = true;
     }
 
@@ -38,11 +41,11 @@ public class TarantoolTransactionManager {
         for (TarantoolTransactionRecord<?> result : state().results){
             result.transactionCommitted(response);
         }
-        clearTransaction();
+        state().clear();
     }
 
     public void cancel(){
-        clearTransaction();
+        state().clear();
     }
 
     public TarantoolRecord<?> callRW(String function, Function<List<?>, Optional<?>> responseMapper, Object ... args){
@@ -77,19 +80,19 @@ public class TarantoolTransactionManager {
         return state().isRWTransaction ? client.get().callRW(function, args) : client.get().callRO(function, args);
     }
 
-    private void clearTransaction(){
-        state().operations.clear();
-        state().results.clear();
-        state().isRWTransaction = false;
-        state().activeTransaction = false;
-        state().bucketId = null;
-    }
-
     private static class State {
         public boolean activeTransaction = false;
         public boolean isRWTransaction = false;
         public Long bucketId = null;
         public final List<List<?>> operations = linkedList();
         public final List<TarantoolTransactionRecord<?>> results = linkedList();
+
+        private void clear(){
+            operations.clear();
+            results.clear();
+            isRWTransaction = false;
+            activeTransaction = false;
+            bucketId = null;
+        }
     }
 }

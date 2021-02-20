@@ -89,6 +89,10 @@ public class TarantoolInstance {
         transactionManager.begin();
     }
 
+    public void beginTransaction(Long bucketId){
+        transactionManager.begin(bucketId);
+    }
+
     public void commitTransaction(){
         transactionManager.commit();
     }
