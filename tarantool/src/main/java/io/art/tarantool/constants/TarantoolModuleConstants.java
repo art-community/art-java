@@ -107,7 +107,7 @@ public interface TarantoolModuleConstants {
     interface SelectOptions{
         String LIMIT = "limit";
         String OFFSET = "offset";
-        String ITERATOR = "iterator";
+
     }
 
     enum TarantoolFieldType {

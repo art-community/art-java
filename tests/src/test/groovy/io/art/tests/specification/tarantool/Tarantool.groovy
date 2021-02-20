@@ -174,6 +174,14 @@ class Tarantool extends Specification {
         then:
         space.get(intPrimitive(7)).isPresent() && space.get(intPrimitive(8)).isPresent()
 
+        when:
+        response = space.select(intPrimitive(7))
+                .index("primary")
+                .iterator(TarantoolIndexIterator.EQ)
+                .execute().synchronize()
+        then:
+        ((Entity) response.get().get(0)).get("id") == intPrimitive(7) && response.get().size() == 1
+
 
         cleanup:
         db.dropSpace(spaceName)
@@ -234,6 +242,7 @@ class Tarantool extends Specification {
         when:
         request = intPrimitive(6)
         then:
+        sleep(synchronizationTimeout)
         space.get(request).isEmpty() && space.select(request).get().isEmpty()
 
 

@@ -198,8 +198,10 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
 
     public class SelectRequest {
         private final Object request;
-        private final Map<String, Object> options = MapFactory.map();
         private Object index = 0;
+        String iterator = TarantoolIndexIterator.EQ.toString();
+        private final List<List<Object>> stream = linkedList();
+
 
         public SelectRequest(Value request) {
             this.request = requestTuple(request);
@@ -215,22 +217,32 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
         }
 
         public SelectRequest limit(Long limit) {
-            options.put(LIMIT, limit);
+            stream.add(linkedListOf(LIMIT, limit));
             return this;
         }
 
         public SelectRequest offset(Long offset) {
-            options.put(OFFSET, offset);
+            stream.add(linkedListOf(OFFSET, offset));
             return this;
         }
 
-        public SelectRequest iterator(TarantoolModuleConstants.TarantoolIndexIterator iterator){
-            options.put(ITERATOR, iterator.toString());
+//        public SelectRequest filterBy(Long field, Object value, String comparator){
+//            filters.add(cast(linkedListOf(field, value, comparator)));
+//            return this;
+//        }
+//
+//        public SelectRequest sortBy(Long field, String comparator){
+//            sortMethod = linkedListOf(field, comparator);
+//            return this;
+//        }
+
+        public SelectRequest iterator(TarantoolIndexIterator iterator){
+            this.iterator = iterator.toString();
             return this;
         }
 
         public TarantoolRecord<ImmutableArray<T>> execute(){
-            return cast(transactionManager.callRO(SELECT, selectToModelMapper, space, request, index, options));
+            return cast(transactionManager.callRO(SELECT, selectToModelMapper, space, request, index, iterator, stream));
         }
 
         public ImmutableArray<T> get(){
