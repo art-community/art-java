@@ -32,7 +32,7 @@ public class ServiceMethodConfiguration {
     private boolean deactivated;
     private boolean logging;
     private boolean validating;
-    private Scheduler scheduler;
+    private Scheduler blockingScheduler;
 
     public static ServiceMethodConfiguration from(ServerModuleRefresher refresher, ConfigurationSource source) {
         ServiceMethodConfiguration configuration = new ServiceMethodConfiguration();
@@ -42,7 +42,7 @@ public class ServiceMethodConfiguration {
         configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
         configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), true));
         configuration.validating = validationListener.emit(orElse(source.getBool(VALIDATING_KEY), true));
-        configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
+        configuration.blockingScheduler = DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER;
         return configuration;
     }
 }

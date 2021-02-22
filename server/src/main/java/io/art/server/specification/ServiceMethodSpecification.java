@@ -35,6 +35,7 @@ import reactor.core.scheduler.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
+import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
@@ -102,16 +103,19 @@ public class ServiceMethodSpecification {
     private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
 
     @Getter(lazy = true, value = PRIVATE)
+    private final Function<Flux<Value>, Flux<Value>> adoptServe = adoptServe();
+
+    @Getter(lazy = true, value = PRIVATE)
     private final ServerModuleConfiguration configuration = serverModule().configuration();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Scheduler scheduler = getConfiguration().getScheduler(serviceId, methodId);
+    private final Scheduler blockingScheduler = getConfiguration().getBlockingScheduler(serviceId, methodId);
 
     public Flux<Value> serve(Flux<Value> input) {
-        return defer(() -> deferredServe(input)).subscribeOn(getScheduler());
+        return getAdoptServe().apply(input);
     }
 
-    private Flux<Value> deferredServe(Flux<Value> input) {
+    private Flux<Value> processServing(Flux<Value> input) {
         try {
             return transformOutput(implementation.serve(transformInput(input)));
         } catch (Throwable throwable) {
@@ -195,5 +199,12 @@ public class ServiceMethodSpecification {
             default:
                 throw new ImpossibleSituationException();
         }
+    }
+
+    private Function<Flux<Value>, Flux<Value>> adoptServe() {
+        if (inputMode == BLOCKING || outputMode == BLOCKING) {
+            return input -> defer(() -> processServing(input)).subscribeOn(getBlockingScheduler());
+        }
+        return this::processServing;
     }
 }

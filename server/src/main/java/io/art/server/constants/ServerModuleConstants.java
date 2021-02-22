@@ -25,7 +25,7 @@ import static reactor.core.scheduler.Schedulers.*;
 
 public interface ServerModuleConstants {
     interface Defaults {
-        Scheduler DEFAULT_SERVICE_METHOD_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, Integer.MAX_VALUE, "service-method");
+        Scheduler DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER = newBoundedElastic(DEFAULT_THREAD_POOL_SIZE, Integer.MAX_VALUE, "(blocking):service-method");
     }
 
     interface ConfigurationKeys {

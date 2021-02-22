@@ -59,11 +59,11 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         return getActionConfiguration(id).map(configuration -> configuration.getConnectors().get(protocol));
     }
 
-    public Scheduler getScheduler(String communicatorId, String actionId) {
+    public Scheduler getBlockingScheduler(String communicatorId, String actionId) {
         return getActionConfiguration(CommunicatorActionIdentifier.communicatorAction(communicatorId, actionId))
-                .map(CommunicatorActionConfiguration::getScheduler)
+                .map(CommunicatorActionConfiguration::getBlockingScheduler)
                 .orElseGet(() -> ofNullable(getConfigurations().get(communicatorId))
-                        .map(CommunicatorProxyConfiguration::getScheduler)
+                        .map(CommunicatorProxyConfiguration::getBlockingScheduler)
                         .orElse(scheduler));
     }
 
@@ -116,7 +116,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
+            configuration.scheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
                     .map(communicator -> communicator.getNestedMap(PROXIES_SECTION, proxy -> CommunicatorProxyConfiguration.from(configuration.refresher, proxy)))
                     .orElse(emptyImmutableMap());

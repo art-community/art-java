@@ -49,14 +49,14 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     @Getter
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
     @Getter
-    private Scheduler scheduler;
+    private Scheduler blockingScheduler;
 
-    public Scheduler getScheduler(String serviceId, String methodId) {
+    public Scheduler getBlockingScheduler(String serviceId, String methodId) {
         return getMethodConfiguration(serviceId, methodId)
-                .map(ServiceMethodConfiguration::getScheduler)
+                .map(ServiceMethodConfiguration::getBlockingScheduler)
                 .orElseGet(() -> ofNullable(configurations.get(serviceId))
-                        .map(ServiceConfiguration::getScheduler)
-                        .orElse(scheduler));
+                        .map(ServiceConfiguration::getBlockingScheduler)
+                        .orElse(blockingScheduler));
     }
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(String serviceId, String methodId) {
@@ -107,7 +107,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
+            configuration.blockingScheduler = DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER;
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
                     .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                     .orElse(emptyImmutableMap());
