@@ -45,72 +45,72 @@ public class ResilienceConfiguration {
 
     public static ResilienceConfiguration from(ChangesListener listener, ConfigurationSource source) {
         ResilienceConfigurationBuilder builder = ResilienceConfiguration.builder();
-        boolean hasRetry = source.has(RETRY_KEY);
-        boolean hasCircuitBreaker = source.has(CIRCUIT_BREAKER_KEY);
-        boolean hasRateLimiter = source.has(RATE_LIMITER_KEY);
-        boolean hasBulkhead = source.has(BULKHEAD_KEY);
-        boolean hasTimeLimiter = source.has(TIME_LIMITER_KEY);
+        boolean hasRetry = listener.emit(source.has(RETRY_KEY));
+        boolean hasCircuitBreaker = listener.emit(source.has(CIRCUIT_BREAKER_KEY));
+        boolean hasRateLimiter = listener.emit(source.has(RATE_LIMITER_KEY));
+        boolean hasBulkhead = listener.emit(source.has(BULKHEAD_KEY));
+        boolean hasTimeLimiter = listener.emit(source.has(TIME_LIMITER_KEY));
         if (hasRetry) {
             RetryConfig defaults = RetryConfig.ofDefaults();
             builder.retry(RetryConfig.custom()
-                    .maxAttempts(orElse(source.getInt(RETRY_MAX_ATTEMPTS_KEY), defaults.getMaxAttempts()))
-                    .waitDuration(orElse(source.getDuration(RETRY_WAIT_DURATION_KEY), ofMillis(DEFAULT_WAIT_DURATION)))
+                    .maxAttempts(listener.emit(orElse(source.getInt(RETRY_MAX_ATTEMPTS_KEY), defaults.getMaxAttempts())))
+                    .waitDuration(listener.emit(orElse(source.getDuration(RETRY_WAIT_DURATION_KEY), ofMillis(DEFAULT_WAIT_DURATION))))
                     .build());
         }
         if (hasCircuitBreaker) {
             CircuitBreakerConfig defaults = CircuitBreakerConfig.ofDefaults();
             builder.circuitBreaker(CircuitBreakerConfig.custom()
                     .automaticTransitionFromOpenToHalfOpenEnabled(
-                            orElse(
+                            listener.emit(orElse(
                                     source.getBool(CIRCUIT_BREAKER_AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED_KEY),
                                     defaults.isAutomaticTransitionFromOpenToHalfOpenEnabled()
-                            )
+                            ))
                     )
                     .failureRateThreshold(
-                            orElse(source.getFloat(CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD_KEY), defaults.getFailureRateThreshold())
+                            listener.emit(orElse(source.getFloat(CIRCUIT_BREAKER_FAILURE_RATE_THRESHOLD_KEY), defaults.getFailureRateThreshold()))
                     )
                     .permittedNumberOfCallsInHalfOpenState(
-                            orElse(source.getInt(CIRCUIT_BREAKER_PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE_KEY), defaults.getPermittedNumberOfCallsInHalfOpenState())
+                            listener.emit(orElse(source.getInt(CIRCUIT_BREAKER_PERMITTED_NUMBER_OF_CALLS_IN_HALF_OPEN_STATE_KEY), defaults.getPermittedNumberOfCallsInHalfOpenState()))
                     )
                     .minimumNumberOfCalls(
-                            orElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_MINIMUM_NUMBER_OF_CALLS_KEY), defaults.getMinimumNumberOfCalls())
+                            listener.emit(orElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_MINIMUM_NUMBER_OF_CALLS_KEY), defaults.getMinimumNumberOfCalls()))
                     )
                     .slidingWindowSize(
-                            orElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE_KEY), defaults.getSlidingWindowSize())
+                            listener.emit(orElse(source.getInt(CIRCUIT_BREAKER_SLIDING_WINDOW_SIZE_KEY), defaults.getSlidingWindowSize()))
                     )
                     .slidingWindowType(
-                            enumOf(SlidingWindowType::valueOf, source.getString(CIRCUIT_BREAKER_SLIDING_WINDOW_TYPE_KEY), defaults.getSlidingWindowType())
+                            listener.emit(enumOf(SlidingWindowType::valueOf, source.getString(CIRCUIT_BREAKER_SLIDING_WINDOW_TYPE_KEY), defaults.getSlidingWindowType()))
                     )
                     .slowCallDurationThreshold(
-                            orElse(source.getDuration(CIRCUIT_BREAKER_SLOW_CALL_DURATION_THRESHOLD_KEY), defaults.getSlowCallDurationThreshold())
+                            listener.emit(orElse(source.getDuration(CIRCUIT_BREAKER_SLOW_CALL_DURATION_THRESHOLD_KEY), defaults.getSlowCallDurationThreshold()))
                     )
                     .slowCallRateThreshold(
-                            orElse(source.getFloat(CIRCUIT_BREAKER_SLOW_CALL_RATE_THRESHOLD_KEY), defaults.getSlowCallRateThreshold())
+                            listener.emit(orElse(source.getFloat(CIRCUIT_BREAKER_SLOW_CALL_RATE_THRESHOLD_KEY), defaults.getSlowCallRateThreshold()))
                     )
                     .build());
         }
         if (hasRateLimiter) {
             RateLimiterConfig defaults = RateLimiterConfig.ofDefaults();
             builder.rateLimiter(RateLimiterConfig.custom()
-                    .limitForPeriod(orElse(source.getInt(RATE_LIMITER_LIMIT_FOR_PERIOD_KEY), defaults.getLimitForPeriod()))
-                    .limitRefreshPeriod(orElse(source.getDuration(RATE_LIMITER_LIMIT_REFRESH_PERIOD_KEY), defaults.getLimitRefreshPeriod()))
-                    .timeoutDuration(orElse(source.getDuration(RATE_LIMITER_TIMEOUT_DURATION_KEY), defaults.getTimeoutDuration()))
-                    .writableStackTraceEnabled(orElse(source.getBool(RATE_LIMITER_WRITABLE_STACK_TRACE_ENABLED_KEY), defaults.isWritableStackTraceEnabled()))
+                    .limitForPeriod(listener.emit(orElse(source.getInt(RATE_LIMITER_LIMIT_FOR_PERIOD_KEY), defaults.getLimitForPeriod())))
+                    .limitRefreshPeriod(listener.emit(orElse(source.getDuration(RATE_LIMITER_LIMIT_REFRESH_PERIOD_KEY), defaults.getLimitRefreshPeriod())))
+                    .timeoutDuration(listener.emit(orElse(source.getDuration(RATE_LIMITER_TIMEOUT_DURATION_KEY), defaults.getTimeoutDuration())))
+                    .writableStackTraceEnabled(listener.emit(orElse(source.getBool(RATE_LIMITER_WRITABLE_STACK_TRACE_ENABLED_KEY), defaults.isWritableStackTraceEnabled())))
                     .build());
         }
         if (hasBulkhead) {
             BulkheadConfig defaults = BulkheadConfig.ofDefaults();
             builder.bulkhead(BulkheadConfig.custom()
-                    .maxConcurrentCalls(orElse(source.getInt(BULKHEAD_MAX_CONCURRENT_CALLS_KEY), defaults.getMaxConcurrentCalls()))
-                    .maxWaitDuration(orElse(source.getDuration(BULKHEAD_MAX_WAIT_DURATION_KEY), defaults.getMaxWaitDuration()))
-                    .writableStackTraceEnabled(orElse(source.getBool(BULKHEAD_WRITABLE_STACK_TRACE_ENABLED_KEY), defaults.isWritableStackTraceEnabled()))
+                    .maxConcurrentCalls(listener.emit(orElse(source.getInt(BULKHEAD_MAX_CONCURRENT_CALLS_KEY), defaults.getMaxConcurrentCalls())))
+                    .maxWaitDuration(listener.emit(orElse(source.getDuration(BULKHEAD_MAX_WAIT_DURATION_KEY), defaults.getMaxWaitDuration())))
+                    .writableStackTraceEnabled(listener.emit(orElse(source.getBool(BULKHEAD_WRITABLE_STACK_TRACE_ENABLED_KEY), defaults.isWritableStackTraceEnabled())))
                     .build());
         }
         if (hasTimeLimiter) {
             TimeLimiterConfig defaults = TimeLimiterConfig.ofDefaults();
             builder.timeLimiter(TimeLimiterConfig.custom()
-                    .timeoutDuration(orElse(source.getDuration(TIME_LIMITER_TIMEOUT_DURATION_KEY), defaults.getTimeoutDuration()))
-                    .cancelRunningFuture(orElse(source.getBool(TIME_LIMITER_CANCEL_RUNNING_FUTURE_KEY), defaults.shouldCancelRunningFuture()))
+                    .timeoutDuration(listener.emit(orElse(source.getDuration(TIME_LIMITER_TIMEOUT_DURATION_KEY), defaults.getTimeoutDuration())))
+                    .cancelRunningFuture(listener.emit(orElse(source.getBool(TIME_LIMITER_CANCEL_RUNNING_FUTURE_KEY), defaults.shouldCancelRunningFuture())))
                     .build());
         }
         return builder.build();
