@@ -34,7 +34,7 @@ import static io.art.resilience.constants.ResilienceModuleConstants.Configuratio
 public class CommunicatorProxyConfiguration {
     private boolean logging;
     private boolean deactivated;
-    private Scheduler scheduler;
+    private Scheduler blockingScheduler;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
     private ImmutableMap<String, String> connectors;
     private ResilienceConfiguration resilienceConfiguration;
@@ -45,7 +45,7 @@ public class CommunicatorProxyConfiguration {
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
-        configuration.scheduler = DEFAULT_COMMUNICATOR_SCHEDULER;
+        configuration.blockingScheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER;
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
         configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
         configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));

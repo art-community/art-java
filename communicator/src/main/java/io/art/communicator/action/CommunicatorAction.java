@@ -40,6 +40,7 @@ import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
+import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
@@ -111,6 +112,9 @@ public class CommunicatorAction implements Managed {
     private final Function<Flux<Object>, Object> adoptOutput = adoptOutput();
 
     @Getter(lazy = true, value = PRIVATE)
+    private final Function<Object, Object> adoptCommunicate = adoptCommunicate();
+
+    @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
 
     private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
@@ -119,7 +123,7 @@ public class CommunicatorAction implements Managed {
     private final CommunicatorActionImplementation implementation;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Scheduler scheduler = getConfiguration().getScheduler(communicatorId, actionId);
+    private final Scheduler blockingScheduler = getConfiguration().getBlockingScheduler(communicatorId, actionId);
 
     @Override
     public void initialize() {
@@ -138,10 +142,10 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate(Object input) {
-        return cast(getAdoptOutput().apply(defer(() -> deferredCommunicate(input)).subscribeOn(getScheduler())));
+        return cast(getAdoptCommunicate().apply(input));
     }
 
-    private Flux<Object> deferredCommunicate(Object input) {
+    private Flux<Object> processCommunication(Object input) {
         try {
             return let(input, this::transformInput, Flux.<Value>empty())
                     .transform(implementation::communicate)
@@ -236,5 +240,12 @@ public class CommunicatorAction implements Managed {
 
     private Optional<CommunicatorProxyConfiguration> communicatorConfiguration() {
         return ofNullable(getConfiguration().getConfigurations().get(communicatorId));
+    }
+
+    private Function<Object, Object> adoptCommunicate() {
+        if (outputMode == BLOCKING) {
+            return input -> getAdoptOutput().apply(defer(() -> processCommunication(input)).subscribeOn(getBlockingScheduler()));
+        }
+        return input -> getAdoptOutput().apply(processCommunication(input));
     }
 }

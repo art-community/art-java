@@ -33,7 +33,7 @@ public class ServiceConfiguration {
     private boolean deactivated;
     private boolean logging;
     private boolean validating;
-    private Scheduler scheduler;
+    private Scheduler blockingScheduler;
     private ImmutableMap<String, ServiceMethodConfiguration> methods;
 
     public static ServiceConfiguration from(ServerModuleRefresher refresher, ConfigurationSource source) {
@@ -44,7 +44,7 @@ public class ServiceConfiguration {
         configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
         configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), true));
         configuration.validating = validationListener.emit(orElse(source.getBool(VALIDATING_KEY), true));
-        configuration.scheduler = DEFAULT_SERVICE_METHOD_SCHEDULER;
+        configuration.blockingScheduler = DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER;
         configuration.methods = source.getNestedMap(METHODS_KEY, method -> ServiceMethodConfiguration.from(refresher, source));
         return configuration;
     }

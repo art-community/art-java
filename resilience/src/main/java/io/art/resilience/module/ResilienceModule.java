@@ -81,7 +81,7 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     }
 
     @Override
-    public void beforeReload(Context.Service contextService) {
+    public void afterReload(Context.Service contextService) {
         state.reset();
     }
 }
