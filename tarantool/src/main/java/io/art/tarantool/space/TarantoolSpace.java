@@ -5,7 +5,7 @@ import io.art.storage.space.*;
 import io.art.tarantool.model.operation.*;
 import io.art.tarantool.model.record.*;
 import io.art.tarantool.model.transaction.dependency.*;
-import io.art.tarantool.space.TarantoolSpaceImplementation.*;
+import io.art.tarantool.space.TarantoolSpaceImplementation.SelectRequest;
 import io.art.value.immutable.*;
 import java.util.*;
 import java.util.function.*;
@@ -21,10 +21,10 @@ public interface TarantoolSpace<T, K> extends Space<T, K> {
 
     TarantoolRecord<ImmutableArray<T>> getAll();
 
-    SelectRequest select(K request);
-    SelectRequest select(TarantoolTransactionDependency requestDependency);
-    SelectRequest select(String index, Value request);
-    SelectRequest select(String index, TarantoolTransactionDependency requestDependency);
+    SelectRequest<T> select(K request);
+    SelectRequest<T> select(TarantoolTransactionDependency requestDependency);
+    SelectRequest<T> select(String index, Value request);
+    SelectRequest<T> select(String index, TarantoolTransactionDependency requestDependency);
 
     TarantoolRecord<T> delete(K key);
     TarantoolRecord<T> delete(TarantoolTransactionDependency keyDependency);

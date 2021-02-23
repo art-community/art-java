@@ -73,20 +73,20 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
     }
 
 
-    public SelectRequest select(K request){
-        return new SelectRequest(keyMapper.apply(request));
+    public SelectRequest<T> select(K request){
+        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, keyMapper.apply(request));
     }
 
-    public SelectRequest select(TarantoolTransactionDependency requestDependency){
-        return new SelectRequest(requestDependency);
+    public SelectRequest<T> select(TarantoolTransactionDependency requestDependency){
+        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, requestDependency);
     }
 
-    public SelectRequest select(String index, Value request){
-        return new SelectRequest(request).index(index);
+    public SelectRequest<T> select(String index, Value request){
+        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, request).index(index);
     }
 
-    public SelectRequest select(String index, TarantoolTransactionDependency requestDependency){
-        return new SelectRequest(requestDependency).index(index);
+    public SelectRequest<T> select(String index, TarantoolTransactionDependency requestDependency){
+        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, requestDependency).index(index);
     }
 
 
@@ -196,65 +196,76 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
         this.bucketIdGenerator = generator;
     }
 
-    public class SelectRequest {
+    public static class SelectRequest<R> {
+        private final TarantoolTransactionManager transactionManager;
+        private final String space;
+        private final Function<List<?>, Optional<?>> selectToModelMapper;
         private final Object request;
         private Object index = 0;
         String iterator = TarantoolIndexIterator.EQ.toString();
         private final List<List<Object>> stream = linkedList();
 
 
-        public SelectRequest(Value request) {
+        public SelectRequest(TarantoolTransactionManager transactionManager, String space, 
+                             Function<List<?>, Optional<?>> selectToModelMapper, Value request) {
+            this.transactionManager = transactionManager;
+            this.space = space;
+            this.selectToModelMapper = selectToModelMapper;
             this.request = requestTuple(request);
         }
 
-        public SelectRequest(TarantoolTransactionDependency requestDependency) {
+        public SelectRequest(TarantoolTransactionManager transactionManager, String space, 
+                             Function<List<?>, Optional<?>> selectToModelMapper, TarantoolTransactionDependency requestDependency) {
+            this.transactionManager = transactionManager;
+            this.space = space;
+            this.selectToModelMapper = selectToModelMapper;
             this.request = requestDependency.get();
         }
 
-        private SelectRequest index(String index) {
+        private SelectRequest<R> index(String index) {
             this.index = index;
             return this;
         }
 
-        public SelectRequest limit(Long limit) {
+        public SelectRequest<R> limit(Long limit) {
             stream.add(linkedListOf(LIMIT, limit));
             return this;
         }
 
-        public SelectRequest offset(Long offset) {
+        public SelectRequest<R> offset(Long offset) {
             stream.add(linkedListOf(OFFSET, offset));
             return this;
         }
 
-        public SelectRequest filter(TarantoolFilterOperation operation){
+        public SelectRequest<R> filter(TarantoolFilterOperation operation){
             stream.add(operation.build());
             return this;
         }
 
-        public SelectRequest sortBy(TarantoolSortOperation comparator){
+        public SelectRequest<R> sortBy(TarantoolSortOperation comparator){
             stream.add(comparator.build());
             return this;
         }
 
-        public SelectRequest distinct(Long fieldNumber){
+        public SelectRequest<R> distinct(Long fieldNumber){
             stream.add(linkedListOf(DISTINCT, fieldNumber));
             return this;
         }
 
-        public SelectRequest iterator(TarantoolIndexIterator iterator){
+        public SelectRequest<R> iterator(TarantoolIndexIterator iterator){
             this.iterator = iterator.toString();
             return this;
         }
 
-        public TarantoolRecord<ImmutableArray<T>> execute(){
+        public TarantoolRecord<ImmutableArray<R>> execute(){
             return cast(transactionManager.callRO(SELECT, selectToModelMapper, space, request, index, iterator, stream));
         }
 
-        public ImmutableArray<T> get(){
+        public ImmutableArray<R> get(){
             return execute().get();
         }
 
-        public Stream<T> stream() {
+        public Stream<R> stream() {
             return execute().get().stream();
         }
     }
