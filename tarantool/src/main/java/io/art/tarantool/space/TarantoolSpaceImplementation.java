@@ -1,6 +1,7 @@
 package io.art.tarantool.space;
 
 import io.art.core.collection.*;
+import io.art.tarantool.model.field.*;
 import io.art.tarantool.model.mapping.*;
 import io.art.tarantool.model.operation.*;
 import io.art.tarantool.model.record.*;
@@ -18,6 +19,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.MapFactory.map;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
@@ -32,6 +34,7 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
     private final Function<K, Value> keyMapper;
     private final Function<List<?>, Optional<?>> selectToModelMapper;
     private Function<T, Long> bucketIdGenerator = emptyFunction();
+    protected Map<String, TarantoolField> fields = map();
 
     @Builder
     public TarantoolSpaceImplementation(String space,
@@ -74,19 +77,19 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
 
 
     public SelectRequest<T> select(K request){
-        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, keyMapper.apply(request));
+        return new SelectRequest<T>(this, keyMapper.apply(request));
     }
 
     public SelectRequest<T> select(TarantoolTransactionDependency requestDependency){
-        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, requestDependency);
+        return new SelectRequest<T>(this, requestDependency);
     }
 
     public SelectRequest<T> select(String index, Value request){
-        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, request).index(index);
+        return new SelectRequest<T>(this, request).index(index);
     }
 
     public SelectRequest<T> select(String index, TarantoolTransactionDependency requestDependency){
-        return new SelectRequest<T>(transactionManager, space, selectToModelMapper, requestDependency).index(index);
+        return new SelectRequest<T>(this, requestDependency).index(index);
     }
 
 
@@ -196,29 +199,25 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
         this.bucketIdGenerator = generator;
     }
 
+    public void fieldsMap(Map<String, TarantoolField> map){
+        fields = map;
+    }
+
     public static class SelectRequest<R> {
-        private final TarantoolTransactionManager transactionManager;
-        private final String space;
-        private final Function<List<?>, Optional<?>> selectToModelMapper;
+        private final TarantoolSpaceImplementation<?,?> space;
         private final Object request;
         private Object index = 0;
         String iterator = TarantoolIndexIterator.EQ.toString();
         private final List<List<Object>> stream = linkedList();
 
 
-        public SelectRequest(TarantoolTransactionManager transactionManager, String space, 
-                             Function<List<?>, Optional<?>> selectToModelMapper, Value request) {
-            this.transactionManager = transactionManager;
+        public SelectRequest(TarantoolSpaceImplementation<?,?> space, Value request) {
             this.space = space;
-            this.selectToModelMapper = selectToModelMapper;
             this.request = requestTuple(request);
         }
 
-        public SelectRequest(TarantoolTransactionManager transactionManager, String space, 
-                             Function<List<?>, Optional<?>> selectToModelMapper, TarantoolTransactionDependency requestDependency) {
-            this.transactionManager = transactionManager;
+        public SelectRequest(TarantoolSpaceImplementation<?,?> space, TarantoolTransactionDependency requestDependency) {
             this.space = space;
-            this.selectToModelMapper = selectToModelMapper;
             this.request = requestDependency.get();
         }
 
@@ -227,28 +226,48 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
             return this;
         }
 
-        public SelectRequest<R> limit(Long limit) {
+        public SelectRequest<R> limit(long limit) {
             stream.add(linkedListOf(LIMIT, limit));
             return this;
         }
 
-        public SelectRequest<R> offset(Long offset) {
+        public SelectRequest<R> limit(int limit) {
+            stream.add(linkedListOf(LIMIT, limit));
+            return this;
+        }
+
+        public SelectRequest<R> offset(long offset) {
+            stream.add(linkedListOf(OFFSET, offset));
+            return this;
+        }
+
+        public SelectRequest<R> offset(int offset) {
             stream.add(linkedListOf(OFFSET, offset));
             return this;
         }
 
         public SelectRequest<R> filter(TarantoolFilterOperation operation){
-            stream.add(operation.build());
+            stream.add(operation.build(space.fields));
             return this;
         }
 
         public SelectRequest<R> sortBy(TarantoolSortOperation comparator){
-            stream.add(comparator.build());
+            stream.add(comparator.build(space.fields));
             return this;
         }
 
         public SelectRequest<R> distinct(Long fieldNumber){
             stream.add(linkedListOf(DISTINCT, fieldNumber));
+            return this;
+        }
+
+        public SelectRequest<R> distinct(String fieldName){
+            stream.add(linkedListOf(DISTINCT, space.fields.get(fieldName).getFieldNumber()));
+            return this;
+        }
+
+        public SelectRequest<R> distinct(TarantoolField field){
+            stream.add(linkedListOf(DISTINCT, field.getFieldNumber()));
             return this;
         }
 
@@ -258,7 +277,7 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
         }
 
         public TarantoolRecord<ImmutableArray<R>> execute(){
-            return cast(transactionManager.callRO(SELECT, selectToModelMapper, space, request, index, iterator, stream));
+            return cast(space.transactionManager.callRO(SELECT, space.selectToModelMapper, space.space, request, index, iterator, stream));
         }
 
         public ImmutableArray<R> get(){
