@@ -7,11 +7,10 @@ import lombok.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
-import static io.art.core.collection.ImmutableSet.immutableSetBuilder;
-import static io.art.core.factory.ArrayFactory.streamOf;
-import static io.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_CLUSTER_NAME;
-import static lombok.AccessLevel.PACKAGE;
+import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
+import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor
