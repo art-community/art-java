@@ -12,31 +12,31 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
-public class TarantoolSpaceModelConfigurator {
+public class TarantoolSpaceModelConfigurator<T, K> {
     private String cluster = DEFAULT_TARANTOOL_CLUSTER_NAME;
     private final String space;
-    private final Class<?> spaceModelClass;
-    private final Class<?> primaryKeyClass;
+    private final Class<T> spaceModelClass;
+    private final Class<K> primaryKeyClass;
     private final Map<String, Class<?>> searchers = map();
-    private Function<?, Long> bucketIdGenerator = emptyFunction();
+    private Function<T, Long> bucketIdGenerator = emptyFunction();
 
-    public TarantoolSpaceModelConfigurator(String space, Class<?> spaceModelClass, Class<?> primaryKeyClass){
+    public TarantoolSpaceModelConfigurator(String space, Class<T> spaceModelClass, Class<K> primaryKeyClass){
         this.space = space;
         this.spaceModelClass = spaceModelClass;
         this.primaryKeyClass = primaryKeyClass;
     }
 
-    protected TarantoolSpaceModelConfigurator cluster(String cluster){
+    protected TarantoolSpaceModelConfigurator<T, K> cluster(String cluster){
         this.cluster = cluster;
         return this;
     }
 
-    public TarantoolSpaceModelConfigurator sharded(Function<?, Long> bucketIdGenerator){
+    public TarantoolSpaceModelConfigurator<T, K> sharded(Function<T, Long> bucketIdGenerator){
         this.bucketIdGenerator = bucketIdGenerator;
         return this;
     }
 
-    public TarantoolSpaceModelConfigurator searchBy(String indexName, Class<?> keyClass){
+    public TarantoolSpaceModelConfigurator<T, K> searchBy(String indexName, Class<?> keyClass){
         searchers.put(indexName, keyClass);
         return this;
     }
