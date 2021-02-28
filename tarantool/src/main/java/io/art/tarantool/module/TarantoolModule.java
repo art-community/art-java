@@ -1,7 +1,6 @@
 package io.art.tarantool.module;
 
 import io.art.core.module.*;
-import io.art.core.property.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.instance.*;
 import io.art.tarantool.module.connection.client.*;
@@ -32,7 +31,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     }
 
     public static TarantoolInstance tarantoolInstance(){
-        return tarantoolInstance(DEFAULT_CLUSTER_NAME);
+        return tarantoolInstance(DEFAULT_TARANTOOL_CLUSTER_NAME);
     }
 
     public static TarantoolInstance tarantoolInstance(String clusterId){

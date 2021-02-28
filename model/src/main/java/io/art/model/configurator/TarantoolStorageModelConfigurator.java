@@ -1,55 +1,47 @@
 package io.art.model.configurator;
 
-import io.art.model.implementation.storage.TarantoolSortMethodModel;
-import io.art.model.implementation.storage.TarantoolSpaceModel;
-import lombok.Getter;
+import io.art.core.collection.*;
+import io.art.model.implementation.storage.*;
+import lombok.*;
 
-import java.util.Map;
-import java.util.function.Function;
+import java.util.function.*;
+import java.util.stream.*;
 
-import static io.art.core.constants.EmptyFunctions.emptyFunction;
-import static io.art.core.factory.MapFactory.map;
-import static io.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_CLUSTER_NAME;
+import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.collection.ImmutableSet.immutableSetBuilder;
+import static io.art.core.factory.ArrayFactory.streamOf;
+import static io.art.tarantool.constants.TarantoolModuleConstants.DEFAULT_TARANTOOL_CLUSTER_NAME;
 import static lombok.AccessLevel.PACKAGE;
 
 @Getter(value = PACKAGE)
+@RequiredArgsConstructor
 public class TarantoolStorageModelConfigurator {
-    private String cluster = DEFAULT_CLUSTER_NAME;
-    private final String space;
-    private final Class<?> spaceModelClass;
-    private final Class<?> primaryKeyClass;
-    private final Map<String, Class<?>> searchers = map();
-    private Function<?, Long> bucketIdGenerator = emptyFunction();
+    private final String clusterName;
+    private final ImmutableSet.Builder<TarantoolSpaceModelConfigurator> tarantoolConfigurators = immutableSetBuilder();
 
-    public TarantoolStorageModelConfigurator(String space, Class<?> spaceModelClass, Class<?> primaryKeyClass){
-        this.space = space;
-        this.spaceModelClass = spaceModelClass;
-        this.primaryKeyClass = primaryKeyClass;
+    public TarantoolStorageModelConfigurator(){
+        clusterName = DEFAULT_TARANTOOL_CLUSTER_NAME;
     }
 
-    public TarantoolStorageModelConfigurator cluster(String cluster){
-        this.cluster = cluster;
+    public final TarantoolStorageModelConfigurator space(String space, Class<?> spaceModelClass, Class<?> primaryKeyClass) {
+        tarantoolConfigurators.add(new TarantoolSpaceModelConfigurator(space, spaceModelClass, primaryKeyClass).cluster(clusterName));
         return this;
     }
 
-    public TarantoolStorageModelConfigurator sharded(Function<?, Long> bucketIdGenerator){
-        this.bucketIdGenerator = bucketIdGenerator;
+    @SafeVarargs
+    public final TarantoolStorageModelConfigurator space(String space, Class<?> spaceModelClass, Class<?> primaryKeyClass,
+                                                    UnaryOperator<TarantoolSpaceModelConfigurator>... configurators) {
+        streamOf(configurators)
+                .map(configurator -> (Function<TarantoolSpaceModelConfigurator, TarantoolSpaceModelConfigurator>) configurator)
+                .reduce(Function::andThen)
+                .map(configurator -> configurator.apply(new TarantoolSpaceModelConfigurator(space, spaceModelClass, primaryKeyClass).cluster(clusterName)))
+                .ifPresent(tarantoolConfigurators::add);
         return this;
     }
 
-    public TarantoolStorageModelConfigurator searchBy(String indexName, Class<?> keyClass){
-        searchers.put(indexName, keyClass);
-        return this;
-    }
-
-    TarantoolSpaceModel configure() {
-        return TarantoolSpaceModel.builder()
-                .cluster(cluster)
-                .space(space)
-                .spaceModelClass(spaceModelClass)
-                .primaryKeyClass(primaryKeyClass)
-                .searchers(searchers)
-                .bucketIdGenerator(bucketIdGenerator)
-                .build();
+    Stream<TarantoolSpaceModel> configure() {
+        return this.tarantoolConfigurators.build()
+                .stream()
+                .map(TarantoolSpaceModelConfigurator::configure);
     }
 }
