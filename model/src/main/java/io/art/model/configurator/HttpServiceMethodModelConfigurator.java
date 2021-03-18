@@ -20,24 +20,44 @@ package io.art.model.configurator;
 
 import io.art.model.implementation.server.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
+import io.netty.handler.codec.http.*;
 import lombok.*;
+
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Getter(value = PACKAGE)
 public class HttpServiceMethodModelConfigurator {
-    private final String name;
-    private String id;
+    private final String id;
+    private String name;
+    private boolean deactivated = false;
+    private boolean logging = false;
+    private HttpMethod httpMethod = HttpMethod.GET;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
-    public HttpServiceMethodModelConfigurator(String name) {
-        this.name = name;
-        this.id = name;
+    public HttpServiceMethodModelConfigurator(String methodName) {
+        this.name = methodName;
+        this.id = methodName;
     }
 
-    public HttpServiceMethodModelConfigurator id(String id) {
-        this.id = id;
+    public HttpServiceMethodModelConfigurator pathName(String path) {
+        this.name = path;
+        return this;
+    }
+
+    public HttpServiceMethodModelConfigurator deactivate() {
+        deactivated = false;
+        return this;
+    }
+
+    public HttpServiceMethodModelConfigurator logging(boolean isLogging) {
+        logging = isLogging;
+        return this;
+    }
+
+    public HttpServiceMethodModelConfigurator httpMethod(HttpMethod httpMethod) {
+        this.httpMethod = httpMethod;
         return this;
     }
 
@@ -47,6 +67,13 @@ public class HttpServiceMethodModelConfigurator {
     }
 
     HttpServiceMethodModel configure() {
-        return new HttpServiceMethodModel(id, name, decorator);
+        return HttpServiceMethodModel.builder()
+                .id(id)
+                .name(name)
+                .deactivated(deactivated)
+                .logging(logging)
+                .httpMethod(httpMethod)
+                .decorator(decorator)
+                .build();
     }
 }

@@ -27,9 +27,10 @@ import java.util.function.*;
 
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.set;
+import static io.art.core.factory.SetFactory.*;
 import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
@@ -37,10 +38,14 @@ import static lombok.AccessLevel.*;
 public class HttpServiceModelConfigurator {
     private final Map<String, HttpServiceRouteModelConfigurator> routes = map();
     private final Set<String> existentIDs = set();
+    private String host = BROADCAST_IP_ADDRESS;
     private Integer port = 80;
+    private boolean logging = false;
+    private boolean compression = false;
 
-    public HttpServiceModelConfigurator(Class<?> baseServiceClass) {
-        putRouteIfAbsent(SLASH, new HttpServiceRouteModelConfigurator(baseServiceClass));
+    public HttpServiceModelConfigurator host(String host) {
+        this.host = host;
+        return this;
     }
 
     public HttpServiceModelConfigurator port(Integer port){
@@ -48,14 +53,24 @@ public class HttpServiceModelConfigurator {
         return this;
     }
 
+    public HttpServiceModelConfigurator logging(boolean isLogging) {
+        this.logging = isLogging;
+        return this;
+    }
+
+    public HttpServiceModelConfigurator compress() {
+        this.compression = true;
+        return this;
+    }
+
     public HttpServiceModelConfigurator route(String path, Class<?> serviceClass){
-        putRouteIfAbsent(path, new HttpServiceRouteModelConfigurator(serviceClass));
+        addRouteIfAbsent(path, new HttpServiceRouteModelConfigurator(serviceClass));
         return this;
     }
 
     public HttpServiceModelConfigurator route(String path, Class<?> serviceClass,
                                               UnaryOperator<HttpServiceRouteModelConfigurator> configurator){
-        putRouteIfAbsent(path, configurator.apply(new HttpServiceRouteModelConfigurator(serviceClass)));
+        addRouteIfAbsent(path, configurator.apply(new HttpServiceRouteModelConfigurator(serviceClass)));
         return this;
     }
 
@@ -64,6 +79,7 @@ public class HttpServiceModelConfigurator {
                 .map(route -> HttpServiceModel.builder()
                         .id(route.getValue().getId())
                         .path(route.getKey())
+                        .host(host)
                         .port(port)
                         .serviceClass(route.getValue().getServiceClass())
                         .methods(route.getValue().getMethods()
@@ -71,13 +87,16 @@ public class HttpServiceModelConfigurator {
                                 .stream()
                                 .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                         .decorator(route.getValue().getDecorator())
+                        .logging(logging)
+                        .compression(compression)
                         .build())
                 .collect(immutableSetCollector());
     }
 
-    private void putRouteIfAbsent(String route, HttpServiceRouteModelConfigurator configurator){
+    private void addRouteIfAbsent(String route, HttpServiceRouteModelConfigurator configurator){
         if (!existentIDs.contains(configurator.getId()) && !routes.containsKey(route)){
             existentIDs.add(configurator.getId());
+            configurator.logging(logging);
             routes.put(route, configurator);
         }
     }

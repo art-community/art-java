@@ -24,11 +24,11 @@ public interface ServiceModel {
                 .findFirst();
     }
 
-    default ServiceMethodSpecificationBuilder implement(String id, ServiceMethodSpecificationBuilder current) {
+    default ServiceMethodSpecificationBuilder implement(String MethodId, ServiceMethodSpecificationBuilder current) {
         ImmutableMap<String, ServiceMethodModel> methods = getMethods();
         if (isEmpty(methods)) {
-            return let(getDecorator(), decorator -> decorator.apply(id, current));
+            return let(getDecorator(), decorator -> decorator.apply(MethodId, current));
         }
-        return let(methods.get(id), methodModel -> methodModel.implement(current));
+        return let(methods.get(MethodId), methodModel -> methodModel.implement(current));
     }
 }
