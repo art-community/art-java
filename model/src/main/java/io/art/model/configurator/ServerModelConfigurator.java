@@ -20,16 +20,19 @@ package io.art.model.configurator;
 
 import io.art.core.collection.*;
 import io.art.core.operator.*;
+import io.art.http.server.*;
 import io.art.model.implementation.server.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static java.util.function.UnaryOperator.*;
+
+import java.util.*;
 import java.util.function.*;
 
 public class ServerModelConfigurator {
     private final ImmutableSet.Builder<RsocketServiceModelConfigurator> rsocketServices = immutableSetBuilder();
-    private final ImmutableSet.Builder<HttpServiceModelConfigurator> httpServices = immutableSetBuilder();
+    private final HttpServerModelConfigurator httpServerConfigurator = new HttpServerModelConfigurator();
 
     public final ServerModelConfigurator rsocket(Class<?> service) {
         rsocketServices.add(new RsocketServiceModelConfigurator(service));
@@ -46,11 +49,8 @@ public class ServerModelConfigurator {
     }
 
     @SafeVarargs
-    public final ServerModelConfigurator http(UnaryOperator<HttpServiceModelConfigurator>... configurators) {
-        streamOf(configurators)
-                .reduce(Operators::andThen)
-                .map(configurator -> configurator.apply(new HttpServiceModelConfigurator()))
-                .ifPresent(httpServices::add);
+    public final ServerModelConfigurator http(UnaryOperator<HttpServerModelConfigurator>... configurators) {
+        streamOf(configurators).forEach(configurator -> configurator.apply(httpServerConfigurator));
         return this;
     }
 
@@ -59,13 +59,11 @@ public class ServerModelConfigurator {
                 .stream()
                 .map(RsocketServiceModelConfigurator::configure)
                 .collect(immutableMapCollector(RsocketServiceModel::getId, identity()));
-        ImmutableMap<String, HttpServiceModel> httpServices = this.httpServices.build()
-                .stream()
-                .flatMap(configurator -> configurator.configure().stream())
-                .collect(immutableMapCollector(HttpServiceModel::getId, identity()));
+        HttpServerModel httpServer = httpServerConfigurator.configure();
         return ServerModuleModel.builder()
                 .rsocketServices(rsocketServices)
-                .httpServices(httpServices)
+                .httpServer(httpServer)
+                .httpServices(httpServer.getServices())
                 .build();
     }
 }

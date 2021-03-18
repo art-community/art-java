@@ -28,6 +28,8 @@ import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 public class HttpMethodConfiguration {
     private String path;
     private HttpMethod method;
+    private boolean deactivated;
+    private boolean logging;
 
     public static HttpMethodConfiguration from(HttpServiceConfiguration serviceConfiguration, ConfigurationSource source) {
         HttpMethodConfiguration configuration = HttpMethodConfiguration.builder().build();

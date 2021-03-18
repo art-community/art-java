@@ -1,0 +1,126 @@
+/*
+ * ART
+ *
+ * Copyright 2020 ART
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.art.model.configurator;
+
+import io.art.core.collection.*;
+import io.art.core.model.*;
+import io.art.model.implementation.server.*;
+import io.art.value.constants.ValueModuleConstants.*;
+import lombok.*;
+
+import java.util.*;
+import java.util.function.*;
+
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.*;
+import static io.art.http.constants.HttpModuleConstants.Defaults.DEFAULT_PORT;
+import static lombok.AccessLevel.*;
+
+@Getter(value = PACKAGE)
+@NoArgsConstructor
+public class HttpServerModelConfigurator {
+    private final Map<String, HttpServiceModelConfigurator> routes = map();
+    private final Set<String> existentIDs = set();
+    private String host = BROADCAST_IP_ADDRESS;
+    private Integer port = DEFAULT_PORT;
+    private boolean compression = false;
+    private boolean logging = false;
+    private int fragmentationMtu;
+    private DataFormat defaultDataFormat;
+    private DataFormat defaultMetaDataFormat;
+    private ServiceMethodIdentifier defaultServiceMethod;
+
+    public HttpServerModelConfigurator route(String path, Class<?> serviceClass){
+        addRouteIfAbsent(path, new HttpServiceModelConfigurator(serviceClass));
+        return this;
+    }
+
+    public HttpServerModelConfigurator route(String path, Class<?> serviceClass,
+                                             UnaryOperator<HttpServiceModelConfigurator> configurator){
+        addRouteIfAbsent(path, configurator.apply(new HttpServiceModelConfigurator(serviceClass)));
+        return this;
+    }
+
+    public HttpServerModelConfigurator host(String host) {
+        this.host = host;
+        return this;
+    }
+
+    public HttpServerModelConfigurator port(Integer port) {
+        this.port = port;
+        return this;
+    }
+
+    public HttpServerModelConfigurator logging(boolean isLogging) {
+        logging = isLogging;
+        return this;
+    }
+
+    public HttpServerModelConfigurator compress() {
+        compression = true;
+        return this;
+    }
+
+    public HttpServerModelConfigurator fragmentationMtu(int mtu) {
+        fragmentationMtu = mtu;
+        return this;
+    }
+
+    public HttpServerModelConfigurator defaultDataFormat(DataFormat format) {
+        defaultDataFormat = format;
+        return this;
+    }
+
+    public HttpServerModelConfigurator defaultMetaDataFormat(DataFormat format) {
+        defaultMetaDataFormat = format;
+        return this;
+    }
+
+    public HttpServerModelConfigurator defaultServiceMethod(ServiceMethodIdentifier serviceMethodId) {
+        defaultServiceMethod = serviceMethodId;
+        return this;
+    }
+
+    protected HttpServerModel configure() {
+        ImmutableMap.Builder<String, HttpServiceModel> services = immutableMapBuilder();
+        routes.forEach((path, modelConfigurator) -> services.put(path, modelConfigurator.configure(path)));
+        return HttpServerModel.builder()
+                .services(services.build())
+                .host(host)
+                .port(port)
+                .compression(compression)
+                .logging(logging)
+                .fragmentationMtu(fragmentationMtu)
+                .defaultDataFormat(defaultDataFormat)
+                .defaultMetaDataFormat(defaultMetaDataFormat)
+                .defaultServiceMethod(defaultServiceMethod)
+                .build();
+    }
+
+    private void addRouteIfAbsent(String route, HttpServiceModelConfigurator configurator){
+        if (!existentIDs.contains(configurator.getId()) && !routes.containsKey(route)){
+            existentIDs.add(configurator.getId());
+            configurator.logging(logging);
+            routes.put(route, configurator);
+        }
+    }
+
+}

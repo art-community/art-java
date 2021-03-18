@@ -21,6 +21,7 @@ package io.art.model.implementation.server;
 import io.art.core.collection.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
+
 import java.util.function.*;
 
 @Getter
@@ -28,11 +29,7 @@ import java.util.function.*;
 public class HttpServiceModel implements ServiceModel {
     private final String id;
     private final String path;
-    private final String host;
-    private final Integer port;
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, ServiceMethodModel> methods;
-    private final boolean logging;
-    private final boolean compression;
 }

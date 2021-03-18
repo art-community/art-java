@@ -38,6 +38,8 @@ public class ServerModuleModel {
     @Builder.Default
     private final ImmutableMap<String, HttpServiceModel> httpServices = emptyImmutableMap();
 
+    private final HttpServerModel httpServer;
+
     public ServiceMethodSpecificationBuilder implement(String serviceId, String methodId, ServiceMethodSpecificationBuilder current) {
         return let(getServices().get(serviceId), service -> service.implement(methodId, current), current);
     }

@@ -30,19 +30,19 @@ import java.util.function.*;
 @Getter(value = PACKAGE)
 public class HttpServiceMethodModelConfigurator {
     private final String id;
-    private String name;
+    private String path;
     private boolean deactivated = false;
     private boolean logging = false;
     private HttpMethod httpMethod = HttpMethod.GET;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
     public HttpServiceMethodModelConfigurator(String methodName) {
-        this.name = methodName;
+        this.path = methodName;
         this.id = methodName;
     }
 
     public HttpServiceMethodModelConfigurator pathName(String path) {
-        this.name = path;
+        this.path = path;
         return this;
     }
 
@@ -69,7 +69,7 @@ public class HttpServiceMethodModelConfigurator {
     HttpServiceMethodModel configure() {
         return HttpServiceMethodModel.builder()
                 .id(id)
-                .name(name)
+                .name(path)
                 .deactivated(deactivated)
                 .logging(logging)
                 .httpMethod(httpMethod)
