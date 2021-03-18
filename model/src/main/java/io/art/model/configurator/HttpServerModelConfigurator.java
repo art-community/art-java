@@ -94,8 +94,8 @@ public class HttpServerModelConfigurator {
         return this;
     }
 
-    public HttpServerModelConfigurator defaultServiceMethod(ServiceMethodIdentifier serviceMethodId) {
-        defaultServiceMethod = serviceMethodId;
+    public HttpServerModelConfigurator defaultServiceMethod(String serviceId, String methodId) {
+        defaultServiceMethod = new ServiceMethodIdentifier(serviceId, methodId);
         return this;
     }
 
