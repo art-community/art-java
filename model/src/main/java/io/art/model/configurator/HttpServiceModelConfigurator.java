@@ -18,59 +18,68 @@
 
 package io.art.model.configurator;
 
+import io.art.core.collection.*;
 import io.art.model.implementation.server.*;
-import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.factory.MapFactory.*;
-import static lombok.AccessLevel.*;
+
 import java.util.*;
 import java.util.function.*;
 
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.set;
+import static lombok.AccessLevel.*;
+
 @Getter(value = PACKAGE)
+@NoArgsConstructor
 public class HttpServiceModelConfigurator {
-    private String id;
-    private final Class<?> serviceClass;
-    private final Map<String, HttpServiceMethodModelConfigurator> methods = map();
-    private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
+    private final Map<String, HttpServiceRouteModelConfigurator> routes = map();
+    private final Set<String> existentIDs = set();
+    private Integer port = 80;
 
-    public HttpServiceModelConfigurator(Class<?> serviceClass) {
-        this.serviceClass = serviceClass;
-        this.id = serviceClass.getSimpleName();
+    public HttpServiceModelConfigurator(Class<?> baseServiceClass) {
+        putRouteIfAbsent(SLASH, new HttpServiceRouteModelConfigurator(baseServiceClass));
     }
 
-    public HttpServiceModelConfigurator id(String id) {
-        this.id = id;
+    public HttpServiceModelConfigurator port(Integer port){
+        this.port = port;
         return this;
     }
 
-    public HttpServiceModelConfigurator method(String name) {
-        return method(name, UnaryOperator.identity());
-    }
-
-    public HttpServiceModelConfigurator method(String name, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
-        methods.putIfAbsent(name, configurator.apply(new HttpServiceMethodModelConfigurator(name)));
+    public HttpServiceModelConfigurator route(String path, Class<?> serviceClass){
+        putRouteIfAbsent(path, new HttpServiceRouteModelConfigurator(serviceClass));
         return this;
     }
 
-    public HttpServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
-        BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.decorator;
-        this.decorator = (method, builder) -> {
-            builder = current.apply(method, builder);
-            return decorator.apply(method, builder);
-        };
+    public HttpServiceModelConfigurator route(String path, Class<?> serviceClass,
+                                              UnaryOperator<HttpServiceRouteModelConfigurator> configurator){
+        putRouteIfAbsent(path, configurator.apply(new HttpServiceRouteModelConfigurator(serviceClass)));
         return this;
     }
 
-    HttpServiceModel configure() {
-        return HttpServiceModel.builder()
-                .id(id)
-                .serviceClass(serviceClass)
-                .decorator(decorator)
-                .methods(methods
-                        .entrySet()
-                        .stream()
-                        .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
-                .build();
+    protected ImmutableSet<HttpServiceModel> configure() {
+        return routes.entrySet().stream()
+                .map(route -> HttpServiceModel.builder()
+                        .id(route.getValue().getId())
+                        .path(route.getKey())
+                        .port(port)
+                        .serviceClass(route.getValue().getServiceClass())
+                        .methods(route.getValue().getMethods()
+                                .entrySet()
+                                .stream()
+                                .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
+                        .decorator(route.getValue().getDecorator())
+                        .build())
+                .collect(immutableSetCollector());
     }
+
+    private void putRouteIfAbsent(String route, HttpServiceRouteModelConfigurator configurator){
+        if (!existentIDs.contains(configurator.getId()) && !routes.containsKey(route)){
+            existentIDs.add(configurator.getId());
+            routes.put(route, configurator);
+        }
+    }
+
 }

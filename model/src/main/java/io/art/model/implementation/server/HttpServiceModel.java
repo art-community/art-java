@@ -27,6 +27,8 @@ import java.util.function.*;
 @Builder
 public class HttpServiceModel implements ServiceModel {
     private final String id;
+    private final String path;
+    private final Integer port;
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, ServiceMethodModel> methods;

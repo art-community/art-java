@@ -45,19 +45,30 @@ public class ServerModelConfigurator {
         return this;
     }
 
-    public final ServerModelConfigurator http(Class<?> service) {
-        httpServices.add(new HttpServiceModelConfigurator(service));
+    public final ServerModelConfigurator http(Class<?> serviceClass) {
+        httpServices.add(new HttpServiceModelConfigurator(serviceClass));
         return this;
     }
 
     @SafeVarargs
-    public final ServerModelConfigurator http(Class<?> service, UnaryOperator<HttpServiceModelConfigurator>... configurators) {
+    public final ServerModelConfigurator http(UnaryOperator<HttpServiceModelConfigurator>... configurators) {
         streamOf(configurators)
                 .reduce(Operators::andThen)
-                .map(configurator -> configurator.apply(new HttpServiceModelConfigurator(service)))
+                .map(configurator -> configurator.apply(new HttpServiceModelConfigurator()))
                 .ifPresent(httpServices::add);
         return this;
     }
+
+    @SafeVarargs
+    public final ServerModelConfigurator http(Class<?> serviceClass, UnaryOperator<HttpServiceModelConfigurator>... configurators) {
+        streamOf(configurators)
+                .reduce(Operators::andThen)
+                .map(configurator -> configurator.apply(new HttpServiceModelConfigurator(serviceClass)))
+                .ifPresent(httpServices::add);
+        return this;
+    }
+
+
 
     ServerModuleModel configure() {
         ImmutableMap<String, RsocketServiceModel> rsocketServices = this.rsocketServices.build()
@@ -66,7 +77,7 @@ public class ServerModelConfigurator {
                 .collect(immutableMapCollector(RsocketServiceModel::getId, identity()));
         ImmutableMap<String, HttpServiceModel> httpServices = this.httpServices.build()
                 .stream()
-                .map(HttpServiceModelConfigurator::configure)
+                .flatMap(configurator -> configurator.configure().stream())
                 .collect(immutableMapCollector(HttpServiceModel::getId, identity()));
         return ServerModuleModel.builder()
                 .rsocketServices(rsocketServices)
