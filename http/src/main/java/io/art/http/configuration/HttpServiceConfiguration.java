@@ -29,11 +29,10 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 public class HttpServiceConfiguration {
     private ImmutableMap<String, HttpMethodConfiguration> methods;
     private String path;
-    private final HttpServerConfiguration serverConfiguration;
 
-    public static HttpServiceConfiguration from(HttpServerConfiguration serverConfiguration, ConfigurationSource source) {
-        HttpServiceConfiguration configuration = HttpServiceConfiguration.builder()
-                .serverConfiguration(serverConfiguration).build();
+
+    public static HttpServiceConfiguration from(ConfigurationSource source) {
+        HttpServiceConfiguration configuration = HttpServiceConfiguration.builder().build();
         configuration.methods = source.getNestedMap(METHODS_KEY, method -> HttpMethodConfiguration.from(configuration, method));
         configuration.path = source.getString(PATH_KEY);
         return configuration;

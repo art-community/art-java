@@ -24,6 +24,8 @@ import lombok.*;
 
 import java.util.function.*;
 
+import static io.art.core.caster.Caster.cast;
+
 @Getter
 @Builder
 public class HttpServiceModel implements ServiceModel {
@@ -31,5 +33,13 @@ public class HttpServiceModel implements ServiceModel {
     private final String path;
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
-    private final ImmutableMap<String, ServiceMethodModel> methods;
+    private final ImmutableMap<String, HttpServiceMethodModel> methods;
+
+    public ImmutableMap<String, ServiceMethodModel> getMethods() {
+        return cast(methods);
+    }
+
+    public ImmutableMap<String, HttpServiceMethodModel> getHttpMethods() {
+        return methods;
+    }
 }

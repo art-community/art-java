@@ -23,10 +23,19 @@ import io.art.core.collection.*;
 import io.art.http.configuration.*;
 import io.art.http.module.*;
 import io.art.http.refresher.*;
-import io.art.rsocket.configuration.*;
-import io.art.rsocket.module.*;
-import io.art.rsocket.refresher.*;
+import io.art.model.implementation.server.*;
+import io.art.server.module.*;
 import lombok.*;
+import reactor.netty.http.server.*;
+
+import java.util.function.*;
+
+import static io.art.core.caster.Caster.cast;
+import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.collection.ImmutableMap.immutableMapBuilder;
+import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.core.constants.StringConstants.SLASH;
+import static io.netty.handler.codec.http.HttpMethod.GET;
 
 @Getter
 @UsedByGenerator
@@ -35,6 +44,30 @@ public class HttpCustomizer {
 
     public HttpCustomizer(HttpModule module) {
         this.configuration = new Custom(module.getRefresher());
+    }
+
+    public HttpCustomizer server(HttpServerConfiguration serverConfiguration) {
+        configuration.serverConfiguration = serverConfiguration;
+        return this;
+    }
+
+    public HttpCustomizer server(HttpServerModel httpServerModel) {
+        HttpServerConfiguration.HttpServerConfigurationBuilder serverConfigurationBuilder = HttpServerConfiguration.builder()
+                .httpServer(HttpServer.create()
+                        .host(httpServerModel.getHost())
+                        .port(httpServerModel.getPort())
+                        .compress(httpServerModel.isCompression()))
+                .defaultDataFormat(httpServerModel.getDefaultDataFormat())
+                .defaultMetaDataFormat(httpServerModel.getDefaultMetaDataFormat())
+                .fragmentationMtu(httpServerModel.getFragmentationMtu())
+                .logging(httpServerModel.isLogging())
+                .services(httpServerModel.getServices().values().stream()
+                .collect(cast(immutableMapCollector(HttpServiceModel::getId, this::buildServiceConfig))));
+
+        let(httpServerModel.getDefaultServiceMethod(), serverConfigurationBuilder::defaultServiceMethod);
+
+        server(serverConfigurationBuilder.build());
+        return this;
     }
 
     public HttpCustomizer services(ImmutableMap<String, HttpServiceConfiguration> services) {
@@ -50,6 +83,40 @@ public class HttpCustomizer {
     public HttpCustomizer activateCommunicator() {
         configuration.activateCommunicator = true;
         return this;
+    }
+
+    private HttpServiceConfiguration buildServiceConfig(HttpServiceModel serviceModel) {
+        ImmutableMap.Builder<String, HttpMethodConfiguration> configs = immutableMapBuilder();
+        configs.putAll(ServerModule.serverModule()
+                .configuration()
+                .getRegistry()
+                .getServices()
+                .get(serviceModel.getId())
+                .getMethods().keySet().stream()
+                .collect(immutableMapCollector(id -> id, id -> HttpMethodConfiguration.builder()
+                        .path(serviceModel.getPath().endsWith(SLASH) ?
+                                serviceModel.getPath() + id :
+                                serviceModel.getPath() + SLASH + id
+                        )
+                        .method(GET)
+                        .build())
+                ));
+        configs.putAll(serviceModel.getHttpMethods().values().stream()
+                .collect(immutableMapCollector(HttpServiceMethodModel::getId, methodModel ->
+                        HttpMethodConfiguration.builder()
+                                .path(serviceModel.getPath().endsWith(SLASH) ?
+                                        serviceModel.getPath() + methodModel.getName() :
+                                        serviceModel.getPath() + SLASH + methodModel.getName()
+                                )
+                                .deactivated(methodModel.isDeactivated())
+                                .logging(methodModel.isLogging())
+                                .method(methodModel.getHttpMethod())
+                                .build()
+                )));
+        return HttpServiceConfiguration.builder()
+                .path(serviceModel.getPath())
+                .methods(configs.build())
+                .build();
     }
 
     @Getter

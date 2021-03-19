@@ -23,6 +23,7 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
+import io.art.server.configuration.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.server.*;
@@ -78,8 +79,9 @@ public class HttpServerConfiguration {
         String host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS));
 
         configuration.httpServer = HttpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
-        configuration.services = source.getNestedMap(SERVICES_KEY, service -> HttpServiceConfiguration.from(configuration, service));
+        configuration.services = source.getNestedMap(SERVICES_KEY, HttpServiceConfiguration::from);
 
         return configuration;
     }
+
 }

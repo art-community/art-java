@@ -32,6 +32,7 @@ import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.DEFAULT_PORT;
+import static io.art.value.constants.ValueModuleConstants.DataFormat.JSON;
 import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
@@ -43,9 +44,9 @@ public class HttpServerModelConfigurator {
     private Integer port = DEFAULT_PORT;
     private boolean compression = false;
     private boolean logging = false;
-    private int fragmentationMtu;
-    private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
+    private int fragmentationMtu = 0;
+    private DataFormat defaultDataFormat = JSON;
+    private DataFormat defaultMetaDataFormat = JSON;
     private ServiceMethodIdentifier defaultServiceMethod;
 
     public HttpServerModelConfigurator route(String path, Class<?> serviceClass){

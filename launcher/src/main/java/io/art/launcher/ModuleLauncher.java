@@ -21,11 +21,15 @@ package io.art.launcher;
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.core.configuration.*;
+import io.art.core.constants.*;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
+import io.art.http.configuration.HttpServerConfiguration;
 import io.art.http.configuration.*;
+import io.art.http.configuration.HttpServerConfiguration.*;
 import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.*;
@@ -37,6 +41,7 @@ import io.art.rocks.db.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
+import io.art.server.specification.*;
 import io.art.storage.module.*;
 import io.art.tarantool.module.*;
 import io.art.value.module.*;
@@ -44,11 +49,18 @@ import io.art.xml.module.*;
 import io.art.yaml.module.*;
 import lombok.experimental.*;
 import org.apache.logging.log4j.*;
+import reactor.netty.http.server.*;
+
+import java.util.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
+
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
-import static io.art.core.constants.StringConstants.SLASH;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.property.LazyProperty.*;
@@ -60,9 +72,6 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.netty.handler.codec.http.HttpMethod.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import java.util.*;
-import java.util.concurrent.atomic.*;
-import java.util.function.*;
 
 @UtilityClass
 @UsedByGenerator
@@ -210,23 +219,11 @@ public class ModuleLauncher {
     private static HttpModule http(HttpModule http, ModuleConfiguringState state, HttpCustomizer httpCustomizer) {
         ServerModuleModel serverModel = state.getModel().getServerModel();
         CommunicatorModuleModel communicatorModel = state.getModel().getCommunicatorModel();
+
         if (isNotEmpty(let(serverModel, ServerModuleModel::getHttpServices))) {
-            httpCustomizer.services(ServerModule.serverModule().configuration()
-                    .getRegistry()
-                    .getServices()
-                    .entrySet()
-                    .stream()
-                    .collect(immutableMapCollector(Map.Entry::getKey, service -> HttpServiceConfiguration.builder()
-                            .methods(service
-                                    .getValue()
-                                    .getMethods()
-                                    .entrySet()
-                                    .stream()
-                                    .collect(immutableMapCollector(Map.Entry::getKey, method -> HttpMethodConfiguration.builder()
-                                            .path(SLASH + method.getKey())
-                                            .method(GET)
-                                            .build())))
-                            .build()))).activateServer();
+            httpCustomizer
+                    .server(serverModel.getHttpServer())
+                    .activateServer();
         }
 //        if (isNotEmpty(let(communicatorModel, CommunicatorModuleModel::getCommunicators))) {
 //            httpCustomizer.activateCommunicator();
