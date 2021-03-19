@@ -110,6 +110,15 @@ public interface HttpModuleConstants {
         String SETUP_PAYLOAD_KEY = "setupPayload";
     }
 
+    interface HttpMethodNames {
+        String GET_METHOD_NAME = "GET";
+        String POST_METHOD_NAME = "POST";
+        String PUT_METHOD_NAME = "PUT";
+        String DELETE_METHOD_NAME = "DELETE";
+        String OPTIONS_METHOD_NAME = "OPTIONS";
+        String HEAD_METHOD_NAME = "HEAD";
+    }
+
     interface Defaults {
         long DEFAULT_RETRY_MAX_ATTEMPTS = 3;
         Duration DEFAULT_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);
@@ -171,7 +180,7 @@ public interface HttpModuleConstants {
         REQUEST_RESPONSE,
         REQUEST_STREAM,
         REQUEST_CHANNEL,
-        METADATA_PUSH;
+        METADATA_PUSH
     }
 
     @Getter

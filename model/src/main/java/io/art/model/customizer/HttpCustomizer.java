@@ -87,32 +87,31 @@ public class HttpCustomizer {
 
     private HttpServiceConfiguration buildServiceConfig(HttpServiceModel serviceModel) {
         ImmutableMap.Builder<String, HttpMethodConfiguration> configs = immutableMapBuilder();
-        configs.putAll(ServerModule.serverModule()
+        ServerModule.serverModule()
                 .configuration()
                 .getRegistry()
                 .getServices()
                 .get(serviceModel.getId())
-                .getMethods().keySet().stream()
-                .collect(immutableMapCollector(id -> id, id -> HttpMethodConfiguration.builder()
-                        .path(serviceModel.getPath().endsWith(SLASH) ?
-                                serviceModel.getPath() + id :
-                                serviceModel.getPath() + SLASH + id
-                        )
-                        .method(GET)
-                        .build())
-                ));
-        configs.putAll(serviceModel.getHttpMethods().values().stream()
-                .collect(immutableMapCollector(HttpServiceMethodModel::getId, methodModel ->
-                        HttpMethodConfiguration.builder()
+                .getMethods().keySet()
+                .forEach(id -> configs.put(id, serviceModel.getHttpMethods().containsKey(id)
+                        ? HttpMethodConfiguration.builder()
                                 .path(serviceModel.getPath().endsWith(SLASH) ?
-                                        serviceModel.getPath() + methodModel.getName() :
-                                        serviceModel.getPath() + SLASH + methodModel.getName()
+                                        serviceModel.getPath() + serviceModel.getHttpMethods().get(id).getName() :
+                                        serviceModel.getPath() + SLASH + serviceModel.getHttpMethods().get(id).getName()
                                 )
-                                .deactivated(methodModel.isDeactivated())
-                                .logging(methodModel.isLogging())
-                                .method(methodModel.getHttpMethod())
+                                .deactivated(serviceModel.getHttpMethods().get(id).isDeactivated())
+                                .logging(serviceModel.getHttpMethods().get(id).isLogging())
+                                .method(serviceModel.getHttpMethods().get(id).getHttpMethod())
                                 .build()
-                )));
+                        : HttpMethodConfiguration.builder()
+                                .path(serviceModel.getPath().endsWith(SLASH) ?
+                                        serviceModel.getPath() + id :
+                                        serviceModel.getPath() + SLASH + id
+                                )
+                                .method(GET)
+                                .build())
+
+                );
         return HttpServiceConfiguration.builder()
                 .path(serviceModel.getPath())
                 .methods(configs.build())

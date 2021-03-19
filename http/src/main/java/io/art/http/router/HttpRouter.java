@@ -35,6 +35,7 @@ import reactor.util.context.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
+import static io.art.http.constants.HttpModuleConstants.HttpMethodNames.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
@@ -56,8 +57,25 @@ public class HttpRouter {
             for (Map.Entry<String, HttpMethodConfiguration> method : service.getValue().getMethods().entrySet()) {
                 HttpMethodConfiguration methodValue = method.getValue();
                 HttpMethod httpMethod = methodValue.getMethod();
-                if (GET.equals(httpMethod)) {
-                    routes.get(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                switch (httpMethod.toString()){
+                    case GET_METHOD_NAME:
+                        routes.get(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        break;
+                    case POST_METHOD_NAME:
+                        routes.post(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        break;
+                    case PUT_METHOD_NAME:
+                        routes.put(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        break;
+                    case DELETE_METHOD_NAME:
+                        routes.delete(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        break;
+                    case OPTIONS_METHOD_NAME:
+                        routes.options(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        break;
+                    case HEAD_METHOD_NAME:
+                        routes.head(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        break;
                 }
             }
         }
