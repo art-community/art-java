@@ -24,14 +24,18 @@ import io.art.http.configuration.HttpServerConfiguration;
 import io.art.http.configuration.*;
 import io.art.http.exception.*;
 import io.art.http.model.*;
+import io.art.http.module.*;
 import io.art.http.state.*;
 import io.art.server.specification.*;
 import io.art.value.constants.ValueModuleConstants.*;
+import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.util.context.*;
+
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
@@ -92,13 +96,20 @@ public class HttpRouter {
         String acceptType = headers.get(ACCEPT);
         DataFormat inputDataFormat = fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON);
         DataFormat outputDataFormat = fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON);
-        return request.receiveContent()
+
+        Flux<ByteBuf> result = request.receiveContent()
+                .switchOnFirst((signal, flux) -> {
+                    HttpModule.httpModule().state().localState(from(request, response));
+                    return flux;
+                })
+//                .doOnEach(item -> HttpModule.httpModule().state().localState(from(request, response)))
                 .map(content -> readPayloadData(inputDataFormat, content.content()))
                 .map(HttpPayloadValue::getValue)
                 .transform(specification::serve)
-                .map(output -> writePayloadData(outputDataFormat, output))
-                .transform(response::send)
-                .then();
+                .map(output -> writePayloadData(outputDataFormat, output));
+        response.status(201);
+        return result.transform(response::send).then();
+
     }
 
     private ServiceMethodSpecification findSpecification(ServiceMethodIdentifier serviceMethodId) {
@@ -106,16 +117,16 @@ public class HttpRouter {
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
     }
-
-    private <T> Flux<T> addContext(Flux<T> flux) {
-        return flux.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
-    }
-
-    private void loadContext(Context context) {
-        moduleState.localState(fromContext(context));
-    }
-
-    private Context saveContext(Context context) {
-        return context;
-    }
+//
+//    private <T> Flux<T> addContext(Flux<T> flux) {
+//        return flux.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
+//    }
+//
+//    private void loadContext(Context context) {
+//        moduleState.localState(fromContext(context));
+//    }
+//
+//    private Context saveContext(Context context) {
+//        return context;
+//    }
 }

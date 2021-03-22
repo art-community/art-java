@@ -19,8 +19,14 @@
 package io.art.http.state;
 
 import io.art.core.module.*;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
+import reactor.netty.http.server.*;
 import reactor.util.context.*;
+
+import java.net.*;
+import java.util.*;
 import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
@@ -40,11 +46,38 @@ public class HttpModuleState implements ModuleState {
 
 
     @Getter
-    @Builder(toBuilder = true)
     public static class HttpThreadLocalState {
+        private HttpServerRequest request;
+        private HttpServerResponse response;
+        private Context context;
+//        private final Map<String, String> parameters;
+//        private final HttpHeaders headers;
+//        private final Map<CharSequence, Set<Cookie>> cookies;
+//        private final String scheme;
+//        private final InetSocketAddress hostAddress;
+//        private final InetSocketAddress remoteAddress;
+
+        HttpThreadLocalState(HttpServerRequest request, HttpServerResponse response) {
+            this.request = request;
+            this.response = response;
+//            parameters = request.params();
+//            headers = request.requestHeaders();
+//            cookies = request.cookies();
+//            scheme = request.scheme();
+//            hostAddress = request.hostAddress();
+//            remoteAddress = request.remoteAddress();
+        }
+
+        HttpThreadLocalState(Context context) {
+            this.context = context;
+        }
 
         public static HttpThreadLocalState fromContext(Context context) {
-            return new HttpThreadLocalState();
+            return new HttpThreadLocalState(context);
+        }
+
+        public static HttpThreadLocalState from(HttpServerRequest request, HttpServerResponse response) {
+            return new HttpThreadLocalState(request, response);
         }
     }
 }

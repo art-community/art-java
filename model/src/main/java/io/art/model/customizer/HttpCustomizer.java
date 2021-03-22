@@ -20,6 +20,7 @@ package io.art.model.customizer;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.http.configuration.HttpServerConfiguration;
 import io.art.http.configuration.*;
 import io.art.http.module.*;
 import io.art.http.refresher.*;
@@ -28,14 +29,11 @@ import io.art.server.module.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 
-import java.util.function.*;
-
-import static io.art.core.caster.Caster.cast;
-import static io.art.core.checker.NullityChecker.let;
-import static io.art.core.collection.ImmutableMap.immutableMapBuilder;
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
-import static io.art.core.constants.StringConstants.SLASH;
-import static io.netty.handler.codec.http.HttpMethod.GET;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.netty.handler.codec.http.HttpMethod.*;
 
 @Getter
 @UsedByGenerator
