@@ -18,6 +18,7 @@
 
 package io.art.http.state;
 
+import io.art.core.local.*;
 import io.art.core.module.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -29,8 +30,10 @@ import java.net.*;
 import java.util.*;
 import java.util.function.*;
 
+import static io.art.core.local.ThreadLocalValue.threadLocal;
+
 public class HttpModuleState implements ModuleState {
-    private final ThreadLocal<HttpThreadLocalState> threadLocalState = new ThreadLocal<>();
+    private final ThreadLocalValue<HttpThreadLocalState> threadLocalState = threadLocal(HttpThreadLocalState::new);
 
     public void localState(Function<HttpThreadLocalState, HttpThreadLocalState> functor) {
         threadLocalState.set(functor.apply(threadLocalState.get()));
@@ -46,16 +49,19 @@ public class HttpModuleState implements ModuleState {
 
 
     @Getter
+    @NoArgsConstructor
     public static class HttpThreadLocalState {
         private HttpServerRequest request;
         private HttpServerResponse response;
-        private Context context;
+        private ContextView context;
 //        private final Map<String, String> parameters;
 //        private final HttpHeaders headers;
 //        private final Map<CharSequence, Set<Cookie>> cookies;
 //        private final String scheme;
 //        private final InetSocketAddress hostAddress;
 //        private final InetSocketAddress remoteAddress;
+        @Setter
+        private Integer status = 200;
 
         HttpThreadLocalState(HttpServerRequest request, HttpServerResponse response) {
             this.request = request;
@@ -68,11 +74,11 @@ public class HttpModuleState implements ModuleState {
 //            remoteAddress = request.remoteAddress();
         }
 
-        HttpThreadLocalState(Context context) {
+        HttpThreadLocalState(ContextView context) {
             this.context = context;
         }
 
-        public static HttpThreadLocalState fromContext(Context context) {
+        public static HttpThreadLocalState fromContext(ContextView context) {
             return new HttpThreadLocalState(context);
         }
 

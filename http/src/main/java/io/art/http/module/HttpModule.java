@@ -53,6 +53,10 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
         return httpModule().state().localState();
     }
 
+    public static void httpModuleState(HttpThreadLocalState state) {
+        httpModule().state().localState(state);
+    }
+
     @Override
     public void onLoad(Context.Service contextService) {
         if (configuration.isActivateServer()) {
