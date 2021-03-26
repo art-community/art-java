@@ -27,6 +27,8 @@ import io.art.http.state.HttpModuleState.*;
 import io.art.http.state.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
+import reactor.netty.http.server.*;
+
 import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.http.configuration.HttpModuleConfiguration.*;
@@ -49,12 +51,12 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
         return getHttpModule();
     }
 
-    public static HttpThreadLocalState httpModuleState() {
-        return httpModule().state().localState();
+    public static HttpThreadLocalContext httpContext() {
+        return httpModule().state().localContext();
     }
 
-    public static void httpModuleState(HttpThreadLocalState state) {
-        httpModule().state().localState(state);
+    public static void httpContextFrom(HttpServerRequest request, HttpServerResponse response) {
+        httpModule().state().localContext(new HttpThreadLocalContext(request, response));
     }
 
     @Override

@@ -24,7 +24,6 @@ import io.art.http.configuration.HttpServerConfiguration;
 import io.art.http.configuration.*;
 import io.art.http.exception.*;
 import io.art.http.model.*;
-import io.art.http.module.*;
 import io.art.http.state.*;
 import io.art.server.specification.*;
 import io.art.value.constants.ValueModuleConstants.*;
@@ -34,7 +33,9 @@ import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
+import org.reactivestreams.*;
 import reactor.core.publisher.*;
+import reactor.core.scheduler.*;
 import reactor.netty.http.server.*;
 import reactor.util.context.*;
 
@@ -45,14 +46,17 @@ import static io.art.http.constants.HttpModuleConstants.HttpMethodNames.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
-import static io.art.http.state.HttpModuleState.HttpThreadLocalState.*;
+import static io.art.http.state.HttpModuleState.HttpThreadLocalContext.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.isNull;
+
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 public class HttpRouter {
@@ -87,51 +91,27 @@ public class HttpRouter {
         }
     }
 
-    private Mono<Void> handle(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
-        Map<String, String> parameters = request.params();
+    private Publisher<Void> handle(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
         HttpHeaders headers = request.requestHeaders();
-        Map<CharSequence, Set<Cookie>> cookies = request.cookies();
-        String scheme = request.scheme();
-        InetSocketAddress hostAddress = request.hostAddress();
-        InetSocketAddress remoteAddress = request.remoteAddress();
         String contentType = headers.get(CONTENT_TYPE);
         String acceptType = headers.get(ACCEPT);
         DataFormat inputDataFormat = fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON);
         DataFormat outputDataFormat = fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON);
-        AtomicReference<Integer> status = new AtomicReference<>();
+        AtomicInteger status = new AtomicInteger(200);
 
-        Flux<Value> serveResult = request.receive()
-                .switchOnFirst((signal, flux) -> {
-                    httpModuleState(fromContext(signal.getContextView()));
-                    return flux;
-                })
+        Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
+
+        return request.receive()
+                .doFirst(() -> httpContextFrom(request, response))
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
-                .transform(specification::serve);
-
-        return serveResult
                 .transform(specification::serve)
-//                .doOnEach(ignored -> context.set(Context.of("status", httpModuleState().getStatus())))
+                .doOnEach(ignored -> response.status(httpContext().status))
                 .map(output -> writePayloadData(outputDataFormat, output))
-                .transformDeferred(response::send)
-                .doFirst(() -> response.status(202))
-                .then();
-
-//
-//        return request.receive()
-//                .switchOnFirst((signal, flux) -> {
-//                    httpModuleState(fromContext(signal.getContextView()));
-//                    return flux;
-//                })
-//                .map(content -> readPayloadData(inputDataFormat, content))
-//                .map(HttpPayloadValue::getValue)
-//                .transform(specification::serve)
-////                .doOnEach(ignored -> context.set(Context.of("status", httpModuleState().getStatus())))
-//                .map(output -> writePayloadData(outputDataFormat, output))
-//                .transform(response::send)
-//                .doFirst(() -> response.status(202))
-//                .then();
-
+                .doOnNext(unicast::tryEmitNext)
+                .doOnError(unicast::tryEmitError)
+                .doOnComplete(unicast::tryEmitComplete)
+                .thenMany(response.send(unicast.asFlux()));
     }
 
     private ServiceMethodSpecification findSpecification(ServiceMethodIdentifier serviceMethodId) {
@@ -140,9 +120,10 @@ public class HttpRouter {
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
     }
 
-    //
 //    private <T> Flux<T> addContext(Flux<T> flux) {
-//        return flux.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
+//        return flux
+//                .doOnEach(signal -> loadContext(signal.getContext()))
+//                .contextWrite(this::saveContext);
 //    }
 //
 //    private void loadContext(Context context) {

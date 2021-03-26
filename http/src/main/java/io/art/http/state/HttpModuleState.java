@@ -18,72 +18,60 @@
 
 package io.art.http.state;
 
-import io.art.core.local.*;
 import io.art.core.module.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
 import reactor.netty.http.server.*;
-import reactor.util.context.*;
 
 import java.net.*;
 import java.util.*;
 import java.util.function.*;
 
-import static io.art.core.local.ThreadLocalValue.threadLocal;
-
 public class HttpModuleState implements ModuleState {
-    private final ThreadLocalValue<HttpThreadLocalState> threadLocalState = threadLocal(HttpThreadLocalState::new);
+    private final ThreadLocal<HttpThreadLocalContext> threadLocalContext = new ThreadLocal<>();
 
-    public void localState(Function<HttpThreadLocalState, HttpThreadLocalState> functor) {
-        threadLocalState.set(functor.apply(threadLocalState.get()));
+    public void localContext(Function<HttpThreadLocalContext, HttpThreadLocalContext> functor) {
+        threadLocalContext.set(functor.apply(threadLocalContext.get()));
     }
 
-    public void localState(HttpThreadLocalState state) {
-        threadLocalState.set(state);
+    public void localContext(HttpThreadLocalContext context) {
+        threadLocalContext.set(context);
     }
 
-    public HttpThreadLocalState localState() {
-        return threadLocalState.get();
+    public HttpThreadLocalContext localContext() {
+        return threadLocalContext.get();
     }
 
 
     @Getter
-    @NoArgsConstructor
-    public static class HttpThreadLocalState {
-        private HttpServerRequest request;
-        private HttpServerResponse response;
-        private ContextView context;
-//        private final Map<String, String> parameters;
-//        private final HttpHeaders headers;
-//        private final Map<CharSequence, Set<Cookie>> cookies;
-//        private final String scheme;
-//        private final InetSocketAddress hostAddress;
-//        private final InetSocketAddress remoteAddress;
-        @Setter
-        private Integer status = 200;
+    public static class HttpThreadLocalContext {
+        private final HttpServerRequest request;
+        @Getter(value = AccessLevel.PRIVATE)
+        private final HttpServerResponse response;
+        private final Map<String, String> parameters;
+        private final HttpHeaders headers;
+        private final Map<CharSequence, Set<Cookie>> cookies;
+        private final String scheme;
+        private final InetSocketAddress hostAddress;
+        private final InetSocketAddress remoteAddress;
+        public Integer status = 201;
 
-        HttpThreadLocalState(HttpServerRequest request, HttpServerResponse response) {
+        public HttpThreadLocalContext(HttpServerRequest request, HttpServerResponse response) {
             this.request = request;
             this.response = response;
-//            parameters = request.params();
-//            headers = request.requestHeaders();
-//            cookies = request.cookies();
-//            scheme = request.scheme();
-//            hostAddress = request.hostAddress();
-//            remoteAddress = request.remoteAddress();
+            parameters = request.params();
+            headers = request.requestHeaders();
+            cookies = request.cookies();
+            scheme = request.scheme();
+            hostAddress = request.hostAddress();
+            remoteAddress = request.remoteAddress();
         }
 
-        HttpThreadLocalState(ContextView context) {
-            this.context = context;
+        public void setStatus(int status){
+//            response.status(status);
+            this.status = status;
         }
 
-        public static HttpThreadLocalState fromContext(ContextView context) {
-            return new HttpThreadLocalState(context);
-        }
-
-        public static HttpThreadLocalState from(HttpServerRequest request, HttpServerResponse response) {
-            return new HttpThreadLocalState(request, response);
-        }
     }
 }
