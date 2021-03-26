@@ -27,17 +27,11 @@ import io.art.http.model.*;
 import io.art.http.state.*;
 import io.art.server.specification.*;
 import io.art.value.constants.ValueModuleConstants.*;
-import io.art.value.immutable.*;
-import io.art.value.immutable.Value;
 import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.cookie.Cookie;
-import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import reactor.core.scheduler.*;
 import reactor.netty.http.server.*;
-import reactor.util.context.*;
 
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
@@ -46,17 +40,13 @@ import static io.art.http.constants.HttpModuleConstants.HttpMethodNames.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
-import static io.art.http.state.HttpModuleState.HttpThreadLocalContext.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.isNull;
 
-import java.net.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
 public class HttpRouter {
@@ -106,8 +96,8 @@ public class HttpRouter {
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
                 .transform(specification::serve)
-                .doOnEach(ignored -> response.status(httpContext().status))
                 .map(output -> writePayloadData(outputDataFormat, output))
+                .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
                 .doOnNext(unicast::tryEmitNext)
                 .doOnError(unicast::tryEmitError)
                 .doOnComplete(unicast::tryEmitComplete)
@@ -119,18 +109,4 @@ public class HttpRouter {
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
     }
-
-//    private <T> Flux<T> addContext(Flux<T> flux) {
-//        return flux
-//                .doOnEach(signal -> loadContext(signal.getContext()))
-//                .contextWrite(this::saveContext);
-//    }
-//
-//    private void loadContext(Context context) {
-//        moduleState.localState(fromContext(context));
-//    }
-//
-//    private Context saveContext(Context context) {
-//        return context;
-//    }
 }

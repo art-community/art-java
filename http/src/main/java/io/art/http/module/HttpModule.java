@@ -23,7 +23,6 @@ import io.art.core.module.*;
 import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.http.manager.*;
-import io.art.http.state.HttpModuleState.*;
 import io.art.http.state.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
@@ -51,12 +50,12 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
         return getHttpModule();
     }
 
-    public static HttpThreadLocalContext httpContext() {
+    public static HttpContext httpContext() {
         return httpModule().state().localContext();
     }
 
     public static void httpContextFrom(HttpServerRequest request, HttpServerResponse response) {
-        httpModule().state().localContext(new HttpThreadLocalContext(request, response));
+        httpModule().state().localContext(HttpContext.from(request, response));
     }
 
     @Override
