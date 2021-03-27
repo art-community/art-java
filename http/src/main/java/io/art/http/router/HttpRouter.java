@@ -20,7 +20,6 @@ package io.art.http.router;
 
 import io.art.core.mime.*;
 import io.art.core.model.*;
-import io.art.http.configuration.HttpServerConfiguration;
 import io.art.http.configuration.*;
 import io.art.http.exception.*;
 import io.art.http.model.*;
@@ -32,6 +31,9 @@ import io.netty.handler.codec.http.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
+
+import java.util.*;
+import java.util.concurrent.atomic.*;
 
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
@@ -45,9 +47,6 @@ import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
-
-import java.util.*;
-import java.util.concurrent.atomic.*;
 
 public class HttpRouter {
     private final HttpModuleState moduleState = httpModule().state();

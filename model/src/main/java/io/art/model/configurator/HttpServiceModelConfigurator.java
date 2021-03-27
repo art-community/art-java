@@ -2,6 +2,7 @@ package io.art.model.configurator;
 
 import io.art.model.implementation.server.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
+import io.netty.handler.codec.http.*;
 import lombok.*;
 
 import java.util.*;
@@ -22,15 +23,61 @@ public class HttpServiceModelConfigurator {
         this.serviceClass = serviceClass;
     }
 
-    public HttpServiceModelConfigurator method(String methodName) {
-        return method(methodName, UnaryOperator.identity());
-    }
-
-    public HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
+    private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
         HttpServiceMethodModelConfigurator newMethod = new HttpServiceMethodModelConfigurator(methodName).logging(logging);
         methods.putIfAbsent(methodName, configurator.apply(newMethod));
         return this;
     }
+
+    public HttpServiceModelConfigurator get(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethod.GET));
+    }
+
+    public HttpServiceModelConfigurator post(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethod.POST));
+    }
+
+    public HttpServiceModelConfigurator put(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethod.PUT));
+    }
+
+    public HttpServiceModelConfigurator delete(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethod.DELETE));
+    }
+
+    public HttpServiceModelConfigurator options(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethod.OPTIONS));
+    }
+
+    public HttpServiceModelConfigurator head(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethod.HEAD));
+    }
+
+    public HttpServiceModelConfigurator get(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.GET)));
+    }
+
+    public HttpServiceModelConfigurator post(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.POST)));
+    }
+
+    public HttpServiceModelConfigurator put(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.PUT)));
+    }
+
+    public HttpServiceModelConfigurator delete(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.DELETE)));
+    }
+
+    public HttpServiceModelConfigurator options(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.OPTIONS)));
+    }
+
+    public HttpServiceModelConfigurator head(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.HEAD)));
+    }
+
+
 
     public HttpServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> current = this.decorator;

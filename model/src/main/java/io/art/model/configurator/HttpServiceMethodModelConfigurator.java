@@ -56,7 +56,7 @@ public class HttpServiceMethodModelConfigurator {
         return this;
     }
 
-    public HttpServiceMethodModelConfigurator httpMethod(HttpMethod httpMethod) {
+    protected HttpServiceMethodModelConfigurator httpMethod(HttpMethod httpMethod) {
         this.httpMethod = httpMethod;
         return this;
     }

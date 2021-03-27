@@ -117,6 +117,7 @@ public interface HttpModuleConstants {
         String DELETE_METHOD_NAME = "DELETE";
         String OPTIONS_METHOD_NAME = "OPTIONS";
         String HEAD_METHOD_NAME = "HEAD";
+        String PATCH_METHOD_NAME = "PATCH";
     }
 
     interface Defaults {

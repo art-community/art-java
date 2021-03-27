@@ -1,20 +1,26 @@
 package io.art.http.state;
 
+import io.art.value.immutable.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
 import reactor.netty.http.server.*;
 
 import java.net.*;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static io.art.core.collector.MapCollector.mapCollector;
+import static io.art.core.factory.MapFactory.map;
+import static io.art.value.factory.PrimitivesFactory.stringPrimitive;
+import static java.util.Objects.isNull;
 
 @Getter
 public class HttpContext {
     private final HttpServerRequest request;
     @Getter(value = AccessLevel.PRIVATE)
     private final HttpServerResponse response;
-    private final Map<String, String> parameters;
+    private final Map<String, Primitive> pathParams;
+    private final Map<String, Primitive> queryParams;
     private final HttpHeaders headers;
     private final Map<CharSequence, Set<Cookie>> cookies;
     private final String scheme;
@@ -24,7 +30,10 @@ public class HttpContext {
     private HttpContext(HttpServerRequest request, HttpServerResponse response) {
         this.request = request;
         this.response = response;
-        parameters = request.params();
+        pathParams = isNull(request.params()) ? map() :
+                request.params().entrySet().stream()
+                        .collect(mapCollector(Map.Entry::getKey, entry -> stringPrimitive(entry.getValue())));
+        queryParams = parseQuery(request);
         headers = request.requestHeaders();
         cookies = request.cookies();
         scheme = request.scheme();
@@ -76,6 +85,15 @@ public class HttpContext {
     public HttpContext compression(boolean compress){
         response.compression(compress);
         return this;
+    }
+
+    private static Map<String, Primitive> parseQuery(HttpServerRequest request){
+        String[] parts = request.uri().split(request.path());
+        return parts.length != 2 ? map() :
+                Arrays.stream(parts[1].substring(1).split("&"))
+                        .sequential()
+                        .map(query -> query.split("="))
+                        .collect(mapCollector(item -> item[0], item -> stringPrimitive(item[1])));
     }
 
 }
