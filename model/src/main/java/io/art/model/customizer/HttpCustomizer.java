@@ -20,7 +20,6 @@ package io.art.model.customizer;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.http.configuration.HttpServerConfiguration;
 import io.art.http.configuration.*;
 import io.art.http.module.*;
 import io.art.http.refresher.*;
@@ -33,7 +32,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.netty.handler.codec.http.HttpMethod.*;
+import static io.art.http.constants.HttpModuleConstants.HttpMethodType.*;
 
 @Getter
 @UsedByGenerator
@@ -59,8 +58,10 @@ public class HttpCustomizer {
                 .defaultMetaDataFormat(httpServerModel.getDefaultMetaDataFormat())
                 .fragmentationMtu(httpServerModel.getFragmentationMtu())
                 .logging(httpServerModel.isLogging())
-                .services(httpServerModel.getServices().values().stream()
-                .collect(cast(immutableMapCollector(HttpServiceModel::getId, this::buildServiceConfig))));
+                .services(httpServerModel.getServices()
+                        .values()
+                        .stream()
+                        .collect(cast(immutableMapCollector(HttpServiceModel::getId, this::buildServiceConfig))));
 
         let(httpServerModel.getDefaultServiceMethod(), serverConfigurationBuilder::defaultServiceMethod);
 
@@ -85,6 +86,7 @@ public class HttpCustomizer {
 
     private HttpServiceConfiguration buildServiceConfig(HttpServiceModel serviceModel) {
         ImmutableMap.Builder<String, HttpMethodConfiguration> configs = immutableMapBuilder();
+
         ServerModule.serverModule()
                 .configuration()
                 .getRegistry()
@@ -99,7 +101,7 @@ public class HttpCustomizer {
                                 )
                                 .deactivated(serviceModel.getHttpMethods().get(id).isDeactivated())
                                 .logging(serviceModel.getHttpMethods().get(id).isLogging())
-                                .method(serviceModel.getHttpMethods().get(id).getHttpMethod())
+                                .method(serviceModel.getHttpMethods().get(id).getHttpMethodType())
                                 .build()
                         : HttpMethodConfiguration.builder()
                                 .path(serviceModel.getPath().endsWith(SLASH) ?
@@ -113,6 +115,7 @@ public class HttpCustomizer {
         return HttpServiceConfiguration.builder()
                 .path(serviceModel.getPath())
                 .methods(configs.build())
+                .exceptionMapper(serviceModel.getExceptionsMapper())
                 .build();
     }
 

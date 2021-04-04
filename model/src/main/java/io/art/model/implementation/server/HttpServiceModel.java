@@ -34,6 +34,7 @@ public class HttpServiceModel implements ServiceModel {
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, HttpServiceMethodModel> methods;
+    private final Function<? extends Throwable, ?> exceptionsMapper;
 
     public ImmutableMap<String, ServiceMethodModel> getMethods() {
         return cast(methods);

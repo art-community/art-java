@@ -66,7 +66,7 @@ public class RsocketModuleState implements ModuleState {
         private final RSocket requesterRsocket;
         private final RsocketSetupPayload setupPayload;
 
-        public static RsocketThreadLocalState fromContext(Context context) {
+        public static RsocketThreadLocalState fromContext(ContextView context) {
             RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
             RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
             return new RsocketThreadLocalState(requesterRsocket, setupPayload);

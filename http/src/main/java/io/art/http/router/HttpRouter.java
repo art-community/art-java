@@ -26,19 +26,22 @@ import io.art.http.model.*;
 import io.art.http.state.*;
 import io.art.server.specification.*;
 import io.art.value.constants.ValueModuleConstants.*;
+import io.art.value.immutable.*;
 import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
+import reactor.netty.http.websocket.*;
 
 import java.util.*;
-import java.util.concurrent.atomic.*;
 
+import static io.art.core.caster.Caster.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.core.wrapper.ExceptionWrapper.ignoreException;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
-import static io.art.http.constants.HttpModuleConstants.HttpMethodNames.*;
+import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
@@ -49,44 +52,64 @@ import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
 
 public class HttpRouter {
-    private final HttpModuleState moduleState = httpModule().state();
 
     public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration configuration) {
         for (Map.Entry<String, HttpServiceConfiguration> service : configuration.getServices().entrySet()) {
             for (Map.Entry<String, HttpMethodConfiguration> method : service.getValue().getMethods().entrySet()) {
                 HttpMethodConfiguration methodValue = method.getValue();
-                HttpMethod httpMethod = methodValue.getMethod();
-                switch (httpMethod.toString()){
-                    case GET_METHOD_NAME:
-                        routes.get(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                HttpMethodType httpMethodType = methodValue.getMethod();
+                switch (httpMethodType){
+                    case GET:
+                        routes.get(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
-                    case POST_METHOD_NAME:
-                        routes.post(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                    case POST:
+                        routes.post(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
-                    case PUT_METHOD_NAME:
-                        routes.put(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                    case PUT:
+                        routes.put(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
-                    case DELETE_METHOD_NAME:
-                        routes.delete(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                    case DELETE:
+                        routes.delete(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
-                    case OPTIONS_METHOD_NAME:
-                        routes.options(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                    case OPTIONS:
+                        routes.options(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
-                    case HEAD_METHOD_NAME:
-                        routes.head(methodValue.getPath(), (request, response) -> handle(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                    case HEAD:
+                        routes.head(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
+                    case WEBSOCKET:
+                        routes.ws(methodValue.getPath(), (inbound, outbound) -> handleWebsocket(findSpecification(serviceMethod(service.getKey(), method.getKey())), inbound, outbound));
                 }
             }
         }
     }
 
-    private Publisher<Void> handle(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
+    private Publisher<Void> handleWebsocket(ServiceMethodSpecification specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
+        DataFormat dataFormat = findConfiguration(specification).getDataFormat();
+        return inbound.receive()
+                .map(content -> readPayloadData(dataFormat, content))
+                .map(HttpPayloadValue::getValue)
+
+//                .map(item -> specification.getInputMapper().map(cast(item)))
+//                .transform(flux -> specification.decorateInput(cast(flux)))
+//                .map(item -> specification.getImplementation().serve(item))
+//                .transform(flux -> specification.decorateOutput(cast(flux)))
+//                .map(item -> specification.getOutputMapper().map(cast(item)))
+
+                .transform(specification::serve)
+
+                .map(output -> writePayloadData(dataFormat, output))
+                .transform(outbound::send);
+    }
+
+    private Publisher<Void> handleHttp(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
         HttpHeaders headers = request.requestHeaders();
         String contentType = headers.get(CONTENT_TYPE);
         String acceptType = headers.get(ACCEPT);
-        DataFormat inputDataFormat = fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON);
-        DataFormat outputDataFormat = fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON);
-        AtomicInteger status = new AtomicInteger(200);
+        DataFormat defaultDataFormat = findConfiguration(specification).getDataFormat();
+        DataFormat inputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON), ignored -> defaultDataFormat);
+        DataFormat outputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON), ignored -> defaultDataFormat);
+
 
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
 
@@ -95,10 +118,11 @@ public class HttpRouter {
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
                 .transform(specification::serve)
+                .onErrorResume(throwable -> mapException(specification, throwable))
                 .map(output -> writePayloadData(outputDataFormat, output))
                 .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
                 .doOnNext(unicast::tryEmitNext)
-                .doOnError(unicast::tryEmitError)
+
                 .doOnComplete(unicast::tryEmitComplete)
                 .thenMany(response.send(unicast.asFlux()));
     }
@@ -107,5 +131,17 @@ public class HttpRouter {
         return specifications()
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
+    }
+
+    private HttpMethodConfiguration findConfiguration(ServiceMethodSpecification specification){
+        return httpModule().configuration().getServerConfiguration().getServices().get(specification.getServiceId())
+                .getMethods().get(specification.getMethodId());
+    }
+
+    private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception){
+        Object result = httpModule().configuration().getServerConfiguration().getServices().get(specification.getServiceId())
+                .getExceptionMapper()
+                .apply(cast(exception));
+        return Flux.just(specification.getOutputMapper().map(cast(result)));
     }
 }

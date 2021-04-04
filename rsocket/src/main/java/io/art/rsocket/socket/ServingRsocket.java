@@ -134,10 +134,10 @@ public class ServingRsocket implements RSocket {
     }
 
     private <T> Flux<T> addContext(Flux<T> flux) {
-        return flux.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
+        return flux.doOnEach(signal -> loadContext(signal.getContextView())).contextWrite(this::saveContext);
     }
 
-    private void loadContext(Context context) {
+    private void loadContext(ContextView context) {
         moduleState.localState(fromContext(context));
     }
 

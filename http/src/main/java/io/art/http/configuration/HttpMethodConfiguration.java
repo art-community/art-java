@@ -19,7 +19,9 @@
 package io.art.http.configuration;
 
 import io.art.core.source.*;
-import io.netty.handler.codec.http.*;
+import static io.art.http.constants.HttpModuleConstants.*;
+
+import static io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 
@@ -27,14 +29,16 @@ import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 @Builder(toBuilder = true)
 public class HttpMethodConfiguration {
     private String path;
-    private HttpMethod method;
+    private HttpMethodType method;
     private boolean deactivated;
     private boolean logging;
+    @Builder.Default
+    private DataFormat dataFormat = DataFormat.JSON;
 
     public static HttpMethodConfiguration from(HttpServiceConfiguration serviceConfiguration, ConfigurationSource source) {
         HttpMethodConfiguration configuration = HttpMethodConfiguration.builder().build();
         configuration.path = source.getString(PATH_KEY);
-        configuration.method = HttpMethod.valueOf(source.getString(METHOD_KEY).toUpperCase());
+        configuration.method = HttpMethodType.valueOf(source.getString(METHOD_KEY).toUpperCase());
         return configuration;
     }
 }

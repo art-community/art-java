@@ -2,25 +2,27 @@ package io.art.model.configurator;
 
 import io.art.model.implementation.server.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
-import io.netty.handler.codec.http.*;
 import lombok.*;
 
 import java.util.*;
 import java.util.function.*;
 
-import static io.art.core.collection.ImmutableMap.immutableMapCollector;
+import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
-import static lombok.AccessLevel.PACKAGE;
+import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
 public class HttpServiceModelConfigurator {
     private final Class<?> serviceClass;
     private final Map<String, HttpServiceMethodModelConfigurator> methods = map();
+    private final HttpServiceExceptionMappingConfigurator exceptionMapping;
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
     private boolean logging;
 
     public HttpServiceModelConfigurator(Class<?> serviceClass){
         this.serviceClass = serviceClass;
+        this.exceptionMapping = new HttpServiceExceptionMappingConfigurator(serviceClass);
     }
 
     private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
@@ -30,51 +32,66 @@ public class HttpServiceModelConfigurator {
     }
 
     public HttpServiceModelConfigurator get(String methodName){
-        return method(methodName, method -> method.httpMethod(HttpMethod.GET));
+        return method(methodName, method -> method.httpMethod(HttpMethodType.GET));
     }
 
     public HttpServiceModelConfigurator post(String methodName){
-        return method(methodName, method -> method.httpMethod(HttpMethod.POST));
+        return method(methodName, method -> method.httpMethod(HttpMethodType.POST));
     }
 
     public HttpServiceModelConfigurator put(String methodName){
-        return method(methodName, method -> method.httpMethod(HttpMethod.PUT));
+        return method(methodName, method -> method.httpMethod(HttpMethodType.PUT));
     }
 
     public HttpServiceModelConfigurator delete(String methodName){
-        return method(methodName, method -> method.httpMethod(HttpMethod.DELETE));
+        return method(methodName, method -> method.httpMethod(HttpMethodType.DELETE));
     }
 
     public HttpServiceModelConfigurator options(String methodName){
-        return method(methodName, method -> method.httpMethod(HttpMethod.OPTIONS));
+        return method(methodName, method -> method.httpMethod(HttpMethodType.OPTIONS));
     }
 
     public HttpServiceModelConfigurator head(String methodName){
-        return method(methodName, method -> method.httpMethod(HttpMethod.HEAD));
+        return method(methodName, method -> method.httpMethod(HttpMethodType.HEAD));
+    }
+
+    public HttpServiceModelConfigurator websocket(String methodName){
+        return method(methodName, method -> method.httpMethod(HttpMethodType.WEBSOCKET));
     }
 
     public HttpServiceModelConfigurator get(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
-        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.GET)));
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.GET)));
     }
 
     public HttpServiceModelConfigurator post(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
-        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.POST)));
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.POST)));
     }
 
     public HttpServiceModelConfigurator put(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
-        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.PUT)));
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.PUT)));
     }
 
     public HttpServiceModelConfigurator delete(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
-        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.DELETE)));
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.DELETE)));
     }
 
     public HttpServiceModelConfigurator options(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
-        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.OPTIONS)));
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.OPTIONS)));
     }
 
     public HttpServiceModelConfigurator head(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
-        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethod.HEAD)));
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.HEAD)));
+    }
+
+    public HttpServiceModelConfigurator websocket(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.WEBSOCKET)));
+    }
+
+
+
+    public HttpServiceModelConfigurator exceptions(UnaryOperator<HttpServiceExceptionMappingConfigurator> configurator){
+        configurator.apply(exceptionMapping);
+        return this;
     }
 
 
@@ -107,6 +124,7 @@ public class HttpServiceModelConfigurator {
                         .stream()
                         .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .decorator(decorator)
+                .exceptionsMapper(exceptionMapping.configure())
                 .build();
     }
 }

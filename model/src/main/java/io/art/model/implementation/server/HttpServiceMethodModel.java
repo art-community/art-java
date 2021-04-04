@@ -19,9 +19,11 @@
 package io.art.model.implementation.server;
 
 import io.art.server.specification.ServiceMethodSpecification.*;
-import io.netty.handler.codec.http.*;
 import lombok.*;
+
 import java.util.function.*;
+
+import static io.art.http.constants.HttpModuleConstants.*;
 
 @Getter
 @Builder
@@ -30,6 +32,6 @@ public class HttpServiceMethodModel implements ServiceMethodModel {
     private final String name;
     private final boolean deactivated;
     private final boolean logging;
-    private final HttpMethod httpMethod;
+    private final HttpMethodType httpMethodType;
     private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
 }

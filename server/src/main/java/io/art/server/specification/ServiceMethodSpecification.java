@@ -28,7 +28,6 @@ import io.art.server.decorator.*;
 import io.art.server.implementation.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
-import io.art.value.mapping.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
@@ -67,9 +66,6 @@ public class ServiceMethodSpecification {
 
     @Getter
     private final ValueFromModelMapper<?, ? extends Value> outputMapper;
-
-    @Builder.Default
-    private final ValueFromModelMapper<Throwable, ? extends Value> exceptionMapper = ThrowableMapping::fromThrowableNested;
 
     private final ServiceMethodImplementation implementation;
 
@@ -123,52 +119,57 @@ public class ServiceMethodSpecification {
         }
     }
 
-    private Object transformInput(Flux<Value> input) {
-        Flux<Object> inputFlux = input.map(value -> inputMapper.map(cast(value)));
-        for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
-            inputFlux = inputFlux.transform(decorator);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
-            inputFlux = inputFlux.transform(decorator);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
-            inputFlux = inputFlux.transform(decorator);
-        }
+
+    public Object transformInput(Flux<Value> input) {
+        Flux<Object> inputFlux = input
+                .map(value -> inputMapper.map(cast(value)))
+                .transform(flux -> decorateInput(cast(flux)));
         return getAdoptInput().apply(inputFlux);
     }
 
     private Flux<Value> transformOutput(Object output) {
-        Flux<Object> outputFlux = let(output, getAdoptOutput(), Flux.empty());
-        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
-            outputFlux = outputFlux.transform(decorator);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            outputFlux = outputFlux.transform(decorator);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
-            outputFlux = outputFlux.transform(decorator);
-        }
-        return outputFlux
+        return let(output, getAdoptOutput(), Flux.empty())
+                .transform(this::decorateOutput)
                 .map(value -> (Value) outputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, this::transformException);
     }
 
     private Flux<Value> transformException(Throwable exception) {
-        Flux<Object> errorOutput = Flux.error(exception);
+        return Flux
+                .error(exception)
+                .transform(this::decorateOutput)
+                .map(Caster::cast);
+    }
+
+
+    public Flux<Object> decorateInput(Flux<Object> input) {
+        Flux<Object> result = input;
+        for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
+            result = result.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
+            result = result.transform(decorator);
+        }
+        for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
+            result = result.transform(decorator);
+        }
+        return result;
+    }
+
+    public Flux<Object> decorateOutput(Flux<Object> output) {
+        Flux<Object> result = output;
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
-            errorOutput = errorOutput.transform(decorator);
+            result = result.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            errorOutput = errorOutput.transform(decorator);
+            result = result.transform(decorator);
         }
         for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
-            errorOutput = errorOutput.transform(decorator);
+            result = result.transform(decorator);
         }
-        return errorOutput
-                .onErrorResume(Throwable.class, throwable -> Flux.just(exceptionMapper.map(throwable)))
-                .map(Caster::cast);
-
+        return result;
     }
+
 
     private Function<Flux<Object>, Object> adoptInput() {
         if (isNull(inputMode)) {

@@ -19,10 +19,10 @@ public class ServiceStateDecorator implements UnaryOperator<Flux<Object>> {
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
-        return input.doOnEach(signal -> loadContext(signal.getContext())).subscriberContext(this::saveContext);
+        return input.doOnEach(signal -> loadContext(signal.getContextView())).contextWrite(this::saveContext);
     }
 
-    private void loadContext(Context context) {
+    private void loadContext(ContextView context) {
         getModuleState().localState(fromContext(context));
     }
 

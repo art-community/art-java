@@ -120,6 +120,17 @@ public interface HttpModuleConstants {
         String PATCH_METHOD_NAME = "PATCH";
     }
 
+    enum HttpMethodType {
+        GET,
+        POST,
+        PUT,
+        DELETE,
+        OPTIONS,
+        HEAD,
+//        PATCH,
+        WEBSOCKET;
+    }
+
     interface Defaults {
         long DEFAULT_RETRY_MAX_ATTEMPTS = 3;
         Duration DEFAULT_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);

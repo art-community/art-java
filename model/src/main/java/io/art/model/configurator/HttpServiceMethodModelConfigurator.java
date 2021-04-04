@@ -18,11 +18,12 @@
 
 package io.art.model.configurator;
 
+
 import io.art.model.implementation.server.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
-import io.netty.handler.codec.http.*;
 import lombok.*;
 
+import static io.art.http.constants.HttpModuleConstants.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -33,7 +34,7 @@ public class HttpServiceMethodModelConfigurator {
     private String path;
     private boolean deactivated = false;
     private boolean logging = false;
-    private HttpMethod httpMethod = HttpMethod.GET;
+    private HttpMethodType httpMethodType = HttpMethodType.GET;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
 
     public HttpServiceMethodModelConfigurator(String methodName) {
@@ -56,8 +57,8 @@ public class HttpServiceMethodModelConfigurator {
         return this;
     }
 
-    protected HttpServiceMethodModelConfigurator httpMethod(HttpMethod httpMethod) {
-        this.httpMethod = httpMethod;
+    protected HttpServiceMethodModelConfigurator httpMethod(HttpMethodType httpMethodType) {
+        this.httpMethodType = httpMethodType;
         return this;
     }
 
@@ -72,7 +73,7 @@ public class HttpServiceMethodModelConfigurator {
                 .name(path)
                 .deactivated(deactivated)
                 .logging(logging)
-                .httpMethod(httpMethod)
+                .httpMethodType(httpMethodType)
                 .decorator(decorator)
                 .build();
     }
