@@ -167,7 +167,7 @@ public class HttpServerModelConfigurator {
                 .defaultServiceMethod(defaultServiceMethod)
                 .requestDecoderConfigurator(requestDecoderConfigurator)
                 .redirectToHttps(redirectToHttps)
-                .sslConfigurator(isNull(defaultSslContext) ? emptyConsumer() :
+                .sslConfigurator(isNull(defaultSslContext) ? null :
                         spec -> spec.sslContext(defaultSslContext)
                                 .addSniMappings(sniMapping)
                                 .build())

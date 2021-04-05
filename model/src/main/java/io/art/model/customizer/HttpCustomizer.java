@@ -49,15 +49,17 @@ public class HttpCustomizer {
     }
 
     public HttpCustomizer server(HttpServerModel httpServerModel) {
+        HttpServer server = HttpServer.create()
+                .httpRequestDecoder(httpServerModel.getRequestDecoderConfigurator())
+                .wiretap(httpServerModel.isWiretap())
+                .accessLog(httpServerModel.isAccessLogging())
+                .host(httpServerModel.getHost())
+                .port(httpServerModel.getPort())
+                .compress(httpServerModel.isCompression());
+        let(httpServerModel.getSslConfigurator(), configurator -> server.secure(configurator, httpServerModel.isRedirectToHttps()));
+
         HttpServerConfiguration.HttpServerConfigurationBuilder serverConfigurationBuilder = HttpServerConfiguration.builder()
-                .httpServer(HttpServer.create()
-                        .httpRequestDecoder(httpServerModel.getRequestDecoderConfigurator())
-                        .wiretap(httpServerModel.isWiretap())
-                        .accessLog(httpServerModel.isAccessLogging())
-//                        .secure(httpServerModel.getSslConfigurator(), httpServerModel.isRedirectToHttps())
-                        .host(httpServerModel.getHost())
-                        .port(httpServerModel.getPort())
-                        .compress(httpServerModel.isCompression()))
+                .httpServer(server)
                 .defaultDataFormat(httpServerModel.getDefaultDataFormat())
                 .defaultMetaDataFormat(httpServerModel.getDefaultMetaDataFormat())
                 .fragmentationMtu(httpServerModel.getFragmentationMtu())
