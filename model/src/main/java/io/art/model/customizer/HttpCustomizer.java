@@ -54,7 +54,7 @@ public class HttpCustomizer {
                         .httpRequestDecoder(httpServerModel.getRequestDecoderConfigurator())
                         .wiretap(httpServerModel.isWiretap())
                         .accessLog(httpServerModel.isAccessLogging())
-                        .secure(httpServerModel.getSslConfigurator(), httpServerModel.isRedirectToHttps())
+//                        .secure(httpServerModel.getSslConfigurator(), httpServerModel.isRedirectToHttps())
                         .host(httpServerModel.getHost())
                         .port(httpServerModel.getPort())
                         .compress(httpServerModel.isCompression()))
