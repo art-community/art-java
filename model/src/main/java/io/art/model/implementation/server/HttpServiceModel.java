@@ -24,17 +24,21 @@ import lombok.*;
 
 import java.util.function.*;
 
-import static io.art.core.caster.Caster.cast;
+import static io.art.core.caster.Caster.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 
 @Getter
 @Builder
 public class HttpServiceModel implements ServiceModel {
     private final String id;
     private final String path;
+    private final boolean logging;
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, HttpServiceMethodModel> methods;
     private final Function<? extends Throwable, ?> exceptionsMapper;
+    private final DataFormat defaultDataFormat;
+    private final DataFormat defaultMetaDataFormat;
 
     public ImmutableMap<String, ServiceMethodModel> getMethods() {
         return cast(methods);

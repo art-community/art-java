@@ -23,10 +23,12 @@ import io.art.model.implementation.server.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
 
+import java.util.function.*;
+
 import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
-import java.util.function.*;
 
 @Getter(value = PACKAGE)
 public class HttpServiceMethodModelConfigurator {
@@ -36,6 +38,8 @@ public class HttpServiceMethodModelConfigurator {
     private boolean logging = false;
     private HttpMethodType httpMethodType = HttpMethodType.GET;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
+    private DataFormat defaultDataFormat;
+    private DataFormat defaultMetaDataFormat;
 
     public HttpServiceMethodModelConfigurator(String methodName) {
         this.path = methodName;
@@ -62,6 +66,16 @@ public class HttpServiceMethodModelConfigurator {
         return this;
     }
 
+    public HttpServiceMethodModelConfigurator defaultDataFormat(DataFormat format) {
+        defaultDataFormat = format;
+        return this;
+    }
+
+    public HttpServiceMethodModelConfigurator defaultMetaDataFormat(DataFormat format) {
+        defaultMetaDataFormat = format;
+        return this;
+    }
+
     public HttpServiceMethodModelConfigurator decorate(Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         this.decorator = decorator.andThen(decorator);
         return this;
@@ -75,6 +89,8 @@ public class HttpServiceMethodModelConfigurator {
                 .logging(logging)
                 .httpMethodType(httpMethodType)
                 .decorator(decorator)
+                .defaultDataFormat(defaultDataFormat)
+                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();
     }
 }

@@ -7,9 +7,10 @@ import lombok.*;
 import java.util.*;
 import java.util.function.*;
 
-import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
@@ -19,6 +20,8 @@ public class HttpServiceModelConfigurator {
     private final HttpServiceExceptionMappingConfigurator exceptionMapping;
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
     private boolean logging;
+    private DataFormat defaultDataFormat;
+    private DataFormat defaultMetaDataFormat;
 
     public HttpServiceModelConfigurator(Class<?> serviceClass){
         this.serviceClass = serviceClass;
@@ -26,7 +29,10 @@ public class HttpServiceModelConfigurator {
     }
 
     private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
-        HttpServiceMethodModelConfigurator newMethod = new HttpServiceMethodModelConfigurator(methodName).logging(logging);
+        HttpServiceMethodModelConfigurator newMethod = new HttpServiceMethodModelConfigurator(methodName)
+                .logging(logging)
+                .defaultDataFormat(defaultDataFormat)
+                .defaultMetaDataFormat(defaultMetaDataFormat);
         methods.putIfAbsent(methodName, configurator.apply(newMethod));
         return this;
     }
@@ -88,12 +94,10 @@ public class HttpServiceModelConfigurator {
     }
 
 
-
     public HttpServiceModelConfigurator exceptions(UnaryOperator<HttpServiceExceptionMappingConfigurator> configurator){
         configurator.apply(exceptionMapping);
         return this;
     }
-
 
 
     public HttpServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
@@ -110,6 +114,16 @@ public class HttpServiceModelConfigurator {
         return this;
     }
 
+    public HttpServiceModelConfigurator defaultDataFormat(DataFormat format) {
+        defaultDataFormat = format;
+        return this;
+    }
+
+    public HttpServiceModelConfigurator defaultMetaDataFormat(DataFormat format) {
+        defaultMetaDataFormat = format;
+        return this;
+    }
+
     protected String getId(){
         return serviceClass.getSimpleName();
     }
@@ -118,6 +132,7 @@ public class HttpServiceModelConfigurator {
         return HttpServiceModel.builder()
                 .id(getId())
                 .path(path)
+                .logging(logging)
                 .serviceClass(serviceClass)
                 .methods(methods
                         .entrySet()
@@ -125,6 +140,8 @@ public class HttpServiceModelConfigurator {
                         .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .decorator(decorator)
                 .exceptionsMapper(exceptionMapping.configure())
+                .defaultDataFormat(defaultDataFormat)
+                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();
     }
 }

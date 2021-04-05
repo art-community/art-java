@@ -39,7 +39,7 @@ import java.util.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
-import static io.art.core.wrapper.ExceptionWrapper.ignoreException;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
@@ -85,7 +85,7 @@ public class HttpRouter {
     }
 
     private Publisher<Void> handleWebsocket(ServiceMethodSpecification specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
-        DataFormat dataFormat = findConfiguration(specification).getDataFormat();
+        DataFormat dataFormat = findConfiguration(specification).getDefaultDataFormat();
         return inbound.receive()
                 .map(content -> readPayloadData(dataFormat, content))
                 .map(HttpPayloadValue::getValue)
@@ -106,7 +106,7 @@ public class HttpRouter {
         HttpHeaders headers = request.requestHeaders();
         String contentType = headers.get(CONTENT_TYPE);
         String acceptType = headers.get(ACCEPT);
-        DataFormat defaultDataFormat = findConfiguration(specification).getDataFormat();
+        DataFormat defaultDataFormat = findConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON), ignored -> defaultDataFormat);
         DataFormat outputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON), ignored -> defaultDataFormat);
 

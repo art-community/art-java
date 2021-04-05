@@ -51,6 +51,10 @@ public class HttpCustomizer {
     public HttpCustomizer server(HttpServerModel httpServerModel) {
         HttpServerConfiguration.HttpServerConfigurationBuilder serverConfigurationBuilder = HttpServerConfiguration.builder()
                 .httpServer(HttpServer.create()
+                        .httpRequestDecoder(httpServerModel.getRequestDecoderConfigurator())
+                        .wiretap(httpServerModel.isWiretap())
+                        .accessLog(httpServerModel.isAccessLogging())
+                        .secure(httpServerModel.getSslConfigurator(), httpServerModel.isRedirectToHttps())
                         .host(httpServerModel.getHost())
                         .port(httpServerModel.getPort())
                         .compress(httpServerModel.isCompression()))
@@ -102,13 +106,19 @@ public class HttpCustomizer {
                                 .deactivated(serviceModel.getHttpMethods().get(id).isDeactivated())
                                 .logging(serviceModel.getHttpMethods().get(id).isLogging())
                                 .method(serviceModel.getHttpMethods().get(id).getHttpMethodType())
+                                .defaultDataFormat(serviceModel.getHttpMethods().get(id).getDefaultDataFormat())
+                                .defaultMetaDataFormat(serviceModel.getHttpMethods().get(id).getDefaultMetaDataFormat())
                                 .build()
                         : HttpMethodConfiguration.builder()
                                 .path(serviceModel.getPath().endsWith(SLASH) ?
                                         serviceModel.getPath() + id :
                                         serviceModel.getPath() + SLASH + id
                                 )
+                                .deactivated(false)
+                                .logging(serviceModel.isLogging())
                                 .method(GET)
+                                .defaultDataFormat(serviceModel.getDefaultDataFormat())
+                                .defaultMetaDataFormat(serviceModel.getDefaultDataFormat())
                                 .build())
 
                 );

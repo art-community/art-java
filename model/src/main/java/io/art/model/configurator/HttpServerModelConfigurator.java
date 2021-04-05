@@ -22,17 +22,24 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.model.implementation.server.*;
 import io.art.value.constants.ValueModuleConstants.*;
+import io.netty.handler.ssl.*;
 import lombok.*;
+import reactor.netty.http.server.*;
+import reactor.netty.tcp.SslProvider;
 
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.http.constants.HttpModuleConstants.Defaults.DEFAULT_PORT;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.JSON;
+import static io.art.http.constants.HttpModuleConstants.Defaults.*;
+import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
+import static java.util.Objects.*;
+import static java.util.function.UnaryOperator.*;
 import static lombok.AccessLevel.*;
 
 @Getter(value = PACKAGE)
@@ -44,19 +51,30 @@ public class HttpServerModelConfigurator {
     private Integer port = DEFAULT_PORT;
     private boolean compression = false;
     private boolean logging = false;
+    private boolean wiretap = false;
+    private boolean accessLogging = false;
     private int fragmentationMtu = 0;
     private DataFormat defaultDataFormat = JSON;
     private DataFormat defaultMetaDataFormat = JSON;
     private ServiceMethodIdentifier defaultServiceMethod;
+    private UnaryOperator<HttpRequestDecoderSpec> requestDecoderConfigurator = identity();
+    private SslContext defaultSslContext;
+    private final Map<String, Consumer<? super SslProvider.SslContextSpec>> sniMapping = map();
+    private boolean redirectToHttps = false;
 
     public HttpServerModelConfigurator route(String path, Class<?> serviceClass){
-        addRouteIfAbsent(path, new HttpServiceModelConfigurator(serviceClass));
-        return this;
+        return route(path, serviceClass, identity());
     }
 
     public HttpServerModelConfigurator route(String path, Class<?> serviceClass,
                                              UnaryOperator<HttpServiceModelConfigurator> configurator){
-        addRouteIfAbsent(path, configurator.apply(new HttpServiceModelConfigurator(serviceClass)));
+        addRouteIfAbsent(path, configurator
+                .andThen(route -> route
+                        .logging(logging)
+                        .defaultDataFormat(defaultDataFormat)
+                        .defaultMetaDataFormat(defaultMetaDataFormat)
+                )
+                .apply(new HttpServiceModelConfigurator(serviceClass)));
         return this;
     }
 
@@ -70,8 +88,18 @@ public class HttpServerModelConfigurator {
         return this;
     }
 
-    public HttpServerModelConfigurator logging(boolean isLogging) {
-        logging = isLogging;
+    public HttpServerModelConfigurator logging(boolean isEnabled) {
+        logging = isEnabled;
+        return this;
+    }
+
+    public HttpServerModelConfigurator wiretap(boolean isEnabled){
+        wiretap = isEnabled;
+        return this;
+    }
+
+    public HttpServerModelConfigurator accessLogging(boolean isEnabled){
+        accessLogging = isEnabled;
         return this;
     }
 
@@ -100,6 +128,28 @@ public class HttpServerModelConfigurator {
         return this;
     }
 
+    public HttpServerModelConfigurator configureRequestDecoder(UnaryOperator<HttpRequestDecoderSpec> configurator){
+        requestDecoderConfigurator = configurator;
+        return this;
+    }
+
+    @SneakyThrows
+    public HttpServerModelConfigurator ssl(File certificate, File key){
+        defaultSslContext = SslContextBuilder.forServer(certificate, key).build();
+        return this;
+    }
+
+    @SneakyThrows
+    public HttpServerModelConfigurator ssl(String domain, File certificate, File key){
+        sniMapping.put(domain, spec -> spec.sslContext(SslContextBuilder.forServer(certificate, key)));
+        return this;
+    }
+
+    public HttpServerModelConfigurator redirectToHttps(boolean isEnabled){
+        redirectToHttps = isEnabled;
+        return this;
+    }
+
     protected HttpServerModel configure() {
         ImmutableMap.Builder<String, HttpServiceModel> services = immutableMapBuilder();
         routes.forEach((path, modelConfigurator) -> services.put(path, modelConfigurator.configure(path)));
@@ -109,18 +159,25 @@ public class HttpServerModelConfigurator {
                 .port(port)
                 .compression(compression)
                 .logging(logging)
+                .wiretap(wiretap)
+                .accessLogging(accessLogging)
                 .fragmentationMtu(fragmentationMtu)
                 .defaultDataFormat(defaultDataFormat)
                 .defaultMetaDataFormat(defaultMetaDataFormat)
                 .defaultServiceMethod(defaultServiceMethod)
+                .requestDecoderConfigurator(requestDecoderConfigurator)
+                .redirectToHttps(redirectToHttps)
+                .sslConfigurator(isNull(defaultSslContext) ? emptyConsumer() :
+                        spec -> spec.sslContext(defaultSslContext)
+                                .addSniMappings(sniMapping)
+                                .build())
                 .build();
     }
 
-    private void addRouteIfAbsent(String route, HttpServiceModelConfigurator configurator){
-        if (!existentIDs.contains(configurator.getId()) && !routes.containsKey(route)){
-            existentIDs.add(configurator.getId());
-            configurator.logging(logging);
-            routes.put(route, configurator);
+    private void addRouteIfAbsent(String route, HttpServiceModelConfigurator routeConfigurator){
+        if (!existentIDs.contains(routeConfigurator.getId()) && !routes.containsKey(route)){
+            existentIDs.add(routeConfigurator.getId());
+            routes.put(route, routeConfigurator);
         }
     }
 

@@ -24,6 +24,7 @@ import lombok.*;
 import java.util.function.*;
 
 import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 
 @Getter
 @Builder
@@ -34,4 +35,6 @@ public class HttpServiceMethodModel implements ServiceMethodModel {
     private final boolean logging;
     private final HttpMethodType httpMethodType;
     private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+    private final DataFormat defaultDataFormat;
+    private final DataFormat defaultMetaDataFormat;
 }

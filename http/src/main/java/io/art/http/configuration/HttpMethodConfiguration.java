@@ -19,11 +19,11 @@
 package io.art.http.configuration;
 
 import io.art.core.source.*;
-import static io.art.http.constants.HttpModuleConstants.*;
-
-import static io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
+
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
+import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -32,8 +32,9 @@ public class HttpMethodConfiguration {
     private HttpMethodType method;
     private boolean deactivated;
     private boolean logging;
-    @Builder.Default
-    private DataFormat dataFormat = DataFormat.JSON;
+    private DataFormat defaultDataFormat;
+    private DataFormat defaultMetaDataFormat;
+
 
     public static HttpMethodConfiguration from(HttpServiceConfiguration serviceConfiguration, ConfigurationSource source) {
         HttpMethodConfiguration configuration = HttpMethodConfiguration.builder().build();
