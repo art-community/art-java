@@ -17,7 +17,7 @@
  */
 
 plugins {
-    id("groovy")
+    groovy
 }
 
 dependencies {

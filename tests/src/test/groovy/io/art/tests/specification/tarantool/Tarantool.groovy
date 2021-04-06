@@ -9,6 +9,7 @@ import io.art.tarantool.instance.TarantoolInstance
 import io.art.tarantool.model.operation.TarantoolUpdateFieldOperation
 
 import io.art.tarantool.storage.TarantoolStorageSpace
+import spock.config.RunnerConfiguration
 import spock.lang.Specification
 
 import static io.art.launcher.ModuleLauncher.launch
