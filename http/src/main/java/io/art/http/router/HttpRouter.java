@@ -85,31 +85,35 @@ public class HttpRouter {
     }
 
     private Publisher<Void> handleWebsocket(ServiceMethodSpecification specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
-        DataFormat dataFormat = findConfiguration(specification).getDefaultDataFormat();
+        DataFormat defaultDataFormat = findConfiguration(specification).getDefaultDataFormat();
+        DataFormat inputDataFormat = ignoreException(
+                () -> fromMimeType(MimeType.valueOf(inbound.headers().get(CONTENT_TYPE))),
+                ignored -> defaultDataFormat);
+        DataFormat outputDataFormat = ignoreException(
+                () -> fromMimeType(MimeType.valueOf(inbound.headers().get(ACCEPT))),
+                ignored -> defaultDataFormat);
+
         return inbound.receive()
-                .map(content -> readPayloadData(dataFormat, content))
+//                .doFirst(() -> httpContextFrom(request, response))
+                .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
+                .log("before serve")
+                .flatMap(value -> specification.serve(Flux.just(value)))
+                .log("after serve")
+                .map(output -> writePayloadData(outputDataFormat, output))
+                .transform(outbound::send).then();
+//                .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
 
-//                .map(item -> specification.getInputMapper().map(cast(item)))
-//                .transform(flux -> specification.decorateInput(cast(flux)))
-//                .map(item -> specification.getImplementation().serve(item))
-//                .transform(flux -> specification.decorateOutput(cast(flux)))
-//                .map(item -> specification.getOutputMapper().map(cast(item)))
-
-                .transform(specification::serve)
-
-                .map(output -> writePayloadData(dataFormat, output))
-                .transform(outbound::send);
     }
 
     private Publisher<Void> handleHttp(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
-        HttpHeaders headers = request.requestHeaders();
-        String contentType = headers.get(CONTENT_TYPE);
-        String acceptType = headers.get(ACCEPT);
         DataFormat defaultDataFormat = findConfiguration(specification).getDefaultDataFormat();
-        DataFormat inputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(contentType)), ignored -> defaultDataFormat);
-        DataFormat outputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(acceptType)), ignored -> defaultDataFormat);
-
+        DataFormat inputDataFormat = ignoreException(
+                () -> fromMimeType(MimeType.valueOf(request.requestHeaders().get(CONTENT_TYPE))),
+                ignored -> defaultDataFormat);
+        DataFormat outputDataFormat = ignoreException(
+                () -> fromMimeType(MimeType.valueOf(request.requestHeaders().get(ACCEPT))),
+                ignored -> defaultDataFormat);
 
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
 
@@ -121,8 +125,8 @@ public class HttpRouter {
                 .onErrorResume(throwable -> mapException(specification, throwable))
                 .map(output -> writePayloadData(outputDataFormat, output))
                 .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
-                .doOnNext(unicast::tryEmitNext)
 
+                .doOnNext(unicast::tryEmitNext)
                 .doOnComplete(unicast::tryEmitComplete)
                 .thenMany(response.send(unicast.asFlux()));
     }
