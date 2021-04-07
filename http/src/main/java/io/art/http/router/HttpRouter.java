@@ -107,8 +107,8 @@ public class HttpRouter {
         String contentType = headers.get(CONTENT_TYPE);
         String acceptType = headers.get(ACCEPT);
         DataFormat defaultDataFormat = findConfiguration(specification).getDefaultDataFormat();
-        DataFormat inputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(contentType, TEXT_HTML), JSON), ignored -> defaultDataFormat);
-        DataFormat outputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(acceptType, TEXT_HTML), JSON), ignored -> defaultDataFormat);
+        DataFormat inputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(contentType)), ignored -> defaultDataFormat);
+        DataFormat outputDataFormat = ignoreException(() -> fromMimeType(MimeType.valueOf(acceptType)), ignored -> defaultDataFormat);
 
 
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();

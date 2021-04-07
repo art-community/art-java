@@ -69,12 +69,10 @@ public class HttpServerModelConfigurator {
     public HttpServerModelConfigurator route(String path, Class<?> serviceClass,
                                              UnaryOperator<HttpServiceModelConfigurator> configurator){
         addRouteIfAbsent(path, configurator
-                .andThen(route -> route
+                .apply(new HttpServiceModelConfigurator(serviceClass)
                         .logging(logging)
                         .defaultDataFormat(defaultDataFormat)
-                        .defaultMetaDataFormat(defaultMetaDataFormat)
-                )
-                .apply(new HttpServiceModelConfigurator(serviceClass)));
+                        .defaultMetaDataFormat(defaultMetaDataFormat)));
         return this;
     }
 

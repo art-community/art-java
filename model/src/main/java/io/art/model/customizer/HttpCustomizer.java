@@ -120,7 +120,7 @@ public class HttpCustomizer {
                                 .logging(serviceModel.isLogging())
                                 .method(GET)
                                 .defaultDataFormat(serviceModel.getDefaultDataFormat())
-                                .defaultMetaDataFormat(serviceModel.getDefaultDataFormat())
+                                .defaultMetaDataFormat(serviceModel.getDefaultMetaDataFormat())
                                 .build())
 
                 );
