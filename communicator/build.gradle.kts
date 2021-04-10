@@ -22,5 +22,4 @@ dependencies {
     implementation(project(":value"))
     implementation(project(":resilience"))
     implementation(project(":logging"))
-
 }

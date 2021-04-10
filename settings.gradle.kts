@@ -1,10 +1,3 @@
-pluginManagement {
-    repositories {
-        maven("https://dl.bintray.com/kotlin/kotlin-eap")
-        mavenCentral()
-        maven("https://plugins.gradle.org/m2/")
-    }
-}
 /*
  * ART
  *
@@ -23,9 +16,6 @@ pluginManagement {
  * limitations under the License.
  */
 
-plugins {
-    id("com.gradle.enterprise") version "3.3.4"
-}
 rootProject.name = "art-java"
 include("core")
 include("model")
