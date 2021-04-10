@@ -29,19 +29,21 @@ import io.art.server.implementation.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.*;
+import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
+
+import java.util.*;
+import java.util.function.*;
+
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
+import static java.util.function.UnaryOperator.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Flux.*;
-import java.util.*;
-import java.util.function.*;
 
 @Builder(toBuilder = true)
 @UsedByGenerator
@@ -93,10 +95,10 @@ public class ServiceMethodSpecification {
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Object>, Object> adoptInput = adoptInput();
+    private final Function<Flux<Object>, Flux<Object>> adoptInput = adoptInput();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Flux<Object>> adoptOutput = adoptOutput();
+    private final Function<Flux<Object>, Flux<Object>> adoptOutput = adoptOutput();
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Value>, Flux<Value>> adoptServe = adoptServe();
@@ -108,31 +110,31 @@ public class ServiceMethodSpecification {
     private final Scheduler blockingScheduler = getConfiguration().getBlockingScheduler(serviceId, methodId);
 
     public Flux<Value> serve(Flux<Value> input) {
-        return getAdoptServe().apply(input);
+        return input.transform(getAdoptServe());
     }
 
-    private Flux<Value> processServing(Flux<Value> input) {
-        try {
-            return transformOutput(implementation.serve(transformInput(input)));
-        } catch (Throwable throwable) {
-            return transformException(throwable);
-        }
+    private Flux<Value> processServing(Flux<Value> input){
+        return input
+                .transform(this::transformInput)
+                .map(implementation::serve)
+                .switchIfEmpty(Flux.just(implementation.serve(null)))
+                .transform(this::transformOutput);
     }
 
-
-    public Object transformInput(Flux<Value> input) {
-        Flux<Object> inputFlux = input
+    private Flux<Object> transformInput(Flux<Value> input) {
+        return input
                 .map(value -> inputMapper.map(cast(value)))
-                .transform(flux -> decorateInput(cast(flux)));
-        return getAdoptInput().apply(inputFlux);
+                .transform(flux -> decorateInput(cast(flux)))
+                .transform(getAdoptInput());
     }
 
-    private Flux<Value> transformOutput(Object output) {
-        return let(output, getAdoptOutput(), Flux.empty())
+    private Flux<Value> transformOutput(Flux<Object> output) {
+        return output.transform(getAdoptOutput())
                 .transform(this::decorateOutput)
                 .map(value -> (Value) outputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, this::transformException);
     }
+
 
     private Flux<Value> transformException(Throwable exception) {
         return Flux
@@ -142,7 +144,7 @@ public class ServiceMethodSpecification {
     }
 
 
-    public Flux<Object> decorateInput(Flux<Object> input) {
+    private Flux<Object> decorateInput(Flux<Object> input) {
         Flux<Object> result = input;
         for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
             result = result.transform(decorator);
@@ -156,7 +158,7 @@ public class ServiceMethodSpecification {
         return result;
     }
 
-    public Flux<Object> decorateOutput(Flux<Object> output) {
+    private Flux<Object> decorateOutput(Flux<Object> output) {
         Flux<Object> result = output;
         for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
             result = result.transform(decorator);
@@ -170,33 +172,35 @@ public class ServiceMethodSpecification {
         return result;
     }
 
-
-    private Function<Flux<Object>, Object> adoptInput() {
+    private Function<Flux<Object>, Flux<Object>> adoptInput() {
         if (isNull(inputMode)) {
             throw new ImpossibleSituationException();
         }
         switch (inputMode) {
             case BLOCKING:
-                return input -> input.next().block();
+                return identity();
             case MONO:
-                return Flux::next;
+                return input -> input.transform(Mono::just);
             case FLUX:
-                return Caster::cast;
+                return Flux::just;
             default:
                 throw new ImpossibleSituationException();
         }
     }
 
-    private Function<Object, Flux<Object>> adoptOutput() {
+    private Function<Flux<Object>, Flux<Object>> adoptOutput(){
         if (isNull(outputMode)) {
             throw new ImpossibleSituationException();
         }
         switch (outputMode) {
             case BLOCKING:
-                return Flux::just;
+                return identity();
             case MONO:
             case FLUX:
-                return output -> Flux.from(cast(output));
+                return input -> {
+                    Flux<Publisher<Object>> casted = cast(input);
+                    return Flux.concat(casted);
+                };
             default:
                 throw new ImpossibleSituationException();
         }
@@ -204,7 +208,9 @@ public class ServiceMethodSpecification {
 
     private Function<Flux<Value>, Flux<Value>> adoptServe() {
         if (inputMode == BLOCKING || outputMode == BLOCKING) {
-            return input -> defer(() -> processServing(input)).subscribeOn(getBlockingScheduler());
+            return input -> input
+                    .transformDeferred(this::processServing)
+                    .subscribeOn(getBlockingScheduler());
         }
         return this::processServing;
     }

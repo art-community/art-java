@@ -28,7 +28,6 @@ import io.art.server.specification.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
 import io.netty.buffer.*;
-import io.netty.handler.codec.http.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
@@ -37,7 +36,6 @@ import reactor.netty.http.websocket.*;
 import java.util.*;
 
 import static io.art.core.caster.Caster.*;
-import static io.art.core.mime.MimeTypes.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
@@ -46,7 +44,6 @@ import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
 import static io.art.server.module.ServerModule.*;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
@@ -97,9 +94,8 @@ public class HttpRouter {
 //                .doFirst(() -> httpContextFrom(request, response))
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
-                .log("before serve")
-                .flatMap(value -> specification.serve(Flux.just(value)))
-                .log("after serve")
+//                .flatMap(value -> specification.serve(Flux.just(value)))
+                .transform(specification::serve)
                 .map(output -> writePayloadData(outputDataFormat, output))
                 .transform(outbound::send).then();
 //                .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
@@ -121,6 +117,7 @@ public class HttpRouter {
                 .doFirst(() -> httpContextFrom(request, response))
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
+//                .switchIfEmpty(Flux.just(emptyEntity()))
                 .transform(specification::serve)
                 .onErrorResume(throwable -> mapException(specification, throwable))
                 .map(output -> writePayloadData(outputDataFormat, output))
@@ -128,6 +125,7 @@ public class HttpRouter {
 
                 .doOnNext(unicast::tryEmitNext)
                 .doOnComplete(unicast::tryEmitComplete)
+                .doOnError(unicast::tryEmitError)
                 .thenMany(response.send(unicast.asFlux()));
     }
 
