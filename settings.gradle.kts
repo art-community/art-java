@@ -51,3 +51,10 @@ include("rocks-db")
 //include("soap-client")
 //include("soap-server")
 //include("sql")
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = uri("https://nexus.art-platform.io/repository/art-gradle-plugins/") }
+    }
+}
