@@ -56,10 +56,10 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven { url = uri("https://nexus.art-platform.io/repository/art-gradle-plugins/") }
-        resolutionStrategy {
-            eachPlugin {
-                if (requested.id.id == "art-internal") useModule("io.art.gradle:art-gradle:${requested.version}")
-            }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "art-internal") useModule("io.art.gradle:art-gradle:${requested.version}")
         }
     }
 }
