@@ -18,6 +18,7 @@
 
 plugins {
     `java-library`
+    id("art-internal")
 }
 
 group = "io.art.java"
@@ -41,5 +42,10 @@ subprojects {
         val lombokVersion: String by project
         compileOnly("org.projectlombok", "lombok", lombokVersion)
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
+    }
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
 }
