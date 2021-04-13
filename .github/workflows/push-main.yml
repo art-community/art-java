@@ -15,15 +15,10 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.jdk }}
-      - name: Cache Gradle packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: ${{ runner.os }}-gradle
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew clean publish --max-workers 8 --parallel -Ppublish.properties=${publishProperties}
+        run: ./gradlew clean publish --max-workers 8 --parallel -Ppublisher.username=${publisherUsername} -Ppublisher.password=${publisherPassword}
         env:
-          publishProperties: ${{ secrets.publishProperties }}
+          publisherUsername: ${{ secrets.PUBLISHER_USERNAME }}
+          publisherPassword: ${{ secrets.PUBLISHER_PASSWORD }}
