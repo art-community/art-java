@@ -1,11 +1,14 @@
-name: ART Java CI
-on: [push]
+name: ART Java Publish
+on:
+  push:
+    branches:
+      - main
 jobs:
   gradle:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        jdk: [ 1.8, 11, 14 ]
+        os: [ ubuntu-latest ]
+        jdk: [ 1.8 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -21,4 +24,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew clean build --max-workers 8 --configure-on-demand --parallel
+        run: ./gradlew clean publish --max-workers 8 --parallel -Ppublish.properties=${publishProperties}
+        env:
+          publishProperties: ${{ secrets.publishProperties }}

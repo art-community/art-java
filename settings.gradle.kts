@@ -1,10 +1,3 @@
-pluginManagement {
-    repositories {
-        maven("https://dl.bintray.com/kotlin/kotlin-eap")
-        mavenCentral()
-        maven("https://plugins.gradle.org/m2/")
-    }
-}
 /*
  * ART
  *
@@ -23,9 +16,6 @@ pluginManagement {
  * limitations under the License.
  */
 
-plugins {
-    id("com.gradle.enterprise") version "3.3.4"
-}
 rootProject.name = "art-java"
 include("core")
 include("model")
@@ -50,7 +40,6 @@ include("tests")
 include("scheduler")
 include("graal")
 include("storage")
-include("kotlin")
 include("rocks-db")
 //include("metrics")
 //include("metrics-http")
@@ -61,3 +50,15 @@ include("rocks-db")
 //include("soap-client")
 //include("soap-server")
 //include("sql")
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven { url = uri("https://nexus.art-platform.io/repository/art-gradle-plugins/") }
+    }
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "art-internal") useModule("io.art.gradle:art-gradle:${requested.version}")
+        }
+    }
+}

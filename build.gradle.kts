@@ -16,49 +16,26 @@
  * limitations under the License.
  */
 
-import com.jfrog.bintray.gradle.BintrayExtension.PackageConfig
-import com.jfrog.bintray.gradle.tasks.BintrayUploadTask
-import groovy.lang.GroovyObject
-import org.jfrog.gradle.plugin.artifactory.dsl.PublisherConfig
-import org.jfrog.gradle.plugin.artifactory.task.ArtifactoryTask
-
-val bintrayUser: String? by project
-val bintrayKey: String? by project
-val version: String? by project
-
 plugins {
-    `maven-publish`
-    idea
     `java-library`
-    id("com.jfrog.bintray") version "1.8.4"
-    id("com.jfrog.artifactory") version "4.10.0"
+    id("art-internal") version "main"
 }
 
-tasks.withType(Wrapper::class.java) {
-    gradleVersion = "6.5.1"
+group = "io.art.java"
+
+tasks.withType(type = Wrapper::class) {
+    gradleVersion = "7.0"
 }
 
-group = "io.art"
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
 
 subprojects {
     group = rootProject.group
 
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven {
-            url = uri("https://repo.spring.io/milestone")
-        }
-    }
-
-    apply(plugin = "com.jfrog.bintray")
-    apply(plugin = "com.jfrog.artifactory")
-    apply(plugin = "maven-publish")
     apply(plugin = "java-library")
 
     dependencies {
@@ -67,98 +44,8 @@ subprojects {
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
     }
 
-    tasks.findByPath("check")?.let { check ->
-        check.setDependsOn(check.dependsOn
-                .filter { task ->
-                    when (task) {
-                        is String -> task != "test"
-                        is TaskProvider<*> -> task.name != "test"
-                        else -> true
-                    }
-                }
-                .toSet())
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
-
-    tasks.findByPath("build")?.let { check ->
-        check.setDependsOn(check.dependsOn
-                .filter { task ->
-                    when (task) {
-                        is String -> task != "test"
-                        is TaskProvider<*> -> task.name != "test"
-                        else -> true
-                    }
-                }
-                .toSet())
-    }
-
-    if (bintrayUser.isNullOrEmpty() || bintrayKey.isNullOrEmpty()) {
-        return@subprojects
-    }
-
-    val jar: Jar by tasks
-    val sourceJar = task("sourceJar", type = Jar::class) {
-        archiveClassifier.set("sources")
-        from(sourceSets.main.get().allJava)
-    }
-
-    publishing {
-        publications {
-            create<MavenPublication>(project.name) {
-                artifact(jar)
-                artifact(sourceJar)
-                groupId = rootProject.group as String
-                artifactId = project.name
-                version = rootProject.version as String
-                pom {
-                    packaging = "jar"
-                    description.set(project.name)
-                }
-            }
-        }
-    }
-
-    artifactory {
-        setContextUrl("https://oss.jfrog.org")
-        publish(delegateClosureOf<PublisherConfig> {
-            repository(delegateClosureOf<GroovyObject> {
-                setProperty("repoKey", "oss-snapshot-local")
-                setProperty("username", bintrayUser ?: "")
-                setProperty("password", bintrayKey ?: "")
-                setProperty("maven", true)
-            })
-        })
-        val artifactoryPublish: ArtifactoryTask by tasks
-        with(artifactoryPublish) {
-            publications(project.name)
-        }
-        artifactoryPublish.dependsOn(tasks["generatePomFileFor${name.capitalize()}Publication"], jar, sourceJar)
-    }
-
-    bintray {
-        user = bintrayUser ?: ""
-        key = bintrayKey ?: ""
-        publish = true
-        override = true
-        setPublications(project.name)
-        pkg(delegateClosureOf<PackageConfig> {
-            repo = "art"
-            name = rootProject.group as String
-            userOrg = "art-community"
-            websiteUrl = "art-platform.io"
-            vcsUrl = "https://github.com/art-community/art-java"
-            setLabels("art")
-            setLicenses("Apache-2.0")
-        })
-
-        with(tasks["bintrayUpload"] as BintrayUploadTask) {
-            publish = true
-            dependsOn(tasks["generatePomFileFor${this@subprojects.name.capitalize()}Publication"], jar, sourceJar)
-        }
-    }
-}
-
-afterEvaluate {
-    tasks["bintrayUpload"].enabled = false
-    tasks["bintrayPublish"].enabled = false
-    tasks["artifactoryPublish"].enabled = false
 }
