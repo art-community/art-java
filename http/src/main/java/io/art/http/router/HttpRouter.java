@@ -30,6 +30,7 @@ import io.art.value.immutable.*;
 import io.netty.buffer.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
+import reactor.netty.*;
 import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
 
@@ -43,10 +44,13 @@ import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
+import static io.art.server.constants.ServerModuleConstants.StateKeys.SPECIFICATION_KEY;
 import static io.art.server.module.ServerModule.*;
+import static io.art.value.factory.EntityFactory.emptyEntity;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.isNull;
 
 public class HttpRouter {
 
@@ -113,15 +117,20 @@ public class HttpRouter {
 
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
 
-        return request.receive()
-                .doFirst(() -> httpContextFrom(request, response))
+        ByteBufFlux input = request.receive();
+
+        return input
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
-//                .switchIfEmpty(Flux.just(emptyEntity()))
                 .transform(specification::serve)
+                .log("after serve")
                 .onErrorResume(throwable -> mapException(specification, throwable))
+
                 .map(output -> writePayloadData(outputDataFormat, output))
-                .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
+                .contextWrite(ctx -> ctx
+                        .put(HttpContext.class, HttpContext.from(request, response))
+                        .put(SPECIFICATION_KEY, specification)
+                )
 
                 .doOnNext(unicast::tryEmitNext)
                 .doOnComplete(unicast::tryEmitComplete)
@@ -144,6 +153,8 @@ public class HttpRouter {
         Object result = httpModule().configuration().getServerConfiguration().getServices().get(specification.getServiceId())
                 .getExceptionMapper()
                 .apply(cast(exception));
-        return Flux.just(specification.getOutputMapper().map(cast(result)));
+        return isNull(result) ?
+                Flux.empty() :
+                Flux.just(specification.getOutputMapper().map(cast(result)));
     }
 }

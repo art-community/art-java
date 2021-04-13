@@ -19,6 +19,7 @@
 package io.art.http.state;
 
 import io.art.core.module.*;
+import io.art.server.module.*;
 
 import java.util.function.*;
 
@@ -34,7 +35,7 @@ public class HttpModuleState implements ModuleState {
     }
 
     public HttpContext localContext() {
-        return threadLocalContext.get();
+        return ServerModule.serverModule().state().localState().getContext().get(HttpContext.class);
     }
 
 

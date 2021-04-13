@@ -25,7 +25,7 @@ public class HttpServiceModelConfigurator {
 
     public HttpServiceModelConfigurator(Class<?> serviceClass){
         this.serviceClass = serviceClass;
-        this.exceptionMapping = new HttpServiceExceptionMappingConfigurator(serviceClass);
+        this.exceptionMapping = new HttpServiceExceptionMappingConfigurator();
     }
 
     private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
