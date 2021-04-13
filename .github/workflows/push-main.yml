@@ -24,6 +24,7 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew clean publish --max-workers 8 --parallel -Ppublishing.properties=${publishingProperties}
+        run: ./gradlew clean publish --max-workers 8 --parallel -PpublisherUsername=${publisherUsername} -PpublisherPassword=${publisherPassword}
         env:
-          publishingProperties: ${{ secrets.PUBLSIHING_PROPERTIES }}
+          publisherUsername: ${{ secrets.PUBLISHER_USERNAME }}
+          publisherPassword: ${{ secrets.PUBLISHER_PASSWORD }}
