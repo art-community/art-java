@@ -26,4 +26,4 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean publish --max-workers 8 --parallel -Ppublishing.properties=${publishingProperties}
         env:
-          publishingProperties: ${{ secrets.publishingProperties }}
+          publishingProperties: ${{ secrets.PUBLSIHING_PROPERTIES }}
