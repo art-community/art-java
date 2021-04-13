@@ -1,5 +1,8 @@
-name: ART Java Pull Request
-on: [ pull_request ]
+name: ART Java Build
+on:
+  push:
+    branches-ignore:
+      - main
 jobs:
   gradle:
     strategy:
@@ -21,4 +24,4 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Build with Gradle
-        run: ./gradlew clean build --max-workers 8 --configure-on-demand --parallel
+        run: ./gradlew clean build --max-workers 8 --parallel
