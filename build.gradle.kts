@@ -18,7 +18,7 @@
 
 plugins {
     `java-library`
-    id("art-internal") version "main"
+    id("art-internal-jvm") version "main"
 }
 
 group = "io.art.java"

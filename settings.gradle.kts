@@ -58,7 +58,7 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == "art-internal") useModule("io.art.gradle:art-gradle:${requested.version}")
+            if (requested.id.id == "art-internal-jvm") useModule("io.art.gradle:art-gradle:${requested.version}")
         }
     }
 }
