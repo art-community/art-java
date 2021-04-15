@@ -22,5 +22,5 @@ public enum MethodProcessingMode {
     BLOCKING,
     MONO,
     FLUX,
-    VOID
+    EMPTY
 }
