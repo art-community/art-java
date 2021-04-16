@@ -140,7 +140,7 @@ public class HttpRouter {
     }
 
     private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception){
-        Object result = findServiceConfiguration(specification)
+        Object result = httpModule().configuration().getServerConfiguration()
                 .getExceptionMapper()
                 .apply(cast(exception));
         return isNull(result) ?
@@ -160,10 +160,8 @@ public class HttpRouter {
     }
 
     private HttpMethodConfiguration findMethodConfiguration(ServiceMethodSpecification specification){
-        return findServiceConfiguration(specification).getMethods().get(specification.getMethodId());
-    }
-
-    private HttpServiceConfiguration findServiceConfiguration(ServiceMethodSpecification specification){
-        return httpModule().configuration().getServerConfiguration().getServices().get(specification.getServiceId());
+        return httpModule().configuration().getServerConfiguration()
+                .getServices().get(specification.getServiceId())
+                .getMethods().get(specification.getMethodId());
     }
 }

@@ -26,4 +26,5 @@ public class HttpServerModel {
     private final UnaryOperator<HttpRequestDecoderSpec> requestDecoderConfigurator;
     private final boolean redirectToHttps;
     private final Consumer<? super SslProvider.SslContextSpec> sslConfigurator;
+    private final Function<? extends Throwable, ?> exceptionsMapper;
 }

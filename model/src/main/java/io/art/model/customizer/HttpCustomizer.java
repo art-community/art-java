@@ -70,8 +70,8 @@ public class HttpCustomizer {
                 .services(httpServerModel.getServices()
                         .values()
                         .stream()
-                        .collect(cast(immutableMapCollector(HttpServiceModel::getId, this::buildServiceConfig))));
-
+                        .collect(cast(immutableMapCollector(HttpServiceModel::getId, this::buildServiceConfig))))
+                .exceptionMapper(httpServerModel.getExceptionsMapper());
         let(httpServerModel.getDefaultServiceMethod(), serverConfigurationBuilder::defaultServiceMethod);
 
         server(serverConfigurationBuilder.build());
@@ -134,7 +134,6 @@ public class HttpCustomizer {
         return HttpServiceConfiguration.builder()
                 .path(serviceModel.getPath())
                 .methods(immutableMapOf(configs))
-                .exceptionMapper(serviceModel.getExceptionsMapper())
                 .build();
     }
 

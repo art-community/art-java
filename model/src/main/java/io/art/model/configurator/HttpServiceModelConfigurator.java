@@ -17,7 +17,6 @@ import static lombok.AccessLevel.*;
 public class HttpServiceModelConfigurator {
     private final Class<?> serviceClass;
     private final Map<String, HttpServiceMethodModelConfigurator> methods = map();
-    private final HttpServiceExceptionMappingConfigurator exceptionMapping;
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
     private boolean logging;
     private DataFormat defaultDataFormat;
@@ -25,7 +24,6 @@ public class HttpServiceModelConfigurator {
 
     public HttpServiceModelConfigurator(Class<?> serviceClass){
         this.serviceClass = serviceClass;
-        this.exceptionMapping = new HttpServiceExceptionMappingConfigurator();
     }
 
     private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
@@ -110,10 +108,7 @@ public class HttpServiceModelConfigurator {
     }
 
 
-    public HttpServiceModelConfigurator exceptions(UnaryOperator<HttpServiceExceptionMappingConfigurator> configurator){
-        configurator.apply(exceptionMapping);
-        return this;
-    }
+
 
 
     public HttpServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
@@ -155,7 +150,6 @@ public class HttpServiceModelConfigurator {
                         .stream()
                         .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .decorator(decorator)
-                .exceptionsMapper(exceptionMapping.configure())
                 .defaultDataFormat(defaultDataFormat)
                 .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();

@@ -32,7 +32,6 @@ import java.util.*;
 import java.util.function.*;
 
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -56,6 +55,7 @@ public class HttpServerModelConfigurator {
     private int fragmentationMtu = 0;
     private DataFormat defaultDataFormat = JSON;
     private DataFormat defaultMetaDataFormat = JSON;
+    private final HttpServiceExceptionMappingConfigurator exceptionMapping = new HttpServiceExceptionMappingConfigurator();
     private ServiceMethodIdentifier defaultServiceMethod;
     private UnaryOperator<HttpRequestDecoderSpec> requestDecoderConfigurator = identity();
     private SslContext defaultSslContext;
@@ -73,6 +73,11 @@ public class HttpServerModelConfigurator {
                         .logging(logging)
                         .defaultDataFormat(defaultDataFormat)
                         .defaultMetaDataFormat(defaultMetaDataFormat)));
+        return this;
+    }
+
+    public HttpServerModelConfigurator exceptions(UnaryOperator<HttpServiceExceptionMappingConfigurator> configurator){
+        configurator.apply(exceptionMapping);
         return this;
     }
 
@@ -169,6 +174,7 @@ public class HttpServerModelConfigurator {
                         spec -> spec.sslContext(defaultSslContext)
                                 .addSniMappings(sniMapping)
                                 .build())
+                .exceptionsMapper(exceptionMapping.configure())
                 .build();
     }
 

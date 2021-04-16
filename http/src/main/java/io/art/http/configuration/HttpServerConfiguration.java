@@ -23,10 +23,10 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
-import io.art.server.configuration.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.server.*;
+import java.util.function.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -45,6 +45,7 @@ public class HttpServerConfiguration {
     private int fragmentationMtu;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
+    private final Function<? extends Throwable, ?> exceptionMapper;
 
     public static HttpServerConfiguration defaults() {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();

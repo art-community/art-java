@@ -22,9 +22,6 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
 
-import java.util.function.*;
-
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 
@@ -33,8 +30,6 @@ import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 public class HttpServiceConfiguration {
     private ImmutableMap<String, HttpMethodConfiguration> methods;
     private String path;
-    @Builder.Default
-    private Function<? extends Throwable, ?> exceptionMapper = emptyFunction();
 
 
     public static HttpServiceConfiguration from(ConfigurationSource source) {
