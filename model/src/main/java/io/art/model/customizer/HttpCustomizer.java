@@ -58,13 +58,13 @@ public class HttpCustomizer {
                 .accessLog(httpServerModel.isAccessLogging())
                 .host(httpServerModel.getHost())
                 .port(httpServerModel.getPort())
+                .protocol(httpServerModel.getProtocol())
                 .compress(httpServerModel.isCompression());
         let(httpServerModel.getSslConfigurator(), configurator -> server.secure(configurator, httpServerModel.isRedirectToHttps()));
 
         HttpServerConfiguration.HttpServerConfigurationBuilder serverConfigurationBuilder = HttpServerConfiguration.builder()
                 .httpServer(server)
                 .defaultDataFormat(httpServerModel.getDefaultDataFormat())
-                .defaultMetaDataFormat(httpServerModel.getDefaultMetaDataFormat())
                 .fragmentationMtu(httpServerModel.getFragmentationMtu())
                 .logging(httpServerModel.isLogging())
                 .services(httpServerModel.getServices()
@@ -108,7 +108,6 @@ public class HttpCustomizer {
                                 .logging(method.isLogging())
                                 .method(method.getHttpMethodType())
                                 .defaultDataFormat(method.getDefaultDataFormat())
-                                .defaultMetaDataFormat(method.getDefaultMetaDataFormat())
                                 .build()
                         )
                 );
@@ -126,7 +125,6 @@ public class HttpCustomizer {
                                 .logging(serviceModel.isLogging())
                                 .method(GET)
                                 .defaultDataFormat(serviceModel.getDefaultDataFormat())
-                                .defaultMetaDataFormat(serviceModel.getDefaultMetaDataFormat())
                                 .build()
                         )
                 );

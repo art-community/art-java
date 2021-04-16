@@ -37,7 +37,6 @@ public class HttpServiceModel implements ServiceModel {
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, HttpServiceMethodModel> methods;
     private final DataFormat defaultDataFormat;
-    private final DataFormat defaultMetaDataFormat;
 
     public ImmutableMap<String, ServiceMethodModel> getMethods() {
         return cast(methods);

@@ -37,5 +37,4 @@ public class HttpServiceMethodModel implements ServiceMethodModel {
     private final HttpMethodType httpMethodType;
     private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final DataFormat defaultDataFormat;
-    private final DataFormat defaultMetaDataFormat;
 }

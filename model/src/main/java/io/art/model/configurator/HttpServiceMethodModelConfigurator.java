@@ -41,7 +41,6 @@ public class HttpServiceMethodModelConfigurator {
     private HttpMethodType httpMethodType = HttpMethodType.GET;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
 
     public HttpServiceMethodModelConfigurator(String methodName) {
         this.path = methodName;
@@ -78,11 +77,6 @@ public class HttpServiceMethodModelConfigurator {
         return this;
     }
 
-    public HttpServiceMethodModelConfigurator defaultMetaDataFormat(DataFormat format) {
-        defaultMetaDataFormat = format;
-        return this;
-    }
-
     public HttpServiceMethodModelConfigurator decorate(Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
         this.decorator = decorator.andThen(decorator);
         return this;
@@ -98,7 +92,6 @@ public class HttpServiceMethodModelConfigurator {
                 .httpMethodType(httpMethodType)
                 .decorator(decorator)
                 .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();
     }
 }

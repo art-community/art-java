@@ -24,6 +24,7 @@ import io.art.model.implementation.server.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.netty.handler.ssl.*;
 import lombok.*;
+import reactor.netty.http.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.SslProvider;
 
@@ -48,13 +49,13 @@ public class HttpServerModelConfigurator {
     private final Set<String> existentIDs = set();
     private String host = BROADCAST_IP_ADDRESS;
     private Integer port = DEFAULT_PORT;
+    private HttpProtocol protocol = HttpProtocol.HTTP11;
     private boolean compression = false;
     private boolean logging = false;
     private boolean wiretap = false;
     private boolean accessLogging = false;
     private int fragmentationMtu = 0;
     private DataFormat defaultDataFormat = JSON;
-    private DataFormat defaultMetaDataFormat = JSON;
     private final HttpServiceExceptionMappingConfigurator exceptionMapping = new HttpServiceExceptionMappingConfigurator();
     private ServiceMethodIdentifier defaultServiceMethod;
     private UnaryOperator<HttpRequestDecoderSpec> requestDecoderConfigurator = identity();
@@ -71,8 +72,7 @@ public class HttpServerModelConfigurator {
         addRouteIfAbsent(path, configurator
                 .apply(new HttpServiceModelConfigurator(serviceClass)
                         .logging(logging)
-                        .defaultDataFormat(defaultDataFormat)
-                        .defaultMetaDataFormat(defaultMetaDataFormat)));
+                        .defaultDataFormat(defaultDataFormat)));
         return this;
     }
 
@@ -88,6 +88,11 @@ public class HttpServerModelConfigurator {
 
     public HttpServerModelConfigurator port(Integer port) {
         this.port = port;
+        return this;
+    }
+
+    public HttpServerModelConfigurator protocol(HttpProtocol version) {
+        this.protocol = version;
         return this;
     }
 
@@ -121,11 +126,6 @@ public class HttpServerModelConfigurator {
         return this;
     }
 
-    public HttpServerModelConfigurator defaultMetaDataFormat(DataFormat format) {
-        defaultMetaDataFormat = format;
-        return this;
-    }
-
     public HttpServerModelConfigurator defaultServiceMethod(String serviceId, String methodId) {
         defaultServiceMethod = new ServiceMethodIdentifier(serviceId, methodId);
         return this;
@@ -144,7 +144,8 @@ public class HttpServerModelConfigurator {
 
     @SneakyThrows
     public HttpServerModelConfigurator ssl(String domain, File certificate, File key){
-        sniMapping.put(domain, spec -> spec.sslContext(SslContextBuilder.forServer(certificate, key)));
+        SslContext sslContext = SslContextBuilder.forServer(certificate, key).build();
+        sniMapping.put(domain, spec -> spec.sslContext(sslContext));
         return this;
     }
 
@@ -160,13 +161,13 @@ public class HttpServerModelConfigurator {
                 .services(services.build())
                 .host(host)
                 .port(port)
+                .protocol(protocol)
                 .compression(compression)
                 .logging(logging)
                 .wiretap(wiretap)
                 .accessLogging(accessLogging)
                 .fragmentationMtu(fragmentationMtu)
                 .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .defaultServiceMethod(defaultServiceMethod)
                 .requestDecoderConfigurator(requestDecoderConfigurator)
                 .redirectToHttps(redirectToHttps)

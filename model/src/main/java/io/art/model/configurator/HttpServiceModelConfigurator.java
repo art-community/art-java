@@ -20,7 +20,6 @@ public class HttpServiceModelConfigurator {
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
     private boolean logging;
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
 
     public HttpServiceModelConfigurator(Class<?> serviceClass){
         this.serviceClass = serviceClass;
@@ -29,8 +28,7 @@ public class HttpServiceModelConfigurator {
     private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
         HttpServiceMethodModelConfigurator newMethod = new HttpServiceMethodModelConfigurator(methodName)
                 .logging(logging)
-                .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat);
+                .defaultDataFormat(defaultDataFormat);
         methods.putIfAbsent(methodName, configurator.apply(newMethod));
         return this;
     }
@@ -130,11 +128,6 @@ public class HttpServiceModelConfigurator {
         return this;
     }
 
-    public HttpServiceModelConfigurator defaultMetaDataFormat(DataFormat format) {
-        defaultMetaDataFormat = format;
-        return this;
-    }
-
     protected String getId(){
         return serviceClass.getSimpleName();
     }
@@ -151,7 +144,6 @@ public class HttpServiceModelConfigurator {
                         .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .decorator(decorator)
                 .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();
     }
 }

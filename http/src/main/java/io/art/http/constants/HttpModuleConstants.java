@@ -67,7 +67,6 @@ public interface HttpModuleConstants {
 
         String DEFAULT_SECTION = "default";
         String DATA_FORMAT_KEY = "dataFormat";
-        String META_DATA_FORMAT_KEY = "metaDataFormat";
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
 
@@ -130,7 +129,7 @@ public interface HttpModuleConstants {
 //        PATCH,
         DIRECTORY,
         FILE,
-        WEBSOCKET;
+        WEBSOCKET
     }
 
     interface Defaults {

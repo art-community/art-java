@@ -44,13 +44,11 @@ public class HttpServerConfiguration {
     private boolean logging;
     private int fragmentationMtu;
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
     private final Function<? extends Throwable, ?> exceptionMapper;
 
     public static HttpServerConfiguration defaults() {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
         configuration.defaultDataFormat = JSON;
-        configuration.defaultMetaDataFormat = JSON;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
         configuration.httpServer = HttpServer.create().port(DEFAULT_PORT);
@@ -66,7 +64,6 @@ public class HttpServerConfiguration {
         configuration.logging = serverLoggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
 
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
-        configuration.defaultMetaDataFormat = serverListener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
         configuration.fragmentationMtu = serverListener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
 
         String serviceId = source.getString(SERVICE_ID_KEY);

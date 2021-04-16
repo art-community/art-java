@@ -34,7 +34,6 @@ public class HttpMethodConfiguration {
     private boolean deactivated;
     private boolean logging;
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
 
 
     public static HttpMethodConfiguration from(HttpServiceConfiguration serviceConfiguration, ConfigurationSource source) {
