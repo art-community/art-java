@@ -28,10 +28,13 @@ import io.art.server.module.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 
+import java.util.*;
+
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.http.constants.HttpModuleConstants.HttpMethodType.*;
 
 @Getter
@@ -91,27 +94,30 @@ public class HttpCustomizer {
     }
 
     private HttpServiceConfiguration buildServiceConfig(HttpServiceModel serviceModel) {
-        ImmutableMap.Builder<String, HttpMethodConfiguration> configs = immutableMapBuilder();
+        Map<String, HttpMethodConfiguration> configs = map();
 
-        ServerModule.serverModule()
-                .configuration()
-                .getRegistry()
-                .getServices()
+        serviceModel.getHttpMethods()
+                .forEach((id, method) -> configs.put(id,
+                        HttpMethodConfiguration.builder()
+                                .path(serviceModel.getPath().endsWith(SLASH) ?
+                                        serviceModel.getPath() + method.getName() :
+                                        serviceModel.getPath() + SLASH + method.getName()
+                                )
+                                .filePath(method.getFilePath())
+                                .deactivated(method.isDeactivated())
+                                .logging(method.isLogging())
+                                .method(method.getHttpMethodType())
+                                .defaultDataFormat(method.getDefaultDataFormat())
+                                .defaultMetaDataFormat(method.getDefaultMetaDataFormat())
+                                .build()
+                        )
+                );
+
+        ServerModule.serverModule().configuration().getRegistry().getServices()
                 .get(serviceModel.getId())
                 .getMethods().keySet()
-                .forEach(id -> configs.put(id, serviceModel.getHttpMethods().containsKey(id)
-                        ? HttpMethodConfiguration.builder()
-                                .path(serviceModel.getPath().endsWith(SLASH) ?
-                                        serviceModel.getPath() + serviceModel.getHttpMethods().get(id).getName() :
-                                        serviceModel.getPath() + SLASH + serviceModel.getHttpMethods().get(id).getName()
-                                )
-                                .deactivated(serviceModel.getHttpMethods().get(id).isDeactivated())
-                                .logging(serviceModel.getHttpMethods().get(id).isLogging())
-                                .method(serviceModel.getHttpMethods().get(id).getHttpMethodType())
-                                .defaultDataFormat(serviceModel.getHttpMethods().get(id).getDefaultDataFormat())
-                                .defaultMetaDataFormat(serviceModel.getHttpMethods().get(id).getDefaultMetaDataFormat())
-                                .build()
-                        : HttpMethodConfiguration.builder()
+                .forEach(id -> configs.putIfAbsent(id,
+                        HttpMethodConfiguration.builder()
                                 .path(serviceModel.getPath().endsWith(SLASH) ?
                                         serviceModel.getPath() + id :
                                         serviceModel.getPath() + SLASH + id
@@ -121,12 +127,13 @@ public class HttpCustomizer {
                                 .method(GET)
                                 .defaultDataFormat(serviceModel.getDefaultDataFormat())
                                 .defaultMetaDataFormat(serviceModel.getDefaultMetaDataFormat())
-                                .build())
-
+                                .build()
+                        )
                 );
+
         return HttpServiceConfiguration.builder()
                 .path(serviceModel.getPath())
-                .methods(configs.build())
+                .methods(immutableMapOf(configs))
                 .exceptionMapper(serviceModel.getExceptionsMapper())
                 .build();
     }

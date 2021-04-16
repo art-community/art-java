@@ -65,6 +65,14 @@ public class HttpServiceModelConfigurator {
         return method(methodName, method -> method.httpMethod(HttpMethodType.WEBSOCKET));
     }
 
+    public HttpServiceModelConfigurator file(String httpPath, String filePath){
+        return method(httpPath, method -> method.httpMethod(HttpMethodType.FILE).filePath(filePath));
+    }
+
+    public HttpServiceModelConfigurator directory(String httpPath, String directory){
+        return method(httpPath, method -> method.httpMethod(HttpMethodType.DIRECTORY).filePath(directory));
+    }
+
     public HttpServiceModelConfigurator get(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
         return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.GET)));
     }
@@ -91,6 +99,14 @@ public class HttpServiceModelConfigurator {
 
     public HttpServiceModelConfigurator websocket(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
         return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.WEBSOCKET)));
+    }
+
+    public HttpServiceModelConfigurator file(String httpPath, String filePath, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(httpPath, method -> configurator.apply(method.httpMethod(HttpMethodType.FILE).filePath(filePath)));
+    }
+
+    public HttpServiceModelConfigurator directory(String httpPath, String directory, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(httpPath, method -> configurator.apply(method.httpMethod(HttpMethodType.DIRECTORY).filePath(directory)));
     }
 
 

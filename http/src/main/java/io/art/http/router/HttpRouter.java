@@ -34,6 +34,7 @@ import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
 import reactor.util.context.*;
 
+import java.nio.file.*;
 import java.util.*;
 
 import static io.art.core.caster.Caster.*;
@@ -44,14 +45,13 @@ import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
-import static io.art.logging.LoggingModule.logger;
-import static io.art.server.constants.ServerModuleConstants.StateKeys.SPECIFICATION_KEY;
+import static io.art.server.constants.ServerModuleConstants.StateKeys.*;
 import static io.art.server.module.ServerModule.*;
-import static io.art.server.state.ServerModuleState.ServerThreadLocalState.fromContext;
+import static io.art.server.state.ServerModuleState.ServerThreadLocalState.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 
 public class HttpRouter {
 
@@ -81,6 +81,13 @@ public class HttpRouter {
                         break;
                     case WEBSOCKET:
                         routes.ws(methodValue.getPath(), (inbound, outbound) -> handleWebsocket(findSpecification(serviceMethod(service.getKey(), method.getKey())), inbound, outbound));
+                        break;
+                    case FILE:
+                        routes.file(methodValue.getPath(), methodValue.getFilePath());
+                        break;
+                    case DIRECTORY:
+                        routes.directory(methodValue.getPath(), Paths.get(methodValue.getFilePath()));
+                        break;
                 }
             }
         }

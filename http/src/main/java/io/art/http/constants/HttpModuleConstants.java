@@ -128,6 +128,8 @@ public interface HttpModuleConstants {
         OPTIONS,
         HEAD,
 //        PATCH,
+        DIRECTORY,
+        FILE,
         WEBSOCKET;
     }
 

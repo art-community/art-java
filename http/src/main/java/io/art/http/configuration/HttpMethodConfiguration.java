@@ -29,6 +29,7 @@ import static io.art.value.constants.ValueModuleConstants.*;
 @Builder(toBuilder = true)
 public class HttpMethodConfiguration {
     private String path;
+    private String filePath;
     private HttpMethodType method;
     private boolean deactivated;
     private boolean logging;
