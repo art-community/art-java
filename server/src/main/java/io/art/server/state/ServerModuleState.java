@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,11 +44,12 @@ public class ServerModuleState implements ModuleState {
     @Getter
     @Builder(toBuilder = true)
     public static class ServerThreadLocalState {
+        private final ContextView context;
         private final ServiceMethodSpecification specification;
 
         public static ServerThreadLocalState fromContext(ContextView context) {
             ServiceMethodSpecification specification = context.get(SPECIFICATION_KEY);
-            return new ServerThreadLocalState(specification);
+            return new ServerThreadLocalState(context, specification);
         }
     }
 }

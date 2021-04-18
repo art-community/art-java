@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,11 +29,11 @@ import static io.art.value.constants.ValueModuleConstants.*;
 @Builder(toBuilder = true)
 public class HttpMethodConfiguration {
     private String path;
+    private String filePath;
     private HttpMethodType method;
     private boolean deactivated;
     private boolean logging;
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
 
 
     public static HttpMethodConfiguration from(HttpServiceConfiguration serviceConfiguration, ConfigurationSource source) {

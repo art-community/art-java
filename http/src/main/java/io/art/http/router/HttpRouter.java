@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,9 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
+import reactor.util.context.*;
 
+import java.nio.file.*;
 import java.util.*;
 
 import static io.art.core.caster.Caster.*;
@@ -43,10 +45,13 @@ import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.payload.HttpPayloadReader.*;
 import static io.art.http.payload.HttpPayloadWriter.*;
+import static io.art.server.constants.ServerModuleConstants.StateKeys.*;
 import static io.art.server.module.ServerModule.*;
+import static io.art.server.state.ServerModuleState.ServerThreadLocalState.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 
 public class HttpRouter {
 
@@ -76,13 +81,20 @@ public class HttpRouter {
                         break;
                     case WEBSOCKET:
                         routes.ws(methodValue.getPath(), (inbound, outbound) -> handleWebsocket(findSpecification(serviceMethod(service.getKey(), method.getKey())), inbound, outbound));
+                        break;
+                    case FILE:
+                        routes.file(methodValue.getPath(), methodValue.getFilePath());
+                        break;
+                    case DIRECTORY:
+                        routes.directory(methodValue.getPath(), Paths.get(methodValue.getFilePath()));
+                        break;
                 }
             }
         }
     }
 
     private Publisher<Void> handleWebsocket(ServiceMethodSpecification specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
-        DataFormat defaultDataFormat = findConfiguration(specification).getDefaultDataFormat();
+        DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(
                 () -> fromMimeType(MimeType.valueOf(inbound.headers().get(CONTENT_TYPE))),
                 ignored -> defaultDataFormat);
@@ -91,19 +103,17 @@ public class HttpRouter {
                 ignored -> defaultDataFormat);
 
         return inbound.receive()
-//                .doFirst(() -> httpContextFrom(request, response))
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
-//                .flatMap(value -> specification.serve(Flux.just(value)))
                 .transform(specification::serve)
                 .map(output -> writePayloadData(outputDataFormat, output))
-                .transform(outbound::send).then();
-//                .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
+                .transform(outbound::send)
+                .then();
 
     }
 
     private Publisher<Void> handleHttp(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
-        DataFormat defaultDataFormat = findConfiguration(specification).getDefaultDataFormat();
+        DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(
                 () -> fromMimeType(MimeType.valueOf(request.requestHeaders().get(CONTENT_TYPE))),
                 ignored -> defaultDataFormat);
@@ -114,19 +124,33 @@ public class HttpRouter {
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
 
         return request.receive()
-                .doFirst(() -> httpContextFrom(request, response))
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
-//                .switchIfEmpty(Flux.just(emptyEntity()))
                 .transform(specification::serve)
                 .onErrorResume(throwable -> mapException(specification, throwable))
                 .map(output -> writePayloadData(outputDataFormat, output))
-                .contextWrite(ctx -> ctx.put(HttpContext.class, HttpContext.from(request, response)))
-
+                .contextWrite(ctx -> setContext(ctx
+                        .put(HttpContext.class, HttpContext.from(request, response))
+                        .put(SPECIFICATION_KEY, specification))
+                )
                 .doOnNext(unicast::tryEmitNext)
                 .doOnComplete(unicast::tryEmitComplete)
                 .doOnError(unicast::tryEmitError)
                 .thenMany(response.send(unicast.asFlux()));
+    }
+
+    private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception){
+        Object result = httpModule().configuration().getServerConfiguration()
+                .getExceptionMapper()
+                .apply(cast(exception));
+        return isNull(result) ?
+                Flux.empty() :
+                Flux.just(specification.getOutputMapper().map(cast(result)));
+    }
+
+    private Context setContext(Context context){
+        serverModule().state().localState(fromContext(context));
+        return context;
     }
 
     private ServiceMethodSpecification findSpecification(ServiceMethodIdentifier serviceMethodId) {
@@ -135,15 +159,9 @@ public class HttpRouter {
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
     }
 
-    private HttpMethodConfiguration findConfiguration(ServiceMethodSpecification specification){
-        return httpModule().configuration().getServerConfiguration().getServices().get(specification.getServiceId())
+    private HttpMethodConfiguration findMethodConfiguration(ServiceMethodSpecification specification){
+        return httpModule().configuration().getServerConfiguration()
+                .getServices().get(specification.getServiceId())
                 .getMethods().get(specification.getMethodId());
-    }
-
-    private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception){
-        Object result = httpModule().configuration().getServerConfiguration().getServices().get(specification.getServiceId())
-                .getExceptionMapper()
-                .apply(cast(exception));
-        return Flux.just(specification.getOutputMapper().map(cast(result)));
     }
 }

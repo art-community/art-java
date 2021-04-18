@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,10 +31,10 @@ import static io.art.value.constants.ValueModuleConstants.*;
 public class HttpServiceMethodModel implements ServiceMethodModel {
     private final String id;
     private final String name;
+    private final String filePath;
     private final boolean deactivated;
     private final boolean logging;
     private final HttpMethodType httpMethodType;
     private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final DataFormat defaultDataFormat;
-    private final DataFormat defaultMetaDataFormat;
 }

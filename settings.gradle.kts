@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ pluginManagement {
     }
     resolutionStrategy {
         eachPlugin {
-            if (requested.id.id == "art-internal") useModule("io.art.gradle:art-gradle:${requested.version}")
+            if (requested.id.id == "art-internal-jvm") useModule("io.art.gradle:art-gradle:${requested.version}")
         }
     }
 }

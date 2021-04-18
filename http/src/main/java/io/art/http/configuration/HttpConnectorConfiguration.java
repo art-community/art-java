@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ public class HttpConnectorConfiguration {
     private String httpWebSocketPath;
     private boolean logging;
     private DataFormat dataFormat;
-    private DataFormat metaDataFormat;
 
     public static HttpConnectorConfiguration defaults() {
         HttpConnectorConfiguration configuration = new HttpConnectorConfiguration();
@@ -57,7 +56,6 @@ public class HttpConnectorConfiguration {
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
         configuration.payloadDecoderMode = DEFAULT;
         configuration.dataFormat = JSON;
-        configuration.metaDataFormat = JSON;
         configuration.httpWebSocketPath = SLASH;
         return configuration;
     }
@@ -71,7 +69,6 @@ public class HttpConnectorConfiguration {
         configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
         configuration.payloadDecoderMode = httpPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
         configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
-        configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
         configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, HttpKeepAliveConfiguration::httpKeepAlive);
         configuration.retry = source.getNested(RECONNECT_SECTION, HttpRetryConfiguration::httpRetry);
 
@@ -97,7 +94,6 @@ public class HttpConnectorConfiguration {
         configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), defaults.logging));
 
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
-        configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat));
         configuration.payloadDecoderMode = listener.emit(httpPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
         configuration.fragment = listener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment));

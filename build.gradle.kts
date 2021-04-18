@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
 
 plugins {
     `java-library`
-    id("art-internal") version "main"
+    id("art-internal-jvm") version "main"
 }
 
 group = "io.art.java"

@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import lombok.*;
 
 import java.util.function.*;
 
+import static io.art.core.constants.StringConstants.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.value.constants.ValueModuleConstants.*;
 import static java.util.function.Function.*;
@@ -34,19 +35,19 @@ import static lombok.AccessLevel.*;
 public class HttpServiceMethodModelConfigurator {
     private final String id;
     private String path;
+    private String filePath = EMPTY_STRING;
     private boolean deactivated = false;
     private boolean logging = false;
     private HttpMethodType httpMethodType = HttpMethodType.GET;
     private Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = identity();
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
 
     public HttpServiceMethodModelConfigurator(String methodName) {
         this.path = methodName;
         this.id = methodName;
     }
 
-    public HttpServiceMethodModelConfigurator pathName(String path) {
+    public HttpServiceMethodModelConfigurator path(String path) {
         this.path = path;
         return this;
     }
@@ -66,13 +67,13 @@ public class HttpServiceMethodModelConfigurator {
         return this;
     }
 
-    public HttpServiceMethodModelConfigurator defaultDataFormat(DataFormat format) {
-        defaultDataFormat = format;
+    protected HttpServiceMethodModelConfigurator filePath(String path) {
+        this.filePath = path;
         return this;
     }
 
-    public HttpServiceMethodModelConfigurator defaultMetaDataFormat(DataFormat format) {
-        defaultMetaDataFormat = format;
+    public HttpServiceMethodModelConfigurator defaultDataFormat(DataFormat format) {
+        defaultDataFormat = format;
         return this;
     }
 
@@ -85,12 +86,12 @@ public class HttpServiceMethodModelConfigurator {
         return HttpServiceMethodModel.builder()
                 .id(id)
                 .name(path)
+                .filePath(filePath)
                 .deactivated(deactivated)
                 .logging(logging)
                 .httpMethodType(httpMethodType)
                 .decorator(decorator)
                 .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();
     }
 }

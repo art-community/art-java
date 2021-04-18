@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
+import reactor.util.context.*;
 
 import java.util.*;
 import java.util.function.*;
@@ -40,7 +41,9 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.server.constants.ServerModuleConstants.StateKeys.*;
 import static io.art.server.module.ServerModule.*;
+import static io.art.server.state.ServerModuleState.ServerThreadLocalState.*;
 import static java.util.Objects.*;
 import static java.util.function.UnaryOperator.*;
 import static lombok.AccessLevel.*;
@@ -101,7 +104,7 @@ public class ServiceMethodSpecification {
     private final Function<Flux<Object>, Flux<Object>> adoptOutput = adoptOutput();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Flux<Value>, Flux<Value>> adoptServe = adoptServe();
+    private final Function<Flux<Object>, Flux<Object>> adoptServe = adoptServe();
 
     @Getter(lazy = true, value = PRIVATE)
     private final ServerModuleConfiguration configuration = serverModule().configuration();
@@ -110,20 +113,16 @@ public class ServiceMethodSpecification {
     private final Scheduler blockingScheduler = getConfiguration().getBlockingScheduler(serviceId, methodId);
 
     public Flux<Value> serve(Flux<Value> input) {
-        return input.transform(getAdoptServe());
-    }
-
-    private Flux<Value> processServing(Flux<Value> input){
         return input
                 .transform(this::transformInput)
-                .map(implementation::serve)
-                .switchIfEmpty(Flux.just(implementation.serve(null)))
+                .transform(getAdoptServe())
                 .transform(this::transformOutput);
     }
 
+
     private Flux<Object> transformInput(Flux<Value> input) {
         return input
-                .map(value -> inputMapper.map(cast(value)))
+                .mapNotNull(value -> inputMapper.map(cast(value)))
                 .transform(flux -> decorateInput(cast(flux)))
                 .transform(getAdoptInput());
     }
@@ -131,7 +130,7 @@ public class ServiceMethodSpecification {
     private Flux<Value> transformOutput(Flux<Object> output) {
         return output.transform(getAdoptOutput())
                 .transform(this::decorateOutput)
-                .map(value -> (Value) outputMapper.map(cast(value)))
+                .mapNotNull(value -> (Value) outputMapper.map(cast(value)))
                 .onErrorResume(Throwable.class, this::transformException);
     }
 
@@ -178,9 +177,10 @@ public class ServiceMethodSpecification {
         }
         switch (inputMode) {
             case BLOCKING:
+            case EMPTY:
                 return identity();
             case MONO:
-                return input -> input.transform(Mono::just);
+                return input -> input.map(Mono::just);
             case FLUX:
                 return Flux::just;
             default:
@@ -206,12 +206,28 @@ public class ServiceMethodSpecification {
         }
     }
 
-    private Function<Flux<Value>, Flux<Value>> adoptServe() {
+    private Function<Flux<Object>, Flux<Object>> adoptServe() {
+        if (inputMode == EMPTY) {
+            return input -> input
+                    .publishOn(getBlockingScheduler())
+                    .transformDeferredContextual((flux, ctx) -> flux
+                            .mapNotNull(entry -> processServing(entry, ctx))
+                            .defaultIfEmpty(processServing(null, ctx))
+                    );
+        }
+
         if (inputMode == BLOCKING || outputMode == BLOCKING) {
             return input -> input
-                    .transformDeferred(this::processServing)
-                    .subscribeOn(getBlockingScheduler());
+                    .publishOn(getBlockingScheduler())
+                    .transformDeferredContextual((flux, ctx) -> flux.mapNotNull(entry -> processServing(entry, ctx)));
         }
-        return this::processServing;
+
+        return input -> input
+                .transformDeferredContextual((flux, ctx) -> flux.mapNotNull(entry -> processServing(entry, ctx)));
+    }
+
+    private Object processServing(Object input, ContextView context){
+        if (context.hasKey(SPECIFICATION_KEY)) serverModule().state().localState(fromContext(context));
+        return implementation.serve(input);
     }
 }

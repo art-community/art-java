@@ -17,22 +17,18 @@ import static lombok.AccessLevel.*;
 public class HttpServiceModelConfigurator {
     private final Class<?> serviceClass;
     private final Map<String, HttpServiceMethodModelConfigurator> methods = map();
-    private final HttpServiceExceptionMappingConfigurator exceptionMapping;
     private BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator = (id, builder) -> builder;
     private boolean logging;
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
 
     public HttpServiceModelConfigurator(Class<?> serviceClass){
         this.serviceClass = serviceClass;
-        this.exceptionMapping = new HttpServiceExceptionMappingConfigurator(serviceClass);
     }
 
     private HttpServiceModelConfigurator method(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator) {
         HttpServiceMethodModelConfigurator newMethod = new HttpServiceMethodModelConfigurator(methodName)
                 .logging(logging)
-                .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat);
+                .defaultDataFormat(defaultDataFormat);
         methods.putIfAbsent(methodName, configurator.apply(newMethod));
         return this;
     }
@@ -65,6 +61,14 @@ public class HttpServiceModelConfigurator {
         return method(methodName, method -> method.httpMethod(HttpMethodType.WEBSOCKET));
     }
 
+    public HttpServiceModelConfigurator file(String httpPath, String filePath){
+        return method(httpPath, method -> method.httpMethod(HttpMethodType.FILE).filePath(filePath));
+    }
+
+    public HttpServiceModelConfigurator directory(String httpPath, String directory){
+        return method(httpPath, method -> method.httpMethod(HttpMethodType.DIRECTORY).filePath(directory));
+    }
+
     public HttpServiceModelConfigurator get(String methodName, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
         return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.GET)));
     }
@@ -93,11 +97,16 @@ public class HttpServiceModelConfigurator {
         return method(methodName, method -> configurator.apply(method.httpMethod(HttpMethodType.WEBSOCKET)));
     }
 
-
-    public HttpServiceModelConfigurator exceptions(UnaryOperator<HttpServiceExceptionMappingConfigurator> configurator){
-        configurator.apply(exceptionMapping);
-        return this;
+    public HttpServiceModelConfigurator file(String httpPath, String filePath, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(httpPath, method -> configurator.apply(method.httpMethod(HttpMethodType.FILE).filePath(filePath)));
     }
+
+    public HttpServiceModelConfigurator directory(String httpPath, String directory, UnaryOperator<HttpServiceMethodModelConfigurator> configurator){
+        return method(httpPath, method -> configurator.apply(method.httpMethod(HttpMethodType.DIRECTORY).filePath(directory)));
+    }
+
+
+
 
 
     public HttpServiceModelConfigurator decorate(BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator) {
@@ -119,11 +128,6 @@ public class HttpServiceModelConfigurator {
         return this;
     }
 
-    public HttpServiceModelConfigurator defaultMetaDataFormat(DataFormat format) {
-        defaultMetaDataFormat = format;
-        return this;
-    }
-
     protected String getId(){
         return serviceClass.getSimpleName();
     }
@@ -139,9 +143,7 @@ public class HttpServiceModelConfigurator {
                         .stream()
                         .collect(immutableMapCollector(entry -> entry.getValue().getId(), entry -> entry.getValue().configure())))
                 .decorator(decorator)
-                .exceptionsMapper(exceptionMapping.configure())
                 .defaultDataFormat(defaultDataFormat)
-                .defaultMetaDataFormat(defaultMetaDataFormat)
                 .build();
     }
 }

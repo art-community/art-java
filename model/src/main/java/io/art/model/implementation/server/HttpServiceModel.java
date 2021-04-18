@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,7 @@ public class HttpServiceModel implements ServiceModel {
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
     private final ImmutableMap<String, HttpServiceMethodModel> methods;
-    private final Function<? extends Throwable, ?> exceptionsMapper;
     private final DataFormat defaultDataFormat;
-    private final DataFormat defaultMetaDataFormat;
 
     public ImmutableMap<String, ServiceMethodModel> getMethods() {
         return cast(methods);

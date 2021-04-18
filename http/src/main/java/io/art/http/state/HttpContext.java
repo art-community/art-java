@@ -5,6 +5,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
 import reactor.netty.http.server.*;
+import reactor.util.context.*;
 
 import java.net.*;
 import java.util.*;
@@ -43,6 +44,10 @@ public class HttpContext {
 
     public static HttpContext from(HttpServerRequest request, HttpServerResponse response){
         return new HttpContext(request, response);
+    }
+
+    public static HttpContext from(ContextView context){
+        return context.get(HttpContext.class);
     }
 
     public HttpResponseStatus responseStatus(){

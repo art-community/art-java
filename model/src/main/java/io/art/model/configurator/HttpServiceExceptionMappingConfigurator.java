@@ -12,15 +12,17 @@ import static io.art.http.module.HttpModule.*;
 
 @RequiredArgsConstructor
 public class HttpServiceExceptionMappingConfigurator{
-    private final Map<Class<? extends Throwable>, Function<? extends Throwable, ?>> mappers = map();
-    private final Class<?> serviceClass;
+    private final Map<Class<? extends Throwable>, Function<? extends Throwable, ?>> mappers = mapOf(Throwable.class, exception -> {
+        httpContext().status(500);
+        return null;
+    });
 
-    public HttpServiceExceptionMappingConfigurator mapException(Class<? extends Throwable> exceptionClass, Function<? extends Throwable, ?> mapper){
+    public HttpServiceExceptionMappingConfigurator on(Class<? extends Throwable> exceptionClass, Function<? extends Throwable, ?> mapper){
         mappers.put(exceptionClass, mapper);
         return this;
     }
 
-    public HttpServiceExceptionMappingConfigurator mapException(Class<? extends Throwable> exceptionClass, HttpResponseStatus httpStatus, Supplier<Object> responseSupplier){
+    public HttpServiceExceptionMappingConfigurator on(Class<? extends Throwable> exceptionClass, HttpResponseStatus httpStatus, Supplier<Object> responseSupplier){
         mappers.put(exceptionClass, exception -> {
             httpContext().status(httpStatus);
             return responseSupplier.get();
@@ -28,20 +30,22 @@ public class HttpServiceExceptionMappingConfigurator{
         return this;
     }
 
-    public HttpServiceExceptionMappingConfigurator mapException(Class<? extends Throwable> exceptionClass, HttpResponseStatus httpStatus){
-        return mapException(exceptionClass, httpStatus, () -> null);
+    public HttpServiceExceptionMappingConfigurator on(Class<? extends Throwable> exceptionClass, HttpResponseStatus httpStatus){
+        return on(exceptionClass, httpStatus, () -> null);
     }
 
-    public HttpServiceExceptionMappingConfigurator mapException(Class<? extends Throwable> exceptionClass, Integer httpStatus, Supplier<Object> responseSupplier){
-        return mapException(exceptionClass, HttpResponseStatus.valueOf(httpStatus), responseSupplier);
+    public HttpServiceExceptionMappingConfigurator on(Class<? extends Throwable> exceptionClass, Integer httpStatus, Supplier<Object> responseSupplier){
+        return on(exceptionClass, HttpResponseStatus.valueOf(httpStatus), responseSupplier);
     }
 
-    public HttpServiceExceptionMappingConfigurator mapException(Class<? extends Throwable> exceptionClass, Integer httpStatus){
-        return mapException(exceptionClass, httpStatus, () -> null);
+    public HttpServiceExceptionMappingConfigurator on(Class<? extends Throwable> exceptionClass, Integer httpStatus){
+        return on(exceptionClass, httpStatus, () -> null);
     }
 
     public Function<? extends Throwable, ?> configure(){
-        return exception -> mappers.get(exception.getClass()).apply(cast(exception));
+        return exception -> mappers.containsKey(exception.getClass()) ?
+                mappers.get(exception.getClass()).apply(cast(exception)) :
+                mappers.get(Throwable.class).apply(cast(exception));
     }
 
 }

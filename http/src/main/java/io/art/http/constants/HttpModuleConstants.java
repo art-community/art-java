@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,7 +67,6 @@ public interface HttpModuleConstants {
 
         String DEFAULT_SECTION = "default";
         String DATA_FORMAT_KEY = "dataFormat";
-        String META_DATA_FORMAT_KEY = "metaDataFormat";
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
 
@@ -128,7 +127,9 @@ public interface HttpModuleConstants {
         OPTIONS,
         HEAD,
 //        PATCH,
-        WEBSOCKET;
+        DIRECTORY,
+        FILE,
+        WEBSOCKET
     }
 
     interface Defaults {

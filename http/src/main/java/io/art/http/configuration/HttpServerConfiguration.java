@@ -1,7 +1,7 @@
 /*
  * ART
  *
- * Copyright 2020 ART
+ * Copyright 2019-2021 ART
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
-import io.art.server.configuration.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.server.*;
+import java.util.function.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -44,12 +44,11 @@ public class HttpServerConfiguration {
     private boolean logging;
     private int fragmentationMtu;
     private DataFormat defaultDataFormat;
-    private DataFormat defaultMetaDataFormat;
+    private final Function<? extends Throwable, ?> exceptionMapper;
 
     public static HttpServerConfiguration defaults() {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
         configuration.defaultDataFormat = JSON;
-        configuration.defaultMetaDataFormat = JSON;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
         configuration.httpServer = HttpServer.create().port(DEFAULT_PORT);
@@ -65,7 +64,6 @@ public class HttpServerConfiguration {
         configuration.logging = serverLoggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
 
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
-        configuration.defaultMetaDataFormat = serverListener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
         configuration.fragmentationMtu = serverListener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
 
         String serviceId = source.getString(SERVICE_ID_KEY);
