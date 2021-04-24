@@ -1,5 +1,5 @@
 /*
- * ART Java
+ * ART
  *
  * Copyright 2019 ART
  *
