@@ -47,7 +47,6 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -128,7 +127,7 @@ public class ModuleLauncher {
                     .stream()
                     .map(source -> NEW_LINE + source.getType().toString() + COLON + NEW_LINE + source.dump())
                     .collect(joining(NEW_LINE)));
-            LAUNCHED_MESSAGES.forEach(message -> logger.get().info(success(message)));
+            LAUNCHED_MESSAGES.forEach(message -> logger.get().info(message));
             if (needBlock()) block();
         }
     }
