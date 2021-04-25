@@ -28,9 +28,9 @@ import static java.lang.System.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
-    private Boolean enabled;
-    private Boolean colored;
-    private Boolean asynchronous;
+    private Boolean enabled = true;
+    private Boolean colored = true;
+    private Boolean asynchronous = true;
     private String configurationPath;
 
     @RequiredArgsConstructor
@@ -39,9 +39,9 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.enabled = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ENABLED_KEY)), true);
-            configuration.colored = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(COLORED_KEY)), true);
-            configuration.asynchronous = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ASYNCHRONOUS_KEY)), true);
+            configuration.enabled = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ENABLED_KEY)), configuration.enabled);
+            configuration.colored = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(COLORED_KEY)), configuration.colored);
+            configuration.asynchronous = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ASYNCHRONOUS_KEY)), configuration.asynchronous);
             configuration.configurationPath = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getString(CONFIGURATION_PATH_KEY)), getProperty(LOG42_CONFIGURATION_FILE_PROPERTY));
             return this;
         }
