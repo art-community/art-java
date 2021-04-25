@@ -39,6 +39,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.model.RsocketSetupPayload.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.value.constants.ValueModuleConstants.*;
@@ -94,21 +95,21 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
-        TransportPayload payloadValue = dataReader.read(payload.sliceData());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload);
         Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).then();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
-        TransportPayload payloadValue = dataReader.read(payload.sliceData());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload);
         Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).map(value -> ByteBufPayload.create(dataWriter.write(value))).last(EMPTY_PAYLOAD);
     }
 
     @Override
     public Flux<Payload> requestStream(Payload payload) {
-        TransportPayload payloadValue = dataReader.read(payload.sliceData());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload);
         Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).map(value -> ByteBufPayload.create(dataWriter.write(value)));
     }
@@ -116,7 +117,7 @@ public class ServingRsocket implements RSocket {
     @Override
     public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
         Flux<Value> input = addContext(from(payloads)
-                .map(payload -> dataReader.read(payload.sliceData()))
+                .map(data -> readRsocketPayload(dataReader, data))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue));
         return specification.serve(input).map(value -> ByteBufPayload.create(dataWriter.write(value)));
@@ -124,8 +125,8 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Mono<Void> metadataPush(Payload payload) {
-        TransportPayload payloadValue = dataReader.read(payload.sliceData());
-        Flux<Value> input = addContext(isNull(payloadValue) ? empty() : just(payloadValue.getValue()));
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload);
+        Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
         return specification.serve(input).then();
     }
 

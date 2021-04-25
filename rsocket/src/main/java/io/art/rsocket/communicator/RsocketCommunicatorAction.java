@@ -22,7 +22,6 @@ import io.art.communicator.action.*;
 import io.art.communicator.configuration.*;
 import io.art.communicator.implementation.*;
 import io.art.core.exception.*;
-import io.art.core.extensions.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
@@ -54,6 +53,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static io.art.rsocket.reader.RsocketPayloadReader.readRsocketPayload;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.core.RSocketClient.*;
 import static io.rsocket.util.ByteBufPayload.*;
@@ -183,19 +183,19 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
                 return input -> client
                         .requestResponse(input.map(value -> create(writer.write(value))).last(EMPTY_PAYLOAD))
                         .flux()
-                        .map(payload -> reader.read(payload.sliceData()))
+                        .map(payload -> readRsocketPayload(reader, payload))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case REQUEST_STREAM:
                 return input -> client
                         .requestStream(input.map(value -> create(writer.write(value))).last(EMPTY_PAYLOAD))
-                        .map(payload -> reader.read(payload.sliceData()))
+                        .map(payload -> readRsocketPayload(reader, payload))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
                         .requestChannel(input.map(value -> create(writer.write(value))).switchIfEmpty(EMPTY_PAYLOAD_MONO))
-                        .map(payload -> reader.read(payload.sliceData()))
+                        .map(payload -> readRsocketPayload(reader, payload))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case METADATA_PUSH:
