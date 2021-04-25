@@ -32,6 +32,7 @@ import io.art.transport.payload.*;
 import io.art.value.immutable.Value;
 import io.rsocket.*;
 import io.rsocket.core.*;
+import io.rsocket.frame.decoder.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
 import io.rsocket.util.*;
@@ -97,6 +98,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
     private RSocketClient createClient() {
         RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
         RSocketConnector connector = RSocketConnector.create()
+                .payloadDecoder(connectorConfiguration.getPayloadDecoderMode() == PayloadDecoderMode.ZERO_COPY ? PayloadDecoder.ZERO_COPY : PayloadDecoder.DEFAULT)
                 .dataMimeType(toMimeType(connectorConfiguration.getDataFormat()).toString())
                 .metadataMimeType(toMimeType(connectorConfiguration.getMetaDataFormat()).toString())
                 .fragment(connectorConfiguration.getFragment())

@@ -68,7 +68,7 @@ public class RsocketConnectorConfiguration {
         configuration.logging = false;
         configuration.fragment = 0;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
-        configuration.payloadDecoderMode = DEFAULT;
+        configuration.payloadDecoderMode = ZERO_COPY;
         configuration.dataFormat = JSON;
         configuration.metaDataFormat = JSON;
         configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
