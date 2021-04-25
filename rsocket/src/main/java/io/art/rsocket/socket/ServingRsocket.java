@@ -19,6 +19,7 @@
 package io.art.rsocket.socket;
 
 import io.art.core.exception.*;
+import io.art.core.factory.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
@@ -26,6 +27,7 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
 import io.art.rsocket.state.*;
+import io.art.server.module.*;
 import io.art.server.specification.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
@@ -33,6 +35,7 @@ import io.rsocket.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.context.*;
+import static io.art.communicator.module.CommunicatorModule.communicatorModule;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
@@ -56,6 +59,7 @@ public class ServingRsocket implements RSocket {
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final RsocketSetupPayload setupPayload;
     private final ServiceMethodSpecification specification;
+    private final NettyBufferFactory writeBufferFactory = serverModule().configuration().getWriteBufferFactory();
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -96,14 +100,14 @@ public class ServingRsocket implements RSocket {
     public Mono<Payload> requestResponse(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
-        return specification.serve(input).map(writer::writePayloadData).last(EMPTY_PAYLOAD);
+        return specification.serve(input).map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf())).last(EMPTY_PAYLOAD);
     }
 
     @Override
     public Flux<Payload> requestStream(Payload payload) {
         RsocketPayloadValue payloadValue = reader.readPayloadData(payload);
         Flux<Value> input = addContext(payloadValue.isEmpty() ? empty() : just(payloadValue.getValue()));
-        return specification.serve(input).map(writer::writePayloadData);
+        return specification.serve(input).map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf()));
     }
 
     @Override
@@ -112,7 +116,7 @@ public class ServingRsocket implements RSocket {
                 .map(reader::readPayloadData)
                 .filter(data -> !data.isEmpty())
                 .map(RsocketPayloadValue::getValue));
-        return specification.serve(input).map(writer::writePayloadData);
+        return specification.serve(input).map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf()));
     }
 
     @Override

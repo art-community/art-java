@@ -20,35 +20,46 @@ package io.art.http.payload;
 
 import io.art.core.exception.*;
 import io.art.http.model.*;
+import io.art.json.descriptor.*;
+import io.art.message.pack.descriptor.*;
+import io.art.protobuf.descriptor.*;
 import io.art.value.constants.ValueModuleConstants.*;
+import io.art.xml.descriptor.*;
+import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import static io.art.http.model.HttpPayloadValue.*;
-import static io.art.json.descriptor.JsonReader.*;
-import static io.art.message.pack.descriptor.MessagePackReader.*;
-import static io.art.protobuf.descriptor.ProtobufReader.*;
-import static io.art.xml.descriptor.XmlReader.*;
-import static io.art.yaml.descriptor.YamlReader.*;
+import static io.art.json.module.JsonModule.*;
+import static io.art.message.pack.module.MessagePackModule.*;
+import static io.art.protobuf.module.ProtobufModule.*;
+import static io.art.xml.module.XmlModule.*;
+import static io.art.yaml.module.YamlModule.*;
 
 @UtilityClass
 public class HttpPayloadReader {
+    private static final ProtobufReader protobufReader = protobufModule().configuration().getReader();
+    private static final JsonReader jsonReader = jsonModule().configuration().getReader();
+    private static final YamlReader yamlReader = yamlModule().configuration().getReader();
+    private static final XmlReader xmlReader = xmlModule().configuration().getReader();
+    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getReader();
+
     public HttpPayloadValue readPayloadData(DataFormat dataFormat, ByteBuf payload) {
-        return read(payload, dataFormat);
+        return read(dataFormat, payload);
     }
 
-    private HttpPayloadValue read(ByteBuf payload, DataFormat format) {
+    private HttpPayloadValue read(DataFormat format, ByteBuf payload) {
         if (payload.capacity() == 0) return emptyHttpPayload();
         switch (format) {
             case PROTOBUF:
-                return new HttpPayloadValue(payload, readProtobuf(payload));
+                return new HttpPayloadValue(payload, protobufReader.read(payload));
             case JSON:
-                return new HttpPayloadValue(payload, readJson(payload));
+                return new HttpPayloadValue(payload, jsonReader.read(payload));
             case YAML:
-                return new HttpPayloadValue(payload, readYaml(payload));
+                return new HttpPayloadValue(payload, yamlReader.read(payload));
             case XML:
-                return new HttpPayloadValue(payload, readXml(payload));
+                return new HttpPayloadValue(payload, xmlReader.read(payload));
             case MESSAGE_PACK:
-                return new HttpPayloadValue(payload, readMessagePack(payload));
+                return new HttpPayloadValue(payload, messagePackReader.read(payload));
         }
         throw new ImpossibleSituationException();
     }

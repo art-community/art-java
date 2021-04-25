@@ -19,22 +19,32 @@
 package io.art.rsocket.payload;
 
 import io.art.core.exception.*;
+import io.art.json.descriptor.*;
+import io.art.message.pack.descriptor.*;
+import io.art.protobuf.descriptor.*;
 import io.art.rsocket.model.*;
 import io.art.value.constants.ValueModuleConstants.*;
+import io.art.xml.descriptor.*;
+import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import io.rsocket.*;
 import lombok.*;
-import static io.art.json.descriptor.JsonReader.*;
-import static io.art.message.pack.descriptor.MessagePackReader.*;
-import static io.art.protobuf.descriptor.ProtobufReader.*;
+import static io.art.json.module.JsonModule.*;
+import static io.art.message.pack.module.MessagePackModule.*;
+import static io.art.protobuf.module.ProtobufModule.*;
 import static io.art.rsocket.model.RsocketPayloadValue.*;
-import static io.art.xml.descriptor.XmlReader.*;
-import static io.art.yaml.descriptor.YamlReader.*;
+import static io.art.xml.module.XmlModule.*;
+import static io.art.yaml.module.YamlModule.*;
 
 @RequiredArgsConstructor
 public class RsocketPayloadReader {
     private final DataFormat dataFormat;
     private final DataFormat metaDataFormat;
+    private static final ProtobufReader protobufReader = protobufModule().configuration().getReader();
+    private static final JsonReader jsonReader = jsonModule().configuration().getReader();
+    private static final YamlReader yamlReader = yamlModule().configuration().getReader();
+    private static final XmlReader xmlReader = xmlModule().configuration().getReader();
+    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getReader();
 
     public RsocketPayloadReader(RsocketSetupPayload setupPayload) {
         this.dataFormat = setupPayload.getDataFormat();
@@ -55,15 +65,15 @@ public class RsocketPayloadReader {
         if (data.capacity() == 0) return emptyRsocketPayload();
         switch (format) {
             case PROTOBUF:
-                return new RsocketPayloadValue(payload, readProtobuf(data));
+                return new RsocketPayloadValue(payload, protobufReader.read(data));
             case JSON:
-                return new RsocketPayloadValue(payload, readJson(data));
+                return new RsocketPayloadValue(payload, jsonReader.read(data));
             case YAML:
-                return new RsocketPayloadValue(payload, readYaml(data));
+                return new RsocketPayloadValue(payload, yamlReader.read(data));
             case XML:
-                return new RsocketPayloadValue(payload, readXml(data));
+                return new RsocketPayloadValue(payload, xmlReader.read(data));
             case MESSAGE_PACK:
-                return new RsocketPayloadValue(payload, readMessagePack(data));
+                return new RsocketPayloadValue(payload, messagePackReader.read(data));
         }
         throw new ImpossibleSituationException();
     }

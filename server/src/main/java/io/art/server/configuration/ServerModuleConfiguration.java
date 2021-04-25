@@ -19,6 +19,7 @@
 package io.art.server.configuration;
 
 import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -29,8 +30,10 @@ import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.constants.BufferConstants.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
+import static io.netty.buffer.ByteBufAllocator.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -46,10 +49,15 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
+
     @Getter
     private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
+
     @Getter
     private Scheduler blockingScheduler;
+
+    @Getter
+    private NettyBufferFactory writeBufferFactory;
 
     public Scheduler getBlockingScheduler(String serviceId, String methodId) {
         return getMethodConfiguration(serviceId, methodId)
@@ -108,6 +116,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ConfigurationSource source) {
             configuration.blockingScheduler = DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER;
+            configuration.writeBufferFactory = () -> DEFAULT.ioBuffer(DEFAULT_BUFFER_SIZE);
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
                     .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                     .orElse(emptyImmutableMap());

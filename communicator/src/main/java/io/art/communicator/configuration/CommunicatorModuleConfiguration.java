@@ -21,6 +21,7 @@ package io.art.communicator.configuration;
 import io.art.communicator.refresher.*;
 import io.art.communicator.registry.*;
 import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -32,6 +33,8 @@ import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.constants.BufferConstants.*;
+import static io.netty.buffer.ByteBufAllocator.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -46,11 +49,15 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private ImmutableMap<String, CommunicatorProxyConfiguration> configurations = emptyImmutableMap();
+
     @Getter
     private CommunicatorProxyRegistry registry = new CommunicatorProxyRegistry();
+
     @Getter
     private Scheduler scheduler;
 
+    @Getter
+    private NettyBufferFactory writeBufferFactory;
 
     public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
         CommunicatorProxyConfiguration proxyConfiguration = configurations.get(id.getCommunicatorId());
@@ -117,6 +124,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ConfigurationSource source) {
             configuration.scheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER;
+            configuration.writeBufferFactory = () -> DEFAULT.ioBuffer(DEFAULT_BUFFER_SIZE);
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
                     .map(communicator -> communicator.getNestedMap(PROXIES_SECTION, proxy -> CommunicatorProxyConfiguration.from(configuration.refresher, proxy)))
                     .orElse(emptyImmutableMap());

@@ -16,32 +16,31 @@
  * limitations under the License.
  */
 
-package io.art.core.stream;
+package io.art.value.descriptor;
 
-import lombok.*;
-import static java.lang.Math.*;
+import io.art.core.stream.*;
+import io.art.value.immutable.*;
+import io.netty.buffer.*;
+import static io.art.core.context.Context.*;
 import java.io.*;
 import java.nio.*;
 
-@AllArgsConstructor
-public class NioByteBufferInputStream extends InputStream {
-    private final ByteBuffer buffer;
-
-    @Override
-    public int available() {
-        return buffer.remaining();
+public interface Reader<T extends Value> {
+    default T read(byte[] bytes) {
+        return read(new ByteArrayInputStream(bytes));
     }
 
-    @Override
-    public int read() {
-        return buffer.hasRemaining() ? (buffer.get() & 0xFF) : -1;
+    default T read(ByteBuffer nioBuffer) {
+        return read(new NioByteBufferInputStream(nioBuffer));
     }
 
-    @Override
-    public int read(byte[] bytes, int off, int lenght) {
-        if (!buffer.hasRemaining()) return -1;
-        lenght = min(lenght, buffer.remaining());
-        buffer.get(bytes, off, lenght);
-        return lenght;
+    default T read(ByteBuf nettyBuffer) {
+        return read(new ByteBufInputStream(nettyBuffer));
     }
+
+    default T read(String xml) {
+        return read(xml.getBytes(context().configuration().getCharset()));
+    }
+
+    T read(InputStream input);
 }

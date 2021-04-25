@@ -21,10 +21,10 @@ package io.art.rsocket.communicator;
 import io.art.communicator.action.*;
 import io.art.communicator.implementation.*;
 import io.art.core.exception.*;
+import io.art.core.factory.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.payload.*;
@@ -46,8 +46,8 @@ import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.MethodProcessingMode.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static io.art.rsocket.manager.RsocketManager.*;
@@ -61,6 +61,8 @@ import java.util.function.*;
 
 @Builder(toBuilder = true)
 public class RsocketCommunicatorAction implements CommunicatorActionImplementation {
+    private final NettyBufferFactory writeBufferFactory = communicatorModule().configuration().getWriteBufferFactory();
+
     private final CommunicatorActionIdentifier communicatorActionId;
 
     @Getter(lazy = true, value = PRIVATE)
@@ -104,7 +106,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
         apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(connectorConfiguration.getResume(), resume -> connector.resume(resume.toResume()));
         apply(connectorConfiguration.getRetry(), retry -> connector.reconnect(retry.toRetry()));
-        connector.setupPayload(setupPayload.get().getWriter().writePayloadMetaData(setupPayload.get().toEntity()));
+        connector.setupPayload(setupPayload.get().getWriter().writePayloadMetaData(setupPayload.get().toEntity(), writeBufferFactory.newByteBuf()));
         switch (connectorConfiguration.getTransport()) {
             case TCP:
                 TcpClient tcpClient = connectorConfiguration.getTcpClient();
@@ -178,28 +180,28 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
         RSocketClient client = this.client.get();
         switch (communicationMode()) {
             case FIRE_AND_FORGET:
-                return input -> cast(client.fireAndForget(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD)).flux());
+                return input -> cast(client.fireAndForget(input.map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf())).last(EMPTY_PAYLOAD)).flux());
             case REQUEST_RESPONSE:
                 return input -> client
-                        .requestResponse(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD))
+                        .requestResponse(input.map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf())).last(EMPTY_PAYLOAD))
                         .flux()
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
             case REQUEST_STREAM:
                 return input -> client
-                        .requestStream(input.map(writer::writePayloadData).last(EMPTY_PAYLOAD))
+                        .requestStream(input.map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf())).last(EMPTY_PAYLOAD))
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
-                        .requestChannel(input.map(writer::writePayloadData).switchIfEmpty(EMPTY_PAYLOAD_MONO))
+                        .requestChannel(input.map(value -> writer.writePayloadData(value, writeBufferFactory.newByteBuf())).switchIfEmpty(EMPTY_PAYLOAD_MONO))
                         .map(reader::readPayloadData)
                         .filter(data -> !data.isEmpty())
                         .map(RsocketPayloadValue::getValue);
             case METADATA_PUSH:
-                return input -> cast(client.metadataPush(input.map(writer::writePayloadMetaData).last(EMPTY_PAYLOAD)).flux());
+                return input -> cast(client.metadataPush(input.map(value -> writer.writePayloadMetaData(value, writeBufferFactory.newByteBuf())).last(EMPTY_PAYLOAD)).flux());
         }
         throw new ImpossibleSituationException();
     }

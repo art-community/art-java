@@ -16,23 +16,21 @@
  * limitations under the License.
  */
 
-package io.art.json.configuration;
+package io.art.protobuf.configuration;
 
-import com.fasterxml.jackson.databind.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
-import io.art.json.descriptor.*;
+import io.art.protobuf.descriptor.*;
 import lombok.*;
 
 @Getter
-public class JsonModuleConfiguration implements ModuleConfiguration {
-    private final ObjectMapper objectMapper = new ObjectMapper();
-    private final JsonReader reader = new JsonReader(objectMapper.getFactory());
-    private final JsonWriter writer = new JsonWriter(objectMapper.getFactory());
+public class ProtobufModuleConfiguration implements ModuleConfiguration {
+    private final ProtobufReader reader = new ProtobufReader();
+    private final ProtobufWriter writer = new ProtobufWriter();
 
     @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<JsonModuleConfiguration, Configurator> {
-        private final JsonModuleConfiguration configuration;
+    public static class Configurator implements ModuleConfigurator<ProtobufModuleConfiguration, Configurator> {
+        private final ProtobufModuleConfiguration configuration;
 
         @Override
         public Configurator from(ConfigurationSource source) {

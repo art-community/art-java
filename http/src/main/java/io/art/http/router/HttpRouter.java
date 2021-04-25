@@ -18,6 +18,7 @@
 
 package io.art.http.router;
 
+import io.art.core.factory.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.http.configuration.*;
@@ -33,10 +34,6 @@ import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
 import reactor.util.context.*;
-
-import java.nio.file.*;
-import java.util.*;
-
 import static io.art.core.caster.Caster.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -52,15 +49,18 @@ import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import java.nio.file.*;
+import java.util.*;
 
 public class HttpRouter {
+    private final NettyBufferFactory writeBufferFactory = serverModule().configuration().getWriteBufferFactory();
 
     public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration configuration) {
         for (Map.Entry<String, HttpServiceConfiguration> service : configuration.getServices().entrySet()) {
             for (Map.Entry<String, HttpMethodConfiguration> method : service.getValue().getMethods().entrySet()) {
                 HttpMethodConfiguration methodValue = method.getValue();
                 HttpMethodType httpMethodType = methodValue.getMethod();
-                switch (httpMethodType){
+                switch (httpMethodType) {
                     case GET:
                         routes.get(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
                         break;
@@ -106,7 +106,7 @@ public class HttpRouter {
                 .map(content -> readPayloadData(inputDataFormat, content))
                 .map(HttpPayloadValue::getValue)
                 .transform(specification::serve)
-                .map(output -> writePayloadData(outputDataFormat, output))
+                .map(output -> writePayloadData(outputDataFormat, output, writeBufferFactory.newByteBuf()))
                 .transform(outbound::send)
                 .then();
 
@@ -128,7 +128,7 @@ public class HttpRouter {
                 .map(HttpPayloadValue::getValue)
                 .transform(specification::serve)
                 .onErrorResume(throwable -> mapException(specification, throwable))
-                .map(output -> writePayloadData(outputDataFormat, output))
+                .map(output -> writePayloadData(outputDataFormat, output, writeBufferFactory.newByteBuf()))
                 .contextWrite(ctx -> setContext(ctx
                         .put(HttpContext.class, HttpContext.from(request, response))
                         .put(SPECIFICATION_KEY, specification))
@@ -139,7 +139,7 @@ public class HttpRouter {
                 .thenMany(response.send(unicast.asFlux()));
     }
 
-    private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception){
+    private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception) {
         Object result = httpModule().configuration().getServerConfiguration()
                 .getExceptionMapper()
                 .apply(cast(exception));
@@ -148,7 +148,7 @@ public class HttpRouter {
                 Flux.just(specification.getOutputMapper().map(cast(result)));
     }
 
-    private Context setContext(Context context){
+    private Context setContext(Context context) {
         serverModule().state().localState(fromContext(context));
         return context;
     }
@@ -159,7 +159,7 @@ public class HttpRouter {
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
     }
 
-    private HttpMethodConfiguration findMethodConfiguration(ServiceMethodSpecification specification){
+    private HttpMethodConfiguration findMethodConfiguration(ServiceMethodSpecification specification) {
         return httpModule().configuration().getServerConfiguration()
                 .getServices().get(specification.getServiceId())
                 .getMethods().get(specification.getMethodId());
