@@ -16,21 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.payload;
+package io.art.transport.payload;
 
 import io.art.core.exception.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
 import io.art.protobuf.descriptor.*;
-import io.art.rsocket.model.*;
 import io.art.value.immutable.Value;
 import io.art.xml.descriptor.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
-import io.rsocket.*;
-import io.rsocket.util.*;
 import lombok.*;
-import static io.art.core.constants.ArrayConstants.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.protobuf.module.ProtobufModule.*;
@@ -40,60 +36,68 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.xml.XmlEntityFromEntityConverter.*;
 import static io.art.xml.module.XmlModule.*;
 import static io.art.yaml.module.YamlModule.*;
+import static io.netty.buffer.ByteBufAllocator.*;
+import static lombok.AccessLevel.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
-public class RsocketPayloadWriter {
+public class TransportPayloadWriter {
     private final DataFormat dataFormat;
-    private final DataFormat metaDataFormat;
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final Function<Value, ByteBuf> writer = writer(dataFormat);
+
+    @Getter(lazy = true, value = PRIVATE)
     private static final ProtobufWriter protobufWriter = protobufModule().configuration().getWriter();
+
+    @Getter(lazy = true, value = PRIVATE)
     private static final JsonWriter jsonWriter = jsonModule().configuration().getWriter();
+
+    @Getter(lazy = true, value = PRIVATE)
     private static final XmlWriter xmlWriter = xmlModule().configuration().getWriter();
+
+    @Getter(lazy = true, value = PRIVATE)
     private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getWriter();
+
+    @Getter(lazy = true, value = PRIVATE)
     private static final YamlWriter yamlWriter = yamlModule().configuration().getWriter();
 
-    public RsocketPayloadWriter(RsocketSetupPayload setupPayload) {
-        this.dataFormat = setupPayload.getDataFormat();
-        this.metaDataFormat = setupPayload.getMetadataFormat();
+    public ByteBuf write(Value value) {
+        return getWriter().apply(value);
     }
 
-    public Payload writePayloadData(Value value, ByteBuf buffer) {
+    private static Function<Value, ByteBuf> writer(DataFormat dataFormat) {
         switch (dataFormat) {
             case PROTOBUF:
-                protobufWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
+                return value -> {
+                    ByteBuf buffer = DEFAULT.ioBuffer();
+                    getProtobufWriter().write(value, buffer);
+                    return buffer;
+                };
             case JSON:
-                jsonWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
+                return value -> {
+                    ByteBuf buffer = DEFAULT.ioBuffer();
+                    getJsonWriter().write(value, buffer);
+                    return buffer;
+                };
             case XML:
-                xmlWriter.write(value.getType() == XML ? asXml(value) : fromEntityAsTags(asEntity(value)), buffer);
-                return ByteBufPayload.create(buffer);
+                return value -> {
+                    ByteBuf buffer = DEFAULT.ioBuffer();
+                    getXmlWriter().write(value.getType() == XML ? asXml(value) : fromEntityAsTags(asEntity(value)), buffer);
+                    return buffer;
+                };
             case MESSAGE_PACK:
-                messagePackWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
+                return value -> {
+                    ByteBuf buffer = DEFAULT.ioBuffer();
+                    getMessagePackWriter().write(value, buffer);
+                    return buffer;
+                };
             case YAML:
-                yamlWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
-        }
-        throw new ImpossibleSituationException();
-    }
-
-    public Payload writePayloadMetaData(Value value, ByteBuf buffer) {
-        switch (metaDataFormat) {
-            case PROTOBUF:
-                protobufWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
-            case JSON:
-                jsonWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
-            case XML:
-                xmlWriter.write(value.getType() == XML ? asXml(value) : fromEntityAsTags(asEntity(value)), buffer);
-                return ByteBufPayload.create(buffer);
-            case MESSAGE_PACK:
-                messagePackWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
-            case YAML:
-                yamlWriter.write(value, buffer);
-                return ByteBufPayload.create(buffer);
+                return value -> {
+                    ByteBuf buffer = DEFAULT.ioBuffer();
+                    getYamlWriter().write(value, buffer);
+                    return buffer;
+                };
         }
         throw new ImpossibleSituationException();
     }

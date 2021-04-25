@@ -18,14 +18,13 @@
 
 package io.art.http.router;
 
-import io.art.core.factory.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.http.configuration.*;
 import io.art.http.exception.*;
-import io.art.http.model.*;
 import io.art.http.state.*;
 import io.art.server.specification.*;
+import io.art.transport.payload.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
 import io.netty.buffer.*;
@@ -40,8 +39,6 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.http.constants.HttpModuleConstants.ExceptionMessages.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
-import static io.art.http.payload.HttpPayloadReader.*;
-import static io.art.http.payload.HttpPayloadWriter.*;
 import static io.art.server.constants.ServerModuleConstants.StateKeys.*;
 import static io.art.server.module.ServerModule.*;
 import static io.art.server.state.ServerModuleState.ServerThreadLocalState.*;
@@ -53,8 +50,6 @@ import java.nio.file.*;
 import java.util.*;
 
 public class HttpRouter {
-    private final NettyBufferFactory writeBufferFactory = serverModule().configuration().getWriteBufferFactory();
-
     public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration configuration) {
         for (Map.Entry<String, HttpServiceConfiguration> service : configuration.getServices().entrySet()) {
             for (Map.Entry<String, HttpMethodConfiguration> method : service.getValue().getMethods().entrySet()) {
@@ -101,12 +96,17 @@ public class HttpRouter {
         DataFormat outputDataFormat = ignoreException(
                 () -> fromMimeType(MimeType.valueOf(inbound.headers().get(ACCEPT))),
                 ignored -> defaultDataFormat);
-
+        TransportPayloadReader reader = specification
+                .getConfiguration()
+                .getReader(serviceMethod(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
+        TransportPayloadWriter writer = specification
+                .getConfiguration()
+                .getWriter(serviceMethod(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
         return inbound.receive()
-                .map(content -> readPayloadData(inputDataFormat, content))
-                .map(HttpPayloadValue::getValue)
+                .map(reader::read)
+                .map(TransportPayload::getValue)
                 .transform(specification::serve)
-                .map(output -> writePayloadData(outputDataFormat, output, writeBufferFactory.newByteBuf()))
+                .map(writer::write)
                 .transform(outbound::send)
                 .then();
 
@@ -122,13 +122,19 @@ public class HttpRouter {
                 ignored -> defaultDataFormat);
 
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
+        TransportPayloadReader reader = specification
+                .getConfiguration()
+                .getReader(serviceMethod(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
+        TransportPayloadWriter writer = specification
+                .getConfiguration()
+                .getWriter(serviceMethod(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
 
         return request.receive()
-                .map(content -> readPayloadData(inputDataFormat, content))
-                .map(HttpPayloadValue::getValue)
+                .map(reader::read)
+                .map(TransportPayload::getValue)
                 .transform(specification::serve)
                 .onErrorResume(throwable -> mapException(specification, throwable))
-                .map(output -> writePayloadData(outputDataFormat, output, writeBufferFactory.newByteBuf()))
+                .map(writer::write)
                 .contextWrite(ctx -> setContext(ctx
                         .put(HttpContext.class, HttpContext.from(request, response))
                         .put(SPECIFICATION_KEY, specification))

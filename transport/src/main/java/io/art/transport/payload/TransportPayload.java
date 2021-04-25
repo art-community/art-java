@@ -16,11 +16,31 @@
  * limitations under the License.
  */
 
-package io.art.core.factory;
+package io.art.transport.payload;
 
+import io.art.core.property.*;
+import io.art.value.immutable.Value;
 import io.netty.buffer.*;
+import lombok.*;
 
-@FunctionalInterface
-public interface NettyBufferFactory {
-    ByteBuf newByteBuf();
+@AllArgsConstructor
+public class TransportPayload {
+    @Getter
+    private final ByteBuf data;
+
+    private final LazyProperty<Value> valueProvider;
+
+    private static final TransportPayload EMPTY = new TransportPayload(null, null);
+
+    public boolean isEmpty() {
+        return this == EMPTY;
+    }
+
+    public static TransportPayload emptyTransportPayload() {
+        return EMPTY;
+    }
+
+    public Value getValue() {
+        return valueProvider.get();
+    }
 }
