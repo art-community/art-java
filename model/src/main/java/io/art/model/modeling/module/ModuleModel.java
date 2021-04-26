@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation.module;
+package io.art.model.modeling.module;
 
 import io.art.model.customizer.*;
-import io.art.model.implementation.communicator.*;
-import io.art.model.implementation.configurator.*;
-import io.art.model.implementation.server.*;
-import io.art.model.implementation.storage.StorageModuleModel;
-import io.art.model.implementation.value.*;
+import io.art.model.modeling.communicator.*;
+import io.art.model.modeling.configurator.*;
+import io.art.model.modeling.server.*;
+import io.art.model.modeling.storage.StorageModuleModel;
+import io.art.model.modeling.value.*;
 import lombok.*;
 import java.util.function.*;
 

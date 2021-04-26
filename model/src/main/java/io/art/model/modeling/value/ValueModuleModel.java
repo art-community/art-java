@@ -1,4 +1,4 @@
-package io.art.model.implementation.value;
+package io.art.model.modeling.value;
 
 import io.art.core.collection.*;
 import lombok.*;

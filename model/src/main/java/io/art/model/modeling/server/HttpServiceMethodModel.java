@@ -16,22 +16,25 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation.communicator;
+package io.art.model.modeling.server;
 
-import io.art.communicator.action.CommunicatorAction.*;
-import io.art.communicator.constants.CommunicatorModuleConstants.*;
-import io.art.core.collection.*;
+import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
+
 import java.util.function.*;
+
+import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 
 @Getter
 @Builder
-public class RsocketCommunicatorModel implements CommunicatorModel {
+public class HttpServiceMethodModel implements ServiceMethodModel {
     private final String id;
-    private final Class<?> communicatorInterface;
-    private final String targetServiceId;
-    private final BiFunction<String, CommunicatorActionBuilder, CommunicatorActionBuilder> decorator;
-    private final ImmutableMap<String, CommunicatorActionModel> actions;
-    private final CommunicatorProtocol protocol = RSOCKET;
+    private final String name;
+    private final String filePath;
+    private final boolean deactivated;
+    private final boolean logging;
+    private final HttpMethodType httpMethodType;
+    private final Function<ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
+    private final DataFormat defaultDataFormat;
 }

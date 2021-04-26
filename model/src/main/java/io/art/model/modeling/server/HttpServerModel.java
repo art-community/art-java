@@ -1,4 +1,4 @@
-package io.art.model.implementation.server;
+package io.art.model.modeling.server;
 
 import io.art.core.collection.*;
 import io.art.core.model.*;

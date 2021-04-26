@@ -1,7 +1,6 @@
-package io.art.model.implementation.storage;
+package io.art.model.modeling.storage;
 
 import io.art.storage.space.Space;
-import io.art.tarantool.transaction.TarantoolTransactionManager;
 
 import java.util.function.Function;
 import java.util.function.Supplier;

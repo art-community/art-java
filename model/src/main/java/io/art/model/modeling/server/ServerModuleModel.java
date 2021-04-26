@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation.server;
+package io.art.model.modeling.server;
 
 import io.art.core.collection.*;
 import lombok.Builder;

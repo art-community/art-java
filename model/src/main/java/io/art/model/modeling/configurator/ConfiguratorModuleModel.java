@@ -1,4 +1,4 @@
-package io.art.model.implementation.configurator;
+package io.art.model.modeling.configurator;
 
 import io.art.configurator.model.*;
 import io.art.core.collection.*;

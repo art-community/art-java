@@ -16,18 +16,33 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation.server;
+package io.art.model.modeling.server;
 
 import io.art.core.collection.*;
 import io.art.server.specification.ServiceMethodSpecification.*;
 import lombok.*;
+
 import java.util.function.*;
+
+import static io.art.core.caster.Caster.*;
+import static io.art.value.constants.ValueModuleConstants.*;
 
 @Getter
 @Builder
-public class RsocketServiceModel implements ServiceModel {
+public class HttpServiceModel implements ServiceModel {
     private final String id;
+    private final String path;
+    private final boolean logging;
     private final Class<?> serviceClass;
     private final BiFunction<String, ServiceMethodSpecificationBuilder, ServiceMethodSpecificationBuilder> decorator;
-    private final ImmutableMap<String, ServiceMethodModel> methods;
+    private final ImmutableMap<String, HttpServiceMethodModel> methods;
+    private final DataFormat defaultDataFormat;
+
+    public ImmutableMap<String, ServiceMethodModel> getMethods() {
+        return cast(methods);
+    }
+
+    public ImmutableMap<String, HttpServiceMethodModel> getHttpMethods() {
+        return methods;
+    }
 }

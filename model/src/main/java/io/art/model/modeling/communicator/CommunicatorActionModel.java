@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.model.implementation.communicator;
+package io.art.model.modeling.communicator;
 
 import io.art.communicator.action.CommunicatorAction.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.*;
