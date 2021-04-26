@@ -40,7 +40,7 @@ public class ValueModuleConfiguration implements ModuleConfiguration {
         private final ValueModuleConfiguration configuration;
 
         @Override
-        public Configurator override(ValueModuleConfiguration configuration) {
+        public Configurator load(ValueModuleConfiguration configuration) {
             apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }

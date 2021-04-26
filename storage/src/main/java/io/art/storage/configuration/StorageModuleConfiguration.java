@@ -24,7 +24,7 @@ public class StorageModuleConfiguration  implements ModuleConfiguration {
         }
 
         @Override
-        public Configurator override(StorageModuleConfiguration configuration) {
+        public Configurator load(StorageModuleConfiguration configuration) {
             apply(configuration.getSpacesRegistry(), registry -> this.configuration.spacesRegistry = registry);
             return this;
         }
