@@ -136,7 +136,7 @@ public class ModuleLauncher {
         ofNullable(configuratorCustomizer)
                 .ifPresent(customizer -> configuratorModule
                         .configure(configurator -> configurator
-                                .load(customizer.configure(configuratorModule.orderedSources()))));
+                                .configure(customizer.configure(configuratorModule.orderedSources()))));
         return configuratorModule;
     }
 
@@ -145,7 +145,7 @@ public class ModuleLauncher {
         if (isNull(customizer)) {
             return value;
         }
-        value.configure(configurator -> configurator.load(customizer.getConfiguration()));
+        value.configure(configurator -> configurator.configure(customizer.getConfiguration()));
         return value;
     }
 
@@ -159,7 +159,7 @@ public class ModuleLauncher {
         if (isNull(customizer)) {
             return logging;
         }
-        logging.configure(configurator -> configurator.load(customizer.getConfiguration()));
+        logging.configure(configurator -> configurator.configure(customizer.getConfiguration()));
         return logging;
     }
 
@@ -193,7 +193,7 @@ public class ModuleLauncher {
         if (isNull(customizer)) {
             return server;
         }
-        server.configure(configurator -> configurator.load(customizer.getConfiguration()));
+        server.configure(configurator -> configurator.configure(customizer.getConfiguration()));
         return server;
     }
 
@@ -202,7 +202,7 @@ public class ModuleLauncher {
         if (isNull(customizer)) {
             return communicator;
         }
-        communicator.configure(configurator -> configurator.load(customizer.getConfiguration()));
+        communicator.configure(configurator -> configurator.configure(customizer.getConfiguration()));
         return communicator;
     }
 
@@ -217,7 +217,7 @@ public class ModuleLauncher {
         }
         rsocket.configure(configurator -> configurator
                 .from(state.getConfigurator().orderedSources())
-                .load(rsocketCustomizer.getConfiguration()));
+                .configure(rsocketCustomizer.getConfiguration()));
         return rsocket;
     }
 
@@ -235,7 +235,7 @@ public class ModuleLauncher {
 //        }
         http.configure(configurator -> configurator
                 .from(state.getConfigurator().orderedSources())
-                .load(httpCustomizer.getConfiguration()));
+                .configure(httpCustomizer.getConfiguration()));
         return http;
     }
 
@@ -249,7 +249,7 @@ public class ModuleLauncher {
         if (isNull(storageCustomizer)) {
             return storage;
         }
-        storage.configure(configurator -> configurator.load(storageCustomizer.getConfiguration()));
+        storage.configure(configurator -> configurator.configure(storageCustomizer.getConfiguration()));
         return storage;
     }
 

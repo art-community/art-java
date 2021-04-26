@@ -144,7 +144,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
         }
 
         @Override
-        public Configurator load(ServerModuleConfiguration configuration) {
+        public Configurator configure(ServerModuleConfiguration configuration) {
             apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }

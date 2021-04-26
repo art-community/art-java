@@ -38,7 +38,7 @@ public interface ModuleConfigurator<Configuration extends ModuleConfiguration, C
         return cast(this);
     }
 
-    default Configurator load(Configuration configuration) {
+    default Configurator configure(Configuration configuration) {
         return cast(this);
     }
 }
