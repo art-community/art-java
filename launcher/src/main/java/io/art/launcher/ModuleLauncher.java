@@ -47,7 +47,6 @@ import lombok.experimental.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.property.LazyProperty.*;
@@ -55,10 +54,10 @@ import static io.art.core.singleton.SingletonsRegistry.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.launcher.ModuleLauncherConstants.*;
 import static io.art.logging.LoggingModule.*;
+import static io.art.model.configurator.ModuleModelConfigurator.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
-import static java.util.stream.Collectors.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -123,13 +122,13 @@ public class ModuleLauncher {
                     .mainModuleId(model.getMainModuleId())
                     .build();
             initialize(contextConfiguration, modules.get(), message -> logger.get().info(message));
-            logger.get().info(CONFIGURATION_MESSAGE + configurator.orderedSources()
-                    .stream()
-                    .map(source -> NEW_LINE + source.getType().toString() + COLON + NEW_LINE + source.dump())
-                    .collect(joining(NEW_LINE)));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(message));
             if (needBlock()) block();
         }
+    }
+
+    public static void launch() {
+        launch(module().configure());
     }
 
     private static ConfiguratorModule configurator(ConfiguratorModule configuratorModule, ConfiguratorCustomizer configuratorCustomizer) {

@@ -29,6 +29,8 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static java.lang.System.*;
 import static java.nio.ByteBuffer.*;
+import static java.nio.channels.Channels.newInputStream;
+import static java.nio.channels.Channels.newOutputStream;
 import static java.nio.channels.FileChannel.*;
 import static java.nio.file.Files.*;
 import static java.nio.file.Paths.*;
@@ -313,7 +315,7 @@ public class FileExtensions {
 
     public static InputStream fileInputStream(File file) {
         try {
-            return new FileInputStream(file);
+            return newInputStream(open(file.toPath()));
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
         }
@@ -330,7 +332,7 @@ public class FileExtensions {
 
     public static OutputStream fileOutputStream(File file) {
         try {
-            return new FileOutputStream(file);
+            return newOutputStream(open(file.toPath(), CREATE, TRUNCATE_EXISTING, WRITE));
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
         }

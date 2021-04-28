@@ -39,8 +39,8 @@ public interface Reader<T extends Value> {
         return read(new ByteBufInputStream(nettyBuffer));
     }
 
-    default T read(String xml) {
-        return read(xml.getBytes(context().configuration().getCharset()));
+    default T read(String string) {
+        return read(string.getBytes(context().configuration().getCharset()));
     }
 
     T read(InputStream input);
