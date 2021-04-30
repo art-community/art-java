@@ -46,6 +46,7 @@ public class Context {
     private static final Context DEFAULT_INSTANCE = new Context(ContextConfiguration.builder().build(), System.out::println);
     private static Context INSTANCE;
     private static final ChangesListener INITIALIZATION_LISTENER = changesListener();
+    private static final ChangesListener DISPOSE_LISTENER = changesListener();
     private static final Map<String, Module> DEFAULTS_MODULES = map();
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator<?>> configurators = map();
@@ -83,12 +84,14 @@ public class Context {
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
         DisposableProperty<Module> module = disposable(() -> getModule(moduleId)).initialize();
         INITIALIZATION_LISTENER.consume(module::dispose).consume(module::initialize);
+        DISPOSE_LISTENER.consume(module::dispose);
         return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
         DisposableProperty<Module> module = disposable(() -> getModule(moduleId)).initialize();
         INITIALIZATION_LISTENER.consume(module::dispose).consume(module::initialize);
+        DISPOSE_LISTENER.consume(module::dispose);
         return new StatefulModuleProxy<>(cast(module));
     }
 
@@ -148,7 +151,7 @@ public class Context {
             module.onUnload(service);
             this.modules.remove(module.getId());
         }
-
+        DISPOSE_LISTENER.produce();
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
     }
