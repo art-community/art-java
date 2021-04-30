@@ -18,11 +18,14 @@
 
 package io.art.core.context;
 
+import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.changes.ChangesListener.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ExceptionMessages.*;
@@ -31,6 +34,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.core.property.DisposableProperty.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -41,7 +45,8 @@ import java.util.function.*;
 public class Context {
     private static final Context DEFAULT_INSTANCE = new Context(ContextConfiguration.builder().build(), System.out::println);
     private static Context INSTANCE;
-    private final static Map<String, Module> DEFAULTS_MODULES = map();
+    private static final ChangesListener INITIALIZATION_LISTENER = changesListener();
+    private static final Map<String, Module> DEFAULTS_MODULES = map();
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator<?>> configurators = map();
     private final ContextConfiguration configuration;
@@ -76,24 +81,14 @@ public class Context {
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
-        Module module = modules.get(moduleId);
-        if (isNull(module)) {
-            module = cast(DEFAULTS_MODULES.get(moduleId));
-            if (isNull(module)) {
-                throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
-            }
-        }
+        DisposableProperty<Module> module = disposable(() -> getModule(moduleId)).initialize();
+        INITIALIZATION_LISTENER.consume(module::dispose).consume(module::initialize);
         return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
-        Module module = modules.get(moduleId);
-        if (isNull(module)) {
-            module = cast(DEFAULTS_MODULES.get(moduleId));
-            if (isNull(module)) {
-                throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
-            }
-        }
+        DisposableProperty<Module> module = disposable(() -> getModule(moduleId)).initialize();
+        INITIALIZATION_LISTENER.consume(module::dispose).consume(module::initialize);
         return new StatefulModuleProxy<>(cast(module));
     }
 
@@ -113,15 +108,30 @@ public class Context {
     }
 
 
+    private Module getModule(String moduleId) {
+        Module module = modules.get(moduleId);
+        if (nonNull(module)) {
+            return module;
+        }
+        module = cast(DEFAULTS_MODULES.get(moduleId));
+        if (nonNull(module)) {
+            return module;
+        }
+        throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+    }
+
     private void load(ImmutableMap<ModuleFactory<?>, ModuleDecorator<?>> modules) {
         INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
         for (Map.Entry<ModuleFactory<?>, ModuleDecorator<?>> entry : modules.entrySet()) {
             Module module = entry.getKey().get();
-            messages.add(format(MODULE_LOADED_MESSAGE, module.getId()));
-            this.modules.put(module.getId(), entry.getValue().apply(cast(module)));
-            this.configurators.put(module.getId(), entry.getValue());
+            String moduleId = module.getId();
+            ModuleDecorator<?> moduleDecorator = entry.getValue();
+            messages.add(format(MODULE_LOADED_MESSAGE, moduleId));
+            this.modules.put(moduleId, moduleDecorator.apply(cast(module)));
+            this.configurators.put(moduleId, moduleDecorator);
         }
+        INITIALIZATION_LISTENER.produce();
         messages.forEach(printer);
         for (Module module : this.modules.values()) {
             module.onLoad(service);
