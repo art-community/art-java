@@ -20,4 +20,7 @@ package io.art.core.constants;
 
 public interface SystemProperties {
     String OS_NAME_PROPERTY = "os.name";
+    String JAVA_CLASS_PATH = "java.class.path";
+    String SUN_BOOT_CLASS_PATH = "sun.boot.class.path";
+    String JAVA_EXT_DIRS = "java.ext.dirs";
 }
