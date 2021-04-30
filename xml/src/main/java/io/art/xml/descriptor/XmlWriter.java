@@ -26,7 +26,6 @@ import io.netty.buffer.*;
 import lombok.*;
 import org.apache.logging.log4j.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.context.Context.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.XmlValueType.*;
 import static io.art.xml.constants.XmlDocumentConstants.*;
@@ -35,6 +34,7 @@ import static lombok.AccessLevel.*;
 import javax.xml.stream.*;
 import java.io.*;
 import java.nio.*;
+import java.nio.charset.*;
 import java.util.*;
 
 @AllArgsConstructor
@@ -44,12 +44,12 @@ public class XmlWriter implements Writer<XmlEntity> {
     private final XMLOutputFactory outputFactory;
 
     @Override
-    public void write(XmlEntity entity, OutputStream outputStream) {
+    public void write(XmlEntity entity, OutputStream outputStream, Charset charset) {
         if (isNull(entity)) return;
         XMLStreamWriter writer = null;
         try {
-            writer = outputFactory.createXMLStreamWriter(outputStream, context().configuration().getCharset().name());
-            writeAllElements(writer, entity);
+            writer = outputFactory.createXMLStreamWriter(outputStream, charset.name());
+            writeAllElements(writer, entity, charset);
         } catch (Throwable throwable) {
             throw new XmlException(throwable);
         } finally {
@@ -74,8 +74,8 @@ public class XmlWriter implements Writer<XmlEntity> {
     }
 
 
-    private void writeAllElements(XMLStreamWriter xmlStreamWriter, XmlEntity xmlEntity) throws XMLStreamException {
-        writeStartDocument(xmlStreamWriter);
+    private void writeAllElements(XMLStreamWriter xmlStreamWriter, XmlEntity xmlEntity, Charset charset) throws XMLStreamException {
+        writeStartDocument(xmlStreamWriter, charset);
         writeXmlEntity(xmlStreamWriter, xmlEntity);
         writeEndDocument(xmlStreamWriter);
     }
@@ -155,8 +155,8 @@ public class XmlWriter implements Writer<XmlEntity> {
         xmlStreamWriter.writeEndElement();
     }
 
-    private void writeStartDocument(XMLStreamWriter xmlStreamWriter) throws XMLStreamException {
-        xmlStreamWriter.writeStartDocument(context().configuration().getCharset().name(), XML_VERSION);
+    private void writeStartDocument(XMLStreamWriter xmlStreamWriter, Charset charset) throws XMLStreamException {
+        xmlStreamWriter.writeStartDocument(charset.name(), XML_VERSION);
     }
 
     private void writeEndDocument(XMLStreamWriter xmlStreamWriter) throws XMLStreamException {

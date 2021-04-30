@@ -104,21 +104,7 @@ public class FileExtensions {
     }
 
     public static String readFile(Path path, ByteBuffer buffer) {
-        StringBuilder result = new StringBuilder(EMPTY_STRING);
-        CharsetDecoder decoder = context().configuration().getCharset().newDecoder();
-        try (FileChannel fileChannel = open(path)) {
-            do {
-                fileChannel.read(buffer);
-                buffer.flip();
-                if (buffer.limit() > 1) {
-                    result.append(decoder.decode(buffer));
-                }
-                buffer.clear();
-            } while (fileChannel.position() < fileChannel.size());
-            return result.toString();
-        } catch (IOException ioException) {
-            throw new InternalRuntimeException(ioException);
-        }
+        return readFile(path, buffer, context().configuration().getCharset());
     }
 
 
@@ -352,8 +338,16 @@ public class FileExtensions {
         writeFileQuietly(path, content.getBytes());
     }
 
+    public static void writeFile(Path path, String content, Charset charset) {
+        writeFileQuietly(path, content.getBytes(charset));
+    }
+
     public static void writeFileQuietly(Path path, String content) {
         writeFileQuietly(path, content.getBytes());
+    }
+
+    public static void writeFileQuietly(Path path, String content, Charset charset) {
+        writeFileQuietly(path, content.getBytes(charset));
     }
 
 
