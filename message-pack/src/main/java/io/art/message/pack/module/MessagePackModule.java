@@ -32,6 +32,10 @@ public class MessagePackModule implements StatelessModule<MessagePackModuleConfi
     private final MessagePackModuleConfiguration configuration = new MessagePackModuleConfiguration();
     private final MessagePackModuleConfiguration.Configurator configurator = new MessagePackModuleConfiguration.Configurator(configuration);
 
+    static {
+        registerDefault(MessagePackModule.class.getSimpleName(), new MessagePackModule());
+    }
+
     public static StatelessModuleProxy<MessagePackModuleConfiguration> messagePackModule() {
         return getMessagePackModule();
     }

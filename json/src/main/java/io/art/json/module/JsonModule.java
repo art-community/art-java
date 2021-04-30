@@ -32,6 +32,10 @@ public class JsonModule implements StatelessModule<JsonModuleConfiguration, Json
     private final JsonModuleConfiguration configuration = new JsonModuleConfiguration();
     private final JsonModuleConfiguration.Configurator configurator = new JsonModuleConfiguration.Configurator(configuration);
 
+    static {
+        registerDefault(JsonModule.class.getSimpleName(), new JsonModule());
+    }
+
     public static StatelessModuleProxy<JsonModuleConfiguration> jsonModule() {
         return getJsonModule();
     }

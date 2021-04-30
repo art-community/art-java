@@ -37,6 +37,10 @@ public class ValueModule implements StatelessModule<ValueModuleConfiguration, Co
     private final ValueModuleConfiguration configuration = new ValueModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
 
+    static {
+        registerDefault(ValueModule.class.getSimpleName(), new ValueModule());
+    }
+
     public static StatelessModuleProxy<ValueModuleConfiguration> valueModule() {
         return getValueModule();
     }

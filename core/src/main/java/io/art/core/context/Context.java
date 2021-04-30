@@ -22,7 +22,6 @@ import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
 import io.art.core.module.*;
-import io.art.core.module.Module;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -42,6 +41,7 @@ import java.util.function.*;
 public class Context {
     private static final Context DEFAULT_INSTANCE = new Context(ContextConfiguration.builder().build(), System.out::println);
     private static Context INSTANCE;
+    private final static Map<String, Module> DEFAULTS_MODULES = map();
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator<?>> configurators = map();
     private final ContextConfiguration configuration;
@@ -70,16 +70,30 @@ public class Context {
         return INSTANCE;
     }
 
+    public static <T extends ModuleConfiguration> T registerDefault(String id, ModuleConfigurationProvider<T> module) {
+        DEFAULTS_MODULES.put(id, module);
+        return module.getConfiguration();
+    }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
         Module module = modules.get(moduleId);
-        if (isNull(module)) throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+        if (isNull(module)) {
+            module = cast(DEFAULTS_MODULES.get(moduleId));
+            if (isNull(module)) {
+                throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+            }
+        }
         return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
         Module module = modules.get(moduleId);
-        if (isNull(module)) throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+        if (isNull(module)) {
+            module = cast(DEFAULTS_MODULES.get(moduleId));
+            if (isNull(module)) {
+                throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
+            }
+        }
         return new StatefulModuleProxy<>(cast(module));
     }
 

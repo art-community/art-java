@@ -48,6 +48,10 @@ public class CommunicatorModule implements StatefulModule<CommunicatorModuleConf
     private static final
     StatefulModuleProxy<CommunicatorModuleConfiguration, CommunicatorModuleState> communicatorModule = context().getStatefulModule(CommunicatorModule.class.getSimpleName());
 
+    static {
+        registerDefault(CommunicatorModule.class.getSimpleName(), new CommunicatorModule());
+    }
+
     public static StatefulModuleProxy<CommunicatorModuleConfiguration, CommunicatorModuleState> communicatorModule() {
         return getCommunicatorModule();
     }

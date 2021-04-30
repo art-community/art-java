@@ -109,6 +109,10 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
         return orThrow(configuratorModule().configuration().getCustomConfiguration(new CustomConfigurationModel(section, type)), () -> new ConfigurationNotFoundException(section));
     }
 
+    static {
+        registerDefault(ConfiguratorModule.class.getSimpleName(), new ConfiguratorModule());
+    }
+
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {
         return getConfiguratorModule();
     }

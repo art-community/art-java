@@ -41,6 +41,10 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     private static final
     StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(ResilienceModule.class.getSimpleName());
 
+    static {
+        registerDefault(ResilienceModule.class.getSimpleName(), new ResilienceModule());
+    }
+
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {
         return getResilienceModule();
     }

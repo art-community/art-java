@@ -32,6 +32,10 @@ public class XmlModule implements StatelessModule<XmlModuleConfiguration, XmlMod
     private final XmlModuleConfiguration configuration = new XmlModuleConfiguration();
     private final XmlModuleConfiguration.Configurator configurator = new XmlModuleConfiguration.Configurator(configuration);
 
+    static {
+        registerDefault(XmlModule.class.getSimpleName(), new XmlModule());
+    }
+
     public static StatelessModuleProxy<XmlModuleConfiguration> xmlModule() {
         return getXmlModule();
     }

@@ -45,6 +45,10 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     private final LoggingModuleConfiguration configuration = new LoggingModuleConfiguration();
     private final LoggingModuleConfiguration.Configurator configurator = new LoggingModuleConfiguration.Configurator(configuration);
 
+    static {
+        registerDefault(LoggingModule.class.getSimpleName(), new LoggingModule());
+    }
+
     public static StatelessModuleProxy<LoggingModuleConfiguration> loggingModule() {
         return getLoggingModule();
     }
