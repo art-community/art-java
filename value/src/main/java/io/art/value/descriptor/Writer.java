@@ -61,7 +61,6 @@ public interface Writer<T extends Value> {
         return toByteArray(buffer);
     }
 
-
     default String writeToString(T value) {
         return writeToString(value, context().configuration().getCharset());
     }
