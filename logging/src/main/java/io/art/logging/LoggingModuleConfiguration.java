@@ -29,7 +29,7 @@ import static java.lang.System.*;
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private Boolean enabled = true;
-    private Boolean colored = true;
+    private Boolean colored = false;
     private Boolean asynchronous = true;
     private String configurationPath;
 
