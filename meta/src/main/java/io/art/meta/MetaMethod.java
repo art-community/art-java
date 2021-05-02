@@ -19,11 +19,9 @@
 package io.art.meta;
 
 import lombok.*;
-import java.util.*;
 
 @Value(staticConstructor = "metaMethod")
 public class MetaMethod<T> {
     String name;
     Class<T> returnType;
-    Map<String, MetaParameter<?>> parameters;
 }
