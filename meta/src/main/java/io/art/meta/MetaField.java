@@ -32,6 +32,9 @@ import java.util.*;
 public class MetaField<T> {
     private final String name;
     private Class<T> type;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final Map<Class<?>, MetaField<?>> GENERIC_CACHE = map();
 
     public <R> MetaField<R> reified(Class<R> generic) {
