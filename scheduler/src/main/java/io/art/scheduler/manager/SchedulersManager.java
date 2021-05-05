@@ -46,7 +46,7 @@ public class SchedulersManager {
     }
 
     public static <T> ForkJoinTask<? extends T> schedule(Callable<? extends T> task, LocalDateTime startTime) {
-        getLogger().info(format(DEFERRED_TASK_SUBMITTED, startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT)));
+        getLogger().trace(format(DEFERRED_TASK_SUBMITTED, startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT)));
         return deferredExecutor().submit(task, startTime);
     }
 
@@ -55,7 +55,7 @@ public class SchedulersManager {
     }
 
     public static ForkJoinTask<?> schedule(Runnable task, LocalDateTime startTime) {
-        getLogger().info(format(DEFERRED_TASK_SUBMITTED, startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT)));
+        getLogger().trace(format(DEFERRED_TASK_SUBMITTED, startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT)));
         return deferredExecutor().execute(task, startTime);
     }
 
@@ -89,7 +89,7 @@ public class SchedulersManager {
                 .period(period)
                 .mode(FIXED)
                 .build();
-        getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
+        getLogger().trace(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
         periodicExecutor().submit(periodicTask);
     }
 
@@ -105,7 +105,7 @@ public class SchedulersManager {
                 .period(period)
                 .mode(FIXED)
                 .build();
-        getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
+        getLogger().trace(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
         periodicExecutor().execute(periodicTask);
     }
 
@@ -139,7 +139,7 @@ public class SchedulersManager {
                 .period(period)
                 .mode(DELAYED)
                 .build();
-        getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
+        getLogger().trace(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
         periodicExecutor().execute(periodicTask);
     }
 
@@ -155,7 +155,7 @@ public class SchedulersManager {
                 .period(period)
                 .mode(DELAYED)
                 .build();
-        getLogger().info(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
+        getLogger().trace(format(PERIODIC_TASK_SUBMITTED, task.getId(), startTime.format(YYYY_MM_DD_HH_MM_SS_24H_DASH_FORMAT), period));
         periodicExecutor().submit(periodicTask);
     }
 
@@ -165,7 +165,7 @@ public class SchedulersManager {
     }
 
     public static boolean cancelTask(String taskId) {
-        getLogger().info(format(PERIODIC_TASK_CANCELED, taskId));
+        getLogger().trace(format(PERIODIC_TASK_CANCELED, taskId));
         return periodicExecutor().cancelTask(taskId);
     }
 }
