@@ -18,6 +18,7 @@
 
 package io.art.meta;
 
+import io.art.core.annotation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.CollectionExtensions.*;
@@ -26,9 +27,10 @@ import java.util.*;
 
 @Getter
 @ToString
+@EqualsAndHashCode
 @RequiredArgsConstructor(staticName = "metaField")
 @AllArgsConstructor(staticName = "metaField")
-@EqualsAndHashCode
+@UsedByGenerator
 public class MetaField<T> {
     private final String name;
     private Class<T> type;

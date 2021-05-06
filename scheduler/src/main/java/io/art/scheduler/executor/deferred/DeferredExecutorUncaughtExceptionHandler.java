@@ -18,9 +18,21 @@
 
 package io.art.scheduler.executor.deferred;
 
+import lombok.*;
+import org.apache.logging.log4j.*;
+import static com.google.common.base.Throwables.*;
+import static io.art.logging.LoggingModule.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
+import static java.text.MessageFormat.*;
+
 class DeferredExecutorUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+    @Getter(lazy = true)
+    private final Logger logger = logger(DeferredExecutorExceptionHandler.class);
+
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {
+        String message = format(EXCEPTION_OCCURRED_ON_THREAD, thread.getName(), getStackTraceAsString(throwable));
+        getLogger().error(message);
         throw new DeferredExecutionThreadPoolException(thread, throwable);
     }
 }

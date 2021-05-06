@@ -19,11 +19,24 @@
 package io.art.meta;
 
 import io.art.core.annotation.*;
-import lombok.*;
+import io.art.core.collection.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
 @UsedByGenerator
-@Value(staticConstructor = "metaMethod")
-public class MetaMethod<T> {
-    String name;
-    Class<T> returnType;
+public class MetaTypeRegistry {
+    private final static Map<Class<?>, MetaType<?>> META_TYPES = map();
+
+    public static void register(MetaType<?> type) {
+        META_TYPES.put(type.getType(), type);
+    }
+
+    public static ImmutableMap<Class<?>, MetaType<?>> metas() {
+        return immutableMapOf(META_TYPES);
+    }
+
+    public static <T> MetaType<T> metaOf(Class<?> type) {
+        return cast(META_TYPES.get(type));
+    }
 }
