@@ -19,11 +19,11 @@
 package io.art.scheduler.executor.deferred;
 
 import io.art.scheduler.exception.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.AWAIT_TERMINATION_EXCEPTION;
+import lombok.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.ForkJoinPool.*;
-import static java.util.concurrent.ForkJoinTask.*;
 import static java.util.concurrent.TimeUnit.*;
 import java.time.*;
 import java.util.concurrent.*;
@@ -44,7 +44,7 @@ class DeferredEventObserver {
         if (deferredEvents.size() + 1 > configuration.getEventsQueueMaxSize()) {
             return forceExecuteEvent(task);
         }
-        ForkJoinTask<EventResultType> forkJoinTask = adapt(task);
+        ForkJoinTask<EventResultType> forkJoinTask = new CallableExecuteAction(task);
         DeferredEvent<EventResultType> event = new DeferredEvent<>(forkJoinTask, triggerTime, deferredEvents.size());
         deferredEvents.add(event);
         return forkJoinTask;
@@ -107,5 +107,28 @@ class DeferredEventObserver {
 
     void clear() {
         deferredEvents.clear();
+    }
+
+    @RequiredArgsConstructor
+    final class CallableExecuteAction<T> extends ForkJoinTask<T> {
+        final Callable<? extends T> callable;
+        T result;
+
+        public final T getRawResult() {
+            return result;
+        }
+
+        public final void setRawResult(T value) {
+            result = value;
+        }
+
+        public final boolean exec() {
+            try {
+                result = callable.call();
+            } catch (Throwable throwable) {
+                DeferredEventObserver.this.configuration.getExceptionHandler().onException(TASK_EXECUTION, throwable);
+            }
+            return true;
+        }
     }
 }

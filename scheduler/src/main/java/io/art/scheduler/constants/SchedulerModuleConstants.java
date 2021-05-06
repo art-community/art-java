@@ -46,7 +46,7 @@ public interface SchedulerModuleConstants {
     }
 
     interface ExceptionMessages {
-        String EXCEPTION_OCCURRED_DURING = "Exception occurred during ''{0}'': {1}";
+        String EXCEPTION_OCCURRED_DURING = "Exception occurred during {0} on thread {1}: {2}";
         String EXCEPTION_OCCURRED_ON_THREAD = "Exception occurred on thread {0}";
         String AWAIT_TERMINATION_EXCEPTION = "Await termination failed";
 

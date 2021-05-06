@@ -24,6 +24,7 @@ import static com.google.common.base.Throwables.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
+import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
 
 public class DeferredExecutorExceptionHandler implements ExceptionHandler {
@@ -32,7 +33,7 @@ public class DeferredExecutorExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onException(ExceptionMessages.ExceptionEvent event, Throwable throwable) {
-        String message = format(EXCEPTION_OCCURRED_DURING, event.getMessage(), getStackTraceAsString(throwable));
+        String message = format(EXCEPTION_OCCURRED_DURING, event.getMessage(), currentThread().getName(), getStackTraceAsString(throwable));
         getLogger().error(message);
     }
 }
