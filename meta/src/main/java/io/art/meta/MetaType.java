@@ -23,6 +23,7 @@ import io.art.core.annotation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static lombok.AccessLevel.PRIVATE;
 import java.util.*;
 
 @Getter
@@ -43,25 +44,19 @@ public class MetaType<T> {
         return cast(methods.get(name));
     }
 
-    @RequiredArgsConstructor(staticName = "metaTypeOf")
+    @RequiredArgsConstructor(access = PRIVATE)
     public static class MetaTypeBuilder {
         private final Class<?> type;
         private final Map<String, MetaField<?>> fields = map();
         private final Map<String, MetaMethod<?>> methods = map();
-
-        public <F> MetaField<F> add(MetaField<F> field) {
-            fields.put(field.getName(), field);
-            return field;
-        }
-
-        public <M> MetaMethod<M> add(MetaMethod<M> method) {
-            methods.put(method.getName(), method);
-            return method;
-        }
     }
 
     public interface MetaTypeProvider {
         MetaTypeBuilder builder();
+
+        default MetaTypeBuilder metaTypeOf(Class<?> type) {
+            return new MetaTypeBuilder(type);
+        }
 
         default <F> MetaField<F> add(MetaField<F> field) {
             builder().fields.put(field.getName(), field);
