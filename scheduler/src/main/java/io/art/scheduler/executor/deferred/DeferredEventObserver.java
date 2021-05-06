@@ -19,7 +19,6 @@
 package io.art.scheduler.executor.deferred;
 
 import io.art.scheduler.exception.*;
-import lombok.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static java.util.Objects.*;
@@ -109,10 +108,13 @@ class DeferredEventObserver {
         deferredEvents.clear();
     }
 
-    @RequiredArgsConstructor
     final class CallableExecuteAction<T> extends ForkJoinTask<T> {
         final Callable<? extends T> callable;
         T result;
+
+        CallableExecuteAction(Callable<? extends T> callable) {
+            this.callable = callable;
+        }
 
         public final T getRawResult() {
             return result;
