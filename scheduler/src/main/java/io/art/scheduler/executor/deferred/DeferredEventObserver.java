@@ -43,7 +43,7 @@ class DeferredEventObserver {
         if (deferredEvents.size() + 1 > configuration.getEventsQueueMaxSize()) {
             return forceExecuteEvent(task);
         }
-        ForkJoinTask<EventResultType> forkJoinTask = new CallableExecuteAction(task);
+        ForkJoinTask<EventResultType> forkJoinTask = new CallableExecuteAction<>(task);
         DeferredEvent<EventResultType> event = new DeferredEvent<>(forkJoinTask, triggerTime, deferredEvents.size());
         deferredEvents.add(event);
         return forkJoinTask;
