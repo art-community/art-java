@@ -24,7 +24,6 @@ dependencies {
     val disruptorVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":value"))
 
     api("org.slf4j", "slf4j-api", sl4jVersion)
     api("org.slf4j", "log4j-over-slf4j", sl4jVersion)
