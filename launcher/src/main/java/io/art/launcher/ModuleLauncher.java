@@ -110,7 +110,7 @@ public class ModuleLauncher {
                     .put(RsocketModule::new, module -> rsocket(module, state, rsocketCustomizer.apply(module)))
                     .put(HttpModule::new, module -> http(module, state, httpCustomizer.apply(module)))
                     .put(TarantoolModule::new, module -> tarantool(module, state))
-                    //.put(RocksDbModule::new, module -> rocksDb(module, state))
+                    .put(RocksDbModule::new, module -> rocksDb(module, state))
                     .put(StorageModule::new, module -> storage(module, state, storageCustomizer.apply(module)));
 
             LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
