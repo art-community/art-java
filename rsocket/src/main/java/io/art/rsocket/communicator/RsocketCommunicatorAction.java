@@ -54,7 +54,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.module.RsocketModule.*;
-import static io.art.rsocket.reader.RsocketPayloadReader.readRsocketPayload;
+import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.core.RSocketClient.*;
 import static io.rsocket.util.ByteBufPayload.*;
@@ -68,7 +68,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
     private final CommunicatorActionIdentifier communicatorActionId;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(RsocketCommunicatorAction.class);
+    private final static Logger logger = logger(RsocketCommunicatorAction.class);
 
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
@@ -196,7 +196,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
                         .map(TransportPayload::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
-                        .requestChannel(input.map(value -> create(writer.write(value))).switchIfEmpty(EMPTY_PAYLOAD_MONO))
+                        .requestChannel(input.map(value -> create(writer.write(value))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
                         .map(payload -> readRsocketPayload(reader, payload))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);

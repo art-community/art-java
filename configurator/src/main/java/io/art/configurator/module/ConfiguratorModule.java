@@ -110,7 +110,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     }
 
     static {
-        registerDefault(ConfiguratorModule.class.getSimpleName(), new ConfiguratorModule());
+        registerDefault(ConfiguratorModule.class.getSimpleName(), ConfiguratorModule::new);
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {

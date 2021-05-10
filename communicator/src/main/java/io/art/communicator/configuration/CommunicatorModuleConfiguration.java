@@ -142,7 +142,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.scheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER;
+            configuration.scheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER.get();
             configuration.reader = TransportPayloadReader::new;
             configuration.writer = TransportPayloadWriter::new;
             configuration.configurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))

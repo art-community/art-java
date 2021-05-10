@@ -33,7 +33,7 @@ public class XmlModule implements StatelessModule<XmlModuleConfiguration, XmlMod
     private final XmlModuleConfiguration.Configurator configurator = new XmlModuleConfiguration.Configurator(configuration);
 
     static {
-        registerDefault(XmlModule.class.getSimpleName(), new XmlModule());
+        registerDefault(XmlModule.class.getSimpleName(), XmlModule::new);
     }
 
     public static StatelessModuleProxy<XmlModuleConfiguration> xmlModule() {

@@ -42,7 +42,7 @@ import java.util.function.*;
 @Getter
 @AllArgsConstructor
 public class YamlConfigurationSource implements NestedConfiguration {
-    private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
+    private final YAMLMapper YAML_MAPPER = new YAMLMapper();
 
     private final String section;
     private final ModuleConfigurationSourceType type;

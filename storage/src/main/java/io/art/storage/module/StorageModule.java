@@ -21,7 +21,7 @@ public class StorageModule implements StatefulModule<StorageModuleConfiguration,
     private final StorageModuleState state = new StorageModuleState();
 
     static {
-        registerDefault(StorageModule.class.getSimpleName(), new StorageModule());
+        registerDefault(StorageModule.class.getSimpleName(), StorageModule::new);
     }
 
     public static StatefulModuleProxy<StorageModuleConfiguration, StorageModuleState> storageModule() {

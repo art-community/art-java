@@ -45,7 +45,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final Configurator configurator = new Configurator(configuration);
 
     static {
-        registerDefault(RsocketModule.class.getSimpleName(), new RsocketModule());
+        registerDefault(RsocketModule.class.getSimpleName(), RsocketModule::new);
     }
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {

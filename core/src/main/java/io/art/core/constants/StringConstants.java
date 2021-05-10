@@ -19,7 +19,6 @@
 package io.art.core.constants;
 
 import static java.util.regex.Pattern.*;
-import java.nio.charset.*;
 import java.util.regex.*;
 
 public interface StringConstants {

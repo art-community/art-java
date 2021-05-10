@@ -36,6 +36,7 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.DisposableProperty.*;
+import static io.art.core.property.LazyProperty.lazy;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -48,7 +49,7 @@ public class Context {
     private static Context INSTANCE;
     private static final ChangesListener INITIALIZATION_LISTENER = changesListener();
     private static final ChangesListener DISPOSE_LISTENER = changesListener();
-    private static final Map<String, Module> DEFAULTS_MODULES = map();
+    private static final Map<String, LazyProperty<Module>> DEFAULTS_MODULES = map();
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator<?>> configurators = map();
     private final ContextConfiguration configuration;
@@ -77,9 +78,8 @@ public class Context {
         return INSTANCE;
     }
 
-    public static <T extends ModuleConfiguration> T registerDefault(String id, ModuleConfigurationProvider<T> module) {
-        DEFAULTS_MODULES.put(id, module);
-        return module.getConfiguration();
+    public static <T extends ModuleConfiguration> void registerDefault(String id, ModuleFactory<ModuleConfigurationProvider<T>> module) {
+        DEFAULTS_MODULES.put(id, lazy(module::get));
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {

@@ -27,7 +27,7 @@ import static java.text.MessageFormat.*;
 
 class DeferredExecutorUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
     @Getter(lazy = true)
-    private final Logger logger = logger(DeferredExecutorExceptionHandler.class);
+    private final static Logger logger = logger(DeferredExecutorExceptionHandler.class);
 
     @Override
     public void uncaughtException(Thread thread, Throwable throwable) {

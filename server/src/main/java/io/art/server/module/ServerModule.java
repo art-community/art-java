@@ -47,7 +47,7 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
     private final ServerModuleState state = new ServerModuleState();
 
     static {
-        registerDefault(ServerModule.class.getSimpleName(), new ServerModule());
+        registerDefault(ServerModule.class.getSimpleName(), ServerModule::new);
     }
 
     public static StatefulModuleProxy<ServerModuleConfiguration, ServerModuleState> serverModule() {

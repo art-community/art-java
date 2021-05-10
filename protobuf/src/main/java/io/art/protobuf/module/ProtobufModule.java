@@ -33,7 +33,7 @@ public class ProtobufModule implements StatelessModule<ProtobufModuleConfigurati
     private final ProtobufModuleConfiguration.Configurator configurator = new ProtobufModuleConfiguration.Configurator(configuration);
 
     static {
-        registerDefault(ProtobufModule.class.getSimpleName(), new ProtobufModule());
+        registerDefault(ProtobufModule.class.getSimpleName(), ProtobufModule::new);
     }
 
     public static StatelessModuleProxy<ProtobufModuleConfiguration> protobufModule() {

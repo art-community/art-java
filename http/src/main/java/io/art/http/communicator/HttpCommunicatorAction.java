@@ -50,7 +50,7 @@ public class HttpCommunicatorAction implements CommunicatorActionImplementation 
     private final CommunicatorActionIdentifier communicatorActionId;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(HttpCommunicatorAction.class);
+    private final static Logger logger = logger(HttpCommunicatorAction.class);
 
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();

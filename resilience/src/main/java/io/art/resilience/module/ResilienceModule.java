@@ -42,7 +42,7 @@ public class ResilienceModule implements StatefulModule<ResilienceModuleConfigur
     StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(ResilienceModule.class.getSimpleName());
 
     static {
-        registerDefault(ResilienceModule.class.getSimpleName(), new ResilienceModule());
+        registerDefault(ResilienceModule.class.getSimpleName(), ResilienceModule::new);
     }
 
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {

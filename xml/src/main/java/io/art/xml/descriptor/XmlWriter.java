@@ -40,7 +40,7 @@ import java.util.*;
 @AllArgsConstructor
 public class XmlWriter implements Writer<XmlEntity> {
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(XmlWriter.class);
+    private static final Logger logger = logger(XmlWriter.class);
     private final XMLOutputFactory outputFactory;
 
     @Override

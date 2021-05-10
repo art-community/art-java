@@ -29,7 +29,7 @@ import static java.text.MessageFormat.*;
 
 public class DeferredExecutorExceptionHandler implements ExceptionHandler {
     @Getter(lazy = true)
-    private final Logger logger = logger(DeferredExecutorExceptionHandler.class);
+    private final static Logger logger = logger(DeferredExecutorExceptionHandler.class);
 
     @Override
     public void onException(ExceptionMessages.ExceptionEvent event, Throwable throwable) {

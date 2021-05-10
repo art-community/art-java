@@ -8,7 +8,7 @@ import static java.lang.Class.*;
 
 @AutomaticFeature
 public class GraalRocksDbFeature implements Feature {
-    private final static String ROCKS_DB_MODULE = "io.art.rocks.db.module.RocksDbModule";
+    private final static String ROCKS_DB_MODULE = "org.rocksdb.RocksDBException";
 
     @Override
     public void beforeAnalysis(Feature.BeforeAnalysisAccess access) {

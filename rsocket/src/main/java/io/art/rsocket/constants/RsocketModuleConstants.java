@@ -19,14 +19,16 @@
 package io.art.rsocket.constants;
 
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.art.core.property.*;
 import io.rsocket.util.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.property.LazyProperty.lazy;
 import java.time.*;
 
 public interface RsocketModuleConstants {
-    public static final EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
-    public static final Mono<EmptyPayload> EMPTY_PAYLOAD_MONO = Mono.just(EmptyPayload.INSTANCE);
+    EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
+    LazyProperty<Mono<EmptyPayload>> EMPTY_PAYLOAD_MONO = lazy(() -> Mono.just(EmptyPayload.INSTANCE));
 
     interface ExceptionMessages {
         String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";

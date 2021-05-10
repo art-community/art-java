@@ -24,7 +24,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     private final TarantoolModuleState state = new TarantoolModuleState(refresher.consumer());
 
     static {
-        registerDefault(TarantoolModule.class.getSimpleName(), new TarantoolModule());
+        registerDefault(TarantoolModule.class.getSimpleName(), TarantoolModule::new);
     }
 
     public static StatefulModuleProxy<TarantoolModuleConfiguration, TarantoolModuleState> tarantoolModule() {

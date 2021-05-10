@@ -253,7 +253,7 @@ public class ModuleLauncher {
     }
 
     private static RocksDbModule rocksDb(RocksDbModule rocksDb, ModuleConfiguringState state) {
-        //rocksDb.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
+        rocksDb.configure(configurator -> configurator.from(state.getConfigurator().orderedSources()));
         return rocksDb;
     }
 

@@ -46,7 +46,7 @@ public class RocksDbModule implements StatefulModule<RocksDbModuleConfiguration,
     private RocksDbModuleState state;
 
     static {
-        registerDefault(RocksDbModule.class.getSimpleName(), new RocksDbModule());
+        registerDefault(RocksDbModule.class.getSimpleName(), RocksDbModule::new);
     }
 
     public static StatefulModuleProxy<RocksDbModuleConfiguration, RocksDbModuleState> rocksDbModule() {

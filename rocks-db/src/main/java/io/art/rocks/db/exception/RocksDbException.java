@@ -18,8 +18,8 @@
 
 package io.art.rocks.db.exception;
 
-public class RocksDbOperationException extends RuntimeException {
-    public RocksDbOperationException(String message, Throwable exception) {
+public class RocksDbException extends RuntimeException {
+    public RocksDbException(String message, Throwable exception) {
         super(message, exception);
     }
 }

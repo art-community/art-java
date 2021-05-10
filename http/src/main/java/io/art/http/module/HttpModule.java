@@ -47,7 +47,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     private final Configurator configurator = new Configurator(configuration);
 
     static {
-        registerDefault(HttpModule.class.getSimpleName(), new HttpModule());
+        registerDefault(HttpModule.class.getSimpleName(), HttpModule::new);
     }
 
     public static StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState> httpModule() {
