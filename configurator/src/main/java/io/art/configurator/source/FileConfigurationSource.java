@@ -28,10 +28,12 @@ import lombok.experimental.Delegate;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
 
-@Getter
 public class FileConfigurationSource implements NestedConfiguration {
+    @Getter
     private final String section;
+    @Getter
     private final ConfigurationSourceType type;
+    @Getter
     @Delegate
     private final NestedConfiguration source;
 
