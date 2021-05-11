@@ -1,16 +1,12 @@
 package io.art.logging;
 
 import lombok.experimental.*;
-import org.apache.logging.log4j.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
-import static io.art.core.constants.AnsiColor.*;
 
 @UtilityClass
 public class LogColorizer {
-    public static String byLevel(Level level, String message) {
-        switch (level.getStandardLevel()) {
-            case FATAL:
-                return message(message, RED_BOLD);
+    public static String byLevel(LoggingLevel level, String message) {
+        switch (level) {
             case ERROR:
                 return error(message);
             case WARN:

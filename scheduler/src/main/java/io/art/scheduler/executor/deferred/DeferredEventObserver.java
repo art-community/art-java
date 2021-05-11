@@ -21,6 +21,7 @@ package io.art.scheduler.executor.deferred;
 import io.art.scheduler.exception.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
+import static java.lang.Runtime.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.ForkJoinPool.*;
 import static java.util.concurrent.TimeUnit.*;
@@ -36,6 +37,9 @@ class DeferredEventObserver {
         this.configuration = configuration;
         deferredEvents = new DelayQueue<>();
         threadPool = createThreadPool();
+        if (configuration.isShutdownOnExit()) {
+            getRuntime().addShutdownHook(new Thread(this::shutdown));
+        }
         observe();
     }
 
@@ -50,7 +54,7 @@ class DeferredEventObserver {
     }
 
     void shutdown() {
-        threadPool.shutdownNow();
+        threadPool.shutdown();
         if (!configuration.isAwaitAllTasksTerminationOnShutdown()) {
             return;
         }
@@ -80,6 +84,9 @@ class DeferredEventObserver {
                     DeferredEvent<?> nextEvent;
                     if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime() && !task.isCancelled()) {
                         task.join();
+                    }
+                    if (deferredEvents.isEmpty() && threadPool.isTerminating()) {
+                        threadPool.shutdownNow();
                     }
                 } catch (Throwable throwable) {
                     configuration.getExceptionHandler().onException(TASK_EXECUTION, throwable);

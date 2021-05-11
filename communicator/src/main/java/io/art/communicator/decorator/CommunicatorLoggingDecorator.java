@@ -24,7 +24,7 @@ import io.art.core.constants.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingMessages.*;
 import static io.art.communicator.module.CommunicatorModule.*;

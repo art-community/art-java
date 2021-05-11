@@ -19,7 +19,7 @@
 package io.art.kafka.consumer.module;
 
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import io.art.core.module.Module;
 import io.art.kafka.consumer.configuration.*;
 import io.art.kafka.consumer.model.*;

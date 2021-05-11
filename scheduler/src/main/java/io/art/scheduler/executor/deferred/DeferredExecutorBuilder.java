@@ -31,6 +31,7 @@ public class DeferredExecutorBuilder {
     private Integer threadPoolCoreSize;
     private Boolean awaitAllTasksTerminationOnShutdown;
     private Long threadPoolTerminationTimeout;
+    private boolean shutdownOnExit;
 
     public DeferredExecutorBuilder withExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
@@ -62,6 +63,11 @@ public class DeferredExecutorBuilder {
         return this;
     }
 
+    public DeferredExecutorBuilder shutdownOnExit(boolean shutdownOnExit) {
+        this.shutdownOnExit = shutdownOnExit;
+        return this;
+    }
+
     public DeferredExecutor build() {
         return new DeferredExecutorImplementation(DeferredExecutorConfiguration.builder()
                 .exceptionHandler(orElse(exceptionHandler, new DeferredExecutorExceptionHandler()))
@@ -70,6 +76,7 @@ public class DeferredExecutorBuilder {
                 .threadPoolExceptionHandler(orElse(threadPoolExceptionHandler, new DeferredExecutorUncaughtExceptionHandler()))
                 .awaitAllTasksTerminationOnShutdown(nonNull(awaitAllTasksTerminationOnShutdown) && awaitAllTasksTerminationOnShutdown)
                 .threadPoolTerminationTimeout(orElse(threadPoolTerminationTimeout, DEFAULT_SHUTDOWN_TIMEOUT))
+                .shutdownOnExit(shutdownOnExit)
                 .build());
     }
 }

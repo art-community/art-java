@@ -3,7 +3,7 @@ package io.art.tarantool.module.connection.client.caller;
 import io.art.tarantool.exception.TarantoolDaoException;
 import io.tarantool.driver.api.TarantoolClient;
 import lombok.Getter;
-import org.apache.logging.log4j.Logger;
+import  io.art.logging.Logger;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

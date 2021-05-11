@@ -1,7 +1,7 @@
 package io.art.sql.listener;
 
 import lombok.*;
-import org.apache.logging.log4j.Logger;
+import  io.art.logging.Logger;
 import org.jooq.*;
 import org.jooq.impl.*;
 import org.jooq.tools.*;
@@ -10,7 +10,7 @@ import static java.lang.System.*;
 import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
-import static org.apache.logging.log4j.ThreadContext.*;
+import static  io.art.logging.ThreadContext.*;
 import static org.jooq.ExecuteType.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.tools.StringUtils.*;

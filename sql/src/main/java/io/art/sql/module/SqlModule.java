@@ -21,7 +21,7 @@ package io.art.sql.module;
 import com.zaxxer.hikari.*;
 import io.dropwizard.db.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import org.apache.tomcat.jdbc.pool.*;
 import io.art.core.caster.*;
 import io.art.core.module.Module;

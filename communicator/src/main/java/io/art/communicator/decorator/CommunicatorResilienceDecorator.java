@@ -34,7 +34,7 @@ import io.github.resilience4j.reactor.timelimiter.*;
 import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.module.CommunicatorModule.*;

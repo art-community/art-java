@@ -23,7 +23,7 @@ import io.art.communicator.configuration.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;

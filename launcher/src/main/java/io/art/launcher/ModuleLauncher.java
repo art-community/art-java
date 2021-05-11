@@ -44,7 +44,7 @@ import io.art.value.module.*;
 import io.art.xml.module.*;
 import io.art.yaml.module.*;
 import lombok.experimental.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.context.Context.*;

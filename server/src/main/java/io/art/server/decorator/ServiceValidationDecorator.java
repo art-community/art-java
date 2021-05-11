@@ -26,7 +26,7 @@ import io.art.server.refresher.*;
 import io.art.server.specification.*;
 import io.art.server.validation.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.property.Property.*;

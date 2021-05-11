@@ -22,8 +22,8 @@ import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
-import io.art.core.module.*;
 import io.art.core.module.Module;
+import io.art.core.module.*;
 import io.art.core.property.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.changes.ChangesListener.*;
@@ -36,7 +36,7 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.DisposableProperty.*;
-import static io.art.core.property.LazyProperty.lazy;
+import static io.art.core.property.LazyProperty.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -117,7 +117,7 @@ public class Context {
         if (nonNull(module)) {
             return module;
         }
-        module = cast(DEFAULTS_MODULES.get(moduleId));
+        module = cast(DEFAULTS_MODULES.get(moduleId).get());
         if (nonNull(module)) {
             return module;
         }
@@ -145,6 +145,15 @@ public class Context {
     }
 
     private void unload() {
+        List<LazyProperty<Module>> defaultModules = linkedListOf(DEFAULTS_MODULES.values());
+        reverse(defaultModules);
+        for (LazyProperty<Module> module : defaultModules) {
+            if (!module.initialized()) continue;
+            Module defaultModule = module.get();
+            printer.accept(format(MODULE_UNLOADED_MESSAGE, defaultModule.getId()));
+            defaultModule.onUnload(service);
+            DEFAULTS_MODULES.remove(defaultModule.getId());
+        }
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module module : modules) {

@@ -22,11 +22,9 @@ package io.art.scheduler.executor.periodic;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.model.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.logging.LoggingModule.*;
 import static java.util.Objects.*;
 import java.time.*;
 import java.util.*;
@@ -38,8 +36,6 @@ public class PeriodicExecutor {
     private final Map<String, ForkJoinTask<?>> executingTasks = concurrentMap();
     private final Map<String, ForkJoinTask<?>> cancelledTasks = concurrentMap();
     private final DeferredExecutor deferredExecutor;
-    @Getter(lazy = true)
-    private final static Logger logger = logger(PeriodicExecutor.class);
 
     public <T> void submit(PeriodicCallableTask<? extends T> task) {
         ForkJoinTask<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));

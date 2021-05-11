@@ -18,20 +18,34 @@
 
 package io.art.logging;
 
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
+import io.art.logging.LoggerWriterConfiguration.*;
+import io.art.scheduler.executor.deferred.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.constants.DateTimeConstants.*;
+import static io.art.logging.LoggingLevel.*;
 import static io.art.logging.LoggingModuleConstants.ConfigurationKeys.*;
-import static io.art.logging.LoggingModuleConstants.*;
-import static java.lang.System.*;
+import static io.art.logging.LoggingWriterType.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
-    private Boolean enabled = true;
-    private Boolean colored = false;
     private Boolean asynchronous = true;
-    private String configurationPath;
+    private LoggerWriterConfiguration defaultWriter = LoggerWriterConfiguration.builder()
+            .level(INFO)
+            .type(CONSOLE)
+            .console(ConsoleWriterConfiguration.builder().colored(true).build())
+            .dateTimeFormatter(DD_MM_YYYY_HH_MM_SS_24H_DOT_FORMAT)
+            .build();
+    private ImmutableArray<LoggerWriterConfiguration> writers = emptyImmutableArray();
+    private final DeferredExecutor executor = new DeferredExecutorBuilder()
+            .awaitAllTasksTerminationOnShutdown(true)
+            .threadPoolCoreSize(1)
+            .shutdownOnExit(true)
+            .build();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
@@ -39,19 +53,15 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.enabled = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ENABLED_KEY)), configuration.enabled);
-            configuration.colored = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(COLORED_KEY)), configuration.colored);
+            configuration.defaultWriter = orElse(source.getNested(LOGGING_DEFAULT_SECTION, LoggerWriterConfiguration::from), configuration.defaultWriter);
+            configuration.writers = source.getNestedArray(LOGGING_WRITERS_SECTION, LoggerWriterConfiguration::from);
             configuration.asynchronous = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getBool(ASYNCHRONOUS_KEY)), configuration.asynchronous);
-            configuration.configurationPath = orElse(source.getNested(LOGGING_SECTION, logging -> logging.getString(CONFIGURATION_PATH_KEY)), getProperty(LOG42_CONFIGURATION_FILE_PROPERTY));
             return this;
         }
 
         @Override
         public Configurator configure(LoggingModuleConfiguration configuration) {
-            apply(configuration.getEnabled(), enabled -> this.configuration.enabled = enabled);
-            apply(configuration.getColored(), colored -> this.configuration.colored = colored);
             apply(configuration.getAsynchronous(), asynchronous -> this.configuration.asynchronous = asynchronous);
-            apply(configuration.getConfigurationPath(), path -> this.configuration.configurationPath = path);
             return this;
         }
     }

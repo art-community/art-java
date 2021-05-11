@@ -23,7 +23,7 @@ import io.art.rsocket.configuration.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.LoggingModule.*;

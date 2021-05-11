@@ -24,7 +24,7 @@ import io.art.value.immutable.*;
 import io.art.xml.exception.*;
 import io.netty.buffer.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.logging.LoggingModule.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.XmlValueType.*;

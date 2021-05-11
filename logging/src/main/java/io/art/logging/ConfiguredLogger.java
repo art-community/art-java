@@ -1,97 +1,83 @@
 package io.art.logging;
 
 import lombok.*;
-import org.apache.logging.log4j.*;
-import org.apache.logging.log4j.core.Logger;
-import org.apache.logging.log4j.core.*;
-import org.apache.logging.log4j.util.Supplier;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.EmptyFunctions.*;
-import static io.art.core.extensions.StringExtensions.*;
-import java.util.function.*;
+import static io.art.core.collector.ArrayCollector.*;
+import static io.art.logging.LoggerWriterFactory.*;
+import static io.art.logging.LoggingLevel.*;
+import static java.lang.Thread.*;
+import static java.time.LocalDateTime.*;
+import static java.util.stream.Collectors.*;
+import java.util.*;
 
 @Getter
-public class ConfiguredLogger extends Logger {
+public class ConfiguredLogger implements Logger {
+    private final String name;
+    private final EnumSet<LoggingLevel> levels;
     private final LoggingModuleConfiguration configuration;
-    private final BiFunction<Level, String, String> messageDecorator;
+    private final List<LoggerWriter> infoWriters;
+    private final List<LoggerWriter> errorWriters;
+    private final List<LoggerWriter> debugWriters;
+    private final List<LoggerWriter> traceWriters;
+    private final List<LoggerWriter> warnWriters;
 
     public ConfiguredLogger(String name, LoggingModuleConfiguration configuration) {
-        super(LoggerContext.getContext(), name, LogManager.getLogger(LoggingModule.class.getName()).getMessageFactory());
+        this.name = name;
         this.configuration = configuration;
-        messageDecorator = !configuration.getEnabled()
-                ? emptyBiFunction()
-                : configuration.getColored()
-                ? LogColorizer::byLevel
-                : (level, message) -> emptyIfNull(message);
+        infoWriters = configuration.getWriters()
+                .stream()
+                .filter(writer -> writer.getCategories().contains(name) && writer.getLevel().getLevel() >= INFO.getLevel())
+                .map(writerConfiguration -> loggerWriter(name, writerConfiguration))
+                .collect(listCollector());
+        errorWriters = configuration.getWriters()
+                .stream()
+                .filter(writer -> writer.getCategories().contains(name) && writer.getLevel().getLevel() >= ERROR.getLevel())
+                .map(writerConfiguration -> loggerWriter(name, writerConfiguration))
+                .collect(listCollector());
+        debugWriters = configuration.getWriters()
+                .stream()
+                .filter(writer -> writer.getCategories().contains(name) && writer.getLevel().getLevel() >= DEBUG.getLevel())
+                .map(writerConfiguration -> loggerWriter(name, writerConfiguration))
+                .collect(listCollector());
+        traceWriters = configuration.getWriters()
+                .stream()
+                .filter(writer -> writer.getCategories().contains(name) && writer.getLevel().getLevel() >= TRACE.getLevel())
+                .map(writerConfiguration -> loggerWriter(name, writerConfiguration))
+                .collect(listCollector());
+        warnWriters = configuration.getWriters()
+                .stream()
+                .filter(writer -> writer.getCategories().contains(name) && writer.getLevel().getLevel() >= WARN.getLevel())
+                .map(writerConfiguration -> loggerWriter(name, writerConfiguration))
+                .collect(listCollector());
+        errorWriters.add(loggerWriter(name, configuration.getDefaultWriter().toBuilder().level(ERROR).build()));
+        warnWriters.add(loggerWriter(name, configuration.getDefaultWriter().toBuilder().level(WARN).build()));
+        infoWriters.add(loggerWriter(name, configuration.getDefaultWriter().toBuilder().level(INFO).build()));
+        traceWriters.add(loggerWriter(name, configuration.getDefaultWriter().toBuilder().level(TRACE).build()));
+        debugWriters.add(loggerWriter(name, configuration.getDefaultWriter().toBuilder().level(DEBUG).build()));
+        if (configuration.getWriters().isEmpty()) {
+            levels = EnumSet.of(configuration.getDefaultWriter().getLevel());
+            return;
+        }
+        levels = EnumSet.copyOf(configuration.getWriters().stream().map(LoggerWriterConfiguration::getLevel).collect(toList()));
     }
 
     @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Supplier<?>... paramSuppliers) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, paramSuppliers));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object... params) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, params));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3, p4));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3, p4, p5));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3, p4, p5, p6));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3, p4, p5, p6, p7));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3, p4, p5, p6, p7, p8));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Object p0, Object p1, Object p2, Object p3, Object p4, Object p5, Object p6, Object p7, Object p8, Object p9) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, p0, p1, p2, p3, p4, p5, p6, p7, p8, p9));
-    }
-
-    @Override
-    public void logIfEnabled(String fqcn, Level level, Marker marker, String message, Throwable t) {
-        apply(messageDecorator.apply(level, message), result -> super.logIfEnabled(fqcn, level, marker, result, t));
+    public void log(LoggingLevel level, String message) {
+        String thread = currentThread().getName();
+        switch (level) {
+            case ERROR:
+                errorWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                return;
+            case INFO:
+                infoWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                return;
+            case TRACE:
+                traceWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                return;
+            case DEBUG:
+                debugWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                return;
+            case WARN:
+                warnWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+        }
     }
 }

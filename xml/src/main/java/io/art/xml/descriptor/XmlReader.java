@@ -23,7 +23,7 @@ import io.art.value.descriptor.Reader;
 import io.art.value.immutable.*;
 import io.art.xml.exception.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.logging.LoggingModule.*;

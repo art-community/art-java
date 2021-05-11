@@ -6,7 +6,7 @@ import io.tarantool.driver.TarantoolServerAddress;
 import io.tarantool.driver.auth.SimpleTarantoolCredentials;
 import io.tarantool.driver.exceptions.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import io.tarantool.driver.api.TarantoolClient;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;

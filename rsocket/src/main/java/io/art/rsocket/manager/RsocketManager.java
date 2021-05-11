@@ -24,7 +24,7 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.server.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
+import  io.art.logging.*;
 import reactor.core.*;
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;

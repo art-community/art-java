@@ -12,7 +12,7 @@ import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.Builder;
 import lombok.Getter;
-import org.apache.logging.log4j.Logger;
+import  io.art.logging.Logger;
 
 import java.util.Set;
 import java.util.function.*;

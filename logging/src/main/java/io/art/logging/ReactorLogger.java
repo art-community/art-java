@@ -20,10 +20,9 @@ package io.art.logging;
 
 import lombok.*;
 import lombok.experimental.Delegate;
-import reactor.util.*;
 
 @AllArgsConstructor
-public class ReactorLogger implements Logger {
+public class ReactorLogger implements reactor.util.Logger {
     @Delegate
-    private final org.apache.logging.log4j.Logger logger;
+    private final Logger logger;
 }

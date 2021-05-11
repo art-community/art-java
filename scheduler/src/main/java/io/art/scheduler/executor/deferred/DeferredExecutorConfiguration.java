@@ -30,4 +30,5 @@ class DeferredExecutorConfiguration {
     private final int threadPoolCoreSize;
     private final boolean awaitAllTasksTerminationOnShutdown;
     private final long threadPoolTerminationTimeout;
+    private final boolean shutdownOnExit;
 }
