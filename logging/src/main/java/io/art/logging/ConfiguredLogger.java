@@ -65,19 +65,19 @@ public class ConfiguredLogger implements Logger {
         String thread = currentThread().getName();
         switch (level) {
             case ERROR:
-                errorWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                errorWriters.forEach(writer -> writer.write(thread, message));
                 return;
             case INFO:
-                infoWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                infoWriters.forEach(writer -> writer.write(thread, message));
                 return;
             case TRACE:
-                traceWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                traceWriters.forEach(writer -> writer.write(thread, message));
                 return;
             case DEBUG:
-                debugWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                debugWriters.forEach(writer -> writer.write(thread, message));
                 return;
             case WARN:
-                warnWriters.forEach(writer -> configuration.getExecutor().execute(() -> writer.write(thread, message), now()));
+                warnWriters.forEach(writer -> writer.write(thread, message));
         }
     }
 }

@@ -38,7 +38,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .level(INFO)
             .type(CONSOLE)
             .console(ConsoleWriterConfiguration.builder().colored(true).build())
-            .dateTimeFormatter(DD_MM_YYYY_HH_MM_SS_24H_DOT_FORMAT)
+            .dateTimeFormatter(DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT)
             .build();
     private ImmutableArray<LoggerWriterConfiguration> writers = emptyImmutableArray();
     private final DeferredExecutor executor = new DeferredExecutorBuilder()
