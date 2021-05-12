@@ -37,6 +37,8 @@ public class LoggingManager {
 
     public void deactivate() {
         activated = false;
+        configuration.getProducingExecutor().shutdown();
+        configuration.getConsumingExecutor().shutdown();
     }
 
     private void processConsuming(LoggingModuleState state) {

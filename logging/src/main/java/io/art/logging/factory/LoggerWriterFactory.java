@@ -29,6 +29,8 @@ public class LoggerWriterFactory {
         switch (writerConfiguration.getType()) {
             case CONSOLE:
                 return new ConsoleWriter(loggerConfiguration, writerConfiguration);
+            case FILE:
+                return new FileWriter(loggerConfiguration, writerConfiguration);
         }
         throw new ImpossibleSituationException();
     }

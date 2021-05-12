@@ -21,7 +21,8 @@ package io.art.logging.constants;
 import static java.util.Arrays.*;
 
 public enum LoggingWriterType {
-    CONSOLE;
+    CONSOLE,
+    FILE;
 
     public static LoggingWriterType parse(String type, LoggingWriterType defaultType) {
         return stream(LoggingWriterType.values())

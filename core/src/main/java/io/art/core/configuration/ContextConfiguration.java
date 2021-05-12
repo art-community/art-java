@@ -24,6 +24,7 @@ import io.art.core.network.provider.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.constants.ContextConstants.*;
+import static io.art.core.constants.StringConstants.*;
 import static java.nio.charset.StandardCharsets.*;
 import static java.time.ZoneId.*;
 import static java.util.Locale.Category.*;
@@ -32,6 +33,7 @@ import static java.util.Optional.*;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.*;
+import java.nio.file.*;
 import java.security.*;
 import java.time.*;
 import java.util.*;
@@ -59,6 +61,9 @@ public class ContextConfiguration {
             .map(File::new)
             .map(File::getPath)
             .orElse(DEFAULT_MODULE_JAR);
+    @Builder.Default
+    private final Path workingDirectory = Paths.get(System.getProperty("user.dir"));
+
     private final Runnable onLoad;
     private final Runnable onUnload;
     private final Runnable beforeReload;

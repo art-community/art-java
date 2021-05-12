@@ -25,7 +25,8 @@ import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.constants.AnsiColor.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.logging.colorizer.LogColorizer.*;
-import static java.text.MessageFormat.*;
+import static io.art.logging.constants.LoggingModuleConstants.*;
+import java.text.*;
 
 public class ConsoleWriter implements LoggerWriter {
     private final LoggerConfiguration loggerConfiguration;
@@ -39,20 +40,20 @@ public class ConsoleWriter implements LoggerWriter {
     @Override
     public void write(LoggingMessage message) {
         if (message.getLevel() == LoggingLevel.ERROR) {
-            System.err.println(buildMessage(message));
+            System.err.println(format(message));
             return;
         }
 
-        System.out.println(buildMessage(message));
+        System.out.println(format(message));
     }
 
-    private String buildMessage(LoggingMessage message) {
+    private String format(LoggingMessage message) {
         String dateTime = writerConfiguration.getDateTimeFormatter().format(message.getDateTime());
         LoggingLevel level = message.getLevel();
-        return format("{0} {1} {2}: {3} - {4}",
+        return MessageFormat.format(LOGGING_FORMAT,
                 message(dateTime, BLUE),
                 byLevel(level, level.name()),
-                message(OPENING_SQUARE_BRACES + message.getThread().getName() + CLOSING_SQUARE_BRACES, PURPLE_BOLD),
+                OPENING_SQUARE_BRACES + message(message.getThread().getName(), PURPLE_BOLD) + CLOSING_SQUARE_BRACES,
                 message.getLogger(),
                 message.getMessage()
         );

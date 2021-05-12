@@ -301,7 +301,24 @@ public class FileExtensions {
 
     public static InputStream fileInputStream(File file) {
         try {
-            return newInputStream(open(file.toPath()));
+            return newInputStream(open(file.toPath(), READ));
+        } catch (IOException ioException) {
+            throw new InternalRuntimeException(ioException);
+        }
+    }
+
+
+    public static OutputStream fileOutputStream(String path, OpenOption... options) {
+        return fileOutputStream(get(path), options);
+    }
+
+    public static OutputStream fileOutputStream(Path path, OpenOption... options) {
+        return fileOutputStream(path.toFile(), options);
+    }
+
+    public static OutputStream fileOutputStream(File file, OpenOption... options) {
+        try {
+            return newOutputStream(open(file.toPath(), options));
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
         }
@@ -309,16 +326,16 @@ public class FileExtensions {
 
 
     public static OutputStream fileOutputStream(String path) {
-        return fileOutputStream(get(path));
+        return fileOutputStream(get(path), CREATE, WRITE);
     }
 
     public static OutputStream fileOutputStream(Path path) {
-        return fileOutputStream(path.toFile());
+        return fileOutputStream(path.toFile(), CREATE, WRITE);
     }
 
     public static OutputStream fileOutputStream(File file) {
         try {
-            return newOutputStream(open(file.toPath(), CREATE, TRUNCATE_EXISTING, WRITE));
+            return newOutputStream(open(file.toPath(), CREATE, WRITE));
         } catch (IOException ioException) {
             throw new InternalRuntimeException(ioException);
         }

@@ -18,6 +18,13 @@
 
 package io.art.logging.constants;
 
+import static io.art.core.constants.DateTimeConstants.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.context.Context.*;
+import static java.time.Duration.*;
+import java.time.*;
+import java.time.format.*;
+
 public interface LoggingModuleConstants {
     interface ConfigurationKeys {
         String LOGGING_SECTION = "logging";
@@ -29,6 +36,17 @@ public interface LoggingModuleConstants {
     }
 
     interface Defaults {
-        int DEFAULT_LOGGING_BUFFER_SIZE = 1024 * 1024;
+        String DEFAULT_LOG_FILE_NAME_PREFIX = context().configuration().getMainModuleId() + DASH;
+        String DEFAULT_LOG_FILE_NAME_SUFFIX = ".log";
+        DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
+        DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;
+        Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofSeconds(10);
     }
+
+
+    interface Errors {
+        String UNABLE_TO_CREATE_LOG_DIRECTORY = "Unable to create log directory ''{0}''";
+    }
+
+    String LOGGING_FORMAT = "{0} {1} {2}: {3} - {4}";
 }

@@ -25,10 +25,9 @@ import io.art.scheduler.executor.deferred.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.constants.DateTimeConstants.*;
-import static io.art.logging.configuration.LoggerWriterConfiguration.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
+import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
 import static io.art.logging.constants.LoggingWriterType.*;
 import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
 
@@ -51,9 +50,10 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
     private DefaultLoggerConfiguration defaultLogger = DefaultLoggerConfiguration.builder()
             .level(INFO)
             .writer(LoggerWriterConfiguration.builder()
-                    .type(CONSOLE)
+                    .type(FILE)
                     .console(ConsoleWriterConfiguration.builder().colored(true).build())
-                    .dateTimeFormatter(DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT)
+                    .file(FileWriterConfiguration.builder().build())
+                    .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
                     .build())
             .build();
 

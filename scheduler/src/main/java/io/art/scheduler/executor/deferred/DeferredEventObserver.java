@@ -18,9 +18,10 @@
 
 package io.art.scheduler.executor.deferred;
 
-import io.art.core.exception.*;
 import io.art.scheduler.exception.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static java.lang.Runtime.*;
@@ -37,6 +38,7 @@ class DeferredEventObserver {
     private final DelayQueue<DeferredEvent<?>> deferredEvents;
     private final ForkJoinTask<?> observingTask;
     private volatile boolean terminating = false;
+    private final ForkJoinTask<?> EMPTY_TASK = new Task<>(emptyRunnable());
 
     DeferredEventObserver(DeferredExecutorImplementation implementation) {
         this.implementation = implementation;
@@ -50,7 +52,7 @@ class DeferredEventObserver {
 
     <EventResultType> ForkJoinTask<? extends EventResultType> addEvent(Callable<? extends EventResultType> task, LocalDateTime triggerTime) {
         if (terminating) {
-            throw new InternalRuntimeException(new InterruptedException());
+            return cast(EMPTY_TASK);
         }
 
         if (deferredEvents.size() + 1 > implementation.getQueueSize()) {

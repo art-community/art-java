@@ -16,10 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.logging.exception;
+package io.art.logging.configuration;
 
-public class LoggingModuleException extends RuntimeException {
-    public LoggingModuleException(String message) {
-        super(message);
+import io.art.core.source.*;
+import lombok.*;
+import static io.art.core.context.Context.*;
+import java.nio.charset.*;
+
+@Getter
+@Builder
+public class ConsoleWriterConfiguration {
+    @Builder.Default
+    private final Boolean colored = false;
+
+    @Builder.Default
+    private final Charset charset = context().configuration().getCharset();
+
+    public static ConsoleWriterConfiguration from(ConfigurationSource source) {
+        return ConsoleWriterConfiguration.builder().build();
     }
 }

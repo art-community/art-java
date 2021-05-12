@@ -39,6 +39,10 @@ public class EmptinessChecker {
         return !isEmpty(value);
     }
 
+    public static boolean isNotEmpty(Iterable<?> value) {
+        return !isEmpty(value);
+    }
+
     public static boolean isNotEmpty(byte[] content) {
         return !isEmpty(content);
     }
