@@ -16,19 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.scheduler.executor.deferred;
+package io.art.logging.constants;
 
-import lombok.*;
-import java.lang.Thread.*;
+public interface LoggingModuleConstants {
+    interface ConfigurationKeys {
+        String LOGGING_SECTION = "logging";
+        String LOGGING_LOGGERS_SECTION = "logging.loggers";
+        String LOGGING_DEFAULT_SECTION = "logging.default";
+        String WRITER_SECTION = "writer";
+        String WRITERS_SECTION = "writers";
+        String BUFFER_SIZE = "buffer.size";
+    }
 
-@Getter
-@Builder
-class DeferredExecutorConfiguration {
-    private final ExceptionHandler exceptionHandler;
-    private final UncaughtExceptionHandler threadPoolExceptionHandler;
-    private final int eventsQueueMaxSize;
-    private final int threadPoolCoreSize;
-    private final boolean awaitAllTasksTerminationOnShutdown;
-    private final long threadPoolTerminationTimeout;
-    private final boolean shutdownOnExit;
+    interface Defaults {
+        int DEFAULT_LOGGING_BUFFER_SIZE = 1024 * 1024;
+    }
 }

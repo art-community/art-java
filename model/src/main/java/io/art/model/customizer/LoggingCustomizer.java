@@ -19,7 +19,7 @@
 package io.art.model.customizer;
 
 import io.art.core.annotation.*;
-import io.art.logging.*;
+import io.art.logging.configuration.*;
 import lombok.*;
 
 @UsedByGenerator

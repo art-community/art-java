@@ -18,10 +18,13 @@
 
 package io.art.scheduler.executor.deferred;
 
+import io.art.core.exception.*;
 import io.art.scheduler.exception.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static java.lang.Runtime.*;
+import static java.lang.Thread.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.ForkJoinPool.*;
 import static java.util.concurrent.TimeUnit.*;
@@ -29,54 +32,61 @@ import java.time.*;
 import java.util.concurrent.*;
 
 class DeferredEventObserver {
-    private final DeferredExecutorConfiguration configuration;
+    private final DeferredExecutorImplementation implementation;
     private final ForkJoinPool threadPool;
     private final DelayQueue<DeferredEvent<?>> deferredEvents;
+    private final ForkJoinTask<?> observingTask;
+    private volatile boolean terminating = false;
 
-    DeferredEventObserver(DeferredExecutorConfiguration configuration) {
-        this.configuration = configuration;
+    DeferredEventObserver(DeferredExecutorImplementation implementation) {
+        this.implementation = implementation;
         deferredEvents = new DelayQueue<>();
         threadPool = createThreadPool();
-        if (configuration.isShutdownOnExit()) {
+        if (implementation.isShutdownOnExit()) {
             getRuntime().addShutdownHook(new Thread(this::shutdown));
         }
-        observe();
+        observingTask = threadPool.submit(new Task<>(this::observeQueue));
     }
 
     <EventResultType> ForkJoinTask<? extends EventResultType> addEvent(Callable<? extends EventResultType> task, LocalDateTime triggerTime) {
-        if (deferredEvents.size() + 1 > configuration.getEventsQueueMaxSize()) {
+        if (terminating) {
+            throw new InternalRuntimeException(new InterruptedException());
+        }
+
+        if (deferredEvents.size() + 1 > implementation.getQueueSize()) {
             return forceExecuteEvent(task);
         }
-        ForkJoinTask<EventResultType> forkJoinTask = new CallableExecuteAction<>(task);
+
+        ForkJoinTask<EventResultType> forkJoinTask = new Task<>(task);
         DeferredEvent<EventResultType> event = new DeferredEvent<>(forkJoinTask, triggerTime, deferredEvents.size());
         deferredEvents.add(event);
         return forkJoinTask;
     }
 
     void shutdown() {
-        threadPool.shutdown();
-        if (!configuration.isAwaitAllTasksTerminationOnShutdown()) {
-            return;
-        }
         try {
-            if (!threadPool.awaitTermination(configuration.getThreadPoolTerminationTimeout(), MILLISECONDS)) {
-                configuration.getExceptionHandler().onException(POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+            terminating = true;
+            observingTask.cancel(true);
+            deferredEvents.clear();
+            threadPool.shutdown();
+            if (!implementation.isAwaitOnShutdown()) {
+                return;
+            }
+            if (!threadPool.awaitTermination(implementation.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
+                implementation.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
             }
         } catch (Throwable throwable) {
-            configuration.getExceptionHandler().onException(POOL_SHUTDOWN, throwable);
+            implementation.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, throwable);
+        } finally {
+            terminating = false;
         }
     }
 
-    private void observe() {
-        threadPool.execute(this::observeQueue);
-    }
-
-
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings(CONSTANT_CONDITIONS)
     private void observeQueue() {
-        DeferredEvent<?> currentEvent;
         try {
-            while (nonNull(currentEvent = deferredEvents.take())) {
+            while (!terminating) {
+                DeferredEvent<?> currentEvent = deferredEvents.take();
                 try {
                     ForkJoinTask<?> task = getTaskFromEvent(currentEvent);
                     if (task.isCancelled()) continue;
@@ -85,17 +95,14 @@ class DeferredEventObserver {
                     if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime() && !task.isCancelled()) {
                         task.join();
                     }
-                    if (deferredEvents.isEmpty() && threadPool.isTerminating()) {
-                        threadPool.shutdownNow();
-                    }
                 } catch (Throwable throwable) {
-                    configuration.getExceptionHandler().onException(TASK_EXECUTION, throwable);
+                    implementation.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
                 }
             }
         } catch (InterruptedException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
-            configuration.getExceptionHandler().onException(TASK_OBSERVING, throwable);
+            implementation.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         }
     }
 
@@ -104,7 +111,10 @@ class DeferredEventObserver {
     }
 
     private ForkJoinPool createThreadPool() {
-        return new ForkJoinPool(configuration.getThreadPoolCoreSize(), defaultForkJoinWorkerThreadFactory, configuration.getThreadPoolExceptionHandler(), true);
+        UncaughtExceptionHandler exceptionHandler = (thread, throwable) -> implementation
+                .getExceptionHandler()
+                .onException(thread, TASK_EXECUTION, throwable);
+        return new ForkJoinPool(implementation.getPoolSize() + 1, defaultForkJoinWorkerThreadFactory, exceptionHandler, true);
     }
 
     private <EventResultType> ForkJoinTask<? extends EventResultType> forceExecuteEvent(Callable<? extends EventResultType> task) {
@@ -115,27 +125,51 @@ class DeferredEventObserver {
         deferredEvents.clear();
     }
 
-    final class CallableExecuteAction<T> extends ForkJoinTask<T> {
+    private final class Task<T> extends ForkJoinTask<T> {
         final Callable<? extends T> callable;
+        volatile Thread executionThread;
         T result;
 
-        CallableExecuteAction(Callable<? extends T> callable) {
+        Task(Callable<? extends T> callable) {
             this.callable = callable;
         }
 
+        Task(Runnable runnable) {
+            this.callable = () -> {
+                runnable.run();
+                return null;
+            };
+        }
+
+        @Override
         public final T getRawResult() {
             return result;
         }
 
+        @Override
         public final void setRawResult(T value) {
             result = value;
         }
 
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            boolean cancel = super.cancel(mayInterruptIfRunning);
+            if (mayInterruptIfRunning && nonNull(executionThread)) {
+                executionThread.interrupt();
+            }
+            return cancel;
+        }
+
+        @Override
         public final boolean exec() {
             try {
+                executionThread = currentThread();
                 result = callable.call();
             } catch (Throwable throwable) {
-                DeferredEventObserver.this.configuration.getExceptionHandler().onException(TASK_EXECUTION, throwable);
+                DeferredEventObserver.this
+                        .implementation
+                        .getExceptionHandler()
+                        .onException(currentThread(), TASK_EXECUTION, throwable);
             }
             return true;
         }

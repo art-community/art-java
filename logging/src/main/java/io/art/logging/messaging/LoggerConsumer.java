@@ -16,18 +16,22 @@
  * limitations under the License.
  */
 
-package io.art.logging;
+package io.art.logging.messaging;
 
-public interface LoggingModuleConstants {
-    String DEFAULT_REQUEST_ID = "default-request-id";
+import io.art.core.collection.*;
+import io.art.logging.model.*;
+import io.art.logging.writer.*;
+import lombok.*;
+import static java.util.Objects.*;
 
-    interface ConfigurationKeys {
-        String LOGGING_SECTION = "logging";
-        String LOGGING_WRITERS_SECTION = "logging.writers";
-        String LOGGING_DEFAULT_SECTION = "logging.default";
-        String COLORED_KEY = "colored";
-        String ENABLED_KEY = "enabled";
-        String ASYNCHRONOUS_KEY = "asynchronous";
-        String CONFIGURATION_PATH_KEY = "configuration.path";
+@AllArgsConstructor
+public class LoggerConsumer {
+    private final LoggingQueue queue;
+    private final ImmutableArray<LoggerWriter> writers;
+
+    public void consume() {
+        LoggingMessage message = queue.poll();
+        if (isNull(message)) return;
+        writers.forEach(writer -> writer.write(message));
     }
 }

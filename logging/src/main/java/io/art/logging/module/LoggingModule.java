@@ -16,37 +16,51 @@
  * limitations under the License.
  */
 
-package io.art.logging;
+package io.art.logging.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.logging.configuration.*;
+import io.art.logging.logger.*;
+import io.art.logging.manager.*;
+import io.art.logging.reactor.*;
+import io.art.logging.state.*;
+import io.art.scheduler.manager.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.ThreadExtensions.block;
+import static io.art.core.extensions.ThreadExtensions.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
+import java.time.*;
 
 @Getter
-public class LoggingModule implements StatelessModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator> {
+public class LoggingModule implements StatefulModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<LoggingModuleConfiguration> loggingModule = context().getStatelessModule(LoggingModule.class.getSimpleName());
+    private static final StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule = context().getStatefulModule(LoggingModule.class.getSimpleName());
     private final String id = LoggingModule.class.getSimpleName();
     private final LoggingModuleConfiguration configuration = new LoggingModuleConfiguration();
     private final LoggingModuleConfiguration.Configurator configurator = new LoggingModuleConfiguration.Configurator(configuration);
+    private final LoggingModuleState state = new LoggingModuleState();
+    private final LoggingManager manager = new LoggingManager(configuration, state);
+    private static final LoggingManager DEFAULT_MANAGER;
 
     static {
         registerDefault(LoggingModule.class.getSimpleName(), LoggingModule::new);
+        DEFAULT_MANAGER = new LoggingManager(getLoggingModule().configuration(), getLoggingModule().state());
+        DEFAULT_MANAGER.activate();
     }
 
-    public static StatelessModuleProxy<LoggingModuleConfiguration> loggingModule() {
+    public static StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule() {
         return getLoggingModule();
     }
 
     @Override
     public void onLoad(Context.Service contextService) {
         getLogManager().reset();
-        useCustomLoggers(name -> new ReactorLogger(currentLogger(name)));
+        useCustomLoggers(name -> new ReactorLogger(logger(name)));
+        DEFAULT_MANAGER.deactivate();
+        manager.activate();
     }
 
     @Override
@@ -56,15 +70,7 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
 
     @Override
     public void onUnload(Context.Service contextService) {
-        configuration.getExecutor().shutdown();
-    }
-
-    public Logger currentLogger() {
-        return currentLogger(LoggingModule.class.getName());
-    }
-
-    public Logger currentLogger(String topic) {
-        return new ConfiguredLogger(topic, configuration);
+        manager.deactivate();
     }
 
     public static Logger logger() {
@@ -76,13 +82,19 @@ public class LoggingModule implements StatelessModule<LoggingModuleConfiguration
     }
 
     public static Logger logger(String topic) {
-        return new ConfiguredLogger(topic, loggingModule().configuration());
+        LoggingModuleConfiguration configuration = loggingModule().configuration();
+        LoggingModuleState state = loggingModule().state();
+        LoggerConfiguration loggerConfiguration = configuration
+                .getLoggers()
+                .getOrDefault(topic, configuration.getDefaultLogger().toLoggerConfiguration());
+        return new LoggerImplementation(topic, loggerConfiguration, state);
     }
 
     public static void main(String[] args) {
         for (int i = 0; i < 1000; i++) {
             logger(LoggingModule.class).info("test:  " + i);
         }
+        SchedulersManager.scheduleDelayed(() -> logger(LoggingModule.class).info("test:  "), Duration.ofSeconds(1));
         block();
     }
 }

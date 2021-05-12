@@ -20,14 +20,14 @@ package io.art.rsocket.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.manager.*;
 import io.art.rsocket.state.*;
 import lombok.*;
-import  io.art.logging.*;
 import static io.art.core.context.Context.*;
-import static io.art.logging.LoggingModule.*;
+import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static lombok.AccessLevel.*;
 

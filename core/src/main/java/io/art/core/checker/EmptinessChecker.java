@@ -110,6 +110,10 @@ public class EmptinessChecker {
         return isNull(value) || (valAsString = value.toString().trim()).isEmpty() || (valAsString.equalsIgnoreCase(NULL_STRING));
     }
 
+    public static boolean isEmpty(Iterable<?> value) {
+        return isNull(value) || !value.iterator().hasNext();
+    }
+
     public static boolean isEmpty(Object[] content) {
         return isNull(content) || content.length == 0;
     }

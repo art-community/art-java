@@ -145,15 +145,6 @@ public class Context {
     }
 
     private void unload() {
-        List<LazyProperty<Module>> defaultModules = linkedListOf(DEFAULTS_MODULES.values());
-        reverse(defaultModules);
-        for (LazyProperty<Module> module : defaultModules) {
-            if (!module.initialized()) continue;
-            Module defaultModule = module.get();
-            printer.accept(format(MODULE_UNLOADED_MESSAGE, defaultModule.getId()));
-            defaultModule.onUnload(service);
-            DEFAULTS_MODULES.remove(defaultModule.getId());
-        }
         List<Module> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module module : modules) {

@@ -20,6 +20,8 @@ package io.art.scheduler.constants;
 
 import lombok.*;
 import static java.lang.Integer.*;
+import static java.time.Duration.*;
+import java.time.*;
 
 public interface SchedulerModuleConstants {
     String REFRESHER_TASK = "REFRESHER_TASK";
@@ -29,10 +31,9 @@ public interface SchedulerModuleConstants {
         DELAYED
     }
 
-
     interface Defaults {
-        int DEFAULT_MAX_QUEUE_SIZE = MAX_VALUE - 8;
-        long DEFAULT_SHUTDOWN_TIMEOUT = 60 * 1000;
+        int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
+        Duration DEFAULT_TERMINATION_TIMEOUT = ofMinutes(1);
     }
 
     interface ConfigurationKeys {
@@ -41,7 +42,6 @@ public interface SchedulerModuleConstants {
 
     interface ExceptionMessages {
         String EXCEPTION_OCCURRED_DURING = "Exception occurred during {0} on thread {1}: {2}";
-        String EXCEPTION_OCCURRED_ON_THREAD = "Exception occurred on thread {0}";
         String AWAIT_TERMINATION_EXCEPTION = "Await termination failed";
 
         @Getter

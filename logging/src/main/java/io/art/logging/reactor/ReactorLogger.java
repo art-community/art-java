@@ -16,10 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.logging;
+package io.art.logging.reactor;
 
-public class LoggingModuleException  extends RuntimeException {
-    public LoggingModuleException(Throwable throwable) {
-        super(throwable);
-    }
+import io.art.logging.logger.*;
+import lombok.*;
+import lombok.experimental.Delegate;
+
+@AllArgsConstructor
+public class ReactorLogger implements reactor.util.Logger {
+    @Delegate
+    private final Logger logger;
 }

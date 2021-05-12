@@ -16,13 +16,24 @@
  * limitations under the License.
  */
 
-package io.art.logging;
+package io.art.logging.state;
 
-import lombok.*;
-import lombok.experimental.Delegate;
+import io.art.core.module.*;
+import io.art.logging.logger.*;
+import static io.art.core.factory.ListFactory.*;
+import java.util.*;
+import java.util.function.*;
 
-@AllArgsConstructor
-public class ReactorLogger implements reactor.util.Logger {
-    @Delegate
-    private final Logger logger;
+public class LoggingModuleState implements ModuleState {
+    private final List<LoggerState> loggers = copyOnWriteList();
+
+    public LoggerState register(LoggerImplementation implementation) {
+        LoggerState state = new LoggerState(implementation);
+        loggers.add(state);
+        return state;
+    }
+
+    public void forEach(Consumer<LoggerState> consumer) {
+        loggers.forEach(consumer);
+    }
 }
