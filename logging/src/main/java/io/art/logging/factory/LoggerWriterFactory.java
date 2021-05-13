@@ -25,12 +25,14 @@ import lombok.experimental.*;
 
 @UtilityClass
 public class LoggerWriterFactory {
-    public static LoggerWriter loggerWriter(LoggerConfiguration loggerConfiguration, LoggerWriterConfiguration writerConfiguration) {
+    public static LoggerWriter loggerWriter(LoggerWriterConfiguration writerConfiguration) {
         switch (writerConfiguration.getType()) {
             case CONSOLE:
-                return new ConsoleWriter(loggerConfiguration, writerConfiguration);
+                return new ConsoleWriter(writerConfiguration);
+            case TCP:
+                return new TcpWriter(writerConfiguration);
             case FILE:
-                return new FileWriter(loggerConfiguration, writerConfiguration);
+                return new FileWriter(writerConfiguration);
         }
         throw new ImpossibleSituationException();
     }

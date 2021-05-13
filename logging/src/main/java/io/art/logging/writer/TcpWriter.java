@@ -21,27 +21,52 @@ package io.art.logging.writer;
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
 import io.art.logging.model.*;
-import lombok.*;
+import static com.google.common.base.Throwables.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.constants.AnsiColor.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.colorizer.LogColorizer.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
+import static io.art.logging.module.LoggingModule.*;
+import static java.net.InetSocketAddress.*;
+import static java.net.StandardSocketOptions.*;
+import static java.nio.channels.SocketChannel.*;
+import static java.util.Objects.*;
+import java.nio.*;
+import java.nio.channels.*;
 import java.text.*;
 
-@AllArgsConstructor
-public class ConsoleWriter implements LoggerWriter {
+public class TcpWriter implements LoggerWriter {
     private final LoggerWriterConfiguration writerConfiguration;
+    private SocketChannel channel;
 
+    public TcpWriter(LoggerWriterConfiguration writerConfiguration) {
+        this.writerConfiguration = writerConfiguration;
+        try {
+            channel = open(createUnresolved(writerConfiguration.getTcp().getHost(), writerConfiguration.getTcp().getPort()));
+            channel.setOption(TCP_NODELAY, true);
+            channel.setOption(SO_KEEPALIVE, true);
+            loggingModule().state().register(channel);
+        } catch (Throwable ioException) {
+            System.err.println(getStackTraceAsString(ioException));
+        } finally {
+            if (nonNull(channel)) {
+                ignoreException(channel::close);
+                loggingModule().state().remove(channel);
+            }
+        }
+    }
 
     @Override
     public void write(LoggingMessage message) {
-        if (message.getLevel() == LoggingLevel.ERROR) {
-            System.err.println(format(message));
-            return;
+        try {
+            channel.write(ByteBuffer.wrap(format(message).getBytes(writerConfiguration.getCharset())));
+        } catch (Throwable throwable) {
+            System.err.println(getStackTraceAsString(throwable));
+            ignoreException(channel::close);
+            loggingModule().state().remove(channel);
         }
-
-        System.out.println(format(message));
     }
 
     private String format(LoggingMessage message) {

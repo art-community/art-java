@@ -37,7 +37,8 @@ public class LoggerState {
         LoggingQueue queue = new LoggingQueue();
         consumer = new LoggerConsumer(queue, logger.getWriters());
 
-        LoggerWriter fallbackWriter = loggerWriter(moduleConfiguration.getDefaultLogger().toLoggerConfiguration(), moduleConfiguration.getDefaultLogger().getWriter());
+        DefaultLoggerConfiguration fallbackLogger = moduleConfiguration.getDefaultLogger();
+        LoggerWriter fallbackWriter = loggerWriter(fallbackLogger.getWriter());
         producer = new LoggerProducer(queue, moduleConfiguration.getProducingExecutor(), fallbackWriter);
     }
 }

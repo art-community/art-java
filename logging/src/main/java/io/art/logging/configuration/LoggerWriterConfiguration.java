@@ -24,17 +24,23 @@ import io.art.logging.constants.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.context.Context.context;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.logging.constants.LoggingWriterType.*;
 import static java.time.format.DateTimeFormatter.*;
+import java.nio.charset.*;
 import java.time.format.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class LoggerWriterConfiguration {
+    @Builder.Default
+    private final Charset charset = context().configuration().getCharset();
+
     private final LoggingWriterType type;
     private final ConsoleWriterConfiguration console;
     private final FileWriterConfiguration file;
+    private final TcpWriterConfiguration tcp;
     private final DateTimeFormatter dateTimeFormatter;
 
     @Builder.Default

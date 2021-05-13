@@ -23,11 +23,11 @@ import lombok.*;
 
 @Getter
 @Builder
-public class ConsoleWriterConfiguration {
-    @Builder.Default
-    private final Boolean colored = false;
+public class TcpWriterConfiguration {
+    private final String host;
+    private final int port;
 
-    public static ConsoleWriterConfiguration from(ConfigurationSource source) {
-        return ConsoleWriterConfiguration.builder().build();
+    public static TcpWriterConfiguration from(ConfigurationSource source) {
+        return TcpWriterConfiguration.builder().build();
     }
 }

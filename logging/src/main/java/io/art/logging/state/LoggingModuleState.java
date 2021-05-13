@@ -20,12 +20,22 @@ package io.art.logging.state;
 
 import io.art.core.module.*;
 import io.art.logging.logger.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
+import java.io.*;
 import java.util.*;
 import java.util.function.*;
 
 public class LoggingModuleState implements ModuleState {
     private final List<LoggerState> loggers = copyOnWriteList();
+    private final Map<String, Logger> cache = concurrentMap();
+    private final List<Closeable> resources = linkedList();
+
+    public Logger cachedLogger(String name, Supplier<Logger> logger) {
+        return putIfAbsent(cache, name, logger);
+    }
 
     public LoggerState register(LoggerImplementation implementation) {
         LoggerState state = new LoggerState(implementation);
@@ -33,7 +43,19 @@ public class LoggingModuleState implements ModuleState {
         return state;
     }
 
+    public void register(Closeable resource) {
+        resources.add(resource);
+    }
+
+    public void remove(Closeable resource) {
+        resources.remove(resource);
+    }
+
     public void forEach(Consumer<LoggerState> consumer) {
         loggers.forEach(consumer);
+    }
+
+    public void close() {
+        resources.forEach(resource -> ignoreException(resource::close));
     }
 }

@@ -71,23 +71,24 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     @Override
     public void onUnload(Context.Service contextService) {
         manager.deactivate();
+        state.close();
     }
 
     public static Logger logger() {
         return logger(LoggingModule.class);
     }
 
-    public static Logger logger(Class<?> topicClass) {
-        return logger(topicClass.getName());
+    public static Logger logger(Class<?> nameByClass) {
+        return logger(nameByClass.getName());
     }
 
-    public static Logger logger(String topic) {
+    public static Logger logger(String name) {
         LoggingModuleConfiguration configuration = loggingModule().configuration();
         LoggingModuleState state = loggingModule().state();
         LoggerConfiguration loggerConfiguration = configuration
                 .getLoggers()
-                .getOrDefault(topic, configuration.getDefaultLogger().toLoggerConfiguration());
-        return new LoggerImplementation(topic, loggerConfiguration, state);
+                .getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
+        return state.cachedLogger(name, () -> new LoggerImplementation(name, loggerConfiguration, state));
     }
 
     public static void main(String[] args) {

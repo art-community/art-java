@@ -22,7 +22,6 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
 import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
-import java.nio.charset.*;
 import java.nio.file.*;
 import java.time.*;
 import java.time.format.*;
@@ -30,9 +29,6 @@ import java.time.format.*;
 @Getter
 @Builder
 public class FileWriterConfiguration {
-    @Builder.Default
-    private final Charset charset = context().configuration().getCharset();
-
     @Builder.Default
     private final Path directory = context().configuration().getWorkingDirectory();
 

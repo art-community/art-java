@@ -21,6 +21,7 @@ package io.art.logging.logger;
 import io.art.core.collection.*;
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
+import io.art.logging.factory.*;
 import io.art.logging.messaging.*;
 import io.art.logging.model.*;
 import io.art.logging.state.*;
@@ -28,13 +29,14 @@ import io.art.logging.writer.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.logging.constants.LoggingLevel.*;
-import static io.art.logging.factory.LoggerWriterFactory.*;
 import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
 import static java.time.LocalDateTime.*;
 
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class LoggerImplementation implements Logger {
+    @EqualsAndHashCode.Include
     private final String name;
     private final LoggingLevel level;
     private final LoggerConfiguration configuration;
@@ -60,7 +62,7 @@ public class LoggerImplementation implements Logger {
         writers = configuration
                 .getWriters()
                 .stream()
-                .map(writer -> loggerWriter(configuration, writer))
+                .map(LoggerWriterFactory::loggerWriter)
                 .collect(immutableArrayCollector());
         producer = state.register(this).getProducer();
     }
