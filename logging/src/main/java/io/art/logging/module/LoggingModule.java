@@ -85,9 +85,7 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     public static Logger logger(String name) {
         LoggingModuleConfiguration configuration = loggingModule().configuration();
         LoggingModuleState state = loggingModule().state();
-        LoggerConfiguration loggerConfiguration = configuration
-                .getLoggers()
-                .getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
+        LoggerConfiguration loggerConfiguration = configuration.getLoggers().getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
         return state.cachedLogger(name, () -> new LoggerImplementation(name, loggerConfiguration, state));
     }
 
