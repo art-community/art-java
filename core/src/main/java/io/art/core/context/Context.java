@@ -29,6 +29,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.changes.ChangesListener.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
@@ -36,6 +37,7 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.DisposableProperty.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -48,7 +50,7 @@ public class Context {
     private static Context INSTANCE;
     private static final ChangesListener INITIALIZATION_LISTENER = changesListener();
     private static final ChangesListener DISPOSE_LISTENER = changesListener();
-    private static final Map<String, DisposableProperty<Module>> DEFAULTS_MODULES = map();
+    private static final Map<String, LazyProperty<Module>> DEFAULTS_MODULES = map();
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator<?>> configurators = map();
     private final ContextConfiguration configuration;
@@ -68,6 +70,7 @@ public class Context {
         Context context = new Context(configuration, printer);
         context.load(initializers);
         getRuntime().addShutdownHook(new Thread(context::unload));
+        getRuntime().addShutdownHook(new Thread(context::unloadDefault));
     }
 
     public static Context context() {
@@ -78,8 +81,7 @@ public class Context {
     }
 
     public static <T extends ModuleConfiguration> void registerDefault(String id, ModuleFactory<ModuleConfigurationProvider<T>> module) {
-        DisposableProperty<Module> property = cast(disposable(() -> loadDefaultModule(module)).disposed(provider -> provider.onDefaultUnload(DEFAULT_INSTANCE.service)));
-        DEFAULTS_MODULES.put(id, property);
+        DEFAULTS_MODULES.put(id, lazy(() -> loadDefault(module)));
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
@@ -112,12 +114,6 @@ public class Context {
     }
 
 
-    private static <T extends ModuleConfiguration> ModuleConfigurationProvider<T> loadDefaultModule(ModuleFactory<ModuleConfigurationProvider<T>> module) {
-        ModuleConfigurationProvider<T> provider = module.get();
-        provider.onDefaultLoad(DEFAULT_INSTANCE.service);
-        return provider;
-    }
-
     private Module getModule(String moduleId) {
         Module module = modules.get(moduleId);
         if (nonNull(module)) {
@@ -141,6 +137,7 @@ public class Context {
             this.modules.put(moduleId, moduleDecorator.apply(cast(module)));
             this.configurators.put(moduleId, moduleDecorator);
         }
+        unloadDefault();
         INITIALIZATION_LISTENER.produce();
         messages.forEach(printer);
         for (Module module : this.modules.values()) {
@@ -161,6 +158,26 @@ public class Context {
         DISPOSE_LISTENER.produce();
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
+    }
+
+    private static <T extends ModuleConfiguration> Module loadDefault(ModuleFactory<ModuleConfigurationProvider<T>> module) {
+        ModuleConfigurationProvider<T> provider = module.get();
+        provider.onDefaultLoad(DEFAULT_INSTANCE.service);
+        return provider;
+    }
+
+    private void unloadDefault() {
+        List<Module> modules = DEFAULTS_MODULES
+                .values()
+                .stream()
+                .filter(LazyProperty::initialized)
+                .map(LazyProperty::get)
+                .collect(listCollector());
+        reverse(modules);
+        for (Module module : modules) {
+            module.onDefaultUnload(DEFAULT_INSTANCE.service);
+        }
+        DEFAULTS_MODULES.clear();
     }
 
     public class Service {
