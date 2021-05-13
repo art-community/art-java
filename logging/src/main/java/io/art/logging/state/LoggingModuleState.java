@@ -29,18 +29,18 @@ import java.util.*;
 import java.util.function.*;
 
 public class LoggingModuleState implements ModuleState {
-    private final List<LoggerState> loggers = copyOnWriteList();
+    private final List<LoggerProcessor> loggers = copyOnWriteList();
     private final Map<String, Logger> cache = concurrentMap();
     private final List<Closeable> resources = linkedList();
 
-    public Logger cachedLogger(String name, Supplier<Logger> logger) {
+    public Logger cached(String name, Supplier<Logger> logger) {
         return putIfAbsent(cache, name, logger);
     }
 
-    public LoggerState register(LoggerImplementation implementation) {
-        LoggerState state = new LoggerState(implementation);
-        loggers.add(state);
-        return state;
+    public LoggerProcessor register(LoggerImplementation implementation) {
+        LoggerProcessor processor = new LoggerProcessor(implementation);
+        loggers.add(processor);
+        return processor;
     }
 
     public void register(Closeable resource) {
@@ -51,11 +51,11 @@ public class LoggingModuleState implements ModuleState {
         resources.remove(resource);
     }
 
-    public void forEach(Consumer<LoggerState> consumer) {
+    public void forEach(Consumer<LoggerProcessor> consumer) {
         loggers.forEach(consumer);
     }
 
-    public boolean all(Predicate<LoggerState> predicate) {
+    public boolean all(Predicate<LoggerProcessor> predicate) {
         return loggers.stream().allMatch(predicate);
     }
 

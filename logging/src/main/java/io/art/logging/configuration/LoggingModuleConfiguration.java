@@ -24,6 +24,7 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
@@ -47,18 +48,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
                     .build())
             .build();
 
-    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> {
-        Thread thread = new Thread(runnable, CONSUMER_THREAD);
-        thread.setDaemon(true);
-        return thread;
-    });
-
-    private final ExecutorService producingExecutor = newSingleThreadExecutor(runnable -> {
-        Thread thread = new Thread(runnable, PRODUCER_THREAD);
-        thread.setDaemon(true);
-        return thread;
-    });
-
+    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> newDaemon(CONSUMER_THREAD, runnable));
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
