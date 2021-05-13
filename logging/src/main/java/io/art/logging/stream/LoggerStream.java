@@ -16,8 +16,23 @@
  * limitations under the License.
  */
 
-package io.art.graal.constants;
+package io.art.logging.stream;
 
-public interface GraalConstants {
+import io.art.logging.logger.*;
+import java.io.*;
 
+public class LoggerStream extends PrintStream {
+    private final Logger logger;
+
+    public LoggerStream(Logger logger) {
+        super(new ByteArrayOutputStream(), true);
+        this.logger = logger;
+    }
+
+    @Override
+    public void flush() {
+        super.flush();
+        ByteArrayOutputStream stream = (ByteArrayOutputStream) this.out;
+        logger.info(stream.toString());
+    }
 }
