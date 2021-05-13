@@ -22,7 +22,6 @@ import io.art.logging.configuration.*;
 import io.art.logging.state.*;
 import lombok.*;
 import static java.lang.Thread.*;
-import static java.time.LocalDateTime.*;
 
 @RequiredArgsConstructor
 public class LoggingManager {
@@ -33,7 +32,7 @@ public class LoggingManager {
     public LoggingManager activate() {
         if (activated) return this;
         activated = true;
-        configuration.getConsumingExecutor().execute(() -> processConsuming(state), now());
+        configuration.getConsumingExecutor().execute(() -> processConsuming(state));
         return this;
     }
 

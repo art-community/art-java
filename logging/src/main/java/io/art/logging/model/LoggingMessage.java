@@ -23,7 +23,7 @@ import lombok.*;
 import java.time.*;
 
 @Value
-@Builder
+@Builder(toBuilder = true)
 public class LoggingMessage {
     String logger;
     LocalDateTime dateTime;

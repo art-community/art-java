@@ -20,18 +20,17 @@ package io.art.logging.messaging;
 
 import io.art.logging.model.*;
 import io.art.logging.writer.*;
-import io.art.scheduler.executor.deferred.*;
 import lombok.*;
-import static java.time.LocalDateTime.*;
+import java.util.concurrent.*;
 
 @AllArgsConstructor
 public class LoggerProducer {
     private final LoggingQueue queue;
-    private final DeferredExecutor executor;
+    private final ExecutorService executor;
     private final LoggerWriter fallbackWriter;
 
     public void produce(LoggingMessage message) {
-        executor.execute(() -> processProducing(message), now());
+        executor.execute(() -> processProducing(message));
     }
 
     private void processProducing(LoggingMessage message) {
