@@ -59,59 +59,51 @@ public class FileWriter implements LoggerWriter {
                 throw new LoggingModuleException(MessageFormat.format(UNABLE_TO_CREATE_LOG_DIRECTORY, directory.toString()));
             }
         }
+
         String prefix = fileConfiguration.getPrefix();
-
-        String currentTimeStampString = fileConfiguration.getTimestampFormat().format(currentTimeStamp);
+        String timeStampString = fileConfiguration.getTimestampFormat().format(currentTimeStamp);
         String suffix = fileConfiguration.getSuffix();
-        String fileName = letIfNotEmpty(prefix, filePrefix -> filePrefix + currentTimeStampString, currentTimeStampString) + suffix;
-
-        out.println(fileConfiguration.getDirectory().resolve(fileName));
 
         File[] currentFiles = directory.listFiles();
-        if (isNull(currentFiles) || isEmpty(currentFiles)) {
-            outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
-            return;
+        if (nonNull(currentFiles) && isNotEmpty(currentFiles)) {
+            currentTimeStamp = stream(currentFiles)
+                    .map(file -> parseFileTimeStamp(fileConfiguration, file.getName()))
+                    .filter(Objects::nonNull)
+                    .min(comparing(identity()))
+                    .orElse(currentTimeStamp);
+            timeStampString = fileConfiguration.getTimestampFormat().format(currentTimeStamp);
         }
 
-        currentTimeStamp = stream(currentFiles)
-                .map(file -> parseFileTimeStamp(fileConfiguration, file.getName()))
-                .filter(Objects::nonNull)
-                .min(comparing(identity()))
-                .orElse(currentTimeStamp);
-
-        String fileTimestamp = fileConfiguration.getTimestampFormat().format(currentTimeStamp);
-        fileName = letIfNotEmpty(fileConfiguration.getPrefix(), filePrefix -> filePrefix + fileTimestamp, fileTimestamp) + fileConfiguration.getSuffix();
-
+        String fileName = ifEmpty(prefix, EMPTY_STRING) + timeStampString + suffix;
+        out.println(fileConfiguration.getDirectory().resolve(fileName));
         outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
     }
-
 
     @Override
     public void write(LoggingMessage message) {
         rotate();
-        try {
-            outputStream.write(format(message).getBytes(writerConfiguration.getCharset()));
-            outputStream.flush();
-        } catch (Throwable throwable) {
-            err.println(getStackTraceAsString(throwable));
-            ignoreException(outputStream::close);
-            loggingModule().state().remove(outputStream);
-        }
+        writeToFile(format(message));
     }
 
-    private OutputStream openFileStream(Path path) {
-        OutputStream stream = null;
-        try {
-            stream = fileOutputStream(path, CREATE, APPEND, WRITE);
-            loggingModule().state().register(stream);
-            return stream;
-        } catch (Throwable throwable) {
-            if (nonNull(stream)) {
-                ignoreException(stream::close);
-                loggingModule().state().remove(stream);
-            }
-            throw throwable;
+    private void rotate() {
+        LocalDateTime newTimeStamp = now();
+        if (newTimeStamp.isBefore(currentTimeStamp.plus(writerConfiguration.getFile().getRotationPeriod()))) {
+            return;
         }
+        closeFileStream(outputStream);
+        openFileStream(newTimeStamp);
+    }
+
+    private String format(LoggingMessage message) {
+        String dateTime = writerConfiguration.getDateTimeFormatter().format(message.getDateTime());
+        LoggingLevel level = message.getLevel();
+        return MessageFormat.format(LOGGING_FORMAT,
+                dateTime,
+                level.name(),
+                OPENING_SQUARE_BRACES + message.getThread().getName() + CLOSING_SQUARE_BRACES,
+                message.getLogger(),
+                message.getMessage() + lineSeparator()
+        );
     }
 
     private LocalDateTime parseFileTimeStamp(FileWriterConfiguration configuration, String name) {
@@ -135,34 +127,40 @@ public class FileWriter implements LoggerWriter {
         return nullIfException(() -> parse(name.substring(prefixIndex + 1, suffixIndex), configuration.getTimestampFormat()));
     }
 
-    private void rotate() {
-        LocalDateTime newTimeStamp = now();
-        if (newTimeStamp.isBefore(currentTimeStamp.plus(writerConfiguration.getFile().getRotationPeriod()))) {
-            return;
-        }
+    private void writeToFile(String message) {
         try {
-            outputStream.close();
-            FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
-            String fileTimestamp = fileConfiguration.getTimestampFormat().format(newTimeStamp);
-            String fileName = letIfNotEmpty(fileConfiguration.getPrefix(), filePrefix -> filePrefix + fileTimestamp, fileTimestamp) + fileConfiguration.getSuffix();
-            outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
-            currentTimeStamp = newTimeStamp;
+            outputStream.write(message.getBytes(writerConfiguration.getCharset()));
+            outputStream.flush();
         } catch (Throwable throwable) {
             err.println(getStackTraceAsString(throwable));
-            ignoreException(outputStream::close);
-            loggingModule().state().remove(outputStream);
+            closeFileStream(outputStream);
+            openFileStream(now());
         }
     }
 
-    private String format(LoggingMessage message) {
-        String dateTime = writerConfiguration.getDateTimeFormatter().format(message.getDateTime());
-        LoggingLevel level = message.getLevel();
-        return MessageFormat.format(LOGGING_FORMAT,
-                dateTime,
-                level.name(),
-                OPENING_SQUARE_BRACES + message.getThread().getName() + CLOSING_SQUARE_BRACES,
-                message.getLogger(),
-                message.getMessage() + lineSeparator()
-        );
+    private void openFileStream(LocalDateTime newTimeStamp) {
+        FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
+        String fileTimestamp = fileConfiguration.getTimestampFormat().format(newTimeStamp);
+        String fileName = letIfNotEmpty(fileConfiguration.getPrefix(), filePrefix -> filePrefix + fileTimestamp, fileTimestamp) + fileConfiguration.getSuffix();
+        outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
+        currentTimeStamp = newTimeStamp;
+    }
+
+    private OutputStream openFileStream(Path path) {
+        OutputStream stream = null;
+        try {
+            stream = fileOutputStream(path, CREATE, APPEND, WRITE);
+            loggingModule().state().register(stream);
+            return stream;
+        } catch (Throwable throwable) {
+            if (nonNull(stream)) closeFileStream(stream);
+            err.println(getStackTraceAsString(throwable));
+            throw throwable;
+        }
+    }
+
+    private void closeFileStream(OutputStream stream) {
+        ignoreException(stream::close);
+        loggingModule().state().remove(stream);
     }
 }
