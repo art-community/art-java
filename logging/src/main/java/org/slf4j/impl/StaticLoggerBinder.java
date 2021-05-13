@@ -19,12 +19,12 @@
 package org.slf4j.impl;
 
 import io.art.core.exception.*;
-import io.art.logging.module.*;
 import org.slf4j.*;
 import org.slf4j.spi.*;
+import static io.art.logging.module.LoggingModule.*;
 
 public final class StaticLoggerBinder implements LoggerFactoryBinder {
-    private static final ILoggerFactory iLoggerFactory = name -> new Slf4jLogger(LoggingModule.logger(name));
+    private static final ILoggerFactory iLoggerFactory = name -> new Slf4jLogger(logger(name));
     private static final Class<? extends ILoggerFactory> loggerFactoryClass = iLoggerFactory.getClass();
 
     private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
@@ -33,7 +33,7 @@ public final class StaticLoggerBinder implements LoggerFactoryBinder {
 
     private StaticLoggerBinder() {
         try {
-            loggerFactory = loggerFactoryClass.newInstance();
+            loggerFactory = loggerFactoryClass.getConstructor().newInstance();
         } catch (Throwable throwable) {
             throw new InternalRuntimeException(throwable);
         }

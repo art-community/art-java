@@ -36,7 +36,6 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.DisposableProperty.*;
-import static io.art.core.property.LazyProperty.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -49,7 +48,7 @@ public class Context {
     private static Context INSTANCE;
     private static final ChangesListener INITIALIZATION_LISTENER = changesListener();
     private static final ChangesListener DISPOSE_LISTENER = changesListener();
-    private static final Map<String, LazyProperty<Module>> DEFAULTS_MODULES = map();
+    private static final Map<String, DisposableProperty<Module>> DEFAULTS_MODULES = map();
     private final Map<String, Module> modules = map();
     private final Map<String, ModuleDecorator<?>> configurators = map();
     private final ContextConfiguration configuration;
@@ -79,7 +78,8 @@ public class Context {
     }
 
     public static <T extends ModuleConfiguration> void registerDefault(String id, ModuleFactory<ModuleConfigurationProvider<T>> module) {
-        DEFAULTS_MODULES.put(id, lazy(module::get));
+        DisposableProperty<Module> property = cast(disposable(() -> loadDefaultModule(module)).disposed(provider -> provider.onDefaultUnload(DEFAULT_INSTANCE.service)));
+        DEFAULTS_MODULES.put(id, property);
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
@@ -111,6 +111,12 @@ public class Context {
         return configuration;
     }
 
+
+    private static <T extends ModuleConfiguration> ModuleConfigurationProvider<T> loadDefaultModule(ModuleFactory<ModuleConfigurationProvider<T>> module) {
+        ModuleConfigurationProvider<T> provider = module.get();
+        provider.onDefaultLoad(DEFAULT_INSTANCE.service);
+        return provider;
+    }
 
     private Module getModule(String moduleId) {
         Module module = modules.get(moduleId);

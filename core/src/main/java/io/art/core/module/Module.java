@@ -24,6 +24,12 @@ import static io.art.core.constants.StringConstants.*;
 public interface Module {
     String getId();
 
+    default void onDefaultLoad(Context.Service contextService) {
+    }
+
+    default void onDefaultUnload(Context.Service contextService) {
+    }
+
     default void onLoad(Context.Service contextService) {
     }
 

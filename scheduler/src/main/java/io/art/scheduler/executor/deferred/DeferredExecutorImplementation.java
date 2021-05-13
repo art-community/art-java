@@ -41,9 +41,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Getter
     @Builder.Default
     private final boolean awaitOnShutdown = true;
-    @Getter
-    @Builder.Default
-    private final boolean shutdownOnExit = false;
     @Getter(lazy = true)
     private final DeferredEventObserver observer = new DeferredEventObserver(this);
 

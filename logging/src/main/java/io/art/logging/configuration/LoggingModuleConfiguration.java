@@ -49,13 +49,11 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
     private final DeferredExecutor consumingExecutor = deferredExecutor()
             .poolSize(1)
             .awaitOnShutdown(true)
-            .shutdownOnExit(true)
             .build();
 
     private final DeferredExecutor producingExecutor = deferredExecutor()
             .poolSize(1)
             .awaitOnShutdown(true)
-            .shutdownOnExit(true)
             .build();
 
 

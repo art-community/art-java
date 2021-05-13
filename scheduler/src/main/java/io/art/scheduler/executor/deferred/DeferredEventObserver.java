@@ -24,7 +24,6 @@ import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
-import static java.lang.Runtime.*;
 import static java.lang.Thread.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.ForkJoinPool.*;
@@ -44,9 +43,6 @@ class DeferredEventObserver {
         this.implementation = implementation;
         deferredEvents = new DelayQueue<>();
         threadPool = createThreadPool();
-        if (implementation.isShutdownOnExit()) {
-            getRuntime().addShutdownHook(new Thread(this::shutdown));
-        }
         observingTask = threadPool.submit(new Task<>(this::observeQueue));
     }
 
