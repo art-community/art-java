@@ -43,19 +43,7 @@ public class TcpWriter implements LoggerWriter {
 
     public TcpWriter(LoggerWriterConfiguration writerConfiguration) {
         this.writerConfiguration = writerConfiguration;
-        try {
-            channel = open(createUnresolved(writerConfiguration.getTcp().getHost(), writerConfiguration.getTcp().getPort()));
-            channel.setOption(TCP_NODELAY, true);
-            channel.setOption(SO_KEEPALIVE, true);
-            loggingModule().state().register(channel);
-        } catch (Throwable ioException) {
-            System.err.println(getStackTraceAsString(ioException));
-        } finally {
-            if (nonNull(channel)) {
-                ignoreException(channel::close);
-                loggingModule().state().remove(channel);
-            }
-        }
+        openChannel();
     }
 
     @Override
@@ -64,8 +52,8 @@ public class TcpWriter implements LoggerWriter {
             channel.write(ByteBuffer.wrap(format(message).getBytes(writerConfiguration.getCharset())));
         } catch (Throwable throwable) {
             System.err.println(getStackTraceAsString(throwable));
-            ignoreException(channel::close);
-            loggingModule().state().remove(channel);
+            closeChannel(channel);
+            openChannel();
         }
     }
 
@@ -79,5 +67,23 @@ public class TcpWriter implements LoggerWriter {
                 message.getLogger(),
                 message.getMessage()
         );
+    }
+
+    private void closeChannel(SocketChannel channel) {
+        ignoreException(channel::close);
+        loggingModule().state().remove(channel);
+    }
+
+    private void openChannel() {
+        try {
+            channel = open(createUnresolved(writerConfiguration.getTcp().getHost(), writerConfiguration.getTcp().getPort()));
+            channel.setOption(TCP_NODELAY, true);
+            channel.setOption(SO_KEEPALIVE, true);
+            loggingModule().state().register(channel);
+        } catch (Throwable ioException) {
+            System.err.println(getStackTraceAsString(ioException));
+        } finally {
+            if (nonNull(channel)) closeChannel(channel);
+        }
     }
 }

@@ -50,8 +50,8 @@ public class FileWriter implements LoggerWriter {
     private LocalDateTime currentTimeStamp;
 
     public FileWriter(LoggerWriterConfiguration writerConfiguration) {
-        currentTimeStamp = now();
         this.writerConfiguration = writerConfiguration;
+
         FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
         File directory = fileConfiguration.getDirectory().toFile();
         if (!directory.exists()) {
@@ -60,23 +60,18 @@ public class FileWriter implements LoggerWriter {
             }
         }
 
-        String prefix = fileConfiguration.getPrefix();
-        String timeStampString = fileConfiguration.getTimestampFormat().format(currentTimeStamp);
-        String suffix = fileConfiguration.getSuffix();
+        LocalDateTime timeStamp = now();
 
         File[] currentFiles = directory.listFiles();
         if (nonNull(currentFiles) && isNotEmpty(currentFiles)) {
-            currentTimeStamp = stream(currentFiles)
+            timeStamp = stream(currentFiles)
                     .map(file -> parseFileTimeStamp(fileConfiguration, file.getName()))
                     .filter(Objects::nonNull)
                     .min(comparing(identity()))
-                    .orElse(currentTimeStamp);
-            timeStampString = fileConfiguration.getTimestampFormat().format(currentTimeStamp);
+                    .orElse(timeStamp);
         }
 
-        String fileName = ifEmpty(prefix, EMPTY_STRING) + timeStampString + suffix;
-        out.println(fileConfiguration.getDirectory().resolve(fileName));
-        outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
+        openFileStream(timeStamp);
     }
 
     @Override
@@ -138,12 +133,13 @@ public class FileWriter implements LoggerWriter {
         }
     }
 
-    private void openFileStream(LocalDateTime newTimeStamp) {
+    private void openFileStream(LocalDateTime timeStamp) {
         FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
-        String fileTimestamp = fileConfiguration.getTimestampFormat().format(newTimeStamp);
-        String fileName = letIfNotEmpty(fileConfiguration.getPrefix(), filePrefix -> filePrefix + fileTimestamp, fileTimestamp) + fileConfiguration.getSuffix();
+        String timeStampString = fileConfiguration.getTimestampFormat().format(timeStamp);
+        String fileName = ifEmpty(fileConfiguration.getPrefix(), EMPTY_STRING) + timeStampString + fileConfiguration.getSuffix();
+        out.println(fileConfiguration.getDirectory().resolve(fileName));
         outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
-        currentTimeStamp = newTimeStamp;
+        currentTimeStamp = timeStamp;
     }
 
     private OutputStream openFileStream(Path path) {
