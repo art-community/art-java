@@ -20,8 +20,12 @@ package io.art.logging.configuration;
 
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.handler.ExceptionHandler.*;
+import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
+import static java.time.format.DateTimeFormatter.*;
 import java.nio.file.*;
 import java.time.*;
 import java.time.format.*;
@@ -45,6 +49,15 @@ public class FileWriterConfiguration {
     private final Duration rotationPeriod = DEFAULT_LOG_FILE_ROTATION_PERIOD;
 
     public static FileWriterConfiguration from(ConfigurationSource source) {
-        return FileWriterConfiguration.builder().build();
+        return FileWriterConfiguration.builder()
+                .directory(let(source.getString(DIRECTORY_KEY), Paths::get, context().configuration().getWorkingDirectory()))
+                .rotationPeriod(orElse(source.getDuration(ROTATION_PERIOD_KEY), DEFAULT_LOG_FILE_ROTATION_PERIOD))
+                .prefix(orElse(source.getString(PREFIX_KEY), DEFAULT_LOG_FILE_NAME_PREFIX))
+                .suffix(orElse(source.getString(SUFFIX_KEY), DEFAULT_LOG_FILE_NAME_SUFFIX))
+                .timestampFormat(let(source.getString(TIMESTAMP_FORMAT_KEY),
+                        pattern -> handleException(ignore -> DEFAULT_LOG_FILE_TIME_STAMP_FORMAT).call(() -> ofPattern(pattern)),
+                        DEFAULT_LOG_FILE_TIME_STAMP_FORMAT
+                ))
+                .build();
     }
 }

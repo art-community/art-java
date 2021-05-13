@@ -24,8 +24,9 @@ import io.art.logging.constants.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static io.art.core.context.Context.context;
+import static io.art.core.context.Context.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 import static io.art.logging.constants.LoggingWriterType.*;
 import static java.time.format.DateTimeFormatter.*;
 import java.nio.charset.*;
@@ -51,11 +52,11 @@ public class LoggerWriterConfiguration {
 
     public static LoggerWriterConfiguration from(ConfigurationSource source) {
         LoggerWriterConfigurationBuilder builder = builder();
-        builder.type(LoggingWriterType.parse(source.getString("type"), CONSOLE));
+        builder.type(LoggingWriterType.parse(source.getString(TYPE_KEY), CONSOLE));
         builder.console(ConsoleWriterConfiguration.from(source));
         builder.file(FileWriterConfiguration.from(source));
-        builder.categories(immutableSetOf(source.getStringArray("categories")));
-        builder.dateTimeFormatter(ofPattern(source.getString("dateTimeFormat")));
+        builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
+        builder.dateTimeFormatter(ofPattern(source.getString(DATE_TIME_FORMAT_KEY)));
         return builder.build();
     }
 }

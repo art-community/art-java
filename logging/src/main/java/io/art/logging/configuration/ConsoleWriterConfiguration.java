@@ -20,6 +20,7 @@ package io.art.logging.configuration;
 
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
 @Builder
@@ -28,6 +29,8 @@ public class ConsoleWriterConfiguration {
     private final Boolean colored = false;
 
     public static ConsoleWriterConfiguration from(ConfigurationSource source) {
-        return ConsoleWriterConfiguration.builder().build();
+        return ConsoleWriterConfiguration.builder()
+                .colored(source.getBool(COLORED_KEY))
+                .build();
     }
 }

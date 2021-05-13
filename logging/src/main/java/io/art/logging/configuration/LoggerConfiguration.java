@@ -21,7 +21,6 @@ package io.art.logging.configuration;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.logging.constants.*;
-import io.art.scheduler.executor.deferred.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -45,10 +44,11 @@ public class LoggerConfiguration {
     @Builder.Default
     private final Boolean enabled = false;
 
-    public static LoggerConfiguration from(LoggingModuleConfiguration moduleConfiguration, ConfigurationSource source) {
+    public static LoggerConfiguration from(ConfigurationSource source) {
         LoggerConfigurationBuilder builder = LoggerConfiguration.builder();
-        builder.level(LoggingLevel.parse(source.getString("level"), INFO));
-        builder.categories(immutableSetOf(source.getStringArray("categories")));
+        builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), INFO));
+        builder.enabled(orElse(source.getBool(ENABLED_KEY), true));
+        builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
         builder.writers(source.getNestedArray(WRITERS_SECTION, LoggerWriterConfiguration::from));
         return builder.build();
     }

@@ -45,7 +45,8 @@ public class DefaultLoggerConfiguration {
 
     public static DefaultLoggerConfiguration from(ConfigurationSource source) {
         DefaultLoggerConfiguration.DefaultLoggerConfigurationBuilder builder = DefaultLoggerConfiguration.builder();
-        builder.level(LoggingLevel.parse(source.getString("level"), INFO));
+        builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), INFO));
+        builder.enabled(source.getBool(ENABLED_KEY));
         builder.writer(source.getNested(WRITER_SECTION, LoggerWriterConfiguration::from));
         return builder.build();
     }

@@ -35,6 +35,17 @@ import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
 
+    private DefaultLoggerConfiguration defaultLogger = DefaultLoggerConfiguration.builder()
+            .level(INFO)
+            .writer(LoggerWriterConfiguration.builder()
+                    .type(CONSOLE)
+                    .console(ConsoleWriterConfiguration.builder()
+                            .colored(true)
+                            .build())
+                    .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
+                    .build())
+            .build();
+
     private final DeferredExecutor consumingExecutor = deferredExecutor()
             .poolSize(1)
             .awaitOnShutdown(true)
@@ -47,15 +58,6 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .shutdownOnExit(true)
             .build();
 
-    private DefaultLoggerConfiguration defaultLogger = DefaultLoggerConfiguration.builder()
-            .level(INFO)
-            .writer(LoggerWriterConfiguration.builder()
-                    .type(FILE)
-                    .console(ConsoleWriterConfiguration.builder().colored(true).build())
-                    .file(FileWriterConfiguration.builder().build())
-                    .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
-                    .build())
-            .build();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
@@ -64,7 +66,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ConfigurationSource source) {
             configuration.defaultLogger = orElse(source.getNested(LOGGING_DEFAULT_SECTION, DefaultLoggerConfiguration::from), configuration.defaultLogger);
-            configuration.loggers = source.getNestedMap(LOGGING_LOGGERS_SECTION, configuration -> LoggerConfiguration.from(this.configuration, configuration));
+            configuration.loggers = source.getNestedMap(LOGGING_LOGGERS_SECTION, LoggerConfiguration::from);
             return this;
         }
 

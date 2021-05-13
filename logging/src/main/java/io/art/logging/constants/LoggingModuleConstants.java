@@ -32,7 +32,17 @@ public interface LoggingModuleConstants {
         String LOGGING_DEFAULT_SECTION = "logging.default";
         String WRITER_SECTION = "writer";
         String WRITERS_SECTION = "writers";
-        String BUFFER_SIZE = "buffer.size";
+        String LEVEL_KEY = "level";
+        String ENABLED_KEY = "enabled";
+        String TYPE_KEY = "key";
+        String CATEGORIES_KEY = "categories";
+        String DATE_TIME_FORMAT_KEY = "dateTimeFormat";
+        String COLORED_KEY = "colored";
+        String DIRECTORY_KEY = "directory";
+        String PREFIX_KEY = "prefix";
+        String SUFFIX_KEY = "suffix";
+        String TIMESTAMP_FORMAT_KEY = "timestampFormat";
+        String ROTATION_PERIOD_KEY = "rotationPeriod";
     }
 
     interface Defaults {
