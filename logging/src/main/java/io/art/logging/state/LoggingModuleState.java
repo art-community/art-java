@@ -29,7 +29,7 @@ import java.util.*;
 import java.util.function.*;
 
 public class LoggingModuleState implements ModuleState {
-    private final List<LoggerProcessor> loggers = copyOnWriteList();
+    private final List<LoggerProcessor> processors = copyOnWriteList();
     private final Map<String, Logger> cache = concurrentMap();
     private final List<Closeable> resources = linkedList();
 
@@ -39,7 +39,7 @@ public class LoggingModuleState implements ModuleState {
 
     public LoggerProcessor register(LoggerImplementation implementation) {
         LoggerProcessor processor = new LoggerProcessor(implementation);
-        loggers.add(processor);
+        processors.add(processor);
         return processor;
     }
 
@@ -52,11 +52,11 @@ public class LoggingModuleState implements ModuleState {
     }
 
     public void forEach(Consumer<LoggerProcessor> consumer) {
-        loggers.forEach(consumer);
+        processors.forEach(consumer);
     }
 
     public boolean all(Predicate<LoggerProcessor> predicate) {
-        return loggers.stream().allMatch(predicate);
+        return processors.stream().allMatch(predicate);
     }
 
     public void close() {
