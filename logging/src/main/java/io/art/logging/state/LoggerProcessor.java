@@ -28,12 +28,12 @@ import static io.art.logging.module.LoggingModule.*;
 
 
 @Getter
-public class LoggerState {
+public class LoggerProcessor {
     private final LoggingQueue queue;
     private final LoggerConsumer consumer;
     private final LoggerProducer producer;
 
-    public LoggerState(LoggerImplementation logger) {
+    public LoggerProcessor(LoggerImplementation logger) {
         LoggingModuleConfiguration moduleConfiguration = loggingModule().configuration();
 
         queue = new LoggingQueue();
@@ -42,6 +42,6 @@ public class LoggerState {
 
         DefaultLoggerConfiguration fallbackLogger = moduleConfiguration.getDefaultLogger();
         LoggerWriter fallbackWriter = loggerWriter(fallbackLogger.getWriter());
-        producer = new LoggerProducer(queue, moduleConfiguration.getProducingExecutor(), fallbackWriter);
+        producer = new LoggerProducer(queue, fallbackWriter);
     }
 }

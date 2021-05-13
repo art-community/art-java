@@ -21,20 +21,13 @@ package io.art.logging.messaging;
 import io.art.logging.model.*;
 import io.art.logging.writer.*;
 import lombok.*;
-import java.util.concurrent.*;
 
 @AllArgsConstructor
 public class LoggerProducer {
     private final LoggingQueue queue;
-    private final ExecutorService executor;
     private final LoggerWriter fallbackWriter;
 
     public void produce(LoggingMessage message) {
-        if (executor.isShutdown() || executor.isTerminated()) return;
-        executor.execute(() -> processProducing(message));
-    }
-
-    private void processProducing(LoggingMessage message) {
         if (!queue.offer(message)) {
             fallbackWriter.write(message);
         }

@@ -42,10 +42,6 @@ public class LoggingManager {
     public LoggingManager deactivate() {
         if (!activated) return this;
         try {
-            configuration.getProducingExecutor().shutdown();
-            if (!configuration.getProducingExecutor().awaitTermination(DEFAULT_TERMINATION_TIMEOUT.getSeconds(), SECONDS)) {
-                return this;
-            }
             activated = false;
             configuration.getConsumingExecutor().shutdown();
             if (!configuration.getConsumingExecutor().awaitTermination(DEFAULT_TERMINATION_TIMEOUT.getSeconds(), SECONDS)) {
@@ -61,12 +57,12 @@ public class LoggingManager {
         for (; ; ) {
             if (interrupted()) return;
             if (!activated) {
-                while (!state.all(loggerState -> loggerState.getQueue().isEmpty())) {
-                    state.forEach(loggerState -> loggerState.getConsumer().consume());
+                while (!state.all(processor -> processor.getQueue().isEmpty())) {
+                    state.forEach(processor -> processor.getConsumer().consume());
                 }
                 return;
             }
-            state.forEach(loggerState -> loggerState.getConsumer().consume());
+            state.forEach(processor -> processor.getConsumer().consume());
         }
     }
 }
