@@ -95,12 +95,4 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
         LoggerConfiguration loggerConfiguration = configuration.getLoggers().getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
         return state.cachedLogger(name, () -> new LoggerImplementation(name, loggerConfiguration, state));
     }
-
-    public static void main(String[] args) {
-        for (int i = 0; i < 1000; i++) {
-            logger(LoggingModule.class).info("test:  " + i);
-        }
-        SchedulersManager.scheduleDelayed(() -> logger(LoggingModule.class).info("test:  "), Duration.ofSeconds(1));
-        block();
-    }
 }
