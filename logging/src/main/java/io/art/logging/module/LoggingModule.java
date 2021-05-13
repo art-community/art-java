@@ -25,14 +25,11 @@ import io.art.logging.logger.*;
 import io.art.logging.manager.*;
 import io.art.logging.reactor.*;
 import io.art.logging.state.*;
-import io.art.scheduler.manager.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.ThreadExtensions.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
-import java.time.*;
 
 @Getter
 public class LoggingModule implements StatefulModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModuleState> {
@@ -93,6 +90,6 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
         LoggingModuleConfiguration configuration = loggingModule().configuration();
         LoggingModuleState state = loggingModule().state();
         LoggerConfiguration loggerConfiguration = configuration.getLoggers().getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
-        return state.cachedLogger(name, () -> new LoggerImplementation(name, loggerConfiguration, state));
+        return state.cached(name, () -> new LoggerImplementation(name, loggerConfiguration, state));
     }
 }
