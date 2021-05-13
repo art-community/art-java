@@ -29,7 +29,6 @@ import io.art.scheduler.manager.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
-import static java.lang.Runtime.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
@@ -45,7 +44,6 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     private final LoggingModuleState state = new LoggingModuleState();
     private final LoggingManager manager = new LoggingManager(configuration, state);
     private static LoggingManager DEFAULT_MANAGER;
-    private static Thread DEACTIVATE_MANAGER;
 
     static {
         registerDefault(LoggingModule.class.getSimpleName(), LoggingModule::new);
@@ -54,13 +52,11 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     @Override
     public void onDefaultLoad(Context.Service contextService) {
         DEFAULT_MANAGER = new LoggingManager(configuration, state).activate();
-        getRuntime().addShutdownHook(DEACTIVATE_MANAGER = new Thread(DEFAULT_MANAGER::deactivate));
     }
 
     @Override
     public void onDefaultUnload(Context.Service contextService) {
         DEFAULT_MANAGER.deactivate();
-        getRuntime().removeShutdownHook(DEACTIVATE_MANAGER);
     }
 
     @Override

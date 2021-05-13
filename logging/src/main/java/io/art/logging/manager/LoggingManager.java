@@ -31,12 +31,14 @@ public class LoggingManager {
     private volatile boolean activated = false;
 
     public LoggingManager activate() {
+        if (activated) return this;
         activated = true;
         configuration.getConsumingExecutor().execute(() -> processConsuming(state), now());
         return this;
     }
 
     public LoggingManager deactivate() {
+        if (!activated) return this;
         configuration.getProducingExecutor().shutdown();
         activated = false;
         configuration.getConsumingExecutor().shutdown();
@@ -46,7 +48,7 @@ public class LoggingManager {
     private void processConsuming(LoggingModuleState state) {
         for (; ; ) {
             if (interrupted()) return;
-            if (!activated) {
+            if (!activated && state.all(loggerState -> loggerState.getQueue().isEmpty())) {
                 return;
             }
             state.forEach(loggerState -> loggerState.getConsumer().consume());

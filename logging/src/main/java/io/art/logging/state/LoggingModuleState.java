@@ -55,6 +55,10 @@ public class LoggingModuleState implements ModuleState {
         loggers.forEach(consumer);
     }
 
+    public boolean all(Predicate<LoggerState> predicate) {
+        return loggers.stream().allMatch(predicate);
+    }
+
     public void close() {
         resources.forEach(resource -> ignoreException(resource::close));
     }

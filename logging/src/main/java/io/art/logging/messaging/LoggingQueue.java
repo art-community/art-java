@@ -34,4 +34,7 @@ public class LoggingQueue {
         return queue.poll();
     }
 
+    public boolean isEmpty() {
+        return queue.isEmpty();
+    }
 }
