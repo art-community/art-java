@@ -30,6 +30,7 @@ public class LoggerProducer {
     private final LoggerWriter fallbackWriter;
 
     public void produce(LoggingMessage message) {
+        if (executor.isShutdown() || executor.isTerminated()) return;
         executor.execute(() -> processProducing(message));
     }
 

@@ -47,9 +47,17 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
                     .build())
             .build();
 
-    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> new Thread(runnable, CONSUMER_THREAD));
+    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, CONSUMER_THREAD);
+        thread.setDaemon(true);
+        return thread;
+    });
 
-    private final ExecutorService producingExecutor = newSingleThreadExecutor(runnable -> new Thread(runnable, PRODUCER_THREAD));
+    private final ExecutorService producingExecutor = newSingleThreadExecutor(runnable -> {
+        Thread thread = new Thread(runnable, PRODUCER_THREAD);
+        thread.setDaemon(true);
+        return thread;
+    });
 
 
     @RequiredArgsConstructor
