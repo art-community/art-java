@@ -16,37 +16,36 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.communicator.module;
 
+import io.art.communicator.configuration.*;
+import io.art.communicator.refresher.*;
+import io.art.communicator.registry.*;
 import io.art.core.annotation.*;
 import io.art.core.module.*;
-import io.art.server.configuration.*;
-import io.art.server.module.*;
-import io.art.server.refresher.*;
-import io.art.server.registry.*;
 import lombok.*;
 
 @UsedByGenerator
-public class ServerInitializer implements ModuleInitializer<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModule> {
-    private ServiceSpecificationRegistry registry;
+public class CommunicatorInitializer implements ModuleInitializer<CommunicatorModuleConfiguration, CommunicatorModuleConfiguration.Configurator, CommunicatorModule> {
+    private CommunicatorProxyRegistry registry;
 
-    public ServerInitializer registry(ServiceSpecificationRegistry registry) {
+    public CommunicatorInitializer registry(CommunicatorProxyRegistry registry) {
         this.registry = registry;
         return this;
     }
 
     @Override
-    public ServerModuleConfiguration initialize(ServerModule module) {
+    public CommunicatorModuleConfiguration initialize(CommunicatorModule module) {
         Initial initial = new Initial(module.getRefresher());
         initial.registry = registry;
         return initial;
     }
 
     @Getter
-    private static class Initial extends ServerModuleConfiguration {
-        private ServiceSpecificationRegistry registry;
+    private static class Initial extends CommunicatorModuleConfiguration {
+        private CommunicatorProxyRegistry registry;
 
-        public Initial(ServerModuleRefresher refresher) {
+        public Initial(CommunicatorModuleRefresher refresher) {
             super(refresher);
         }
     }

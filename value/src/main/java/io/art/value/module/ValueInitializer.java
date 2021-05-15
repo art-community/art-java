@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.value.module;
 
 import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.value.configuration.*;
-import io.art.value.module.*;
 import io.art.value.registry.*;
 import lombok.*;
 

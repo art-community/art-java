@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.logging.module;
 
 import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.logging.configuration.*;
-import io.art.logging.module.*;
 import lombok.*;
 
 @UsedByGenerator

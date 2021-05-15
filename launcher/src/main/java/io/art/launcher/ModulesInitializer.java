@@ -16,9 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.launcher;
 
+import io.art.communicator.module.*;
+import io.art.configurator.module.*;
 import io.art.core.annotation.*;
+import io.art.http.module.*;
+import io.art.logging.module.*;
+import io.art.rsocket.module.*;
+import io.art.server.module.*;
+import io.art.storage.module.*;
+import io.art.value.module.*;
 import lombok.*;
 import lombok.experimental.*;
 import static java.util.function.UnaryOperator.*;
@@ -37,4 +45,8 @@ public class ModulesInitializer {
     private UnaryOperator<RsocketInitializer> rsocket = identity();
     private UnaryOperator<HttpInitializer> http = identity();
     private UnaryOperator<StorageInitializer> storage = identity();
+
+    public static ModulesInitializer modules() {
+        return new ModulesInitializer();
+    }
 }

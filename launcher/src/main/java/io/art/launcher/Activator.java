@@ -18,30 +18,27 @@
 
 package io.art.launcher;
 
-import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
-import io.art.http.module.*;
-import io.art.json.module.*;
-import io.art.logging.module.*;
-import io.art.message.pack.module.*;
-import io.art.model.customizer.*;
-import io.art.protobuf.module.*;
-import io.art.resilience.module.*;
-import io.art.rocks.db.module.*;
-import io.art.rsocket.module.*;
-import io.art.scheduler.module.*;
-import io.art.server.module.*;
-import io.art.storage.module.*;
-import io.art.tarantool.module.*;
-import io.art.value.module.*;
-import io.art.xml.module.*;
-import io.art.yaml.module.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.communicator.module.CommunicatorActivator.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.http.module.HttpActivator.*;
+import static io.art.json.module.JsonActivator.*;
+import static io.art.logging.module.LoggingActivator.*;
+import static io.art.message.pack.module.MessagePackActivator.*;
+import static io.art.protobuf.module.ProtobufActivator.*;
+import static io.art.rocks.db.module.RocksDbActivator.*;
+import static io.art.rsocket.module.RsocketActivator.*;
+import static io.art.scheduler.module.SchedulerActivator.*;
+import static io.art.server.module.ServerActivator.*;
+import static io.art.storage.module.StorageActivator.*;
+import static io.art.tarantool.module.TarantoolActivator.*;
+import static io.art.value.module.ValueActivator.*;
+import static io.art.xml.module.XmlActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
@@ -53,7 +50,7 @@ public class Activator {
     private final Map<String, ModuleActivator> modules = map();
 
     @Getter
-    private ModuleActivator configuratorModuleActivator;
+    private ModuleActivator configuratorActivator;
 
     @Setter
     @Getter
@@ -85,150 +82,34 @@ public class Activator {
     }
 
     public Activator configurator(UnaryOperator<ConfiguratorInitializer> initializer) {
-        configuratorModuleActivator = ModuleActivator.builder()
-                .id(ConfiguratorModule.class.getSimpleName())
-                .initializer(initializer.apply(new ConfiguratorInitializer()))
-                .factory(ConfiguratorModule::new)
-                .build();
+        configuratorActivator = ConfiguratorActivator.configurator(initializer);
         return this;
     }
 
-
-    public Activator value() {
-        return value(identity());
+    public Activator module(ModuleActivator activator) {
+        modules.putIfAbsent(activator.getId(), activator);
+        return this;
     }
-
-    public Activator value(UnaryOperator<ValueInitializer> initializer) {
-        return module(ValueModule.class, ValueModule::new, initializer.apply(new ValueInitializer()));
-    }
-
-
-    public Activator scheduler() {
-        return module(SchedulerModule.class, SchedulerModule::new);
-    }
-
-    public Activator logging() {
-        return logging(identity());
-    }
-
-    public Activator logging(UnaryOperator<LoggingInitializer> initializer) {
-        return module(LoggingModule.class, LoggingModule::new, initializer.apply(new LoggingInitializer()));
-    }
-
-
-    public Activator server() {
-        return server(identity());
-    }
-
-    public Activator server(UnaryOperator<ServerInitializer> initializer) {
-        value();
-        logging();
-        scheduler();
-        return module(ServerModule.class, ServerModule::new, initializer.apply(new ServerInitializer()));
-    }
-
-
-    public Activator communicator() {
-        return communicator(identity());
-    }
-
-    public Activator communicator(UnaryOperator<CommunicatorInitializer> initializer) {
-        value();
-        logging();
-        scheduler();
-        resilience();
-        return module(CommunicatorModule.class, CommunicatorModule::new, initializer.apply(new CommunicatorInitializer()));
-    }
-
-
-    public Activator rsocket() {
-        return rsocket(identity());
-    }
-
-    public Activator rsocket(UnaryOperator<RsocketInitializer> initializer) {
-        server();
-        communicator();
-        return module(RsocketModule.class, RsocketModule::new, initializer.apply(new RsocketInitializer()));
-    }
-
-
-    public Activator http() {
-        return http(identity());
-    }
-
-    public Activator http(UnaryOperator<HttpInitializer> initializer) {
-        server();
-        communicator();
-        return module(HttpModule.class, HttpModule::new, initializer.apply(new HttpInitializer()));
-    }
-
-
-    public Activator json() {
-        return module(JsonModule.class, JsonModule::new);
-    }
-
-    public Activator protobuf() {
-        return module(ProtobufModule.class, ProtobufModule::new);
-    }
-
-    public Activator yaml() {
-        return module(YamlModule.class, YamlModule::new);
-    }
-
-    public Activator xml() {
-        return module(XmlModule.class, XmlModule::new);
-    }
-
-    public Activator messagePack() {
-        return module(MessagePackModule.class, MessagePackModule::new);
-    }
-
-
-    public Activator resilience() {
-        return module(ResilienceModule.class, ResilienceModule::new);
-    }
-
-
-    public Activator storage() {
-        return storage(identity());
-    }
-
-    public Activator storage(UnaryOperator<StorageInitializer> initializer) {
-        value();
-        logging();
-        scheduler();
-        return module(StorageModule.class, StorageModule::new, initializer.apply(new StorageInitializer()));
-    }
-
-
-    public Activator rocksdb() {
-        storage();
-        return module(RocksDbModule.class, RocksDbModule::new);
-    }
-
-
-    public Activator tarantool() {
-        storage();
-        return module(TarantoolModule.class, TarantoolModule::new);
-    }
-
 
     public Activator kit() {
         return kit(new ModulesInitializer());
     }
 
     public Activator kit(ModulesInitializer initializer) {
-        value(initializer.value());
-        logging(initializer.logging());
-        json();
-        protobuf();
-        messagePack();
-        xml();
-        communicator(initializer.communicator());
-        server(initializer.server());
-        http(initializer.http());
-        rsocket(initializer.rsocket());
-        storage(initializer.storage());
+        module(value(initializer.value()));
+        module(scheduler());
+        module(logging(initializer.logging()));
+        module(json());
+        module(protobuf());
+        module(messagePack());
+        module(xml());
+        module(communicator(initializer.communicator()));
+        module(server(initializer.server()));
+        module(http(initializer.http()));
+        module(rsocket(initializer.rsocket()));
+        module(storage(initializer.storage()));
+        module(tarantool());
+        module(rocksdb());
         return this;
     }
 
@@ -240,23 +121,5 @@ public class Activator {
 
     public static Activator art() {
         return singleton.configurator();
-    }
-
-
-    private Activator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
-        modules.putIfAbsent(moduleClass.getSimpleName(), ModuleActivator.builder()
-                .id(moduleClass.getSimpleName())
-                .factory(moduleFactory)
-                .build());
-        return this;
-    }
-
-    private Activator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializer<?, ?, ?> initializer) {
-        modules.putIfAbsent(moduleClass.getSimpleName(), ModuleActivator.builder()
-                .id(moduleClass.getSimpleName())
-                .initializer(initializer)
-                .factory(moduleFactory)
-                .build());
-        return this;
     }
 }

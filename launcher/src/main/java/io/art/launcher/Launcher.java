@@ -36,6 +36,7 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.Activator.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.launcher.LauncherConstants.*;
+import static io.art.launcher.ModulesInitializer.*;
 import static io.art.logging.module.LoggingModule.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
@@ -49,7 +50,7 @@ public class Launcher {
         if (LAUNCHED.compareAndSet(false, true)) {
             ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
             ImmutableSet<ModuleActivator> activators = activator.modules();
-            ModuleActivator configuratorActivator = activator.configuratorModuleActivator();
+            ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
             configuratorModule.configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().initialize(cast(configuratorModule)))));
             for (ModuleActivator moduleActivator : activators) {
@@ -78,9 +79,9 @@ public class Launcher {
     }
 
     public static void main(String[] args) {
-        art().communicator()
-                .logging(initializer -> initializer.colored(false))
-                .server()
+        art()
+                .kit(modules()
+                        .logging(logging -> logging.colored(true)))
                 .launch();
     }
 }

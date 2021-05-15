@@ -16,12 +16,11 @@
  * limitations under the License.
  */
 
-package io.art.model.customizer;
+package io.art.rsocket.module;
 
 import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.module.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 

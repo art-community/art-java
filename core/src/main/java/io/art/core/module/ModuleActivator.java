@@ -28,4 +28,20 @@ public class ModuleActivator {
     private final String id;
     private final ModuleFactory<?> factory;
     private final ModuleInitializer<?, ?, ?> initializer;
+
+
+    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
+        return ModuleActivator.builder()
+                .id(moduleClass.getSimpleName())
+                .factory(moduleFactory)
+                .build();
+    }
+
+    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializer<?, ?, ?> initializer) {
+        return ModuleActivator.builder()
+                .id(moduleClass.getSimpleName())
+                .initializer(initializer)
+                .factory(moduleFactory)
+                .build();
+    }
 }

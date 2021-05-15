@@ -2,7 +2,7 @@ package io.art.storage.module;
 
 import io.art.core.module.*;
 import io.art.storage.configuration.*;
-import io.art.storage.module.state.*;
+import io.art.storage.state.*;
 import io.art.storage.space.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
