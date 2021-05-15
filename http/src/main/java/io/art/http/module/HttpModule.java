@@ -46,10 +46,6 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     private final HttpManager manager = new HttpManager(refresher, configuration);
     private final Configurator configurator = new Configurator(configuration);
 
-    static {
-        registerDefault(HttpModule.class.getSimpleName(), HttpModule::new);
-    }
-
     public static StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState> httpModule() {
         return getHttpModule();
     }

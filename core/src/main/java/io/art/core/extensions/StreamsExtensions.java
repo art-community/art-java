@@ -21,15 +21,20 @@ package io.art.core.extensions;
 import lombok.experimental.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import java.io.*;
 
 @UtilityClass
-public class InputOutputStreamExtensions {
+public class StreamsExtensions {
     public static void transferBytes(InputStream inputStream, OutputStream outputStream, int bufferSize) throws IOException {
         outputStream.write(toByteArray(inputStream, bufferSize));
     }
 
     public static void transferBytes(InputStream inputStream, OutputStream outputStream) throws IOException {
         transferBytes(inputStream, outputStream, DEFAULT_BUFFER_SIZE);
+    }
+
+    public static void closeQuietly(Closeable stream) {
+        ignoreException(stream::close);
     }
 }

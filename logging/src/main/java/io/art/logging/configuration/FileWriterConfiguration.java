@@ -21,6 +21,7 @@ package io.art.logging.configuration;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
@@ -33,11 +34,10 @@ import java.time.format.*;
 @Getter
 @Builder
 public class FileWriterConfiguration {
-    @Builder.Default
-    private final Path directory = context().configuration().getWorkingDirectory();
+    private final String prefix;
 
     @Builder.Default
-    private final String prefix = DEFAULT_LOG_FILE_NAME_PREFIX;
+    private final Path directory = context().configuration().getWorkingDirectory();
 
     @Builder.Default
     private final String suffix = DEFAULT_LOG_FILE_NAME_SUFFIX;
@@ -52,7 +52,7 @@ public class FileWriterConfiguration {
         return FileWriterConfiguration.builder()
                 .directory(let(source.getString(DIRECTORY_KEY), Paths::get, context().configuration().getWorkingDirectory()))
                 .rotationPeriod(orElse(source.getDuration(ROTATION_PERIOD_KEY), DEFAULT_LOG_FILE_ROTATION_PERIOD))
-                .prefix(orElse(source.getString(PREFIX_KEY), DEFAULT_LOG_FILE_NAME_PREFIX))
+                .prefix(orElse(source.getString(PREFIX_KEY), context().configuration().getMainModuleId() + DASH))
                 .suffix(orElse(source.getString(SUFFIX_KEY), DEFAULT_LOG_FILE_NAME_SUFFIX))
                 .timestampFormat(let(source.getString(TIMESTAMP_FORMAT_KEY),
                         pattern -> handleException(ignore -> DEFAULT_LOG_FILE_TIME_STAMP_FORMAT).call(() -> ofPattern(pattern)),

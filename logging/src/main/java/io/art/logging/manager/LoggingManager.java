@@ -18,51 +18,62 @@
 
 package io.art.logging.manager;
 
+import io.art.core.extensions.*;
 import io.art.logging.configuration.*;
 import io.art.logging.state.*;
 import lombok.*;
-import static com.google.common.base.Throwables.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
+import static io.art.core.extensions.ExecutorExtensions.*;
+import static io.art.core.factory.ListFactory.*;
 import static java.lang.Thread.*;
-import static java.util.concurrent.TimeUnit.*;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class LoggingManager {
     private final LoggingModuleConfiguration configuration;
-    private final LoggingModuleState state;
-    private volatile boolean activated = false;
+    private final List<LoggerProcessor> processors = copyOnWriteList();
+    private final List<Closeable> resources = linkedList();
 
-    public LoggingManager activate() {
-        if (activated) return this;
-        activated = true;
-        configuration.getConsumingExecutor().execute(() -> processConsuming(state));
-        return this;
-    }
+    private final AtomicBoolean activated = new AtomicBoolean(false);
 
-    public LoggingManager deactivate() {
-        if (!activated) return this;
-        try {
-            activated = false;
-            configuration.getConsumingExecutor().shutdown();
-            if (!configuration.getConsumingExecutor().awaitTermination(DEFAULT_TERMINATION_TIMEOUT.getSeconds(), SECONDS)) {
-                return this;
-            }
-        } catch (Throwable throwable) {
-            System.err.println(getStackTraceAsString(throwable));
+    public void activate() {
+        if (activated.compareAndSet(false, true)) {
+            configuration.getConsumingExecutor().execute(this::processConsuming);
         }
-        return this;
     }
 
-    private void processConsuming(LoggingModuleState state) {
+    public void deactivate() {
+        if (activated.compareAndSet(true, false)) {
+            terminateQuietly(configuration.getConsumingExecutor());
+            resources.forEach(StreamsExtensions::closeQuietly);
+        }
+    }
+
+    public LoggerProcessor register(LoggerConstructionConfiguration configuration) {
+        LoggerProcessor processor = new LoggerProcessor(this, configuration.getWriters());
+        processors.add(processor);
+        return processor;
+    }
+
+    public void register(Closeable resource) {
+        resources.add(resource);
+    }
+
+    public void remove(Closeable resource) {
+        resources.remove(resource);
+    }
+
+    private void processConsuming() {
         for (; ; ) {
             if (interrupted()) return;
-            if (!activated) {
-                while (!state.all(processor -> processor.getQueue().isEmpty())) {
-                    state.forEach(processor -> processor.getConsumer().consume());
+            if (!activated.get()) {
+                while (!processors.stream().allMatch(processor -> processor.getQueue().isEmpty())) {
+                    processors.forEach(processor -> processor.getConsumer().consume());
                 }
                 return;
             }
-            state.forEach(processor -> processor.getConsumer().consume());
+            processors.forEach(processor -> processor.getConsumer().consume());
         }
     }
 }

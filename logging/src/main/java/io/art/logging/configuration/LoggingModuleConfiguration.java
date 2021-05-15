@@ -41,9 +41,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .level(INFO)
             .writer(LoggerWriterConfiguration.builder()
                     .type(CONSOLE)
-                    .console(ConsoleWriterConfiguration.builder()
-                            .colored(true)
-                            .build())
+                    .console(ConsoleWriterConfiguration.builder().build())
                     .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
                     .build())
             .build();
@@ -62,7 +60,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
         }
 
         @Override
-        public Configurator configure(LoggingModuleConfiguration configuration) {
+        public Configurator initialize(LoggingModuleConfiguration configuration) {
             return this;
         }
     }

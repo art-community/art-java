@@ -19,36 +19,41 @@
 package io.art.model.customizer;
 
 import io.art.core.annotation.*;
+import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.refresher.*;
 import io.art.rsocket.module.*;
+import io.art.rsocket.refresher.*;
 import lombok.*;
 
-@Getter
 @UsedByGenerator
-public class RsocketCustomizer {
-    private final Custom configuration;
+public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
+    private boolean activateServer;
+    private boolean activateCommunicator;
 
-    public RsocketCustomizer(RsocketModule module) {
-        this.configuration = new Custom(module.getRefresher());
-    }
-
-    public RsocketCustomizer activateServer() {
-        configuration.activateServer = true;
+    public RsocketInitializer activateServer() {
+        activateServer = true;
         return this;
     }
 
-    public RsocketCustomizer activateCommunicator() {
-        configuration.activateCommunicator = true;
+    public RsocketInitializer activateCommunicator() {
+        activateCommunicator = true;
         return this;
+    }
+
+    @Override
+    public RsocketModuleConfiguration initialize(RsocketModule module) {
+        Initial initial = new Initial(module.getRefresher());
+        initial.activateCommunicator = activateCommunicator;
+        initial.activateServer = activateServer;
+        return initial;
     }
 
     @Getter
-    public static class Custom extends RsocketModuleConfiguration {
+    public static class Initial extends RsocketModuleConfiguration {
         private boolean activateServer;
         private boolean activateCommunicator;
 
-        public Custom(RsocketModuleRefresher refresher) {
+        public Initial(RsocketModuleRefresher refresher) {
             super(refresher);
         }
     }

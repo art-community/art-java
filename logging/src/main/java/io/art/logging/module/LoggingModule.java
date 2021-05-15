@@ -38,23 +38,8 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     private final String id = LoggingModule.class.getSimpleName();
     private final LoggingModuleConfiguration configuration = new LoggingModuleConfiguration();
     private final LoggingModuleConfiguration.Configurator configurator = new LoggingModuleConfiguration.Configurator(configuration);
-    private final LoggingModuleState state = new LoggingModuleState();
-    private final LoggingManager manager = new LoggingManager(configuration, state);
-    private static LoggingManager DEFAULT_MANAGER;
-
-    static {
-        registerDefault(LoggingModule.class.getSimpleName(), LoggingModule::new);
-    }
-
-    @Override
-    public void onDefaultLoad(Context.Service contextService) {
-        DEFAULT_MANAGER = new LoggingManager(configuration, state).activate();
-    }
-
-    @Override
-    public void onDefaultUnload(Context.Service contextService) {
-        DEFAULT_MANAGER.deactivate();
-    }
+    private final LoggingManager manager = new LoggingManager(configuration);
+    private final LoggingModuleState state = new LoggingModuleState(manager);
 
     @Override
     public void onLoad(Context.Service contextService) {
@@ -71,7 +56,6 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     @Override
     public void onUnload(Context.Service contextService) {
         manager.deactivate();
-        state.close();
     }
 
     public static StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule() {
@@ -89,7 +73,9 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     public static Logger logger(String name) {
         LoggingModuleConfiguration configuration = loggingModule().configuration();
         LoggingModuleState state = loggingModule().state();
-        LoggerConfiguration loggerConfiguration = configuration.getLoggers().getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
-        return state.cached(name, () -> new LoggerImplementation(name, loggerConfiguration, state));
+        LoggerConfiguration loggerConfiguration = configuration
+                .getLoggers()
+                .getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
+        return state.register(name, loggerConfiguration);
     }
 }

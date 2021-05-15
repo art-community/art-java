@@ -33,7 +33,6 @@ public interface SchedulerModuleConstants {
 
     interface Defaults {
         int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
-        Duration DEFAULT_TERMINATION_TIMEOUT = ofMinutes(1);
     }
 
     interface ConfigurationKeys {

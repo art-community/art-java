@@ -16,33 +16,19 @@
  * limitations under the License.
  */
 
-package io.art.logging.state;
+package io.art.logging.configuration;
 
 import io.art.core.collection.*;
 import io.art.logging.configuration.*;
-import io.art.logging.manager.*;
 import io.art.logging.messaging.*;
 import io.art.logging.writer.*;
 import lombok.*;
-import static io.art.logging.factory.LoggerWriterFactory.*;
-import static io.art.logging.module.LoggingModule.*;
-
 
 @Getter
-public class LoggerProcessor {
-    private final LoggingQueue queue;
-    private final LoggerConsumer consumer;
+@Builder
+public class LoggerConstructionConfiguration {
+    private final String name;
+    private final LoggerConfiguration loggerConfiguration;
     private final LoggerProducer producer;
-
-    public LoggerProcessor(LoggingManager manager, ImmutableArray<LoggerWriter> writers) {
-        LoggingModuleConfiguration moduleConfiguration = loggingModule().configuration();
-
-        queue = new LoggingQueue();
-
-        consumer = new LoggerConsumer(queue, writers);
-
-        DefaultLoggerConfiguration fallbackLogger = moduleConfiguration.getDefaultLogger();
-        LoggerWriter fallbackWriter = loggerWriter(manager, fallbackLogger.getWriter());
-        producer = new LoggerProducer(queue, fallbackWriter);
-    }
+    private final ImmutableArray<LoggerWriter> writers;
 }

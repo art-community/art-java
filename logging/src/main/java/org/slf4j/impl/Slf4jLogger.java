@@ -36,18 +36,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void trace(String msg) {
-        logger.trace(msg);
+    public void trace(String message) {
+        logger.trace(message);
     }
 
     @Override
-    public void trace(String format, Object arg) {
-        logger.trace(format, arg);
+    public void trace(String format, Object argument) {
+        logger.trace(format, argument);
     }
 
     @Override
-    public void trace(String format, Object arg1, Object arg2) {
-        logger.trace(format, arg1, arg2);
+    public void trace(String format, Object firstArgument, Object secondArgument) {
+        logger.trace(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -56,8 +56,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void trace(String msg, Throwable t) {
-        logger.trace(msg, t);
+    public void trace(String message, Throwable throwable) {
+        logger.trace(message, throwable);
     }
 
     @Override
@@ -66,18 +66,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void trace(Marker marker, String msg) {
-        logger.trace(msg);
+    public void trace(Marker marker, String message) {
+        logger.trace(message);
     }
 
     @Override
-    public void trace(Marker marker, String format, Object arg) {
-        logger.trace(format, arg);
+    public void trace(Marker marker, String format, Object argument) {
+        logger.trace(format, argument);
     }
 
     @Override
-    public void trace(Marker marker, String format, Object arg1, Object arg2) {
-        logger.trace(format, arg1, arg2);
+    public void trace(Marker marker, String format, Object firstArgument, Object secondArgument) {
+        logger.trace(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -86,8 +86,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void trace(Marker marker, String msg, Throwable t) {
-        logger.trace(msg, marker, t);
+    public void trace(Marker marker, String message, Throwable throwable) {
+        logger.trace(message, marker, throwable);
     }
 
     @Override
@@ -96,18 +96,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void debug(String msg) {
-        logger.debug(msg);
+    public void debug(String message) {
+        logger.debug(message);
     }
 
     @Override
-    public void debug(String format, Object arg) {
-        logger.debug(format, arg);
+    public void debug(String format, Object argument) {
+        logger.debug(format, argument);
     }
 
     @Override
-    public void debug(String format, Object arg1, Object arg2) {
-        logger.debug(format, arg1, arg2);
+    public void debug(String format, Object firstArgument, Object secondArgument) {
+        logger.debug(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -116,8 +116,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void debug(String msg, Throwable t) {
-        logger.debug(msg, t);
+    public void debug(String message, Throwable throwable) {
+        logger.debug(message, throwable);
     }
 
     @Override
@@ -126,18 +126,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void debug(Marker marker, String msg) {
-        logger.debug(msg);
+    public void debug(Marker marker, String message) {
+        logger.debug(message);
     }
 
     @Override
-    public void debug(Marker marker, String format, Object arg) {
-        logger.debug(format, arg);
+    public void debug(Marker marker, String format, Object argument) {
+        logger.debug(format, argument);
     }
 
     @Override
-    public void debug(Marker marker, String format, Object arg1, Object arg2) {
-        logger.debug(format, arg1, arg2);
+    public void debug(Marker marker, String format, Object firstArgument, Object secondArgument) {
+        logger.debug(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -146,8 +146,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void debug(Marker marker, String msg, Throwable t) {
-        logger.debug(msg, t);
+    public void debug(Marker marker, String message, Throwable throwable) {
+        logger.debug(message, throwable);
     }
 
     @Override
@@ -156,18 +156,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void info(String msg) {
-        logger.info(msg);
+    public void info(String message) {
+        logger.info(message);
     }
 
     @Override
-    public void info(String format, Object arg) {
-        logger.info(format, arg);
+    public void info(String format, Object argument) {
+        logger.info(format, argument);
     }
 
     @Override
-    public void info(String format, Object arg1, Object arg2) {
-        logger.info(format, arg1, arg2);
+    public void info(String format, Object firstArgument, Object secondArgument) {
+        logger.info(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -176,8 +176,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void info(String msg, Throwable t) {
-        logger.info(msg, t);
+    public void info(String message, Throwable throwable) {
+        logger.info(message, throwable);
     }
 
     @Override
@@ -186,18 +186,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void info(Marker marker, String msg) {
-        logger.info(msg);
+    public void info(Marker marker, String message) {
+        logger.info(message);
     }
 
     @Override
-    public void info(Marker marker, String format, Object arg) {
-        logger.info(format, arg);
+    public void info(Marker marker, String format, Object argument) {
+        logger.info(format, argument);
     }
 
     @Override
-    public void info(Marker marker, String format, Object arg1, Object arg2) {
-        logger.info(format, arg1, arg2);
+    public void info(Marker marker, String format, Object firstArgument, Object secondArgument) {
+        logger.info(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -206,8 +206,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void info(Marker marker, String msg, Throwable t) {
-        logger.info(msg, t);
+    public void info(Marker marker, String message, Throwable throwable) {
+        logger.info(message, throwable);
     }
 
     @Override
@@ -216,13 +216,13 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void warn(String msg) {
-        logger.warn(msg);
+    public void warn(String message) {
+        logger.warn(message);
     }
 
     @Override
-    public void warn(String format, Object arg) {
-        logger.warn(format, arg);
+    public void warn(String format, Object argument) {
+        logger.warn(format, argument);
     }
 
     @Override
@@ -231,13 +231,13 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void warn(String format, Object arg1, Object arg2) {
-        logger.warn(format, arg1, arg2);
+    public void warn(String format, Object firstArgument, Object secondArgument) {
+        logger.warn(format, firstArgument, secondArgument);
     }
 
     @Override
-    public void warn(String msg, Throwable t) {
-        logger.warn(msg, t);
+    public void warn(String message, Throwable throwable) {
+        logger.warn(message, throwable);
     }
 
     @Override
@@ -246,18 +246,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void warn(Marker marker, String msg) {
-        logger.warn(msg);
+    public void warn(Marker marker, String message) {
+        logger.warn(message);
     }
 
     @Override
-    public void warn(Marker marker, String format, Object arg) {
-        logger.warn(format, arg);
+    public void warn(Marker marker, String format, Object argument) {
+        logger.warn(format, argument);
     }
 
     @Override
-    public void warn(Marker marker, String format, Object arg1, Object arg2) {
-        logger.warn(format, arg1, arg2);
+    public void warn(Marker marker, String format, Object firstArgument, Object secondArgument) {
+        logger.warn(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -266,8 +266,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void warn(Marker marker, String msg, Throwable t) {
-        logger.warn(msg, msg, t);
+    public void warn(Marker marker, String message, Throwable throwable) {
+        logger.warn(message, message, throwable);
     }
 
     @Override
@@ -276,18 +276,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void error(String msg) {
-        logger.error(msg);
+    public void error(String message) {
+        logger.error(message);
     }
 
     @Override
-    public void error(String format, Object arg) {
-        logger.error(format, arg);
+    public void error(String format, Object argument) {
+        logger.error(format, argument);
     }
 
     @Override
-    public void error(String format, Object arg1, Object arg2) {
-        logger.error(format, arg1, arg2);
+    public void error(String format, Object firstArgument, Object secondArgument) {
+        logger.error(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -296,8 +296,8 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void error(String msg, Throwable t) {
-        logger.error(msg, t);
+    public void error(String message, Throwable throwable) {
+        logger.error(message, throwable);
     }
 
     @Override
@@ -306,18 +306,18 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void error(Marker marker, String msg) {
-        logger.error(msg);
+    public void error(Marker marker, String message) {
+        logger.error(message);
     }
 
     @Override
-    public void error(Marker marker, String format, Object arg) {
-        logger.error(format, arg);
+    public void error(Marker marker, String format, Object argument) {
+        logger.error(format, argument);
     }
 
     @Override
-    public void error(Marker marker, String format, Object arg1, Object arg2) {
-        logger.error(format, arg1, arg2);
+    public void error(Marker marker, String format, Object firstArgument, Object secondArgument) {
+        logger.error(format, firstArgument, secondArgument);
     }
 
     @Override
@@ -326,7 +326,7 @@ public class Slf4jLogger implements Logger {
     }
 
     @Override
-    public void error(Marker marker, String msg, Throwable t) {
-        logger.error(msg, t);
+    public void error(Marker marker, String message, Throwable throwable) {
+        logger.error(message, throwable);
     }
 }

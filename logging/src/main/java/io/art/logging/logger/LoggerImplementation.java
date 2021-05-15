@@ -21,13 +21,10 @@ package io.art.logging.logger;
 import io.art.core.collection.*;
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
-import io.art.logging.factory.*;
 import io.art.logging.messaging.*;
 import io.art.logging.model.*;
-import io.art.logging.state.*;
 import io.art.logging.writer.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
@@ -49,22 +46,18 @@ public class LoggerImplementation implements Logger {
     private final ImmutableArray<LoggerWriter> writers;
     private final LoggerProducer producer;
 
-    public LoggerImplementation(String name, LoggerConfiguration configuration, LoggingModuleState state) {
-        this.name = name;
-        this.level = configuration.getLevel();
-        this.configuration = configuration;
+    public LoggerImplementation(LoggerConstructionConfiguration configuration, LoggerProducer producer) {
+        this.name = configuration.getName();
+        this.level = configuration.getLoggerConfiguration().getLevel();
+        this.configuration = configuration.getLoggerConfiguration();
+        this.producer = producer;
         errorEnabled = getLevel().getLevel() >= ERROR.getLevel();
         warnEnabled = getLevel().getLevel() >= WARN.getLevel();
         infoEnabled = getLevel().getLevel() >= INFO.getLevel();
         debugEnabled = getLevel().getLevel() >= DEBUG.getLevel();
         traceEnabled = getLevel().getLevel() >= TRACE.getLevel();
-        enabled = configuration.getEnabled();
-        writers = configuration
-                .getWriters()
-                .stream()
-                .map(LoggerWriterFactory::loggerWriter)
-                .collect(immutableArrayCollector());
-        producer = state.register(this).getProducer();
+        enabled = configuration.getLoggerConfiguration().getEnabled();
+        writers = configuration.getWriters();
     }
 
     @Override

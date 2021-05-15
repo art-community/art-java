@@ -37,7 +37,7 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     private final int poolSize = DEFAULT_THREAD_POOL_SIZE;
     @Getter
     @Builder.Default
-    private final Duration poolTerminationTimeout = DEFAULT_TERMINATION_TIMEOUT;
+    private final Duration poolTerminationTimeout = DEFAULT_EXECUTOR_TERMINATION_TIMEOUT;
     @Getter
     @Builder.Default
     private final boolean awaitOnShutdown = true;

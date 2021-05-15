@@ -20,6 +20,7 @@ package io.art.model.customizer;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.module.*;
 import io.art.http.configuration.*;
 import io.art.http.module.*;
 import io.art.http.refresher.*;
@@ -27,31 +28,27 @@ import io.art.model.modeling.server.*;
 import io.art.server.module.*;
 import lombok.*;
 import reactor.netty.http.server.*;
-
-import java.util.*;
-
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.http.constants.HttpModuleConstants.HttpMethodType.*;
+import java.util.*;
 
 @Getter
 @UsedByGenerator
-public class HttpCustomizer {
-    private final Custom configuration;
+public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguration, HttpModuleConfiguration.Configurator, HttpModule> {
+    private HttpServerConfiguration serverConfiguration;
+    private boolean activateServer;
+    private boolean activateCommunicator;
 
-    public HttpCustomizer(HttpModule module) {
-        this.configuration = new Custom(module.getRefresher());
-    }
-
-    public HttpCustomizer server(HttpServerConfiguration serverConfiguration) {
-        configuration.serverConfiguration = serverConfiguration;
+    public HttpInitializer server(HttpServerConfiguration serverConfiguration) {
+        this.serverConfiguration = serverConfiguration;
         return this;
     }
 
-    public HttpCustomizer server(HttpServerModel httpServerModel) {
+    public HttpInitializer server(HttpServerModel httpServerModel) {
         HttpServer server = HttpServer.create()
                 .httpRequestDecoder(httpServerModel.getRequestDecoderConfigurator())
                 .wiretap(httpServerModel.isWiretap())
@@ -78,18 +75,18 @@ public class HttpCustomizer {
         return this;
     }
 
-    public HttpCustomizer services(ImmutableMap<String, HttpServiceConfiguration> services) {
-        configuration.serverConfiguration = HttpServerConfiguration.defaults().toBuilder().services(services).build();
+    public HttpInitializer services(ImmutableMap<String, HttpServiceConfiguration> services) {
+        serverConfiguration = HttpServerConfiguration.defaults().toBuilder().services(services).build();
         return this;
     }
 
-    public HttpCustomizer activateServer() {
-        configuration.activateServer = true;
+    public HttpInitializer activateServer() {
+        activateServer = true;
         return this;
     }
 
-    public HttpCustomizer activateCommunicator() {
-        configuration.activateCommunicator = true;
+    public HttpInitializer activateCommunicator() {
+        activateCommunicator = true;
         return this;
     }
 
@@ -135,13 +132,22 @@ public class HttpCustomizer {
                 .build();
     }
 
+    @Override
+    public HttpModuleConfiguration initialize(HttpModule module) {
+        Initial initial = new Initial(module.getRefresher());
+        initial.serverConfiguration = serverConfiguration;
+        initial.activateCommunicator = activateCommunicator;
+        initial.activateServer = activateServer;
+        return initial;
+    }
+
     @Getter
-    public static class Custom extends HttpModuleConfiguration {
+    public static class Initial extends HttpModuleConfiguration {
         private HttpServerConfiguration serverConfiguration;
         private boolean activateServer;
         private boolean activateCommunicator;
 
-        public Custom(HttpModuleRefresher refresher) {
+        public Initial(HttpModuleRefresher refresher) {
             super(refresher);
         }
     }

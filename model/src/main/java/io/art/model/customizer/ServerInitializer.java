@@ -19,31 +19,34 @@
 package io.art.model.customizer;
 
 import io.art.core.annotation.*;
+import io.art.core.module.*;
 import io.art.server.configuration.*;
 import io.art.server.module.*;
 import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import lombok.*;
 
-@Getter
 @UsedByGenerator
-public class ServerCustomizer {
-    private final Custom configuration;
+public class ServerInitializer implements ModuleInitializer<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModule> {
+    private ServiceSpecificationRegistry registry;
 
-    public ServerCustomizer(ServerModule module) {
-        this.configuration = new ServerCustomizer.Custom(module.getRefresher());
-    }
-
-    public ServerCustomizer registry(ServiceSpecificationRegistry registry) {
-        configuration.registry = registry;
+    public ServerInitializer registry(ServiceSpecificationRegistry registry) {
+        this.registry = registry;
         return this;
     }
 
+    @Override
+    public ServerModuleConfiguration initialize(ServerModule module) {
+        Initial initial = new Initial(module.getRefresher());
+        initial.registry = registry;
+        return initial;
+    }
+
     @Getter
-    private static class Custom extends ServerModuleConfiguration {
+    private static class Initial extends ServerModuleConfiguration {
         private ServiceSpecificationRegistry registry;
 
-        public Custom(ServerModuleRefresher refresher) {
+        public Initial(ServerModuleRefresher refresher) {
             super(refresher);
         }
     }

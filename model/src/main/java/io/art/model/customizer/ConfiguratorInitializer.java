@@ -21,30 +21,31 @@ package io.art.model.customizer;
 import io.art.configurator.configuration.*;
 import io.art.configurator.custom.*;
 import io.art.configurator.model.*;
+import io.art.configurator.module.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.module.*;
 import io.art.core.property.*;
-import io.art.core.source.*;
 import lombok.*;
-import static java.util.Objects.isNull;
+import static java.util.Objects.*;
 
 @UsedByGenerator
-public class ConfiguratorCustomizer {
+public class ConfiguratorInitializer implements ModuleInitializer<ConfiguratorModuleConfiguration, ConfiguratorModuleConfiguration.Configurator, ConfiguratorModule> {
     private CustomConfigurationRegistry registry = new CustomConfigurationRegistry();
 
-    public ConfiguratorCustomizer registry(CustomConfigurationRegistry registry) {
+    public ConfiguratorInitializer registry(CustomConfigurationRegistry registry) {
         this.registry = registry;
         return this;
     }
 
-    public ConfiguratorModuleConfiguration configure(ImmutableArray<ConfigurationSource> sources) {
+    public ConfiguratorModuleConfiguration initialize(ConfiguratorModule module) {
         if (isNull(registry)) registry = new CustomConfigurationRegistry();
-        return new Custom(registry.configure(sources));
+        return new Initial(registry.configure(module.orderedSources()));
     }
 
     @Getter
     @RequiredArgsConstructor
-    private static class Custom extends ConfiguratorModuleConfiguration {
+    private static class Initial extends ConfiguratorModuleConfiguration {
         private final ImmutableMap<CustomConfigurationModel, Property<?>> customConfigurations;
     }
 }

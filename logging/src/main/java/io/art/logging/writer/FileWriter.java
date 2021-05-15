@@ -21,16 +21,18 @@ package io.art.logging.writer;
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
 import io.art.logging.exception.*;
+import io.art.logging.manager.*;
 import io.art.logging.model.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.FileExtensions.*;
+import static io.art.core.extensions.SystemExtensions.*;
 import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.constants.LoggingModuleConstants.Errors.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
-import static io.art.logging.module.LoggingModule.*;
 import static java.lang.System.*;
 import static java.nio.file.StandardOpenOption.*;
 import static java.time.LocalDateTime.*;
@@ -45,11 +47,13 @@ import java.time.*;
 import java.util.*;
 
 public class FileWriter implements LoggerWriter {
+    private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
     private volatile OutputStream outputStream;
     private LocalDateTime currentTimeStamp;
 
-    public FileWriter(LoggerWriterConfiguration writerConfiguration) {
+    public FileWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
+        this.manager = manager;
         this.writerConfiguration = writerConfiguration;
 
         FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
@@ -102,9 +106,6 @@ public class FileWriter implements LoggerWriter {
     }
 
     private LocalDateTime parseFileTimeStamp(FileWriterConfiguration configuration, String name) {
-        if (isEmpty(name)) {
-            return null;
-        }
         int prefixIndex = name.indexOf(configuration.getPrefix());
         if (prefixIndex == -1) {
             int suffixIndex = name.indexOf(configuration.getSuffix());
@@ -127,9 +128,7 @@ public class FileWriter implements LoggerWriter {
             outputStream.write(message.getBytes(writerConfiguration.getCharset()));
             outputStream.flush();
         } catch (Throwable throwable) {
-            err.println(getStackTraceAsString(throwable));
-            closeFileStream(outputStream);
-            openFileStream(now());
+            printError(getStackTraceAsString(throwable));
         }
     }
 
@@ -137,7 +136,6 @@ public class FileWriter implements LoggerWriter {
         FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
         String timeStampString = fileConfiguration.getTimestampFormat().format(timeStamp);
         String fileName = ifEmpty(fileConfiguration.getPrefix(), EMPTY_STRING) + timeStampString + fileConfiguration.getSuffix();
-        out.println(fileConfiguration.getDirectory().resolve(fileName));
         outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
         currentTimeStamp = timeStamp;
     }
@@ -146,17 +144,16 @@ public class FileWriter implements LoggerWriter {
         OutputStream stream = null;
         try {
             stream = fileOutputStream(path, CREATE, APPEND, WRITE);
-            loggingModule().state().register(stream);
+            manager.register(stream);
             return stream;
         } catch (Throwable throwable) {
-            if (nonNull(stream)) closeFileStream(stream);
-            err.println(getStackTraceAsString(throwable));
-            throw throwable;
+            apply(stream, this::closeFileStream);
+            throw new LoggingModuleException(throwable);
         }
     }
 
     private void closeFileStream(OutputStream stream) {
         ignoreException(stream::close);
-        loggingModule().state().remove(stream);
+        manager.remove(stream);
     }
 }

@@ -22,4 +22,8 @@ public class LoggingModuleException extends RuntimeException {
     public LoggingModuleException(String message) {
         super(message);
     }
+
+    public LoggingModuleException(Throwable throwable) {
+        super(throwable);
+    }
 }

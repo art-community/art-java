@@ -18,10 +18,10 @@
 
 package io.art.logging.configuration;
 
-import io.art.core.factory.*;
 import io.art.core.source.*;
 import io.art.logging.constants.*;
 import lombok.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
@@ -38,7 +38,7 @@ public class DefaultLoggerConfiguration {
     public LoggerConfiguration toLoggerConfiguration() {
         return LoggerConfiguration.builder()
                 .level(level)
-                .writers(ArrayFactory.immutableArrayOf(writer))
+                .writers(immutableArrayOf(writer))
                 .enabled(enabled)
                 .build();
     }

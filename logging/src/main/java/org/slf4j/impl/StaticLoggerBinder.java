@@ -19,37 +19,35 @@
 package org.slf4j.impl;
 
 import io.art.core.exception.*;
+import lombok.*;
 import org.slf4j.*;
 import org.slf4j.spi.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.logging.module.LoggingModule.*;
 
+@SuppressWarnings(UNUSED)
 public final class StaticLoggerBinder implements LoggerFactoryBinder {
-    private static final ILoggerFactory iLoggerFactory = name -> new Slf4jLogger(logger(name));
-    private static final Class<? extends ILoggerFactory> loggerFactoryClass = iLoggerFactory.getClass();
+    private static final ILoggerFactory FACTORY = name -> new Slf4jLogger(logger(name));
+    private static final Class<? extends ILoggerFactory> FACTORY_CLASS = FACTORY.getClass();
+    private static final StaticLoggerBinder BINDER = new StaticLoggerBinder();
 
-    private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
-
+    @Getter
     private final ILoggerFactory loggerFactory;
 
     private StaticLoggerBinder() {
         try {
-            loggerFactory = loggerFactoryClass.getConstructor().newInstance();
+            loggerFactory = FACTORY_CLASS.getConstructor().newInstance();
         } catch (Throwable throwable) {
             throw new InternalRuntimeException(throwable);
         }
     }
 
     public static StaticLoggerBinder getSingleton() {
-        return SINGLETON;
-    }
-
-    @Override
-    public ILoggerFactory getLoggerFactory() {
-        return loggerFactory;
+        return BINDER;
     }
 
     @Override
     public String getLoggerFactoryClassStr() {
-        return loggerFactoryClass.getName();
+        return FACTORY_CLASS.getName();
     }
 }

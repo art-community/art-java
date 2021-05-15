@@ -32,10 +32,6 @@ public class YamlModule implements StatelessModule<YamlModuleConfiguration, Yaml
     private final YamlModuleConfiguration configuration = new YamlModuleConfiguration();
     private final YamlModuleConfiguration.Configurator configurator = new YamlModuleConfiguration.Configurator(configuration);
 
-    static {
-        registerDefault(YamlModule.class.getSimpleName(), YamlModule::new);
-    }
-
     public static StatelessModuleProxy<YamlModuleConfiguration> yamlModule() {
         return getYamlModule();
     }

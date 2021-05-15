@@ -16,19 +16,18 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.launcher;
 
-import lombok.*;
+import io.art.core.collection.*;
+import static io.art.core.factory.SetFactory.*;
 
-@RequiredArgsConstructor
-public class StatefulModuleProxy<Configuration extends ModuleConfiguration, State extends ModuleState> {
-    private final StatefulModule<Configuration, ?, State> module;
-
-    public Configuration configuration() {
-        return module.getConfiguration();
+public interface LauncherConstants {
+    interface Errors {
+        String MODULES_ALREADY_LAUNCHED = "Modules already launched";
     }
 
-    public State state() {
-        return module.getState();
-    }
+    ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
+            "Initialization completed",
+            "Have a nice work with ART!"
+    );
 }

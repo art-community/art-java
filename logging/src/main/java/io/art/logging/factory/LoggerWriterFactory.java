@@ -20,19 +20,20 @@ package io.art.logging.factory;
 
 import io.art.core.exception.*;
 import io.art.logging.configuration.*;
+import io.art.logging.manager.*;
 import io.art.logging.writer.*;
 import lombok.experimental.*;
 
 @UtilityClass
 public class LoggerWriterFactory {
-    public static LoggerWriter loggerWriter(LoggerWriterConfiguration writerConfiguration) {
+    public static LoggerWriter loggerWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
         switch (writerConfiguration.getType()) {
             case CONSOLE:
-                return new ConsoleWriter(writerConfiguration);
+                return new ConsoleWriter(manager, writerConfiguration);
             case TCP:
-                return new TcpWriter(writerConfiguration);
+                return new TcpWriter(manager, writerConfiguration);
             case FILE:
-                return new FileWriter(writerConfiguration);
+                return new FileWriter(manager, writerConfiguration);
         }
         throw new ImpossibleSituationException();
     }

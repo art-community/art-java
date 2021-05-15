@@ -16,15 +16,16 @@
  * limitations under the License.
  */
 
-package io.art.launcher;
+package io.art.core.module;
 
-import io.art.core.collection.*;
-import static io.art.core.factory.SetFactory.*;
+import lombok.*;
 
-public interface ModuleLauncherConstants {
-    String CONFIGURATION_MESSAGE = "Modules configured. Current configuration:";
-    ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
-            "Initialization completed",
-            "Have a nice work with ART!"
-    );
+@Builder
+@Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+public class ModuleActivator {
+    @EqualsAndHashCode.Include
+    private final String id;
+    private final ModuleFactory<?> factory;
+    private final ModuleInitializer<?, ?, ?> initializer;
 }

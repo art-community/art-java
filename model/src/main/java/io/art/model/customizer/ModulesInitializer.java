@@ -28,13 +28,13 @@ import java.util.function.*;
 @Setter
 @UsedByGenerator
 @Accessors(fluent = true)
-public class ModuleCustomizer {
-    private UnaryOperator<ConfiguratorCustomizer> configurator = identity();
-    private UnaryOperator<LoggingCustomizer> logging = identity();
-    private UnaryOperator<ServerCustomizer> server = identity();
-    private UnaryOperator<CommunicatorCustomizer> communicator = identity();
-    private UnaryOperator<ValueCustomizer> value = identity();
-    private UnaryOperator<RsocketCustomizer> rsocket = identity();
-    private UnaryOperator<HttpCustomizer> http = identity();
-    private UnaryOperator<StorageCustomizer> storage = identity();
+public class ModulesInitializer {
+    private UnaryOperator<ConfiguratorInitializer> configurator = identity();
+    private UnaryOperator<LoggingInitializer> logging = identity();
+    private UnaryOperator<ServerInitializer> server = identity();
+    private UnaryOperator<CommunicatorInitializer> communicator = identity();
+    private UnaryOperator<ValueInitializer> value = identity();
+    private UnaryOperator<RsocketInitializer> rsocket = identity();
+    private UnaryOperator<HttpInitializer> http = identity();
+    private UnaryOperator<StorageInitializer> storage = identity();
 }

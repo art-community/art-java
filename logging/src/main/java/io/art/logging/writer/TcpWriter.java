@@ -20,28 +20,29 @@ package io.art.logging.writer;
 
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
+import io.art.logging.exception.*;
+import io.art.logging.manager.*;
 import io.art.logging.model.*;
 import static com.google.common.base.Throwables.*;
-import static io.art.core.colorizer.AnsiColorizer.*;
-import static io.art.core.constants.AnsiColor.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.SystemExtensions.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.logging.colorizer.LogColorizer.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
-import static io.art.logging.module.LoggingModule.*;
 import static java.net.InetSocketAddress.*;
 import static java.net.StandardSocketOptions.*;
 import static java.nio.channels.SocketChannel.*;
-import static java.util.Objects.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.text.*;
 
 public class TcpWriter implements LoggerWriter {
+    private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
     private SocketChannel channel;
 
-    public TcpWriter(LoggerWriterConfiguration writerConfiguration) {
+    public TcpWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
+        this.manager = manager;
         this.writerConfiguration = writerConfiguration;
         openChannel();
     }
@@ -51,9 +52,7 @@ public class TcpWriter implements LoggerWriter {
         try {
             channel.write(ByteBuffer.wrap(format(message).getBytes(writerConfiguration.getCharset())));
         } catch (Throwable throwable) {
-            System.err.println(getStackTraceAsString(throwable));
-            closeChannel(channel);
-            openChannel();
+            printError(getStackTraceAsString(throwable));
         }
     }
 
@@ -61,9 +60,9 @@ public class TcpWriter implements LoggerWriter {
         String dateTime = writerConfiguration.getDateTimeFormatter().format(message.getDateTime());
         LoggingLevel level = message.getLevel();
         return MessageFormat.format(LOGGING_FORMAT,
-                message(dateTime, BLUE),
-                byLevel(level, level.name()),
-                OPENING_SQUARE_BRACES + message(message.getThread().getName(), PURPLE_BOLD) + CLOSING_SQUARE_BRACES,
+                dateTime,
+                level.name(),
+                OPENING_SQUARE_BRACES + message.getThread().getName() + CLOSING_SQUARE_BRACES,
                 message.getLogger(),
                 message.getMessage()
         );
@@ -71,7 +70,7 @@ public class TcpWriter implements LoggerWriter {
 
     private void closeChannel(SocketChannel channel) {
         ignoreException(channel::close);
-        loggingModule().state().remove(channel);
+        manager.remove(channel);
     }
 
     private void openChannel() {
@@ -79,11 +78,10 @@ public class TcpWriter implements LoggerWriter {
             channel = open(createUnresolved(writerConfiguration.getTcp().getHost(), writerConfiguration.getTcp().getPort()));
             channel.setOption(TCP_NODELAY, true);
             channel.setOption(SO_KEEPALIVE, true);
-            loggingModule().state().register(channel);
-        } catch (Throwable ioException) {
-            System.err.println(getStackTraceAsString(ioException));
-        } finally {
-            if (nonNull(channel)) closeChannel(channel);
+            manager.register(channel);
+        } catch (Throwable throwable) {
+            apply(channel, this::closeChannel);
+            throw new LoggingModuleException(throwable);
         }
     }
 }

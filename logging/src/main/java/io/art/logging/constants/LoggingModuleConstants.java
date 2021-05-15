@@ -18,9 +18,11 @@
 
 package io.art.logging.constants;
 
+import io.art.core.property.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.lazy;
 import static java.time.Duration.*;
 import java.time.*;
 import java.time.format.*;
@@ -46,7 +48,6 @@ public interface LoggingModuleConstants {
     }
 
     interface Defaults {
-        String DEFAULT_LOG_FILE_NAME_PREFIX = context().configuration().getMainModuleId() + DASH;
         String DEFAULT_LOG_FILE_NAME_SUFFIX = ".log";
         DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
         DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;

@@ -19,34 +19,40 @@
 package io.art.model.customizer;
 
 import io.art.core.annotation.*;
+import io.art.core.module.*;
 import io.art.logging.configuration.*;
+import io.art.logging.module.*;
 import lombok.*;
 
 @UsedByGenerator
-public class LoggingCustomizer {
-    @Getter
-    private final Custom configuration = new Custom();
+public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModule> {
+    private final Initial configuration = new Initial();
 
-    public LoggingCustomizer colored() {
+    public LoggingInitializer colored() {
         return colored(true);
     }
 
-    public LoggingCustomizer colored(boolean colored) {
+    public LoggingInitializer colored(boolean colored) {
         configuration.colored = colored;
         return this;
     }
 
-    public LoggingCustomizer asynchronous() {
+    public LoggingInitializer asynchronous() {
         return asynchronous(true);
     }
 
-    public LoggingCustomizer asynchronous(boolean asynchronous) {
+    public LoggingInitializer asynchronous(boolean asynchronous) {
         configuration.asynchronous = asynchronous;
         return this;
     }
 
+    @Override
+    public LoggingModuleConfiguration initialize(LoggingModule module) {
+        return configuration;
+    }
+
     @Getter
-    private static class Custom extends LoggingModuleConfiguration {
+    private static class Initial extends LoggingModuleConfiguration {
         private Boolean colored;
         private Boolean asynchronous;
     }

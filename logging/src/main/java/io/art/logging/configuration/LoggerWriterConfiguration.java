@@ -35,8 +35,7 @@ import java.time.format.*;
 @Getter
 @Builder(toBuilder = true)
 public class LoggerWriterConfiguration {
-    @Builder.Default
-    private final Charset charset = context().configuration().getCharset();
+    private final Charset charset;
 
     private final LoggingWriterType type;
     private final ConsoleWriterConfiguration console;
@@ -57,6 +56,7 @@ public class LoggerWriterConfiguration {
         builder.file(FileWriterConfiguration.from(source));
         builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
         builder.dateTimeFormatter(ofPattern(source.getString(DATE_TIME_FORMAT_KEY)));
+        builder.charset(context().configuration().getCharset());
         return builder.build();
     }
 }

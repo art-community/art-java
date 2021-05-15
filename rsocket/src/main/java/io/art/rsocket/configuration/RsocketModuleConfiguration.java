@@ -66,7 +66,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         @Override
-        public Configurator configure(RsocketModuleConfiguration configuration) {
+        public Configurator initialize(RsocketModuleConfiguration configuration) {
             this.configuration.activateCommunicator = configuration.isActivateCommunicator();
             this.configuration.activateServer = configuration.isActivateServer();
             return this;

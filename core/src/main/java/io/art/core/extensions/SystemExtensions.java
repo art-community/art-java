@@ -16,19 +16,17 @@
  * limitations under the License.
  */
 
-package io.art.core.module;
+package io.art.core.extensions;
 
-import lombok.*;
+import lombok.experimental.*;
 
-@RequiredArgsConstructor
-public class StatefulModuleProxy<Configuration extends ModuleConfiguration, State extends ModuleState> {
-    private final StatefulModule<Configuration, ?, State> module;
-
-    public Configuration configuration() {
-        return module.getConfiguration();
+@UtilityClass
+public class SystemExtensions {
+    public static void print(Object value) {
+        System.out.println(value);
     }
 
-    public State state() {
-        return module.getState();
+    public static void printError(Object value) {
+        System.err.println(value);
     }
 }

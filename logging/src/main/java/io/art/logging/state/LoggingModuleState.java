@@ -19,47 +19,35 @@
 package io.art.logging.state;
 
 import io.art.core.module.*;
+import io.art.logging.configuration.*;
 import io.art.logging.logger.*;
+import io.art.logging.manager.*;
+import lombok.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
-import java.io.*;
+import static io.art.logging.factory.LoggerWriterFactory.*;
 import java.util.*;
-import java.util.function.*;
 
+@RequiredArgsConstructor
 public class LoggingModuleState implements ModuleState {
-    private final List<LoggerProcessor> processors = copyOnWriteList();
-    private final Map<String, Logger> cache = concurrentMap();
-    private final List<Closeable> resources = linkedList();
+    private final LoggingManager manager;
+    private final Map<String, Logger> loggers = concurrentMap();
 
-    public Logger cached(String name, Supplier<Logger> logger) {
-        return putIfAbsent(cache, name, logger);
+    public Logger register(String name, LoggerConfiguration configuration) {
+        return putIfAbsent(loggers, name, () -> create(name, configuration));
     }
 
-    public LoggerProcessor register(LoggerImplementation implementation) {
-        LoggerProcessor processor = new LoggerProcessor(implementation);
-        processors.add(processor);
-        return processor;
-    }
-
-    public void register(Closeable resource) {
-        resources.add(resource);
-    }
-
-    public void remove(Closeable resource) {
-        resources.remove(resource);
-    }
-
-    public void forEach(Consumer<LoggerProcessor> consumer) {
-        processors.forEach(consumer);
-    }
-
-    public boolean all(Predicate<LoggerProcessor> predicate) {
-        return processors.stream().allMatch(predicate);
-    }
-
-    public void close() {
-        resources.forEach(resource -> ignoreException(resource::close));
+    private Logger create(String name, LoggerConfiguration configuration) {
+        LoggerConstructionConfiguration implementationConfiguration = LoggerConstructionConfiguration.builder()
+                .name(name)
+                .loggerConfiguration(configuration)
+                .writers(configuration
+                        .getWriters()
+                        .stream()
+                        .map(writerConfiguration -> loggerWriter(manager, writerConfiguration))
+                        .collect(immutableArrayCollector()))
+                .build();
+        return new LoggerImplementation(implementationConfiguration, manager.register(implementationConfiguration).getProducer());
     }
 }

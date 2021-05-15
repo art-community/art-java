@@ -18,33 +18,29 @@
 
 package io.art.model.customizer;
 
-import io.art.communicator.configuration.*;
-import io.art.communicator.module.*;
-import io.art.communicator.refresher.*;
-import io.art.communicator.registry.*;
 import io.art.core.annotation.*;
+import io.art.core.module.*;
+import io.art.value.configuration.*;
+import io.art.value.module.*;
+import io.art.value.registry.*;
 import lombok.*;
 
-@Getter
 @UsedByGenerator
-public class CommunicatorCustomizer {
-    private final Custom configuration;
+public class ValueInitializer implements ModuleInitializer<ValueModuleConfiguration, ValueModuleConfiguration.Configurator, ValueModule> {
+    private final Initial configuration = new Initial();
 
-    public CommunicatorCustomizer(CommunicatorModule module) {
-        this.configuration = new CommunicatorCustomizer.Custom(module.getRefresher());
-    }
-
-    public CommunicatorCustomizer registry(CommunicatorProxyRegistry registry) {
+    public ValueInitializer registry(ValueMapperRegistry registry) {
         configuration.registry = registry;
         return this;
     }
 
-    @Getter
-    private static class Custom extends CommunicatorModuleConfiguration {
-        private CommunicatorProxyRegistry registry;
+    @Override
+    public ValueModuleConfiguration initialize(ValueModule module) {
+        return configuration;
+    }
 
-        public Custom(CommunicatorModuleRefresher refresher) {
-            super(refresher);
-        }
+    @Getter
+    private static class Initial extends ValueModuleConfiguration {
+        private ValueMapperRegistry registry = new ValueMapperRegistry();
     }
 }
