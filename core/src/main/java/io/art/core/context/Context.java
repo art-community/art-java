@@ -52,6 +52,18 @@ public class Context {
         this.service = new Context.Service();
     }
 
+    public static void initialize(ImmutableSet<Module<?, ?>> modules) {
+        initialize(ContextConfiguration.builder().build(), modules, System.out::println);
+    }
+
+    public static void initialize(ContextConfiguration configuration, ImmutableSet<Module<?, ?>> modules) {
+        initialize(configuration, modules, System.out::println);
+    }
+
+    public static void initialize(ImmutableSet<Module<?, ?>> modules, Consumer<String> printer) {
+        initialize(ContextConfiguration.builder().build(), modules, printer);
+    }
+
     public static void initialize(ContextConfiguration configuration, ImmutableSet<Module<?, ?>> modules, Consumer<String> printer) {
         if (nonNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);

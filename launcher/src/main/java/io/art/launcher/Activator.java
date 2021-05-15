@@ -45,7 +45,7 @@ import java.util.function.*;
 
 @Accessors(fluent = true)
 public class Activator {
-    private final static Activator singleton = new Activator();
+    private final static Activator activator = new Activator();
 
     private final Map<String, ModuleActivator> modules = map();
 
@@ -119,7 +119,7 @@ public class Activator {
     }
 
 
-    public static Activator art() {
-        return singleton.configurator();
+    public static Activator activator() {
+        return activator.configurator();
     }
 }

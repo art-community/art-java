@@ -65,14 +65,10 @@ public class LoggingManager {
     }
 
     private void processConsuming() {
-        for (; ; ) {
-            if (interrupted()) return;
-            if (!activated.get()) {
-                while (!processors.stream().allMatch(processor -> processor.getQueue().isEmpty())) {
-                    processors.forEach(processor -> processor.getConsumer().consume());
-                }
-                return;
-            }
+        while (!interrupted() && activated.get()) {
+            processors.forEach(processor -> processor.getConsumer().consume());
+        }
+        while (!processors.stream().allMatch(processor -> processor.getQueue().isEmpty())) {
             processors.forEach(processor -> processor.getConsumer().consume());
         }
     }

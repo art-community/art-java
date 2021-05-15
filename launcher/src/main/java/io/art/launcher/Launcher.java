@@ -28,20 +28,16 @@ import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
-import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.launcher.Activator.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.launcher.LauncherConstants.*;
-import static io.art.launcher.ModulesInitializer.*;
 import static io.art.logging.module.LoggingModule.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 
-@UtilityClass
 @UsedByGenerator
 public class Launcher {
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
@@ -76,12 +72,5 @@ public class Launcher {
             return;
         }
         throw new InternalRuntimeException(MODULES_ALREADY_LAUNCHED);
-    }
-
-    public static void main(String[] args) {
-        art()
-                .kit(modules()
-                        .logging(logging -> logging.colored(true)))
-                .launch();
     }
 }
