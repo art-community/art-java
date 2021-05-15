@@ -45,13 +45,6 @@ include("rocks-db")
 include("meta")
 //include("metrics")
 //include("metrics-http")
-//include("kafka-client")
-//include("kafka-consumer")
-//include("kafka-producer")
-//include("soap")
-//include("soap-client")
-//include("soap-server")
-//include("sql")
 
 pluginManagement {
     repositories {
