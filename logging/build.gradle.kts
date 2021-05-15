@@ -18,10 +18,8 @@
 
 dependencies {
     val sl4jVersion: String by project
-    val jacksonVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":scheduler"))
 
     api("org.slf4j", "slf4j-api", sl4jVersion)
 }

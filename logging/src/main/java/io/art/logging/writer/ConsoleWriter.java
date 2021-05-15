@@ -26,6 +26,7 @@ import lombok.*;
 import static io.art.core.colorizer.AnsiColorizer.*;
 import static io.art.core.constants.AnsiColor.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.SystemExtensions.*;
 import static io.art.logging.colorizer.LogColorizer.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
@@ -40,11 +41,11 @@ public class ConsoleWriter implements LoggerWriter {
     @Override
     public void write(LoggingMessage message) {
         if (message.getLevel() == ERROR) {
-            System.err.println(format(message));
+            printError(format(message));
             return;
         }
 
-        System.out.println(format(message));
+        printMessage(format(message));
     }
 
     private String format(LoggingMessage message) {

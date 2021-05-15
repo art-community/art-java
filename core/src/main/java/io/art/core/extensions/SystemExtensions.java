@@ -22,7 +22,7 @@ import lombok.experimental.*;
 
 @UtilityClass
 public class SystemExtensions {
-    public static void print(Object value) {
+    public static void printMessage(Object value) {
         System.out.println(value);
     }
 
