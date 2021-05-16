@@ -28,6 +28,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.extensions.ExecutorExtensions.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.logging.factory.LoggerWriterFactory.*;
 import static java.lang.Thread.*;
 import java.io.*;
@@ -40,7 +41,7 @@ public class LoggingManager {
     private final LoggingModuleConfiguration configuration;
     private final CompositeLoggerWriter fallbackWriter;
     private final LoggingQueue queue = new LoggingQueue();
-    private final List<LoggerProcessor> processors = copyOnWriteList();
+    private final Map<String, LoggerProcessor> processors = concurrentMap();
     private final List<Closeable> resources = linkedList();
 
     public LoggingManager(LoggingModuleConfiguration configuration) {
@@ -73,7 +74,7 @@ public class LoggingManager {
 
     public LoggerProcessor register(LoggerConstructionConfiguration configuration) {
         LoggerProcessor processor = new LoggerProcessor(queue, configuration.getWriters(), fallbackWriter);
-        processors.add(processor);
+        processors.put(configuration.getName(), processor);
         return processor;
     }
 
@@ -87,11 +88,10 @@ public class LoggingManager {
 
     private void processConsuming() {
         while (!interrupted() && activated.get()) {
-            processors.forEach(processor -> apply(queue.poll(), processor.getConsumer()::consume));
-
+            apply(queue.poll(), message -> apply(processors.get(message.getLogger()), processor -> processor.getConsumer().consume(message)));
         }
-        while (!processors.stream().allMatch(processor -> queue.isEmpty())) {
-            processors.forEach(processor -> apply(queue.poll(), processor.getConsumer()::consume));
+        while (!queue.isEmpty()) {
+            apply(queue.poll(), message -> apply(processors.get(message.getLogger()), processor -> processor.getConsumer().consume(message)));
         }
     }
 }

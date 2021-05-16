@@ -31,7 +31,6 @@ import io.art.logging.logger.*;
 import io.art.logging.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
