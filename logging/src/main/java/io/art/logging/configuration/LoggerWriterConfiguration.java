@@ -50,6 +50,9 @@ public class LoggerWriterConfiguration {
     private final TcpWriterConfiguration tcp = TcpWriterConfiguration.defaults();
 
     @Builder.Default
+    private final UdpWriterConfiguration udp = UdpWriterConfiguration.defaults();
+
+    @Builder.Default
     private final DateTimeFormatter dateTimeFormatter = DEFAULT_LOG_DATE_TIME_FORMAT;
 
     public static LoggerWriterConfiguration from(ConfigurationSource source, LoggerWriterConfiguration fallback) {
@@ -58,6 +61,7 @@ public class LoggerWriterConfiguration {
         builder.console(ConsoleWriterConfiguration.from(source, fallback.console));
         builder.file(FileWriterConfiguration.from(source, fallback.file));
         builder.tcp(TcpWriterConfiguration.from(source, fallback.tcp));
+        builder.udp(UdpWriterConfiguration.from(source, fallback.udp));
         builder.dateTimeFormatter(let(source.getString(DATE_TIME_FORMAT_KEY), DateTimeFormatter::ofPattern, fallback.dateTimeFormatter));
         builder.charset(ignoreException(() -> forName(source.getString(CHARSET_KEY)), ignored -> fallback.charset));
         return builder.build();

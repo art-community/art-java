@@ -31,18 +31,16 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
 import static java.net.InetSocketAddress.*;
 import static java.net.StandardSocketOptions.*;
-import static java.nio.channels.SocketChannel.*;
-import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.text.*;
 
-public class TcpWriter implements LoggerWriter {
+public class UdpWriter implements LoggerWriter {
     private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
-    private SocketChannel channel;
+    private DatagramChannel channel;
 
-    public TcpWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
+    public UdpWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
         this.manager = manager;
         this.writerConfiguration = writerConfiguration;
         openChannel();
@@ -71,15 +69,15 @@ public class TcpWriter implements LoggerWriter {
         );
     }
 
-    private void closeChannel(SocketChannel channel) {
+    private void closeChannel(DatagramChannel channel) {
         ignoreException(channel::close);
         manager.remove(channel);
     }
 
     private void openChannel() {
         try {
-            channel = open(createUnresolved(writerConfiguration.getTcp().getHost(), writerConfiguration.getTcp().getPort()));
-            channel.setOption(TCP_NODELAY, true);
+            channel = DatagramChannel.open();
+            channel.connect(createUnresolved(writerConfiguration.getTcp().getHost(), writerConfiguration.getTcp().getPort()));
             channel.setOption(SO_KEEPALIVE, true);
             manager.register(channel);
         } catch (Throwable throwable) {

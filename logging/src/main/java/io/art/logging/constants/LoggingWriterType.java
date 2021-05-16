@@ -23,6 +23,7 @@ import static java.util.Arrays.*;
 public enum LoggingWriterType {
     CONSOLE,
     TCP,
+    UDP,
     FILE;
 
     public static LoggingWriterType parse(String type, LoggingWriterType defaultType) {
