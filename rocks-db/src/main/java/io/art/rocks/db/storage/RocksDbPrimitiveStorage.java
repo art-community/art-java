@@ -25,7 +25,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.logging.LoggingModule.*;
+import static io.art.logging.module.LoggingModule.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.ExceptionMessages.*;
 import static io.art.rocks.db.constants.RocksDbModuleConstants.LoggingMessages.*;
 import static io.art.rocks.db.module.RocksDbModule.*;

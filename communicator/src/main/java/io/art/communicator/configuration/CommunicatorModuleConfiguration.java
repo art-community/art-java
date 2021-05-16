@@ -153,7 +153,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
         }
 
         @Override
-        public Configurator configure(CommunicatorModuleConfiguration configuration) {
+        public Configurator initialize(CommunicatorModuleConfiguration configuration) {
             ifNotEmpty(configuration.getConfigurations(), configurations -> this.configuration.configurations = configurations);
             apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;

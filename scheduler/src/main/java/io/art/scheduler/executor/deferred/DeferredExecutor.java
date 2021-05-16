@@ -30,8 +30,7 @@ public interface DeferredExecutor {
 
     void clear();
 
-    static DeferredExecutorBuilder builder() {
-        return new DeferredExecutorBuilder();
+    static DeferredExecutorImplementation.DeferredExecutorImplementationBuilder deferredExecutor() {
+        return DeferredExecutorImplementation.builder();
     }
-
 }

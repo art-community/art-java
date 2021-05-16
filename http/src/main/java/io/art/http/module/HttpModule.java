@@ -24,12 +24,12 @@ import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.http.manager.*;
 import io.art.http.state.*;
+import io.art.logging.logger.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import reactor.netty.http.server.*;
 
 import static io.art.core.context.Context.*;
-import static io.art.logging.LoggingModule.*;
+import static io.art.logging.module.LoggingModule.*;
 import static io.art.http.configuration.HttpModuleConfiguration.*;
 import static lombok.AccessLevel.*;
 
@@ -45,10 +45,6 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     private final HttpModuleConfiguration configuration = new HttpModuleConfiguration(refresher);
     private final HttpManager manager = new HttpManager(refresher, configuration);
     private final Configurator configurator = new Configurator(configuration);
-
-    static {
-        registerDefault(HttpModule.class.getSimpleName(), HttpModule::new);
-    }
 
     public static StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState> httpModule() {
         return getHttpModule();

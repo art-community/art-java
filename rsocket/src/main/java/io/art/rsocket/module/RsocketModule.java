@@ -20,14 +20,14 @@ package io.art.rsocket.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.refresher.*;
 import io.art.rsocket.manager.*;
+import io.art.rsocket.refresher.*;
 import io.art.rsocket.state.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import static io.art.core.context.Context.*;
-import static io.art.logging.LoggingModule.*;
+import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static lombok.AccessLevel.*;
 
@@ -43,10 +43,6 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final RsocketModuleConfiguration configuration = new RsocketModuleConfiguration(refresher);
     private final RsocketManager manager = new RsocketManager(refresher, configuration);
     private final Configurator configurator = new Configurator(configuration);
-
-    static {
-        registerDefault(RsocketModule.class.getSimpleName(), RsocketModule::new);
-    }
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
         return getRsocketModule();
@@ -64,7 +60,11 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void onUnload(Context.Service contextService) {
-        manager.disposeCommunicators();
-        manager.disposeServer();
+        if (configuration.isActivateServer()) {
+            manager.disposeServer();
+        }
+        if (configuration.isActivateCommunicator()) {
+            manager.disposeCommunicators();
+        }
     }
 }

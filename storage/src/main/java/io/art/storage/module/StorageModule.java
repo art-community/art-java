@@ -2,7 +2,7 @@ package io.art.storage.module;
 
 import io.art.core.module.*;
 import io.art.storage.configuration.*;
-import io.art.storage.module.state.*;
+import io.art.storage.state.*;
 import io.art.storage.space.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -19,10 +19,6 @@ public class StorageModule implements StatefulModule<StorageModuleConfiguration,
     private final StorageModuleConfiguration configuration = new StorageModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     private final StorageModuleState state = new StorageModuleState();
-
-    static {
-        registerDefault(StorageModule.class.getSimpleName(), StorageModule::new);
-    }
 
     public static StatefulModuleProxy<StorageModuleConfiguration, StorageModuleState> storageModule() {
         return getStorageModule();

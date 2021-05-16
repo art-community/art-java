@@ -22,19 +22,17 @@ import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.http.router.*;
+import io.art.logging.logger.*;
 import io.art.server.*;
 import lombok.*;
-import org.apache.logging.log4j.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
-import reactor.netty.http.server.*;
-import reactor.netty.http.websocket.*;
 
 import static io.art.core.property.Property.*;
 import static io.art.http.constants.HttpModuleConstants.LoggingMessages.*;
 import static io.art.http.manager.HttpManager.*;
-import static io.art.logging.LoggingModule.*;
+import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
 @RequiredArgsConstructor

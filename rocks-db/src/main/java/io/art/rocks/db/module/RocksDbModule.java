@@ -45,10 +45,6 @@ public class RocksDbModule implements StatefulModule<RocksDbModuleConfiguration,
     private final RocksDbModuleConfiguration.Configurator configurator = new RocksDbModuleConfiguration.Configurator(configuration);
     private RocksDbModuleState state;
 
-    static {
-        registerDefault(RocksDbModule.class.getSimpleName(), RocksDbModule::new);
-    }
-
     public static StatefulModuleProxy<RocksDbModuleConfiguration, RocksDbModuleState> rocksDbModule() {
         return getRocksDbModule();
     }

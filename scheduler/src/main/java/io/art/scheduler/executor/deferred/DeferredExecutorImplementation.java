@@ -18,19 +18,35 @@
 
 package io.art.scheduler.executor.deferred;
 
+import lombok.*;
+import static io.art.core.constants.ThreadConstants.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
 import java.time.*;
 import java.util.concurrent.*;
 
+@Builder
 public class DeferredExecutorImplementation implements DeferredExecutor {
-    private final DeferredEventObserver observer;
-
-    DeferredExecutorImplementation(DeferredExecutorConfiguration configuration) {
-        observer = new DeferredEventObserver(configuration);
-    }
+    @Getter
+    @Builder.Default
+    private final ExceptionHandler exceptionHandler = new DeferredExecutorExceptionHandler();
+    @Getter
+    @Builder.Default
+    private final int queueSize = DEFAULT_QUEUE_SIZE;
+    @Getter
+    @Builder.Default
+    private final int poolSize = DEFAULT_THREAD_POOL_SIZE;
+    @Getter
+    @Builder.Default
+    private final Duration poolTerminationTimeout = DEFAULT_EXECUTOR_TERMINATION_TIMEOUT;
+    @Getter
+    @Builder.Default
+    private final boolean awaitOnShutdown = true;
+    @Getter(lazy = true)
+    private final DeferredEventObserver observer = new DeferredEventObserver(this);
 
     @Override
     public <EventResultType> ForkJoinTask<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
-        return observer.addEvent(eventTask, triggerTime);
+        return getObserver().addEvent(eventTask, triggerTime);
     }
 
     @Override
@@ -43,11 +59,11 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public void shutdown() {
-        observer.shutdown();
+        getObserver().shutdown();
     }
 
     @Override
     public void clear() {
-        observer.clear();
+        getObserver().clear();
     }
 }

@@ -23,10 +23,6 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     private final Configurator configurator = new Configurator(configuration);
     private final TarantoolModuleState state = new TarantoolModuleState(refresher.consumer());
 
-    static {
-        registerDefault(TarantoolModule.class.getSimpleName(), TarantoolModule::new);
-    }
-
     public static StatefulModuleProxy<TarantoolModuleConfiguration, TarantoolModuleState> tarantoolModule() {
         return getTarantoolModule();
     }

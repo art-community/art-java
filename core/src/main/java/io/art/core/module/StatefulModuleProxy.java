@@ -18,18 +18,17 @@
 
 package io.art.core.module;
 
-import io.art.core.property.*;
 import lombok.*;
 
 @RequiredArgsConstructor
 public class StatefulModuleProxy<Configuration extends ModuleConfiguration, State extends ModuleState> {
-    private final DisposableProperty<StatefulModule<Configuration, ?, State>> module;
+    private final StatefulModule<Configuration, ?, State> module;
 
     public Configuration configuration() {
-        return module.value().getConfiguration();
+        return module.getConfiguration();
     }
 
     public State state() {
-        return module.value().getState();
+        return module.getState();
     }
 }

@@ -41,10 +41,6 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule = context().getStatelessModule(SchedulerModule.class.getSimpleName());
 
-    static {
-        registerDefault(SchedulerModule.class.getSimpleName(), SchedulerModule::new);
-    }
-
     public static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule() {
         return getSchedulerModule();
     }
