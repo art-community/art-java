@@ -55,10 +55,10 @@ class DeferredEventObserver {
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents = new DelayQueue<>();
 
-    private final Map<Long, PriorityQueue<DeferredEvent<?>>> pendingEvents = concurrentMap();
+    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents = concurrentMap();
     private final PriorityBlockingQueue<Long> pendingIds = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
 
-    private final PriorityQueue<Long> takenIds = new PriorityQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
+    private final PriorityBlockingQueue<Long> takenIds = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
 
     private final ReentrantLock takenLock = new ReentrantLock();
     private final ReentrantLock pendingLock = new ReentrantLock();
@@ -140,9 +140,9 @@ class DeferredEventObserver {
 
                 pendingLock.lock();
                 try {
-                    PriorityQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+                    PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
                     if (isNull(queue)) {
-                        queue = new PriorityQueue<>(INITIAL_RUNNING_QUEUE_SIZE, comparing(DeferredEvent::getOrder));
+                        queue = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, comparing(DeferredEvent::getOrder));
 
                         if (!queue.offer(event)) {
                             forceExecuteEvent(event);
@@ -187,7 +187,7 @@ class DeferredEventObserver {
                     takenLock.unlock();
                 }
 
-                PriorityQueue<DeferredEvent<?>> events;
+                PriorityBlockingQueue<DeferredEvent<?>> events;
                 while (nonNull(events = pendingEvents.get(id))) {
                     pendingLock.lock();
                     try {
