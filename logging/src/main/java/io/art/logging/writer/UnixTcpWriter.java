@@ -23,24 +23,24 @@ import io.art.logging.constants.*;
 import io.art.logging.exception.*;
 import io.art.logging.manager.*;
 import io.art.logging.model.*;
+import jnr.unixsocket.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.SystemExtensions.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
-import static java.net.InetSocketAddress.*;
-import static java.net.StandardSocketOptions.*;
+import static jnr.unixsocket.UnixSocketChannel.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.text.*;
 
-public class UdpWriter implements LoggerWriter {
+public class UnixTcpWriter implements LoggerWriter {
     private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
-    private DatagramChannel channel;
+    private UnixSocketChannel channel;
 
-    public UdpWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
+    public UnixTcpWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
         this.manager = manager;
         this.writerConfiguration = writerConfiguration;
         openChannel();
@@ -69,16 +69,14 @@ public class UdpWriter implements LoggerWriter {
         );
     }
 
-    private void closeChannel(DatagramChannel channel) {
+    private void closeChannel(SocketChannel channel) {
         ignoreException(channel::close);
         manager.remove(channel);
     }
 
     private void openChannel() {
         try {
-            channel = DatagramChannel.open();
-            channel.connect(createUnresolved(writerConfiguration.getUdp().getHost(), writerConfiguration.getUdp().getPort()));
-            channel.setOption(SO_KEEPALIVE, true);
+            channel = open(new UnixSocketAddress(writerConfiguration.getUnixTcp().getSocketPath().toFile()));
             manager.register(channel);
         } catch (Throwable throwable) {
             apply(channel, this::closeChannel);

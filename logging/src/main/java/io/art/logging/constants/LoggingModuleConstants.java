@@ -41,6 +41,7 @@ public interface LoggingModuleConstants {
         String ROTATION_PERIOD_KEY = "rotationPeriod";
         String HOST_KEY = "host";
         String PORT_KEY = "port";
+        String SOCKET_KEY = "socket";
     }
 
     interface Defaults {

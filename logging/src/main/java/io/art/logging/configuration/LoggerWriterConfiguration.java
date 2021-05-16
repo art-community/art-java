@@ -50,7 +50,13 @@ public class LoggerWriterConfiguration {
     private final TcpWriterConfiguration tcp = TcpWriterConfiguration.defaults();
 
     @Builder.Default
+    private final UnixTcpWriterConfiguration unixTcp = UnixTcpWriterConfiguration.defaults();
+
+    @Builder.Default
     private final UdpWriterConfiguration udp = UdpWriterConfiguration.defaults();
+
+    @Builder.Default
+    private final UnixTcpWriterConfiguration unixUdp = UnixTcpWriterConfiguration.defaults();
 
     @Builder.Default
     private final DateTimeFormatter dateTimeFormatter = DEFAULT_LOG_DATE_TIME_FORMAT;

@@ -32,8 +32,12 @@ public class LoggerWriterFactory {
                 return new ConsoleWriter(manager, writerConfiguration);
             case TCP:
                 return new TcpWriter(manager, writerConfiguration);
+            case UNIX_TCP:
+                return new UnixTcpWriter(manager, writerConfiguration);
             case UDP:
                 return new UdpWriter(manager, writerConfiguration);
+            case UNIX_UDP:
+                return new UnixUdpWriter(manager, writerConfiguration);
             case FILE:
                 return new FileWriter(manager, writerConfiguration);
         }
