@@ -18,16 +18,22 @@
 
 package io.art.core.module;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.factory.SetFactory.*;
+import java.util.*;
 
 @Builder
-@Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ModuleActivator {
+    @Getter
     @EqualsAndHashCode.Include
     private final String id;
+    @Getter
     private final ModuleFactory<?> factory;
+    @Getter
     private final ModuleInitializer<?, ?, ?> initializer;
+    private final Set<ModuleActivator> dependencies = set();
 
 
     public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
@@ -43,5 +49,14 @@ public class ModuleActivator {
                 .initializer(initializer)
                 .factory(moduleFactory)
                 .build();
+    }
+
+    public ImmutableSet<ModuleActivator> getDependencies() {
+        return immutableSetOf(dependencies);
+    }
+
+    public ModuleActivator with(ModuleActivator dependency) {
+        dependencies.add(dependency);
+        return this;
     }
 }
