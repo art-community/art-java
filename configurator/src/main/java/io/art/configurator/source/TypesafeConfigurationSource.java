@@ -26,6 +26,7 @@ import static com.typesafe.config.ConfigFactory.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.combiner.SectionCombiner.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -93,7 +94,7 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
     public <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
         return orEmptyImmutableArray(section, typesafeConfiguration::hasPath, path -> immutableArrayOf(typesafeConfiguration.getConfigList(path)))
                 .stream()
-                .map(config -> mapper.apply(new TypesafeConfigurationSource(section, type, config)))
+                .map(config -> mapper.apply(new TypesafeConfigurationSource(EMPTY_STRING, type, config)))
                 .collect(immutableArrayCollector());
     }
 

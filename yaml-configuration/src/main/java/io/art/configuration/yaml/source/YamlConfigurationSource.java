@@ -93,7 +93,7 @@ public class YamlConfigurationSource implements NestedConfiguration {
         }
         return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
                 .filter(YamlConfigurationSource::isValid)
-                .map(node -> new YamlConfigurationSource(section, type, inputStream, node))
+                .map(node -> new YamlConfigurationSource(EMPTY_STRING, type, inputStream, node))
                 .collect(immutableArrayCollector());
     }
 
@@ -105,7 +105,7 @@ public class YamlConfigurationSource implements NestedConfiguration {
         }
         return stream(spliterator(configuration.elements(), configuration.size(), IMMUTABLE), false)
                 .filter(YamlConfigurationSource::isValid)
-                .map(node -> mapper.apply(new YamlConfigurationSource(section, type, inputStream, node)))
+                .map(node -> mapper.apply(new YamlConfigurationSource(EMPTY_STRING, type, inputStream, node)))
                 .collect(immutableArrayCollector());
     }
 
