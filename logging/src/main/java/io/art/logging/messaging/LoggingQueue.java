@@ -24,7 +24,7 @@ import org.jctools.queues.atomic.*;
 
 @AllArgsConstructor
 public class LoggingQueue {
-    private final SpscLinkedAtomicQueue<LoggingMessage> queue = new SpscLinkedAtomicQueue<>();
+    private final MpscLinkedAtomicQueue<LoggingMessage> queue = new MpscLinkedAtomicQueue<>();
 
     public boolean offer(LoggingMessage message) {
         return queue.offer(message);
