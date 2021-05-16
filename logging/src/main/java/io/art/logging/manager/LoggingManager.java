@@ -20,25 +20,39 @@ package io.art.logging.manager;
 
 import io.art.core.extensions.*;
 import io.art.logging.configuration.*;
+import io.art.logging.messaging.*;
 import io.art.logging.state.*;
+import io.art.logging.writer.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.extensions.ExecutorExtensions.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.PairFactory.*;
+import static io.art.logging.factory.LoggerWriterFactory.*;
 import static java.lang.Thread.*;
-import static java.util.Comparator.*;
-import static java.util.Objects.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class LoggingManager {
+    private final AtomicBoolean activated = new AtomicBoolean(false);
     private final LoggingModuleConfiguration configuration;
+    private final CompositeLoggerWriter fallbackWriter;
+    private final LoggingQueue queue = new LoggingQueue();
     private final List<LoggerProcessor> processors = copyOnWriteList();
     private final List<Closeable> resources = linkedList();
 
-    private final AtomicBoolean activated = new AtomicBoolean(false);
+    public LoggingManager(LoggingModuleConfiguration configuration) {
+        this.configuration = configuration;
+        List<LoggerWriter> defaultWriters = configuration
+                .getDefaultLogger()
+                .getWriters()
+                .stream()
+                .map(writer -> loggerWriter(this, writer))
+                .collect(listCollector());
+        fallbackWriter = new CompositeLoggerWriter(defaultWriters);
+    }
 
     public boolean isActivated() {
         return activated.get();
@@ -58,7 +72,7 @@ public class LoggingManager {
     }
 
     public LoggerProcessor register(LoggerConstructionConfiguration configuration) {
-        LoggerProcessor processor = new LoggerProcessor(this, configuration.getWriters());
+        LoggerProcessor processor = new LoggerProcessor(queue, configuration.getWriters(), fallbackWriter);
         processors.add(processor);
         return processor;
     }
@@ -73,22 +87,11 @@ public class LoggingManager {
 
     private void processConsuming() {
         while (!interrupted() && activated.get()) {
-            processors
-                    .stream()
-                    .map(processor -> pairOf(processor, processor.getQueue().poll()))
-                    .filter(processor -> nonNull(processor.getSecond()))
-                    .sorted(comparing(processor -> processor.getSecond().getDateTime()))
-                    .forEach(processor -> processor.getFirst().getConsumer().consume(processor.getSecond()));
+            processors.forEach(processor -> apply(queue.poll(), processor.getConsumer()::consume));
 
         }
-        while (!processors.stream().allMatch(processor -> processor.getQueue().isEmpty())) {
-            processors
-                    .stream()
-                    .map(processor -> pairOf(processor, processor.getQueue().poll()))
-                    .filter(processor -> nonNull(processor.getSecond()))
-                    .sorted(comparing(processor -> processor.getSecond().getDateTime()))
-                    .forEach(processor -> processor.getFirst().getConsumer().consume(processor.getSecond()));
-
+        while (!processors.stream().allMatch(processor -> queue.isEmpty())) {
+            processors.forEach(processor -> apply(queue.poll(), processor.getConsumer()::consume));
         }
     }
 }

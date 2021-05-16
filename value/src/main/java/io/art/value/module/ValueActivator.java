@@ -32,6 +32,6 @@ public class ValueActivator {
     }
 
     public ModuleActivator value(UnaryOperator<ValueInitializer> initializer) {
-        return module(ValueModule.class, ValueModule::new, initializer.apply(new ValueInitializer()));
+        return module(ValueModule.class, ValueModule::new, () -> initializer.apply(new ValueInitializer()));
     }
 }

@@ -38,7 +38,7 @@ public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguratio
     }
 
 //    public HttpInitializer server(HttpServerModel httpServerModel) {
-//        HttpServer server = HttpServer.create()
+//        HttpServer server = HttpServer.createLogger()
 //                .httpRequestDecoder(httpServerModel.getRequestDecoderConfigurator())
 //                .wiretap(httpServerModel.isWiretap())
 //                .accessLog(httpServerModel.isAccessLogging())

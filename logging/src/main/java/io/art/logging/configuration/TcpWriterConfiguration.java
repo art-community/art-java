@@ -20,14 +20,23 @@ package io.art.logging.configuration;
 
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class TcpWriterConfiguration {
     private final String host;
     private final int port;
 
-    public static TcpWriterConfiguration from(ConfigurationSource source) {
+    public static TcpWriterConfiguration from(ConfigurationSource source, TcpWriterConfiguration fallback) {
+        TcpWriterConfigurationBuilder builder = TcpWriterConfiguration.builder();
+        builder.host(orElse(source.getString(HOST_KEY), fallback.host));
+        builder.port(orElse(source.getInt(PORT_KEY), fallback.port));
+        return builder.build();
+    }
+
+    public static TcpWriterConfiguration defaults() {
         return TcpWriterConfiguration.builder().build();
     }
 }

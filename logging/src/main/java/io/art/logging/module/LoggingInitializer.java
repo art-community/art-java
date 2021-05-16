@@ -21,7 +21,7 @@ package io.art.logging.module;
 import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.logging.configuration.*;
-import io.art.logging.configuration.DefaultLoggerConfiguration.*;
+import io.art.logging.configuration.LoggerConfiguration.*;
 import io.art.logging.configuration.LoggerWriterConfiguration.*;
 import lombok.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -32,19 +32,18 @@ import java.util.function.*;
 public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModule> {
     private final Initial configuration = new Initial();
 
-    public LoggingInitializer forDefault(UnaryOperator<DefaultLoggerConfigurationBuilder> operator) {
+    public LoggingInitializer configureDefault(UnaryOperator<LoggerConfigurationBuilder> operator) {
         configuration.defaultOperator = operator;
         return this;
     }
 
-    public LoggingInitializer forDefaultWriter(UnaryOperator<LoggerWriterConfigurationBuilder> operator) {
+    public LoggingInitializer configureDefaultWriter(UnaryOperator<LoggerWriterConfigurationBuilder> operator) {
         configuration.defaultWriterOperator = operator;
         return this;
     }
 
     public LoggingInitializer colored() {
-        configuration.defaultWriterOperator = writer -> writer.console(ConsoleWriterConfiguration.builder().colored(true).build());
-        return this;
+        return configureDefaultWriter(writer -> writer.console(ConsoleWriterConfiguration.builder().colored(true).build()));
     }
 
     @Override
@@ -54,12 +53,12 @@ public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfig
 
     @Getter
     private static class Initial extends LoggingModuleConfiguration {
-        private UnaryOperator<DefaultLoggerConfigurationBuilder> defaultOperator = identity();
+        private UnaryOperator<LoggerConfigurationBuilder> defaultOperator = identity();
         private UnaryOperator<LoggerWriterConfigurationBuilder> defaultWriterOperator = identity();
 
         @Override
-        public DefaultLoggerConfiguration getDefaultLogger() {
-            DefaultLoggerConfiguration loggerConfiguration = defaultOperator.apply(super.getDefaultLogger().toBuilder()).build();
+        public LoggerConfiguration getDefaultLogger() {
+            LoggerConfiguration loggerConfiguration = defaultOperator.apply(super.getDefaultLogger().toBuilder()).build();
             return loggerConfiguration.toBuilder()
                     .writers(immutableArrayOf(defaultWriterOperator.apply(loggerConfiguration.getWriters().get(0).toBuilder()).build()))
                     .build();

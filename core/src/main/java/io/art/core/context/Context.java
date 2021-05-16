@@ -26,7 +26,6 @@ import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
@@ -41,7 +40,6 @@ import java.util.*;
 import java.util.function.*;
 
 public class Context {
-    private static Context DEFAULT_INSTANCE = new Context(ContextConfiguration.builder().build(), emptyConsumer());
     private static Context INSTANCE;
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
@@ -54,30 +52,24 @@ public class Context {
         this.service = new Context.Service();
     }
 
-    public static void initialize(ImmutableSet<Module<?, ?>> modules) {
-        initialize(ContextConfiguration.builder().build(), modules, emptyConsumer());
-    }
-
-    public static void initialize(ContextConfiguration configuration, ImmutableSet<Module<?, ?>> modules) {
-        initialize(configuration, modules, emptyConsumer());
-    }
-
-    public static void initialize(ImmutableSet<Module<?, ?>> modules, Consumer<String> printer) {
-        initialize(ContextConfiguration.builder().build(), modules, printer);
-    }
-
-    public static void initialize(ContextConfiguration configuration, ImmutableSet<Module<?, ?>> modules, Consumer<String> printer) {
+    public static void prepareInitialization(ContextConfiguration configuration, Consumer<String> printer) {
         if (nonNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
-        Context context = new Context(configuration, printer);
-        context.load(modules);
-        getRuntime().addShutdownHook(new Thread(context::unload));
+        INSTANCE = new Context(configuration, printer);
+        getRuntime().addShutdownHook(new Thread(INSTANCE::unload));
+    }
+
+    public static void processInitialization(ImmutableSet<Module<?, ?>> modules) {
+        if (isNull(INSTANCE)) {
+            throw new InternalRuntimeException(CONTEXT_NOT_INITIALIZED);
+        }
+        INSTANCE.load(modules);
     }
 
     public static Context context() {
         if (isNull(INSTANCE)) {
-            return DEFAULT_INSTANCE;
+            throw new InternalRuntimeException(CONTEXT_NOT_INITIALIZED);
         }
         return INSTANCE;
     }
@@ -115,7 +107,6 @@ public class Context {
     }
 
     private void load(ImmutableSet<Module<?, ?>> modules) {
-        INSTANCE = this;
         Set<String> messages = setOf(ART_BANNER);
         for (Module<?, ?> module : modules) {
             String moduleId = module.getId();

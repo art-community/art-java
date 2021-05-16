@@ -48,7 +48,7 @@ import java.util.function.*;
 public class Activator {
     private final static Activator activator = new Activator();
 
-    private final Map<String, ModuleActivator> modules = map();
+    private final Map<String, ModuleActivator> activators = map();
 
     @Getter
     private ModuleActivator configuratorActivator;
@@ -81,8 +81,8 @@ public class Activator {
     @Getter
     private boolean quiet = false;
 
-    public ImmutableSet<ModuleActivator> modules() {
-        return immutableSetOf(modules.values());
+    public ImmutableSet<ModuleActivator> activators() {
+        return immutableSetOf(activators.values());
     }
 
     public Activator configurator() {
@@ -96,7 +96,7 @@ public class Activator {
 
     public Activator module(ModuleActivator activator) {
         activator.getDependencies().forEach(this::module);
-        modules.putIfAbsent(activator.getId(), activator);
+        activators.putIfAbsent(activator.getId(), activator);
         return this;
     }
 

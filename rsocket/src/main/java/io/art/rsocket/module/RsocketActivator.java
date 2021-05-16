@@ -31,6 +31,6 @@ public class RsocketActivator {
     }
 
     public ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
-        return module(RsocketModule.class, RsocketModule::new, initializer.apply(new RsocketInitializer()));
+        return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()));
     }
 }

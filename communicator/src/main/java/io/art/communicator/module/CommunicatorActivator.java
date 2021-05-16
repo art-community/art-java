@@ -31,6 +31,6 @@ public class CommunicatorActivator {
     }
 
     public ModuleActivator communicator(UnaryOperator<CommunicatorInitializer> initializer) {
-        return module(CommunicatorModule.class, CommunicatorModule::new, initializer.apply(new CommunicatorInitializer()));
+        return module(CommunicatorModule.class, CommunicatorModule::new, () -> initializer.apply(new CommunicatorInitializer()));
     }
 }

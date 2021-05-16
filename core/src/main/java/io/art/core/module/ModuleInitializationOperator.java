@@ -16,21 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.storage.module;
+package io.art.core.module;
 
-import io.art.core.module.*;
-import lombok.experimental.*;
-import static io.art.core.module.ModuleActivator.*;
-import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@UtilityClass
-public class StorageActivator {
-    public ModuleActivator storage() {
-        return storage(identity());
-    }
-
-    public ModuleActivator storage(UnaryOperator<StorageInitializer> initializer) {
-        return module(StorageModule.class, StorageModule::new, () -> initializer.apply(new StorageInitializer()));
-    }
+@FunctionalInterface
+public interface ModuleInitializationOperator<Initializer extends ModuleInitializer<?, ?, ?>> extends Supplier<Initializer> {
 }

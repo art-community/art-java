@@ -30,6 +30,7 @@ import static io.art.core.context.Context.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
+import java.util.*;
 
 @Getter
 public class LoggingModule implements StatefulModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModuleState> {
@@ -75,7 +76,12 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
         LoggingModuleState state = loggingModule().state();
         LoggerConfiguration loggerConfiguration = configuration
                 .getLoggers()
-                .getOrDefault(name, configuration.getDefaultLogger().toLoggerConfiguration());
+                .entrySet()
+                .stream()
+                .filter(entry -> name.startsWith(entry.getKey()))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse(configuration.getDefaultLogger());
         return state.register(name, loggerConfiguration);
     }
 }

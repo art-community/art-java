@@ -23,32 +23,36 @@ import io.art.core.source.*;
 import io.art.logging.constants.*;
 import lombok.Builder;
 import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
-import static io.art.core.collection.ImmutableSet.*;
-import static io.art.core.factory.SetFactory.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class LoggerConfiguration {
-    private final LoggingLevel level;
-    private final Boolean enabled;
+    @Builder.Default
+    private final LoggingLevel level = INFO;
+
+    @Builder.Default
+    private final Boolean enabled = true;
 
     @Builder.Default
     private final ImmutableArray<LoggerWriterConfiguration> writers = emptyImmutableArray();
 
-    @Builder.Default
-    private final ImmutableSet<String> categories = emptyImmutableSet();
-
-
-    public static LoggerConfiguration from(ConfigurationSource source) {
+    public static LoggerConfiguration from(ConfigurationSource source, LoggerConfiguration fallback) {
         LoggerConfigurationBuilder builder = LoggerConfiguration.builder();
-        builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), INFO));
-        builder.enabled(orElse(source.getBool(ENABLED_KEY), true));
-        builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
-        builder.writers(source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.builder().build())));
+        builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), fallback.level));
+        builder.enabled(orElse(source.getBool(ENABLED_KEY), fallback.enabled));
+        builder.writers(ifEmpty(
+                source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.defaults())),
+                fallback.writers
+        ));
         return builder.build();
+    }
+
+    public static LoggerConfiguration defaults() {
+        return LoggerConfiguration.builder().build();
     }
 }

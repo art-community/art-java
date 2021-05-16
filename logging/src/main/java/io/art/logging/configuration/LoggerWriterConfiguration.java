@@ -18,43 +18,52 @@
 
 package io.art.logging.configuration;
 
-import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.logging.constants.*;
-import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.factory.SetFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
 import static io.art.logging.constants.LoggingWriterType.*;
+import static java.nio.charset.Charset.*;
 import java.nio.charset.*;
 import java.time.format.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class LoggerWriterConfiguration {
-    private final Charset charset;
-
-    private final LoggingWriterType type;
-    private final ConsoleWriterConfiguration console;
-    private final FileWriterConfiguration file;
-    private final TcpWriterConfiguration tcp;
-    private final DateTimeFormatter dateTimeFormatter;
+    @Builder.Default
+    private final Charset charset = context().configuration().getCharset();
 
     @Builder.Default
-    private final ImmutableSet<String> categories = emptyImmutableSet();
+    private final LoggingWriterType type = CONSOLE;
+
+    @Builder.Default
+    private final ConsoleWriterConfiguration console = ConsoleWriterConfiguration.defaults();
+
+    @Builder.Default
+    private final FileWriterConfiguration file = FileWriterConfiguration.defaults();
+
+    @Builder.Default
+    private final TcpWriterConfiguration tcp = TcpWriterConfiguration.defaults();
+
+    @Builder.Default
+    private final DateTimeFormatter dateTimeFormatter = DEFAULT_LOG_DATE_TIME_FORMAT;
 
     public static LoggerWriterConfiguration from(ConfigurationSource source, LoggerWriterConfiguration fallback) {
-        LoggerWriterConfigurationBuilder builder = builder();
-        builder.type(LoggingWriterType.parse(source.getString(TYPE_KEY), CONSOLE));
+        LoggerWriterConfigurationBuilder builder = LoggerWriterConfiguration.builder();
+        builder.type(LoggingWriterType.parse(source.getString(TYPE_KEY), fallback.type));
         builder.console(ConsoleWriterConfiguration.from(source, fallback.console));
-        builder.file(FileWriterConfiguration.from(source));
-        builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
-        builder.dateTimeFormatter(let(source.getString(DATE_TIME_FORMAT_KEY), DateTimeFormatter::ofPattern, DEFAULT_LOG_DATE_TIME_FORMAT));
-        builder.charset(context().configuration().getCharset());
+        builder.file(FileWriterConfiguration.from(source, fallback.file));
+        builder.tcp(TcpWriterConfiguration.from(source, fallback.tcp));
+        builder.dateTimeFormatter(let(source.getString(DATE_TIME_FORMAT_KEY), DateTimeFormatter::ofPattern, fallback.dateTimeFormatter));
+        builder.charset(ignoreException(() -> forName(source.getString(CHARSET_KEY)), ignored -> fallback.charset));
         return builder.build();
+    }
+
+    public static LoggerWriterConfiguration defaults() {
+        return LoggerWriterConfiguration.builder().build();
     }
 }

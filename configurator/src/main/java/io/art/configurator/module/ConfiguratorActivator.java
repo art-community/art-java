@@ -32,7 +32,7 @@ public class ConfiguratorActivator {
     public static ModuleActivator configurator(UnaryOperator<ConfiguratorInitializer> initializer) {
         return ModuleActivator.builder()
                 .id(ConfiguratorModule.class.getSimpleName())
-                .initializer(initializer.apply(new ConfiguratorInitializer()))
+                .initializer(() -> initializer.apply(new ConfiguratorInitializer()))
                 .factory(ConfiguratorModule::new)
                 .build();
     }

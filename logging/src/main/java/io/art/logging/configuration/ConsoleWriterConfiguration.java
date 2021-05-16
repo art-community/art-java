@@ -24,13 +24,18 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class ConsoleWriterConfiguration {
-    private final Boolean colored;
+    @Builder.Default
+    private final Boolean colored = false;
 
     public static ConsoleWriterConfiguration from(ConfigurationSource source, ConsoleWriterConfiguration fallback) {
-        return ConsoleWriterConfiguration.builder()
-                .colored(orElse(source.getBool(COLORED_KEY), fallback.colored))
-                .build();
+        ConsoleWriterConfigurationBuilder builder = ConsoleWriterConfiguration.builder();
+        builder.colored(orElse(source.getBool(COLORED_KEY), fallback.colored));
+        return builder.build();
+    }
+
+    public static ConsoleWriterConfiguration defaults() {
+        return ConsoleWriterConfiguration.builder().build();
     }
 }

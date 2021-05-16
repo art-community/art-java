@@ -31,6 +31,6 @@ public class LoggingActivator {
     }
 
     public ModuleActivator logging(UnaryOperator<LoggingInitializer> initializer) {
-        return module(LoggingModule.class, LoggingModule::new, initializer.apply(new LoggingInitializer()));
+        return module(LoggingModule.class, LoggingModule::new, () -> initializer.apply(new LoggingInitializer()));
     }
 }

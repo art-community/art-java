@@ -23,10 +23,9 @@ import io.art.logging.configuration.*;
 import io.art.logging.logger.*;
 import io.art.logging.manager.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.logging.factory.LoggerWriterFactory.*;
+import static io.art.logging.factory.LoggerFactory.*;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -35,19 +34,6 @@ public class LoggingModuleState implements ModuleState {
     private final Map<String, Logger> loggers = concurrentMap();
 
     public Logger register(String name, LoggerConfiguration configuration) {
-        return putIfAbsent(loggers, name, () -> create(name, configuration));
-    }
-
-    private Logger create(String name, LoggerConfiguration configuration) {
-        LoggerConstructionConfiguration constructionConfiguration = LoggerConstructionConfiguration.builder()
-                .name(name)
-                .loggerConfiguration(configuration)
-                .writers(configuration
-                        .getWriters()
-                        .stream()
-                        .map(writerConfiguration -> loggerWriter(manager, writerConfiguration))
-                        .collect(immutableArrayCollector()))
-                .build();
-        return new LoggerImplementation(constructionConfiguration, manager.register(constructionConfiguration).getProducer());
+        return putIfAbsent(loggers, name, () -> createLogger(name, configuration, manager));
     }
 }

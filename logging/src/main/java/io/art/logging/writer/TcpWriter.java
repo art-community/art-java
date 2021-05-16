@@ -53,6 +53,8 @@ public class TcpWriter implements LoggerWriter {
             channel.write(ByteBuffer.wrap(format(message).getBytes(writerConfiguration.getCharset())));
         } catch (Throwable throwable) {
             printError(getStackTraceAsString(throwable));
+            closeChannel(channel);
+            openChannel();
         }
     }
 

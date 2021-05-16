@@ -30,6 +30,7 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
@@ -45,23 +46,9 @@ public class Launcher {
 
     public static void launch(Activator activator) {
         if (LAUNCHED.compareAndSet(false, true)) {
-            ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
-            ImmutableSet<ModuleActivator> activators = activator.modules();
+            LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
-            configuratorModule
-                    .loadSources()
-                    .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().initialize(cast(configuratorModule)))));
-            for (ModuleActivator moduleActivator : activators) {
-                Module<?, ?> module = moduleActivator.getFactory().get();
-                ModuleInitializer<?, ?, ?> initializer = moduleActivator.getInitializer();
-                if (nonNull(initializer)) {
-                    module.configure(configurator -> configurator.initialize(cast(initializer.initialize(cast(module)))));
-                }
-                module.configure(configurator -> configurator.from(configuratorModule.orderedSources()));
-                builder.add(module);
-            }
-            LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
             ContextConfiguration contextConfiguration = ContextConfiguration.builder()
                     .arguments(immutableArrayOf(activator.arguments()))
                     .onUnload(activator.onUnload())
@@ -71,12 +58,27 @@ public class Launcher {
                     .mainModuleId(activator.mainModuleId())
                     .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())))
                     .build();
-            if (activator.quiet()) {
-                initialize(contextConfiguration, builder.build());
-                return;
+
+            prepareInitialization(contextConfiguration, activator.quiet() ? emptyConsumer() : message -> logger.get().info(message));
+            ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
+            ImmutableSet<ModuleActivator> activators = activator.activators();
+            configuratorModule
+                    .loadSources()
+                    .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().get().initialize(cast(configuratorModule)))));
+            for (ModuleActivator moduleActivator : activators) {
+                Module<?, ?> module = moduleActivator.getFactory().get();
+                ModuleInitializationOperator<?> initializer = moduleActivator.getInitializer();
+                if (nonNull(initializer)) {
+                    module.configure(configurator -> configurator.initialize(cast(initializer.get().initialize(cast(module)))));
+                }
+                module.configure(configurator -> configurator.from(configuratorModule.orderedSources()));
+                builder.add(module);
             }
-            initialize(contextConfiguration, builder.build(), message -> logger.get().info(message));
-            LAUNCHED_MESSAGES.forEach(message -> logger.get().info(message));
+            processInitialization(builder.build());
+
+            if (!activator.quiet()) {
+                LAUNCHED_MESSAGES.forEach(message -> logger.get().info(message));
+            }
             return;
         }
         throw new InternalRuntimeException(MODULES_ALREADY_LAUNCHED);

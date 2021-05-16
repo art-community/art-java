@@ -49,7 +49,7 @@ import java.util.*;
 public class FileWriter implements LoggerWriter {
     private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
-    private volatile OutputStream outputStream;
+    private OutputStream outputStream;
     private LocalDateTime currentTimeStamp;
 
     public FileWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
@@ -129,6 +129,8 @@ public class FileWriter implements LoggerWriter {
             outputStream.flush();
         } catch (Throwable throwable) {
             printError(getStackTraceAsString(throwable));
+            closeFileStream(outputStream);
+            openFileStream(now());
         }
     }
 

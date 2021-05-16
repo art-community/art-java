@@ -31,6 +31,6 @@ public class HttpActivator {
     }
 
     public ModuleActivator http(UnaryOperator<HttpInitializer> initializer) {
-        return module(HttpModule.class, HttpModule::new, initializer.apply(new HttpInitializer()));
+        return module(HttpModule.class, HttpModule::new, () -> initializer.apply(new HttpInitializer()));
     }
 }

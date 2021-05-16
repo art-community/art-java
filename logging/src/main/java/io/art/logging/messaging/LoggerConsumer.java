@@ -22,15 +22,12 @@ import io.art.core.collection.*;
 import io.art.logging.model.*;
 import io.art.logging.writer.*;
 import lombok.*;
-import static java.util.Objects.*;
 
 @AllArgsConstructor
 public class LoggerConsumer {
-    private final LoggingQueue queue;
     private final ImmutableArray<LoggerWriter> writers;
 
     public void consume(LoggingMessage message) {
-        if (isNull(message)) return;
         writers.forEach(writer -> writer.write(message));
     }
 }

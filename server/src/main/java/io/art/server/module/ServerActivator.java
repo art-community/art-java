@@ -31,6 +31,6 @@ public class ServerActivator {
     }
 
     public ModuleActivator server(UnaryOperator<ServerInitializer> initializer) {
-        return module(ServerModule.class, ServerModule::new, initializer.apply(new ServerInitializer()));
+        return module(ServerModule.class, ServerModule::new, () -> initializer.apply(new ServerInitializer()));
     }
 }

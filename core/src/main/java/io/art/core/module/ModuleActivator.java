@@ -32,7 +32,7 @@ public class ModuleActivator {
     @Getter
     private final ModuleFactory<?> factory;
     @Getter
-    private final ModuleInitializer<?, ?, ?> initializer;
+    private final ModuleInitializationOperator<?> initializer;
     private final Set<ModuleActivator> dependencies = set();
 
 
@@ -43,7 +43,7 @@ public class ModuleActivator {
                 .build();
     }
 
-    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializer<?, ?, ?> initializer) {
+    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializationOperator<?> initializer) {
         return ModuleActivator.builder()
                 .id(moduleClass.getSimpleName())
                 .initializer(initializer)

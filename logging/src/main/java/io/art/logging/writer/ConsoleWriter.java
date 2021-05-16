@@ -37,7 +37,6 @@ public class ConsoleWriter implements LoggerWriter {
     private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
 
-
     @Override
     public void write(LoggingMessage message) {
         if (message.getLevel() == ERROR) {

@@ -26,44 +26,40 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
-import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
-import static io.art.logging.constants.LoggingWriterType.*;
 import static java.util.concurrent.Executors.*;
 import java.util.concurrent.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
+    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> newDaemon(CONSUMER_THREAD, runnable));
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
 
-    private DefaultLoggerConfiguration defaultLogger = DefaultLoggerConfiguration.builder()
-            .enabled(true)
-            .level(INFO)
-            .writers(immutableArrayOf(LoggerWriterConfiguration.builder()
-                    .type(CONSOLE)
-                    .console(ConsoleWriterConfiguration.builder().colored(false).build())
-                    .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
-                    .build()))
+    private LoggerConfiguration defaultLogger = LoggerConfiguration.defaults()
+            .toBuilder()
+            .writers(immutableArrayOf(LoggerWriterConfiguration.defaults()))
             .build();
 
-    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> newDaemon(CONSUMER_THREAD, runnable));
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
         private final LoggingModuleConfiguration configuration;
 
         @Override
-        public Configurator from(ConfigurationSource source) {
-            configuration.defaultLogger = orElse(source.getNested(LOGGING_DEFAULT_SECTION, defaultLogger -> DefaultLoggerConfiguration.from(defaultLogger, configuration.getDefaultLogger())), configuration.getDefaultLogger());
-            configuration.loggers = source.getNestedMap(LOGGING_LOGGERS_SECTION, LoggerConfiguration::from);
+        public Configurator initialize(LoggingModuleConfiguration configuration) {
+            this.configuration.defaultLogger = configuration.getDefaultLogger();
+            this.configuration.loggers = configuration.getLoggers();
             return this;
         }
 
         @Override
-        public Configurator initialize(LoggingModuleConfiguration configuration) {
-            this.configuration.defaultLogger = configuration.getDefaultLogger();
+        public Configurator from(ConfigurationSource source) {
+            configuration.defaultLogger = orElse(
+                    source.getNested(LOGGING_DEFAULT_SECTION, defaultLogger -> LoggerConfiguration.from(defaultLogger, configuration.defaultLogger)),
+                    configuration.defaultLogger
+            );
+            configuration.loggers = source.getNestedMap(LOGGING_LOGGERS_SECTION, logger -> LoggerConfiguration.from(logger, configuration.defaultLogger));
             return this;
         }
     }

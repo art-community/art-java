@@ -19,31 +19,19 @@
 package io.art.logging.state;
 
 import io.art.core.collection.*;
-import io.art.logging.configuration.*;
 import io.art.logging.manager.*;
 import io.art.logging.messaging.*;
 import io.art.logging.writer.*;
 import lombok.*;
-import static io.art.core.collector.ArrayCollector.*;
-import static io.art.logging.factory.LoggerWriterFactory.*;
-import static io.art.logging.module.LoggingModule.*;
 
 
 @Getter
 public class LoggerProcessor {
-    private final LoggingQueue queue;
     private final LoggerConsumer consumer;
     private final LoggerProducer producer;
 
-    public LoggerProcessor(LoggingManager manager, ImmutableArray<LoggerWriter> writers) {
-        LoggingModuleConfiguration moduleConfiguration = loggingModule().configuration();
-
-        queue = new LoggingQueue();
-
-        consumer = new LoggerConsumer(queue, writers);
-
-        DefaultLoggerConfiguration fallbackLogger = moduleConfiguration.getDefaultLogger();
-        LoggerWriter fallbackWriter = new CompositeLoggerWriter(fallbackLogger.getWriters().stream().map(writer -> loggerWriter(manager, writer)).collect(listCollector()));
+    public LoggerProcessor(LoggingQueue queue, ImmutableArray<LoggerWriter> writers, LoggerWriter fallbackWriter) {
+        consumer = new LoggerConsumer(writers);
         producer = new LoggerProducer(queue, fallbackWriter);
     }
 }

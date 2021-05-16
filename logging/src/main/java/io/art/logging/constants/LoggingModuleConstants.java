@@ -18,33 +18,29 @@
 
 package io.art.logging.constants;
 
-import io.art.core.property.*;
 import static io.art.core.constants.DateTimeConstants.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.context.Context.*;
-import static io.art.core.property.LazyProperty.lazy;
 import static java.time.Duration.*;
 import java.time.*;
 import java.time.format.*;
 
 public interface LoggingModuleConstants {
     interface ConfigurationKeys {
-        String LOGGING_SECTION = "logging";
         String LOGGING_LOGGERS_SECTION = "logging.loggers";
         String LOGGING_DEFAULT_SECTION = "logging.default";
-        String WRITER_SECTION = "writer";
         String WRITERS_SECTION = "writers";
         String LEVEL_KEY = "level";
         String ENABLED_KEY = "enabled";
         String TYPE_KEY = "type";
-        String CATEGORIES_KEY = "categories";
         String DATE_TIME_FORMAT_KEY = "dateTimeFormat";
+        String CHARSET_KEY = "charset";
         String COLORED_KEY = "colored";
         String DIRECTORY_KEY = "directory";
         String PREFIX_KEY = "prefix";
         String SUFFIX_KEY = "suffix";
         String TIMESTAMP_FORMAT_KEY = "timestampFormat";
         String ROTATION_PERIOD_KEY = "rotationPeriod";
+        String HOST_KEY = "host";
+        String PORT_KEY = "port";
     }
 
     interface Defaults {
@@ -56,7 +52,7 @@ public interface LoggingModuleConstants {
 
 
     interface Errors {
-        String UNABLE_TO_CREATE_LOG_DIRECTORY = "Unable to create log directory ''{0}''";
+        String UNABLE_TO_CREATE_LOG_DIRECTORY = "Unable to createLogger log directory ''{0}''";
     }
 
     String LOGGING_FORMAT = "{0} {1} {2}: {3} - {4}";
