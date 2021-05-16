@@ -27,7 +27,7 @@ import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.
 @Builder(toBuilder = true)
 public class ConsoleWriterConfiguration {
     @Builder.Default
-    private final Boolean colored = false;
+    private final Boolean colored = true;
 
     public static ConsoleWriterConfiguration from(ConfigurationSource source, ConsoleWriterConfiguration fallback) {
         ConsoleWriterConfigurationBuilder builder = ConsoleWriterConfiguration.builder();

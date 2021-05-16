@@ -39,7 +39,6 @@ import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
@@ -81,8 +80,8 @@ public class Activator {
     @Getter
     private boolean quiet = false;
 
-    public ImmutableSet<ModuleActivator> activators() {
-        return immutableSetOf(activators.values());
+    public ImmutableMap<String, ModuleActivator> activators() {
+        return immutableMapOf(activators);
     }
 
     public Activator configurator() {

@@ -28,6 +28,7 @@ import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
+import io.art.logging.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.constants.EmptyFunctions.*;
@@ -39,6 +40,7 @@ import static io.art.launcher.LauncherConstants.*;
 import static io.art.logging.module.LoggingModule.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @UsedByGenerator
 public class Launcher {
@@ -46,9 +48,13 @@ public class Launcher {
 
     public static void launch(Activator activator) {
         if (LAUNCHED.compareAndSet(false, true)) {
+            ImmutableMap<String, ModuleActivator> activators = activator.activators();
+
             LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
+
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
+
             ContextConfiguration contextConfiguration = ContextConfiguration.builder()
                     .arguments(immutableArrayOf(activator.arguments()))
                     .onUnload(activator.onUnload())
@@ -59,13 +65,18 @@ public class Launcher {
                     .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())))
                     .build();
 
-            prepareInitialization(contextConfiguration, activator.quiet() ? emptyConsumer() : message -> logger.get().info(message));
-            ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
-            ImmutableSet<ModuleActivator> activators = activator.activators();
+            Consumer<String> printer = message -> {
+                if (!activator.quiet() && activators.containsKey(LoggingModule.class.getSimpleName())) {
+                    logger.get().info(message);
+                }
+            };
+
+            prepareInitialization(contextConfiguration, printer);
             configuratorModule
                     .loadSources()
                     .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().get().initialize(cast(configuratorModule)))));
-            for (ModuleActivator moduleActivator : activators) {
+            ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
+            for (ModuleActivator moduleActivator : activators.values()) {
                 Module<?, ?> module = moduleActivator.getFactory().get();
                 ModuleInitializationOperator<?> initializer = moduleActivator.getInitializer();
                 if (nonNull(initializer)) {
@@ -76,9 +87,7 @@ public class Launcher {
             }
             processInitialization(builder.build());
 
-            if (!activator.quiet()) {
-                LAUNCHED_MESSAGES.forEach(message -> logger.get().info(message));
-            }
+            LAUNCHED_MESSAGES.forEach(printer);
             return;
         }
         throw new InternalRuntimeException(MODULES_ALREADY_LAUNCHED);
