@@ -29,7 +29,6 @@ import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static java.util.Objects.*;
 import java.io.*;
 import java.util.function.*;
 
@@ -75,11 +74,11 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
 
     @Override
     public NestedConfiguration getNested(String path) {
-        Config configuration = this.typesafeConfiguration.atPath(path);
-        if (isNull(configuration) || !this.typesafeConfiguration.hasPath(path) || configuration.isEmpty()) {
+        String newPath = combine(section, path);
+        if (!this.typesafeConfiguration.hasPath(newPath)) {
             return null;
         }
-        return new TypesafeConfigurationSource(combine(section, path), type, configuration);
+        return new TypesafeConfigurationSource(newPath, type, typesafeConfiguration);
     }
 
     @Override
