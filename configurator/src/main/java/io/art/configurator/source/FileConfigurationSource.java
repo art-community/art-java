@@ -31,15 +31,11 @@ import static io.art.core.extensions.FileExtensions.*;
 public class FileConfigurationSource implements NestedConfiguration {
     @Getter
     private final String section;
-    @Getter
-    private final ConfigurationSourceType type;
-    @Getter
     @Delegate
     private final NestedConfiguration source;
 
     public FileConfigurationSource(String section, ConfigurationSourceType type, FileProxy file) {
         this.section = section;
-        this.type = type;
         source = selectSource(section, type, file);
     }
 
