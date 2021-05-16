@@ -39,7 +39,7 @@ import java.util.concurrent.atomic.*;
 public class LoggingManager {
     private final AtomicBoolean activated = new AtomicBoolean(false);
     private final LoggingModuleConfiguration configuration;
-    private final CompositeLoggerWriter fallbackWriter;
+    private final CompositeWriter fallbackWriter;
     private final LoggingQueue queue = new LoggingQueue();
     private final Map<String, LoggerProcessor> processors = concurrentMap();
     private final List<Closeable> resources = linkedList();
@@ -52,7 +52,7 @@ public class LoggingManager {
                 .stream()
                 .map(writer -> loggerWriter(this, writer))
                 .collect(listCollector());
-        fallbackWriter = new CompositeLoggerWriter(defaultWriters);
+        fallbackWriter = new CompositeWriter(defaultWriters);
     }
 
     public boolean isActivated() {

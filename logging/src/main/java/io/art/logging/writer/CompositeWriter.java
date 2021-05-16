@@ -23,7 +23,7 @@ import lombok.*;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class CompositeLoggerWriter implements LoggerWriter {
+public class CompositeWriter implements LoggerWriter {
     private final List<LoggerWriter> writers;
 
     @Override
