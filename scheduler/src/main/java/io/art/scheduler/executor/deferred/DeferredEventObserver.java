@@ -94,17 +94,26 @@ class DeferredEventObserver {
     void shutdown() {
         if (terminating.compareAndSet(false, true)) {
             try {
-                delayedObserver.interrupt();
+
                 delayedEvents.clear();
                 pendingEvents.clear();
+
                 pendingIds.clear();
                 takenIds.clear();
+
+                delayedObserver.interrupt();
                 pendingPool.shutdown();
                 fallbackExecutor.shutdownNow();
+
                 if (!executor.isAwaitOnShutdown()) {
                     return;
                 }
+
                 if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
+                    executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+                }
+
+                if (!fallbackExecutor.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
                     executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
                 }
             } catch (Throwable throwable) {
