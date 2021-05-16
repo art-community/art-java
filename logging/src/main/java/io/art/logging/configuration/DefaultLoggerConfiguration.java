@@ -18,11 +18,11 @@
 
 package io.art.logging.configuration;
 
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.logging.constants.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.orElse;
-import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
@@ -30,16 +30,15 @@ import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.
 @Builder(toBuilder = true)
 public class DefaultLoggerConfiguration {
     private final LoggingLevel level;
+    private final Boolean enabled;
 
-    private final LoggerWriterConfiguration writer;
-
-    @Builder.Default
-    private final Boolean enabled = false;
+    private final ImmutableArray<LoggerWriterConfiguration> writers;
 
     public LoggerConfiguration toLoggerConfiguration() {
         return LoggerConfiguration.builder()
+                .enabled(enabled)
                 .level(level)
-                .writers(immutableArrayOf(writer))
+                .writers(writers)
                 .enabled(enabled)
                 .build();
     }
@@ -48,8 +47,8 @@ public class DefaultLoggerConfiguration {
         DefaultLoggerConfiguration defaultConfiguration = DefaultLoggerConfiguration.builder().build();
         DefaultLoggerConfiguration.DefaultLoggerConfigurationBuilder builder = DefaultLoggerConfiguration.builder();
         builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), INFO));
-        builder.enabled(source.getBool(ENABLED_KEY));
-        builder.writer(orElse(source.getNested(WRITER_SECTION, LoggerWriterConfiguration::from), defaultConfiguration.writer));
+        builder.enabled(orElse(source.getBool(ENABLED_KEY), true));
+        builder.writers(orElse(source.getNestedArray(WRITERS_SECTION, LoggerWriterConfiguration::from), defaultConfiguration.writers));
         return builder.build();
     }
 }

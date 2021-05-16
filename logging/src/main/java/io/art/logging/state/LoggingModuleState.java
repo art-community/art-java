@@ -39,7 +39,7 @@ public class LoggingModuleState implements ModuleState {
     }
 
     private Logger create(String name, LoggerConfiguration configuration) {
-        LoggerConstructionConfiguration implementationConfiguration = LoggerConstructionConfiguration.builder()
+        LoggerConstructionConfiguration constructionConfiguration = LoggerConstructionConfiguration.builder()
                 .name(name)
                 .loggerConfiguration(configuration)
                 .writers(configuration
@@ -48,6 +48,6 @@ public class LoggingModuleState implements ModuleState {
                         .map(writerConfiguration -> loggerWriter(manager, writerConfiguration))
                         .collect(immutableArrayCollector()))
                 .build();
-        return new LoggerImplementation(implementationConfiguration, manager.register(implementationConfiguration).getProducer());
+        return new LoggerImplementation(constructionConfiguration, manager.register(constructionConfiguration).getProducer());
     }
 }

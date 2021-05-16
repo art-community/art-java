@@ -23,12 +23,13 @@ import io.art.core.source.*;
 import io.art.logging.constants.*;
 import lombok.Builder;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
+import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
 import static io.art.logging.constants.LoggingWriterType.*;
-import static java.time.format.DateTimeFormatter.*;
 import java.nio.charset.*;
 import java.time.format.*;
 
@@ -46,16 +47,13 @@ public class LoggerWriterConfiguration {
     @Builder.Default
     private final ImmutableSet<String> categories = emptyImmutableSet();
 
-    @Builder.Default
-    private final Boolean enabled = false;
-
     public static LoggerWriterConfiguration from(ConfigurationSource source) {
         LoggerWriterConfigurationBuilder builder = builder();
         builder.type(LoggingWriterType.parse(source.getString(TYPE_KEY), CONSOLE));
         builder.console(ConsoleWriterConfiguration.from(source));
         builder.file(FileWriterConfiguration.from(source));
         builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
-        builder.dateTimeFormatter(ofPattern(source.getString(DATE_TIME_FORMAT_KEY)));
+        builder.dateTimeFormatter(let(source.getString(DATE_TIME_FORMAT_KEY), DateTimeFormatter::ofPattern, DEFAULT_LOG_DATE_TIME_FORMAT));
         builder.charset(context().configuration().getCharset());
         return builder.build();
     }

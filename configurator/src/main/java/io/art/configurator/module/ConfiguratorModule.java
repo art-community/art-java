@@ -54,7 +54,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
         return configuration.orderedSources();
     }
 
-    public ConfiguratorModule configure() {
+    public ConfiguratorModule loadSources() {
         configure(configurator -> configurator
                 .from(new EnvironmentConfigurationSource())
                 .from(new PropertiesConfigurationSource())

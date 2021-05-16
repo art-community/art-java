@@ -25,6 +25,7 @@ import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
@@ -38,12 +39,13 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
 
     private DefaultLoggerConfiguration defaultLogger = DefaultLoggerConfiguration.builder()
+            .enabled(true)
             .level(INFO)
-            .writer(LoggerWriterConfiguration.builder()
+            .writers(immutableArrayOf(LoggerWriterConfiguration.builder()
                     .type(CONSOLE)
                     .console(ConsoleWriterConfiguration.builder().build())
                     .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
-                    .build())
+                    .build()))
             .build();
 
     private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> newDaemon(CONSUMER_THREAD, runnable));

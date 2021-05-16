@@ -24,6 +24,7 @@ import io.art.logging.configuration.*;
 import io.art.logging.configuration.DefaultLoggerConfiguration.*;
 import io.art.logging.configuration.LoggerWriterConfiguration.*;
 import lombok.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
@@ -59,7 +60,9 @@ public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfig
         @Override
         public DefaultLoggerConfiguration getDefaultLogger() {
             DefaultLoggerConfiguration loggerConfiguration = defaultOperator.apply(super.getDefaultLogger().toBuilder()).build();
-            return loggerConfiguration.toBuilder().writer(defaultWriterOperator.apply(loggerConfiguration.getWriter().toBuilder()).build()).build();
+            return loggerConfiguration.toBuilder()
+                    .writers(immutableArrayOf(defaultWriterOperator.apply(loggerConfiguration.getWriters().get(0).toBuilder()).build()))
+                    .build();
         }
     }
 }

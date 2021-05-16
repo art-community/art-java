@@ -16,19 +16,18 @@
  * limitations under the License.
  */
 
-package io.art.logging.constants;
+package io.art.logging.writer;
 
-import static java.util.Arrays.*;
+import io.art.logging.model.*;
+import lombok.*;
+import java.util.*;
 
-public enum LoggingWriterType {
-    CONSOLE,
-    TCP,
-    FILE;
+@RequiredArgsConstructor
+public class CompositeLoggerWriter implements LoggerWriter {
+    private final List<LoggerWriter> writers;
 
-    public static LoggingWriterType parse(String type, LoggingWriterType defaultType) {
-        return stream(LoggingWriterType.values())
-                .filter(known -> known.name().equalsIgnoreCase(type))
-                .findFirst()
-                .orElse(defaultType);
+    @Override
+    public void write(LoggingMessage message) {
+        writers.forEach(writer -> writer.write(message));
     }
 }

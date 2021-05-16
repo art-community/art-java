@@ -49,7 +49,9 @@ public class Launcher {
             ImmutableSet<ModuleActivator> activators = activator.modules();
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
-            configuratorModule.configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().initialize(cast(configuratorModule)))));
+            configuratorModule
+                    .loadSources()
+                    .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().initialize(cast(configuratorModule)))));
             for (ModuleActivator moduleActivator : activators) {
                 Module<?, ?> module = moduleActivator.getFactory().get();
                 ModuleInitializer<?, ?, ?> initializer = moduleActivator.getInitializer();

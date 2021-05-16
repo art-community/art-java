@@ -24,6 +24,7 @@ import io.art.logging.manager.*;
 import io.art.logging.messaging.*;
 import io.art.logging.writer.*;
 import lombok.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.logging.factory.LoggerWriterFactory.*;
 import static io.art.logging.module.LoggingModule.*;
 
@@ -42,7 +43,7 @@ public class LoggerProcessor {
         consumer = new LoggerConsumer(queue, writers);
 
         DefaultLoggerConfiguration fallbackLogger = moduleConfiguration.getDefaultLogger();
-        LoggerWriter fallbackWriter = loggerWriter(manager, fallbackLogger.getWriter());
+        LoggerWriter fallbackWriter = new CompositeLoggerWriter(fallbackLogger.getWriters().stream().map(writer -> loggerWriter(manager, writer)).collect(listCollector()));
         producer = new LoggerProducer(queue, fallbackWriter);
     }
 }

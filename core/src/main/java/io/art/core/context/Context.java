@@ -41,6 +41,7 @@ import java.util.*;
 import java.util.function.*;
 
 public class Context {
+    private static Context DEFAULT_INSTANCE = new Context(ContextConfiguration.builder().build(), emptyConsumer());
     private static Context INSTANCE;
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
@@ -76,7 +77,7 @@ public class Context {
 
     public static Context context() {
         if (isNull(INSTANCE)) {
-            throw new InternalRuntimeException(CONTEXT_NOT_INITIALIZED);
+            return DEFAULT_INSTANCE;
         }
         return INSTANCE;
     }

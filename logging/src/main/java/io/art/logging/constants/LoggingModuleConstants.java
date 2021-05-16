@@ -36,7 +36,7 @@ public interface LoggingModuleConstants {
         String WRITERS_SECTION = "writers";
         String LEVEL_KEY = "level";
         String ENABLED_KEY = "enabled";
-        String TYPE_KEY = "key";
+        String TYPE_KEY = "type";
         String CATEGORIES_KEY = "categories";
         String DATE_TIME_FORMAT_KEY = "dateTimeFormat";
         String COLORED_KEY = "colored";
@@ -60,6 +60,5 @@ public interface LoggingModuleConstants {
     }
 
     String LOGGING_FORMAT = "{0} {1} {2}: {3} - {4}";
-    String PRODUCER_THREAD = "logging-producer";
     String CONSUMER_THREAD = "logging-consumer";
 }

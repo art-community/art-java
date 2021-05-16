@@ -34,6 +34,7 @@ import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.
 @Builder(toBuilder = true)
 public class LoggerConfiguration {
     private final LoggingLevel level;
+    private final Boolean enabled;
 
     @Builder.Default
     private final ImmutableArray<LoggerWriterConfiguration> writers = emptyImmutableArray();
@@ -41,8 +42,6 @@ public class LoggerConfiguration {
     @Builder.Default
     private final ImmutableSet<String> categories = emptyImmutableSet();
 
-    @Builder.Default
-    private final Boolean enabled = false;
 
     public static LoggerConfiguration from(ConfigurationSource source) {
         LoggerConfigurationBuilder builder = LoggerConfiguration.builder();
