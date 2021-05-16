@@ -29,8 +29,7 @@ public class LoggerConsumer {
     private final LoggingQueue queue;
     private final ImmutableArray<LoggerWriter> writers;
 
-    public void consume() {
-        LoggingMessage message = queue.poll();
+    public void consume(LoggingMessage message) {
         if (isNull(message)) return;
         writers.forEach(writer -> writer.write(message));
     }

@@ -48,7 +48,7 @@ public class LoggerConfiguration {
         builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), INFO));
         builder.enabled(orElse(source.getBool(ENABLED_KEY), true));
         builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
-        builder.writers(source.getNestedArray(WRITERS_SECTION, LoggerWriterConfiguration::from));
+        builder.writers(source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.builder().build())));
         return builder.build();
     }
 }

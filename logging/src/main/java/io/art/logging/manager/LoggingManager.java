@@ -24,7 +24,10 @@ import io.art.logging.state.*;
 import lombok.*;
 import static io.art.core.extensions.ExecutorExtensions.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.PairFactory.*;
 import static java.lang.Thread.*;
+import static java.util.Comparator.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -36,6 +39,10 @@ public class LoggingManager {
     private final List<Closeable> resources = linkedList();
 
     private final AtomicBoolean activated = new AtomicBoolean(false);
+
+    public boolean isActivated() {
+        return activated.get();
+    }
 
     public void activate() {
         if (activated.compareAndSet(false, true)) {
@@ -66,10 +73,22 @@ public class LoggingManager {
 
     private void processConsuming() {
         while (!interrupted() && activated.get()) {
-            processors.forEach(processor -> processor.getConsumer().consume());
+            processors
+                    .stream()
+                    .map(processor -> pairOf(processor, processor.getQueue().poll()))
+                    .filter(processor -> nonNull(processor.getSecond()))
+                    .sorted(comparing(processor -> processor.getSecond().getDateTime()))
+                    .forEach(processor -> processor.getFirst().getConsumer().consume(processor.getSecond()));
+
         }
         while (!processors.stream().allMatch(processor -> processor.getQueue().isEmpty())) {
-            processors.forEach(processor -> processor.getConsumer().consume());
+            processors
+                    .stream()
+                    .map(processor -> pairOf(processor, processor.getQueue().poll()))
+                    .filter(processor -> nonNull(processor.getSecond()))
+                    .sorted(comparing(processor -> processor.getSecond().getDateTime()))
+                    .forEach(processor -> processor.getFirst().getConsumer().consume(processor.getSecond()));
+
         }
     }
 }

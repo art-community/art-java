@@ -43,12 +43,11 @@ public class DefaultLoggerConfiguration {
                 .build();
     }
 
-    public static DefaultLoggerConfiguration from(ConfigurationSource source) {
-        DefaultLoggerConfiguration defaultConfiguration = DefaultLoggerConfiguration.builder().build();
+    public static DefaultLoggerConfiguration from(ConfigurationSource source, DefaultLoggerConfiguration fallback) {
         DefaultLoggerConfiguration.DefaultLoggerConfigurationBuilder builder = DefaultLoggerConfiguration.builder();
         builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), INFO));
         builder.enabled(orElse(source.getBool(ENABLED_KEY), true));
-        builder.writers(orElse(source.getNestedArray(WRITERS_SECTION, LoggerWriterConfiguration::from), defaultConfiguration.writers));
+        builder.writers(orElse(source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, fallback.getWriters().get(0))), fallback.getWriters()));
         return builder.build();
     }
 }

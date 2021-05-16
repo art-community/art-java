@@ -28,9 +28,9 @@ import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.
 public class ConsoleWriterConfiguration {
     private final Boolean colored;
 
-    public static ConsoleWriterConfiguration from(ConfigurationSource source) {
+    public static ConsoleWriterConfiguration from(ConfigurationSource source, ConsoleWriterConfiguration fallback) {
         return ConsoleWriterConfiguration.builder()
-                .colored(orElse(source.getBool(COLORED_KEY), false))
+                .colored(orElse(source.getBool(COLORED_KEY), fallback.colored))
                 .build();
     }
 }

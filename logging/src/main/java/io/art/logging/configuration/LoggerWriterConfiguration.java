@@ -47,10 +47,10 @@ public class LoggerWriterConfiguration {
     @Builder.Default
     private final ImmutableSet<String> categories = emptyImmutableSet();
 
-    public static LoggerWriterConfiguration from(ConfigurationSource source) {
+    public static LoggerWriterConfiguration from(ConfigurationSource source, LoggerWriterConfiguration fallback) {
         LoggerWriterConfigurationBuilder builder = builder();
         builder.type(LoggingWriterType.parse(source.getString(TYPE_KEY), CONSOLE));
-        builder.console(ConsoleWriterConfiguration.from(source));
+        builder.console(ConsoleWriterConfiguration.from(source, fallback.console));
         builder.file(FileWriterConfiguration.from(source));
         builder.categories(immutableSetOf(source.getStringArray(CATEGORIES_KEY)));
         builder.dateTimeFormatter(let(source.getString(DATE_TIME_FORMAT_KEY), DateTimeFormatter::ofPattern, DEFAULT_LOG_DATE_TIME_FORMAT));

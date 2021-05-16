@@ -43,7 +43,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .level(INFO)
             .writers(immutableArrayOf(LoggerWriterConfiguration.builder()
                     .type(CONSOLE)
-                    .console(ConsoleWriterConfiguration.builder().build())
+                    .console(ConsoleWriterConfiguration.builder().colored(false).build())
                     .dateTimeFormatter(DEFAULT_LOG_DATE_TIME_FORMAT)
                     .build()))
             .build();
@@ -56,7 +56,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.defaultLogger = orElse(source.getNested(LOGGING_DEFAULT_SECTION, DefaultLoggerConfiguration::from), configuration.defaultLogger);
+            configuration.defaultLogger = orElse(source.getNested(LOGGING_DEFAULT_SECTION, defaultLogger -> DefaultLoggerConfiguration.from(defaultLogger, configuration.getDefaultLogger())), configuration.getDefaultLogger());
             configuration.loggers = source.getNestedMap(LOGGING_LOGGERS_SECTION, LoggerConfiguration::from);
             return this;
         }
