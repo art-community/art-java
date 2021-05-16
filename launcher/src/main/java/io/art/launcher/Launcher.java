@@ -31,6 +31,7 @@ import io.art.logging.logger.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.launcher.LauncherConstants.*;
@@ -52,14 +53,15 @@ public class Launcher {
             for (ModuleActivator moduleActivator : activators) {
                 Module<?, ?> module = moduleActivator.getFactory().get();
                 ModuleInitializer<?, ?, ?> initializer = moduleActivator.getInitializer();
-                module.configure(configurator -> configurator.from(configuratorModule.orderedSources()));
                 if (nonNull(initializer)) {
                     module.configure(configurator -> configurator.initialize(cast(initializer.initialize(cast(module)))));
                 }
+                module.configure(configurator -> configurator.from(configuratorModule.orderedSources()));
                 builder.add(module);
             }
             LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
             ContextConfiguration contextConfiguration = ContextConfiguration.builder()
+                    .arguments(immutableArrayOf(activator.arguments()))
                     .onUnload(activator.onUnload())
                     .onLoad(activator.onLoad())
                     .beforeReload(activator.beforeReload())

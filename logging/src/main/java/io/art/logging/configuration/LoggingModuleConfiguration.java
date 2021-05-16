@@ -61,6 +61,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator initialize(LoggingModuleConfiguration configuration) {
+            this.configuration.defaultLogger = configuration.getDefaultLogger();
             return this;
         }
     }

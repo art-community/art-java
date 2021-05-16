@@ -24,6 +24,7 @@ import io.art.core.module.Module;
 import io.art.core.network.provider.*;
 import lombok.Builder;
 import lombok.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.SystemProperties.*;
 import static io.art.core.network.provider.IpAddressProvider.*;
@@ -67,6 +68,8 @@ public class ContextConfiguration {
             .orElse(DEFAULT_MODULE_JAR);
     @Builder.Default
     private final Path workingDirectory = Paths.get(getProperty(USER_DIR_PROPERTY));
+    @Builder.Default
+    private final ImmutableArray<String> arguments = emptyImmutableArray();
     private final Runnable onLoad;
     private final Runnable onUnload;
     private final Runnable beforeReload;

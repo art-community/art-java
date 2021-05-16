@@ -18,27 +18,28 @@
 
 package io.art.launcher;
 
+import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.http.module.*;
+import io.art.json.module.*;
+import io.art.logging.module.*;
+import io.art.message.pack.module.*;
+import io.art.protobuf.module.*;
+import io.art.rocks.db.module.*;
+import io.art.rsocket.module.*;
+import io.art.scheduler.module.*;
+import io.art.server.module.*;
+import io.art.storage.module.*;
+import io.art.tarantool.module.*;
+import io.art.value.module.*;
+import io.art.xml.module.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.communicator.module.CommunicatorActivator.*;
+import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.http.module.HttpActivator.*;
-import static io.art.json.module.JsonActivator.*;
-import static io.art.logging.module.LoggingActivator.*;
-import static io.art.message.pack.module.MessagePackActivator.*;
-import static io.art.protobuf.module.ProtobufActivator.*;
-import static io.art.rocks.db.module.RocksDbActivator.*;
-import static io.art.rsocket.module.RsocketActivator.*;
-import static io.art.scheduler.module.SchedulerActivator.*;
-import static io.art.server.module.ServerActivator.*;
-import static io.art.storage.module.StorageActivator.*;
-import static io.art.tarantool.module.TarantoolActivator.*;
-import static io.art.value.module.ValueActivator.*;
-import static io.art.xml.module.XmlActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
@@ -72,10 +73,13 @@ public class Activator {
     @Getter
     private Runnable afterReload;
 
+    @Setter
+    @Getter
+    private String[] arguments;
+
     public ImmutableSet<ModuleActivator> modules() {
         return immutableSetOf(modules.values());
     }
-
 
     public Activator configurator() {
         return configurator(identity());
@@ -96,20 +100,20 @@ public class Activator {
     }
 
     public Activator kit(ModulesInitializer initializer) {
-        module(value(initializer.value()));
-        module(scheduler());
-        module(logging(initializer.logging()));
-        module(json());
-        module(protobuf());
-        module(messagePack());
-        module(xml());
-        module(communicator(initializer.communicator()));
-        module(server(initializer.server()));
-        module(http(initializer.http()));
-        module(rsocket(initializer.rsocket()));
-        module(storage(initializer.storage()));
-        module(tarantool());
-        module(rocksdb());
+        module(ValueActivator.value(initializer.value()));
+        module(SchedulerActivator.scheduler());
+        module(LoggingActivator.logging(initializer.logging()));
+        module(JsonActivator.json());
+        module(ProtobufActivator.protobuf());
+        module(MessagePackActivator.messagePack());
+        module(XmlActivator.xml());
+        module(CommunicatorActivator.communicator(initializer.communicator()));
+        module(ServerActivator.server(initializer.server()));
+        module(HttpActivator.http(initializer.http()));
+        module(RsocketActivator.rsocket(initializer.rsocket()));
+        module(StorageActivator.storage(initializer.storage()));
+        module(TarantoolActivator.tarantool());
+        module(RocksDbActivator.rocksdb());
         return this;
     }
 
@@ -119,7 +123,11 @@ public class Activator {
     }
 
 
+    public static Activator activator(String[] arguments) {
+        return activator.arguments(arguments).configurator();
+    }
+
     public static Activator activator() {
-        return activator.configurator();
+        return activator(EMPTY_STRINGS);
     }
 }
