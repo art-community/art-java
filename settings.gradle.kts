@@ -35,7 +35,6 @@ include("server")
 include("communicator")
 include("rsocket")
 include("http")
-include("template-engine")
 include("tarantool")
 include("tests")
 include("scheduler")
@@ -44,7 +43,6 @@ include("storage")
 include("rocks-db")
 include("meta")
 //include("metrics")
-//include("metrics-http")
 
 pluginManagement {
     repositories {
