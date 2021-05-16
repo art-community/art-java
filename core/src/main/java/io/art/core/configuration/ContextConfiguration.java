@@ -27,6 +27,7 @@ import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.SystemProperties.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.network.provider.IpAddressProvider.*;
 import static java.lang.System.*;
 import static java.nio.charset.StandardCharsets.*;
@@ -70,6 +71,10 @@ public class ContextConfiguration {
     private final Path workingDirectory = Paths.get(getProperty(USER_DIR_PROPERTY));
     @Builder.Default
     private final ImmutableArray<String> arguments = emptyImmutableArray();
+    @Builder.Default
+    private final ImmutableMap<String, String> environment = immutableMapOf(getenv());
+    @Builder.Default
+    private final ImmutableMap<String, String> properties = immutableMapOf(System.getProperties());
     private final Runnable onLoad;
     private final Runnable onUnload;
     private final Runnable beforeReload;

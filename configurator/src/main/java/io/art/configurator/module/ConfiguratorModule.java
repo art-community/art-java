@@ -56,7 +56,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
 
     public ConfiguratorModule loadSources() {
         configure(configurator -> configurator
-                .from(new EnvironmentConfigurationSource())
+                .from(new EnvironmentConfigurationSource(EMPTY_STRING))
                 .from(new PropertiesConfigurationSource())
         );
         ClassLoader loader = Thread.currentThread().getContextClassLoader();

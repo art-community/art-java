@@ -3,6 +3,7 @@ package io.art.core.factory;
 import io.art.core.collection.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import java.util.*;
 import java.util.concurrent.*;
 
@@ -34,6 +35,10 @@ public class MapFactory {
 
     public static <K, V> ImmutableMap<K, V> immutableMapOf(Map<K, V> map) {
         return new ImmutableMapImplementation<>(map);
+    }
+
+    public static ImmutableMap<String, String> immutableMapOf(Properties properties) {
+        return properties.entrySet().stream().collect(immutableMapCollector(entry -> entry.getKey().toString(), entry -> entry.getValue().toString()));
     }
 
     public static <K, V> ImmutableMap<K, V> immutableMapOf(ImmutableMap<K, V> map) {

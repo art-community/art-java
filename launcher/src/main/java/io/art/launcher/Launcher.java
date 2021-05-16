@@ -75,6 +75,8 @@ public class Launcher {
                     .loadSources()
                     .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().get().initialize(cast(configuratorModule)))));
             ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
+            builder.add(configuratorModule);
+
             for (ModuleActivator moduleActivator : activators.values()) {
                 Module<?, ?> module = moduleActivator.getFactory().get();
                 ModuleInitializationOperator<?> initializer = moduleActivator.getInitializer();
