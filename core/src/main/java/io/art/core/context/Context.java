@@ -26,6 +26,7 @@ import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
@@ -53,11 +54,11 @@ public class Context {
     }
 
     public static void initialize(ImmutableSet<Module<?, ?>> modules) {
-        initialize(ContextConfiguration.builder().build(), modules, System.out::println);
+        initialize(ContextConfiguration.builder().build(), modules, emptyConsumer());
     }
 
     public static void initialize(ContextConfiguration configuration, ImmutableSet<Module<?, ?>> modules) {
-        initialize(configuration, modules, System.out::println);
+        initialize(configuration, modules, emptyConsumer());
     }
 
     public static void initialize(ImmutableSet<Module<?, ?>> modules, Consumer<String> printer) {

@@ -77,6 +77,10 @@ public class Activator {
     @Getter
     private String[] arguments;
 
+    @Setter
+    @Getter
+    private boolean quiet = false;
+
     public ImmutableSet<ModuleActivator> modules() {
         return immutableSetOf(modules.values());
     }

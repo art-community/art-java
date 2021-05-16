@@ -69,6 +69,10 @@ public class Launcher {
                     .mainModuleId(activator.mainModuleId())
                     .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())))
                     .build();
+            if (activator.quiet()) {
+                initialize(contextConfiguration, builder.build());
+                return;
+            }
             initialize(contextConfiguration, builder.build(), message -> logger.get().info(message));
             LAUNCHED_MESSAGES.forEach(message -> logger.get().info(message));
             return;
