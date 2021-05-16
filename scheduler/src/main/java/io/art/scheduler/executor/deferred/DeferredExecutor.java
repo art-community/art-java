@@ -22,9 +22,9 @@ import java.time.*;
 import java.util.concurrent.*;
 
 public interface DeferredExecutor {
-    <EventResultType> ForkJoinTask<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime);
+    <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime);
 
-    ForkJoinTask<?> execute(Runnable task, LocalDateTime triggerTime);
+    Future<?> execute(Runnable task, LocalDateTime triggerTime);
 
     void shutdown();
 

@@ -55,7 +55,7 @@ class DeferredEvent<EventResultType> implements Delayed {
         return triggerDateTime;
     }
 
-    private int getOrder() {
+    public int getOrder() {
         return order;
     }
 }

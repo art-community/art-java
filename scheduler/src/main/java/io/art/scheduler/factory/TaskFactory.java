@@ -20,15 +20,21 @@ package io.art.scheduler.factory;
 
 import io.art.core.callable.*;
 import io.art.core.runnable.*;
+import io.art.logging.logger.*;
+import io.art.logging.module.*;
 import io.art.scheduler.model.*;
+import io.art.scheduler.module.*;
+import lombok.*;
 import lombok.experimental.*;
-import static com.google.common.base.Throwables.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.util.UUID.*;
 import java.util.function.*;
 
 @UtilityClass
 public class TaskFactory {
+    @Getter(lazy = true)
+    private final static Logger logger = LoggingModule.logger(SchedulerModule.class);
+
     public static RunnableTask task(ExceptionRunnable runnable) {
         return task(randomUUID().toString(), runnable);
     }
@@ -62,6 +68,6 @@ public class TaskFactory {
     }
 
     private static void logError(Throwable error) {
-        System.err.println(getStackTraceAsString(error));
+        getLogger().error(error);
     }
 }

@@ -24,16 +24,11 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
-import static java.util.concurrent.Executors.*;
-import java.util.concurrent.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
-    private final ExecutorService consumingExecutor = newSingleThreadExecutor(runnable -> newDaemon(CONSUMER_THREAD, runnable));
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
 
     private LoggerConfiguration defaultLogger = LoggerConfiguration.defaults()

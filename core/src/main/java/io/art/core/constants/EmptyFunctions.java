@@ -1,11 +1,16 @@
 package io.art.core.constants;
 
+import java.util.concurrent.*;
 import java.util.function.*;
 
 public interface EmptyFunctions {
     static Runnable emptyRunnable() {
         return () -> {
         };
+    }
+
+    static <T> Callable<T> emptyCallable() {
+        return () -> null;
     }
 
     static <T> Consumer<T> emptyConsumer() {
@@ -29,4 +34,6 @@ public interface EmptyFunctions {
     static <K, V> Function<K, V> emptyFunction() {
         return (K ignore) -> null;
     }
+
+    FutureTask<?> EMPTY_FUTURE_TASK = new FutureTask<>(emptyCallable());
 }

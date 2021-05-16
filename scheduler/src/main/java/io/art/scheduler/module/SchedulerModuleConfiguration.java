@@ -30,10 +30,10 @@ import java.time.*;
 @Getter
 public class SchedulerModuleConfiguration implements ModuleConfiguration {
     private final DeferredExecutor deferredExecutor = deferredExecutor()
-            .exceptionHandler(new DeferredExecutorExceptionHandler())
+            .exceptionHandler(new DefaultExceptionHandler())
             .build();
     private final PeriodicExecutor periodicExecutor = new PeriodicExecutor(deferredExecutor()
-            .exceptionHandler(new DeferredExecutorExceptionHandler())
+            .exceptionHandler(new DefaultExceptionHandler())
             .build());
     private Duration refreshDuration;
 

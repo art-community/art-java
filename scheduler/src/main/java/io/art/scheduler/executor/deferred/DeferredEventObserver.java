@@ -18,159 +18,224 @@
 
 package io.art.scheduler.executor.deferred;
 
+import io.art.logging.module.*;
 import io.art.scheduler.exception.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static java.lang.Thread.*;
+import static java.util.Comparator.*;
 import static java.util.Objects.*;
-import static java.util.concurrent.ForkJoinPool.*;
+import static java.util.concurrent.Executors.*;
 import static java.util.concurrent.TimeUnit.*;
 import java.time.*;
+import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
 
-//TODO: FIXME - Observer working incorrectly. Will be fixed later...
 class DeferredEventObserver {
-    private final DeferredExecutorImplementation implementation;
-    private final ForkJoinPool threadPool;
-    private final DelayQueue<DeferredEvent<?>> deferredEvents;
-    private final ForkJoinTask<?> observingTask;
-    private volatile boolean terminating = false;
-    private final ForkJoinTask<?> EMPTY_TASK = new Task<>(emptyRunnable());
+    private final static AtomicInteger threadCounter = new AtomicInteger(0);
+    private final static ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_THREAD_NAME + DASH + threadCounter.incrementAndGet(), runnable);
 
-    DeferredEventObserver(DeferredExecutorImplementation implementation) {
-        this.implementation = implementation;
-        deferredEvents = new DelayQueue<>();
-        threadPool = createThreadPool();
-        observingTask = threadPool.submit(new Task<>(this::observeQueue));
+    private final DeferredExecutorImplementation executor;
+
+    private final ThreadPoolExecutor pendingPool;
+    private final Thread delayedObserver;
+    private final ExecutorService fallbackExecutor = newSingleThreadExecutor(threadFactory);
+
+    private final AtomicBoolean terminating = new AtomicBoolean(false);
+    private volatile boolean terminated = false;
+
+    private final DelayQueue<DeferredEvent<?>> delayedEvents = new DelayQueue<>();
+    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents = concurrentMap();
+    private final PriorityBlockingQueue<Long> pendingIds = new PriorityBlockingQueue<>(DEFAULT_RUNNING_QUEUE_SIZE, Long::compare);
+    private final PriorityBlockingQueue<Long> takenIds = new PriorityBlockingQueue<>(DEFAULT_RUNNING_QUEUE_SIZE, Long::compare);
+
+    private final ReentrantLock takenLock = new ReentrantLock();
+    private final ReentrantLock pendingLock = new ReentrantLock();
+
+    DeferredEventObserver(DeferredExecutorImplementation executor) {
+        this.executor = executor;
+        pendingPool = createThreadPool();
+        for (int thread = 0; thread < this.executor.getPoolSize(); thread++) {
+            pendingPool.submit(this::observePending);
+        }
+        delayedObserver = new Thread(this::observeDelayed);
+        delayedObserver.start();
     }
 
-    <EventResultType> ForkJoinTask<? extends EventResultType> addEvent(Callable<? extends EventResultType> task, LocalDateTime triggerTime) {
-        if (terminating) {
-            return cast(EMPTY_TASK);
+    <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> action, LocalDateTime triggerTime) {
+        if (terminated) {
+            throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
 
-        if (deferredEvents.size() + 1 > implementation.getQueueSize()) {
-            return forceExecuteEvent(task);
+        if (terminating.get()) {
+            return cast(EMPTY_FUTURE_TASK);
         }
 
-        ForkJoinTask<EventResultType> forkJoinTask = new Task<>(task);
-        DeferredEvent<EventResultType> event = new DeferredEvent<>(forkJoinTask, triggerTime, deferredEvents.size());
-        deferredEvents.add(event);
-        return forkJoinTask;
+        FutureTask<? extends EventResultType> task = new FutureTask<>(action);
+        DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, delayedEvents.size());
+
+        if (delayedEvents.size() + 1 > executor.getQueueSize()) {
+            return cast(forceExecuteEvent(event));
+        }
+
+        delayedEvents.add(event);
+        return task;
     }
 
     void shutdown() {
-        try {
-            terminating = true;
-            observingTask.cancel(true);
-            deferredEvents.clear();
-            threadPool.shutdown();
-            if (!implementation.isAwaitOnShutdown()) {
-                return;
+        if (terminating.compareAndSet(false, true)) {
+            try {
+                delayedObserver.interrupt();
+                delayedEvents.clear();
+                pendingEvents.clear();
+                pendingIds.clear();
+                takenIds.clear();
+                pendingPool.shutdown();
+                fallbackExecutor.shutdownNow();
+                if (!executor.isAwaitOnShutdown()) {
+                    return;
+                }
+                if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
+                    executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+                }
+            } catch (Throwable throwable) {
+                executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, throwable);
+            } finally {
+                terminated = true;
             }
-            if (!threadPool.awaitTermination(implementation.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
-                implementation.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
-            }
-        } catch (Throwable throwable) {
-            implementation.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, throwable);
-        } finally {
-            terminating = false;
         }
     }
 
-    @SuppressWarnings(CONSTANT_CONDITIONS)
-    private void observeQueue() {
+    private void observeDelayed() {
         try {
-            while (!terminating) {
-                DeferredEvent<?> currentEvent = deferredEvents.take();
-                try {
-                    ForkJoinTask<?> task = getTaskFromEvent(currentEvent);
-                    if (task.isCancelled()) continue;
-                    task = task.fork();
-                    DeferredEvent<?> nextEvent;
-                    if (nonNull(nextEvent = deferredEvents.peek()) && nextEvent.getTriggerDateTime() == currentEvent.getTriggerDateTime() && !task.isCancelled()) {
-                        task.join();
+            while (!terminating.get()) {
+                DeferredEvent<?> event = delayedEvents.take();
+
+                erasePendingEvents(event);
+
+                long id = event.getTriggerDateTime();
+
+                pendingLock.lock();
+                PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+
+                if (isNull(queue)) {
+                    queue = new PriorityBlockingQueue<>(DEFAULT_RUNNING_QUEUE_SIZE, comparing(DeferredEvent::getOrder));
+
+                    if (!queue.add(event)) {
+                        forceExecuteEvent(event);
+                        pendingLock.unlock();
+                        continue;
                     }
-                } catch (Throwable throwable) {
-                    implementation.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
+
+                    pendingEvents.put(id, queue);
+
+                    if (!pendingIds.add(id)) {
+                        pendingEvents.remove(id);
+                        forceExecuteEvent(event);
+                    }
+
+                    pendingLock.unlock();
+                    continue;
+                }
+
+                if (!queue.add(event)) {
+                    forceExecuteEvent(event);
+                }
+
+                pendingLock.unlock();
+            }
+        } catch (InterruptedException ignore) {
+            // Ignoring exception because interrupting is normal situation when we want shutdown observer
+        } catch (Throwable throwable) {
+            executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
+        }
+    }
+
+    private void observePending() {
+        try {
+            while (!terminating.get()) {
+                Long id = pendingIds.take();
+                takenLock.lock();
+                if (!takenIds.offer(id)) {
+                    takenLock.unlock();
+                    continue;
+                }
+                takenLock.unlock();
+                PriorityBlockingQueue<DeferredEvent<?>> events;
+                while (nonNull(events = pendingEvents.get(id))) {
+                    DeferredEvent<?> event;
+                    pendingLock.lock();
+                    while (nonNull(event = events.poll())) {
+                        FutureTask<?> task = getTaskFromEvent(event);
+                        task.run();
+                        task.get();
+                    }
+                    pendingLock.unlock();
                 }
             }
         } catch (InterruptedException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
-            implementation.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
+            executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
         }
     }
 
-    private ForkJoinTask<?> getTaskFromEvent(DeferredEvent<?> currentEvent) {
-        return (ForkJoinTask<?>) currentEvent.getTask();
+    private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
+        takenLock.lock();
+        pendingLock.lock();
+        try {
+            Long currentId;
+            while (nonNull(currentId = takenIds.peek())) {
+
+                if (event.getTriggerDateTime() > currentId && isEmpty(pendingEvents.get(currentId))) {
+                    pendingEvents.remove(currentId);
+                    takenIds.poll();
+                    continue;
+                }
+
+                return;
+            }
+        } catch (Throwable throwable) {
+            executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
+        } finally {
+            pendingLock.unlock();
+            takenLock.unlock();
+        }
     }
 
-    private ForkJoinPool createThreadPool() {
-        UncaughtExceptionHandler exceptionHandler = (thread, throwable) -> implementation
-                .getExceptionHandler()
-                .onException(thread, TASK_EXECUTION, throwable);
-        return new ForkJoinPool(implementation.getPoolSize() + 1, defaultForkJoinWorkerThreadFactory, exceptionHandler, true);
+    private FutureTask<?> getTaskFromEvent(DeferredEvent<?> currentEvent) {
+        return (FutureTask<?>) currentEvent.getTask();
     }
 
-    private <EventResultType> ForkJoinTask<? extends EventResultType> forceExecuteEvent(Callable<? extends EventResultType> task) {
-        return threadPool.submit(task);
+
+    private Future<?> forceExecuteEvent(DeferredEvent<?> event) {
+        return fallbackExecutor.submit(getTaskFromEvent(event));
+    }
+
+    private ThreadPoolExecutor createThreadPool() {
+        return new ThreadPoolExecutor(
+                executor.getPoolSize(),
+                executor.getPoolSize(),
+                DEFAULT_POOL_KEEP_ALIVE.toMillis(), MILLISECONDS,
+                new LinkedBlockingDeque<>(executor.getQueueSize()),
+                threadFactory,
+                (runnable, executor) -> this.executor
+                        .getExceptionHandler()
+                        .onException(currentThread(), TASK_EXECUTION, new SchedulerModuleException(REJECTED_EXCEPTION))
+        );
     }
 
     void clear() {
-        deferredEvents.clear();
-    }
-
-    private final class Task<T> extends ForkJoinTask<T> {
-        final Callable<? extends T> callable;
-        volatile Thread executionThread;
-        T result;
-
-        Task(Callable<? extends T> callable) {
-            this.callable = callable;
-        }
-
-        Task(Runnable runnable) {
-            this.callable = () -> {
-                runnable.run();
-                return null;
-            };
-        }
-
-        @Override
-        public final T getRawResult() {
-            return result;
-        }
-
-        @Override
-        public final void setRawResult(T value) {
-            result = value;
-        }
-
-        @Override
-        public boolean cancel(boolean mayInterruptIfRunning) {
-            boolean cancel = super.cancel(mayInterruptIfRunning);
-            if (mayInterruptIfRunning && nonNull(executionThread)) {
-                executionThread.interrupt();
-            }
-            return cancel;
-        }
-
-        @Override
-        public final boolean exec() {
-            try {
-                executionThread = currentThread();
-                result = callable.call();
-            } catch (Throwable throwable) {
-                DeferredEventObserver.this
-                        .implementation
-                        .getExceptionHandler()
-                        .onException(currentThread(), TASK_EXECUTION, throwable);
-            }
-            return true;
-        }
+        delayedEvents.clear();
     }
 }

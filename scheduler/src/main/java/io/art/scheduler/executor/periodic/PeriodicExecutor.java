@@ -33,18 +33,18 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public class PeriodicExecutor {
-    private final Map<String, ForkJoinTask<?>> executingTasks = concurrentMap();
-    private final Map<String, ForkJoinTask<?>> cancelledTasks = concurrentMap();
+    private final Map<String, Future<?>> executingTasks = concurrentMap();
+    private final Map<String, Future<?>> cancelledTasks = concurrentMap();
     private final DeferredExecutor deferredExecutor;
 
     public <T> void submit(PeriodicCallableTask<? extends T> task) {
-        ForkJoinTask<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));
+        Future<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));
         if (nonNull(deferred)) return;
         submitTask(task);
     }
 
     public void execute(PeriodicRunnableTask task) {
-        ForkJoinTask<?> deferred = cast(executingTasks.get(task.getDelegate().getId()));
+        Future<?> deferred = cast(executingTasks.get(task.getDelegate().getId()));
         if (nonNull(deferred)) return;
         executeTask(task);
     }
@@ -54,7 +54,7 @@ public class PeriodicExecutor {
     }
 
     public boolean cancelTask(String taskId) {
-        ForkJoinTask<?> current = executingTasks.remove(taskId);
+        Future<?> current = executingTasks.remove(taskId);
         if (isNull(current)) return true;
         apply(cancelledTasks.put(taskId, current), task -> task.cancel(false));
         return current.cancel(false);
@@ -81,7 +81,7 @@ public class PeriodicExecutor {
     }
 
     private boolean validate(String id) {
-        ForkJoinTask<?> task;
+        Future<?> task;
         return isNull(task = cancelledTasks.remove(id)) || !task.isCancelled();
     }
 

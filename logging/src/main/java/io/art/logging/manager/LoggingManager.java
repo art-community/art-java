@@ -26,11 +26,11 @@ import io.art.logging.writer.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.ArrayCollector.*;
-import static io.art.core.extensions.ExecutorExtensions.*;
+import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.factory.LoggerWriterFactory.*;
-import static java.lang.Thread.*;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -38,14 +38,13 @@ import java.util.concurrent.atomic.*;
 @RequiredArgsConstructor
 public class LoggingManager {
     private final AtomicBoolean activated = new AtomicBoolean(false);
-    private final LoggingModuleConfiguration configuration;
     private final CompositeWriter fallbackWriter;
     private final LoggingQueue queue = new LoggingQueue();
     private final Map<String, LoggerProcessor> processors = concurrentMap();
     private final List<Closeable> resources = linkedList();
+    private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
 
     public LoggingManager(LoggingModuleConfiguration configuration) {
-        this.configuration = configuration;
         List<LoggerWriter> defaultWriters = configuration
                 .getDefaultLogger()
                 .getWriters()
@@ -61,13 +60,13 @@ public class LoggingManager {
 
     public void activate() {
         if (activated.compareAndSet(false, true)) {
-            configuration.getConsumingExecutor().execute(this::processConsuming);
+            consumer.start();
         }
     }
 
     public void deactivate() {
         if (activated.compareAndSet(true, false)) {
-            terminateQuietly(configuration.getConsumingExecutor());
+            consumer.interrupt();
             resources.forEach(StreamsExtensions::closeQuietly);
         }
     }
@@ -87,7 +86,7 @@ public class LoggingManager {
     }
 
     private void processConsuming() {
-        while (!interrupted() && activated.get()) {
+        while (activated.get()) {
             apply(queue.poll(), message -> apply(processors.get(message.getLogger()), processor -> processor.getConsumer().consume(message)));
         }
         while (!queue.isEmpty()) {

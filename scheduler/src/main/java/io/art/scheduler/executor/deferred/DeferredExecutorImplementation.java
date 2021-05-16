@@ -28,7 +28,7 @@ import java.util.concurrent.*;
 public class DeferredExecutorImplementation implements DeferredExecutor {
     @Getter
     @Builder.Default
-    private final ExceptionHandler exceptionHandler = new DeferredExecutorExceptionHandler();
+    private final ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
     @Getter
     @Builder.Default
     private final int queueSize = DEFAULT_QUEUE_SIZE;
@@ -45,12 +45,12 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     private final DeferredEventObserver observer = new DeferredEventObserver(this);
 
     @Override
-    public <EventResultType> ForkJoinTask<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
+    public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
         return getObserver().addEvent(eventTask, triggerTime);
     }
 
     @Override
-    public ForkJoinTask<?> execute(Runnable task, LocalDateTime triggerTime) {
+    public Future<?> execute(Runnable task, LocalDateTime triggerTime) {
         return submit(() -> {
             task.run();
             return null;

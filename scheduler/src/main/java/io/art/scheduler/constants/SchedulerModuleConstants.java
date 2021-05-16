@@ -25,6 +25,7 @@ import java.time.*;
 
 public interface SchedulerModuleConstants {
     String REFRESHER_TASK = "REFRESHER_TASK";
+    String SCHEDULER_THREAD_NAME = "scheduler";
 
     enum PeriodicTaskMode {
         FIXED,
@@ -33,6 +34,8 @@ public interface SchedulerModuleConstants {
 
     interface Defaults {
         int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
+        int DEFAULT_RUNNING_QUEUE_SIZE = 11;
+        Duration DEFAULT_POOL_KEEP_ALIVE = Duration.ofMinutes(1);
     }
 
     interface ConfigurationKeys {
@@ -42,6 +45,8 @@ public interface SchedulerModuleConstants {
     interface ExceptionMessages {
         String EXCEPTION_OCCURRED_DURING = "Exception occurred during {0} on thread {1}: {2}";
         String AWAIT_TERMINATION_EXCEPTION = "Await termination failed";
+        String SCHEDULER_TERMINATED = "Scheduler terminated";
+        String REJECTED_EXCEPTION = "Thread pool rejected task";
 
         @Getter
         @AllArgsConstructor

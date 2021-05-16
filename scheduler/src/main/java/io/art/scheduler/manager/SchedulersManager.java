@@ -31,19 +31,19 @@ import java.util.concurrent.*;
 
 @UtilityClass
 public class SchedulersManager {
-    public static <T> ForkJoinTask<? extends T> schedule(Callable<? extends T> task) {
+    public static <T> Future<? extends T> schedule(Callable<? extends T> task) {
         return deferredExecutor().submit(task, now());
     }
 
-    public static <T> ForkJoinTask<? extends T> schedule(Callable<? extends T> task, LocalDateTime startTime) {
+    public static <T> Future<? extends T> schedule(Callable<? extends T> task, LocalDateTime startTime) {
         return deferredExecutor().submit(task, startTime);
     }
 
-    public static ForkJoinTask<?> schedule(Runnable task) {
+    public static Future<?> schedule(Runnable task) {
         return deferredExecutor().execute(task, now());
     }
 
-    public static ForkJoinTask<?> schedule(Runnable task, LocalDateTime startTime) {
+    public static Future<?> schedule(Runnable task, LocalDateTime startTime) {
         return deferredExecutor().execute(task, startTime);
     }
 
