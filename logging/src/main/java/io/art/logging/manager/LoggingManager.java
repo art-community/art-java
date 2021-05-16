@@ -21,6 +21,7 @@ package io.art.logging.manager;
 import io.art.core.extensions.*;
 import io.art.logging.configuration.*;
 import io.art.logging.messaging.*;
+import io.art.logging.model.*;
 import io.art.logging.state.*;
 import io.art.logging.writer.*;
 import lombok.*;
@@ -38,11 +39,12 @@ import java.util.concurrent.atomic.*;
 @RequiredArgsConstructor
 public class LoggingManager {
     private final AtomicBoolean activated = new AtomicBoolean(false);
-    private final CompositeWriter fallbackWriter;
     private final LoggingQueue queue = new LoggingQueue();
     private final Map<String, LoggerProcessor> processors = concurrentMap();
-    private final List<Closeable> resources = linkedList();
     private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
+    private final List<Closeable> resources = linkedList();
+
+    private final CompositeWriter fallbackWriter;
 
     public LoggingManager(LoggingModuleConfiguration configuration) {
         List<LoggerWriter> defaultWriters = configuration
@@ -87,10 +89,14 @@ public class LoggingManager {
 
     private void processConsuming() {
         while (activated.get()) {
-            apply(queue.poll(), message -> apply(processors.get(message.getLogger()), processor -> processor.getConsumer().consume(message)));
+            apply(queue.poll(), this::consume);
         }
         while (!queue.isEmpty()) {
-            apply(queue.poll(), message -> apply(processors.get(message.getLogger()), processor -> processor.getConsumer().consume(message)));
+            apply(queue.poll(), this::consume);
         }
+    }
+
+    private void consume(LoggingMessage message) {
+        apply(processors.get(message.getLogger()), processor -> processor.getConsumer().consume(message));
     }
 }
