@@ -98,6 +98,7 @@ public class LoggerImplementation implements Logger {
 
     @Override
     public void info(String message) {
+        if (!enabled || !infoEnabled) return;
         producer.produce(createMessage(INFO, message));
     }
 
