@@ -34,8 +34,8 @@ public interface SchedulerModuleConstants {
 
     interface Defaults {
         int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
-        int DEFAULT_RUNNING_QUEUE_SIZE = 11;
-        Duration DEFAULT_POOL_KEEP_ALIVE = Duration.ofMinutes(1);
+        int INITIAL_RUNNING_QUEUE_SIZE = 11;
+        Duration DEFAULT_POOL_KEEP_ALIVE = ofMinutes(1);
     }
 
     interface ConfigurationKeys {

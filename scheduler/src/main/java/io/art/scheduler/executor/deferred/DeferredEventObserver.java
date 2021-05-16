@@ -18,7 +18,6 @@
 
 package io.art.scheduler.executor.deferred;
 
-import io.art.logging.module.*;
 import io.art.scheduler.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -56,8 +55,8 @@ class DeferredEventObserver {
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents = new DelayQueue<>();
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents = concurrentMap();
-    private final PriorityBlockingQueue<Long> pendingIds = new PriorityBlockingQueue<>(DEFAULT_RUNNING_QUEUE_SIZE, Long::compare);
-    private final PriorityBlockingQueue<Long> takenIds = new PriorityBlockingQueue<>(DEFAULT_RUNNING_QUEUE_SIZE, Long::compare);
+    private final PriorityBlockingQueue<Long> pendingIds = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
+    private final PriorityBlockingQueue<Long> takenIds = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
 
     private final ReentrantLock takenLock = new ReentrantLock();
     private final ReentrantLock pendingLock = new ReentrantLock();
@@ -126,33 +125,32 @@ class DeferredEventObserver {
                 long id = event.getTriggerDateTime();
 
                 pendingLock.lock();
-                PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+                try {
+                    PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+                    if (isNull(queue)) {
+                        queue = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, comparing(DeferredEvent::getOrder));
 
-                if (isNull(queue)) {
-                    queue = new PriorityBlockingQueue<>(DEFAULT_RUNNING_QUEUE_SIZE, comparing(DeferredEvent::getOrder));
+                        if (!queue.add(event)) {
+                            forceExecuteEvent(event);
+                            continue;
+                        }
 
-                    if (!queue.add(event)) {
-                        forceExecuteEvent(event);
-                        pendingLock.unlock();
+                        pendingEvents.put(id, queue);
+
+                        if (!pendingIds.add(id)) {
+                            pendingEvents.remove(id);
+                            forceExecuteEvent(event);
+                        }
+
                         continue;
                     }
 
-                    pendingEvents.put(id, queue);
-
-                    if (!pendingIds.add(id)) {
-                        pendingEvents.remove(id);
+                    if (!queue.add(event)) {
                         forceExecuteEvent(event);
                     }
-
+                } finally {
                     pendingLock.unlock();
-                    continue;
                 }
-
-                if (!queue.add(event)) {
-                    forceExecuteEvent(event);
-                }
-
-                pendingLock.unlock();
             }
         } catch (InterruptedException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
@@ -165,22 +163,29 @@ class DeferredEventObserver {
         try {
             while (!terminating.get()) {
                 Long id = pendingIds.take();
+
                 takenLock.lock();
-                if (!takenIds.offer(id)) {
+                try {
+                    if (!takenIds.offer(id)) {
+                        continue;
+                    }
+                } finally {
                     takenLock.unlock();
-                    continue;
                 }
-                takenLock.unlock();
+
                 PriorityBlockingQueue<DeferredEvent<?>> events;
                 while (nonNull(events = pendingEvents.get(id))) {
-                    DeferredEvent<?> event;
                     pendingLock.lock();
-                    while (nonNull(event = events.poll())) {
-                        FutureTask<?> task = getTaskFromEvent(event);
-                        task.run();
-                        task.get();
+                    try {
+                        DeferredEvent<?> event;
+                        while (nonNull(event = events.poll())) {
+                            FutureTask<?> task = getTaskFromEvent(event);
+                            task.run();
+                            task.get();
+                        }
+                    } finally {
+                        pendingLock.unlock();
                     }
-                    pendingLock.unlock();
                 }
             }
         } catch (InterruptedException ignore) {
