@@ -39,6 +39,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.*;
 
+
+//TODO: Reduce locks, optimize spin-locks and add graceful shutdown
 class DeferredEventObserver {
     private final static AtomicInteger threadCounter = new AtomicInteger(0);
     private final static ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_THREAD_NAME + DASH + threadCounter.incrementAndGet(), runnable);
