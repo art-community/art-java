@@ -27,6 +27,7 @@ public interface LoggingModuleConstants {
     interface ConfigurationKeys {
         String LOGGING_LOGGERS_SECTION = "logging.loggers";
         String LOGGING_DEFAULT_SECTION = "logging.default";
+        String LOGGING_FALLBACK_SECTION = "logging.fallback";
         String WRITERS_SECTION = "writers";
         String LEVEL_KEY = "level";
         String ENABLED_KEY = "enabled";

@@ -26,7 +26,6 @@ import io.art.logging.state.*;
 import io.art.logging.writer.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -44,16 +43,10 @@ public class LoggingManager {
     private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
     private final List<Closeable> resources = linkedList();
 
-    private final CompositeWriter fallbackWriter;
+    private final LoggerWriter fallbackWriter;
 
     public LoggingManager(LoggingModuleConfiguration configuration) {
-        List<LoggerWriter> defaultWriters = configuration
-                .getDefaultLogger()
-                .getConfigurableWriters()
-                .stream()
-                .map(writer -> loggerWriter(this, writer))
-                .collect(listCollector());
-        fallbackWriter = new CompositeWriter(defaultWriters);
+        fallbackWriter = loggerWriter(this, configuration.getFallbackWriter());
     }
 
     public boolean isActivated() {

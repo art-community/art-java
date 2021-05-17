@@ -36,6 +36,10 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .configurableWriters(immutableArrayOf(LoggerWriterConfiguration.defaults()))
             .build();
 
+    private LoggerWriterConfiguration fallbackWriter = LoggerWriterConfiguration.builder()
+            .console(ConsoleWriterConfiguration.builder().build())
+            .build();
+
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
@@ -45,6 +49,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
         public Configurator initialize(LoggingModuleConfiguration configuration) {
             this.configuration.defaultLogger = configuration.getDefaultLogger();
             this.configuration.loggers = configuration.getLoggers();
+            this.configuration.fallbackWriter = configuration.getFallbackWriter();
             return this;
         }
 
@@ -53,6 +58,10 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             configuration.defaultLogger = orElse(
                     source.getNested(LOGGING_DEFAULT_SECTION, defaultLogger -> LoggerConfiguration.from(defaultLogger, configuration.defaultLogger)),
                     configuration.defaultLogger
+            );
+            configuration.fallbackWriter = orElse(
+                    source.getNested(LOGGING_FALLBACK_SECTION, fallback -> LoggerWriterConfiguration.from(fallback, configuration.fallbackWriter)),
+                    configuration.fallbackWriter
             );
             configuration.loggers = source.getNestedMap(LOGGING_LOGGERS_SECTION, logger -> LoggerConfiguration.from(logger, configuration.defaultLogger));
             return this;

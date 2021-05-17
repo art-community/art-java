@@ -18,13 +18,14 @@
 
 package io.art.logging.writer;
 
+import io.art.core.collection.*;
 import io.art.logging.model.*;
 import lombok.*;
 import java.util.*;
 
 @RequiredArgsConstructor
 public class CompositeWriter implements LoggerWriter {
-    private final List<LoggerWriter> writers;
+    private final ImmutableArray<LoggerWriter> writers;
 
     @Override
     public void write(LoggingMessage message) {
