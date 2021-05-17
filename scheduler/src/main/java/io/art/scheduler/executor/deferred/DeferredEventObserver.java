@@ -244,7 +244,7 @@ class DeferredEventObserver {
                 executor.getPoolSize(),
                 executor.getPoolSize(),
                 executor.getPoolKeepAlive().toMillis(), MILLISECONDS,
-                new LinkedBlockingQueue<>(executor.getDelayedQueueSize()),
+                new LinkedBlockingQueue<>(executor.getPoolSize()),
                 threadFactory,
                 (runnable, executor) -> this.executor
                         .getExceptionHandler()
