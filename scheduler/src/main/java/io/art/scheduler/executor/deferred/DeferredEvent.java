@@ -33,25 +33,25 @@ class DeferredEvent<EventResultType> implements Delayed {
     private final Future<EventResultType> task;
 
     @Getter(value = PACKAGE)
-    private final long triggerDateTime;
+    private final long trigger;
 
     @Getter(value = PACKAGE)
     private final int order;
 
     DeferredEvent(Future<EventResultType> task, LocalDateTime triggerDateTime, int order) {
         this.task = task;
-        this.triggerDateTime = triggerDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
+        this.trigger = triggerDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
         this.order = order;
     }
 
     @Override
     public long getDelay(TimeUnit unit) {
-        return unit.toNanos(triggerDateTime - currentTimeMillis());
+        return unit.toNanos(trigger - currentTimeMillis());
     }
 
     @Override
     public int compareTo(@SuppressWarnings(NULLABLE_PROBLEMS) Delayed other) {
-        return comparingLong((ToLongFunction<DeferredEvent<?>>) DeferredEvent::getTriggerDateTime)
+        return comparingLong((ToLongFunction<DeferredEvent<?>>) DeferredEvent::getTrigger)
                 .thenComparingInt(DeferredEvent::getOrder)
                 .compare(this, (DeferredEvent<?>) other);
     }

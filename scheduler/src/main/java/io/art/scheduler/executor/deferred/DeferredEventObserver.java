@@ -62,6 +62,7 @@ class DeferredEventObserver {
     private final ExecutorService fallbackExecutor;
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
+
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
     private final PriorityBlockingQueue<Long> pendingIds;
 
@@ -91,10 +92,6 @@ class DeferredEventObserver {
 
         FutureTask<? extends EventResultType> task = new FutureTask<>(action);
         DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, order);
-
-        if (delayedEvents.size() + 1 > executor.getDelayedQueueSize()) {
-            return cast(forceExecuteEvent(event));
-        }
 
         if (!delayedEvents.offer(event)) {
             return cast(forceExecuteEvent(event));
@@ -152,7 +149,7 @@ class DeferredEventObserver {
 
                 erasePendingEvents(event);
 
-                long id = event.getTriggerDateTime();
+                long id = event.getTrigger();
 
                 pendingLock.lock();
                 try {
@@ -223,7 +220,7 @@ class DeferredEventObserver {
             List<Long> toRemove = linkedList();
             Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
             for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
-                if (event.getTriggerDateTime() > entry.getKey() && isEmpty(entry.getValue())) {
+                if (event.getTrigger() > entry.getKey() && isEmpty(entry.getValue())) {
                     toRemove.add(entry.getKey());
                 }
             }
