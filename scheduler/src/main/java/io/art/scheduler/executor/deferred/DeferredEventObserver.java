@@ -68,7 +68,7 @@ class DeferredEventObserver {
         for (int thread = 0; thread < this.executor.getPoolSize(); thread++) {
             pendingPool.submit(this::observePending);
         }
-        delayedObserver = new Thread(this::observeDelayed);
+        delayedObserver = newDaemon(this::observeDelayed);
         delayedObserver.start();
     }
 
@@ -131,7 +131,8 @@ class DeferredEventObserver {
     private void observeDelayed() {
         try {
             while (!terminating.get()) {
-                DeferredEvent<?> event = delayedEvents.take();
+                DeferredEvent<?> event = poll(delayedEvents);
+                if (isNull(event)) return;
 
                 erasePendingEvents(event);
 
@@ -165,8 +166,6 @@ class DeferredEventObserver {
                     pendingLock.unlock();
                 }
             }
-        } catch (InterruptedException ignore) {
-            // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         }
@@ -175,7 +174,8 @@ class DeferredEventObserver {
     private void observePending() {
         try {
             while (!terminating.get()) {
-                Long id = pendingIds.take();
+                Long id = poll(pendingIds);
+                if (isNull(id)) return;
 
                 takenLock.lock();
                 try {
@@ -250,6 +250,15 @@ class DeferredEventObserver {
                         .getExceptionHandler()
                         .onException(currentThread(), TASK_EXECUTION, new SchedulerModuleException(REJECTED_EXCEPTION))
         );
+    }
+
+
+    private <T> T poll(Queue<T> queue) {
+        for (; ; ) {
+            if (terminating.get()) return null;
+            T element;
+            if (nonNull(element = queue.poll())) return element;
+        }
     }
 
     void clear() {

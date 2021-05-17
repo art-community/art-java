@@ -72,6 +72,8 @@ public class PeriodicExecutor {
 
     public void shutdown() {
         deferredExecutor.shutdown();
+        executingTasks.clear();
+        cancelledTasks.clear();
     }
 
     private void executeTask(PeriodicRunnableTask task) {
