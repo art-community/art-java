@@ -147,12 +147,10 @@ class DeferredEventObserver {
                     if (terminating.get()) return;
                 }
 
-                erasePendingEvents(event);
-
-                long id = event.getTrigger();
-
                 pendingLock.lock();
                 try {
+                    erasePendingEvents(event);
+                    long id = event.getTrigger();
                     PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
                     if (isNull(queue)) {
                         queue = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), comparing(DeferredEvent::getOrder));
@@ -167,14 +165,12 @@ class DeferredEventObserver {
                             pendingEvents.remove(id);
                             forceExecuteEvent(event);
                         }
-
                         continue;
                     }
 
                     if (!queue.offer(event)) {
                         forceExecuteEvent(event);
                     }
-
                 } finally {
                     pendingLock.unlock();
                 }
@@ -215,21 +211,14 @@ class DeferredEventObserver {
     }
 
     private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
-        pendingLock.lock();
-        try {
-            List<Long> toRemove = linkedList();
-            Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
-            for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
-                if (event.getTrigger() > entry.getKey() && isEmpty(entry.getValue())) {
-                    toRemove.add(entry.getKey());
-                }
+        List<Long> toRemove = linkedList();
+        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
+        for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
+            if (event.getTrigger() > entry.getKey() && isEmpty(entry.getValue())) {
+                toRemove.add(entry.getKey());
             }
-            toRemove.forEach(pendingEvents::remove);
-        } catch (Throwable throwable) {
-            executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
-        } finally {
-            pendingLock.unlock();
         }
+        toRemove.forEach(pendingEvents::remove);
     }
 
     private FutureTask<?> getTaskFromEvent(DeferredEvent<?> currentEvent) {
