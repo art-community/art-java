@@ -23,5 +23,4 @@ dependencies {
     implementation(project(":core"))
 
     api("org.slf4j", "slf4j-api", sl4jVersion)
-    api("com.github.jnr", "jnr-unixsocket", jnrUnixsocketVersion)
 }
