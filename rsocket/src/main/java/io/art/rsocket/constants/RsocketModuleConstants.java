@@ -23,7 +23,7 @@ import io.art.core.property.*;
 import io.rsocket.util.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.core.property.LazyProperty.lazy;
+import static io.art.core.property.LazyProperty.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
@@ -37,7 +37,7 @@ public interface RsocketModuleConstants {
 
     interface LoggingMessages {
         String RSOCKET_DISPOSING = "Disposing RSocket";
-        String SERVER_STARTED = "RSocket server started";
+        String SERVER_STARTED = "RSocket server started: {0}";
         String SERVER_STOPPED = "RSocket server stopped";
         String COMMUNICATOR_STARTED = "RSocket communicator started\nConnector: {0}";
         String COMMUNICATOR_STOPPED = "RSocket communicator stopped\nConnector: {0}";
