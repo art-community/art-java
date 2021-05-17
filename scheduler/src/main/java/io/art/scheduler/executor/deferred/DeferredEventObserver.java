@@ -46,15 +46,15 @@ class DeferredEventObserver {
     private final static AtomicInteger poolCounter = new AtomicInteger(0);
     private final AtomicInteger threadCounter = new AtomicInteger(0);
     private final ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
-                    + poolCounter.get() + DASH
-                    + SCHEDULER_THREAD_NAME + DASH
-                    + threadCounter.incrementAndGet(),
-            runnable);
+            + poolCounter.get() + DASH
+            + SCHEDULER_THREAD_NAME + DASH
+            + threadCounter.incrementAndGet(), runnable
+    );
 
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
 
-    private final ReentrantLock pendingLock = new ReentrantLock();
+    private final ReentrantLock executionLock = new ReentrantLock();
 
     private final DeferredExecutorImplementation executor;
     private final ThreadPoolExecutor pendingPool;
@@ -147,7 +147,7 @@ class DeferredEventObserver {
                     if (terminating.get()) return;
                 }
 
-                pendingLock.lock();
+                executionLock.lock();
                 try {
                     erasePendingEvents(event);
                     long id = event.getTrigger();
@@ -172,7 +172,7 @@ class DeferredEventObserver {
                         forceExecuteEvent(event);
                     }
                 } finally {
-                    pendingLock.unlock();
+                    executionLock.unlock();
                 }
             }
         } catch (Throwable throwable) {
@@ -190,7 +190,7 @@ class DeferredEventObserver {
 
                 PriorityBlockingQueue<DeferredEvent<?>> events;
                 while (nonNull(events = pendingEvents.get(id)) && !terminating.get()) {
-                    pendingLock.lock();
+                    executionLock.lock();
                     try {
                         DeferredEvent<?> event;
                         while (nonNull(event = events.poll())) {
@@ -199,7 +199,7 @@ class DeferredEventObserver {
                             task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
                         }
                     } finally {
-                        pendingLock.unlock();
+                        executionLock.unlock();
                     }
                 }
             }
@@ -214,8 +214,9 @@ class DeferredEventObserver {
         List<Long> toRemove = linkedList();
         Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
         for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
-            if (event.getTrigger() > entry.getKey() && isEmpty(entry.getValue())) {
-                toRemove.add(entry.getKey());
+            Long key = entry.getKey();
+            if (event.getTrigger() > key && isEmpty(entry.getValue())) {
+                toRemove.add(key);
             }
         }
         toRemove.forEach(pendingEvents::remove);
