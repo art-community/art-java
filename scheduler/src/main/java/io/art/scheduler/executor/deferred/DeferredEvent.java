@@ -18,7 +18,6 @@
 
 package io.art.scheduler.executor.deferred;
 
-import io.art.logging.module.*;
 import lombok.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.lang.System.*;
@@ -43,7 +42,6 @@ class DeferredEvent<EventResultType> implements Delayed {
         this.task = task;
         this.triggerDateTime = triggerDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
         this.order = order;
-        LoggingModule.logger(DeferredEvent.class).info("Event: triggerDateTime = " + triggerDateTime + " order = " + order);
     }
 
     @Override
