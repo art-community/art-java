@@ -36,7 +36,7 @@ import java.util.function.*;
 @Builder(toBuilder = true)
 public class LoggerConfiguration {
     @Builder.Default
-    private final LoggingLevel level = DEBUG;
+    private final LoggingLevel level = INFO;
 
     @Builder.Default
     private final Boolean enabled = true;
