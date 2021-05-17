@@ -20,7 +20,12 @@ package io.art.logging.reactor;
 
 import io.art.logging.logger.*;
 import lombok.*;
+import reactor.util.annotation.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.StringConstants.*;
 import static java.lang.String.*;
+import static java.util.Objects.*;
+import static java.util.regex.Matcher.*;
 
 @AllArgsConstructor
 public class ReactorLogger implements reactor.util.Logger {
@@ -129,5 +134,18 @@ public class ReactorLogger implements reactor.util.Logger {
     @Override
     public void error(String message, Throwable throwable) {
         logger.error(message, throwable);
+    }
+
+    private String format(@Nullable String from, @Nullable Object... arguments) {
+        if (isNull(from) || isEmpty(from)) {
+            return EMPTY_STRING;
+        }
+        String computed = from;
+        if (nonNull(arguments) && isNotEmpty(arguments)) {
+            for (Object argument : arguments) {
+                computed = computed.replaceFirst(FORMAT_REGEX, quoteReplacement(valueOf(argument)));
+            }
+        }
+        return computed;
     }
 }
