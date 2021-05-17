@@ -25,7 +25,8 @@ import java.time.*;
 
 public interface SchedulerModuleConstants {
     String REFRESHER_TASK = "REFRESHER_TASK";
-    String SCHEDULER_THREAD_NAME = "scheduler";
+    String SCHEDULER_NAME = "scheduler";
+    String SCHEDULER_THREAD_NAME = "thread";
 
     enum PeriodicTaskMode {
         FIXED,
@@ -35,7 +36,6 @@ public interface SchedulerModuleConstants {
     interface Defaults {
         int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
         int INITIAL_PENDING_QUEUE_CAPACITY = 11;
-        Duration DEFAULT_POOL_KEEP_ALIVE = ofMinutes(1);
         Duration DEFAULT_TASK_EXECUTION_TIMEOUT = ofMinutes(1);
     }
 

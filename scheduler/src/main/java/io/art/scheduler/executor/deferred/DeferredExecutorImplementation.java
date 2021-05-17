@@ -46,10 +46,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Getter
     @Builder.Default
-    private final Duration poolKeepAlive = DEFAULT_POOL_KEEP_ALIVE;
-
-    @Getter
-    @Builder.Default
     private final Duration taskExecutionTimeout = DEFAULT_TASK_EXECUTION_TIMEOUT;
 
     @Getter

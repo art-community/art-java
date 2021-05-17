@@ -43,8 +43,13 @@ import java.util.concurrent.locks.*;
 
 
 class DeferredEventObserver {
-    private final static AtomicInteger threadCounter = new AtomicInteger(0);
-    private final static ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_THREAD_NAME + DASH + threadCounter.incrementAndGet(), runnable);
+    private final static AtomicInteger poolCounter = new AtomicInteger(0);
+    private final AtomicInteger threadCounter = new AtomicInteger(0);
+    private final ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
+                    + poolCounter.get() + DASH
+                    + SCHEDULER_THREAD_NAME + DASH
+                    + threadCounter.incrementAndGet(),
+            runnable);
 
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
@@ -61,6 +66,7 @@ class DeferredEventObserver {
     private final PriorityBlockingQueue<Long> pendingIds;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
+        poolCounter.incrementAndGet();
         this.executor = executor;
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
@@ -100,17 +106,16 @@ class DeferredEventObserver {
     void shutdown() {
         if (terminating.compareAndSet(false, true)) {
             try {
-
-                delayedEvents.clear();
-                pendingEvents.clear();
-
-                pendingIds.clear();
-
                 delayedObserver.interrupt();
                 pendingPool.shutdown();
                 fallbackExecutor.shutdownNow();
 
                 if (!executor.isAwaitOnShutdown()) {
+                    delayedEvents.clear();
+                    pendingEvents.clear();
+                    pendingIds.clear();
+                    poolCounter.decrementAndGet();
+                    threadCounter.set(0);
                     return;
                 }
 
@@ -121,6 +126,13 @@ class DeferredEventObserver {
                 if (!fallbackExecutor.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
                     executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
                 }
+
+                delayedEvents.clear();
+                pendingEvents.clear();
+                pendingIds.clear();
+
+                poolCounter.decrementAndGet();
+                threadCounter.set(0);
             } catch (Throwable throwable) {
                 executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, throwable);
             } finally {
@@ -132,8 +144,11 @@ class DeferredEventObserver {
     private void observeDelayed() {
         try {
             while (!terminating.get()) {
-                DeferredEvent<?> event = poll(delayedEvents);
-                if (isNull(event)) return;
+                DeferredEvent<?> event;
+
+                while (isNull(event = delayedEvents.poll())) {
+                    if (terminating.get()) return;
+                }
 
                 erasePendingEvents(event);
 
@@ -151,7 +166,6 @@ class DeferredEventObserver {
                         }
 
                         pendingEvents.put(id, queue);
-
                         if (!pendingIds.offer(id)) {
                             pendingEvents.remove(id);
                             forceExecuteEvent(event);
@@ -163,6 +177,7 @@ class DeferredEventObserver {
                     if (!queue.offer(event)) {
                         forceExecuteEvent(event);
                     }
+
                 } finally {
                     pendingLock.unlock();
                 }
@@ -175,11 +190,13 @@ class DeferredEventObserver {
     private void observePending() {
         try {
             while (!terminating.get()) {
-                Long id = poll(pendingIds);
-                if (isNull(id)) return;
+                Long id;
+                while (isNull(id = pendingIds.poll())) {
+                    if (terminating.get()) return;
+                }
 
                 PriorityBlockingQueue<DeferredEvent<?>> events;
-                while (nonNull(events = pendingEvents.get(id))) {
+                while (nonNull(events = pendingEvents.get(id)) && !terminating.get()) {
                     pendingLock.lock();
                     try {
                         DeferredEvent<?> event;
@@ -230,7 +247,7 @@ class DeferredEventObserver {
         return new ThreadPoolExecutor(
                 executor.getPoolSize(),
                 executor.getPoolSize(),
-                executor.getPoolKeepAlive().toMillis(), MILLISECONDS,
+                0L, MILLISECONDS,
                 new LinkedBlockingQueue<>(executor.getPoolSize()),
                 threadFactory,
                 (runnable, executor) -> this.executor
@@ -239,14 +256,6 @@ class DeferredEventObserver {
         );
     }
 
-
-    private <T> T poll(Queue<T> queue) {
-        for (; ; ) {
-            if (terminating.get()) return null;
-            T element;
-            if (nonNull(element = queue.poll())) return element;
-        }
-    }
 
     void clear() {
         delayedEvents.clear();
