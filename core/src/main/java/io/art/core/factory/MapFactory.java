@@ -13,6 +13,10 @@ public class MapFactory {
         return new LinkedHashMap<>();
     }
 
+    public static <K, V> Map<K, V> map(int capacity) {
+        return new LinkedHashMap<>(capacity);
+    }
+
     public static <K, V> Map<K, V> mapOf(K key, V value) {
         LinkedHashMap<K, V> map = new LinkedHashMap<>();
         map.put(key, value);

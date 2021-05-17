@@ -35,6 +35,7 @@ import io.art.storage.module.*;
 import io.art.tarantool.module.*;
 import io.art.value.module.*;
 import io.art.xml.module.*;
+import io.art.yaml.module.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ArrayConstants.*;
@@ -104,13 +105,14 @@ public class Activator {
     }
 
     public Activator kit(ModulesInitializer initializer) {
+        module(LoggingActivator.logging(initializer.logging()));
         module(ValueActivator.value(initializer.value()));
         module(SchedulerActivator.scheduler());
-        module(LoggingActivator.logging(initializer.logging()));
         module(JsonActivator.json());
         module(ProtobufActivator.protobuf());
         module(MessagePackActivator.messagePack());
         module(XmlActivator.xml());
+        module(YamlActivator.yaml());
         module(CommunicatorActivator.communicator(initializer.communicator()));
         module(ServerActivator.server(initializer.server()));
         module(HttpActivator.http(initializer.http()));

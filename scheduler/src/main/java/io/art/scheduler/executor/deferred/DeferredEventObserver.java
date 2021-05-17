@@ -24,6 +24,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
@@ -35,35 +36,34 @@ import static java.util.concurrent.Executors.*;
 import static java.util.concurrent.TimeUnit.*;
 import java.time.*;
 import java.util.*;
+import java.util.Map.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.*;
 
 
-//TODO: Reduce locks, optimize spin-locks and add graceful shutdown
 class DeferredEventObserver {
     private final static AtomicInteger threadCounter = new AtomicInteger(0);
     private final static ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_THREAD_NAME + DASH + threadCounter.incrementAndGet(), runnable);
 
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
-    private final ReentrantLock takenLock = new ReentrantLock();
+
     private final ReentrantLock pendingLock = new ReentrantLock();
 
     private final DeferredExecutorImplementation executor;
     private final ThreadPoolExecutor pendingPool;
     private final Thread delayedObserver;
     private final ExecutorService fallbackExecutor;
+
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
     private final PriorityBlockingQueue<Long> pendingIds;
-    private final PriorityBlockingQueue<Long> takenIds;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
         this.executor = executor;
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
-        takenIds = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), Long::compare);
         pendingIds = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), Long::compare);
         pendingEvents = concurrentMap(executor.getPendingQueueInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
@@ -105,7 +105,6 @@ class DeferredEventObserver {
                 pendingEvents.clear();
 
                 pendingIds.clear();
-                takenIds.clear();
 
                 delayedObserver.interrupt();
                 pendingPool.shutdown();
@@ -179,15 +178,6 @@ class DeferredEventObserver {
                 Long id = poll(pendingIds);
                 if (isNull(id)) return;
 
-                takenLock.lock();
-                try {
-                    if (!takenIds.offer(id)) {
-                        continue;
-                    }
-                } finally {
-                    takenLock.unlock();
-                }
-
                 PriorityBlockingQueue<DeferredEvent<?>> events;
                 while (nonNull(events = pendingEvents.get(id))) {
                     pendingLock.lock();
@@ -211,25 +201,20 @@ class DeferredEventObserver {
     }
 
     private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
-        takenLock.lock();
         pendingLock.lock();
         try {
-            Long currentId;
-            while (nonNull(currentId = takenIds.peek())) {
-
-                if (event.getTriggerDateTime() > currentId && isEmpty(pendingEvents.get(currentId))) {
-                    pendingEvents.remove(currentId);
-                    takenIds.poll();
-                    continue;
+            List<Long> toRemove = linkedList();
+            Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
+            for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
+                if (event.getTriggerDateTime() > entry.getKey() && isEmpty(entry.getValue())) {
+                    toRemove.add(entry.getKey());
                 }
-
-                return;
             }
+            toRemove.forEach(pendingEvents::remove);
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         } finally {
             pendingLock.unlock();
-            takenLock.unlock();
         }
     }
 
