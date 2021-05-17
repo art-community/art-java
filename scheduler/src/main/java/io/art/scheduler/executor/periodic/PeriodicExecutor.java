@@ -29,6 +29,7 @@ import static java.util.Objects.*;
 import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -36,16 +37,25 @@ public class PeriodicExecutor {
     private final Map<String, Future<?>> executingTasks = concurrentMap();
     private final Map<String, Future<?>> cancelledTasks = concurrentMap();
     private final DeferredExecutor deferredExecutor;
+    private final AtomicInteger counter = new AtomicInteger();
 
     public <T> void submit(PeriodicCallableTask<? extends T> task) {
         Future<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));
         if (nonNull(deferred)) return;
+        task = task.toBuilder()
+                .decrement(counter::decrementAndGet)
+                .order(counter.incrementAndGet())
+                .build();
         submitTask(task);
     }
 
     public void execute(PeriodicRunnableTask task) {
         Future<?> deferred = cast(executingTasks.get(task.getDelegate().getId()));
         if (nonNull(deferred)) return;
+        task = task.toBuilder()
+                .decrement(counter::decrementAndGet)
+                .order(counter.incrementAndGet())
+                .build();
         executeTask(task);
     }
 
@@ -69,7 +79,7 @@ public class PeriodicExecutor {
         Consumer<LocalDateTime> repeat = time -> repeat(task, time);
         Supplier<Boolean> validate = () -> validate(id);
         RepeatableRunnable runnable = new RepeatableRunnable(validate, repeat, task);
-        executingTasks.put(id, deferredExecutor.execute(runnable, task.getStartTime()));
+        executingTasks.put(id, deferredExecutor.execute(runnable, task.getStartTime(), task.getOrder()));
     }
 
     private <T> void submitTask(PeriodicCallableTask<? extends T> task) {
@@ -77,7 +87,7 @@ public class PeriodicExecutor {
         Consumer<LocalDateTime> repeat = time -> repeat(task, time);
         Supplier<Boolean> validate = () -> validate(id);
         RepeatableCallable<? extends T> callable = new RepeatableCallable<>(validate, repeat, task);
-        executingTasks.put(id, deferredExecutor.submit(callable, task.getStartTime()));
+        executingTasks.put(id, deferredExecutor.submit(callable, task.getStartTime(), task.getOrder()));
     }
 
     private boolean validate(String id) {
@@ -86,12 +96,18 @@ public class PeriodicExecutor {
     }
 
     private void repeat(PeriodicRunnableTask task, LocalDateTime time) {
-        if (!validate(task.getDelegate().getId())) return;
+        if (!validate(task.getDelegate().getId())) {
+            task.getDecrement().run();
+            return;
+        }
         executeTask(task.toBuilder().startTime(time.plus(task.getPeriod())).build());
     }
 
     private void repeat(PeriodicCallableTask<?> task, LocalDateTime time) {
-        if (!validate(task.getDelegate().getId())) return;
+        if (!validate(task.getDelegate().getId())) {
+            task.getDecrement().run();
+            return;
+        }
         submitTask(task.toBuilder().startTime(time.plus(task.getPeriod())).build());
     }
 }

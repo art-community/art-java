@@ -34,8 +34,9 @@ public interface SchedulerModuleConstants {
 
     interface Defaults {
         int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
-        int INITIAL_RUNNING_QUEUE_SIZE = 11;
+        int INITIAL_PENDING_QUEUE_CAPACITY = 11;
         Duration DEFAULT_POOL_KEEP_ALIVE = ofMinutes(1);
+        Duration DEFAULT_TASK_EXECUTION_TIMEOUT = ofMinutes(1);
     }
 
     interface ConfigurationKeys {

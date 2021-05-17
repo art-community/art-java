@@ -26,6 +26,10 @@ public interface DeferredExecutor {
 
     Future<?> execute(Runnable task, LocalDateTime triggerTime);
 
+    <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime, int order);
+
+    Future<?> execute(Runnable task, LocalDateTime triggerTime, int order);
+
     void shutdown();
 
     void clear();

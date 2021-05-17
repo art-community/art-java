@@ -50,6 +50,10 @@ public class MapFactory {
         return new ConcurrentHashMap<>();
     }
 
+    public static <K, V> Map<K, V> concurrentMap(int initialCapacity) {
+        return new ConcurrentHashMap<>(initialCapacity);
+    }
+
     public static <K, V> Map<K, V> concurrentMapOf(K key, V value) {
         return new ConcurrentHashMap<>(mapOf(key, value));
     }

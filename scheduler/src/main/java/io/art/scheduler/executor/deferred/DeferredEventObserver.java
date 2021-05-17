@@ -25,7 +25,6 @@ import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
@@ -44,28 +43,29 @@ class DeferredEventObserver {
     private final static AtomicInteger threadCounter = new AtomicInteger(0);
     private final static ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_THREAD_NAME + DASH + threadCounter.incrementAndGet(), runnable);
 
-    private final DeferredExecutorImplementation executor;
-
-    private final ThreadPoolExecutor pendingPool;
-    private final Thread delayedObserver;
-    private final ExecutorService fallbackExecutor = newSingleThreadExecutor(threadFactory);
-
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
-
-    private final DelayQueue<DeferredEvent<?>> delayedEvents = new DelayQueue<>();
-
-    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents = concurrentMap();
-    private final PriorityBlockingQueue<Long> pendingIds = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
-
-    private final PriorityBlockingQueue<Long> takenIds = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, Long::compare);
-
     private final ReentrantLock takenLock = new ReentrantLock();
     private final ReentrantLock pendingLock = new ReentrantLock();
+
+
+    private final DeferredExecutorImplementation executor;
+    private final ThreadPoolExecutor pendingPool;
+    private final Thread delayedObserver;
+    private final ExecutorService fallbackExecutor;
+    private final DelayQueue<DeferredEvent<?>> delayedEvents;
+    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
+    private final PriorityBlockingQueue<Long> pendingIds;
+    private final PriorityBlockingQueue<Long> takenIds;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
         this.executor = executor;
         pendingPool = createThreadPool();
+        delayedEvents = new DelayQueue<>();
+        takenIds = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), Long::compare);
+        pendingIds = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), Long::compare);
+        pendingEvents = concurrentMap(executor.getPendingQueueInitialCapacity());
+        fallbackExecutor = newSingleThreadExecutor(threadFactory);
         for (int thread = 0; thread < this.executor.getPoolSize(); thread++) {
             pendingPool.submit(this::observePending);
         }
@@ -73,7 +73,7 @@ class DeferredEventObserver {
         delayedObserver.start();
     }
 
-    <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> action, LocalDateTime triggerTime) {
+    <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> action, LocalDateTime triggerTime, int order) {
         if (terminated) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
@@ -83,9 +83,9 @@ class DeferredEventObserver {
         }
 
         FutureTask<? extends EventResultType> task = new FutureTask<>(action);
-        DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, delayedEvents.size());
+        DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, order);
 
-        if (delayedEvents.size() + 1 > executor.getQueueSize()) {
+        if (delayedEvents.size() + 1 > executor.getDelayedQueueSize()) {
             return cast(forceExecuteEvent(event));
         }
 
@@ -142,7 +142,7 @@ class DeferredEventObserver {
                 try {
                     PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
                     if (isNull(queue)) {
-                        queue = new PriorityBlockingQueue<>(INITIAL_RUNNING_QUEUE_SIZE, comparing(DeferredEvent::getOrder));
+                        queue = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), comparing(DeferredEvent::getOrder));
 
                         if (!queue.offer(event)) {
                             forceExecuteEvent(event);
@@ -195,7 +195,7 @@ class DeferredEventObserver {
                         while (nonNull(event = events.poll())) {
                             FutureTask<?> task = getTaskFromEvent(event);
                             task.run();
-                            task.get();
+                            task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
                         }
                     } finally {
                         pendingLock.unlock();
@@ -236,7 +236,6 @@ class DeferredEventObserver {
         return (FutureTask<?>) currentEvent.getTask();
     }
 
-
     private Future<?> forceExecuteEvent(DeferredEvent<?> event) {
         return fallbackExecutor.submit(getTaskFromEvent(event));
     }
@@ -245,8 +244,8 @@ class DeferredEventObserver {
         return new ThreadPoolExecutor(
                 executor.getPoolSize(),
                 executor.getPoolSize(),
-                DEFAULT_POOL_KEEP_ALIVE.toMillis(), MILLISECONDS,
-                new LinkedBlockingDeque<>(executor.getQueueSize()),
+                executor.getPoolKeepAlive().toMillis(), MILLISECONDS,
+                new LinkedBlockingQueue<>(executor.getDelayedQueueSize()),
                 threadFactory,
                 (runnable, executor) -> this.executor
                         .getExceptionHandler()
