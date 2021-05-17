@@ -21,6 +21,8 @@ package io.art.logging.configuration;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.logging.constants.*;
+import io.art.logging.manager.*;
+import io.art.logging.writer.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -28,6 +30,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -39,15 +42,18 @@ public class LoggerConfiguration {
     private final Boolean enabled = true;
 
     @Builder.Default
-    private final ImmutableArray<LoggerWriterConfiguration> writers = emptyImmutableArray();
+    private final ImmutableArray<LoggerWriterConfiguration> configurableWriters = emptyImmutableArray();
+
+    @Builder.Default
+    private final ImmutableArray<Function<LoggingManager, LoggerWriter>> customWriters = emptyImmutableArray();
 
     public static LoggerConfiguration from(ConfigurationSource source, LoggerConfiguration fallback) {
         LoggerConfigurationBuilder builder = LoggerConfiguration.builder();
         builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), fallback.level));
         builder.enabled(orElse(source.getBool(ENABLED_KEY), fallback.enabled));
-        builder.writers(ifEmpty(
+        builder.configurableWriters(ifEmpty(
                 source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.defaults())),
-                fallback.writers
+                fallback.configurableWriters
         ));
         return builder.build();
     }

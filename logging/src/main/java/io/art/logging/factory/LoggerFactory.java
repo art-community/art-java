@@ -21,6 +21,7 @@ package io.art.logging.factory;
 import io.art.logging.configuration.*;
 import io.art.logging.logger.*;
 import io.art.logging.manager.*;
+import io.art.logging.writer.*;
 import lombok.experimental.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.logging.factory.LoggerWriterFactory.*;
@@ -28,15 +29,25 @@ import static io.art.logging.factory.LoggerWriterFactory.*;
 @UtilityClass
 public class LoggerFactory {
     public static Logger createLogger(String name, LoggerConfiguration configuration, LoggingManager manager) {
+        Builder<LoggerWriter> writers = immutableArrayBuilder();
+        configuration
+                .getConfigurableWriters()
+                .stream()
+                .map(writerConfiguration -> loggerWriter(manager, writerConfiguration))
+                .forEach(writers::add);
+
+        configuration
+                .getCustomWriters()
+                .stream()
+                .map(writer -> writer.apply(manager))
+                .forEach(writers::add);
+
         LoggerConstructionConfiguration constructionConfiguration = LoggerConstructionConfiguration.builder()
                 .name(name)
                 .loggerConfiguration(configuration)
-                .writers(configuration
-                        .getWriters()
-                        .stream()
-                        .map(writerConfiguration -> loggerWriter(manager, writerConfiguration))
-                        .collect(immutableArrayCollector()))
+                .writers(writers.build())
                 .build();
+
         return new LoggerImplementation(constructionConfiguration, manager.register(constructionConfiguration).getProducer());
     }
 }

@@ -60,7 +60,7 @@ public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfig
         public LoggerConfiguration getDefaultLogger() {
             LoggerConfiguration loggerConfiguration = defaultOperator.apply(super.getDefaultLogger().toBuilder()).build();
             return loggerConfiguration.toBuilder()
-                    .writers(immutableArrayOf(defaultWriterOperator.apply(loggerConfiguration.getWriters().get(0).toBuilder()).build()))
+                    .configurableWriters(immutableArrayOf(defaultWriterOperator.apply(loggerConfiguration.getConfigurableWriters().get(0).toBuilder()).build()))
                     .build();
         }
     }

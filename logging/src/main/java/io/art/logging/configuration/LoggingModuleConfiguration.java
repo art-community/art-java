@@ -33,7 +33,7 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
 
     private LoggerConfiguration defaultLogger = LoggerConfiguration.defaults()
             .toBuilder()
-            .writers(immutableArrayOf(LoggerWriterConfiguration.defaults()))
+            .configurableWriters(immutableArrayOf(LoggerWriterConfiguration.defaults()))
             .build();
 
 

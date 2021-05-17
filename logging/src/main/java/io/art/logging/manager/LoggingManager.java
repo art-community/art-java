@@ -49,7 +49,7 @@ public class LoggingManager {
     public LoggingManager(LoggingModuleConfiguration configuration) {
         List<LoggerWriter> defaultWriters = configuration
                 .getDefaultLogger()
-                .getWriters()
+                .getConfigurableWriters()
                 .stream()
                 .map(writer -> loggerWriter(this, writer))
                 .collect(listCollector());
