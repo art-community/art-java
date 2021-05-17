@@ -51,11 +51,11 @@ public class LoggerImplementation implements Logger {
         this.level = configuration.getLoggerConfiguration().getLevel();
         this.configuration = configuration.getLoggerConfiguration();
         this.producer = producer;
-        errorEnabled = getLevel().getLevel() >= ERROR.getLevel();
-        warnEnabled = getLevel().getLevel() >= WARN.getLevel();
-        infoEnabled = getLevel().getLevel() >= INFO.getLevel();
-        debugEnabled = getLevel().getLevel() >= DEBUG.getLevel();
-        traceEnabled = getLevel().getLevel() >= TRACE.getLevel();
+        errorEnabled = level.getLevel() >= ERROR.getLevel();
+        warnEnabled = level.getLevel() >= WARN.getLevel();
+        infoEnabled = level.getLevel() >= INFO.getLevel();
+        debugEnabled = level.getLevel() >= DEBUG.getLevel();
+        traceEnabled = level.getLevel() >= TRACE.getLevel();
         enabled = configuration.getLoggerConfiguration().getEnabled();
         writers = configuration.getWriters();
     }

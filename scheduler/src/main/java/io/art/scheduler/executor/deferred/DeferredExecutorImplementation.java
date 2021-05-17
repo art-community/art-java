@@ -42,7 +42,7 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Getter
     @Builder.Default
-    private final int poolSize = DEFAULT_THREAD_POOL_SIZE;
+    private final int poolSize = DEFAULT_SCHEDULER_POOL_SIZE;
 
     @Getter
     @Builder.Default
