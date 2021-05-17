@@ -48,7 +48,6 @@ class DeferredEventObserver {
     private final ReentrantLock takenLock = new ReentrantLock();
     private final ReentrantLock pendingLock = new ReentrantLock();
 
-
     private final DeferredExecutorImplementation executor;
     private final ThreadPoolExecutor pendingPool;
     private final Thread delayedObserver;
