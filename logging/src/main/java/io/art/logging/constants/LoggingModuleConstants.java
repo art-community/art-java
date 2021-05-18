@@ -19,6 +19,7 @@
 package io.art.logging.constants;
 
 import static io.art.core.constants.DateTimeConstants.*;
+import static io.art.core.constants.QueueConstants.*;
 import static java.time.Duration.*;
 import java.time.*;
 import java.time.format.*;
@@ -50,7 +51,7 @@ public interface LoggingModuleConstants {
         DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
         DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;
         Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofSeconds(10);
-        int DEFAULT_QUEUE_CAPACITY = 1 << 30;
+        int DEFAULT_QUEUE_CAPACITY = DEFAULT_MAX_MPSC_BLOCKING_QUEUE_CAPACITY;
     }
 
 
