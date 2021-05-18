@@ -20,14 +20,18 @@ package io.art.logging.messaging;
 
 import io.art.logging.model.*;
 import lombok.*;
-import org.jctools.queues.atomic.*;
+import org.jctools.queues.*;
 
 @AllArgsConstructor
 public class LoggingQueue {
-    private final MpscLinkedAtomicQueue<LoggingMessage> queue = new MpscLinkedAtomicQueue<>();
+    private final MpscBlockingConsumerArrayQueue<LoggingMessage> queue = new MpscBlockingConsumerArrayQueue<>(128);
 
     public boolean offer(LoggingMessage message) {
         return queue.offer(message);
+    }
+
+    public LoggingMessage take() throws InterruptedException {
+        return queue.take();
     }
 
     public LoggingMessage poll() {
@@ -36,9 +40,5 @@ public class LoggingQueue {
 
     public boolean isEmpty() {
         return queue.isEmpty();
-    }
-
-    public void clear() {
-        queue.clear();
     }
 }

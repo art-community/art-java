@@ -54,18 +54,15 @@ class DeferredEventObserver {
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
 
-    private final ReentrantLock pendingLock = new ReentrantLock();
-    private final Condition pendingCondition = pendingLock.newCondition();
-
     private final ReentrantLock executionLock = new ReentrantLock();
 
     private final DeferredExecutorImplementation executor;
+
     private final ThreadPoolExecutor pendingPool;
     private final Thread delayedObserver;
     private final ExecutorService fallbackExecutor;
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
-
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
     private final PriorityBlockingQueue<Long> pendingIds;
 
@@ -75,7 +72,7 @@ class DeferredEventObserver {
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
         pendingIds = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), Long::compare);
-        pendingEvents = concurrentMap(executor.getPendingQueueInitialCapacity());
+        pendingEvents = map(executor.getPendingQueueInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
         for (int thread = 0; thread < this.executor.getPoolSize(); thread++) {
             pendingPool.submit(this::observePending);
@@ -171,6 +168,7 @@ class DeferredEventObserver {
                     if (!queue.offer(event)) {
                         forceExecuteEvent(event);
                     }
+
                 } finally {
                     executionLock.unlock();
                 }

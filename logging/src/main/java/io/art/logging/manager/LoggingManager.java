@@ -82,7 +82,14 @@ public class LoggingManager {
 
     private void processConsuming() {
         while (activated.get()) {
-            apply(queue.poll(), this::consume);
+            try {
+                apply(queue.take(), this::consume);
+            } catch (InterruptedException interruptedException) {
+                while (!queue.isEmpty()) {
+                    apply(queue.poll(), this::consume);
+                }
+                return;
+            }
         }
         while (!queue.isEmpty()) {
             apply(queue.poll(), this::consume);
