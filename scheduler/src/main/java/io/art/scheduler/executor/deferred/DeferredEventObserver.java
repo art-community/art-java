@@ -164,7 +164,9 @@ class DeferredEventObserver {
                         if (!pendingIds.offer(id)) {
                             pendingEvents.remove(id);
                             forceExecuteEvent(event);
+                            continue;
                         }
+
                         continue;
                     }
 
