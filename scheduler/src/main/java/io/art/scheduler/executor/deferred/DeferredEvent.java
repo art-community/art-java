@@ -19,10 +19,10 @@
 package io.art.scheduler.executor.deferred;
 
 import lombok.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.lang.System.*;
 import static java.time.ZoneId.*;
 import static java.util.Comparator.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.time.*;
 import java.util.concurrent.*;
@@ -50,7 +50,8 @@ class DeferredEvent<EventResultType> implements Delayed {
     }
 
     @Override
-    public int compareTo(@SuppressWarnings(NULLABLE_PROBLEMS) Delayed other) {
+    public int compareTo(Delayed other) {
+        if (isNull(other)) return 1;
         return comparingLong((ToLongFunction<DeferredEvent<?>>) DeferredEvent::getTrigger)
                 .thenComparingInt(DeferredEvent::getOrder)
                 .compare(this, (DeferredEvent<?>) other);

@@ -19,6 +19,7 @@
 package io.art.scheduler.executor.deferred;
 
 import io.art.scheduler.exception.*;
+import org.jctools.queues.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
@@ -30,7 +31,6 @@ import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessa
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static java.lang.Thread.*;
-import static java.util.Comparator.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.Executors.*;
 import static java.util.concurrent.TimeUnit.*;
@@ -39,7 +39,6 @@ import java.util.*;
 import java.util.Map.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.*;
 
 
 class DeferredEventObserver {
@@ -54,8 +53,6 @@ class DeferredEventObserver {
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
 
-    private final ReentrantLock executionLock = new ReentrantLock();
-
     private final DeferredExecutorImplementation executor;
 
     private final ThreadPoolExecutor pendingPool;
@@ -63,20 +60,17 @@ class DeferredEventObserver {
     private final ExecutorService fallbackExecutor;
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
-    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
-    private final PriorityBlockingQueue<Long> pendingIds;
+    private final Map<Long, MpscBlockingConsumerArrayQueue<DeferredEvent<?>>> pendingEvents;
+    private final Map<Long, Future<?>> runningWorkers;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
         poolCounter.incrementAndGet();
         this.executor = executor;
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
-        pendingIds = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), Long::compare);
-        pendingEvents = map(executor.getPendingQueueInitialCapacity());
+        pendingEvents = map(executor.getPendingInitialCapacity());
+        runningWorkers = map(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
-        for (int thread = 0; thread < this.executor.getPoolSize(); thread++) {
-            pendingPool.submit(this::observePending);
-        }
         delayedObserver = newDaemon(this::observeDelayed);
         delayedObserver.start();
     }
@@ -110,7 +104,6 @@ class DeferredEventObserver {
                 if (!executor.isAwaitOnShutdown()) {
                     delayedEvents.clear();
                     pendingEvents.clear();
-                    pendingIds.clear();
                     poolCounter.decrementAndGet();
                     threadCounter.set(0);
                     return;
@@ -126,7 +119,6 @@ class DeferredEventObserver {
 
                 delayedEvents.clear();
                 pendingEvents.clear();
-                pendingIds.clear();
 
                 poolCounter.decrementAndGet();
                 threadCounter.set(0);
@@ -141,41 +133,25 @@ class DeferredEventObserver {
     private void observeDelayed() {
         try {
             while (!terminating.get()) {
-                DeferredEvent<?> event;
-
-                while (isNull(event = delayedEvents.poll())) {
-                    if (terminating.get()) return;
-                }
-
-                executionLock.lock();
-                try {
-                    erasePendingEvents(event);
-                    long id = event.getTrigger();
-                    PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
-                    if (isNull(queue)) {
-                        queue = new PriorityBlockingQueue<>(executor.getPendingQueueInitialCapacity(), comparing(DeferredEvent::getOrder));
-
-                        if (!queue.offer(event)) {
-                            forceExecuteEvent(event);
-                            continue;
-                        }
-
-                        pendingEvents.put(id, queue);
-                        if (!pendingIds.offer(id)) {
-                            pendingEvents.remove(id);
-                            forceExecuteEvent(event);
-                            continue;
-                        }
-
-                        continue;
-                    }
+                DeferredEvent<?> event = delayedEvents.take();
+                erasePendingEvents(event);
+                long id = event.getTrigger();
+                MpscBlockingConsumerArrayQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+                if (isNull(queue)) {
+                    queue = new MpscBlockingConsumerArrayQueue<>(executor.getMaxSimultaneousEvents());
 
                     if (!queue.offer(event)) {
                         forceExecuteEvent(event);
+                        continue;
                     }
 
-                } finally {
-                    executionLock.unlock();
+                    pendingEvents.put(id, queue);
+                    runningWorkers.put(id, pendingPool.submit(() -> observePending(id)));
+                    continue;
+                }
+
+                if (!queue.offer(event)) {
+                    forceExecuteEvent(event);
                 }
             }
         } catch (Throwable throwable) {
@@ -183,28 +159,14 @@ class DeferredEventObserver {
         }
     }
 
-    private void observePending() {
+    private void observePending(Long id) {
         try {
-            while (!terminating.get()) {
-                Long id;
-                while (isNull(id = pendingIds.poll())) {
-                    if (terminating.get()) return;
-                }
-
-                PriorityBlockingQueue<DeferredEvent<?>> events;
-                while (nonNull(events = pendingEvents.get(id)) && !terminating.get()) {
-                    executionLock.lock();
-                    try {
-                        DeferredEvent<?> event;
-                        while (nonNull(event = events.poll())) {
-                            FutureTask<?> task = getTaskFromEvent(event);
-                            task.run();
-                            task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
-                        }
-                    } finally {
-                        executionLock.unlock();
-                    }
-                }
+            MpscBlockingConsumerArrayQueue<DeferredEvent<?>> queue;
+            while (!terminating.get() && nonNull(queue = pendingEvents.get(id))) {
+                DeferredEvent<?> event = queue.take();
+                FutureTask<?> task = getTaskFromEvent(event);
+                task.run();
+                task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
             }
         } catch (InterruptedException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
@@ -215,14 +177,17 @@ class DeferredEventObserver {
 
     private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
         List<Long> toRemove = linkedList();
-        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
-        for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
+        Set<Entry<Long, MpscBlockingConsumerArrayQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
+        for (Entry<Long, MpscBlockingConsumerArrayQueue<DeferredEvent<?>>> entry : events) {
             Long key = entry.getKey();
             if (event.getTrigger() > key && isEmpty(entry.getValue())) {
                 toRemove.add(key);
             }
         }
-        toRemove.forEach(pendingEvents::remove);
+        for (Long id : toRemove) {
+            pendingEvents.remove(id);
+            runningWorkers.remove(id).cancel(true);
+        }
     }
 
     private FutureTask<?> getTaskFromEvent(DeferredEvent<?> currentEvent) {

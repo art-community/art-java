@@ -37,7 +37,8 @@ public interface SchedulerModuleConstants {
     interface Defaults {
         int DEFAULT_QUEUE_SIZE = MAX_VALUE - 8;
         int INITIAL_PENDING_QUEUE_CAPACITY = 11;
-        int DEFAULT_SCHEDULER_POOL_SIZE = Math.max((int) Math.ceil(DEFAULT_THREAD_POOL_SIZE * 0.25), 1);
+        int DEFAULT_MAX_SIMULTANEOUS_EVENTS = 1 << 30;
+        int DEFAULT_SCHEDULER_POOL_SIZE = DEFAULT_THREAD_POOL_SIZE * 2;
         Duration DEFAULT_TASK_EXECUTION_TIMEOUT = ofMinutes(1);
     }
 

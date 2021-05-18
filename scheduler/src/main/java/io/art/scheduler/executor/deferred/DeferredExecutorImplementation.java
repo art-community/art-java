@@ -38,7 +38,11 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Getter
     @Builder.Default
-    private final int pendingQueueInitialCapacity = INITIAL_PENDING_QUEUE_CAPACITY;
+    private final int pendingInitialCapacity = INITIAL_PENDING_QUEUE_CAPACITY;
+
+    @Getter
+    @Builder.Default
+    private final int maxSimultaneousEvents = DEFAULT_MAX_SIMULTANEOUS_EVENTS;
 
     @Getter
     @Builder.Default

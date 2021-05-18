@@ -24,7 +24,7 @@ import org.jctools.queues.*;
 
 @AllArgsConstructor
 public class LoggingQueue {
-    private final MpscBlockingConsumerArrayQueue<LoggingMessage> queue = new MpscBlockingConsumerArrayQueue<>(128);
+    private final MpscBlockingConsumerArrayQueue<LoggingMessage> queue = new MpscBlockingConsumerArrayQueue<>(1);
 
     public boolean offer(LoggingMessage message) {
         return queue.offer(message);
