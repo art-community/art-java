@@ -54,6 +54,9 @@ class DeferredEventObserver {
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
 
+    private final ReentrantLock pendingLock = new ReentrantLock();
+    private final Condition pendingCondition = pendingLock.newCondition();
+
     private final ReentrantLock executionLock = new ReentrantLock();
 
     private final DeferredExecutorImplementation executor;
@@ -141,11 +144,7 @@ class DeferredEventObserver {
     private void observeDelayed() {
         try {
             while (!terminating.get()) {
-                DeferredEvent<?> event;
-
-                while (isNull(event = delayedEvents.poll())) {
-                    if (terminating.get()) return;
-                }
+                DeferredEvent<?> event = delayedEvents.take();
 
                 executionLock.lock();
                 try {
@@ -165,6 +164,7 @@ class DeferredEventObserver {
                             pendingEvents.remove(id);
                             forceExecuteEvent(event);
                         }
+
                         continue;
                     }
 
@@ -175,6 +175,8 @@ class DeferredEventObserver {
                     executionLock.unlock();
                 }
             }
+        } catch (InterruptedException ignore) {
+            // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         }
@@ -183,10 +185,7 @@ class DeferredEventObserver {
     private void observePending() {
         try {
             while (!terminating.get()) {
-                Long id;
-                while (isNull(id = pendingIds.poll())) {
-                    if (terminating.get()) return;
-                }
+                Long id = pendingIds.take();
 
                 PriorityBlockingQueue<DeferredEvent<?>> events;
                 while (nonNull(events = pendingEvents.get(id)) && !terminating.get()) {
