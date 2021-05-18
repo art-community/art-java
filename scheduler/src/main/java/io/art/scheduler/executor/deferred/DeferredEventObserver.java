@@ -141,7 +141,11 @@ class DeferredEventObserver {
     private void observeDelayed() {
         try {
             while (!terminating.get()) {
-                DeferredEvent<?> event = delayedEvents.take();
+                DeferredEvent<?> event;
+
+                while (isNull(event = delayedEvents.poll())) {
+                    if (terminating.get()) return;
+                }
 
                 executionLock.lock();
                 try {
@@ -161,7 +165,6 @@ class DeferredEventObserver {
                             pendingEvents.remove(id);
                             forceExecuteEvent(event);
                         }
-
                         continue;
                     }
 
@@ -173,8 +176,6 @@ class DeferredEventObserver {
                     executionLock.unlock();
                 }
             }
-        } catch (InterruptedException ignore) {
-            // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         }
@@ -183,7 +184,10 @@ class DeferredEventObserver {
     private void observePending() {
         try {
             while (!terminating.get()) {
-                Long id = pendingIds.take();
+                Long id;
+                while (isNull(id = pendingIds.poll())) {
+                    if (terminating.get()) return;
+                }
 
                 PriorityBlockingQueue<DeferredEvent<?>> events;
                 while (nonNull(events = pendingEvents.get(id)) && !terminating.get()) {
