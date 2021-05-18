@@ -50,6 +50,7 @@ public interface LoggingModuleConstants {
         DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
         DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;
         Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofSeconds(10);
+        int DEFAULT_QUEUE_CAPACITY = 1 << 30;
     }
 
 

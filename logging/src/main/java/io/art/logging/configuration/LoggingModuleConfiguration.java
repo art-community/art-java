@@ -26,10 +26,13 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
+import static io.art.logging.constants.LoggingModuleConstants.Defaults.DEFAULT_QUEUE_CAPACITY;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
+
+    private final int queueCapacity = DEFAULT_QUEUE_CAPACITY;
 
     private LoggerConfiguration defaultLogger = LoggerConfiguration.defaults()
             .toBuilder()

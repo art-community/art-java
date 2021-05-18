@@ -38,14 +38,15 @@ import java.util.concurrent.atomic.*;
 @RequiredArgsConstructor
 public class LoggingManager {
     private final AtomicBoolean activated = new AtomicBoolean(false);
-    private final LoggingQueue queue = new LoggingQueue();
     private final Map<String, LoggerProcessor> processors = concurrentMap();
     private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
     private final List<Closeable> resources = linkedList();
 
+    private final LoggingQueue queue;
     private final LoggerWriter fallbackWriter;
 
     public LoggingManager(LoggingModuleConfiguration configuration) {
+        queue = new LoggingQueue(configuration);
         fallbackWriter = loggerWriter(this, configuration.getFallbackWriter());
     }
 

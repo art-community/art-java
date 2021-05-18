@@ -19,7 +19,6 @@
 package io.art.scheduler.executor.deferred;
 
 import io.art.scheduler.exception.*;
-import org.jctools.queues.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
@@ -31,6 +30,7 @@ import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessa
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static java.lang.Thread.*;
+import static java.util.Comparator.*;
 import static java.util.Objects.*;
 import static java.util.concurrent.Executors.*;
 import static java.util.concurrent.TimeUnit.*;
@@ -60,7 +60,7 @@ class DeferredEventObserver {
     private final ExecutorService fallbackExecutor;
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
-    private final Map<Long, MpscBlockingConsumerArrayQueue<DeferredEvent<?>>> pendingEvents;
+    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
     private final Map<Long, Future<?>> runningWorkers;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
@@ -102,8 +102,6 @@ class DeferredEventObserver {
                 fallbackExecutor.shutdownNow();
 
                 if (!executor.isAwaitOnShutdown()) {
-                    delayedEvents.clear();
-                    pendingEvents.clear();
                     poolCounter.decrementAndGet();
                     threadCounter.set(0);
                     return;
@@ -116,9 +114,6 @@ class DeferredEventObserver {
                 if (!fallbackExecutor.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
                     executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
                 }
-
-                delayedEvents.clear();
-                pendingEvents.clear();
 
                 poolCounter.decrementAndGet();
                 threadCounter.set(0);
@@ -136,9 +131,9 @@ class DeferredEventObserver {
                 DeferredEvent<?> event = delayedEvents.take();
                 erasePendingEvents(event);
                 long id = event.getTrigger();
-                MpscBlockingConsumerArrayQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+                PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
                 if (isNull(queue)) {
-                    queue = new MpscBlockingConsumerArrayQueue<>(executor.getMaxSimultaneousEvents());
+                    queue = new PriorityBlockingQueue<>(executor.getPendingInitialCapacity(), comparing(DeferredEvent::getOrder));
 
                     if (!queue.offer(event)) {
                         forceExecuteEvent(event);
@@ -154,6 +149,10 @@ class DeferredEventObserver {
                     forceExecuteEvent(event);
                 }
             }
+        } catch (InterruptedException interruptedException) {
+            pendingEvents.clear();
+            runningWorkers.values().forEach(worker -> worker.cancel(true));
+            runningWorkers.clear();
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         }
@@ -161,7 +160,7 @@ class DeferredEventObserver {
 
     private void observePending(Long id) {
         try {
-            MpscBlockingConsumerArrayQueue<DeferredEvent<?>> queue;
+            PriorityBlockingQueue<DeferredEvent<?>> queue;
             while (!terminating.get() && nonNull(queue = pendingEvents.get(id))) {
                 DeferredEvent<?> event = queue.take();
                 FutureTask<?> task = getTaskFromEvent(event);
@@ -177,8 +176,8 @@ class DeferredEventObserver {
 
     private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
         List<Long> toRemove = linkedList();
-        Set<Entry<Long, MpscBlockingConsumerArrayQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
-        for (Entry<Long, MpscBlockingConsumerArrayQueue<DeferredEvent<?>>> entry : events) {
+        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
+        for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
             Long key = entry.getKey();
             if (event.getTrigger() > key && isEmpty(entry.getValue())) {
                 toRemove.add(key);

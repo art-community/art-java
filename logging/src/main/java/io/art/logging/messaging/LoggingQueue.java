@@ -18,13 +18,16 @@
 
 package io.art.logging.messaging;
 
+import io.art.logging.configuration.*;
 import io.art.logging.model.*;
-import lombok.*;
 import org.jctools.queues.*;
 
-@AllArgsConstructor
 public class LoggingQueue {
-    private final MpscBlockingConsumerArrayQueue<LoggingMessage> queue = new MpscBlockingConsumerArrayQueue<>(1);
+    private final MpscBlockingConsumerArrayQueue<LoggingMessage> queue;
+
+    public LoggingQueue(LoggingModuleConfiguration configuration) {
+        queue = new MpscBlockingConsumerArrayQueue<>(configuration.getQueueCapacity());
+    }
 
     public boolean offer(LoggingMessage message) {
         return queue.offer(message);
