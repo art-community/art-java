@@ -44,15 +44,10 @@ import java.util.concurrent.atomic.*;
 class DeferredEventObserver {
     private final static AtomicInteger poolCounter = new AtomicInteger(0);
     private final AtomicInteger threadCounter = new AtomicInteger(0);
-    private final ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
-            + poolCounter.get() + DASH
-            + SCHEDULER_THREAD_NAME + DASH
-            + threadCounter.incrementAndGet(), runnable
-    );
-
     private final AtomicBoolean terminating = new AtomicBoolean(false);
     private volatile boolean terminated = false;
 
+    private final ThreadFactory threadFactory;
     private final DeferredExecutorImplementation executor;
 
     private final ThreadPoolExecutor pendingPool;
@@ -64,8 +59,13 @@ class DeferredEventObserver {
     private final Map<Long, Future<?>> runningWorkers;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
-        poolCounter.incrementAndGet();
         this.executor = executor;
+        int poolNumber = poolCounter.incrementAndGet();
+        threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
+                + poolNumber + DASH
+                + SCHEDULER_THREAD_NAME + DASH
+                + threadCounter.incrementAndGet(), runnable
+        );
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
         pendingEvents = map(executor.getPendingInitialCapacity());
