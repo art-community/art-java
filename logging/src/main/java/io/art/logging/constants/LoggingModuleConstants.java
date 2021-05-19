@@ -43,7 +43,6 @@ public interface LoggingModuleConstants {
         String ROTATION_PERIOD_KEY = "rotationPeriod";
         String HOST_KEY = "host";
         String PORT_KEY = "port";
-        String SOCKET_KEY = "socket";
     }
 
     interface Defaults {
@@ -51,7 +50,7 @@ public interface LoggingModuleConstants {
         DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
         DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;
         Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofSeconds(10);
-        int DEFAULT_QUEUE_CAPACITY = DEFAULT_MAX_MPSC_BLOCKING_QUEUE_CAPACITY;
+        int DEFAULT_QUEUE_CAPACITY = DEFAULT_MPSC_BLOCKING_QUEUE_CAPACITY;
     }
 
 

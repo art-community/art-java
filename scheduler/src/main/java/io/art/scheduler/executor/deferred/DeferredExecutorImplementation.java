@@ -38,10 +38,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Getter
     @Builder.Default
-    private final int maxSimultaneousEvents = DEFAULT_MAX_SIMULTANEOUS_EVENTS;
-
-    @Getter
-    @Builder.Default
     private final int poolSize = DEFAULT_SCHEDULER_POOL_SIZE;
 
     @Getter

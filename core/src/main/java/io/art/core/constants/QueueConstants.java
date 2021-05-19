@@ -19,5 +19,5 @@
 package io.art.core.constants;
 
 public interface QueueConstants {
-    int DEFAULT_MAX_MPSC_BLOCKING_QUEUE_CAPACITY = 8129;
+    int DEFAULT_MPSC_BLOCKING_QUEUE_CAPACITY = 8129;
 }
