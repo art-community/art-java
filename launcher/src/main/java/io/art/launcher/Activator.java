@@ -40,6 +40,7 @@ import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.launcher.LauncherConstants.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
@@ -52,6 +53,9 @@ public class Activator {
 
     @Getter
     private ModuleActivator configuratorActivator;
+
+    @Getter
+    private ModuleActivator loggingActivator;
 
     @Setter
     @Getter
@@ -94,7 +98,24 @@ public class Activator {
         return this;
     }
 
+    public Activator logging() {
+        return logging(identity());
+    }
+
+    public Activator logging(UnaryOperator<LoggingInitializer> initializer) {
+        loggingActivator = LoggingActivator.logging(initializer);
+        return this;
+    }
+
     public Activator module(ModuleActivator activator) {
+        if (activator.getId().equals(CONFIGURATOR_MODULE_ID)) {
+            configuratorActivator = activator;
+            return this;
+        }
+        if (activator.getId().equals(LOGGING_MODULE_ID)) {
+            loggingActivator = activator;
+            return this;
+        }
         activator.getDependencies().forEach(this::module);
         activators.putIfAbsent(activator.getId(), activator);
         return this;

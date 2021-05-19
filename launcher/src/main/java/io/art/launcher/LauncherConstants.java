@@ -32,4 +32,6 @@ public interface LauncherConstants {
     );
 
     String LAUNCHER_LOGGER = "launcher";
+    String LOGGING_MODULE_ID = "LoggingModule";
+    String CONFIGURATOR_MODULE_ID = "ConfiguratorModule";
 }

@@ -29,6 +29,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -57,7 +58,7 @@ public class Context {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
         INSTANCE = new Context(configuration, printer);
-        getRuntime().addShutdownHook(new Thread(INSTANCE::unload));
+        getRuntime().addShutdownHook(newThread(INSTANCE::unload));
     }
 
     public static void processInitialization(ImmutableSet<Module<?, ?>> modules) {

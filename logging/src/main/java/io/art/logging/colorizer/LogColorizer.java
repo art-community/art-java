@@ -20,7 +20,7 @@ package io.art.logging.colorizer;
 
 import io.art.logging.constants.*;
 import lombok.experimental.*;
-import static io.art.core.colorizer.AnsiColorizer.*;
+import static io.art.logging.colorizer.AnsiColorizer.*;
 
 @UtilityClass
 public class LogColorizer {

@@ -26,7 +26,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
-import static io.art.logging.constants.LoggingModuleConstants.Defaults.DEFAULT_QUEUE_CAPACITY;
+import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
 
 @Getter
 public class LoggingModuleConfiguration implements ModuleConfiguration {
@@ -43,6 +43,17 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .console(ConsoleWriterConfiguration.builder().build())
             .build();
 
+
+    public boolean isColored() {
+        boolean defaultColored = defaultLogger.getConfigurableWriters()
+                .stream()
+                .anyMatch(writer -> writer.getConsole().getColored());
+        boolean loggersColored = loggers.values()
+                .stream()
+                .anyMatch(logger -> logger.getConfigurableWriters().stream().anyMatch(writer -> writer.getConsole().getColored()));
+        boolean fallbackColored = fallbackWriter.getConsole().getColored();
+        return defaultColored || loggersColored || fallbackColored;
+    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {

@@ -35,7 +35,6 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.launcher.LauncherConstants.*;
-import static io.art.logging.module.LoggingModule.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -48,7 +47,7 @@ public class Launcher {
         if (LAUNCHED.compareAndSet(false, true)) {
             ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
-            LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
+            LazyProperty<Logger> logger = lazy(() -> LoggingModule.logger(LAUNCHER_LOGGER));
 
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
@@ -64,7 +63,7 @@ public class Launcher {
                     .build();
 
             Consumer<String> printer = message -> {
-                if (!activator.quiet() && activators.containsKey(LoggingModule.class.getSimpleName())) {
+                if (!activator.quiet() && nonNull(activator.loggingActivator())) {
                     logger.get().info(message);
                 }
             };
@@ -74,6 +73,17 @@ public class Launcher {
                     .loadSources()
                     .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().get().initialize(cast(configuratorModule)))));
             ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
+
+            if (nonNull(activator.loggingActivator())) {
+                LoggingModule loggingModule = cast(activator.loggingActivator().getFactory().get());
+                ModuleInitializationOperator<LoggingInitializer> loggingInitializer = cast(activator.loggingActivator().getInitializer());
+                if (nonNull(loggingInitializer)) {
+                    loggingModule.configure(configurator -> configurator.initialize(loggingInitializer.get().initialize(loggingModule)));
+                }
+                loggingModule.configure(configurator -> configurator.from(configuratorModule.orderedSources()));
+                builder.add(loggingModule);
+            }
+
             builder.add(configuratorModule);
 
             for (ModuleActivator moduleActivator : activators.values()) {
