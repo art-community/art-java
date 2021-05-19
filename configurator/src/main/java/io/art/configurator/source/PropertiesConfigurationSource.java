@@ -26,5 +26,11 @@ import static io.art.core.constants.StringConstants.*;
 
 public class PropertiesConfigurationSource implements NestedConfiguration {
     @Delegate
-    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(EMPTY_STRING, PROPERTIES, systemProperties());
+    private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(ConfigurationSourceParameters.builder()
+            .section(EMPTY_STRING)
+            .type(PROPERTIES)
+            .path(PROPERTIES.toString())
+            .build(),
+            systemProperties()
+    );
 }

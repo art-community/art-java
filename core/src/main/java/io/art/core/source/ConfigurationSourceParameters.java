@@ -16,20 +16,18 @@
  * limitations under the License.
  */
 
-package io.art.launcher;
+package io.art.core.source;
 
-import io.art.core.collection.*;
-import static io.art.core.factory.SetFactory.*;
+import lombok.*;
+import static io.art.core.source.ConfigurationSource.*;
+import java.io.*;
+import java.util.function.*;
 
-public interface LauncherConstants {
-    interface Errors {
-        String MODULES_ALREADY_LAUNCHED = "Modules already launched";
-    }
-
-    ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
-            "Initialization completed",
-            "Have a nice work with ART!"
-    );
-
-    String LAUNCHER_LOGGER = "launcher";
+@Value
+@Builder(toBuilder = true)
+public class ConfigurationSourceParameters {
+    String section;
+    String path;
+    ModuleConfigurationSourceType type;
+    Supplier<InputStream> inputStream;
 }

@@ -22,7 +22,6 @@ import io.art.configurator.module.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
-import io.art.core.context.*;
 import io.art.core.exception.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
@@ -49,7 +48,7 @@ public class Launcher {
         if (LAUNCHED.compareAndSet(false, true)) {
             ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
-            LazyProperty<Logger> logger = lazy(() -> logger(Context.class));
+            LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());

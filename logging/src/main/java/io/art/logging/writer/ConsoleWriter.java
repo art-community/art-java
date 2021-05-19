@@ -55,7 +55,7 @@ public class ConsoleWriter implements LoggerWriter {
                     message(dateTime, BLUE),
                     byLevel(level, level.name()),
                     OPENING_SQUARE_BRACES + message(message.getThread().getName(), PURPLE_BOLD) + CLOSING_SQUARE_BRACES,
-                    message.getLogger(),
+                    special(message.getLogger()),
                     message.getMessage()
             );
         }

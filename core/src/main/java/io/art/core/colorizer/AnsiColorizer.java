@@ -8,7 +8,7 @@ import static io.art.core.constants.StringConstants.*;
 @UtilityClass
 public class AnsiColorizer {
     public static String message(String message, AnsiColor color) {
-        return  color.getCode() + message + ANSI_RESET;
+        return color.getCode() + message + ANSI_RESET;
     }
 
     public static String success(String message) {
@@ -25,5 +25,9 @@ public class AnsiColorizer {
 
     public static String additional(String message) {
         return message(message, PURPLE_BOLD);
+    }
+
+    public static String special(String message) {
+        return message(message, CYAN_BOLD);
     }
 }

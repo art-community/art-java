@@ -42,6 +42,7 @@ import java.util.function.*;
 public class EnvironmentConfigurationSource implements NestedConfiguration {
     private final String section;
     private final ModuleConfigurationSourceType type = ENVIRONMENT;
+    private final String path = type.toString();
     private final ImmutableMap<String, String> environment = context().configuration().getEnvironment();
 
     @Override

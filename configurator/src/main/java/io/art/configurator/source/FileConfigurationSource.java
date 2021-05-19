@@ -31,25 +31,34 @@ import static io.art.core.extensions.FileExtensions.*;
 public class FileConfigurationSource implements NestedConfiguration {
     @Getter
     private final String section;
+    @Getter
+    private final String path;
     @Delegate
     private final NestedConfiguration source;
 
     public FileConfigurationSource(String section, ConfigurationSourceType type, FileProxy file) {
         this.section = section;
         source = selectSource(section, type, file);
+        path = file.getPath();
     }
 
     private static NestedConfiguration selectSource(String section, ConfigurationSourceType type, FileProxy file) {
         String extension = parseExtension(file.getPath());
+        ConfigurationSourceParameters parameters = ConfigurationSourceParameters.builder()
+                .section(section)
+                .type(type)
+                .path(file.getPath())
+                .inputStream(file.getInputStream())
+                .build();
         switch (extension) {
             case HOCON_EXTENSION:
             case JSON_EXTENSION:
             case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(section, type, file.getInputStream());
+                return new TypesafeConfigurationSource(parameters);
             case YAML_EXTENSION:
             case YML_EXTENSION:
-                return new YamlConfigurationSource(section, type, file.getInputStream());
+                return new YamlConfigurationSource(parameters);
         }
         throw new UnknownConfigurationFileExtensionException(extension);
     }
