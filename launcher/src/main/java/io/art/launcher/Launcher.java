@@ -33,8 +33,9 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.launcher.LauncherConstants.*;
+import static io.art.launcher.LauncherConstants.Errors.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -97,6 +98,7 @@ public class Launcher {
             }
             processInitialization(builder.build());
 
+            printer.accept(format(CONFIGURED_BY_MESSAGE, configuratorModule.getConfiguration().getConfiguration().getPath()));
             LAUNCHED_MESSAGES.forEach(printer);
             return;
         }

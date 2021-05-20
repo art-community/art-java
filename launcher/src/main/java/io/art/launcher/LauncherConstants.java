@@ -31,6 +31,8 @@ public interface LauncherConstants {
             "Have a nice work with ART!"
     );
 
+    String CONFIGURED_BY_MESSAGE = "Configured by {0}";
+
     String LAUNCHER_LOGGER = "launcher";
     String LOGGING_MODULE_ID = "LoggingModule";
     String CONFIGURATOR_MODULE_ID = "ConfiguratorModule";
