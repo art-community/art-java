@@ -19,29 +19,40 @@
 package io.art.meta;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 
 @ForGenerator
 @EqualsAndHashCode
-public class MetaField<T> {
+public abstract class MetaPackage {
     private final String name;
-    private final MetaType<T> type;
+    private final ImmutableMap<String, MetaPackage> packages;
+    private final ImmutableMap<Class<?>, MetaClass> classes;
 
-    public MetaField(String name, Class<?> type) {
+    protected MetaPackage(String name, ImmutableMap<String, MetaPackage> packages, ImmutableMap<Class<?>, MetaClass> classes) {
         this.name = name;
-        this.type = cast(new MetaType<>(type));
+        this.packages = packages;
+        this.classes = classes;
     }
 
     public String name() {
         return name;
     }
 
-    public MetaType<T> type() {
-        return type;
+    public ImmutableMap<String, MetaPackage> packages() {
+        return packages;
     }
 
-    public <G> MetaField<G> reify(Class<G> type) {
-        return new MetaField<>(name, this.type.reify(type));
+    public ImmutableMap<Class<?>, MetaClass> classes() {
+        return classes;
+    }
+
+    public <T extends MetaPackage> T packageOf(String name) {
+        return cast(packages.get(name));
+    }
+
+    public <T extends MetaClass> T classOf(Class<?> type) {
+        return cast(classes.get(type));
     }
 }

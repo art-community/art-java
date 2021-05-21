@@ -24,7 +24,7 @@ import io.art.value.configuration.*;
 import io.art.value.registry.*;
 import lombok.*;
 
-@UsedByGenerator
+@ForGenerator
 public class ValueInitializer implements ModuleInitializer<ValueModuleConfiguration, ValueModuleConfiguration.Configurator, ValueModule> {
     private final Initial configuration = new Initial();
 

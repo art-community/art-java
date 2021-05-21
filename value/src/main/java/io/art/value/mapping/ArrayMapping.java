@@ -36,7 +36,7 @@ import java.util.function.*;
 import java.util.stream.*;
 
 @UtilityClass
-@UsedByGenerator
+@ForGenerator
 public class ArrayMapping {
     public ArrayToModelMapper<int[]> toIntArray = array -> let(array, ArrayValue::intArray);
     public ArrayToModelMapper<long[]> toLongArray = array -> let(array, ArrayValue::longArray);

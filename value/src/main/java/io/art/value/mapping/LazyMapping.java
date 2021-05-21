@@ -30,7 +30,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.LazyProperty.*;
 
 @UtilityClass
-@UsedByGenerator
+@ForGenerator
 public class LazyMapping {
     public static <T> ValueFromModelMapper<LazyProperty<T>, Value> fromLazy(ValueFromModelMapper<T, ? extends Value> valueMapper) {
         return lazy -> let(lazy, value -> let(value.get(), valueMapper::map));

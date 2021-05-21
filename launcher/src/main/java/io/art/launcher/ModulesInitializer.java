@@ -34,7 +34,7 @@ import java.util.function.*;
 
 @Getter
 @Setter
-@UsedByGenerator
+@ForGenerator
 @Accessors(fluent = true)
 public class ModulesInitializer {
     private UnaryOperator<ConfiguratorInitializer> configurator = identity();

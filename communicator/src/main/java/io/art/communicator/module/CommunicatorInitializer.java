@@ -25,7 +25,7 @@ import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.*;
 
-@UsedByGenerator
+@ForGenerator
 public class CommunicatorInitializer implements ModuleInitializer<CommunicatorModuleConfiguration, CommunicatorModuleConfiguration.Configurator, CommunicatorModule> {
     private CommunicatorProxyRegistry registry;
 

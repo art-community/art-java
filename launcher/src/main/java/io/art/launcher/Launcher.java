@@ -40,7 +40,7 @@ import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-@UsedByGenerator
+@ForGenerator
 public class Launcher {
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
 

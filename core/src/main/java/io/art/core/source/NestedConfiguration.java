@@ -12,7 +12,7 @@ import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
-@UsedByGenerator
+@ForGenerator
 public interface NestedConfiguration extends ConfigurationSource {
     Boolean asBool();
 

@@ -16,24 +16,31 @@
  * limitations under the License.
  */
 
-package io.art.communicator.registry;
+package io.art.meta;
 
-import io.art.communicator.action.*;
 import io.art.core.annotation.*;
-import io.art.core.collection.*;
-import static io.art.core.factory.MapFactory.*;
-import java.util.*;
+import lombok.*;
 
 @ForGenerator
-public class CommunicatorActionRegistry {
-    private final Map<String, CommunicatorAction> actions = map();
+@EqualsAndHashCode
+public class MetaParameter<T> {
+    private final String name;
+    private final MetaType<T> type;
 
-    public ImmutableMap<String, CommunicatorAction> get() {
-        return immutableMapOf(actions);
+    public MetaParameter(String name, Class<T> type) {
+        this.name = name;
+        this.type = new MetaType<>(type);
     }
 
-    public CommunicatorAction register(String id, CommunicatorAction action) {
-        actions.put(id, action);
-        return action;
+    public String name() {
+        return name;
+    }
+
+    public MetaType<T> type() {
+        return type;
+    }
+
+    public <G> MetaParameter<G> reify(Class<G> type) {
+        return new MetaParameter<G>(name, this.type.reify(type));
     }
 }

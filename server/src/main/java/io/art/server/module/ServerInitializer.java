@@ -25,7 +25,7 @@ import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import lombok.*;
 
-@UsedByGenerator
+@ForGenerator
 public class ServerInitializer implements ModuleInitializer<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModule> {
     private ServiceSpecificationRegistry registry;
 

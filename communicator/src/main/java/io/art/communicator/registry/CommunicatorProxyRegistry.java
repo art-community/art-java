@@ -29,7 +29,7 @@ import static io.art.core.factory.MapFactory.*;
 import static java.util.Optional.*;
 import java.util.*;
 
-@UsedByGenerator
+@ForGenerator
 public class CommunicatorProxyRegistry {
     private final Map<String, CommunicatorProxy> proxies = map();
 

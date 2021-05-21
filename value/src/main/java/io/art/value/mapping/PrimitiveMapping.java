@@ -28,13 +28,12 @@ import lombok.experimental.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.DateTimeExtensions.*;
 import static io.art.value.factory.PrimitivesFactory.*;
-import static java.util.Objects.isNull;
 
 import java.time.*;
 import java.util.*;
 
 @UtilityClass
-@UsedByGenerator
+@ForGenerator
 public class PrimitiveMapping {
     public static PrimitiveFromModelMapper<String> fromString = PrimitivesFactory::stringPrimitive;
     public static PrimitiveToModelMapper<String> toString = primitive -> let(primitive, Primitive::getString);

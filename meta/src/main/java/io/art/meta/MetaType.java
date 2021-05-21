@@ -18,59 +18,24 @@
 
 package io.art.meta;
 
-
 import io.art.core.annotation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.MapFactory.*;
-import static lombok.AccessLevel.*;
-import java.util.*;
 
-@Getter
-@ToString
+@ForGenerator
 @EqualsAndHashCode
-@RequiredArgsConstructor(staticName = "metaType")
-@UsedByGenerator
 public class MetaType<T> {
     private final Class<T> type;
-    private final Map<String, MetaField<?>> fields;
-    private final Map<String, MetaMethod<?>> methods;
 
-    public <F> MetaField<F> field(String name) {
-        return cast(fields.get(name));
+    public MetaType(Class<T> type) {
+        this.type = type;
     }
 
-    public <M> MetaMethod<M> method(String name) {
-        return cast(methods.get(name));
+    public Class<T> type() {
+        return type;
     }
 
-    @RequiredArgsConstructor(access = PRIVATE)
-    public static class MetaTypeBuilder {
-        private final Class<?> type;
-        private final Map<String, MetaField<?>> fields = map();
-        private final Map<String, MetaMethod<?>> methods = map();
-    }
-
-    public abstract static class MetaTypeProvider {
-        protected abstract MetaTypeBuilder builder();
-
-        protected MetaTypeBuilder metaTypeOf(Class<?> type) {
-            return new MetaTypeBuilder(type);
-        }
-
-        protected <F> MetaField<F> add(MetaField<F> field) {
-            builder().fields.put(field.getName(), field);
-            return field;
-        }
-
-        protected <M> MetaMethod<M> add(MetaMethod<M> method) {
-            builder().methods.put(method.getName(), method);
-            return method;
-        }
-
-        protected <T> MetaType<T> provide() {
-            MetaTypeBuilder builder = builder();
-            return cast(metaType(builder.type, builder.fields, builder.methods));
-        }
+    public <G> Class<G> reify(Class<G> type) {
+        return cast(new MetaType<>(type).type);
     }
 }

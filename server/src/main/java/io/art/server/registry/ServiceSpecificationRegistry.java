@@ -20,7 +20,6 @@ package io.art.server.registry;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.factory.*;
 import io.art.core.model.*;
 import io.art.server.specification.*;
 import static io.art.core.factory.MapFactory.*;
@@ -28,7 +27,7 @@ import static io.art.core.factory.SetFactory.immutableSetOf;
 import static java.util.Optional.*;
 import java.util.*;
 
-@UsedByGenerator
+@ForGenerator
 public class ServiceSpecificationRegistry {
     private final Map<String, ServiceSpecification> services = map();
 

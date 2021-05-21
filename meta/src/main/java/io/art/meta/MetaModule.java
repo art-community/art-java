@@ -20,23 +20,23 @@ package io.art.meta;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.MapFactory.*;
-import java.util.*;
 
-@UsedByGenerator
-public class MetaTypeRegistry {
-    private final static Map<Class<?>, MetaType<?>> META_TYPES = map();
+@ForGenerator
+@EqualsAndHashCode
+public abstract class MetaModule {
+    private final ImmutableMap<String, MetaPackage> packages;
 
-    public static void register(MetaType<?> type) {
-        META_TYPES.put(type.getType(), type);
+    protected MetaModule(ImmutableMap<String, MetaPackage> packages) {
+        this.packages = packages;
     }
 
-    public static ImmutableMap<Class<?>, MetaType<?>> metas() {
-        return immutableMapOf(META_TYPES);
+    public ImmutableMap<String, MetaPackage> packages() {
+        return packages;
     }
 
-    public static <T> MetaType<T> metaOf(Class<?> type) {
-        return cast(META_TYPES.get(type));
+    public <T extends MetaPackage> T packageOf(String name) {
+        return cast(packages.get(name));
     }
 }

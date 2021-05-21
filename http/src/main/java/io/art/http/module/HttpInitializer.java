@@ -26,7 +26,7 @@ import io.art.http.refresher.*;
 import lombok.*;
 
 @Getter
-@UsedByGenerator
+@ForGenerator
 public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguration, HttpModuleConfiguration.Configurator, HttpModule> {
     private HttpServerConfiguration serverConfiguration;
     private boolean activateServer;

@@ -50,7 +50,7 @@ import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
-@UsedByGenerator
+@ForGenerator
 @Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CommunicatorAction implements Managed {

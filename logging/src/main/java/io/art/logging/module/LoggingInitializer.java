@@ -28,7 +28,7 @@ import static io.art.core.factory.ArrayFactory.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@UsedByGenerator
+@ForGenerator
 public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModule> {
     private final Initial configuration = new Initial();
 

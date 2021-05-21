@@ -26,7 +26,7 @@ import java.util.*;
 
 @Getter
 @Builder
-@UsedByGenerator
+@ForGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceSpecification {
     @Singular("method")

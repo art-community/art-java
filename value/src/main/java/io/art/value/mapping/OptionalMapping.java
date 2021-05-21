@@ -19,7 +19,6 @@
 package io.art.value.mapping;
 
 import io.art.core.annotation.*;
-import io.art.core.caster.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
@@ -32,7 +31,7 @@ import static java.util.Optional.*;
 import java.util.*;
 
 @UtilityClass
-@UsedByGenerator
+@ForGenerator
 public class OptionalMapping {
     public static <T> ValueFromModelMapper<Optional<T>, Value> fromOptional(ValueFromModelMapper<T, ? extends Value> valueMapper) {
         return value -> let(unwrap(value), valueMapper::map);

@@ -24,7 +24,7 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 
-@UsedByGenerator
+@ForGenerator
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private boolean activateServer;
     private boolean activateCommunicator;

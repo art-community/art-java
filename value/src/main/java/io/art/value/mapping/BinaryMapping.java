@@ -26,7 +26,7 @@ import lombok.experimental.*;
 import static io.art.core.checker.NullityChecker.let;
 
 @UtilityClass
-@UsedByGenerator
+@ForGenerator
 public class BinaryMapping {
     public static BinaryFromModelMapper<byte[]> fromBinary = binary -> let(binary, BinaryValue::new);
     public static BinaryToModelMapper<byte[]> toBinary = binary -> let(binary, BinaryValue::getContent);

@@ -25,7 +25,7 @@ import io.art.storage.configuration.*;
 import io.art.storage.registry.*;
 import lombok.*;
 
-@UsedByGenerator
+@ForGenerator
 public class StorageInitializer implements ModuleInitializer<StorageModuleConfiguration, StorageModuleConfiguration.Configurator, StorageModule> {
     private final Initial configuration = new Initial();
 

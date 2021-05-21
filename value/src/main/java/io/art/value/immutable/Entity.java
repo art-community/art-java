@@ -240,7 +240,7 @@ public class Entity implements Value {
     }
 
 
-    @UsedByGenerator
+    @ForGenerator
     public EntityMapping mapping() {
         return mapping;
     }

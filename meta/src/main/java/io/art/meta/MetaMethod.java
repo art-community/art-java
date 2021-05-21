@@ -19,11 +19,44 @@
 package io.art.meta;
 
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 
-@UsedByGenerator
-@Value(staticConstructor = "metaMethod")
-public class MetaMethod<T> {
-    String name;
-    Class<T> returnType;
+@ForGenerator
+@EqualsAndHashCode
+public class MetaMethod {
+    private final String name;
+    private final MetaType<?> returnType;
+    private final ImmutableMap<String, MetaParameter<?>> parameters;
+
+    public MetaMethod(String name, Class<?> returnType, ImmutableMap<String, MetaParameter<?>> parameters) {
+        this.name = name;
+        this.returnType = new MetaType<>(returnType);
+        this.parameters = parameters;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public <T> MetaType<T> returnType() {
+        return cast(returnType);
+    }
+
+    public <T> MetaParameter<T> parameter(String name) {
+        return cast(parameters.get(name));
+    }
+
+    public <T> MetaType<T> returnType(Class<T> type) {
+        return cast(returnType.reify(type));
+    }
+
+    public <T> MetaParameter<T> parameter(String name, Class<T> type) {
+        return cast(parameters.get(name).reify(type));
+    }
+
+    public ImmutableMap<String, MetaParameter<?>> parameters() {
+        return parameters;
+    }
 }

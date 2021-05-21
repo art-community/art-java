@@ -48,7 +48,7 @@ import java.util.*;
 import java.util.function.*;
 
 @Builder(toBuilder = true)
-@UsedByGenerator
+@ForGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
     @Getter

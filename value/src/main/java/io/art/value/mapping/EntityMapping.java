@@ -35,7 +35,7 @@ import static io.art.value.factory.PrimitivesFactory.*;
 import java.util.*;
 import java.util.function.*;
 
-@UsedByGenerator
+@ForGenerator
 @RequiredArgsConstructor
 public class EntityMapping {
     private final Entity entity;

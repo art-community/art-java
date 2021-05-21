@@ -12,7 +12,7 @@ import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
 import java.util.*;
 
-@UsedByGenerator
+@ForGenerator
 public class CustomConfigurationRegistry {
     private final Map<CustomConfigurationModel, CustomConfigurator<?>> configurators = map();
 

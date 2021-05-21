@@ -29,7 +29,7 @@ import static io.art.value.mapper.ValueMapper.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-@UsedByGenerator
+@ForGenerator
 public class ValueMapperRegistry {
     private final Map<Type, ValueToModelMapper<?, ? extends Value>> toModel = map();
     private final Map<Type, ValueFromModelMapper<?, ? extends Value>> fromModel = map();

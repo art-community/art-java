@@ -5,7 +5,7 @@ import static io.art.core.property.DisposableProperty.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
-@UsedByGenerator
+@ForGenerator
 public class LazyProperty<T> implements Supplier<T> {
     private final DisposableProperty<T> disposable;
 
