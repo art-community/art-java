@@ -26,7 +26,7 @@ import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.ContextConstants.UNLOAD_THREAD;
+import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
@@ -65,6 +65,9 @@ public class Context {
     public static void processInitialization(ImmutableSet<Module<?, ?>> modules) {
         if (isNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_NOT_INITIALIZED);
+        }
+        if (isNotEmpty(INSTANCE.modules)) {
+            throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
         INSTANCE.load(modules);
     }
