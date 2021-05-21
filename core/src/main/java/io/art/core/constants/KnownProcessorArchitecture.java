@@ -33,7 +33,9 @@ public enum KnownProcessorArchitecture {
 
     ARM_V7(new ProcessorArchitecture("arm-v7", setOf("armv7", "arm", "arm32"))),
 
-    ARM_V8(new ProcessorArchitecture("arm-v8", setOf("aarch64")));
+    ARM_V8(new ProcessorArchitecture("arm-v8", setOf("aarch64"))),
+
+    E2K(new ProcessorArchitecture("e2k", setOf("e2k")));
 
     private final ProcessorArchitecture architecture;
 }
