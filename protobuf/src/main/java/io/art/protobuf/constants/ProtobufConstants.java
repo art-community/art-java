@@ -18,8 +18,11 @@
 
 package io.art.protobuf.constants;
 
+import static java.lang.Integer.*;
+
 public interface ProtobufConstants {
-    int BINARY_UNKNOWN_FIELD_NUMBER = 1;
+    int BINARY_UNKNOWN_FIELD_NUMBER = MAX_VALUE - 1;
+
     interface ExceptionMessages {
         String VALUE_TYPE_NOT_SUPPORTED = "Protobuf emit type ''{0}'' not supported";
     }
