@@ -33,15 +33,15 @@ public class ProcessorArchitecture {
     String canonicalName;
     Set<String> aliases;
 
-    private boolean isKnown() {
+    public boolean isKnown() {
         return tryAsKnown().isPresent();
     }
 
-    private KnownProcessorArchitecture asKnown() {
+    public KnownProcessorArchitecture asKnown() {
         return tryAsKnown().orElseThrow(() -> new InternalRuntimeException(format(UNKNOWN_PROCESSOR_ARCHITECTURE, this)));
     }
 
-    private Optional<KnownProcessorArchitecture> tryAsKnown() {
+    public Optional<KnownProcessorArchitecture> tryAsKnown() {
         return stream(KnownProcessorArchitecture.values())
                 .filter((value -> value.getArchitecture().names().stream().anyMatch(names()::contains)))
                 .findFirst();
