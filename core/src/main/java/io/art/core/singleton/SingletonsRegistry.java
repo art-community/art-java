@@ -7,12 +7,7 @@ import java.util.*;
 import java.util.function.*;
 
 public class SingletonsRegistry {
-    private static final Map<Supplier<?>, ?> SINGLETONS_BY_FUNCTION = concurrentMap();
     private static final Map<Class<?>, ?> SINGLETONS_BY_CLASS = concurrentMap();
-
-    public static <T> T singleton(Supplier<T> factory) {
-        return cast(putIfAbsent(SINGLETONS_BY_FUNCTION, factory, cast(factory)));
-    }
 
     public static <T> T singleton(Class<?> objectClass, Supplier<T> factory) {
         return cast(putIfAbsent(SINGLETONS_BY_CLASS, objectClass, cast(factory)));
