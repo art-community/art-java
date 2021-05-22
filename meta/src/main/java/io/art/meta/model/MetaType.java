@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.computer.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.Builder;
@@ -30,9 +31,11 @@ import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.registry.MetaClassRegistry.*;
 import static java.util.Objects.*;
 import java.util.*;
+import java.util.function.*;
 
 @ForGenerator
 @Builder(toBuilder = true)
+@ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MetaType<T> {
     @EqualsAndHashCode.Include
@@ -42,11 +45,12 @@ public class MetaType<T> {
     private final ImmutableSet<MetaType<?>> parameters;
 
     @EqualsAndHashCode.Include
-    private final MetaType<?> element;
+    private final boolean array;
 
     @EqualsAndHashCode.Include
     private final String variable;
 
+    private final Function<Integer, T> arrayFactory;
     private ValueToModelMapper<T, Value> toModel;
     private ValueFromModelMapper<T, Value> fromModel;
 
@@ -58,8 +62,12 @@ public class MetaType<T> {
         return parameters;
     }
 
-    public MetaType<?> element() {
-        return element;
+    public boolean array() {
+        return array;
+    }
+
+    public Function<Integer, T> arrayFactory() {
+        return arrayFactory;
     }
 
     public ValueToModelMapper<T, ? extends Value> toModel() {
@@ -78,9 +86,10 @@ public class MetaType<T> {
         return fromModel.map(model);
     }
 
-    public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
         return MetaType.<T>builder()
                 .type(cast(type))
+                .arrayFactory(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
                 .build();
     }
@@ -91,48 +100,43 @@ public class MetaType<T> {
                 .build();
     }
 
-    public static <T> MetaType<T> metaArray(Class<?> type, MetaType<?> arrayElementsType, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
         return MetaType.<T>builder()
                 .type(cast(type))
-                .element(arrayElementsType)
+                .arrayFactory(cast(arrayFactory))
+                .array(true)
                 .parameters(immutableSetOf(parameters))
                 .build();
     }
 
-    public static <T> MetaType<T> metaType(Class<?> type, MetaClass<T> metaClass) {
-        return MetaType.<T>builder()
-                .type(cast(type))
-                .toModel(metaClass::toModel)
-                .fromModel(metaClass::fromModel)
-                .build();
-    }
-
-    public void compute() {
+    public MetaType<T> compute() {
+        if (nonNull(toModel) && nonNull(fromModel)) return this;
         MetaClass<?> metaClass = classes().get(type);
         if (isNull(metaClass)) {
-
+            ValueMapper<T, Value> mapper = MetaTypeMappersComputer.compute(this);
+            toModel = mapper.getToModel();
+            fromModel = mapper.getFromModel();
+            return this;
         }
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters.toArray(new MetaType[0])));
         type = typedMetaClass.type().type;
         fromModel = typedMetaClass::fromModel;
         toModel = typedMetaClass::toModel;
+        return this;
     }
 
     public MetaType<?> parameterize(Map<String, MetaType<?>> parameters) {
         if (isNull(variable)) {
             return this;
         }
-        MetaTypeBuilder<?> builder = toBuilder().variable(null);
-        if (nonNull(element)) {
-            builder.element(element.parameterize(parameters));
-        }
-        builder.parameters(this.parameters
+        MetaTypeBuilder<?> builder = toBuilder().variable(null).parameters(this.parameters
                 .stream()
                 .map(parameter -> parameter.parameterize(parameters))
                 .collect(immutableSetCollector()));
         MetaType<?> parameter = parameters.get(variable);
         if (nonNull(parameter)) {
-            builder.type(cast(parameter.type));
+            builder.type(cast(parameter.type))
+                    .arrayFactory(cast(parameter.arrayFactory));
         }
         return builder.build();
     }

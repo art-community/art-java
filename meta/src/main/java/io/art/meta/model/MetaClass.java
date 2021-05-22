@@ -24,12 +24,14 @@ import io.art.core.collection.*;
 import io.art.meta.registry.*;
 import io.art.value.immutable.Value;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.model.MetaType.*;
 import java.util.*;
 import java.util.Map.*;
+import java.util.function.*;
 
 @ForGenerator
 @EqualsAndHashCode
@@ -42,8 +44,9 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaType<?>> variables;
     private MetaType<?> parent;
 
-    protected MetaClass(Class<?> type) {
-        this.type = metaType(type, this);
+    protected MetaClass(Class<?> type, Function<Integer, ?> arrayFactory) {
+        this.type = metaType(type);
+        this.arrayFactory = cast(arrayFactory);
         constructors = set();
         fields = map();
         properties = map();
@@ -52,9 +55,10 @@ public abstract class MetaClass<T> {
         MetaClassRegistry.register(this);
     }
 
-    protected MetaClass(Class<T> type, MetaType<?> parent) {
-        this.type = metaType(type, this);
+    protected MetaClass(Class<T> type, Function<Integer, T> arrayFactory, MetaType<?> parent) {
+        this.type = metaType(type);
         this.parent = parent;
+        this.arrayFactory = arrayFactory;
         constructors = set();
         fields = map();
         properties = map();
@@ -64,7 +68,8 @@ public abstract class MetaClass<T> {
     }
 
     protected MetaClass(MetaClass<T> base) {
-        this.type = base.type;
+        type = base.type;
+        arrayFactory = base.arrayFactory;
         parent = base.parent;
         constructors = base.constructors;
         fields = base.fields;
@@ -122,6 +127,7 @@ public abstract class MetaClass<T> {
     }
 
     protected void compute() {
+        type.compute();
         for (MetaField<?> field : fields.values()) {
             field.type().compute();
         }
