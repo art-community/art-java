@@ -27,6 +27,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.registry.MetaClassRegistry.*;
 import static java.util.Objects.*;
 import java.util.*;
 
@@ -35,7 +36,7 @@ import java.util.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MetaType<T> {
     @EqualsAndHashCode.Include
-    private final Class<T> type;
+    private Class<T> type;
 
     @EqualsAndHashCode.Include
     private final ImmutableSet<MetaType<?>> parameters;
@@ -46,8 +47,8 @@ public class MetaType<T> {
     @EqualsAndHashCode.Include
     private final String variable;
 
-    private final ValueToModelMapper<T, Value> toModel;
-    private final ValueFromModelMapper<T, Value> fromModel;
+    private ValueToModelMapper<T, Value> toModel;
+    private ValueFromModelMapper<T, Value> fromModel;
 
     public Class<T> type() {
         return type;
@@ -77,24 +78,19 @@ public class MetaType<T> {
         return fromModel.map(model);
     }
 
-    public static <T> MetaType<T> metaType(Class<T> type, ValueToModelMapper<?, ? extends Value> toModel, ValueFromModelMapper<?, ? extends Value> fromModel) {
-        return metaType(type)
-                .toModel(cast(toModel))
-                .fromModel(cast(fromModel))
+    public static <T> MetaType<T> metaType(Class<T> type, MetaType<?>... parameters) {
+        return MetaType.<T>builder()
+                .type(type)
+                .parameters(immutableSetOf(parameters))
                 .build();
     }
 
-    public static <T> MetaTypeBuilder<T> metaType(Class<T> type, MetaType<?>... parameters) {
-        return MetaType.<T>builder()
-                .type(type)
-                .parameters(immutableSetOf(parameters));
-    }
-
-    public static <T> MetaTypeBuilder<T> metaType(Class<T> type, MetaType<?> arrayElementsType, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaType(Class<T> type, MetaType<?> arrayElementsType, MetaType<?>... parameters) {
         return MetaType.<T>builder()
                 .type(type)
                 .element(arrayElementsType)
-                .parameters(immutableSetOf(parameters));
+                .parameters(immutableSetOf(parameters))
+                .build();
     }
 
     public static <T> MetaType<T> metaType(Class<T> type, MetaClass<T> metaClass) {
@@ -103,6 +99,18 @@ public class MetaType<T> {
                 .toModel(metaClass::toModel)
                 .fromModel(metaClass::fromModel)
                 .build();
+    }
+
+    public MetaType<T> classify() {
+        MetaClass<?> metaClass = classes().get(type);
+        if (isNull(metaClass)) {
+            return this;
+        }
+        MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters.toArray(new MetaType[0])));
+        type = typedMetaClass.type().type;
+        fromModel = typedMetaClass::fromModel;
+        toModel = typedMetaClass::toModel;
+        return this;
     }
 
     public MetaType<?> parameterize(Map<String, MetaType<?>> parameters) {
@@ -118,6 +126,10 @@ public class MetaType<T> {
         if (nonNull(parameter)) {
             builder.type(cast(parameter.type));
         }
-        return builder.build();
+        return builder.build().compute();
+    }
+
+    public MetaType<T> compute() {
+        return this;
     }
 }
