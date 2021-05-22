@@ -20,14 +20,17 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
-import io.art.meta.model.*;
 import lombok.*;
 
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
 public abstract class StaticMetaMethod<R> extends MetaMethod<R> {
-    protected StaticMetaMethod(String name, Class<R> returnType) {
+    protected StaticMetaMethod(String name, MetaType<R> returnType) {
         super(name, returnType);
+    }
+
+    public StaticMetaMethod(MetaMethod<R> base) {
+        super(base);
     }
 
     public R invoke() {

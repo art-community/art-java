@@ -19,7 +19,6 @@ public interface MetaTypes {
     MetaType<Byte> META_BYTE = metaType(Byte.class, toByte, fromByte);
     MetaType<Float> META_FLOAT = metaType(Float.class, toFloat, fromFloat);
     MetaType<String> META_STRING = metaType(String.class, toString, fromString);
-
     MetaType<UUID> META_UUID = metaType(UUID.class, toUuid, fromUuid);
     MetaType<LocalDateTime> META_LOCAL_DATE_TIME = metaType(LocalDateTime.class, toLocalDateTime, fromLocalDateTime);
     MetaType<ZonedDateTime> META_ZONED_DATE_TIME = metaType(ZonedDateTime.class, toZonedDateTime, fromZonedDateTime);

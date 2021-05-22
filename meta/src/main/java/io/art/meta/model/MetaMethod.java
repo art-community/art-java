@@ -23,24 +23,42 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.meta.selector.MetaTypeSelector.*;
 import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaMethod<R> {
+    private MetaType<?> returnType;
     private final String name;
-    private final MetaType<?> returnType;
-    private final Map<String, MetaParameter<?>> parameters = map();
+    private final Map<String, MetaParameter<?>> parameters;
 
-    protected MetaMethod(String name, Class<R> returnType) {
+    protected MetaMethod(MetaMethod<R> base) {
+        this.name = base.name;
+        this.returnType = base.returnType;
+        this.parameters = base.parameters;
+    }
+
+    protected MetaMethod(String name, MetaType<R> returnType) {
         this.name = name;
-        this.returnType = select(returnType);
+        this.returnType = returnType;
+        this.parameters = map();
     }
 
     protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
+    }
+
+    protected abstract MetaMethod<R> duplicate();
+
+    protected MetaMethod<R> parameterize(Map<String, MetaType<?>> parameters) {
+        MetaMethod<R> newMethod = duplicate();
+        newMethod.returnType = returnType.parameterize(parameters);
+        for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
+            MetaType<?> newParameterType = parameter.getValue().type().parameterize(parameters);
+            newMethod.register(new MetaParameter<>(parameter.getKey(), newParameterType));
+        }
+        return newMethod;
     }
 
     public String name() {

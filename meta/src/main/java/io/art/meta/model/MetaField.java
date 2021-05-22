@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import lombok.*;
+import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode
@@ -38,5 +39,10 @@ public class MetaField<T> {
 
     public MetaType<T> type() {
         return type;
+    }
+
+    public MetaField<?> parameterize(Map<String, MetaType<?>> parameters) {
+        MetaType<?> newFieldType = type.parameterize(parameters);
+        return new MetaField<>(name, newFieldType);
     }
 }

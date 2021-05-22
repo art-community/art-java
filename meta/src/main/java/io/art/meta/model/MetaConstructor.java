@@ -30,16 +30,33 @@ import java.util.*;
 @EqualsAndHashCode
 public abstract class MetaConstructor<C> {
     private final MetaClass<C> owner;
-    private final Map<String, MetaParameter<?>> parameters = map();
+    private final Map<String, MetaParameter<?>> parameters;
 
     protected MetaConstructor(MetaClass<C> owner) {
         this.owner = owner;
+        parameters = map();
+    }
+
+    protected MetaConstructor(MetaConstructor<C> base) {
+        this.owner = base.owner;
+        this.parameters = base.parameters;
     }
 
     protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
     }
+
+    protected MetaConstructor<C> parameterize(Map<String, MetaType<?>> parameters) {
+        MetaConstructor<C> newConstructor = duplicate();
+        for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
+            MetaType<?> newParameterType = parameter.getValue().type().parameterize(parameters);
+            newConstructor.register(new MetaParameter<>(parameter.getKey(), newParameterType));
+        }
+        return newConstructor;
+    }
+
+    protected abstract MetaConstructor<C> duplicate();
 
     public MetaClass<C> type() {
         return owner;
@@ -62,4 +79,5 @@ public abstract class MetaConstructor<C> {
     }
 
     public abstract C invoke(Object... arguments);
+
 }

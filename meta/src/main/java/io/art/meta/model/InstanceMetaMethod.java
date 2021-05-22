@@ -25,8 +25,12 @@ import lombok.*;
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
 public abstract class InstanceMetaMethod<C, R> extends MetaMethod<R> {
-    protected InstanceMetaMethod(String name, Class<R> returnType) {
+    protected InstanceMetaMethod(String name, MetaType<R> returnType) {
         super(name, returnType);
+    }
+
+    protected InstanceMetaMethod(MetaMethod<R> base) {
+        super(base);
     }
 
     public R invoke(MetaInstance<C> instance) {

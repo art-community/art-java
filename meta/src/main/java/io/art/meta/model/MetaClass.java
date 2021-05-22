@@ -23,26 +23,51 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.value.immutable.Value;
 import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.meta.model.MetaType.metaType;
+import static io.art.meta.model.MetaType.*;
 import java.util.*;
+import java.util.Map.*;
 
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
     private final MetaType<T> type;
-    private final Set<MetaConstructor<T>> constructors = set();
-    private final Map<String, MetaField<?>> fields = map();
-    private final Map<String, MetaProperty<?>> properties = map();
-    private final Set<MetaMethod<?>> methods = set();
+    private final Set<MetaConstructor<T>> constructors;
+    private final Map<String, MetaField<?>> fields;
+    private final Map<String, MetaProperty<?>> properties;
+    private final Set<MetaMethod<?>> methods;
+    private final Map<String, MetaType<?>> variables;
     private MetaType<?> parent;
 
     protected MetaClass(Class<T> type) {
-        this.type = metaType(type)
-                .fromModel(this::fromModel)
-                .toModel(this::toModel)
-                .build();
+        this.type = metaType(type, this);
+        constructors = set();
+        fields = map();
+        properties = map();
+        methods = set();
+        variables = map();
+    }
+
+    protected MetaClass(Class<T> type, MetaType<?> parent) {
+        this.type = metaType(type, this);
+        this.parent = parent;
+        constructors = set();
+        fields = map();
+        properties = map();
+        methods = set();
+        variables = map();
+    }
+
+    protected MetaClass(MetaClass<T> base) {
+        this.type = base.type;
+        parent = base.parent;
+        constructors = base.constructors;
+        fields = base.fields;
+        properties = base.properties;
+        methods = base.methods;
+        variables = base.variables;
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -60,8 +85,41 @@ public abstract class MetaClass<T> {
         return constructor;
     }
 
+    protected MetaClass<T> parameterize(MetaType<?>... parameters) {
+        if (isEmpty(variables)) return this;
+        MetaClass<T> newMetaClass = duplicate();
+        Map<String, MetaType<?>> variableToParameter = map();
+        for (int index = 0; index < parameters.length; index++) {
+            int variableIndex = 0;
+            for (Entry<String, MetaType<?>> variable : variables.entrySet()) {
+                if (variableIndex == index) {
+                    variableToParameter.put(variable.getKey(), parameters[index]);
+                }
+                variableIndex++;
+            }
+        }
+
+        if (isEmpty(variableToParameter)) return this;
+        for (MetaField<?> field : fields.values()) {
+            newMetaClass.fields.put(field.name(), field.parameterize(variableToParameter));
+        }
+        for (MetaConstructor<T> constructor : constructors) {
+            newMetaClass.constructors.add(constructor.parameterize(variableToParameter));
+        }
+        for (MetaMethod<?> method : methods) {
+            newMetaClass.methods.add(method.parameterize(variableToParameter));
+        }
+        return newMetaClass;
+    }
+
+    protected abstract MetaClass<T> duplicate();
+
     public MetaType<T> type() {
         return type;
+    }
+
+    public MetaType<?> variable(String name) {
+        return variables.get(name);
     }
 
     public ImmutableMap<String, MetaField<?>> fields() {
@@ -80,6 +138,10 @@ public abstract class MetaClass<T> {
         return immutableSetOf(constructors);
     }
 
+    public ImmutableMap<String, MetaType<?>> variables() {
+        return immutableMapOf(variables);
+    }
+
     public T toModel(Value value) {
         return null;
     }
@@ -87,4 +149,5 @@ public abstract class MetaClass<T> {
     public Value fromModel(T model) {
         return null;
     }
+
 }
