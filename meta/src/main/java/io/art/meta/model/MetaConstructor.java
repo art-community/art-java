@@ -79,5 +79,4 @@ public abstract class MetaConstructor<C> {
     }
 
     public abstract C invoke(Object... arguments);
-
 }

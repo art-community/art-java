@@ -31,8 +31,8 @@ import static io.art.meta.registry.MetaClassRegistry.*;
 import static java.util.Objects.*;
 import java.util.*;
 
-@Builder(toBuilder = true)
 @ForGenerator
+@Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MetaType<T> {
     @EqualsAndHashCode.Include
