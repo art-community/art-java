@@ -42,7 +42,7 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaType<?>> variables;
     private MetaType<?> parent;
 
-    protected MetaClass(Class<T> type) {
+    protected MetaClass(Class<?> type) {
         this.type = metaType(type, this);
         constructors = set();
         fields = map();
@@ -87,6 +87,11 @@ public abstract class MetaClass<T> {
     protected <C extends MetaConstructor<T>> C register(C constructor) {
         constructors.add(constructor);
         return constructor;
+    }
+
+    protected MetaType<?> register(String name, MetaType<?> variable) {
+        variables.put(name, variable);
+        return variable;
     }
 
     protected MetaClass<T> parameterize(MetaType<?>... parameters) {

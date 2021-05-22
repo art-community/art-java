@@ -29,16 +29,16 @@ import java.util.*;
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaConstructor<C> {
-    private final MetaClass<C> owner;
+    private final MetaType<C> type;
     private final Map<String, MetaParameter<?>> parameters;
 
-    protected MetaConstructor(MetaClass<C> owner) {
-        this.owner = owner;
+    protected MetaConstructor(MetaType<C> type) {
+        this.type = type;
         parameters = map();
     }
 
     protected MetaConstructor(MetaConstructor<C> base) {
-        this.owner = base.owner;
+        this.type = base.type;
         this.parameters = base.parameters;
     }
 
@@ -58,8 +58,8 @@ public abstract class MetaConstructor<C> {
 
     protected abstract MetaConstructor<C> duplicate();
 
-    public MetaClass<C> type() {
-        return owner;
+    public MetaType<C> type() {
+        return type;
     }
 
     public <T> MetaParameter<T> parameter(String name) {

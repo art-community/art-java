@@ -78,24 +78,30 @@ public class MetaType<T> {
         return fromModel.map(model);
     }
 
-    public static <T> MetaType<T> metaType(Class<T> type, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
         return MetaType.<T>builder()
-                .type(type)
+                .type(cast(type))
                 .parameters(immutableSetOf(parameters))
                 .build();
     }
 
-    public static <T> MetaType<T> metaType(Class<T> type, MetaType<?> arrayElementsType, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaType(String variable) {
         return MetaType.<T>builder()
-                .type(type)
+                .variable(variable)
+                .build();
+    }
+
+    public static <T> MetaType<T> metaArray(Class<?> type, MetaType<?> arrayElementsType, MetaType<?>... parameters) {
+        return MetaType.<T>builder()
+                .type(cast(type))
                 .element(arrayElementsType)
                 .parameters(immutableSetOf(parameters))
                 .build();
     }
 
-    public static <T> MetaType<T> metaType(Class<T> type, MetaClass<T> metaClass) {
+    public static <T> MetaType<T> metaType(Class<?> type, MetaClass<T> metaClass) {
         return MetaType.<T>builder()
-                .type(type)
+                .type(cast(type))
                 .toModel(metaClass::toModel)
                 .fromModel(metaClass::fromModel)
                 .build();

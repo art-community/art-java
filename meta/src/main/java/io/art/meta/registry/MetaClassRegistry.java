@@ -20,6 +20,7 @@ package io.art.meta.registry;
 
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
@@ -28,6 +29,10 @@ public class MetaClassRegistry {
 
     public static ImmutableMap<Class<?>, MetaClass<?>> classes() {
         return immutableMapOf(META_CLASS_REGISTRY);
+    }
+
+    public static <T> MetaClass<T> metaOf(Class<T> type) {
+        return cast(classes().get(type));
     }
 
     public static void register(MetaClass<?> metaClass) {
