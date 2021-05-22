@@ -22,34 +22,33 @@ package io.art.meta;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode
-public abstract class MetaClass {
-    private final MetaType<?> type;
+public abstract class MetaClass<T> {
+    private final MetaType<T> type;
     private final Map<String, MetaField<?>> fields = map();
     private final Set<MetaMethod<?>> methods = set();
 
-    protected MetaClass(Class<?> type) {
-        this.type = cast(new MetaType<>(type));
+    protected MetaClass(Class<T> type) {
+        this.type = new MetaType<>(type);
     }
 
-    protected <T> MetaField<T> register(MetaField<T> field) {
+    protected <F> MetaField<F> register(MetaField<F> field) {
         fields.put(field.name(), field);
         return field;
     }
 
-    protected <T extends MetaMethod<?>> T register(T method) {
+    protected <M extends MetaMethod<?>> M register(M method) {
         methods.add(method);
         return method;
     }
 
-    public <T> MetaType<T> type() {
-        return cast(type);
+    public MetaType<T> type() {
+        return type;
     }
 
     public ImmutableMap<String, MetaField<?>> fields() {
