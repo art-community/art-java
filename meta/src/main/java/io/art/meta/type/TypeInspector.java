@@ -20,6 +20,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Arrays.*;
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.stream.*;
 
 @UtilityClass
 public class TypeInspector {
@@ -71,6 +72,10 @@ public class TypeInspector {
         return Queue.class.isAssignableFrom(extractClass(type));
     }
 
+    public boolean isStream(Type type) {
+        return Stream.class.isAssignableFrom(extractClass(type));
+    }
+
     public boolean isDequeue(Type type) {
         return Deque.class.isAssignableFrom(extractClass(type));
     }
@@ -95,10 +100,6 @@ public class TypeInspector {
         return ImmutableMap.class.isAssignableFrom(extractClass(type))
                 || ImmutableSet.class.isAssignableFrom(extractClass(type))
                 || ImmutableArray.class.isAssignableFrom(extractClass(type));
-    }
-
-    public boolean isMutableCollection(Type type) {
-        return !isImmutableCollection(type);
     }
 
     public boolean isJavaPrimitive(Type type) {

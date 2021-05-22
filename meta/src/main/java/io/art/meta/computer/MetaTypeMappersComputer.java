@@ -54,6 +54,9 @@ public class MetaTypeMappersComputer {
             MetaType<T> component = type.toBuilder().array(false).build();
             return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.arrayFactory(), component.toModel())));
         }
+        if (isObject(rawType)) {
+            return cast(mapper(ValueFromModelMapper.identity(), ValueToModelMapper.identity()));
+        }
         if (isPrimitive(rawType)) {
             if (Short.class.equals(rawType)) {
                 return cast(mapper(fromShort, toShort));
@@ -128,14 +131,24 @@ public class MetaTypeMappersComputer {
             if (isDequeue(rawType)) {
                 return mapper(cast(fromDeque(firstParameter.fromModel())), cast(toMutableDeque(firstParameter.toModel())));
             }
+            if (isImmutableCollection(rawType)) {
+                return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toImmutableArray(firstParameter.toModel())));
+            }
+            if (isStream(rawType)) {
+                return mapper(cast(fromStream(firstParameter.fromModel())), cast(toStream(firstParameter.toModel())));
+            }
             return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toMutableCollection(firstParameter.toModel())));
         }
-        if (isMap(rawType)) {
+        if (isMap(rawType) || isImmutableMap(rawType)) {
             if (parameters.size() != 2) {
                 throw new MetaException(format(UNSUPPORTED_TYPE, type));
             }
             MetaType<?>[] metaTypes = parameters.toArray(MetaType[]::new);
             MetaType<?> key = metaTypes[0].compute();
+            if (isUserType(key.type())) {
+                throw new MetaException(format(UNSUPPORTED_TYPE, type));
+            }
+
             MetaType<?> value = metaTypes[1].compute();
             if (isImmutableMap(rawType)) {
                 EntityFromModelMapper<? extends ImmutableMap<?, ?>> fromMapper = fromImmutableMap(cast(key.toModel()), cast(key.fromModel()), value.fromModel());
