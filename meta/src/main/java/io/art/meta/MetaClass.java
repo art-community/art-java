@@ -31,9 +31,7 @@ import java.util.*;
 public abstract class MetaClass<T> {
     private final MetaType<T> type;
     private final Set<MetaConstructor<T>> constructors = set();
-    private final Map<String, Met aField<?>>fields =
-
-    map();
+    private final Map<String, MetaField<?>> fields = map();
 
     private final Set<MetaMethod<?>> methods = set();
 
