@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.value.immutable.Value;

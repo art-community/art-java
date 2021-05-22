@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 
 import io.art.core.annotation.*;
@@ -68,7 +68,6 @@ public abstract class MetaClass<T> {
     public ImmutableMap<String, MetaField<?>> fields() {
         return immutableMapOf(fields);
     }
-
 
     public ImmutableMap<String, MetaProperty<?>> properties() {
         return immutableMapOf(properties);

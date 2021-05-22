@@ -16,26 +16,35 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
-import io.art.core.exception.*;
+import io.art.meta.selector.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
+import java.lang.reflect.*;
 
 @ForGenerator
-@EqualsAndHashCode(callSuper = true)
-public abstract class InstanceMetaMethod<C, R> extends MetaMethod<R> {
-    protected InstanceMetaMethod(String name, Class<R> returnType) {
-        super(name, returnType);
+@EqualsAndHashCode
+public class MetaField<T> {
+    private final String name;
+    private final MetaType<T> type;
+
+    public MetaField(String name, Type type) {
+        this.name = name;
+        this.type = cast(MetaTypeSelector.select(type));
     }
 
-    public R invoke(MetaInstance<C> instance) {
-        throw new NotImplementedException("");
+    public MetaField(String name, Class<T> type, MetaClass<T> metaClass) {
+        this.name = name;
+        this.type = new MetaType<>(type, metaClass);
     }
 
-    public R invoke(MetaInstance<C> instance, Object argument) {
-        throw new NotImplementedException("");
+    public String name() {
+        return name;
     }
 
-    public abstract R invoke(MetaInstance<C> instance, Object... arguments);
+    public MetaType<T> type() {
+        return type;
+    }
 }

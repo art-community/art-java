@@ -1,6 +1,7 @@
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.collection.*;
+import io.art.meta.model.*;
 import lombok.*;
 import lombok.experimental.*;
 

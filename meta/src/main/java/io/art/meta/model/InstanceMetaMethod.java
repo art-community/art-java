@@ -16,26 +16,27 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
+import io.art.meta.model.*;
 import lombok.*;
 
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
-public abstract class StaticMetaMethod<R> extends MetaMethod<R> {
-    protected StaticMetaMethod(String name, Class<R> returnType) {
+public abstract class InstanceMetaMethod<C, R> extends MetaMethod<R> {
+    protected InstanceMetaMethod(String name, Class<R> returnType) {
         super(name, returnType);
     }
 
-    public R invoke() {
+    public R invoke(MetaInstance<C> instance) {
         throw new NotImplementedException("");
     }
 
-    public R invoke(Object argument) {
+    public R invoke(MetaInstance<C> instance, Object argument) {
         throw new NotImplementedException("");
     }
 
-    public abstract R invoke(Object... arguments);
+    public abstract R invoke(MetaInstance<C> instance, Object... arguments);
 }

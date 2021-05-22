@@ -16,11 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
+import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;

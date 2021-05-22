@@ -1,6 +1,7 @@
-package io.art.meta;
+package io.art.meta.constants;
 
 import io.art.core.collection.*;
+import io.art.meta.model.*;
 import static io.art.value.mapping.ArrayMapping.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import java.time.*;

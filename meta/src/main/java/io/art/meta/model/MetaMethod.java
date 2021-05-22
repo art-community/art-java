@@ -16,53 +16,46 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.selector.MetaTypeSelector.*;
 import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode
-public abstract class MetaPackage {
+public abstract class MetaMethod<R> {
     private final String name;
-    private final Map<String, MetaPackage> packages = map();
-    private final Map<Class<?>, MetaClass> classes = map();
+    private final MetaType<?> returnType;
+    private final Map<String, MetaParameter<?>> parameters = map();
 
-    protected MetaPackage(String name) {
+    protected MetaMethod(String name, Class<R> returnType) {
         this.name = name;
+        this.returnType = select(returnType);
     }
 
-    protected <T extends MetaPackage> T register(T metaPackage) {
-        packages.put(metaPackage.name(), metaPackage);
-        return metaPackage;
-    }
-
-    protected <T extends MetaClass> T register(T metaClass) {
-        classes.put(metaClass.type().type(), metaClass);
-        return metaClass;
+    protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {
+        parameters.put(parameter.name(), parameter);
+        return parameter;
     }
 
     public String name() {
         return name;
     }
 
-    public ImmutableMap<String, MetaPackage> packages() {
-        return immutableMapOf(packages);
+    public MetaType<R> returnType() {
+        return cast(returnType);
     }
 
-    public ImmutableMap<Class<?>, MetaClass> classes() {
-        return immutableMapOf(classes);
+    public <T> MetaParameter<T> parameter(String name) {
+        return cast(parameters.get(name));
     }
 
-    public <T extends MetaPackage> T packageOf(String name) {
-        return cast(packages.get(name));
-    }
-
-    public <T extends MetaClass> T classOf(Class<?> type) {
-        return cast(classes.get(type));
+    public ImmutableMap<String, MetaParameter<?>> parameters() {
+        return immutableMapOf(parameters);
     }
 }

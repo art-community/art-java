@@ -16,34 +16,29 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
+import io.art.core.singleton.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
-import java.lang.reflect.*;
+import java.util.function.*;
 
 @ForGenerator
 @EqualsAndHashCode
-public class MetaField<T> {
-    private final String name;
-    private final MetaType<T> type;
+public class MetaInstance<T> {
+    private final MetaClass<T> metaClass;
+    private final Function<Object[], T> factory;
 
-    public MetaField(String name, Type type) {
-        this.name = name;
-        this.type = cast(MetaTypeSelector.select(type));
+    public MetaInstance(MetaClass<T> metaClass, Function<Object[], T> factory) {
+        this.metaClass = metaClass;
+        this.factory = factory;
     }
 
-    public MetaField(String name, Class<T> type, MetaClass<T> metaClass) {
-        this.name = name;
-        this.type = new MetaType<>(type, metaClass);
+    public T instance(Object... arguments) {
+        return factory.apply(arguments);
     }
 
-    public String name() {
-        return name;
-    }
-
-    public MetaType<T> type() {
-        return type;
+    public T singleton(Object... arguments) {
+        return SingletonsRegistry.singleton(metaClass.type().type(), () -> factory.apply(arguments));
     }
 }

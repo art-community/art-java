@@ -16,30 +16,29 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
-import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.MapFactory.*;
-import java.util.*;
+import static io.art.meta.selector.MetaTypeSelector.*;
 
 @ForGenerator
 @EqualsAndHashCode
-public abstract class MetaModule {
-    private final Map<String, MetaPackage> packages = map();
+public class MetaParameter<T> {
+    private final String name;
+    private final MetaType<T> type;
 
-    protected <T extends MetaPackage> T register(T metaPackage) {
-        packages.put(metaPackage.name(), metaPackage);
-        return metaPackage;
+    public MetaParameter(String name, Class<T> type) {
+        this.name = name;
+        this.type = cast(select(type));
     }
 
-    public ImmutableMap<String, MetaPackage> packages() {
-        return immutableMapOf(packages);
+    public String name() {
+        return name;
     }
 
-    public <T extends MetaPackage> T packageOf(String name) {
-        return cast(packages.get(name));
+    public MetaType<T> type() {
+        return type;
     }
 }

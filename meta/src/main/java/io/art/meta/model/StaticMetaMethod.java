@@ -16,29 +16,27 @@
  * limitations under the License.
  */
 
-package io.art.meta;
+package io.art.meta.model;
 
 import io.art.core.annotation.*;
-import io.art.core.singleton.*;
+import io.art.core.exception.*;
+import io.art.meta.model.*;
 import lombok.*;
-import java.util.function.*;
 
 @ForGenerator
-@EqualsAndHashCode
-public class MetaInstance<T> {
-    private final MetaClass<T> metaClass;
-    private final Function<Object[], T> factory;
-
-    public MetaInstance(MetaClass<T> metaClass, Function<Object[], T> factory) {
-        this.metaClass = metaClass;
-        this.factory = factory;
+@EqualsAndHashCode(callSuper = true)
+public abstract class StaticMetaMethod<R> extends MetaMethod<R> {
+    protected StaticMetaMethod(String name, Class<R> returnType) {
+        super(name, returnType);
     }
 
-    public T instance(Object... arguments) {
-        return factory.apply(arguments);
+    public R invoke() {
+        throw new NotImplementedException("");
     }
 
-    public T singleton(Object... arguments) {
-        return SingletonsRegistry.singleton(metaClass.type().type(), () -> factory.apply(arguments));
+    public R invoke(Object argument) {
+        throw new NotImplementedException("");
     }
+
+    public abstract R invoke(Object... arguments);
 }
