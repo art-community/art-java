@@ -21,6 +21,7 @@ package io.art.meta;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.value.immutable.Value;
 import lombok.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -32,11 +33,17 @@ public abstract class MetaClass<T> {
     private final MetaType<T> type;
     private final Set<MetaConstructor<T>> constructors = set();
     private final Map<String, MetaField<?>> fields = map();
-
+    private final Map<String, MetaProperty<?>> properties = map();
     private final Set<MetaMethod<?>> methods = set();
+    private MetaType<?> parent;
 
     protected MetaClass(Class<T> type) {
-        this.type = new MetaType<>(type);
+        this.type = new MetaType<>(type, this);
+    }
+
+    protected MetaClass(Class<T> type, MetaType<?> parent) {
+        this.type = new MetaType<>(type, this);
+        this.parent = parent;
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -62,11 +69,24 @@ public abstract class MetaClass<T> {
         return immutableMapOf(fields);
     }
 
+
+    public ImmutableMap<String, MetaProperty<?>> properties() {
+        return immutableMapOf(properties);
+    }
+
     public ImmutableSet<MetaMethod<?>> methods() {
         return immutableSetOf(methods);
     }
 
     public ImmutableSet<MetaConstructor<T>> constructors() {
         return immutableSetOf(constructors);
+    }
+
+    public T toModel(Value value) {
+        return null;
+    }
+
+    public Value fromModel(T model) {
+        return null;
     }
 }

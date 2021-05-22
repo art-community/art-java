@@ -20,6 +20,7 @@ package io.art.meta;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
@@ -51,4 +52,14 @@ public abstract class MetaConstructor<C> {
     public ImmutableMap<String, MetaParameter<?>> parameters() {
         return immutableMapOf(parameters);
     }
+
+    public C invoke() {
+        throw new NotImplementedException("");
+    }
+
+    public C invoke(Object argument) {
+        throw new NotImplementedException("");
+    }
+
+    public abstract C invoke(Object... arguments);
 }

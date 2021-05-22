@@ -20,6 +20,8 @@ package io.art.meta;
 
 import io.art.core.annotation.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.meta.MetaTypeSelector.*;
 
 @ForGenerator
 @EqualsAndHashCode
@@ -29,7 +31,7 @@ public class MetaParameter<T> {
 
     public MetaParameter(String name, Class<T> type) {
         this.name = name;
-        this.type = new MetaType<>(type);
+        this.type = cast(select(type));
     }
 
     public String name() {

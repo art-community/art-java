@@ -23,6 +23,7 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.MetaTypeSelector.*;
 import java.util.*;
 
 @ForGenerator
@@ -34,7 +35,7 @@ public abstract class MetaMethod<R> {
 
     protected MetaMethod(String name, Class<R> returnType) {
         this.name = name;
-        this.returnType = new MetaType<>(returnType);
+        this.returnType = select(returnType);
     }
 
     protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {

@@ -19,18 +19,47 @@
 package io.art.meta;
 
 import io.art.core.annotation.*;
+import io.art.value.immutable.Value;
+import io.art.value.mapper.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 
 @ForGenerator
 @EqualsAndHashCode
 public class MetaType<T> {
     private final Class<T> type;
+    private final ValueToModelMapper<T, Value> toModel;
+    private final ValueFromModelMapper<T, Value> fromModel;
 
-    public MetaType(Class<T> type) {
-        this.type = type;
+    public MetaType(Class<?> type, ValueToModelMapper<?, ? extends Value> toModel, ValueFromModelMapper<?, ? extends Value> fromModel) {
+        this.type = cast(type);
+        this.toModel = cast(toModel);
+        this.fromModel = cast(fromModel);
+    }
+
+    public MetaType(Class<?> type, MetaClass<T> metaClass) {
+        this.type = cast(type);
+        toModel = metaClass::toModel;
+        fromModel = metaClass::fromModel;
     }
 
     public Class<T> type() {
         return type;
+    }
+
+    public ValueToModelMapper<T, ? extends Value> toModel() {
+        return toModel;
+    }
+
+    public ValueFromModelMapper<T, ? extends Value> fromModel() {
+        return fromModel;
+    }
+
+    public T toModel(io.art.value.immutable.Value value) {
+        return toModel.map(value);
+    }
+
+    public Value fromModel(T model) {
+        return fromModel.map(model);
     }
 }
