@@ -30,7 +30,7 @@ import java.util.*;
 public abstract class MetaPackage {
     private final String name;
     private final Map<String, MetaPackage> packages = map();
-    private final Map<Class<?>, MetaClass> classes = map();
+    private final Map<Class<?>, MetaClass<?>> classes = map();
 
     protected MetaPackage(String name) {
         this.name = name;
@@ -41,9 +41,14 @@ public abstract class MetaPackage {
         return metaPackage;
     }
 
-    protected <T extends MetaClass> T register(T metaClass) {
+    protected <T extends MetaClass<?>> T register(T metaClass) {
         classes.put(metaClass.type().type(), metaClass);
         return metaClass;
+    }
+
+    protected void compute() {
+        packages.values().forEach(MetaPackage::compute);
+        classes.values().forEach(MetaClass::compute);
     }
 
     public String name() {
@@ -54,7 +59,7 @@ public abstract class MetaPackage {
         return immutableMapOf(packages);
     }
 
-    public ImmutableMap<Class<?>, MetaClass> classes() {
+    public ImmutableMap<Class<?>, MetaClass<?>> classes() {
         return immutableMapOf(classes);
     }
 
@@ -62,7 +67,7 @@ public abstract class MetaPackage {
         return cast(packages.get(name));
     }
 
-    public <T extends MetaClass> T classOf(Class<?> type) {
+    public <T extends MetaClass<?>> T classOf(Class<?> type) {
         return cast(classes.get(type));
     }
 }

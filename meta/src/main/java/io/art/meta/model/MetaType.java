@@ -101,19 +101,21 @@ public class MetaType<T> {
                 .build();
     }
 
-    public MetaType<T> classify() {
+    public void compute() {
         MetaClass<?> metaClass = classes().get(type);
         if (isNull(metaClass)) {
-            return this;
+
         }
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters.toArray(new MetaType[0])));
         type = typedMetaClass.type().type;
         fromModel = typedMetaClass::fromModel;
         toModel = typedMetaClass::toModel;
-        return this;
     }
 
     public MetaType<?> parameterize(Map<String, MetaType<?>> parameters) {
+        if (isNull(variable)) {
+            return this;
+        }
         MetaTypeBuilder<?> builder = toBuilder().variable(null);
         if (nonNull(element)) {
             builder.element(element.parameterize(parameters));
@@ -126,10 +128,6 @@ public class MetaType<T> {
         if (nonNull(parameter)) {
             builder.type(cast(parameter.type));
         }
-        return builder.build().compute();
-    }
-
-    public MetaType<T> compute() {
-        return this;
+        return builder.build();
     }
 }

@@ -35,6 +35,10 @@ public abstract class MetaModule {
         return metaPackage;
     }
 
+    protected void compute() {
+        packages.values().forEach(MetaPackage::compute);
+    }
+
     public ImmutableMap<String, MetaPackage> packages() {
         return immutableMapOf(packages);
     }

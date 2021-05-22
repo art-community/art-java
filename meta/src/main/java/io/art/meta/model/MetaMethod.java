@@ -28,9 +28,9 @@ import java.util.*;
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaMethod<R> {
-    private MetaType<?> returnType;
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
+    private MetaType<?> returnType;
 
     protected MetaMethod(MetaMethod<R> base) {
         this.name = base.name;

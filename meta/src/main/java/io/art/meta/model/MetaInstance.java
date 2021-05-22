@@ -34,7 +34,7 @@ public class MetaInstance<T> {
         this.factory = factory;
     }
 
-    public T instance(Object... arguments) {
+    public T create(Object... arguments) {
         return factory.apply(arguments);
     }
 

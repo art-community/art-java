@@ -21,6 +21,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.registry.*;
 import io.art.value.immutable.Value;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -48,6 +49,7 @@ public abstract class MetaClass<T> {
         properties = map();
         methods = set();
         variables = map();
+        MetaClassRegistry.register(this);
     }
 
     protected MetaClass(Class<T> type, MetaType<?> parent) {
@@ -58,6 +60,7 @@ public abstract class MetaClass<T> {
         properties = map();
         methods = set();
         variables = map();
+        MetaClassRegistry.register(this);
     }
 
     protected MetaClass(MetaClass<T> base) {
@@ -68,6 +71,7 @@ public abstract class MetaClass<T> {
         properties = base.properties;
         methods = base.methods;
         variables = base.variables;
+        MetaClassRegistry.register(this);
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -110,6 +114,19 @@ public abstract class MetaClass<T> {
             newMetaClass.methods.add(method.parameterize(variableToParameter));
         }
         return newMetaClass;
+    }
+
+    protected void compute() {
+        for (MetaField<?> field : fields.values()) {
+            field.type().compute();
+        }
+        for (MetaConstructor<T> constructor : constructors) {
+            constructor.parameters().values().forEach(parameter -> parameter.type().compute());
+        }
+        for (MetaMethod<?> method : methods) {
+            method.returnType().compute();
+            method.parameters().values().forEach(parameter -> parameter.type().compute());
+        }
     }
 
     protected abstract MetaClass<T> duplicate();

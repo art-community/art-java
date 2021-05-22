@@ -29,4 +29,8 @@ public class MetaClassRegistry {
     public static ImmutableMap<Class<?>, MetaClass<?>> classes() {
         return immutableMapOf(META_CLASS_REGISTRY);
     }
+
+    public static void register(MetaClass<?> metaClass) {
+        META_CLASS_REGISTRY.put(metaClass.getClass(), metaClass);
+    }
 }

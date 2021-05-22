@@ -34,11 +34,11 @@ public abstract class InstanceMetaMethod<C, R> extends MetaMethod<R> {
     }
 
     public R invoke(MetaInstance<C> instance) {
-        throw new NotImplementedException("invoke(instance)");
+        throw new NotImplementedException("invoke(create)");
     }
 
     public R invoke(MetaInstance<C> instance, Object argument) {
-        throw new NotImplementedException("invoke(instance, argument)");
+        throw new NotImplementedException("invoke(create, argument)");
     }
 
     public abstract R invoke(MetaInstance<C> instance, Object... arguments);
