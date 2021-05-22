@@ -30,7 +30,11 @@ import java.util.*;
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
     private final MetaType<T> type;
-    private final Map<String, MetaField<?>> fields = map();
+    private final Set<MetaConstructor<T>> constructors = set();
+    private final Map<String, Met aField<?>>fields =
+
+    map();
+
     private final Set<MetaMethod<?>> methods = set();
 
     protected MetaClass(Class<T> type) {
@@ -47,6 +51,11 @@ public abstract class MetaClass<T> {
         return method;
     }
 
+    protected <C extends MetaConstructor<T>> C register(C constructor) {
+        constructors.add(constructor);
+        return constructor;
+    }
+
     public MetaType<T> type() {
         return type;
     }
@@ -57,5 +66,9 @@ public abstract class MetaClass<T> {
 
     public ImmutableSet<MetaMethod<?>> methods() {
         return immutableSetOf(methods);
+    }
+
+    public ImmutableSet<MetaConstructor<T>> constructors() {
+        return immutableSetOf(constructors);
     }
 }

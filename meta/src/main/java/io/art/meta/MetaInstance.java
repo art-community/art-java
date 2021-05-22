@@ -27,18 +27,18 @@ import java.util.function.*;
 @EqualsAndHashCode
 public class MetaInstance<T> {
     private final MetaClass<T> metaClass;
-    private final Function<Object[], T> instance;
+    private final Function<Object[], T> factory;
 
-    public MetaInstance(MetaClass<T> metaClass, Function<Object[], T> constructor) {
+    public MetaInstance(MetaClass<T> metaClass, Function<Object[], T> factory) {
         this.metaClass = metaClass;
-        this.instance = constructor;
+        this.factory = factory;
     }
 
     public T instance(Object... arguments) {
-        return instance.apply(arguments);
+        return factory.apply(arguments);
     }
 
     public T singleton(Object... arguments) {
-        return SingletonsRegistry.singleton(metaClass.type().type(), () -> instance.apply(arguments));
+        return SingletonsRegistry.singleton(metaClass.type().type(), () -> factory.apply(arguments));
     }
 }
