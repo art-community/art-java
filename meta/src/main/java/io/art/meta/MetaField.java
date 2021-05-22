@@ -40,8 +40,4 @@ public class MetaField<T> {
     public MetaType<T> type() {
         return type;
     }
-
-    public <G> MetaField<G> reify(Class<G> type) {
-        return new MetaField<>(name, this.type.reify(type));
-    }
 }

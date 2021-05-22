@@ -22,18 +22,21 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaModule {
-    private final ImmutableMap<String, MetaPackage> packages;
+    private final Map<String, MetaPackage> packages = map();
 
-    protected MetaModule(ImmutableMap<String, MetaPackage> packages) {
-        this.packages = packages;
+    protected <T extends MetaPackage> T register(T metaPackage) {
+        packages.put(metaPackage.name(), metaPackage);
+        return metaPackage;
     }
 
     public ImmutableMap<String, MetaPackage> packages() {
-        return packages;
+        return immutableMapOf(packages);
     }
 
     public <T extends MetaPackage> T packageOf(String name) {

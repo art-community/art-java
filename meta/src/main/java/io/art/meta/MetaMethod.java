@@ -22,25 +22,31 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode
-public class MetaMethod {
+public abstract class MetaMethod<R> {
     private final String name;
     private final MetaType<?> returnType;
-    private final ImmutableMap<String, MetaParameter<?>> parameters;
+    private final Map<String, MetaParameter<?>> parameters = map();
 
-    public MetaMethod(String name, Class<?> returnType, ImmutableMap<String, MetaParameter<?>> parameters) {
+    protected MetaMethod(String name, Class<R> returnType) {
         this.name = name;
         this.returnType = new MetaType<>(returnType);
-        this.parameters = parameters;
+    }
+
+    protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {
+        parameters.put(parameter.name(), parameter);
+        return parameter;
     }
 
     public String name() {
         return name;
     }
 
-    public <T> MetaType<T> returnType() {
+    public MetaType<R> returnType() {
         return cast(returnType);
     }
 
@@ -48,15 +54,7 @@ public class MetaMethod {
         return cast(parameters.get(name));
     }
 
-    public <T> MetaType<T> returnType(Class<T> type) {
-        return cast(returnType.reify(type));
-    }
-
-    public <T> MetaParameter<T> parameter(String name, Class<T> type) {
-        return cast(parameters.get(name).reify(type));
-    }
-
     public ImmutableMap<String, MetaParameter<?>> parameters() {
-        return parameters;
+        return immutableMapOf(parameters);
     }
 }

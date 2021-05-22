@@ -20,7 +20,6 @@ package io.art.meta;
 
 import io.art.core.annotation.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 
 @ForGenerator
 @EqualsAndHashCode
@@ -33,9 +32,5 @@ public class MetaType<T> {
 
     public Class<T> type() {
         return type;
-    }
-
-    public <G> Class<G> reify(Class<G> type) {
-        return cast(new MetaType<>(type).type);
     }
 }

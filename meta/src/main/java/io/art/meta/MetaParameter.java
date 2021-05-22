@@ -39,8 +39,4 @@ public class MetaParameter<T> {
     public MetaType<T> type() {
         return type;
     }
-
-    public <G> MetaParameter<G> reify(Class<G> type) {
-        return new MetaParameter<G>(name, this.type.reify(type));
-    }
 }

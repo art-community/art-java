@@ -32,7 +32,7 @@ import java.util.*;
 public abstract class MetaClass {
     private final MetaType<?> type;
     private final Map<String, MetaField<?>> fields = map();
-    private final Set<MetaMethod> methods = set();
+    private final Set<MetaMethod<?>> methods = set();
 
     protected MetaClass(Class<?> type) {
         this.type = cast(new MetaType<>(type));
@@ -43,7 +43,7 @@ public abstract class MetaClass {
         return field;
     }
 
-    protected MetaMethod register(MetaMethod method) {
+    protected <T extends MetaMethod<?>> T register(T method) {
         methods.add(method);
         return method;
     }
@@ -56,7 +56,7 @@ public abstract class MetaClass {
         return immutableMapOf(fields);
     }
 
-    public ImmutableSet<MetaMethod> methods() {
+    public ImmutableSet<MetaMethod<?>> methods() {
         return immutableSetOf(methods);
     }
 }
