@@ -31,11 +31,11 @@ public abstract class StaticMetaMethod<R> extends MetaMethod<R> {
     }
 
     public R invoke() {
-        throw new NotImplementedException("");
+        throw new NotImplementedException("invoke()");
     }
 
     public R invoke(Object argument) {
-        throw new NotImplementedException("");
+        throw new NotImplementedException("invoke(argument)");
     }
 
     public abstract R invoke(Object... arguments);

@@ -19,10 +19,7 @@
 package io.art.meta.model;
 
 import io.art.core.annotation.*;
-import io.art.meta.selector.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
-import java.lang.reflect.*;
 
 @ForGenerator
 @EqualsAndHashCode
@@ -30,14 +27,9 @@ public class MetaField<T> {
     private final String name;
     private final MetaType<T> type;
 
-    public MetaField(String name, Type type) {
+    public MetaField(String name, MetaType<T> type) {
         this.name = name;
-        this.type = cast(MetaTypeSelector.select(type));
-    }
-
-    public MetaField(String name, Class<T> type, MetaClass<T> metaClass) {
-        this.name = name;
-        this.type = new MetaType<>(type, metaClass);
+        this.type = type;
     }
 
     public String name() {

@@ -25,6 +25,7 @@ import io.art.value.immutable.Value;
 import lombok.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.model.MetaType.metaType;
 import java.util.*;
 
 @ForGenerator
@@ -38,12 +39,10 @@ public abstract class MetaClass<T> {
     private MetaType<?> parent;
 
     protected MetaClass(Class<T> type) {
-        this.type = new MetaType<>(type, this);
-    }
-
-    protected MetaClass(Class<T> type, MetaType<?> parent) {
-        this.type = new MetaType<>(type, this);
-        this.parent = parent;
+        this.type = metaType(type)
+                .fromModel(this::fromModel)
+                .toModel(this::toModel)
+                .build();
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {

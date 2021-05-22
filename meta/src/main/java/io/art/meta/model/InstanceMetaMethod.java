@@ -20,7 +20,6 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
-import io.art.meta.model.*;
 import lombok.*;
 
 @ForGenerator
@@ -31,11 +30,11 @@ public abstract class InstanceMetaMethod<C, R> extends MetaMethod<R> {
     }
 
     public R invoke(MetaInstance<C> instance) {
-        throw new NotImplementedException("");
+        throw new NotImplementedException("invoke(instance)");
     }
 
     public R invoke(MetaInstance<C> instance, Object argument) {
-        throw new NotImplementedException("");
+        throw new NotImplementedException("invoke(instance, argument)");
     }
 
     public abstract R invoke(MetaInstance<C> instance, Object... arguments);
