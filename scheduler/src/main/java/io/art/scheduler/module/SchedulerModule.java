@@ -58,7 +58,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     public void onLoad(Context.Service contextService) {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
-        scheduleDelayed(task(REFRESHER_TASK, contextService::reload), now().plus(duration), duration);
+        scheduleDelayed(now().plus(duration), duration, task(REFRESHER_TASK, contextService::reload));
     }
 
     @Override
@@ -70,7 +70,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     public void afterReload(Context.Service contextService) {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
-        scheduleDelayed(task(REFRESHER_TASK, contextService::reload), now().plus(duration), duration);
+        scheduleDelayed(now().plus(duration), duration, task(REFRESHER_TASK, contextService::reload));
     }
 
     @Override
