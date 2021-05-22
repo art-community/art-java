@@ -67,6 +67,14 @@ public class TypeInspector {
         return Set.class.isAssignableFrom(extractClass(type));
     }
 
+    public boolean isQueue(Type type) {
+        return Queue.class.isAssignableFrom(extractClass(type));
+    }
+
+    public boolean isDequeue(Type type) {
+        return Deque.class.isAssignableFrom(extractClass(type));
+    }
+
     public boolean isMap(Type type) {
         return Map.class.isAssignableFrom(extractClass(type));
     }

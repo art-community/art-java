@@ -23,6 +23,8 @@ import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
+import io.art.value.mapper.ValueFromModelMapper.*;
+import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -30,6 +32,10 @@ import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
 import static io.art.value.mapper.ValueMapper.*;
 import static io.art.value.mapping.ArrayMapping.*;
+import static io.art.value.mapping.BinaryMapping.*;
+import static io.art.value.mapping.EntityMapping.*;
+import static io.art.value.mapping.LazyMapping.*;
+import static io.art.value.mapping.OptionalMapping.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.*;
 import java.time.*;
@@ -42,6 +48,9 @@ public class MetaTypeMappersComputer {
         boolean array = type.array();
         ImmutableSet<MetaType<?>> parameters = type.parameters();
         if (array) {
+            if (byte.class.equals(rawType)) {
+                return cast(mapper(fromBinary, toBinary));
+            }
             MetaType<T> component = type.toBuilder().array(false).build();
             return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.arrayFactory(), component.toModel())));
         }
@@ -84,25 +93,59 @@ public class MetaTypeMappersComputer {
             }
             throw new MetaException(format(UNSUPPORTED_TYPE, type));
         }
+        if (isValue(rawType)) {
+            return cast(mapper(ValueFromModelMapper.identity(), ValueToModelMapper.identity()));
+        }
+        if (isEmpty(parameters)) {
+            throw new MetaException(format(UNSUPPORTED_TYPE, type));
+        }
+        MetaType<?> firstParameter = parameters.stream()
+                .findFirst()
+                .map(MetaType::compute)
+                .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, type)));
+        if (isLazyValue(rawType)) {
+            return mapper(cast(fromLazy(firstParameter.fromModel())), cast(toLazy(firstParameter.toModel())));
+        }
+        if (isOptional(rawType)) {
+            return mapper(cast(fromOptional(firstParameter.fromModel())), cast(toOptional(firstParameter.toModel())));
+        }
         if (isCollection(rawType)) {
-            if (isEmpty(parameters)) {
-                throw new MetaException(format(UNSUPPORTED_TYPE, type));
-            }
             if (isList(rawType)) {
-
+                return mapper(cast(fromList(firstParameter.fromModel())), cast(toMutableList(firstParameter.toModel())));
             }
             if (isImmutableArray(rawType)) {
-
+                return mapper(cast(fromImmutableArray(firstParameter.fromModel())), cast(toImmutableArray(firstParameter.toModel())));
             }
             if (isSet(rawType)) {
-
+                return mapper(cast(fromSet(firstParameter.fromModel())), cast(toMutableSet(firstParameter.toModel())));
             }
             if (isImmutableSet(rawType)) {
-
+                return mapper(cast(fromImmutableSet(firstParameter.fromModel())), cast(toImmutableSet(firstParameter.toModel())));
             }
+            if (isQueue(rawType)) {
+                return mapper(cast(fromQueue(firstParameter.fromModel())), cast(toMutableQueue(firstParameter.toModel())));
+            }
+            if (isDequeue(rawType)) {
+                return mapper(cast(fromDeque(firstParameter.fromModel())), cast(toMutableDeque(firstParameter.toModel())));
+            }
+            return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toMutableCollection(firstParameter.toModel())));
         }
         if (isMap(rawType)) {
+            if (parameters.size() != 2) {
+                throw new MetaException(format(UNSUPPORTED_TYPE, type));
+            }
+            MetaType<?>[] metaTypes = parameters.toArray(MetaType[]::new);
+            MetaType<?> key = metaTypes[0].compute();
+            MetaType<?> value = metaTypes[1].compute();
+            if (isImmutableMap(rawType)) {
+                EntityFromModelMapper<? extends ImmutableMap<?, ?>> fromMapper = fromImmutableMap(cast(key.toModel()), cast(key.fromModel()), value.fromModel());
+                EntityToModelMapper<? extends ImmutableMap<?, ?>> toMapper = toImmutableMap(cast(key.toModel()), cast(key.fromModel()), cast(value.toModel()));
+                return mapper(cast(fromMapper), cast(toMapper));
+            }
 
+            EntityFromModelMapper<? extends Map<?, ?>> fromMapper = fromMap(cast(key.toModel()), cast(key.fromModel()), value.fromModel());
+            EntityToModelMapper<? extends Map<?, ?>> toMapper = toMutableMap(cast(key.toModel()), value.toModel());
+            return mapper(cast(fromMapper), cast(toMapper));
         }
         throw new MetaException(format(UNSUPPORTED_TYPE, type));
     }
