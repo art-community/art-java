@@ -30,6 +30,7 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.registry.MetaClassRegistry.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -57,6 +58,9 @@ public class MetaType<T> {
     private final Function<Integer, T> arrayFactory;
     private ValueToModelMapper<T, Value> toModel;
     private ValueFromModelMapper<T, Value> fromModel;
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final ImmutableMap<Class<?>, MetaClass<?>> classes = classes();
 
     public Class<T> type() {
         return type;
@@ -115,7 +119,7 @@ public class MetaType<T> {
 
     public MetaType<T> compute() {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
-        MetaClass<?> metaClass = classes().get(type);
+        MetaClass<?> metaClass = getClasses().get(type);
         if (isNull(metaClass)) {
             ValueMapper<T, Value> mapper = MetaTypeMappersComputer.compute(this);
             toModel = mapper.getToModel();

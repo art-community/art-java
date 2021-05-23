@@ -32,7 +32,7 @@ public class MetaClassRegistry {
     }
 
     public static <T> MetaClass<T> metaOf(Class<T> type) {
-        return cast(classes().get(type));
+        return cast(META_CLASS_REGISTRY.get(type));
     }
 
     public static void register(MetaClass<?> metaClass) {
