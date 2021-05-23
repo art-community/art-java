@@ -156,8 +156,8 @@ public class MetaTypeMappersComputer {
                 return mapper(cast(fromMapper), cast(toMapper));
             }
 
-            EntityFromModelMapper<? extends Map<?, ?>> fromMapper = fromMap(cast(key.toModel()), cast(key.fromModel()), value.fromModel());
-            EntityToModelMapper<? extends Map<?, ?>> toMapper = toMutableMap(cast(key.toModel()), value.toModel());
+            EntityFromModelMapper<? extends Map<?, ?>> fromMapper = fromMap(cast(key.toModel()), cast(key.fromModel()), cast(value.fromModel()));
+            EntityToModelMapper<? extends Map<?, ?>> toMapper = toMutableMap(cast(key.toModel()), cast(value.toModel()));
             return mapper(cast(fromMapper), cast(toMapper));
         }
         throw new MetaException(format(UNSUPPORTED_TYPE, type));
