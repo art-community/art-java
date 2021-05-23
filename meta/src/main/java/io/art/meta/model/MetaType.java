@@ -38,15 +38,19 @@ import java.util.function.*;
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MetaType<T> {
+    @ToString.Include
     @EqualsAndHashCode.Include
     private Class<T> type;
 
+    @ToString.Include
     @EqualsAndHashCode.Include
     private final ImmutableSet<MetaType<?>> parameters;
 
+    @ToString.Include
     @EqualsAndHashCode.Include
     private final boolean array;
 
+    @ToString.Include
     @EqualsAndHashCode.Include
     private final String variable;
 
@@ -120,8 +124,8 @@ public class MetaType<T> {
         }
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters.toArray(new MetaType[0])));
         type = typedMetaClass.type().type;
-        fromModel = typedMetaClass::fromModel;
         toModel = typedMetaClass::toModel;
+        fromModel = typedMetaClass::fromModel;
         return this;
     }
 

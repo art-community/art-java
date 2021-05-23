@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.Map.*;
 import java.util.function.*;
 
+@ToString
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
@@ -45,8 +46,7 @@ public abstract class MetaClass<T> {
     private MetaType<?> parent;
 
     protected MetaClass(Class<?> type, Function<Integer, ?> arrayFactory) {
-        this.type = metaType(type);
-        this.arrayFactory = cast(arrayFactory);
+        this.type = metaType(type, arrayFactory);
         constructors = set();
         fields = map();
         properties = map();
@@ -56,9 +56,8 @@ public abstract class MetaClass<T> {
     }
 
     protected MetaClass(Class<T> type, Function<Integer, T> arrayFactory, MetaType<?> parent) {
-        this.type = metaType(type);
+        this.type = metaType(type, arrayFactory);
         this.parent = parent;
-        this.arrayFactory = arrayFactory;
         constructors = set();
         fields = map();
         properties = map();
@@ -69,7 +68,6 @@ public abstract class MetaClass<T> {
 
     protected MetaClass(MetaClass<T> base) {
         type = base.type;
-        arrayFactory = base.arrayFactory;
         parent = base.parent;
         constructors = base.constructors;
         fields = base.fields;

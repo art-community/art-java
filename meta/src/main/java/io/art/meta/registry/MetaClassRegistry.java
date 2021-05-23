@@ -36,6 +36,6 @@ public class MetaClassRegistry {
     }
 
     public static void register(MetaClass<?> metaClass) {
-        META_CLASS_REGISTRY.put(metaClass.getClass(), metaClass);
+        META_CLASS_REGISTRY.put(metaClass.type().type(), metaClass);
     }
 }

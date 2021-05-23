@@ -51,7 +51,7 @@ public class MetaTypeMappersComputer {
             if (byte.class.equals(rawType)) {
                 return cast(mapper(fromBinary, toBinary));
             }
-            MetaType<T> component = type.toBuilder().array(false).build();
+            MetaType<T> component = type.toBuilder().array(false).build().compute();
             return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.arrayFactory(), component.toModel())));
         }
         if (isObject(rawType)) {

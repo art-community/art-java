@@ -26,6 +26,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
+@ToString
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaConstructor<C> {

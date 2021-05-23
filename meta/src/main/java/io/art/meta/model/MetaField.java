@@ -22,6 +22,7 @@ import io.art.core.annotation.*;
 import lombok.*;
 import java.util.*;
 
+@ToString
 @ForGenerator
 @EqualsAndHashCode
 public class MetaField<T> {

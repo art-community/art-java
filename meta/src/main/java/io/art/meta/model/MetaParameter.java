@@ -21,6 +21,7 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import lombok.*;
 
+@ToString
 @ForGenerator
 @EqualsAndHashCode
 public class MetaParameter<T> {
