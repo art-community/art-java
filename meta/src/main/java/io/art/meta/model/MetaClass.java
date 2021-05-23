@@ -24,7 +24,6 @@ import io.art.core.collection.*;
 import io.art.meta.registry.*;
 import io.art.value.immutable.Value;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -98,7 +97,7 @@ public abstract class MetaClass<T> {
     }
 
     protected MetaClass<T> parameterize(MetaType<?>... parameters) {
-        if (isEmpty(variables)) return this;
+        if (isEmpty(variables) || isEmpty(parameters)) return this;
         MetaClass<T> newMetaClass = duplicate();
         Map<String, MetaType<?>> variableToParameter = map();
         for (int index = 0; index < parameters.length; index++) {
