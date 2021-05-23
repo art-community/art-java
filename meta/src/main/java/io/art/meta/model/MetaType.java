@@ -74,6 +74,10 @@ public class MetaType<T> {
         return array;
     }
 
+    public String variable() {
+        return variable;
+    }
+
     public Function<Integer, T> arrayFactory() {
         return arrayFactory;
     }
@@ -92,29 +96,6 @@ public class MetaType<T> {
 
     public Value fromModel(T model) {
         return fromModel.map(model);
-    }
-
-    public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
-        return MetaType.<T>builder()
-                .type(cast(type))
-                .arrayFactory(cast(arrayFactory))
-                .parameters(immutableSetOf(parameters))
-                .build();
-    }
-
-    public static <T> MetaType<T> metaType(String variable) {
-        return MetaType.<T>builder()
-                .variable(variable)
-                .build();
-    }
-
-    public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
-        return MetaType.<T>builder()
-                .type(cast(type))
-                .arrayFactory(cast(arrayFactory))
-                .array(true)
-                .parameters(immutableSetOf(parameters))
-                .build();
     }
 
     public MetaType<T> compute() {
@@ -147,5 +128,28 @@ public class MetaType<T> {
                     .arrayFactory(cast(parameter.arrayFactory));
         }
         return builder.build();
+    }
+
+    public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
+        return MetaType.<T>builder()
+                .type(cast(type))
+                .arrayFactory(cast(arrayFactory))
+                .parameters(immutableSetOf(parameters))
+                .build();
+    }
+
+    public static <T> MetaType<T> metaVariable(String variable) {
+        return MetaType.<T>builder()
+                .variable(variable)
+                .build();
+    }
+
+    public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
+        return MetaType.<T>builder()
+                .type(cast(type))
+                .arrayFactory(cast(arrayFactory))
+                .array(true)
+                .parameters(immutableSetOf(parameters))
+                .build();
     }
 }

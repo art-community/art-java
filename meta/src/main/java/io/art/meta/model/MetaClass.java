@@ -29,10 +29,8 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.meta.model.MetaType.*;
 import java.util.*;
 import java.util.Map.*;
-import java.util.function.*;
 
 @ToString
 @ForGenerator
@@ -46,8 +44,8 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaType<?>> variables;
     private MetaType<?> parent;
 
-    protected MetaClass(Class<?> type, Function<Integer, ?> arrayFactory) {
-        this.type = metaType(type, arrayFactory);
+    protected MetaClass(MetaType<T> type) {
+        this.type = type;
         constructors = set();
         fields = map();
         properties = map();
@@ -56,8 +54,8 @@ public abstract class MetaClass<T> {
         MetaClassRegistry.register(this);
     }
 
-    protected MetaClass(Class<T> type, Function<Integer, T> arrayFactory, MetaType<?> parent) {
-        this.type = metaType(type, arrayFactory);
+    protected MetaClass(MetaType<T> type, MetaType<?> parent) {
+        this.type = type;
         this.parent = parent;
         constructors = set();
         fields = map();
@@ -90,8 +88,8 @@ public abstract class MetaClass<T> {
         return cast(putIfAbsent(constructors, constructor));
     }
 
-    protected MetaType<?> register(String name, MetaType<?> variable) {
-        return cast(putIfAbsent(variables, name, () -> variable));
+    protected MetaType<?> register(MetaType<?> variable) {
+        return cast(putIfAbsent(variables, variable.variable(), () -> variable));
     }
 
     protected MetaClass<T> parameterize(MetaType<?>... parameters) {
