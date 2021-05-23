@@ -24,7 +24,9 @@ import io.art.core.collection.*;
 import io.art.meta.registry.*;
 import io.art.value.immutable.Value;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.model.MetaType.*;
@@ -77,27 +79,23 @@ public abstract class MetaClass<T> {
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
-        fields.put(field.name(), field);
-        return field;
+        return cast(putIfAbsent(fields, field.name(), () -> field));
     }
 
     protected <M extends MetaMethod<?>> M register(M method) {
-        methods.add(method);
-        return method;
+        return cast(putIfAbsent(methods, method));
     }
 
     protected <C extends MetaConstructor<T>> C register(C constructor) {
-        constructors.add(constructor);
-        return constructor;
+        return cast(putIfAbsent(constructors, constructor));
     }
 
     protected MetaType<?> register(String name, MetaType<?> variable) {
-        variables.put(name, variable);
-        return variable;
+        return cast(putIfAbsent(variables, name, () -> variable));
     }
 
     protected MetaClass<T> parameterize(MetaType<?>... parameters) {
-        if (isEmpty(variables) || isEmpty(parameters)) return this;
+        if (isEmpty(variables)) return this;
         MetaClass<T> newMetaClass = duplicate();
         Map<String, MetaType<?>> variableToParameter = map();
         for (int index = 0; index < parameters.length; index++) {
@@ -110,7 +108,7 @@ public abstract class MetaClass<T> {
             }
         }
 
-        if (isEmpty(variableToParameter)) return this;
+        if (isEmpty(variableToParameter)) return newMetaClass;
         for (MetaField<?> field : fields.values()) {
             newMetaClass.fields.put(field.name(), field.parameterize(variableToParameter));
         }

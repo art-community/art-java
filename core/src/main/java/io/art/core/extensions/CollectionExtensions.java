@@ -19,6 +19,7 @@
 package io.art.core.extensions;
 
 import io.art.core.collection.*;
+import io.art.core.exception.*;
 import lombok.experimental.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -144,6 +145,15 @@ public final class CollectionExtensions {
             return current;
         }
         return current;
+    }
+
+
+    public static <V> V putIfAbsent(Set<V> set, V value) {
+        if (set.contains(value)) {
+            return set.stream().filter(value::equals).findFirst().orElseThrow(ImpossibleSituationException::new);
+        }
+        set.add(value);
+        return value;
     }
 
 
