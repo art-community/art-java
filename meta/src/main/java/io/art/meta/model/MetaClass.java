@@ -29,11 +29,17 @@ import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.TypeConstants.*;
+import static io.art.meta.type.TypeInspector.*;
 import static io.art.value.immutable.Entity.*;
 import static java.util.Objects.*;
 import java.util.*;
@@ -49,10 +55,11 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaProperty<?>> properties;
     private final Set<MetaMethod<?>> methods;
     private final Map<String, MetaType<?>> variables;
-    private MetaType<?> parent;
 
     private MetaConstructor<T> allArgumentsConstructors;
-    private List<MetaProperty<?>> getters;
+    private List<MetaProperty<?>> gettableProperties;
+    private List<MetaProperty<?>> settableProperties;
+    private List<MetaProperty<?>> constructableProperties;
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
@@ -64,21 +71,17 @@ public abstract class MetaClass<T> {
         MetaClassRegistry.register(this);
     }
 
-    protected MetaClass(MetaType<T> type, MetaType<?> parent) {
-        this(type);
-        this.parent = parent;
-    }
-
     protected MetaClass(MetaClass<T> base) {
         type = base.type;
-        parent = base.parent;
         constructors = base.constructors;
         fields = base.fields;
         properties = base.properties;
         methods = base.methods;
         variables = base.variables;
         allArgumentsConstructors = base.allArgumentsConstructors;
-        getters = base.getters;
+        gettableProperties = base.gettableProperties;
+        settableProperties = base.settableProperties;
+        constructableProperties = base.constructableProperties;
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -99,21 +102,25 @@ public abstract class MetaClass<T> {
 
     protected void compute() {
         type.compute();
+
         for (MetaField<?> field : fields.values()) {
             field.type().compute();
         }
+
         for (MetaConstructor<T> constructor : constructors) {
             constructor.parameters().values().forEach(parameter -> parameter.type().compute());
         }
+
         for (MetaMethod<?> method : methods) {
             method.returnType().compute();
             method.parameters().values().forEach(parameter -> parameter.type().compute());
         }
+
         for (MetaConstructor<T> constructor : constructors) {
             int parameterIndex = 0;
             for (MetaParameter<?> parameter : constructor.parameters().values()) {
-                for (MetaProperty<?> property : properties.values()) {
-                    if (!property.type().equals(parameter.type()) && !property.name().equals(parameter.name())) {
+                for (MetaField<?> field : fields.values()) {
+                    if (!field.type().equals(parameter.type()) && !field.name().equals(parameter.name())) {
                         break;
                     }
                 }
@@ -124,7 +131,101 @@ public abstract class MetaClass<T> {
                 break;
             }
         }
-        getters = properties()
+
+        Map<String, MetaMethod<?>> getters = map();
+        Map<String, MetaMethod<?>> setters = map();
+        Map<String, List<MetaConstructor<?>>> constructors = map();
+
+        for (Entry<String, MetaField<?>> entry : fields.entrySet()) {
+            String fieldName = entry.getKey();
+            String fieldCapitalizedName = capitalize(entry.getKey());
+            MetaField<?> fieldValue = entry.getValue();
+            Class<?> fieldType = fieldValue.type().type();
+
+            for (MetaMethod<?> method : methods) {
+                if (method.isStatic()) continue;
+
+                String methodName = method.name();
+                MetaParameter<?>[] methodParameters = method.parameters().values().toArray(MetaParameter[]::new);
+                MetaType<?> methodReturnType = method.returnType();
+
+                boolean hasSetter = methodName.equals(SET_NAME + fieldCapitalizedName)
+                        && methodParameters.length == 1
+                        && methodParameters[0].type().equals(fieldValue.type());
+
+                if (hasSetter) {
+                    setters.put(fieldName, method);
+                }
+
+                if (methodParameters.length != 0) continue;
+
+                if (!fieldType.equals(methodReturnType.type())) {
+                    continue;
+                }
+
+                if (isBoolean(fieldType)) {
+                    if (methodName.equals(IS_NAME + fieldCapitalizedName) || methodName.equals(GET_NAME + fieldCapitalizedName)) {
+                        getters.put(fieldName, method);
+                        continue;
+                    }
+                }
+
+                if (methodName.equals(GET_NAME + fieldCapitalizedName)) {
+                    getters.put(fieldName, method);
+                }
+            }
+
+            for (MetaConstructor<?> constructor : this.constructors) {
+                for (Entry<String, MetaParameter<?>> parameter : constructor.parameters().entrySet()) {
+                    if (parameter.getKey().equals(fieldName) && parameter.getValue().type().equals(fieldValue.type())) {
+                        List<MetaConstructor<?>> fieldConstructors = constructors.get(parameter.getKey());
+                        if (isNull(fieldConstructors)) {
+                            constructors.put(parameter.getKey(), linkedListOf(constructor));
+                            continue;
+                        }
+                        fieldConstructors.add(constructor);
+                    }
+                }
+            }
+        }
+
+        for (Entry<String, MetaField<?>> entry : fields.entrySet()) {
+            MetaProperty.MetaPropertyBuilder<Object> builder = MetaProperty.builder()
+                    .name(entry.getKey())
+                    .type(cast(entry.getValue().type()))
+                    .owner(cast(this));
+
+            MetaMethod<?> fieldGetter = getters.get(entry.getKey());
+            MetaMethod<?> fieldSetter = setters.get(entry.getKey());
+            List<MetaConstructor<?>> fieldConstructors = constructors.get(entry.getKey());
+
+            if (isNull(fieldGetter) && isNull(fieldSetter) && isEmpty(fieldConstructors)) continue;
+            boolean constructable = fieldConstructors
+                    .stream()
+                    .anyMatch(constructor -> constructor == allArgumentsConstructors);
+
+            apply(fieldGetter, getter -> builder.getter(cast(getter)));
+            apply(fieldConstructors, constructorList -> builder.constructors(immutableArrayOf(constructorList)));
+
+            if (nonNull(fieldSetter)) {
+                builder.setter(cast(fieldSetter));
+                if (!constructable) {
+                    MetaProperty<Object> property = builder.build();
+                    settableProperties.add(property);
+                    properties.put(entry.getKey(), property);
+                    continue;
+                }
+            }
+
+            MetaProperty<Object> property = builder.build();
+            if (constructable) {
+                constructableProperties.add(property);
+            }
+
+            properties.put(entry.getKey(), property);
+        }
+
+        this.gettableProperties = properties()
                 .values()
                 .stream()
                 .filter(property -> nonNull(property.getter()))
@@ -186,37 +287,47 @@ public abstract class MetaClass<T> {
         return immutableMapOf(variables);
     }
 
-    public boolean constructable() {
-        return nonNull(allArgumentsConstructors);
-    }
-
-    public boolean readable() {
-        return isNotEmpty(getters);
-    }
-
     public T toModel(Value value) {
         Entity entity = Value.asEntity(value);
         EntityMapping mapping = entity.mapping();
-        Object[] constructorArguments = new Object[properties.size()];
+
+        Object[] constructorArguments = new Object[constructableProperties.size()];
         int index = 0;
-        for (Entry<String, MetaProperty<?>> property : properties.entrySet()) {
-            String propertyKey = property.getKey();
-            MetaProperty<?> propertyValue = property.getValue();
-            MetaType<?> type = propertyValue.type();
+        for (MetaProperty<?> property : constructableProperties) {
+            String name = property.name();
+            MetaType<?> type = property.type();
+
             if (type.primitive()) {
-                constructorArguments[index] = mapping.mapOrDefault(propertyKey, PRIMITIVE_TYPE_MAPPINGS.get(type), type::toModel);
+                constructorArguments[index] = mapping.mapOrDefault(name, PRIMITIVE_TYPE_MAPPINGS.get(type), type::toModel);
                 index++;
                 continue;
             }
-            constructorArguments[index] = mapping.map(propertyKey, type::toModel);
+
+            constructorArguments[index] = mapping.map(name, type::toModel);
             index++;
         }
-        return allArgumentsConstructors.invoke(constructorArguments);
+
+        T model = allArgumentsConstructors.invoke(constructorArguments);
+
+        for (MetaProperty<?> property : settableProperties) {
+            String propertyKey = property.name();
+            InstanceMetaMethod<Object, Object> setter = property.setter();
+            MetaType<Object> type = property.setter().returnType();
+
+            if (type.primitive()) {
+                setter.invoke(model, mapping.mapOrDefault(propertyKey, PRIMITIVE_TYPE_MAPPINGS.get(type), type::toModel));
+                continue;
+            }
+
+            setter.invoke(model, mapping.map(propertyKey, type::toModel));
+        }
+
+        return model;
     }
 
     public Value fromModel(Object model) {
         EntityBuilder entityBuilder = entityBuilder();
-        for (MetaProperty<?> property : getters) {
+        for (MetaProperty<?> property : gettableProperties) {
             InstanceMetaMethod<Object, ?> getter = property.getter();
             entityBuilder.put(property.name(), getter.invoke(model), getter.returnType()::fromModel);
         }

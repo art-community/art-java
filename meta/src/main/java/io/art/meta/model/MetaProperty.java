@@ -16,5 +16,5 @@ public class MetaProperty<T> {
     private final MetaClass<T> owner;
     private final ImmutableArray<MetaConstructor<?>> constructors;
     private final InstanceMetaMethod<Object, T> getter;
-    private final MetaMethod<Void> setter;
+    private final InstanceMetaMethod<Object, Object> setter;
 }

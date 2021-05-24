@@ -74,4 +74,6 @@ public abstract class MetaMethod<T> {
     public ImmutableMap<String, MetaParameter<?>> parameters() {
         return immutableMapOf(parameters);
     }
+
+    protected abstract boolean isStatic();
 }
