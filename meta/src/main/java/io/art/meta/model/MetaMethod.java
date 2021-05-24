@@ -28,18 +28,18 @@ import java.util.*;
 @ToString
 @ForGenerator
 @EqualsAndHashCode
-public abstract class MetaMethod<R> {
+public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
-    private MetaType<?> returnType;
+    private MetaType<T> returnType;
 
-    protected MetaMethod(MetaMethod<R> base) {
+    protected MetaMethod(MetaMethod<T> base) {
         this.name = base.name;
         this.returnType = base.returnType;
         this.parameters = base.parameters;
     }
 
-    protected MetaMethod(String name, MetaType<R> returnType) {
+    protected MetaMethod(String name, MetaType<T> returnType) {
         this.name = name;
         this.returnType = returnType;
         this.parameters = map();
@@ -50,11 +50,9 @@ public abstract class MetaMethod<R> {
         return parameter;
     }
 
-    protected abstract MetaMethod<R> duplicate();
-
-    protected MetaMethod<R> parameterize(Map<String, MetaType<?>> parameters) {
-        MetaMethod<R> newMethod = duplicate();
-        newMethod.returnType = returnType.parameterize(parameters);
+    protected MetaMethod<T> parameterize(Map<String, MetaType<?>> parameters) {
+        MetaMethod<T> newMethod = new ParametrizedMetaMethod<>(this);
+        newMethod.returnType = cast(returnType.parameterize(parameters));
         for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
             MetaType<?> newParameterType = parameter.getValue().type().parameterize(parameters);
             newMethod.register(new MetaParameter<>(parameter.getKey(), newParameterType));
@@ -66,11 +64,11 @@ public abstract class MetaMethod<R> {
         return name;
     }
 
-    public MetaType<R> returnType() {
+    public MetaType<T> returnType() {
         return cast(returnType);
     }
 
-    public <T> MetaParameter<T> parameter(String name) {
+    public <P> MetaParameter<P> parameter(String name) {
         return cast(parameters.get(name));
     }
 

@@ -29,27 +29,27 @@ import java.util.*;
 @ToString
 @ForGenerator
 @EqualsAndHashCode
-public abstract class MetaConstructor<C> {
-    private final MetaType<C> type;
+public abstract class MetaConstructor<T> {
+    private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
 
-    protected MetaConstructor(MetaType<C> type) {
+    protected MetaConstructor(MetaType<T> type) {
         this.type = type;
         parameters = map();
     }
 
-    protected MetaConstructor(MetaConstructor<C> base) {
+    protected MetaConstructor(MetaConstructor<T> base) {
         this.type = base.type;
         this.parameters = base.parameters;
     }
 
-    protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {
+    protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
     }
 
-    protected MetaConstructor<C> parameterize(Map<String, MetaType<?>> parameters) {
-        MetaConstructor<C> newConstructor = duplicate();
+    protected MetaConstructor<T> parameterize(Map<String, MetaType<?>> parameters) {
+        MetaConstructor<T> newConstructor = new ParametrizedMetaConstructor<>(this);
         for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
             MetaType<?> newParameterType = parameter.getValue().type().parameterize(parameters);
             newConstructor.register(new MetaParameter<>(parameter.getKey(), newParameterType));
@@ -57,13 +57,11 @@ public abstract class MetaConstructor<C> {
         return newConstructor;
     }
 
-    protected abstract MetaConstructor<C> duplicate();
-
-    public MetaType<C> type() {
+    public MetaType<T> type() {
         return type;
     }
 
-    public <T> MetaParameter<T> parameter(String name) {
+    public <P> MetaParameter<P> parameter(String name) {
         return cast(parameters.get(name));
     }
 
@@ -71,13 +69,13 @@ public abstract class MetaConstructor<C> {
         return immutableMapOf(parameters);
     }
 
-    public C invoke() {
+    public T invoke() {
         throw new NotImplementedException("invoke()");
     }
 
-    public C invoke(Object argument) {
+    public T invoke(Object argument) {
         throw new NotImplementedException("invoke(argument)");
     }
 
-    public abstract C invoke(Object... arguments);
+    public abstract T invoke(Object... arguments);
 }

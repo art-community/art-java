@@ -18,28 +18,16 @@
 
 package io.art.meta.model;
 
-import io.art.core.annotation.*;
-import io.art.core.exception.*;
-import lombok.*;
+public class ParametrizedMetaConstructor<T> extends MetaConstructor<T> {
+    private final MetaConstructor<T> template;
 
-@ForGenerator
-@EqualsAndHashCode(callSuper = true)
-public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
-    protected StaticMetaMethod(String name, MetaType<T> returnType) {
-        super(name, returnType);
+    public ParametrizedMetaConstructor(MetaConstructor<T> template) {
+        super(template);
+        this.template = template;
     }
 
-    public StaticMetaMethod(MetaMethod<T> base) {
-        super(base);
+    @Override
+    public T invoke(Object... arguments) {
+        return template.invoke(arguments);
     }
-
-    public T invoke() {
-        throw new NotImplementedException("invoke()");
-    }
-
-    public T invoke(Object argument) {
-        throw new NotImplementedException("invoke(argument)");
-    }
-
-    public abstract T invoke(Object... arguments);
 }
