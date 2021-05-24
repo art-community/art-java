@@ -58,6 +58,7 @@ public abstract class MetaClass<T> {
 
     protected final Map<String, MetaType<?>> variables;
 
+    private MetaConstructor<T> noArgumentsConstructors;
     private MetaConstructor<T> allArgumentsConstructors;
     private List<MetaProperty<?>> gettableProperties;
     private List<MetaProperty<?>> settableProperties;
@@ -80,6 +81,7 @@ public abstract class MetaClass<T> {
         properties = base.properties;
         methods = base.methods;
         variables = base.variables;
+        noArgumentsConstructors = base.noArgumentsConstructors;
         allArgumentsConstructors = base.allArgumentsConstructors;
         gettableProperties = base.gettableProperties;
         settableProperties = base.settableProperties;
@@ -120,7 +122,12 @@ public abstract class MetaClass<T> {
 
         for (MetaConstructor<T> constructor : constructors) {
             int parameterIndex = 0;
-            for (MetaParameter<?> parameter : constructor.parameters().values()) {
+            ImmutableMap<String, MetaParameter<?>> parameters = constructor.parameters();
+            if (isEmpty(parameters)) {
+                noArgumentsConstructors = constructor;
+                continue;
+            }
+            for (MetaParameter<?> parameter : parameters.values()) {
                 for (MetaField<?> field : fields.values()) {
                     if (!field.type().equals(parameter.type()) && !field.name().equals(parameter.name())) {
                         break;
@@ -128,7 +135,7 @@ public abstract class MetaClass<T> {
                 }
                 parameterIndex++;
             }
-            if (parameterIndex == constructor.parameters().size()) {
+            if (parameterIndex == parameters.size()) {
                 allArgumentsConstructors = constructor;
                 break;
             }
@@ -311,22 +318,7 @@ public abstract class MetaClass<T> {
             index++;
         }
 
-        T model = allArgumentsConstructors.invoke(constructorArguments);
-
-        for (MetaProperty<?> property : settableProperties) {
-            String propertyKey = property.name();
-            InstanceMetaMethod<Object, Object> setter = property.setter();
-            MetaType<Object> type = property.setter().returnType();
-
-            if (type.primitive()) {
-                setter.invoke(model, mapping.mapOrDefault(propertyKey, PRIMITIVE_TYPE_MAPPINGS.get(type), type::toModel));
-                continue;
-            }
-
-            setter.invoke(model, mapping.map(propertyKey, type::toModel));
-        }
-
-        return model;
+        return allArgumentsConstructors.invoke(constructorArguments);
     }
 
     public Value fromModel(Object model) {
