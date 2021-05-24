@@ -42,4 +42,9 @@ public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
     }
 
     public abstract T invoke(Object... arguments);
+
+    @Override
+    public boolean isStatic() {
+        return true;
+    }
 }

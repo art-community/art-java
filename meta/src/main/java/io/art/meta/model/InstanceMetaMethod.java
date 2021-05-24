@@ -42,4 +42,9 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
     }
 
     public abstract R invoke(I instance, Object... arguments);
+
+    @Override
+    public boolean isStatic() {
+        return false;
+    }
 }

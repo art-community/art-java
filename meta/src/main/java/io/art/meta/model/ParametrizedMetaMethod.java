@@ -19,7 +19,15 @@
 package io.art.meta.model;
 
 public class ParametrizedMetaMethod<T> extends MetaMethod<T> {
+    private final MetaMethod<T> template;
+
     protected ParametrizedMetaMethod(MetaMethod<T> template) {
         super(template);
+        this.template = template;
+    }
+
+    @Override
+    public boolean isStatic() {
+        return template.isStatic();
     }
 }

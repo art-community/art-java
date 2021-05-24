@@ -75,5 +75,5 @@ public abstract class MetaMethod<T> {
         return immutableMapOf(parameters);
     }
 
-    protected abstract boolean isStatic();
+    public abstract boolean isStatic();
 }

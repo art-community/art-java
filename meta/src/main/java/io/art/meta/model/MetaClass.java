@@ -21,6 +21,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.Value;
@@ -190,7 +191,7 @@ public abstract class MetaClass<T> {
         }
 
         for (Entry<String, MetaField<?>> entry : fields.entrySet()) {
-            MetaProperty.MetaPropertyBuilder<Object> builder = MetaProperty.builder()
+            MetaPropertyBuilder<Object> builder = MetaProperty.builder()
                     .name(entry.getKey())
                     .type(cast(entry.getValue().type()))
                     .owner(cast(this));

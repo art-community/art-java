@@ -13,11 +13,8 @@ import static io.art.core.reflection.GenericArrayTypeImplementation.*;
 import static io.art.core.reflection.ParameterizedTypeImplementation.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.TypeConstants.*;
-import static io.art.meta.type.TypeMatcher.*;
 import static io.art.meta.type.TypeSubstitutor.*;
-import static java.lang.reflect.Modifier.*;
 import static java.text.MessageFormat.*;
-import static java.util.Arrays.*;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.*;
@@ -170,41 +167,6 @@ public class TypeInspector {
 
     public boolean isVoidMethod(Method method) {
         return method.getGenericReturnType() == void.class;
-    }
-
-    public boolean hasAtLeastOneSetter(Type type) {
-        Class<?> rawClass = extractClass(type);
-        return stream(rawClass.getDeclaredMethods())
-                .filter(method -> method.getName().startsWith(SET_NAME))
-                .filter(method -> isPublic(method.getModifiers()))
-                .anyMatch(method -> method.getParameterCount() == 1);
-    }
-
-    public boolean hasNoArgumentsConstructor(Type type) {
-        Class<?> rawClass = extractClass(type);
-        return stream(rawClass.getConstructors())
-                .filter(constructor -> isPublic(constructor.getModifiers()))
-                .anyMatch(constructor -> constructor.getParameterCount() == 0);
-    }
-
-    public boolean matchConstructorArguments(Type type, ImmutableArray<Type> argumentTypes) {
-        Class<?> rawClass = extractClass(type);
-        for (Constructor<?> constructor : rawClass.getConstructors()) {
-            if (!isPublic(constructor.getModifiers())) continue;
-            Parameter[] parameters = constructor.getParameters();
-            if (argumentTypes.size() != parameters.length) continue;
-            for (int i = 0; i < parameters.length; i++) {
-                Type parameterType = parameters[i].getParameterizedType();
-                Type argumentType = argumentTypes.get(i);
-                if (isParametrized(type) && typeMatches((ParameterizedType) type, parameterType, argumentType)) {
-                    return true;
-                }
-                if (typeMatches(parameterType, argumentType)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public Type boxed(Type primitiveType) {
