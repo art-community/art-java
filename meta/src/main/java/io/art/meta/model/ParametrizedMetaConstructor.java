@@ -21,7 +21,7 @@ package io.art.meta.model;
 public class ParametrizedMetaConstructor<T> extends MetaConstructor<T> {
     private final MetaConstructor<T> template;
 
-    public ParametrizedMetaConstructor(MetaConstructor<T> template) {
+    protected ParametrizedMetaConstructor(MetaConstructor<T> template) {
         super(template);
         this.template = template;
     }

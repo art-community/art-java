@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.meta.computer;
+package io.art.meta.model;
 
 import io.art.core.collection.*;
 import io.art.meta.exception.*;

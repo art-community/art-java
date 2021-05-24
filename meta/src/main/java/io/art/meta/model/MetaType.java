@@ -28,7 +28,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.meta.computer.KnownMappersComputer.*;
+import static io.art.meta.model.KnownMappersComputer.*;
 import static io.art.meta.registry.MetaClassRegistry.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -80,15 +80,7 @@ public class MetaType<T> {
     @Getter(lazy = true, value = PRIVATE)
     private final static ImmutableMap<Class<?>, MetaClass<?>> classes = classes();
 
-    public Object toModel(io.art.value.immutable.Value value) {
-        return toModel.map(value);
-    }
-
-    public Value fromModel(Object model) {
-        return fromModel.map(model);
-    }
-
-    public MetaType<T> compute() {
+    protected MetaType<T> compute() {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
         MetaClass<?> metaClass = getClasses().get(type);
         if (isNull(metaClass)) {
@@ -103,7 +95,7 @@ public class MetaType<T> {
         return this;
     }
 
-    public MetaType<?> parameterize(Map<String, MetaType<?>> parameters) {
+    protected MetaType<?> parameterize(Map<String, MetaType<?>> parameters) {
         ImmutableSet<MetaType<?>> parametrizedTypeParameters = this.parameters
                 .stream()
                 .map(parameter -> parameter.parameterize(parameters))
@@ -119,6 +111,14 @@ public class MetaType<T> {
             builder.type(cast(parameter.type)).asArray(cast(parameter.asArray));
         }
         return builder.build();
+    }
+
+    public Object toModel(io.art.value.immutable.Value value) {
+        return toModel.map(value);
+    }
+
+    public Value fromModel(Object model) {
+        return fromModel.map(model);
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {

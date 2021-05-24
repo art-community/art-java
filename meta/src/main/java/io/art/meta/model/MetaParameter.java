@@ -33,7 +33,7 @@ public class MetaParameter<T> {
     private final String name;
     private final MetaType<T> type;
 
-    public MetaParameter<?> parameterize(Map<String, MetaType<?>> parameters) {
+    protected MetaParameter<?> parameterize(Map<String, MetaType<?>> parameters) {
         MetaType<?> newFieldType = type.parameterize(parameters);
         return new MetaParameter<>(name, newFieldType);
     }
