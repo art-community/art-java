@@ -21,7 +21,6 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.meta.exception.*;
 import io.art.meta.registry.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.Value;
@@ -34,10 +33,8 @@ import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.TypeConstants.*;
 import static io.art.value.immutable.Entity.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.Map.*;
@@ -54,7 +51,7 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaType<?>> variables;
     private MetaType<?> parent;
 
-    private MetaConstructor<T> allArgumentsConstructors = null;
+    private MetaConstructor<T> allArgumentsConstructors;
     private List<MetaProperty<?>> getters;
 
     protected MetaClass(MetaType<T> type) {
@@ -68,14 +65,8 @@ public abstract class MetaClass<T> {
     }
 
     protected MetaClass(MetaType<T> type, MetaType<?> parent) {
-        this.type = type;
+        this(type);
         this.parent = parent;
-        constructors = set();
-        fields = map();
-        properties = map();
-        methods = set();
-        variables = map();
-        MetaClassRegistry.register(this);
     }
 
     protected MetaClass(MetaClass<T> base) {
@@ -86,6 +77,8 @@ public abstract class MetaClass<T> {
         properties = base.properties;
         methods = base.methods;
         variables = base.variables;
+        allArgumentsConstructors = base.allArgumentsConstructors;
+        getters = base.getters;
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -115,6 +108,21 @@ public abstract class MetaClass<T> {
         for (MetaMethod<?> method : methods) {
             method.returnType().compute();
             method.parameters().values().forEach(parameter -> parameter.type().compute());
+        }
+        for (MetaConstructor<T> constructor : constructors) {
+            int parameterIndex = 0;
+            for (MetaParameter<?> parameter : constructor.parameters().values()) {
+                for (MetaProperty<?> property : properties.values()) {
+                    if (!property.type().equals(parameter.type()) && !property.name().equals(parameter.name())) {
+                        break;
+                    }
+                }
+                parameterIndex++;
+            }
+            if (parameterIndex == constructor.parameters().size()) {
+                allArgumentsConstructors = constructor;
+                break;
+            }
         }
         getters = properties()
                 .values()
@@ -178,10 +186,15 @@ public abstract class MetaClass<T> {
         return immutableMapOf(variables);
     }
 
+    public boolean constructable() {
+        return nonNull(allArgumentsConstructors);
+    }
+
+    public boolean readable() {
+        return isNotEmpty(getters);
+    }
+
     public T toModel(Value value) {
-        if (!Value.isEntity(value)) {
-            throw new MetaException(format(UNSUPPORTED_TYPE, type));
-        }
         Entity entity = Value.asEntity(value);
         EntityMapping mapping = entity.mapping();
         Object[] constructorArguments = new Object[properties.size()];
@@ -209,5 +222,4 @@ public abstract class MetaClass<T> {
         }
         return entityBuilder.build();
     }
-
 }
