@@ -1,7 +1,6 @@
 package io.art.meta.model;
 
 import io.art.core.collection.*;
-import io.art.meta.model.*;
 import lombok.*;
 import lombok.experimental.*;
 
@@ -12,10 +11,10 @@ import lombok.experimental.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MetaProperty<T> {
     @EqualsAndHashCode.Include
-    private final MetaField<T> field;
+    private final String name;
     private final MetaType<T> type;
     private final MetaClass<T> owner;
     private final ImmutableArray<MetaConstructor<?>> constructors;
-    private final MetaMethod<T> getter;
+    private final InstanceMetaMethod<Object, T> getter;
     private final MetaMethod<Void> setter;
 }

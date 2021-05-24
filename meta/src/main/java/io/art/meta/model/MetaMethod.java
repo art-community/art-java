@@ -45,7 +45,7 @@ public abstract class MetaMethod<T> {
         this.parameters = map();
     }
 
-    protected <T> MetaParameter<T> register(MetaParameter<T> parameter) {
+    protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
     }
@@ -54,8 +54,7 @@ public abstract class MetaMethod<T> {
         MetaMethod<T> newMethod = new ParametrizedMetaMethod<>(this);
         newMethod.returnType = cast(returnType.parameterize(parameters));
         for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
-            MetaType<?> newParameterType = parameter.getValue().type().parameterize(parameters);
-            newMethod.register(new MetaParameter<>(parameter.getKey(), newParameterType));
+            newMethod.register(parameter.getValue().parameterize(parameters));
         }
         return newMethod;
     }
@@ -65,7 +64,7 @@ public abstract class MetaMethod<T> {
     }
 
     public MetaType<T> returnType() {
-        return cast(returnType);
+        return returnType;
     }
 
     public <P> MetaParameter<P> parameter(String name) {

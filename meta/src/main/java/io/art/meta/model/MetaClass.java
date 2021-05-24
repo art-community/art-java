@@ -21,14 +21,24 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.exception.*;
 import io.art.meta.registry.*;
+import io.art.value.builder.*;
 import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
+import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.constants.MetaConstants.*;
+import static io.art.meta.constants.TypeConstants.*;
+import static io.art.value.immutable.Entity.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.Map.*;
 
@@ -43,6 +53,9 @@ public abstract class MetaClass<T> {
     private final Set<MetaMethod<?>> methods;
     private final Map<String, MetaType<?>> variables;
     private MetaType<?> parent;
+
+    private MetaConstructor<T> allArgumentsConstructors = null;
+    private List<MetaProperty<?>> getters;
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
@@ -103,6 +116,11 @@ public abstract class MetaClass<T> {
             method.returnType().compute();
             method.parameters().values().forEach(parameter -> parameter.type().compute());
         }
+        getters = properties()
+                .values()
+                .stream()
+                .filter(property -> nonNull(property.getter()))
+                .collect(listCollector());
     }
 
     protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
@@ -119,7 +137,7 @@ public abstract class MetaClass<T> {
                 variableIndex++;
             }
         }
-        if (isEmpty(variableToParameter)) return parametrized;
+        if (isEmpty(variableToParameter)) return this;
         for (MetaField<?> field : fields.values()) {
             parametrized.fields.put(field.name(), field.parameterize(variableToParameter));
         }
@@ -161,11 +179,35 @@ public abstract class MetaClass<T> {
     }
 
     public T toModel(Value value) {
-        return null;
+        if (!isEntity(value)) {
+            throw new MetaException(format(UNSUPPORTED_TYPE, type));
+        }
+        Entity entity = asEntity(value);
+        EntityMapping mapping = entity.mapping();
+        Object[] constructorArguments = new Object[properties.size()];
+        int index = 0;
+        for (Entry<String, MetaProperty<?>> property : properties.entrySet()) {
+            String propertyKey = property.getKey();
+            MetaProperty<?> propertyValue = property.getValue();
+            MetaType<?> type = propertyValue.type();
+            if (type.primitive()) {
+                constructorArguments[index] = mapping.mapOrDefault(propertyKey, PRIMITIVE_TYPE_MAPPINGS.get(type), type::toModel);
+                index++;
+                continue;
+            }
+            constructorArguments[index] = mapping.map(propertyKey, type::toModel);
+            index++;
+        }
+        return allArgumentsConstructors.invoke(constructorArguments);
     }
 
-    public Value fromModel(T model) {
-        return null;
+    public Value fromModel(Object model) {
+        EntityBuilder entityBuilder = entityBuilder();
+        for (MetaProperty<?> property : getters) {
+            InstanceMetaMethod<Object, ?> getter = property.getter();
+            entityBuilder.put(property.name(), getter.invoke(model), getter.returnType()::fromModel);
+        }
+        return entityBuilder.build();
     }
 
 }

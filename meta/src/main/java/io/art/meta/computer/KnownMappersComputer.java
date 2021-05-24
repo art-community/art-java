@@ -50,10 +50,10 @@ public class KnownMappersComputer {
         boolean array = type.array();
         boolean primitive = type.primitive();
         ImmutableSet<MetaType<?>> parameters = type.parameters();
+        if (isByteArray(rawType)) {
+            return cast(mapper(fromBinary, toBinary));
+        }
         if (array) {
-            if (byte.class.equals(rawType) || Byte.class.equals(rawType)) {
-                return cast(mapper(fromBinary, toBinary));
-            }
             if (primitive) {
                 if (short.class.equals(rawType)) {
                     return cast(mapper(fromShortArray, toShortArray));
@@ -78,7 +78,7 @@ public class KnownMappersComputer {
                 }
             }
             MetaType<T> component = type.toBuilder().array(false).build().compute();
-            return cast(mapper(fromArray(component::fromModel), toArrayRaw(component.arrayFactory(), component::toModel)));
+            return cast(mapper(fromArray(component::fromModel), toArrayRaw(component.asArray(), component::toModel)));
         }
         if (isPrimitive(rawType)) {
             if (short.class.equals(rawType) || Short.class.equals(rawType)) {
@@ -171,7 +171,7 @@ public class KnownMappersComputer {
             }
             MetaType<?>[] metaTypes = parameters.toArray(MetaType[]::new);
             MetaType<?> key = metaTypes[0].compute();
-            if (isUserType(key.type())) {
+            if (isNotPrimitive(key.type())) {
                 throw new MetaException(format(UNSUPPORTED_TYPE, type));
             }
 

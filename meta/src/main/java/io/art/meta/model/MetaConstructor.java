@@ -51,8 +51,7 @@ public abstract class MetaConstructor<T> {
     protected MetaConstructor<T> parameterize(Map<String, MetaType<?>> parameters) {
         MetaConstructor<T> newConstructor = new ParametrizedMetaConstructor<>(this);
         for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
-            MetaType<?> newParameterType = parameter.getValue().type().parameterize(parameters);
-            newConstructor.register(new MetaParameter<>(parameter.getKey(), newParameterType));
+            newConstructor.register(parameter.getValue().parameterize(parameters));
         }
         return newConstructor;
     }

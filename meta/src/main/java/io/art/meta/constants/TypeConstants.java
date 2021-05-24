@@ -3,11 +3,17 @@ package io.art.meta.constants;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
-import io.art.value.constants.*;
+import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.*;
 import reactor.core.publisher.*;
-import static io.art.core.factory.SetFactory.immutableSetOf;
-import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.*;
+import static io.art.core.factory.SetFactory.*;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.BOOL;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.BYTE;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.DOUBLE;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.FLOAT;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.INT;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.LONG;
+import static io.art.value.constants.ValueModuleConstants.ValueType.PrimitiveType.STRING;
 import java.lang.reflect.*;
 import java.time.*;
 import java.util.*;
@@ -108,6 +114,17 @@ public interface TypeConstants {
             .put(float.class, Float.class)
             .build();
 
+    ImmutableMap<Class<?>, PrimitiveType> PRIMITIVE_TYPE_MAPPINGS = ImmutableMap.<Class<?>, PrimitiveType>immutableMapBuilder()
+            .put(char.class, STRING)
+            .put(int.class, INT)
+            .put(short.class, INT)
+            .put(long.class, LONG)
+            .put(boolean.class, BOOL)
+            .put(double.class, FLOAT)
+            .put(byte.class, BYTE)
+            .put(float.class, FLOAT)
+            .build();
+
     ImmutableSet<Class<?>> COLLECTION_TYPES = immutableSetOf(
             List.class,
             Queue.class,
@@ -119,7 +136,7 @@ public interface TypeConstants {
             ImmutableSet.class
     );
 
-    ImmutableMap<Type, ValueModuleConstants.ValueType.PrimitiveType> JAVA_TO_PRIMITIVE_TYPE = ImmutableMap.<Type, ValueModuleConstants.ValueType.PrimitiveType>immutableMapBuilder()
+    ImmutableMap<Type, PrimitiveType> JAVA_TO_PRIMITIVE_TYPE = ImmutableMap.<Type, PrimitiveType>immutableMapBuilder()
             .put(char.class, STRING)
             .put(int.class, INT)
             .put(short.class, INT)
@@ -137,4 +154,6 @@ public interface TypeConstants {
             .put(Byte.class, BYTE)
             .put(Float.class, FLOAT)
             .build();
+
+
 }

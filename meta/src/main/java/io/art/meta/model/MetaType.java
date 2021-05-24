@@ -24,6 +24,7 @@ import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.Builder;
 import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
@@ -39,63 +40,51 @@ import java.util.function.*;
 @ToString(onlyExplicitlyIncluded = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MetaType<T> {
+    @Getter
     @ToString.Include
     @EqualsAndHashCode.Include
+    @Accessors(fluent = true)
     private final Class<T> type;
 
+    @Getter
     @ToString.Include
     @EqualsAndHashCode.Include
+    @Accessors(fluent = true)
     private final ImmutableSet<MetaType<?>> parameters;
 
+    @Getter
     @ToString.Include
     @EqualsAndHashCode.Include
+    @Accessors(fluent = true)
     private final boolean primitive;
 
+    @Getter
     @ToString.Include
     @EqualsAndHashCode.Include
+    @Accessors(fluent = true)
     private final boolean array;
 
+    @Getter
     @ToString.Include
     @EqualsAndHashCode.Include
+    @Accessors(fluent = true)
     private final String variable;
 
-    private final Function<Integer, T> arrayFactory;
+    @Getter
+    @Accessors(fluent = true)
+    private final Function<Integer, T> asArray;
 
-    private ValueToModelMapper<T, Value> toModel;
-    private ValueFromModelMapper<T, Value> fromModel;
+    private ValueToModelMapper<Object, Value> toModel;
+    private ValueFromModelMapper<Object, Value> fromModel;
 
     @Getter(lazy = true, value = PRIVATE)
     private final static ImmutableMap<Class<?>, MetaClass<?>> classes = classes();
 
-    public Class<T> type() {
-        return type;
-    }
-
-    public ImmutableSet<MetaType<?>> parameters() {
-        return parameters;
-    }
-
-    public boolean array() {
-        return array;
-    }
-
-    public boolean primitive() {
-        return primitive;
-    }
-
-    public String variable() {
-        return variable;
-    }
-
-    public Function<Integer, T> arrayFactory() {
-        return arrayFactory;
-    }
-
-    public T toModel(io.art.value.immutable.Value value) {
+    public Object toModel(io.art.value.immutable.Value value) {
         return toModel.map(value);
     }
 
-    public Value fromModel(T model) {
+    public Value fromModel(Object model) {
         return fromModel.map(model);
     }
 
@@ -104,8 +93,8 @@ public class MetaType<T> {
         MetaClass<?> metaClass = getClasses().get(type);
         if (isNull(metaClass)) {
             ValueMapper<T, Value> mapper = computeKnownMappers(this);
-            toModel = mapper.getToModel();
-            fromModel = mapper.getFromModel();
+            toModel = cast(mapper.getToModel());
+            fromModel = cast(mapper.getFromModel());
             return this;
         }
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters));
@@ -127,7 +116,7 @@ public class MetaType<T> {
         }
         MetaType<?> parameter = parameters.get(variable);
         if (nonNull(parameter)) {
-            builder.type(cast(parameter.type)).arrayFactory(cast(parameter.arrayFactory));
+            builder.type(cast(parameter.type)).asArray(cast(parameter.asArray));
         }
         return builder.build();
     }
@@ -136,13 +125,14 @@ public class MetaType<T> {
         return MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
-                .arrayFactory(cast(arrayFactory))
+                .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
                 .build();
     }
 
     public static <T> MetaType<T> metaVariable(String variable) {
         return MetaType.<T>builder()
+                .type(cast(Object.class))
                 .variable(variable)
                 .build();
     }
@@ -151,7 +141,7 @@ public class MetaType<T> {
         return MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
-                .arrayFactory(cast(arrayFactory))
+                .asArray(cast(arrayFactory))
                 .array(true)
                 .parameters(immutableSetOf(parameters))
                 .build();

@@ -20,27 +20,18 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import lombok.*;
+import lombok.experimental.*;
 import java.util.*;
 
+@Getter
 @ToString
 @ForGenerator
 @EqualsAndHashCode
+@AllArgsConstructor
+@Accessors(fluent = true)
 public class MetaField<T> {
     private final String name;
     private final MetaType<T> type;
-
-    public MetaField(String name, MetaType<T> type) {
-        this.name = name;
-        this.type = type;
-    }
-
-    public String name() {
-        return name;
-    }
-
-    public MetaType<T> type() {
-        return type;
-    }
 
     public MetaField<?> parameterize(Map<String, MetaType<?>> parameters) {
         MetaType<?> newFieldType = type.parameterize(parameters);

@@ -28,14 +28,6 @@ public class TypeInspector {
         return fieldType == boolean.class;
     }
 
-    public boolean isVoid(Type fieldType) {
-        return fieldType == void.class || fieldType == Void.class;
-    }
-
-    public boolean isNotVoid(Type fieldType) {
-        return !isVoid(fieldType);
-    }
-
     public boolean isFlux(Type fieldType) {
         return extractClass(fieldType).isAssignableFrom(Flux.class);
     }
@@ -146,7 +138,7 @@ public class TypeInspector {
         return isGenericArray(type) || extractClass(type).isArray();
     }
 
-    public boolean isUserType(Type type) {
+    public boolean isNotPrimitive(Type type) {
         return !isPrimitive(type);
     }
 
