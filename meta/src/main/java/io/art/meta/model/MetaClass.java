@@ -179,10 +179,10 @@ public abstract class MetaClass<T> {
     }
 
     public T toModel(Value value) {
-        if (!isEntity(value)) {
+        if (!Value.isEntity(value)) {
             throw new MetaException(format(UNSUPPORTED_TYPE, type));
         }
-        Entity entity = asEntity(value);
+        Entity entity = Value.asEntity(value);
         EntityMapping mapping = entity.mapping();
         Object[] constructorArguments = new Object[properties.size()];
         int index = 0;
