@@ -60,9 +60,9 @@ public abstract class MetaClass<T> {
 
     private MetaConstructor<T> noArgumentsConstructors;
     private MetaConstructor<T> allArgumentsConstructors;
-    private List<MetaProperty<?>> gettableProperties;
-    private List<MetaProperty<?>> settableProperties;
-    private List<MetaProperty<?>> constructableProperties;
+    private List<MetaProperty<?>> gettableProperties = linkedList();
+    private List<MetaProperty<?>> settableProperties = linkedList();
+    private List<MetaProperty<?>> constructableProperties = linkedList();
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
