@@ -21,5 +21,6 @@ package io.art.meta.model;
 public class ParametrizedMetaClass<T> extends MetaClass<T> {
     protected ParametrizedMetaClass(MetaClass<T> template) {
         super(template);
+        variables.clear();
     }
 }

@@ -55,7 +55,8 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Map<String, MetaProperty<?>> properties;
     private final Set<MetaMethod<?>> methods;
-    private final Map<String, MetaType<?>> variables;
+
+    protected final Map<String, MetaType<?>> variables;
 
     private MetaConstructor<T> allArgumentsConstructors;
     private List<MetaProperty<?>> gettableProperties;
@@ -243,9 +244,11 @@ public abstract class MetaClass<T> {
             for (Entry<String, MetaType<?>> variable : variables.entrySet()) {
                 if (variableIndex == index) {
                     variableToParameter.put(variable.getKey(), parameter);
+                    break;
                 }
                 variableIndex++;
             }
+            index++;
         }
         if (isEmpty(variableToParameter)) return this;
         for (MetaField<?> field : fields.values()) {
