@@ -179,6 +179,7 @@ public class KnownMappersComputer {
             PrimitiveFromModelMapper<Object> keyFromModel = model -> asPrimitive(key.fromModel(cast(model)));
             ValueToModelMapper<Object, Value> valueToModel = value::toModel;
             ValueFromModelMapper<Object, Value> valueFromModel = model -> value.fromModel(cast(model));
+
             if (isImmutableMap(rawType)) {
                 EntityFromModelMapper<ImmutableMap<Object, Object>> fromMapper = fromImmutableMap(keyToModel, keyFromModel, valueFromModel);
                 EntityToModelMapper<ImmutableMap<Object, Object>> toMapper = toImmutableMap(keyToModel, keyFromModel, valueToModel);
