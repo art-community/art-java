@@ -309,7 +309,7 @@ public abstract class MetaClass<T> {
             MetaType<?> type = property.type();
 
             if (type.primitive()) {
-                constructorArguments[index] = mapping.mapOrDefault(name, PRIMITIVE_TYPE_MAPPINGS.get(type), type::toModel);
+                constructorArguments[index] = mapping.mapOrDefault(name, PRIMITIVE_TYPE_MAPPINGS.get(type.type()), type::toModel);
                 index++;
                 continue;
             }
