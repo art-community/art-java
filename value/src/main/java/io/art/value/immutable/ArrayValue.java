@@ -20,6 +20,7 @@ package io.art.value.immutable;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
+import io.art.core.factory.*;
 import io.art.core.property.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
@@ -49,7 +50,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, ?> mappedValueCache = concurrentMap();
+    private final Map<Integer, ?> mappedValueCache = MapFactory.map();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyProperty<Integer> size;
 

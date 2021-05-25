@@ -31,13 +31,12 @@ import io.art.value.mapper.*;
 import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
-import static io.art.core.property.LazyProperty.lazy;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
 import static io.art.value.factory.PrimitivesFactory.*;
@@ -45,7 +44,7 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.Optional.empty;
+import static java.util.Optional.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -55,7 +54,7 @@ public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
     private final EntityMapping mapping = new EntityMapping(this);
-    private final Map<Primitive, ?> mappedValueCache = concurrentMap();
+    private final Map<Primitive, Object> mappedValueCache = MapFactory.map();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -197,7 +196,7 @@ public class Entity implements Value {
         if (nonNull(cached)) return cached;
         cached = mapper.map(cast(get(primitive)));
         if (isEmpty(cached)) return empty();
-        mappedValueCache.put(primitive, cast(cached));
+        mappedValueCache.put(primitive, cached);
         return cached;
     }
 
@@ -206,7 +205,7 @@ public class Entity implements Value {
         if (nonNull(cached)) return cached;
         Value value = orElse(get(key), type::defaultValue);
         cached = mapper.map(cast(value));
-        mappedValueCache.put(key, cast(cached));
+        mappedValueCache.put(key, cached);
         return cached;
     }
 

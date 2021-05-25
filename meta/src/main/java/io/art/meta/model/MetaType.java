@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
 import lombok.Builder;
@@ -28,6 +29,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.model.KnownMappersComputer.*;
 import static io.art.meta.registry.MetaClassRegistry.*;
 import static java.util.Objects.*;
@@ -57,6 +59,10 @@ public class MetaType<T> {
     @EqualsAndHashCode.Include
     @Accessors(fluent = true)
     private final boolean primitive;
+
+    @Getter
+    @Accessors(fluent = true)
+    private final PrimitiveType primitiveType;
 
     @Getter
     @ToString.Include
@@ -125,6 +131,7 @@ public class MetaType<T> {
         return MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
+                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
                 .build();
@@ -141,6 +148,7 @@ public class MetaType<T> {
         return MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
+                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .array(true)
                 .parameters(immutableSetOf(parameters))

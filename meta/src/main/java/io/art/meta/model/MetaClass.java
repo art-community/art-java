@@ -39,7 +39,6 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
-import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.type.TypeInspector.*;
 import static io.art.value.immutable.Entity.*;
 import static java.util.Objects.*;
@@ -302,23 +301,23 @@ public abstract class MetaClass<T> {
         Entity entity = Value.asEntity(value);
         EntityMapping mapping = entity.mapping();
 
-        Object[] constructorArguments = new Object[constructableProperties.size()];
+        Object[] arguments = new Object[constructableProperties.size()];
         int index = 0;
         for (MetaProperty<?> property : constructableProperties) {
             String name = property.name();
             MetaType<?> type = property.type();
 
             if (type.primitive()) {
-                constructorArguments[index] = mapping.mapOrDefault(name, PRIMITIVE_TYPE_MAPPINGS.get(type.type()), type::toModel);
+                arguments[index] = mapping.mapOrDefault(name, type.primitiveType(), type::toModel);
                 index++;
                 continue;
             }
 
-            constructorArguments[index] = mapping.map(name, type::toModel);
+            arguments[index] = mapping.map(name, type::toModel);
             index++;
         }
 
-        return allArgumentsConstructors.invoke(constructorArguments);
+        return allArgumentsConstructors.invoke(arguments);
     }
 
     public Value fromModel(Object model) {
