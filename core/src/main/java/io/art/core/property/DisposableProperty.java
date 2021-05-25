@@ -64,14 +64,15 @@ public class DisposableProperty<T> implements Supplier<T> {
 
     @Override
     public T get() {
-        while (isNull(value)) {
+        if (nonNull(value)) return value;
+        for (; ; ) {
+            if (nonNull(value)) return value;
             if (this.initialized.compareAndSet(false, true)) {
                 value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
                 erase(creationConsumers, consumer -> consumer.accept(value));
                 initializationConsumers.forEach(consumer -> consumer.accept(value));
             }
         }
-        return value;
     }
 
     public T value() {
