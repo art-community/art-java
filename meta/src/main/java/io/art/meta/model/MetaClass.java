@@ -94,6 +94,14 @@ public abstract class MetaClass<T> {
         primitiveProperties = base.primitiveProperties;
     }
 
+    @SafeVarargs
+    protected MetaClass(MetaType<T> metaType, MetaType<T>... variables) {
+        this(metaType);
+        for (MetaType<T> variable : variables) {
+            this.variables.put(variable.variable(), variable);
+        }
+    }
+
     protected <F> MetaField<F> register(MetaField<F> field) {
         return cast(putIfAbsent(fields, field.name(), () -> field));
     }
