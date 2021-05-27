@@ -28,7 +28,6 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.meta.constants.MetaConstants.*;
-import static io.art.meta.type.TypeInspector.isPrimitive;
 import static io.art.meta.type.TypeInspector.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueMapper.*;
