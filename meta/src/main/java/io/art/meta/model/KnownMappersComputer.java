@@ -20,7 +20,6 @@ package io.art.meta.model;
 
 import io.art.core.collection.*;
 import io.art.meta.exception.*;
-import io.art.meta.model.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
@@ -29,6 +28,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.meta.constants.MetaConstants.*;
+import static io.art.meta.type.TypeInspector.isPrimitive;
 import static io.art.meta.type.TypeInspector.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueMapper.*;
@@ -43,8 +43,8 @@ import java.time.*;
 import java.util.*;
 
 @UtilityClass
-public class KnownMappersComputer {
-    public static <T> ValueMapper<T, Value> computeKnownMappers(MetaType<T> type) {
+class KnownMappersComputer {
+    static <T> ValueMapper<T, Value> computeKnownMappers(MetaType<T> type) {
         Class<T> rawType = type.type();
         boolean array = type.array();
         boolean primitive = type.primitive();

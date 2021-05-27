@@ -20,7 +20,6 @@ package io.art.value.immutable;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.core.factory.*;
 import io.art.core.property.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
@@ -50,7 +49,7 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, ?> mappedValueCache = MapFactory.map();
+    private final Map<Integer, ?> cache = weakMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyProperty<Integer> size;
 
@@ -65,10 +64,10 @@ public class ArrayValue implements Value {
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
         try {
-            Object cached = mappedValueCache.get(index);
+            Object cached = cache.get(index);
             if (nonNull(cached)) return cast(cached);
             cached = let(cast(get(index)), mapper::map);
-            if (nonNull(cached)) mappedValueCache.put(index, cast(cached));
+            if (nonNull(cached)) cache.put(index, cast(cached));
             return cast(cached);
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index), throwable);

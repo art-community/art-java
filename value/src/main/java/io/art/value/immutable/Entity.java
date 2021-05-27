@@ -54,7 +54,7 @@ public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
     private final EntityMapping mapping = new EntityMapping(this);
-    private final Map<Primitive, Object> mappedValueCache = MapFactory.map();
+    private final Map<Primitive, Object> cache = MapFactory.weakMap();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -180,11 +180,11 @@ public class Entity implements Value {
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         try {
-            T cached = cast(mappedValueCache.get(primitive));
+            T cached = cast(cache.get(primitive));
             if (nonNull(cached)) return cached;
             cached = let(cast(get(primitive)), mapper::map);
             if (isNull(cached)) return null;
-            mappedValueCache.put(primitive, cast(cached));
+            cache.put(primitive, cast(cached));
             return cached;
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
@@ -192,20 +192,20 @@ public class Entity implements Value {
     }
 
     public <T, V extends Value> Optional<T> mapOptional(Primitive primitive, ValueToModelMapper<Optional<T>, V> mapper) {
-        Optional<T> cached = cast(mappedValueCache.get(primitive));
+        Optional<T> cached = cast(cache.get(primitive));
         if (nonNull(cached)) return cached;
         cached = mapper.map(cast(get(primitive)));
         if (isEmpty(cached)) return empty();
-        mappedValueCache.put(primitive, cached);
+        cache.put(primitive, cached);
         return cached;
     }
 
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
-        T cached = cast(mappedValueCache.get(key));
+        T cached = cast(cache.get(key));
         if (nonNull(cached)) return cached;
         Value value = orElse(get(key), type::defaultValue);
         cached = mapper.map(cast(value));
-        mappedValueCache.put(key, cached);
+        cache.put(key, cached);
         return cached;
     }
 
