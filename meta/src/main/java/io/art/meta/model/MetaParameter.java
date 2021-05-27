@@ -30,11 +30,12 @@ import java.util.*;
 @AllArgsConstructor
 @Accessors(fluent = true)
 public class MetaParameter<T> {
+    private final int index;
     private final String name;
     private final MetaType<T> type;
 
     protected MetaParameter<?> parameterize(Map<String, MetaType<?>> parameters) {
         MetaType<?> newFieldType = type.parameterize(parameters);
-        return new MetaParameter<>(name, newFieldType);
+        return new MetaParameter<>(index, name, newFieldType);
     }
 }

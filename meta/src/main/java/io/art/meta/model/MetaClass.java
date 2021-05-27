@@ -21,6 +21,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
 import io.art.value.builder.*;
 import io.art.value.immutable.Value;
@@ -30,10 +31,13 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.constants.MetaConstants.*;
 import static io.art.value.immutable.Entity.*;
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.Map.*;
 
@@ -47,10 +51,10 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaProperty<?>> properties;
     private final Set<MetaMethod<?>> methods;
     protected final Map<String, MetaType<?>> variables;
-    private MetaConstructor<T> allArgumentsConstructors;
-    private List<MetaProperty<?>> gettableProperties;
-    private List<MetaProperty<?>> objectProperties;
-    private List<MetaProperty<?>> primitiveProperties;
+    private MetaConstructor<T> allArgumentsConstructor;
+    private final List<MetaProperty<?>> gettableProperties;
+    private final List<MetaProperty<?>> objectProperties;
+    private final List<MetaProperty<?>> primitiveProperties;
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
@@ -72,7 +76,7 @@ public abstract class MetaClass<T> {
         properties = base.properties;
         methods = base.methods;
         variables = base.variables;
-        allArgumentsConstructors = base.allArgumentsConstructors;
+        allArgumentsConstructor = base.allArgumentsConstructor;
         gettableProperties = base.gettableProperties;
         objectProperties = base.objectProperties;
         primitiveProperties = base.primitiveProperties;
@@ -110,8 +114,56 @@ public abstract class MetaClass<T> {
             method.parameters().values().forEach(parameter -> parameter.type().compute());
         }
 
+        for (MetaConstructor<T> constructor : constructors) {
+            MetaField<?>[] fields = this.fields.values().toArray(new MetaField[0]);
+            MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
+            if (fields.length != parameters.length) continue;
+            for (int index = 0; index < fields.length; index++) {
+                if (parameters[index].name().equals(fields[index].name()) && parameters[index].type().equals(fields[index].type())) {
+                    allArgumentsConstructor = constructor;
+                    break;
+                }
+            }
+        }
 
+        for (MetaField<?> field : fields.values()) {
+            MetaPropertyBuilder<?> builder = MetaProperty.builder()
+                    .name(field.name())
+                    .type(cast(field.type()));
 
+            Optional<MetaMethod<?>> getter = methods
+                    .stream()
+                    .filter(method -> !method.isStatic())
+                    .filter(method -> method.name().equals(GET_NAME + capitalize(field.name())))
+                    .filter(method -> method.parameters().isEmpty())
+                    .filter(method -> method.returnType().equals(field.type()))
+                    .findFirst();
+
+            getter.ifPresent(metaMethod -> builder.getter(cast(metaMethod)));
+
+            if (nonNull(allArgumentsConstructor)) {
+                int constructorParameterIndex = allArgumentsConstructor.parameters().get(field.name()).index();
+                builder.constructorParameterIndex(constructorParameterIndex);
+
+                MetaProperty<?> property = builder.build();
+
+                if (getter.isPresent()) {
+                    gettableProperties.add(property);
+                }
+
+                if (property.type().primitive()) {
+                    primitiveProperties.add(property);
+                    continue;
+                }
+
+                objectProperties.add(property);
+                continue;
+            }
+
+            if (getter.isPresent()) {
+                gettableProperties.add(builder.build());
+            }
+        }
     }
 
     protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
@@ -205,7 +257,7 @@ public abstract class MetaClass<T> {
             arguments[property.constructorParameterIndex()] = mapping.map(name, type::toModel);
         }
 
-        return allArgumentsConstructors.invoke(arguments);
+        return allArgumentsConstructor.invoke(arguments);
     }
 
     public Value fromModel(Object model) {
