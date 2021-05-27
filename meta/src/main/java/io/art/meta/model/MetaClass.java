@@ -154,7 +154,7 @@ public abstract class MetaClass<T> {
                 if (method.isStatic()) continue;
 
                 String methodName = method.name();
-                MetaParameter<?>[] methodParameters = method.parameters().values().toArray(MetaParameter[]::new);
+                MetaParameter<?>[] methodParameters = method.parameters().values().toArray(new MetaParameter[0]);
                 MetaType<?> methodReturnType = method.returnType();
 
                 boolean hasSetter = methodName.equals(SET_NAME + fieldCapitalizedName)
