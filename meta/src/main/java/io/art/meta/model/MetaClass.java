@@ -48,7 +48,6 @@ public abstract class MetaClass<T> {
     private final MetaType<T> type;
     private final Set<MetaConstructor<T>> constructors;
     private final Map<String, MetaField<?>> fields;
-    private final Map<String, MetaProperty<?>> properties;
     private final Set<MetaMethod<?>> methods;
     protected final Map<String, MetaType<?>> variables;
 
@@ -72,7 +71,6 @@ public abstract class MetaClass<T> {
         this.type = type;
         constructors = set();
         fields = map();
-        properties = map();
         methods = set();
         variables = map();
         gettableProperties = linkedList();
@@ -85,7 +83,6 @@ public abstract class MetaClass<T> {
         type = base.type;
         constructors = base.constructors;
         fields = base.fields;
-        properties = base.properties;
         methods = base.methods;
         variables = base.variables;
         allArgumentsConstructor = base.allArgumentsConstructor;
@@ -238,15 +235,6 @@ public abstract class MetaClass<T> {
 
     public ImmutableMap<String, MetaField<?>> fields() {
         return immutableMapOf(fields);
-    }
-
-
-    public <P> MetaProperty<P> property(String name) {
-        return cast(properties.get(name));
-    }
-
-    public ImmutableMap<String, MetaProperty<?>> properties() {
-        return immutableMapOf(properties);
     }
 
 

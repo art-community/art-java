@@ -4,13 +4,9 @@ import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.meta.exception.*;
-import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.reflection.GenericArrayTypeImplementation.*;
-import static io.art.core.reflection.ParameterizedTypeImplementation.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.type.TypeSubstitutor.*;
@@ -139,32 +135,6 @@ public class TypeInspector {
         return !isPrimitive(type);
     }
 
-    public boolean isCoreType(Type type) {
-        if (isWildcard(type)) {
-            return isCoreType(substituteWildcard((WildcardType) type));
-        }
-        if (isParametrized(type)) {
-            return isCoreType(extractClass((ParameterizedType) type));
-        }
-        if (isGenericArray(type)) {
-            return isCoreType(extractClass((GenericArrayType) type));
-        }
-        if (isClass(type)) {
-            Class<?> typeAsClass = (Class<?>) type;
-            if (typeAsClass.isArray()) {
-                return isCoreType(typeAsClass.getComponentType());
-            }
-            boolean coreBased = CORE_BASE_TYPES
-                    .stream()
-                    .anyMatch(matching -> matching.isAssignableFrom(typeAsClass));
-            boolean core = CORE_TYPES
-                    .stream()
-                    .anyMatch(matching -> matching.equals(typeAsClass));
-            return core || coreBased;
-        }
-        return false;
-    }
-
     public boolean isVoidMethod(Method method) {
         return method.getGenericReturnType() == void.class;
     }
@@ -172,11 +142,6 @@ public class TypeInspector {
     public Type boxed(Type primitiveType) {
         return isJavaPrimitive(primitiveType) ? JAVA_PRIMITIVE_MAPPINGS.get(primitiveType) : primitiveType;
     }
-
-    public PrimitiveType primitiveTypeFromJava(Type type) {
-        return orThrow(JAVA_TO_PRIMITIVE_TYPE.get(type), () -> new MetaException(format(UNSUPPORTED_TYPE, type)));
-    }
-
 
     public Class<?> extractClass(ParameterizedType parameterizedType) {
         return extractClass(parameterizedType.getRawType());
@@ -200,48 +165,5 @@ public class TypeInspector {
             return extractClass(substituteWildcard((WildcardType) type));
         }
         throw new MetaException(format(UNSUPPORTED_TYPE, type));
-    }
-
-
-    public Type extractGenericPropertyType(ParameterizedType owner, Type type) {
-        if (isWildcard(type)) {
-            return extractGenericPropertyType(owner, substituteWildcard((WildcardType) type));
-        }
-        if (isVariable(type)) {
-            return owner.getActualTypeArguments()[typeVariableIndex((TypeVariable<?>) type)];
-        }
-        if (isGenericArray(type)) {
-            Type componentType = ((GenericArrayType) type).getGenericComponentType();
-            return genericArrayType(extractGenericPropertyType(owner, componentType));
-        }
-        if (isParametrized(type)) {
-            ParameterizedType parameterizedType = (ParameterizedType) type;
-            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-            Type[] extractedArguments = new Type[actualTypeArguments.length];
-            for (int index = 0, actualTypeArgumentsLength = actualTypeArguments.length; index < actualTypeArgumentsLength; index++) {
-                Type actualTypeArgument = actualTypeArguments[index];
-                extractedArguments[index] = extractGenericPropertyType(owner, actualTypeArgument);
-            }
-            return parameterizedType(extractClass(parameterizedType), extractedArguments);
-        }
-        return type;
-    }
-
-    public int typeVariableIndex(TypeVariable<?> typeVariable) {
-        TypeVariable<?>[] typeParameters = typeVariable.getGenericDeclaration().getTypeParameters();
-        int index = -1;
-        for (TypeVariable<?> parameter : typeParameters) {
-            index++;
-            if (typeVariable.equals(parameter)) return index;
-        }
-        throw new MetaException(format(TYPE_VARIABLE_WAS_NOT_FOUND, typeVariable));
-    }
-
-    public Type extractFirstTypeParameter(ParameterizedType type) {
-        return extractTypeParameter(type, 0);
-    }
-
-    public Type extractTypeParameter(ParameterizedType type, int index) {
-        return type.getActualTypeArguments()[index];
     }
 }

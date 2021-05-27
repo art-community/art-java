@@ -119,7 +119,7 @@ public class MetaType<T> {
         return builder.build();
     }
 
-    public Object toModel(io.art.value.immutable.Value value) {
+    public Object toModel(Value value) {
         return toModel.map(value);
     }
 
