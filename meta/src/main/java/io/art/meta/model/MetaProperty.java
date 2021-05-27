@@ -13,5 +13,5 @@ public class MetaProperty<T> {
     private final String name;
     private final MetaType<T> type;
     private final InstanceMetaMethod<Object, ?> getter;
-    private final int constructorParameterIndex;
+    private final int index;
 }

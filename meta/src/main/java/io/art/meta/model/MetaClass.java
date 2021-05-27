@@ -51,9 +51,21 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaProperty<?>> properties;
     private final Set<MetaMethod<?>> methods;
     protected final Map<String, MetaType<?>> variables;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private MetaConstructor<T> allArgumentsConstructor;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final List<MetaProperty<?>> gettableProperties;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final List<MetaProperty<?>> objectProperties;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final List<MetaProperty<?>> primitiveProperties;
 
     protected MetaClass(MetaType<T> type) {
@@ -143,7 +155,7 @@ public abstract class MetaClass<T> {
 
             if (nonNull(allArgumentsConstructor)) {
                 int constructorParameterIndex = allArgumentsConstructor.parameters().get(field.name()).index();
-                builder.constructorParameterIndex(constructorParameterIndex);
+                builder.index(constructorParameterIndex);
 
                 MetaProperty<?> property = builder.build();
 
@@ -248,13 +260,13 @@ public abstract class MetaClass<T> {
         for (MetaProperty<?> property : primitiveProperties) {
             String name = property.name();
             MetaType<?> type = property.type();
-            arguments[property.constructorParameterIndex()] = mapping.mapOrDefault(name, type.primitiveType(), type::toModel);
+            arguments[property.index()] = mapping.mapOrDefault(name, type.primitiveType(), type::toModel);
         }
 
         for (MetaProperty<?> property : objectProperties) {
             String name = property.name();
             MetaType<?> type = property.type();
-            arguments[property.constructorParameterIndex()] = mapping.map(name, type::toModel);
+            arguments[property.index()] = mapping.map(name, type::toModel);
         }
 
         return allArgumentsConstructor.invoke(arguments);
