@@ -71,7 +71,7 @@ public abstract class MetaClass<T> {
     @SafeVarargs
     protected MetaClass(MetaType<T> metaType, MetaType<T>... variables) {
         this(metaType);
-        this.variables = stream(variables).collect(mapCollector(MetaType::variable, identity()));
+        this.variables = stream(variables).collect(mapCollector(variable -> variable.variable().name(), identity()));
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -87,7 +87,44 @@ public abstract class MetaClass<T> {
     }
 
     protected MetaType<?> register(MetaType<?> variable) {
-        return cast(putIfAbsent(variables, variable.variable(), () -> variable));
+        return variables.putIfAbsent(variable.variable().name(), variable);
+    }
+
+    protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
+        if (isEmpty(variables) || isEmpty(parameters)) return this;
+
+        MetaClass<T> parametrized = new ParametrizedMetaClass<>(this);
+        Map<String, MetaType<?>> variableToParameter = map();
+        int index = 0;
+        for (MetaType<?> parameter : parameters) {
+            int variableIndex = 0;
+            for (Entry<String, MetaType<?>> variable : variables.entrySet()) {
+                if (variableIndex == index) {
+                    variableToParameter.put(variable.getKey(), parameter);
+                    break;
+                }
+                variableIndex++;
+            }
+            index++;
+        }
+
+        if (isEmpty(variableToParameter)) return this;
+
+        for (MetaField<?> field : fields.values()) {
+            parametrized.fields.put(field.name(), field.parameterize(variableToParameter));
+        }
+
+        for (MetaConstructor<T> constructor : constructors) {
+            parametrized.constructors.add(constructor.parameterize(variableToParameter));
+        }
+
+        for (MetaMethod<?> method : methods) {
+            parametrized.methods.add(method.parameterize(variableToParameter));
+        }
+
+        parametrized.variables.clear();
+
+        return parametrized;
     }
 
     protected void compute() {
@@ -176,41 +213,6 @@ public abstract class MetaClass<T> {
                 .build();
     }
 
-    protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
-        if (isEmpty(variables) || isEmpty(parameters)) return this;
-        MetaClass<T> parametrized = new ParametrizedMetaClass<>(this);
-        Map<String, MetaType<?>> variableToParameter = map();
-        int index = 0;
-        for (MetaType<?> parameter : parameters) {
-            int variableIndex = 0;
-            for (Entry<String, MetaType<?>> variable : variables.entrySet()) {
-                if (variableIndex == index) {
-                    variableToParameter.put(variable.getKey(), parameter);
-                    break;
-                }
-                variableIndex++;
-            }
-            index++;
-        }
-
-        if (isEmpty(variableToParameter)) return this;
-
-        for (MetaField<?> field : fields.values()) {
-            parametrized.fields.put(field.name(), field.parameterize(variableToParameter));
-        }
-
-        for (MetaConstructor<T> constructor : constructors) {
-            parametrized.constructors.add(constructor.parameterize(variableToParameter));
-        }
-
-        for (MetaMethod<?> method : methods) {
-            parametrized.methods.add(method.parameterize(variableToParameter));
-        }
-
-        parametrized.variables.clear();
-
-        return parametrized;
-    }
 
     public MetaType<T> type() {
         return type;

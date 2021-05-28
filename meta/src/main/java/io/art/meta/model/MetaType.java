@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.TypeConstants.*;
@@ -38,12 +39,12 @@ import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForGenerator
 @Getter
+@ToString
+@ForGenerator
+@EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(toBuilder = true)
-@ToString
-@EqualsAndHashCode
 public class MetaType<T> {
     private final Class<T> type;
     private final ImmutableSet<MetaType<?>> parameters;
@@ -53,7 +54,7 @@ public class MetaType<T> {
     private final boolean mono;
     private final boolean voidType;
     private final PrimitiveType primitiveType;
-    private final String variable;
+    private final MetaTypeVariable variable;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -91,14 +92,18 @@ public class MetaType<T> {
                 .map(parameter -> parameter.parameterize(parameters))
                 .collect(immutableSetCollector());
         MetaTypeBuilder<?> builder = toBuilder()
-                .variable(null)
+                .variable(let(variable, notNullVariable -> notNullVariable.toBuilder()
+                        .bound(let(notNullVariable.bound(), notNullBound -> notNullBound.parameterize(parameters)))
+                        .build()))
                 .parameters(parametrizedTypeParameters);
         if (isNull(variable)) {
             return builder.build();
         }
-        MetaType<?> parameter = parameters.get(variable);
+        MetaType<?> parameter = parameters.get(variable.name());
         if (nonNull(parameter)) {
-            builder.type(cast(parameter.type)).asArray(cast(parameter.asArray));
+            builder.variable(null)
+                    .type(cast(parameter.type))
+                    .asArray(cast(parameter.asArray));
         }
         return builder.build();
     }
@@ -116,10 +121,9 @@ public class MetaType<T> {
                 .build();
     }
 
-    public static <T> MetaType<T> metaVariable(String variable) {
+    public static <T> MetaType<T> metaVariable(String name, MetaType<?> bound) {
         return MetaType.<T>builder()
-                .type(cast(Object.class))
-                .variable(variable)
+                .variable(new MetaTypeVariable(name, bound))
                 .build();
     }
 
