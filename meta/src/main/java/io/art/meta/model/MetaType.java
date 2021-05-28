@@ -96,8 +96,8 @@ public class MetaType<T> {
             return this;
         }
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters));
-        toModel = typedMetaClass::toModel;
-        fromModel = typedMetaClass::fromModel;
+        toModel = typedMetaClass.schema()::toModel;
+        fromModel = typedMetaClass.schema()::fromModel;
         return this;
     }
 

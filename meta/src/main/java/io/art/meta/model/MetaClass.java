@@ -23,21 +23,19 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
-import io.art.value.builder.*;
-import io.art.value.immutable.Value;
-import io.art.value.immutable.*;
-import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
-import static io.art.value.immutable.Entity.*;
+import static java.util.Arrays.*;
 import static java.util.Objects.*;
+import static java.util.function.Function.*;
 import java.util.*;
 import java.util.Map.*;
 
@@ -49,23 +47,8 @@ public abstract class MetaClass<T> {
     private final Set<MetaConstructor<T>> constructors;
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
-    protected final Map<String, MetaType<?>> variables;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private MetaConstructor<T> allArgumentsConstructor;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private final List<MetaProperty<?>> gettableProperties;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private final List<MetaProperty<?>> objectProperties;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private final List<MetaProperty<?>> primitiveProperties;
+    private Map<String, MetaType<?>> variables;
+    private MetaSchema<T> schema;
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
@@ -73,9 +56,6 @@ public abstract class MetaClass<T> {
         fields = map();
         methods = set();
         variables = map();
-        gettableProperties = linkedList();
-        objectProperties = linkedList();
-        primitiveProperties = linkedList();
         MetaClassRegistry.register(this);
     }
 
@@ -85,18 +65,13 @@ public abstract class MetaClass<T> {
         fields = base.fields;
         methods = base.methods;
         variables = base.variables;
-        allArgumentsConstructor = base.allArgumentsConstructor;
-        gettableProperties = base.gettableProperties;
-        objectProperties = base.objectProperties;
-        primitiveProperties = base.primitiveProperties;
+        schema = base.schema;
     }
 
     @SafeVarargs
     protected MetaClass(MetaType<T> metaType, MetaType<T>... variables) {
         this(metaType);
-        for (MetaType<T> variable : variables) {
-            this.variables.put(variable.variable(), variable);
-        }
+        this.variables = stream(variables).collect(mapCollector(MetaType::variable, identity()));
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -131,7 +106,14 @@ public abstract class MetaClass<T> {
             method.parameters().values().forEach(parameter -> parameter.type().compute());
         }
 
+        schema = computeSchema();
+    }
+
+    private MetaSchema<T> computeSchema() {
+        MetaConstructor<T> allArgumentsConstructor = null;
         for (MetaConstructor<T> constructor : constructors) {
+            constructor.parameters().values().forEach(parameter -> parameter.type().compute());
+
             MetaField<?>[] fields = this.fields.values().toArray(new MetaField[0]);
             MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
             if (fields.length != parameters.length) continue;
@@ -142,6 +124,10 @@ public abstract class MetaClass<T> {
                 }
             }
         }
+
+        List<MetaProperty<?>> gettableProperties = linkedList();
+        List<MetaProperty<?>> primitiveProperties = linkedList();
+        List<MetaProperty<?>> objectProperties = linkedList();
 
         for (MetaField<?> field : fields.values()) {
             MetaPropertyBuilder<?> builder = MetaProperty.builder()
@@ -181,6 +167,13 @@ public abstract class MetaClass<T> {
                 gettableProperties.add(builder.build());
             }
         }
+
+        return MetaSchema.<T>builder()
+                .allArgumentsConstructor(allArgumentsConstructor)
+                .primitiveProperties(primitiveProperties)
+                .gettableProperties(gettableProperties)
+                .objectProperties(objectProperties)
+                .build();
     }
 
     protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
@@ -199,13 +192,17 @@ public abstract class MetaClass<T> {
             }
             index++;
         }
+
         if (isEmpty(variableToParameter)) return this;
+
         for (MetaField<?> field : fields.values()) {
             parametrized.fields.put(field.name(), field.parameterize(variableToParameter));
         }
+
         for (MetaConstructor<T> constructor : constructors) {
             parametrized.constructors.add(constructor.parameterize(variableToParameter));
         }
+
         for (MetaMethod<?> method : methods) {
             parametrized.methods.add(method.parameterize(variableToParameter));
         }
@@ -219,7 +216,6 @@ public abstract class MetaClass<T> {
         return type;
     }
 
-
     public MetaType<?> variable(String name) {
         return variables.get(name);
     }
@@ -227,7 +223,6 @@ public abstract class MetaClass<T> {
     public ImmutableMap<String, MetaType<?>> variables() {
         return immutableMapOf(variables);
     }
-
 
     public <F> MetaField<F> field(String name) {
         return cast(fields.get(name));
@@ -237,7 +232,6 @@ public abstract class MetaClass<T> {
         return immutableMapOf(fields);
     }
 
-
     public ImmutableSet<MetaMethod<?>> methods() {
         return immutableSetOf(methods);
     }
@@ -246,34 +240,7 @@ public abstract class MetaClass<T> {
         return immutableSetOf(constructors);
     }
 
-
-    public T toModel(Value value) {
-        Entity entity = Value.asEntity(value);
-        EntityMapping mapping = entity.mapping();
-
-        Object[] arguments = new Object[objectProperties.size() + primitiveProperties.size()];
-
-        for (MetaProperty<?> property : primitiveProperties) {
-            String name = property.name();
-            MetaType<?> type = property.type();
-            arguments[property.index()] = mapping.mapOrDefault(name, type.primitiveType(), type::toModel);
-        }
-
-        for (MetaProperty<?> property : objectProperties) {
-            String name = property.name();
-            MetaType<?> type = property.type();
-            arguments[property.index()] = mapping.map(name, type::toModel);
-        }
-
-        return allArgumentsConstructor.invoke(arguments);
-    }
-
-    public Value fromModel(Object model) {
-        EntityBuilder entityBuilder = entityBuilder();
-        for (MetaProperty<?> property : gettableProperties) {
-            InstanceMetaMethod<Object, ?> getter = property.getter();
-            entityBuilder.put(property.name(), getter.invoke(model), getter.returnType()::fromModel);
-        }
-        return entityBuilder.build();
+    public MetaSchema<T> schema() {
+        return schema;
     }
 }
