@@ -87,10 +87,6 @@ public class TypeInspector {
                 || ImmutableArray.class.isAssignableFrom(extractClass(type));
     }
 
-    public boolean isJavaPrimitive(Type type) {
-        return JAVA_PRIMITIVE_TYPES.contains(type);
-    }
-
     public boolean isPrimitive(Type type) {
         return PRIMITIVE_TYPES.contains(type);
     }
@@ -135,12 +131,8 @@ public class TypeInspector {
         return !isPrimitive(type);
     }
 
-    public boolean isVoidMethod(Method method) {
-        return method.getGenericReturnType() == void.class;
-    }
-
-    public Type boxed(Type primitiveType) {
-        return isJavaPrimitive(primitiveType) ? JAVA_PRIMITIVE_MAPPINGS.get(primitiveType) : primitiveType;
+    public boolean isVoid(Type type) {
+        return extractClass(type) == void.class;
     }
 
     public Class<?> extractClass(ParameterizedType parameterizedType) {

@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.registry.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
@@ -31,64 +32,47 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.model.KnownMappersComputer.*;
-import static io.art.meta.registry.MetaClassRegistry.*;
+import static io.art.meta.type.TypeInspector.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
 @ForGenerator
+@Getter
+@Accessors(fluent = true)
 @Builder(toBuilder = true)
-@ToString(onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString
+@EqualsAndHashCode
 public class MetaType<T> {
-    @Getter
-    @ToString.Include
-    @EqualsAndHashCode.Include
-    @Accessors(fluent = true)
     private final Class<T> type;
-
-    @Getter
-    @ToString.Include
-    @EqualsAndHashCode.Include
-    @Accessors(fluent = true)
     private final ImmutableSet<MetaType<?>> parameters;
-
-    @Getter
-    @ToString.Include
-    @EqualsAndHashCode.Include
-    @Accessors(fluent = true)
     private final boolean primitive;
-
-    @Getter
-    @Accessors(fluent = true)
-    private final PrimitiveType primitiveType;
-
-    @Getter
-    @ToString.Include
-    @EqualsAndHashCode.Include
-    @Accessors(fluent = true)
     private final boolean array;
-
-    @Getter
-    @ToString.Include
-    @EqualsAndHashCode.Include
-    @Accessors(fluent = true)
+    private final boolean flux;
+    private final boolean mono;
+    private final boolean voidType;
+    private final PrimitiveType primitiveType;
     private final String variable;
 
-    @Getter
-    @Accessors(fluent = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final Function<Integer, T> asArray;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private ValueToModelMapper<Object, Value> toModel;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private ValueFromModelMapper<Object, Value> fromModel;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final static ImmutableMap<Class<?>, MetaClass<?>> classes = classes();
+    private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
 
     protected MetaType<T> compute() {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
-        MetaClass<?> metaClass = getClasses().get(type);
+        MetaClass<?> metaClass = classes().get(type);
         if (isNull(metaClass)) {
             ValueMapper<T, Value> mapper = computeKnownMappers(this);
             toModel = cast(mapper.getToModel());
@@ -131,6 +115,9 @@ public class MetaType<T> {
         return MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
+                .flux(isFlux(type))
+                .mono(isMono(type))
+                .voidType(isVoid(type))
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
