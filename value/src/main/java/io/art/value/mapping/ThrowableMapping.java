@@ -13,50 +13,60 @@ import static io.art.value.mapping.PrimitiveMapping.*;
 
 @UtilityClass
 public class ThrowableMapping {
+    private static final Primitive CLASS = stringPrimitive(CLASS_KEY);
+    private static final Primitive MESSAGE = stringPrimitive(MESSAGE_KEY);
+    private static final Primitive STACK_TRACE = stringPrimitive(STACK_TRACE_KEY);
+    private static final Primitive EXCEPTION = stringPrimitive(EXCEPTION_KEY);
+    private static final Primitive DECLARING_CLASS = stringPrimitive(DECLARING_CLASS_KEY);
+    private static final Primitive METHOD_NAME = stringPrimitive(METHOD_NAME_KEY);
+    private static final Primitive FILE_NAME = stringPrimitive(FILE_NAME_KEY);
+    private static final Primitive LINE_NUMBER = stringPrimitive(LINE_NUMBER_KEY);
+    private static final Primitive CAUSE = stringPrimitive(CAUSE_KEY);
+
     public Entity fromThrowable(Throwable throwable) {
         EntityBuilder builder = entityBuilder()
-                .lazyPut(stringPrimitive(CLASS_KEY), () -> stringPrimitive(throwable.getClass().getName()))
-                .lazyPut(stringPrimitive(MESSAGE_KEY), () -> stringPrimitive(throwable.getMessage()))
-                .lazyPut(stringPrimitive(STACK_TRACE_KEY), throwable::getStackTrace, fromArray(ThrowableMapping::fromStackTraceElement));
-        apply(throwable.getCause(), cause -> builder.lazyPut(stringPrimitive(CAUSE_KEY), () -> fromThrowable(cause)));
+                .lazyPut(CLASS, () -> stringPrimitive(throwable.getClass().getName()))
+                .lazyPut(MESSAGE, () -> stringPrimitive(throwable.getMessage()))
+                .lazyPut(STACK_TRACE, throwable::getStackTrace, fromArray(ThrowableMapping::fromStackTraceElement));
+        apply(throwable.getCause(), cause -> builder.lazyPut(CAUSE, () -> fromThrowable(cause)));
         return builder.build();
     }
 
     public Entity fromThrowableNested(Throwable throwable) {
-        return entityBuilder().lazyPut(stringPrimitive(EXCEPTION_KEY), () -> fromThrowable(throwable)).build();
+        return entityBuilder().lazyPut(EXCEPTION, () -> fromThrowable(throwable)).build();
     }
 
 
     public Throwable toThrowable(Entity entity) {
-        String message = entity.map(stringPrimitive(MESSAGE_KEY), toString);
-        StackTraceElement[] stackTrace = entity.map(stringPrimitive(STACK_TRACE_KEY), toArrayRaw(StackTraceElement[]::new, ThrowableMapping::toStackTraceElement));
-        Throwable cause = entity.map(stringPrimitive(CAUSE_KEY), ThrowableMapping::toThrowable);
+        String message = entity.map(MESSAGE, toString);
+        StackTraceElement[] stackTrace = entity.map(STACK_TRACE, toArrayRaw(StackTraceElement[]::new, ThrowableMapping::toStackTraceElement));
+        Throwable cause = entity.map(CAUSE, ThrowableMapping::toThrowable);
         Throwable throwable = new Throwable(message, cause);
         throwable.setStackTrace(stackTrace);
         return throwable;
     }
 
     public Throwable toThrowableNested(Entity entity) {
-        return entity.mapping().map(EXCEPTION_KEY, ThrowableMapping::toThrowable);
+        return entity.map(EXCEPTION, ThrowableMapping::toThrowable);
     }
 
 
     public Value fromStackTraceElement(StackTraceElement element) {
         return Entity.entityBuilder()
-                .put(stringPrimitive(DECLARING_CLASS_KEY), stringPrimitive(element.getClassName()))
-                .put(stringPrimitive(METHOD_NAME_KEY), stringPrimitive(element.getMethodName()))
-                .put(stringPrimitive(FILE_NAME_KEY), stringPrimitive(element.getFileName()))
-                .put(stringPrimitive(LINE_NUMBER_KEY), intPrimitive(element.getLineNumber()))
+                .put(DECLARING_CLASS, stringPrimitive(element.getClassName()))
+                .put(METHOD_NAME, stringPrimitive(element.getMethodName()))
+                .put(FILE_NAME, stringPrimitive(element.getFileName()))
+                .put(LINE_NUMBER, intPrimitive(element.getLineNumber()))
                 .build();
     }
 
     public StackTraceElement toStackTraceElement(Value value) {
         if (!Value.isEntity(value)) return null;
         Entity entity = Value.asEntity(value);
-        String declaringClass = entity.map(stringPrimitive(DECLARING_CLASS_KEY), toString);
-        String methodName = entity.map(stringPrimitive(METHOD_NAME_KEY), toString);
-        String fileName = entity.map(stringPrimitive(FILE_NAME_KEY), toString);
-        int lineNumber = entity.mapOrDefault(stringPrimitive(LINE_NUMBER_KEY), INT, toInt);
+        String declaringClass = entity.map(DECLARING_CLASS, toString);
+        String methodName = entity.map(METHOD_NAME, toString);
+        String fileName = entity.map(FILE_NAME, toString);
+        int lineNumber = entity.mapOrDefault(LINE_NUMBER, INT, toInt);
         return new StackTraceElement(declaringClass, methodName, fileName, lineNumber);
     }
 }

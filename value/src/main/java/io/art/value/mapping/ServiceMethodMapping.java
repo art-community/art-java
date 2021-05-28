@@ -14,9 +14,12 @@ import static java.text.MessageFormat.*;
 
 @UtilityClass
 public class ServiceMethodMapping {
+    private final static Primitive SERVICE_ID = stringPrimitive(SERVICE_ID_KEY);
+    private final static Primitive METHOD_ID = stringPrimitive(METHOD_ID_KEY);
+
     public ServiceMethodIdentifier toServiceMethod(Entity entity) {
-        String serviceId = entity.mapping().map(SERVICE_ID_KEY, toString);
-        String methodId = entity.mapping().map(METHOD_ID_KEY, toString);
+        String serviceId = entity.map(SERVICE_ID, toString);
+        String methodId = entity.map(METHOD_ID, toString);
         if (isEmpty(serviceId)) {
             throw new ValueMappingException(format(SERVICE_ID_NOT_PRESENTED, entity.toMap()));
         }
@@ -28,8 +31,8 @@ public class ServiceMethodMapping {
 
     public Entity fromServiceMethod(ServiceMethodIdentifier id) {
         return entityBuilder()
-                .put(stringPrimitive(SERVICE_ID_KEY), stringPrimitive(id.getServiceId()))
-                .put(stringPrimitive(METHOD_ID_KEY), stringPrimitive(id.getMethodId()))
+                .put(SERVICE_ID, stringPrimitive(id.getServiceId()))
+                .put(METHOD_ID, stringPrimitive(id.getMethodId()))
                 .build();
     }
 }

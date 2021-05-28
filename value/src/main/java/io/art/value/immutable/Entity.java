@@ -18,7 +18,6 @@
 
 package io.art.value.immutable;
 
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
@@ -28,7 +27,6 @@ import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.exception.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.*;
-import io.art.value.mapping.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -44,7 +42,6 @@ import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueToModelMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static java.util.Optional.*;
 import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
@@ -53,8 +50,6 @@ import java.util.function.*;
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
-    private final EntityMapping mapping = new EntityMapping(this);
-    private final Map<Primitive, Object> cache = MapFactory.weakMap();
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
 
@@ -180,33 +175,14 @@ public class Entity implements Value {
 
     public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
         try {
-            T cached = cast(cache.get(primitive));
-            if (nonNull(cached)) return cached;
-            cached = let(cast(get(primitive)), mapper::map);
-            if (isNull(cached)) return null;
-            cache.put(primitive, cast(cached));
-            return cached;
+            return let(cast(get(primitive)), mapper::map);
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(FIELD_MAPPING_EXCEPTION, primitive), throwable);
         }
     }
 
-    public <T, V extends Value> Optional<T> mapOptional(Primitive primitive, ValueToModelMapper<Optional<T>, V> mapper) {
-        Optional<T> cached = cast(cache.get(primitive));
-        if (nonNull(cached)) return cached;
-        cached = mapper.map(cast(get(primitive)));
-        if (isEmpty(cached)) return empty();
-        cache.put(primitive, cached);
-        return cached;
-    }
-
     public <T, V extends Value> T mapOrDefault(Primitive key, PrimitiveType type, ValueToModelMapper<T, V> mapper) {
-        T cached = cast(cache.get(key));
-        if (nonNull(cached)) return cached;
-        Value value = orElse(get(key), type::defaultValue);
-        cached = mapper.map(cast(value));
-        cache.put(key, cached);
-        return cached;
+        return mapper.map(cast(orElse(get(key), type::defaultValue)));
     }
 
 
@@ -216,7 +192,7 @@ public class Entity implements Value {
 
     public <K, V> Map<K, V> toMap(PrimitiveToModelMapper<K> keyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         Map<K, V> newMap = MapFactory.map();
-        for (Primitive key : keys) apply(mapping.map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
+        for (Primitive key : keys) apply(map(key, valueMapper), value -> newMap.put(keyMapper.map(key), value));
         return newMap;
     }
 
@@ -236,12 +212,6 @@ public class Entity implements Value {
 
     public <K, V> ImmutableMap<K, V> asImmutableMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
         return new ProxyMap<>(toKeyMapper, fromKeyMapper, valueMapper);
-    }
-
-
-    @ForGenerator
-    public EntityMapping mapping() {
-        return mapping;
     }
 
     public EntityBuilder toBuilder() {
@@ -317,7 +287,7 @@ public class Entity implements Value {
             if (isNull(key)) {
                 return null;
             }
-            return mapping.map(fromKeyMapper.map(cast(key)), valueMapper);
+            return map(fromKeyMapper.map(cast(key)), valueMapper);
         }
 
         @Override

@@ -76,7 +76,7 @@ class KnownMappersComputer {
                 }
             }
             MetaType<T> component = type.toBuilder().array(false).build().compute();
-            return cast(mapper(fromArray(component::fromModel), toArrayRaw(component.asArray(), component::toModel)));
+            return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.asArray(), component.toModel())));
         }
         if (isPrimitive(rawType)) {
             if (short.class.equals(rawType) || Short.class.equals(rawType)) {
@@ -131,37 +131,37 @@ class KnownMappersComputer {
                 .map(MetaType::compute)
                 .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, type)));
         if (isLazyValue(rawType)) {
-            return mapper(cast(fromLazy(firstParameter::fromModel)), cast(toLazy((ValueToModelMapper<?, Value>) firstParameter::toModel)));
+            return mapper(cast(fromLazy(firstParameter.fromModel())), cast(toLazy((ValueToModelMapper<?, Value>) firstParameter.toModel())));
         }
         if (isOptional(rawType)) {
-            return mapper(cast(fromOptional(firstParameter::fromModel)), cast(toOptional((ValueToModelMapper<?, Value>) firstParameter::toModel)));
+            return mapper(cast(fromOptional(firstParameter.fromModel())), cast(toOptional((ValueToModelMapper<?, Value>) firstParameter.toModel())));
         }
         if (isCollection(rawType)) {
             if (isList(rawType)) {
-                return mapper(cast(fromList(firstParameter::fromModel)), cast(toMutableList(firstParameter::toModel)));
+                return mapper(cast(fromList(firstParameter.fromModel())), cast(toMutableList(firstParameter.toModel())));
             }
             if (isImmutableArray(rawType)) {
-                return mapper(cast(fromImmutableArray(firstParameter::fromModel)), cast(toImmutableArray(firstParameter::toModel)));
+                return mapper(cast(fromImmutableArray(firstParameter.fromModel())), cast(toImmutableArray(firstParameter.toModel())));
             }
             if (isSet(rawType)) {
-                return mapper(cast(fromSet(firstParameter::fromModel)), cast(toMutableSet(firstParameter::toModel)));
+                return mapper(cast(fromSet(firstParameter.fromModel())), cast(toMutableSet(firstParameter.toModel())));
             }
             if (isImmutableSet(rawType)) {
-                return mapper(cast(fromImmutableSet(firstParameter::fromModel)), cast(toImmutableSet(firstParameter::toModel)));
+                return mapper(cast(fromImmutableSet(firstParameter.fromModel())), cast(toImmutableSet(firstParameter.toModel())));
             }
             if (isImmutableCollection(rawType)) {
-                return mapper(cast(fromCollection(firstParameter::fromModel)), cast(toImmutableArray(firstParameter::toModel)));
+                return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toImmutableArray(firstParameter.toModel())));
             }
             if (isQueue(rawType)) {
-                return mapper(cast(fromQueue(firstParameter::fromModel)), cast(toMutableQueue(firstParameter::toModel)));
+                return mapper(cast(fromQueue(firstParameter.fromModel())), cast(toMutableQueue(firstParameter.toModel())));
             }
             if (isDequeue(rawType)) {
-                return mapper(cast(fromDeque(firstParameter::fromModel)), cast(toMutableDeque(firstParameter::toModel)));
+                return mapper(cast(fromDeque(firstParameter.fromModel())), cast(toMutableDeque(firstParameter.toModel())));
             }
             if (isStream(rawType)) {
-                return mapper(cast(fromStream(firstParameter::fromModel)), cast(toStream(firstParameter::toModel)));
+                return mapper(cast(fromStream(firstParameter.fromModel())), cast(toStream(firstParameter.toModel())));
             }
-            return mapper(cast(fromCollection(firstParameter::fromModel)), cast(toMutableCollection(firstParameter::toModel)));
+            return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toMutableCollection(firstParameter.toModel())));
         }
         if (isMap(rawType) || isImmutableMap(rawType)) {
             if (parameters.size() != 2) {
@@ -174,13 +174,13 @@ class KnownMappersComputer {
             }
 
             MetaType<?> value = metaTypes[1].compute();
-            PrimitiveToModelMapper<Object> keyToModel = key::toModel;
-            PrimitiveFromModelMapper<Object> keyFromModel = model -> asPrimitive(key.fromModel(cast(model)));
-            ValueToModelMapper<Object, Value> valueToModel = value::toModel;
-            ValueFromModelMapper<Object, Value> valueFromModel = model -> value.fromModel(cast(model));
+            PrimitiveToModelMapper<Object> keyToModel = cast(key.toModel());
+            PrimitiveFromModelMapper<Object> keyFromModel = model -> asPrimitive(key.fromModel().map(model));
+            ValueToModelMapper<Object, Value> valueToModel = cast(value.toModel());
+            ValueFromModelMapper<Object, Value> valueFromModel = model -> value.fromModel().map(model);
 
             if (isImmutableMap(rawType)) {
-                EntityFromModelMapper<ImmutableMap<Object, Object>> fromMapper = fromImmutableMap(keyToModel, keyFromModel, valueFromModel);
+                EntityFromModelMapper<ImmutableMap<Object, Object>> fromMapper = fromImmutableMap(cast(keyToModel), cast(keyFromModel), valueFromModel);
                 EntityToModelMapper<ImmutableMap<Object, Object>> toMapper = toImmutableMap(keyToModel, keyFromModel, valueToModel);
                 return mapper(cast(fromMapper), cast(toMapper));
             }

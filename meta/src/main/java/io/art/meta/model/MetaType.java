@@ -103,14 +103,6 @@ public class MetaType<T> {
         return builder.build();
     }
 
-    public Object toModel(Value value) {
-        return toModel.map(value);
-    }
-
-    public Value fromModel(Object model) {
-        return fromModel.map(model);
-    }
-
     public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
         return MetaType.<T>builder()
                 .type(cast(type))

@@ -29,7 +29,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.LazyProperty.*;
@@ -49,7 +48,6 @@ import java.util.stream.*;
 public class ArrayValue implements Value {
     @Getter
     private final ValueType type = ARRAY;
-    private final Map<Integer, ?> cache = weakMap();
     private final Function<Integer, ? extends Value> valueProvider;
     private final LazyProperty<Integer> size;
 
@@ -64,11 +62,7 @@ public class ArrayValue implements Value {
 
     public <T> T map(int index, ValueToModelMapper<T, ? extends Value> mapper) {
         try {
-            Object cached = cache.get(index);
-            if (nonNull(cached)) return cast(cached);
-            cached = let(cast(get(index)), mapper::map);
-            if (nonNull(cached)) cache.put(index, cast(cached));
-            return cast(cached);
+            return let(cast(get(index)), mapper::map);
         } catch (Throwable throwable) {
             throw new ValueMappingException(format(INDEX_MAPPING_EXCEPTION, index), throwable);
         }

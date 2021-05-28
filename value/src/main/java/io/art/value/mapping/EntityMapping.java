@@ -26,41 +26,15 @@ import io.art.value.mapper.*;
 import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collector.SetCollector.setCollector;
-import static io.art.value.constants.ValueModuleConstants.ValueType.*;
+import static io.art.core.collector.SetCollector.*;
 import static io.art.value.factory.EntityFactory.*;
-import static io.art.value.factory.PrimitivesFactory.*;
 import java.util.*;
 import java.util.function.*;
 
 @ForGenerator
 @RequiredArgsConstructor
 public class EntityMapping {
-    private final Entity entity;
-
-    public <T, V extends Value> T map(String key, ValueToModelMapper<T, V> mapper) {
-        return map(stringPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T map(Primitive primitive, ValueToModelMapper<T, V> mapper) {
-        return entity.map(primitive, mapper);
-    }
-
-    public <T, V extends Value> Optional<T> mapOptional(String key, ValueToModelMapper<Optional<T>, V> mapper) {
-        return entity.mapOptional(stringPrimitive(key), mapper);
-    }
-
-    public <T, V extends Value> T mapNested(String key, ValueToModelMapper<T, V> mapper) {
-        return let(entity.find(key), value -> mapper.map(cast(value)));
-    }
-
-    public <T, V extends Value> T mapOrDefault(String key, PrimitiveType valueType, ValueToModelMapper<T, V> valueMapper) {
-        return entity.mapOrDefault(stringPrimitive(key), valueType, valueMapper);
-    }
-
-
     public static <K, V> EntityToModelMapper<Map<K, V>> toMap(PrimitiveToModelMapper<K> toKey, PrimitiveFromModelMapper<K> fromKey, ValueToModelMapper<V, ? extends Value> value) {
         return entity -> let(entity, notNull -> notNull.asMap(toKey, fromKey, value));
     }

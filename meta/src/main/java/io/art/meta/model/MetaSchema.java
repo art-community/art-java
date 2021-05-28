@@ -19,46 +19,73 @@
 package io.art.meta.model;
 
 import io.art.value.builder.*;
+import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
-import io.art.value.mapping.*;
+import io.art.value.mapper.*;
 import lombok.*;
+import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Entity.*;
 import java.util.*;
 
-@Builder
 public class MetaSchema<T> {
     private final MetaConstructor<T> allArgumentsConstructor;
-    private final List<MetaProperty<?>> gettableProperties;
-    private final List<MetaProperty<?>> objectProperties;
-    private final List<MetaProperty<?>> primitiveProperties;
+    private final Creator[] primitiveCreators;
+    private final Creator[] objectCreators;
+    private final Getter[] getterFromModel;
 
-    public T toModel(Value value) {
-        Entity entity = Value.asEntity(value);
-        EntityMapping mapping = entity.mapping();
+    @AllArgsConstructor
+    @RequiredArgsConstructor
+    private static class Creator {
+        final int index;
+        final Primitive name;
+        final ValueToModelMapper<Object, Value> mapper;
+        PrimitiveType primitiveType;
+    }
 
-        Object[] arguments = new Object[objectProperties.size() + primitiveProperties.size()];
+    @AllArgsConstructor
+    private static class Getter {
+        String name;
+        InstanceMetaMethod<Object, ?> method;
+        ValueFromModelMapper<Object, Value> mapper;
+    }
+
+    @Builder
+    public MetaSchema(MetaConstructor<T> allArgumentsConstructor, List<MetaProperty<?>> gettableProperties, List<MetaProperty<?>> objectProperties, List<MetaProperty<?>> primitiveProperties) {
+        this.allArgumentsConstructor = allArgumentsConstructor;
+        primitiveCreators = new Creator[primitiveProperties.size()];
+        objectCreators = new Creator[objectProperties.size()];
+        getterFromModel = new Getter[gettableProperties.size()];
 
         for (MetaProperty<?> property : primitiveProperties) {
-            String name = property.name();
-            MetaType<?> type = property.type();
-            arguments[property.index()] = mapping.mapOrDefault(name, type.primitiveType(), type::toModel);
+            primitiveCreators[property.index()] = new Creator(property.index(), stringPrimitive(property.name()), property.type().toModel(), property.type().primitiveType());
         }
 
         for (MetaProperty<?> property : objectProperties) {
-            String name = property.name();
-            MetaType<?> type = property.type();
-            arguments[property.index()] = mapping.map(name, type::toModel);
+            objectCreators[property.index()] = new Creator(property.index(), stringPrimitive(property.name()), property.type().toModel());
         }
 
+        for (MetaProperty<?> property : gettableProperties) {
+            getterFromModel[property.index()] = new Getter(property.name(), property.getter(), property.type().fromModel());
+        }
+    }
+
+    public T toModel(Value value) {
+        Entity entity = Value.asEntity(value);
+        Object[] arguments = new Object[objectCreators.length + primitiveCreators.length];
+        for (Creator creator : primitiveCreators) {
+            arguments[creator.index] = entity.mapOrDefault(creator.name, creator.primitiveType, creator.mapper);
+        }
+        for (Creator creator : objectCreators) {
+            arguments[creator.index] = entity.map(creator.name, creator.mapper);
+        }
         return allArgumentsConstructor.invoke(arguments);
     }
 
     public Value fromModel(Object model) {
         EntityBuilder entityBuilder = entityBuilder();
-        for (MetaProperty<?> property : gettableProperties) {
-            InstanceMetaMethod<Object, ?> getter = property.getter();
-            entityBuilder.put(property.name(), getter.invoke(model), getter.returnType()::fromModel);
+        for (Getter getter : getterFromModel) {
+            entityBuilder.put(getter.name, getter.method.invoke(model), getter.mapper);
         }
         return entityBuilder.build();
     }
