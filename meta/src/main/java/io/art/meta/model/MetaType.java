@@ -73,6 +73,14 @@ public class MetaType<T> {
 
     protected MetaType<T> compute() {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
+
+        if (nonNull(variable)) {
+            ValueMapper<T, Value> mapper = cast(computeKnownMappers(variable.bound()));
+            toModel = cast(mapper.getToModel());
+            fromModel = cast(mapper.getFromModel());
+            return this;
+        }
+
         MetaClass<?> metaClass = classes().get(type);
         if (isNull(metaClass)) {
             ValueMapper<T, Value> mapper = computeKnownMappers(this);
@@ -80,6 +88,7 @@ public class MetaType<T> {
             fromModel = cast(mapper.getFromModel());
             return this;
         }
+
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters));
         toModel = typedMetaClass.schema()::toModel;
         fromModel = typedMetaClass.schema()::fromModel;
