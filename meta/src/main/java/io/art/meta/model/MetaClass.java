@@ -155,7 +155,9 @@ public abstract class MetaClass<T> {
             MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
             if (fields.length != parameters.length) continue;
             for (int index = 0; index < fields.length; index++) {
-                if (parameters[index].name().equals(fields[index].name()) && parameters[index].type().equals(fields[index].type())) {
+                MetaParameter<?> parameter = parameters[index];
+                MetaField<?> field = fields[index];
+                if (parameter.name().equals(field.name()) && parameter.type().equals(field.type())) {
                     allArgumentsConstructor = constructor;
                     break;
                 }

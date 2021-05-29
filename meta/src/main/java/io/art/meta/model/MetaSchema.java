@@ -45,9 +45,9 @@ public class MetaSchema<T> {
 
     @AllArgsConstructor
     private static class Getter {
-        String name;
-        InstanceMetaMethod<Object, ?> method;
-        ValueFromModelMapper<Object, Value> mapper;
+        final String name;
+        final InstanceMetaMethod<Object, ?> method;
+        final ValueFromModelMapper<Object, Value> mapper;
     }
 
     @Builder
