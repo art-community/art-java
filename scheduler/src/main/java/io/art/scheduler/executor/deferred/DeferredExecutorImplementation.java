@@ -60,9 +60,11 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Override
     public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
         Callable<EventResultType> callable = () -> {
-            EventResultType result = eventTask.call();
-            counter.decrementAndGet();
-            return result;
+            try {
+                return eventTask.call();
+            } finally {
+                counter.decrementAndGet();
+            }
         };
         return submit(callable, triggerTime, counter.incrementAndGet());
     }

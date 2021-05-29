@@ -84,7 +84,15 @@ class DeferredEventObserver {
             return cast(EMPTY_FUTURE_TASK);
         }
 
-        FutureTask<? extends EventResultType> task = new FutureTask<>(action);
+        Callable<? extends EventResultType> wrapper = () -> {
+            try {
+                return action.call();
+            } catch (Throwable throwable) {
+                executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
+                throw throwable;
+            }
+        };
+        FutureTask<? extends EventResultType> task = new FutureTask<>(wrapper);
         DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, order);
 
         if (!delayedEvents.offer(event)) {
