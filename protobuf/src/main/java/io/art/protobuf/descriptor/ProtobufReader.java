@@ -37,7 +37,7 @@ import java.io.*;
 import java.nio.*;
 import java.util.*;
 
-public class ProtobufReader implements Reader<Value> {
+public class ProtobufReader implements Reader {
     @Override
     public Value read(InputStream inputStream) {
         try {

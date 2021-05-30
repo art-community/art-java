@@ -39,7 +39,7 @@ import java.util.*;
 
 
 @AllArgsConstructor
-public class YamlReader implements Reader<Value> {
+public class YamlReader implements Reader {
     private final YAMLFactory yamlFactory;
 
     @Override

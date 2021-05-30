@@ -33,7 +33,7 @@ import java.nio.charset.*;
 import java.util.*;
 
 @AllArgsConstructor
-public class JsonWriter implements Writer<Value> {
+public class JsonWriter implements Writer {
     private final JsonFactory jsonFactory;
 
     @Override

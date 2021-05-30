@@ -35,7 +35,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class MessagePackWriter implements Writer<Value> {
+public class MessagePackWriter implements Writer {
     @Override
     public void write(io.art.value.immutable.Value value, ByteBuffer buffer) {
         write(value, buffer, MessagePackException::new);

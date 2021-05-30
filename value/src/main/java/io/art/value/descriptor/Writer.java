@@ -30,8 +30,8 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.function.*;
 
-public interface Writer<T extends Value> {
-    default void write(T value, ByteBuffer buffer, Function<IOException, ? extends RuntimeException> catcher) {
+public interface Writer {
+    default void write(Value value, ByteBuffer buffer, Function<IOException, ? extends RuntimeException> catcher) {
         try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(buffer)) {
             write(value, outputStream);
         } catch (IOException ioException) {
@@ -39,7 +39,7 @@ public interface Writer<T extends Value> {
         }
     }
 
-    default void write(T value, ByteBuf buffer, Function<IOException, ? extends RuntimeException> catcher) {
+    default void write(Value value, ByteBuf buffer, Function<IOException, ? extends RuntimeException> catcher) {
         try (ByteBufOutputStream outputStream = new ByteBufOutputStream(buffer)) {
             write(value, outputStream);
         } catch (IOException ioException) {
@@ -47,7 +47,7 @@ public interface Writer<T extends Value> {
         }
     }
 
-    default byte[] writeToBytes(T value) {
+    default byte[] writeToBytes(Value value) {
         ByteBuffer buffer = allocate(DEFAULT_BUFFER_SIZE);
         try {
             return writeToBytes(value, buffer);
@@ -56,34 +56,34 @@ public interface Writer<T extends Value> {
         }
     }
 
-    default byte[] writeToBytes(T value, ByteBuffer buffer) {
+    default byte[] writeToBytes(Value value, ByteBuffer buffer) {
         write(value, buffer);
         return toByteArray(buffer);
     }
 
-    default String writeToString(T value) {
+    default String writeToString(Value value) {
         return writeToString(value, context().configuration().getCharset());
     }
 
-    default String writeToString(T value, ByteBuffer buffer) {
+    default String writeToString(Value value, ByteBuffer buffer) {
         return writeToString(value, buffer, context().configuration().getCharset());
     }
 
-    default String writeToString(T value, Charset charset) {
+    default String writeToString(Value value, Charset charset) {
         return new String(writeToBytes(value), charset);
     }
 
-    default String writeToString(T value, ByteBuffer buffer, Charset charset) {
+    default String writeToString(Value value, ByteBuffer buffer, Charset charset) {
         return new String(writeToBytes(value, buffer), charset);
     }
 
-    default void write(T value, OutputStream outputStream) {
+    default void write(Value value, OutputStream outputStream) {
         write(value, outputStream, context().configuration().getCharset());
     }
 
-    void write(T value, OutputStream outputStream, Charset charset);
+    void write(Value value, OutputStream outputStream, Charset charset);
 
-    void write(T value, ByteBuffer buffer);
+    void write(Value value, ByteBuffer buffer);
 
-    void write(T value, ByteBuf buffer);
+    void write(Value value, ByteBuf buffer);
 }

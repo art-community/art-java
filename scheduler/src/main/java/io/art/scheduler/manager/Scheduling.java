@@ -30,7 +30,7 @@ import java.time.*;
 import java.util.concurrent.*;
 
 @UtilityClass
-public class SchedulersManager {
+public class Scheduling {
     public static <T> Future<? extends T> schedule(Callable<? extends T> task) {
         return deferredExecutor().submit(task, now());
     }

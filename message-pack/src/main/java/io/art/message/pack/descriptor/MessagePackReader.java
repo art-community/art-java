@@ -38,7 +38,7 @@ import java.nio.*;
 import java.util.*;
 
 
-public class MessagePackReader implements Reader<Value> {
+public class MessagePackReader implements Reader {
     public Value read(InputStream inputStream) {
         try (MessageUnpacker unpacker = newDefaultUnpacker(inputStream)) {
             return read(unpacker.unpackValue());

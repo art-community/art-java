@@ -38,7 +38,7 @@ import java.util.*;
 
 
 @AllArgsConstructor
-public class JsonReader implements Reader<Value> {
+public class JsonReader implements Reader {
     private final JsonFactory jsonFactory;
 
     @Override

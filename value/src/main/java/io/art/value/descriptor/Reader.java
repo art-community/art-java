@@ -26,26 +26,26 @@ import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
 
-public interface Reader<T extends Value> {
-    default T read(byte[] bytes) {
+public interface Reader {
+    default Value read(byte[] bytes) {
         return read(new ByteArrayInputStream(bytes));
     }
 
-    default T read(ByteBuffer nioBuffer) {
+    default Value read(ByteBuffer nioBuffer) {
         return read(new NioByteBufferInputStream(nioBuffer));
     }
 
-    default T read(ByteBuf nettyBuffer) {
+    default Value read(ByteBuf nettyBuffer) {
         return read(new ByteBufInputStream(nettyBuffer));
     }
 
-    default T read(String string) {
+    default Value read(String string) {
         return read(string, context().configuration().getCharset());
     }
 
-    default T read(String string, Charset charset) {
+    default Value read(String string, Charset charset) {
         return read(string.getBytes(charset));
     }
 
-    T read(InputStream input);
+    Value read(InputStream input);
 }

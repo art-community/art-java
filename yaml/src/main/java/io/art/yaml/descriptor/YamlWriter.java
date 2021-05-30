@@ -33,7 +33,7 @@ import java.nio.charset.*;
 import java.util.*;
 
 @AllArgsConstructor
-public class YamlWriter implements Writer<Value> {
+public class YamlWriter implements Writer {
     private final YAMLFactory yamlFactory;
 
     @Override
