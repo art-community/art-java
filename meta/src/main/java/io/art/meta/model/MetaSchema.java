@@ -57,16 +57,21 @@ public class MetaSchema<T> {
         objectCreators = new Creator[objectProperties.size()];
         getterFromModel = new Getter[gettableProperties.size()];
 
-        for (MetaProperty<?> property : primitiveProperties) {
-            primitiveCreators[property.index()] = new Creator(property.index(), stringPrimitive(property.name()), property.type().toModel(), property.type().primitiveType());
+        for (int index = 0; index < primitiveProperties.size(); index++) {
+            MetaProperty<?> property = primitiveProperties.get(index);
+            Primitive name = stringPrimitive(property.name());
+            primitiveCreators[index] = new Creator(property.index(), name, property.type().toModel(), property.type().primitiveType());
         }
 
-        for (MetaProperty<?> property : objectProperties) {
-            objectCreators[property.index()] = new Creator(property.index(), stringPrimitive(property.name()), property.type().toModel());
+        for (int index = 0; index < objectProperties.size(); index++) {
+            MetaProperty<?> property = objectProperties.get(index);
+            Primitive name = stringPrimitive(property.name());
+            objectCreators[index] = new Creator(property.index(), name, property.type().toModel());
         }
 
-        for (MetaProperty<?> property : gettableProperties) {
-            getterFromModel[property.index()] = new Getter(property.name(), property.getter(), property.type().fromModel());
+        for (int index = 0; index < gettableProperties.size(); index++) {
+            MetaProperty<?> property = gettableProperties.get(index);
+            getterFromModel[index] = new Getter(property.name(), property.getter(), property.type().fromModel());
         }
     }
 

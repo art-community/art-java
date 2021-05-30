@@ -23,6 +23,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
+import io.art.meta.type.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -33,6 +34,7 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
+import static io.art.meta.type.TypeInspector.isBoolean;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -151,13 +153,15 @@ public abstract class MetaClass<T> {
         for (MetaConstructor<T> constructor : constructors) {
             constructor.parameters().values().forEach(parameter -> parameter.type().compute());
 
-            MetaField<?>[] fields = this.fields.values().toArray(new MetaField[0]);
+            Collection<MetaField<?>> fields = this.fields.values();
             MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
-            if (fields.length != parameters.length) continue;
-            for (int index = 0; index < fields.length; index++) {
+            if (fields.size() != parameters.length) continue;
+            for (int index = 0; index < fields.size(); index++) {
                 MetaParameter<?> parameter = parameters[index];
-                MetaField<?> field = fields[index];
-                if (parameter.name().equals(field.name()) && parameter.type().equals(field.type())) {
+                boolean hasField = fields
+                        .stream()
+                        .anyMatch(field -> parameter.name().equals(field.name()) && parameter.type().equals(field.type()));
+                if (hasField) {
                     allArgumentsConstructor = constructor;
                     break;
                 }
@@ -176,7 +180,7 @@ public abstract class MetaClass<T> {
             Optional<MetaMethod<?>> getter = methods
                     .stream()
                     .filter(method -> !method.isStatic())
-                    .filter(method -> method.name().equals(GET_NAME + capitalize(field.name())))
+                    .filter(method -> method.name().equals(GET_NAME + capitalize(field.name())) || (isBoolean(field.type().type()) && method.name().equals(IS_NAME + capitalize(field.name()))))
                     .filter(method -> method.parameters().isEmpty())
                     .filter(method -> method.returnType().equals(field.type()))
                     .findFirst();

@@ -90,8 +90,8 @@ public class MetaType<T> {
         }
 
         MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters));
-        toModel = typedMetaClass.schema()::toModel;
-        fromModel = typedMetaClass.schema()::fromModel;
+        toModel = value -> typedMetaClass.schema().toModel(value);
+        fromModel = value -> typedMetaClass.schema().fromModel(value);
         return this;
     }
 
@@ -123,7 +123,7 @@ public class MetaType<T> {
                 .primitive(type.isPrimitive())
                 .flux(isFlux(type))
                 .mono(isMono(type))
-                .voidType(isVoid(type))
+                .voidType(isPrimitiveVoid(type))
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))

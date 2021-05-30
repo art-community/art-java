@@ -30,11 +30,11 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
     }
 
     public R invoke(I instance) {
-        throw new NotImplementedException("invoke(create)");
+        throw new NotImplementedException("invoke(instance)");
     }
 
     public R invoke(I instance, Object argument) {
-        throw new NotImplementedException("invoke(create, argument)");
+        throw new NotImplementedException("invoke(instance, argument)");
     }
 
     public abstract R invoke(I instance, Object[] arguments);

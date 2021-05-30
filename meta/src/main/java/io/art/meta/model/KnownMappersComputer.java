@@ -48,6 +48,12 @@ class KnownMappersComputer {
         boolean array = type.array();
         boolean primitive = type.primitive();
         ImmutableSet<MetaType<?>> parameters = type.parameters();
+        if (isVoid(rawType)) {
+            return cast(mapper(ignore -> null, ignore -> null));
+        }
+        if (isObject(rawType) || isValue(rawType)) {
+            return cast(mapper(ValueFromModelMapper.identity(), ValueToModelMapper.identity()));
+        }
         if (isByteArray(rawType)) {
             return cast(mapper(fromBinary, toBinary));
         }
@@ -119,9 +125,6 @@ class KnownMappersComputer {
                 return cast(mapper(fromDuration, toDuration));
             }
             throw new MetaException(format(UNSUPPORTED_TYPE, type));
-        }
-        if (isObject(rawType) || isValue(rawType)) {
-            return cast(mapper(ValueFromModelMapper.identity(), ValueToModelMapper.identity()));
         }
         if (isEmpty(parameters)) {
             throw new MetaException(format(UNSUPPORTED_TYPE, type));

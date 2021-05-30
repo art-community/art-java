@@ -64,11 +64,11 @@ public abstract class MetaPackage {
         return immutableMapOf(classes);
     }
 
-    public <T extends MetaPackage> T packageOf(String name) {
+    public MetaPackage packageOf(String name) {
         return cast(packages.get(name));
     }
 
-    public <T extends MetaClass<?>> T classOf(Class<?> type) {
+    public <T> MetaClass<T> classOf(Class<T> type) {
         return cast(classes.get(type));
     }
 }
