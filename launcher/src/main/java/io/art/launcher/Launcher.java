@@ -35,6 +35,7 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
+import static io.art.logging.module.LoggingModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
@@ -48,7 +49,7 @@ public class Launcher {
         if (LAUNCHED.compareAndSet(false, true)) {
             ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
-            LazyProperty<Logger> logger = lazy(() -> LoggingModule.logger(LAUNCHER_LOGGER));
+            LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());

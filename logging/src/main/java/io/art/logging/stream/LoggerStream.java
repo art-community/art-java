@@ -20,19 +20,22 @@ package io.art.logging.stream;
 
 import io.art.logging.logger.*;
 import java.io.*;
+import java.util.function.*;
 
 public class LoggerStream extends PrintStream {
     private final Logger logger;
+    private final BiConsumer<Logger, String> writer;
 
-    public LoggerStream(Logger logger) {
+    public LoggerStream(Logger logger, BiConsumer<Logger, String> writer) {
         super(new ByteArrayOutputStream(), true);
         this.logger = logger;
+        this.writer = writer;
     }
 
     @Override
     public void flush() {
         super.flush();
         ByteArrayOutputStream stream = (ByteArrayOutputStream) this.out;
-        logger.info(stream.toString());
+        writer.accept(logger, stream.toString());
     }
 }

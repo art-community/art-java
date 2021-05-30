@@ -18,17 +18,12 @@
 
 package io.art.value.constants;
 
-import io.art.core.collection.*;
 import io.art.value.exception.*;
-import io.art.value.factory.*;
 import io.art.value.immutable.*;
-import io.art.value.immutable.Value;
-import io.art.value.mapper.*;
 import lombok.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static java.text.MessageFormat.*;
-import java.lang.reflect.*;
 
 public interface ValueModuleConstants {
     interface Fields {
@@ -101,6 +96,7 @@ public interface ValueModuleConstants {
                         throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, this));
                 }
             }
+
             public static ValueType asValueType(PrimitiveType primitiveType) {
                 switch (primitiveType) {
                     case STRING:
@@ -142,11 +138,6 @@ public interface ValueModuleConstants {
                         throw new ValueMappingException(format(NOT_PRIMITIVE_TYPE, primitiveType));
                 }
             }
-        }
-
-        public enum XmlValueType {
-            STRING,
-            CDATA
         }
     }
 
