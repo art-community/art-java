@@ -37,9 +37,6 @@ public interface ValueFromModelMapper<T, V extends Value> extends Serializable {
     interface BinaryFromModelMapper<T> extends ValueFromModelMapper<T, BinaryValue> {
     }
 
-    interface XmlFromModelMapper<T> extends ValueFromModelMapper<T, XmlEntity> {
-    }
-
     static <V1 extends Value, V2 extends Value> ValueFromModelMapper<V1, V2> identity() {
         return Caster::cast;
     }

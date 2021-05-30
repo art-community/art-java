@@ -23,7 +23,6 @@ import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
 import io.art.protobuf.descriptor.*;
 import io.art.value.immutable.Value;
-import io.art.xml.descriptor.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
@@ -31,10 +30,6 @@ import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.protobuf.module.ProtobufModule.*;
 import static io.art.value.constants.ValueModuleConstants.*;
-import static io.art.value.constants.ValueModuleConstants.ValueType.*;
-import static io.art.value.immutable.Value.*;
-import static io.art.value.xml.XmlEntityFromEntityConverter.*;
-import static io.art.xml.module.XmlModule.*;
 import static io.art.yaml.module.YamlModule.*;
 import static io.netty.buffer.ByteBufAllocator.*;
 import static lombok.AccessLevel.*;
@@ -52,9 +47,6 @@ public class TransportPayloadWriter {
 
     @Getter(lazy = true, value = PRIVATE)
     private static final JsonWriter jsonWriter = jsonModule().configuration().getWriter();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final XmlWriter xmlWriter = xmlModule().configuration().getWriter();
 
     @Getter(lazy = true, value = PRIVATE)
     private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getWriter();
@@ -78,12 +70,6 @@ public class TransportPayloadWriter {
                 return value -> {
                     ByteBuf buffer = DEFAULT.ioBuffer();
                     getJsonWriter().write(value, buffer);
-                    return buffer;
-                };
-            case XML:
-                return value -> {
-                    ByteBuf buffer = DEFAULT.ioBuffer();
-                    getXmlWriter().write(value.getType() == XML ? asXml(value) : toXmlTags(asEntity(value)), buffer);
                     return buffer;
                 };
             case MESSAGE_PACK:

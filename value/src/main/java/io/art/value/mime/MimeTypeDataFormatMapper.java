@@ -33,8 +33,6 @@ public class MimeTypeDataFormatMapper {
     public static DataFormat fromMimeType(MimeType type) {
         if (APPLICATION_JSON.equals(type)) return JSON;
         if (APPLICATION_PROTOBUF.equals(type)) return PROTOBUF;
-        if (APPLICATION_XML.equals(type)) return XML;
-        if (TEXT_XML.equals(type)) return XML;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
@@ -44,8 +42,6 @@ public class MimeTypeDataFormatMapper {
     public static DataFormat fromMimeType(MimeType type, DataFormat fallback) {
         if (APPLICATION_JSON.equals(type)) return JSON;
         if (APPLICATION_PROTOBUF.equals(type)) return PROTOBUF;
-        if (APPLICATION_XML.equals(type)) return XML;
-        if (TEXT_XML.equals(type)) return XML;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
@@ -58,8 +54,6 @@ public class MimeTypeDataFormatMapper {
                 return APPLICATION_PROTOBUF;
             case JSON:
                 return APPLICATION_JSON;
-            case XML:
-                return APPLICATION_XML;
             case MESSAGE_PACK:
                 return APPLICATION_MESSAGE_PACK;
             case YAML:
@@ -74,8 +68,6 @@ public class MimeTypeDataFormatMapper {
                 return APPLICATION_PROTOBUF.withParameter(PARAM_CHARSET, charset.name());
             case JSON:
                 return APPLICATION_JSON.withParameter(PARAM_CHARSET, charset.name());
-            case XML:
-                return APPLICATION_XML.withParameter(PARAM_CHARSET, charset.name());
             case MESSAGE_PACK:
                 return APPLICATION_MESSAGE_PACK.withParameter(PARAM_CHARSET, charset.name());
             case YAML:

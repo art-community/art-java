@@ -52,7 +52,6 @@ public interface ValueModuleConstants {
         String UNKNOWN_VALUE_TYPE = "Unknown emit type: ''{0}''";
         String TUPLE_NOT_SUPPORTED_VALUE_TYPE = "Value type: ''{0}'' not support for tuples";
         String NOT_PRIMITIVE_TYPE = "Not primitive type: ''{0}''";
-        String XML_TAG_IS_EMPTY = "Xml tag is empty";
         String INDEX_MAPPING_EXCEPTION = "Exception occurred during mapping array element ''{0}'':";
         String FIELD_MAPPING_EXCEPTION = "Exception occurred during mapping entity field ''{0}'':";
         String EMPTY_VALIDATION_EXPRESSIONS = "Please provide any validation expression";
@@ -62,7 +61,6 @@ public interface ValueModuleConstants {
     enum ValueType {
         ENTITY,
         ARRAY,
-        XML,
         STRING,
         LONG,
         DOUBLE,
@@ -158,7 +156,6 @@ public interface ValueModuleConstants {
         PROTOBUF("protobuf"),
         JSON("json"),
         YAML("yaml"),
-        XML("xml"),
         MESSAGE_PACK("messagePack");
 
         private final String format;
@@ -167,7 +164,6 @@ public interface ValueModuleConstants {
             if (PROTOBUF.format.equalsIgnoreCase(format)) return PROTOBUF;
             if (JSON.format.equalsIgnoreCase(format)) return JSON;
             if (YAML.format.equalsIgnoreCase(format)) return YAML;
-            if (XML.format.equalsIgnoreCase(format)) return XML;
             if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;
             return fallback;
         }

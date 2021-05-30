@@ -23,7 +23,6 @@ import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
 import io.art.protobuf.descriptor.*;
 import io.art.value.constants.ValueModuleConstants.*;
-import io.art.xml.descriptor.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
@@ -32,7 +31,6 @@ import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.protobuf.module.ProtobufModule.*;
 import static io.art.transport.payload.TransportPayload.*;
-import static io.art.xml.module.XmlModule.*;
 import static io.art.yaml.module.YamlModule.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -51,9 +49,6 @@ public class TransportPayloadReader {
     private static final JsonReader jsonReader = jsonModule().configuration().getReader();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final XmlReader xmlReader = xmlModule().configuration().getReader();
-
-    @Getter(lazy = true, value = PRIVATE)
     private static final MessagePackReader messagePackReader = messagePackModule().configuration().getReader();
 
     @Getter(lazy = true, value = PRIVATE)
@@ -69,8 +64,6 @@ public class TransportPayloadReader {
                 return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getProtobufReader().read(buffer)));
             case JSON:
                 return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getJsonReader().read(buffer)));
-            case XML:
-                return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getXmlReader().read(buffer)));
             case MESSAGE_PACK:
                 return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getMessagePackReader().read(buffer)));
             case YAML:

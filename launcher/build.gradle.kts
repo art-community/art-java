@@ -27,7 +27,6 @@ dependencies {
     implementation(project(":yaml"))
     implementation(project(":protobuf"))
     implementation(project(":message-pack"))
-    implementation(project(":xml"))
     implementation(project(":transport"))
     implementation(project(":server"))
     implementation(project(":communicator"))

@@ -37,7 +37,6 @@ dependencies {
     implementation(project(":json"))
     implementation(project(":protobuf"))
     implementation(project(":message-pack"))
-    implementation(project(":xml"))
     implementation(project(":server"))
     implementation(project(":communicator"))
     implementation(project(":rsocket"))

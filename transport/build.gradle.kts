@@ -23,6 +23,5 @@ dependencies {
     implementation(project(":protobuf"))
     implementation(project(":json"))
     implementation(project(":yaml"))
-    implementation(project(":xml"))
     implementation(project(":message-pack"))
 }

@@ -44,10 +44,6 @@ public interface Value {
         return (BinaryValue) value;
     }
 
-    static XmlEntity asXml(Value value) {
-        return (XmlEntity) value;
-    }
-
     static boolean isPrimitive(Value value) {
         if (Objects.isNull(value)) return false;
         return Value.isPrimitiveType(value.getType());
@@ -61,11 +57,6 @@ public interface Value {
     static boolean isArray(Value value) {
         if (Objects.isNull(value)) return false;
         return Value.isArrayType(value.getType());
-    }
-
-    static boolean isXml(Value value) {
-        if (Objects.isNull(value)) return false;
-        return Value.isXmlType(value.getType());
     }
 
     static boolean isBinary(Value value) {
@@ -99,11 +90,6 @@ public interface Value {
         return type == ARRAY;
     }
 
-    static boolean isXmlType(ValueType type) {
-        if (Objects.isNull(type)) return false;
-        return type == XML;
-    }
-
     static boolean isBinaryType(ValueType type) {
         if (Objects.isNull(type)) return false;
         return type == BINARY;
@@ -124,9 +110,6 @@ public interface Value {
         }
         if (Value.isBinary(value)) {
             return Value.asBinary(value).getContent() == EMPTY_BYTES;
-        }
-        if (Value.isXml(value)) {
-            return isEmpty(Value.asXml(value).getTag()) && isEmpty(Value.asXml(value).getChildren());
         }
         throw new ValueMappingException(format(value.getType().name(), UNKNOWN_VALUE_TYPE));
     }
