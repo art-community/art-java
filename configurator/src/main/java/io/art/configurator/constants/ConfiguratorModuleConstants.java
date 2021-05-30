@@ -45,9 +45,9 @@ public interface ConfiguratorModuleConstants {
     }
 
     interface FileConfigurationExtensions {
-        String PROPERTIES_EXTENSION = "properties";
         String YAML_EXTENSION = "yaml";
         String YML_EXTENSION = "yml";
+        String PROPERTIES_EXTENSION = "properties";
         String JSON_EXTENSION = "json";
         String CONF_EXTENSION = "conf";
         String HOCON_EXTENSION = "hocon";
