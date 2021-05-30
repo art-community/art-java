@@ -29,10 +29,6 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
         super(name, returnType);
     }
 
-    protected InstanceMetaMethod(MetaMethod<R> base) {
-        super(base);
-    }
-
     public R invoke(I instance) {
         throw new NotImplementedException("invoke(create)");
     }

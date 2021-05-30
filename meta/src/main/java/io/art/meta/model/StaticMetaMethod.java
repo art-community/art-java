@@ -29,10 +29,6 @@ public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
         super(name, returnType);
     }
 
-    public StaticMetaMethod(MetaMethod<T> base) {
-        super(base);
-    }
-
     public T invoke() {
         throw new NotImplementedException("invoke()");
     }
