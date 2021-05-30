@@ -37,7 +37,7 @@ public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
         throw new NotImplementedException("invoke(argument)");
     }
 
-    public abstract T invoke(Object... arguments);
+    public abstract T invoke(Object[] arguments);
 
     @Override
     public boolean isStatic() {

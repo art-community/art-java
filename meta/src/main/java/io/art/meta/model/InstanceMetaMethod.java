@@ -37,7 +37,7 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
         throw new NotImplementedException("invoke(create, argument)");
     }
 
-    public abstract R invoke(I instance, Object... arguments);
+    public abstract R invoke(I instance, Object[] arguments);
 
     @Override
     public boolean isStatic() {

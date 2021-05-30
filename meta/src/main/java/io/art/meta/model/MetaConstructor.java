@@ -76,5 +76,5 @@ public abstract class MetaConstructor<T> {
         throw new NotImplementedException("invoke(argument)");
     }
 
-    public abstract T invoke(Object... arguments);
+    public abstract T invoke(Object[] arguments);
 }
