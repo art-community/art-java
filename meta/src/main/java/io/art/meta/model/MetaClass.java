@@ -23,7 +23,6 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
-import io.art.meta.type.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -34,7 +33,7 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
-import static io.art.meta.type.TypeInspector.isBoolean;
+import static io.art.meta.type.TypeInspector.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -179,10 +178,7 @@ public abstract class MetaClass<T> {
 
             Optional<MetaMethod<?>> getter = methods
                     .stream()
-                    .filter(method -> !method.isStatic())
-                    .filter(method -> method.name().equals(GET_NAME + capitalize(field.name())) || (isBoolean(field.type().type()) && method.name().equals(IS_NAME + capitalize(field.name()))))
-                    .filter(method -> method.parameters().isEmpty())
-                    .filter(method -> method.returnType().equals(field.type()))
+                    .filter(method -> isGetter(field, method))
                     .findFirst();
 
             getter.ifPresent(metaMethod -> builder.getter(cast(metaMethod)));
@@ -219,6 +215,14 @@ public abstract class MetaClass<T> {
                 .build();
     }
 
+    private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
+        if (method.isStatic()) return false;
+        if (!method.parameters().isEmpty()) return false;
+        if (!method.returnType().equals(field.type())) return false;
+        if (method.name().equals(GET_NAME + capitalize(field.name()))) return true;
+        if (method.name().equals(field.name())) return true;
+        return isBoolean(field.type().type()) && method.name().equals(IS_NAME + capitalize(field.name()));
+    }
 
     public MetaType<T> type() {
         return type;
