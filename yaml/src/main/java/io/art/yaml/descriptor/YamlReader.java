@@ -76,7 +76,6 @@ public class YamlReader implements Reader {
         }
     }
 
-
     private static Entity parseEntity(YAMLParser parser) throws IOException {
         EntityBuilder entityBuilder = entityBuilder();
         JsonToken currentToken = parser.nextToken();
