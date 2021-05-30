@@ -83,7 +83,7 @@ public class TransportPayloadWriter {
             case XML:
                 return value -> {
                     ByteBuf buffer = DEFAULT.ioBuffer();
-                    getXmlWriter().write(value.getType() == XML ? asXml(value) : fromEntityAsTags(asEntity(value)), buffer);
+                    getXmlWriter().write(value.getType() == XML ? asXml(value) : toXmlTags(asEntity(value)), buffer);
                     return buffer;
                 };
             case MESSAGE_PACK:

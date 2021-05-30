@@ -56,42 +56,8 @@ public class XmlEntity implements Value {
         return new XmlEntityBuilder();
     }
 
-    public static XmlEntity createMandatoryChild(String prefix, String namespace, String tag, Object value) {
-        return createChild(prefix, namespace, tag, emptyIfNull(value));
-    }
-
-    public static XmlEntity createChild(String prefix, String namespace, String tag, Object value) {
-        if (Objects.isNull(value)) {
-            return null;
-        }
-        return xmlEntityBuilder()
-                .prefix(prefix)
-                .namespace(namespace)
-                .namespaceField(prefix, namespace)
-                .tag(tag)
-                .value(value.toString())
-                .create();
-    }
-
-    public static XmlEntity createEntity(String prefix, String namespace, String tag, XmlEntity value) {
-        if (Objects.isNull(value)) {
-            return null;
-        }
-        return xmlEntityBuilder()
-                .prefix(prefix)
-                .namespace(namespace)
-                .namespaceField(prefix, namespace)
-                .tag(tag)
-                .cData(value)
-                .create();
-    }
-
-    public String getValue() {
+    public String asString() {
         return (Objects.isNull(value)) ? null : emptyIfNull(value.getValue());
-    }
-
-    public XmlValue<?> getXmlValue() {
-        return value;
     }
 
     public XmlEntity find(String tag) {
@@ -136,7 +102,7 @@ public class XmlEntity implements Value {
     }
 
     public ImmutableArray<String> getChildValues(String tagName) {
-        return getChildren(tagName).stream().map(XmlEntity::getValue).collect(immutableArrayCollector());
+        return getChildren(tagName).stream().map(XmlEntity::asString).collect(immutableArrayCollector());
     }
 
     public ImmutableMap<String, String> getAttributes(String tagName) {
@@ -158,7 +124,7 @@ public class XmlEntity implements Value {
     public String getValueByTag(String tag) {
         XmlEntity xmlEntity = find(tag);
         if (!Value.valueIsEmpty(xmlEntity)) {
-            return xmlEntity.getValue();
+            return xmlEntity.asString();
         }
         return EMPTY_STRING;
     }

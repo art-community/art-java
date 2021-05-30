@@ -23,6 +23,8 @@ import io.art.value.builder.*;
 import io.art.value.immutable.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
@@ -35,10 +37,10 @@ import java.util.*;
 
 @UtilityClass
 public final class XmlEntityToEntityConverter {
-    public static Entity toEntityFromTags(XmlEntity xmlEntity) {
-        if (Value.valueIsNull(xmlEntity)) return null;
+    public static Entity fromXmlTags(XmlEntity xmlEntity) {
+        if (valueIsNull(xmlEntity)) return null;
         EntityBuilder entityBuilder = entityBuilder();
-        String value = xmlEntity.getValue();
+        String value = xmlEntity.asString();
         if (isNotEmpty(value)) {
             entityBuilder.put(xmlEntity.getTag(), stringPrimitive(value));
         }
@@ -48,35 +50,32 @@ public final class XmlEntityToEntityConverter {
             EntityBuilder innerEntityBuilder = entityBuilder();
             for (XmlEntity child : children) {
                 if (isEmpty(child.getChildren())) {
-                    innerEntityBuilder.put(child.getTag(), stringPrimitive(child.getValue()));
+                    innerEntityBuilder.put(child.getTag(), stringPrimitive(child.asString()));
                     continue;
                 }
-                Entity innerEntity = toEntityFromTags(child);
+                Entity innerEntity = fromXmlTags(child);
                 if (isNull(innerEntity)) continue;
                 innerEntityBuilder.put(child.getTag(), innerEntity.get(child.getTag()));
             }
             return entityBuilder.put(xmlEntity.getTag(), innerEntityBuilder.build()).build();
         }
-        ImmutableArray.Builder<Value> collection = ImmutableArray.immutableArrayBuilder(children.size());
+        ImmutableArray.Builder<Value> collection = immutableArrayBuilder(children.size());
         for (XmlEntity child : children) {
-            if (isEmpty(child.getChildren()) && isEmpty(child.getValue())) {
+            if (isEmpty(child.getChildren()) && isEmpty(child.asString())) {
                 collection.add(stringPrimitive(child.getTag()));
                 continue;
             }
             if (isEmpty(child.getChildren())) {
-                collection.add(entityBuilder().put(child.getTag(), stringPrimitive(child.getValue())).build());
+                collection.add(entityBuilder().put(child.getTag(), stringPrimitive(child.asString())).build());
                 continue;
             }
-            Entity entity = toEntityFromTags(child);
-            if (nonNull(entity)) {
-                collection.add(entity);
-            }
+            let(fromXmlTags(child), collection::add);
         }
         return entityBuilder.put(xmlEntity.getTag(), array(collection.build())).build();
     }
 
-    public static Entity toEntityFromAttributes(XmlEntity xmlEntity) {
-        if (Value.valueIsEmpty(xmlEntity)) {
+    public static Entity fromXmlAttributes(XmlEntity xmlEntity) {
+        if (valueIsEmpty(xmlEntity)) {
             return null;
         }
         Map<Primitive, Primitive> attributes = xmlEntity.getAttributes()

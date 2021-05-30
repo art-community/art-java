@@ -138,14 +138,14 @@ public class XmlWriter implements Writer<XmlEntity> {
     }
 
     private void writeCharacters(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        String value = entity.getValue();
+        String value = entity.asString();
         if (nonNull(value)) {
             xmlStreamWriter.writeCharacters(value);
         }
     }
 
     private void writeCData(XMLStreamWriter xmlStreamWriter, XmlEntity entity) throws XMLStreamException {
-        XmlValue<?> xmlValue = entity.getXmlValue();
+        XmlValue<?> xmlValue = entity.getValue();
         if (CDATA.equals(xmlValue.getType())) {
             xmlStreamWriter.writeCData(writeToString((XmlEntity) xmlValue.getValue()));
         }

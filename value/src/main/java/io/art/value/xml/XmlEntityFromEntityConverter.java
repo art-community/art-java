@@ -19,8 +19,8 @@
 package io.art.value.xml;
 
 import io.art.core.checker.*;
-import io.art.value.immutable.*;
 import io.art.value.immutable.Value;
+import io.art.value.immutable.*;
 import lombok.*;
 import static io.art.value.factory.XmlEntityFactory.*;
 import static io.art.value.immutable.Value.*;
@@ -30,7 +30,7 @@ import java.util.*;
 
 @NoArgsConstructor(access = PRIVATE)
 public final class XmlEntityFromEntityConverter {
-    public static XmlEntity fromEntityAsTags(Entity entity) {
+    public static XmlEntity toXmlTags(Entity entity) {
         if (valueIsNull(entity)) return null;
         XmlEntityBuilder builder = xmlEntityBuilder();
         if (valueIsEmpty(entity)) return emptyXmlEntity();
@@ -44,7 +44,7 @@ public final class XmlEntityFromEntityConverter {
         return builder.create();
     }
 
-    public static XmlEntity fromEntityAsAttributes(String tag, Entity entity) {
+    public static XmlEntity toXmlAttributes(String tag, Entity entity) {
         if (EmptinessChecker.isEmpty(tag) || valueIsNull(entity)) {
             return null;
         }
@@ -73,7 +73,7 @@ public final class XmlEntityFromEntityConverter {
         builder = builder.child().tag(name);
         switch (value.getType()) {
             case ENTITY:
-                builder.child(fromEntityAsTags(asEntity(value))).attach();
+                builder.child(toXmlTags(asEntity(value))).attach();
                 return;
             case STRING:
             case LONG:
@@ -98,7 +98,7 @@ public final class XmlEntityFromEntityConverter {
             if (valueIsNull(element)) continue;
             switch (element.getType()) {
                 case ENTITY:
-                    builder.child(fromEntityAsTags(asEntity(element)));
+                    builder.child(toXmlTags(asEntity(element)));
                     break;
                 case STRING:
                 case LONG:
