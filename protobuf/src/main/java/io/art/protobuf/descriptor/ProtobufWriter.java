@@ -36,7 +36,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class ProtobufWriter implements Writer<io.art.value.immutable.Value> {
+public class ProtobufWriter implements Writer {
     @Override
     public void write(io.art.value.immutable.Value value, ByteBuffer buffer) {
         write(value, buffer, ProtobufException::new);
