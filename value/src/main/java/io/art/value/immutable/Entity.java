@@ -18,6 +18,7 @@
 
 package io.art.value.immutable;
 
+import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.factory.*;
@@ -57,8 +58,8 @@ public class Entity implements Value {
     public Entity(Set<Primitive> keys, Function<Primitive, ? extends Value> valueProvider) {
         this.keys = keys;
         this.valueProvider = valueProvider;
-        asMap = asMap(key -> key, key -> key, value -> value);
-        asImmutableMap = asImmutableMap(key -> key, key -> key, value -> value);
+        asMap = new ProxyMap<>();
+        asImmutableMap = cast(asMap);
     }
 
     public static EntityBuilder entityBuilder() {
@@ -256,6 +257,13 @@ public class Entity implements Value {
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyProperty<Map<K, V>> evaluated;
         private final Set<K> fields;
+
+        public ProxyMap() {
+            this.valueMapper = Caster::cast;
+            this.fromKeyMapper = Caster::cast;
+            this.evaluated = lazy(() -> Entity.this.toMap(Caster::cast, valueMapper));
+            this.fields = cast(keys);
+        }
 
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;

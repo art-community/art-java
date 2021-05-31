@@ -17,8 +17,14 @@ public class DisposableProperty<T> implements Supplier<T> {
     private volatile T value;
     private final Supplier<T> loader;
     private final AtomicBoolean initialized = new AtomicBoolean();
+
+    @Getter(lazy = true)
     private final Queue<Consumer<T>> creationConsumers = queue();
+
+    @Getter(lazy = true)
     private final List<Consumer<T>> initializationConsumers = linkedList();
+
+    @Getter(lazy = true)
     private final List<Consumer<T>> disposeConsumers = linkedList();
 
     public DisposableProperty<T> initialize() {
@@ -28,17 +34,17 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public DisposableProperty<T> created(Consumer<T> consumer) {
-        creationConsumers.add(consumer);
+        getCreationConsumers().add(consumer);
         return this;
     }
 
     public DisposableProperty<T> initialized(Consumer<T> consumer) {
-        initializationConsumers.add(consumer);
+        getInitializationConsumers().add(consumer);
         return this;
     }
 
     public DisposableProperty<T> disposed(Consumer<T> consumer) {
-        disposeConsumers.add(consumer);
+        getDisposeConsumers().add(consumer);
         return this;
     }
 
@@ -57,7 +63,7 @@ public class DisposableProperty<T> implements Supplier<T> {
             if (this.initialized.compareAndSet(true, false)) {
                 T current = value;
                 value = null;
-                disposeConsumers.forEach(consumer -> consumer.accept(current));
+                getDisposeConsumers().forEach(consumer -> consumer.accept(current));
             }
         }
     }
@@ -69,8 +75,8 @@ public class DisposableProperty<T> implements Supplier<T> {
             if (nonNull(value)) return value;
             if (this.initialized.compareAndSet(false, true)) {
                 value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-                erase(creationConsumers, consumer -> consumer.accept(value));
-                initializationConsumers.forEach(consumer -> consumer.accept(value));
+                erase(getCreationConsumers(), consumer -> consumer.accept(value));
+                getInitializationConsumers().forEach(consumer -> consumer.accept(value));
             }
         }
     }
