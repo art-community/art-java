@@ -48,6 +48,7 @@ public abstract class MetaClass<T> {
     private final Set<MetaConstructor<T>> constructors;
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
+    private final Map<Class<?>, MetaClass<?>> classes;
     private Map<String, MetaType<?>> variables;
     private MetaSchema<T> schema;
 
@@ -57,6 +58,7 @@ public abstract class MetaClass<T> {
         fields = map();
         methods = set();
         variables = map();
+        classes = map();
         MetaClassRegistry.register(this);
     }
 
@@ -66,6 +68,7 @@ public abstract class MetaClass<T> {
         fields = base.fields;
         methods = base.methods;
         variables = base.variables;
+        classes = base.classes;
         schema = base.schema;
     }
 
@@ -89,6 +92,11 @@ public abstract class MetaClass<T> {
 
     protected MetaType<?> register(MetaType<?> variable) {
         return variables.putIfAbsent(variable.variable().name(), variable);
+    }
+
+    protected <C extends MetaClass<?>> C register(C metaClass) {
+        classes.put(metaClass.type().type(), metaClass);
+        return metaClass;
     }
 
     protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
@@ -121,6 +129,10 @@ public abstract class MetaClass<T> {
 
         for (MetaMethod<?> method : methods) {
             parametrized.methods.add(method.parameterize(variableToParameter));
+        }
+
+        for (MetaClass<?> inner : classes.values()) {
+            classes.put(inner.type.type(), inner.parameterize(parameters));
         }
 
         parametrized.variables.clear();
@@ -250,6 +262,10 @@ public abstract class MetaClass<T> {
 
     public ImmutableSet<MetaConstructor<T>> constructors() {
         return immutableSetOf(constructors);
+    }
+
+    public ImmutableMap<Class<?>, MetaClass<?>> classes() {
+        return immutableMapOf(classes);
     }
 
     public MetaSchema<T> schema() {
