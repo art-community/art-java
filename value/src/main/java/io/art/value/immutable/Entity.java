@@ -31,9 +31,9 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.QueueFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.value.constants.ValueModuleConstants.ExceptionMessages.*;
 import static io.art.value.constants.ValueModuleConstants.ValueType.*;
@@ -52,11 +52,13 @@ public class Entity implements Value {
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
     private final Map<Primitive, Value> asMap;
+    private final ImmutableMap<Primitive, Value> asImmutableMap;
 
     public Entity(Set<Primitive> keys, Function<Primitive, ? extends Value> valueProvider) {
         this.keys = keys;
         this.valueProvider = valueProvider;
         asMap = asMap(key -> key, key -> key, value -> value);
+        asImmutableMap = asImmutableMap(key -> key, key -> key, value -> value);
     }
 
     public static EntityBuilder entityBuilder() {
@@ -213,7 +215,7 @@ public class Entity implements Value {
 
 
     public ImmutableMap<Primitive, ? extends Value> asImmutableMap() {
-        return asImmutableMap(key -> key, key -> key, value -> value);
+        return asImmutableMap;
     }
 
     public <K, V> ImmutableMap<K, V> asImmutableMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
@@ -253,13 +255,16 @@ public class Entity implements Value {
         private final ValueToModelMapper<V, ? extends Value> valueMapper;
         private final PrimitiveFromModelMapper<K> fromKeyMapper;
         private final LazyProperty<Map<K, V>> evaluated;
-        private final LazyProperty<Set<K>> evaluatedFields;
+        private final Set<K> fields;
 
         public ProxyMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
             this.valueMapper = valueMapper;
             this.fromKeyMapper = fromKeyMapper;
             this.evaluated = lazy(() -> Entity.this.toMap(toKeyMapper, valueMapper));
-            this.evaluatedFields = lazy(() -> keys.stream().map(toKeyMapper::map).collect(setCollector()));
+            this.fields = set();
+            for (Primitive key : keys) {
+                fields.add(toKeyMapper.map(key));
+            }
         }
 
         @Override
@@ -319,7 +324,7 @@ public class Entity implements Value {
         @Override
         @Nonnull
         public Set<K> keySet() {
-            return evaluatedFields.get();
+            return fields;
         }
 
         @Override

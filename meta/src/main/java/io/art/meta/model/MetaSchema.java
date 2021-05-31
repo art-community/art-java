@@ -29,6 +29,7 @@ import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
+import static java.lang.Math.*;
 import java.nio.charset.*;
 import java.util.*;
 
@@ -83,10 +84,16 @@ public class MetaSchema<T> {
         for (int index = 0; index < gettableProperties.size(); index++) {
             MetaProperty<?> property = gettableProperties.get(index);
             String name = property.name();
-            int getterIndex = hashFunction.hashString(name, charset).asInt() % gettableProperties.size();
+            int getterIndex = (gettableProperties.size() - 1) & hashFunction.hashString(name, charset).asInt();
             getterFromModel[getterIndex] = new Getter(name, property.getter(), property.type().fromModel());
             fieldSet.add(stringPrimitive(name));
         }
+    }
+
+    private Value map(Object model, Primitive key) {
+        int getterIndex = (getterFromModel.length - 1) & hashFunction.hashString(key.getString(), charset).asInt();
+        Getter getter = getterFromModel[getterIndex];
+        return getter.mapper.map(getter.method.invoke(model));
     }
 
     public T toModel(Value value) {
@@ -99,12 +106,6 @@ public class MetaSchema<T> {
             arguments[creator.index] = entity.map(creator.name, creator.mapper);
         }
         return allArgumentsConstructor.invoke(arguments);
-    }
-
-    private Value map(Object model, Primitive key) {
-        int getterIndex = hashFunction.hashString(key.getValue().toString(), charset).asInt() % getterFromModel.length;
-        Getter getter = getterFromModel[getterIndex];
-        return getter.mapper.map(getter.method.invoke(model));
     }
 
     public Value fromModel(Object model) {
