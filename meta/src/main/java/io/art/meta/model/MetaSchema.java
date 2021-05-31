@@ -18,21 +18,29 @@
 
 package io.art.meta.model;
 
-import io.art.value.builder.*;
+import com.google.common.hash.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import lombok.*;
+import static com.google.common.hash.Hashing.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.context.Context.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
-import static io.art.value.immutable.Entity.*;
+import java.nio.charset.*;
 import java.util.*;
 
+@SuppressWarnings(UNSTABLE_API_USAGE)
 public class MetaSchema<T> {
     private final MetaConstructor<T> allArgumentsConstructor;
     private final Creator[] primitiveCreators;
     private final Creator[] objectCreators;
     private final Getter[] getterFromModel;
+    private final Set<Primitive> fieldSet;
+    private final HashFunction hashFunction = goodFastHash(32);
+    private final Charset charset = context().configuration().getCharset();
 
     @AllArgsConstructor
     @RequiredArgsConstructor
@@ -56,22 +64,28 @@ public class MetaSchema<T> {
         primitiveCreators = new Creator[primitiveProperties.size()];
         objectCreators = new Creator[objectProperties.size()];
         getterFromModel = new Getter[gettableProperties.size()];
+        fieldSet = set();
 
         for (int index = 0; index < primitiveProperties.size(); index++) {
             MetaProperty<?> property = primitiveProperties.get(index);
             Primitive name = stringPrimitive(property.name());
             primitiveCreators[index] = new Creator(property.index(), name, property.type().toModel(), property.type().primitiveType());
+            fieldSet.add(name);
         }
 
         for (int index = 0; index < objectProperties.size(); index++) {
             MetaProperty<?> property = objectProperties.get(index);
             Primitive name = stringPrimitive(property.name());
             objectCreators[index] = new Creator(property.index(), name, property.type().toModel());
+            fieldSet.add(name);
         }
 
         for (int index = 0; index < gettableProperties.size(); index++) {
             MetaProperty<?> property = gettableProperties.get(index);
-            getterFromModel[index] = new Getter(property.name(), property.getter(), property.type().fromModel());
+            String name = property.name();
+            int getterIndex = hashFunction.hashString(name, charset).asInt() % gettableProperties.size();
+            getterFromModel[getterIndex] = new Getter(name, property.getter(), property.type().fromModel());
+            fieldSet.add(stringPrimitive(name));
         }
     }
 
@@ -87,11 +101,13 @@ public class MetaSchema<T> {
         return allArgumentsConstructor.invoke(arguments);
     }
 
+    private Value map(Object model, Primitive key) {
+        int getterIndex = hashFunction.hashString(key.getValue().toString(), charset).asInt() % getterFromModel.length;
+        Getter getter = getterFromModel[getterIndex];
+        return getter.mapper.map(getter.method.invoke(model));
+    }
+
     public Value fromModel(Object model) {
-        EntityBuilder entityBuilder = entityBuilder();
-        for (Getter getter : getterFromModel) {
-            entityBuilder.put(getter.name, getter.method.invoke(model), getter.mapper);
-        }
-        return entityBuilder.build();
+        return new Entity(fieldSet, key -> map(model, key));
     }
 }

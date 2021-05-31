@@ -46,12 +46,18 @@ import javax.annotation.*;
 import java.util.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
 public class Entity implements Value {
     @Getter
     private final ValueType type = ENTITY;
     private final Set<Primitive> keys;
     private final Function<Primitive, ? extends Value> valueProvider;
+    private final Map<Primitive, Value> asMap;
+
+    public Entity(Set<Primitive> keys, Function<Primitive, ? extends Value> valueProvider) {
+        this.keys = keys;
+        this.valueProvider = valueProvider;
+        asMap = asMap(key -> key, key -> key, value -> value);
+    }
 
     public static EntityBuilder entityBuilder() {
         return new EntityBuilder();
@@ -198,7 +204,7 @@ public class Entity implements Value {
 
 
     public Map<Primitive, ? extends Value> asMap() {
-        return asMap(key -> key, key -> key, value -> value);
+        return asMap;
     }
 
     public <K, V> Map<K, V> asMap(PrimitiveToModelMapper<K> toKeyMapper, PrimitiveFromModelMapper<K> fromKeyMapper, ValueToModelMapper<V, ? extends Value> valueMapper) {
