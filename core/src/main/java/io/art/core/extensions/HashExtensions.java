@@ -21,37 +21,56 @@ package io.art.core.extensions;
 import io.art.core.exception.*;
 import io.art.core.property.*;
 import lombok.experimental.*;
+import net.jpountz.xxhash.*;
 import static io.art.core.constants.AlgorithmConstants.*;
-import static io.art.core.context.Context.*;
-import static io.art.core.extensions.FileExtensions.*;
+import static io.art.core.constants.HashConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import java.io.*;
-import java.nio.charset.*;
-import java.nio.file.*;
+import static net.jpountz.xxhash.XXHashFactory.*;
 import java.security.*;
 
 @UtilityClass
 public class HashExtensions {
     private final LazyProperty<MessageDigest> md5 = lazy(() -> wrapExceptionCall(() -> MessageDigest.getInstance(MD5), InternalRuntimeException::new));
+    private static final XXHash64 DEFAULT_HASH_64 = fastestInstance().hash64();
+    private static final XXHash32 DEFAULT_HASH_32 = fastestInstance().hash32();
 
     public static byte[] md5(byte[] content) {
         return md5.get().digest(content);
     }
 
-    public static byte[] md5(String content) {
-        return md5(content, context().configuration().getCharset());
+    public static long xx64(XXHash64 hash, byte[] content, long seed) {
+        return hash.hash(content, 0, content.length, seed);
     }
 
-    public static byte[] md5(String content, Charset charset) {
-        return md5(content.getBytes(charset));
+    public static int xx32(XXHash32 hash, byte[] content, int seed) {
+        return hash.hash(content, 0, content.length, seed);
     }
 
-    public static byte[] md5(File file) {
-        return md5(file.toPath());
+
+    public static long xx64(XXHash64 hash, byte[] content) {
+        return xx64(hash, content, DEFAULT_XX64_HASH_SEED);
     }
 
-    public static byte[] md5(Path file) {
-        return md5(readFileBytes(file));
+    public static int xx32(XXHash32 hash, byte[] content) {
+        return xx32(hash, content, DEFAULT_XX32_HASH_SEED);
+    }
+
+
+    public static long xx64(byte[] content, long seed) {
+        return xx64(DEFAULT_HASH_64, content, seed);
+    }
+
+    public static int xx32(byte[] content, int seed) {
+        return xx32(DEFAULT_HASH_32, content, seed);
+    }
+
+
+    public static long xx64(byte[] content) {
+        return xx64(content, DEFAULT_XX64_HASH_SEED);
+    }
+
+    public static int xx32(byte[] content) {
+        return xx32(content, DEFAULT_XX32_HASH_SEED);
     }
 }

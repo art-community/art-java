@@ -22,6 +22,10 @@ dependencies {
     val nettyVersion: String by project
     val reactorVersion: String by project
     val jctoolsVersion: String by project
+    val lz4Version: String by project
+
+    api("org.lz4", "lz4-java", lz4Version)
+            .exclude("org.slf4j")
 
     api("com.google.guava", "guava", guavaVersion)
             .exclude("org.slf4j")

@@ -71,9 +71,10 @@ public class Launcher {
             };
 
             prepareInitialization(contextConfiguration, printer);
+            ModuleInitializationOperator<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
             configuratorModule
                     .loadSources()
-                    .configure(configurator -> configurator.initialize(cast(configuratorActivator.getInitializer().get().initialize(cast(configuratorModule)))));
+                    .configure(configurator -> configurator.initialize(configuratorActivatorInitializer.get().initialize(configuratorModule)));
             ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
 
             if (nonNull(activator.loggingActivator())) {

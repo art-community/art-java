@@ -18,29 +18,31 @@
 
 package io.art.meta.model;
 
-import com.google.common.hash.*;
+import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import lombok.*;
-import static com.google.common.hash.Hashing.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableHashTable.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.extensions.HashExtensions.*;
+import static io.art.core.factory.PairFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import java.nio.charset.*;
 import java.util.*;
 
-@SuppressWarnings(UNSTABLE_API_USAGE)
 public class MetaSchema<T> {
     private final MetaConstructor<T> allArgumentsConstructor;
     private final Creator[] primitiveCreators;
     private final Creator[] objectCreators;
-    private final Getter[] getterFromModel;
+    private final ImmutableHashTable<String, Getter> getters;
     private final Set<Primitive> fieldSet;
-    private final HashFunction hashFunction = goodFastHash(32);
     private final Charset charset = context().configuration().getCharset();
+
 
     @AllArgsConstructor
     @RequiredArgsConstructor
@@ -63,7 +65,6 @@ public class MetaSchema<T> {
         this.allArgumentsConstructor = allArgumentsConstructor;
         primitiveCreators = new Creator[primitiveProperties.size()];
         objectCreators = new Creator[objectProperties.size()];
-        getterFromModel = new Getter[gettableProperties.size()];
         fieldSet = set();
 
         for (int index = 0; index < primitiveProperties.size(); index++) {
@@ -80,18 +81,16 @@ public class MetaSchema<T> {
             fieldSet.add(name);
         }
 
-        for (int index = 0; index < gettableProperties.size(); index++) {
-            MetaProperty<?> property = gettableProperties.get(index);
-            String name = property.name();
-            int getterIndex = (gettableProperties.size() - 1) & hashFunction.hashString(name, charset).asInt();
-            getterFromModel[getterIndex] = new Getter(name, property.getter(), property.type().fromModel());
-            fieldSet.add(stringPrimitive(name));
-        }
+        Pair<String, Getter>[] gettersContent = cast(gettableProperties
+                .stream()
+                .peek(property -> fieldSet.add(stringPrimitive(property.name())))
+                .map(property -> pairOf(property.name(), new Getter(property.name(), property.getter(), property.type().fromModel())))
+                .toArray(Pair[]::new));
+        getters = immutableHashTable(key -> xx32(key.getBytes(charset)), gettersContent);
     }
 
     private Value map(Object model, Primitive key) {
-        int getterIndex = (getterFromModel.length - 1) & hashFunction.hashString(key.getString(), charset).asInt();
-        Getter getter = getterFromModel[getterIndex];
+        Getter getter = getters.get(key.getString());
         return getter.mapper.map(getter.method.invoke(model));
     }
 
