@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.exception.*;
 import io.art.meta.registry.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
@@ -75,10 +76,7 @@ public class MetaType<T> {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
 
         if (nonNull(variable)) {
-            ValueMapper<T, Value> mapper = cast(computeKnownMappers(variable.bound()));
-            toModel = cast(mapper.getToModel());
-            fromModel = cast(mapper.getFromModel());
-            return this;
+            throw new MetaException("Type Varaibles not supported");
         }
 
         MetaClass<?> metaClass = classes().get(type);
@@ -100,11 +98,7 @@ public class MetaType<T> {
                 .stream()
                 .map(parameter -> parameter.parameterize(parameters))
                 .collect(immutableSetCollector());
-        MetaTypeBuilder<?> builder = toBuilder()
-                .variable(let(variable, notNullVariable -> notNullVariable.toBuilder()
-                        .bound(let(notNullVariable.bound(), notNullBound -> notNullBound.parameterize(parameters)))
-                        .build()))
-                .parameters(parametrizedTypeParameters);
+        MetaTypeBuilder<?> builder = toBuilder().parameters(parametrizedTypeParameters);
         if (isNull(variable)) {
             return builder.build();
         }
@@ -130,9 +124,9 @@ public class MetaType<T> {
                 .build();
     }
 
-    public static <T> MetaType<T> metaVariable(String name, MetaType<?> bound) {
+    public static <T> MetaType<T> metaVariable(String name) {
         return MetaType.<T>builder()
-                .variable(new MetaTypeVariable(name, bound))
+                .variable(new MetaTypeVariable(name))
                 .build();
     }
 

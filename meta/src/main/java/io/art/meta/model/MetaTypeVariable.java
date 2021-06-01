@@ -31,5 +31,4 @@ import lombok.experimental.*;
 @Builder(toBuilder = true)
 public class MetaTypeVariable {
     private final String name;
-    private final MetaType<?> bound;
 }
