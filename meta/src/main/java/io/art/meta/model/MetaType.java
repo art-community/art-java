@@ -20,7 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.meta.exception.*;
+import io.art.core.exception.*;
 import io.art.meta.registry.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
@@ -29,7 +29,6 @@ import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.TypeConstants.*;
@@ -76,7 +75,7 @@ public class MetaType<T> {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
 
         if (nonNull(variable)) {
-            throw new MetaException("Type Varaibles not supported");
+            throw new ImpossibleSituationException();
         }
 
         MetaClass<?> metaClass = classes().get(type);

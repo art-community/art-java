@@ -22,14 +22,13 @@ import io.art.core.collection.*;
 import io.art.meta.exception.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
-import io.art.value.mapper.ValueFromModelMapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
-import static io.art.value.immutable.Value.*;
+import static io.art.value.mapper.ValueFromModelMapper.identity;
+import static io.art.value.mapper.ValueFromModelMapper.*;
 import static io.art.value.mapper.ValueMapper.*;
 import static io.art.value.mapping.ArrayMapping.*;
 import static io.art.value.mapping.BinaryMapping.*;
@@ -38,6 +37,7 @@ import static io.art.value.mapping.LazyMapping.*;
 import static io.art.value.mapping.OptionalMapping.*;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.*;
+import static java.util.Optional.*;
 import java.time.*;
 import java.util.*;
 
@@ -52,7 +52,7 @@ class KnownMappersComputer {
             return cast(mapper(ignore -> null, ignore -> null));
         }
         if (isObject(rawType) || isValue(rawType)) {
-            return cast(mapper(ValueFromModelMapper.identity(), ValueToModelMapper.identity()));
+            return cast(mapper(identity(), ValueToModelMapper.identity()));
         }
         if (isByteArray(rawType)) {
             return cast(mapper(fromBinary, toBinary));
@@ -126,62 +126,74 @@ class KnownMappersComputer {
             }
             throw new MetaException(format(UNSUPPORTED_TYPE, type));
         }
-        if (isEmpty(parameters)) {
-            throw new MetaException(format(UNSUPPORTED_TYPE, type));
-        }
-        MetaType<?> firstParameter = parameters.stream()
+        Optional<MetaType<?>> firstParameter = parameters.stream()
                 .findFirst()
-                .map(MetaType::compute)
-                .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, type)));
+                .map(MetaType::compute);
+        ValueFromModelMapper<Object, Value> parameterFromModel = firstParameter
+                .map(MetaType::fromModel)
+                .orElseGet(() -> cast(ValueFromModelMapper.identity()));
+        ValueToModelMapper<Object, Value> parameterToModel = firstParameter
+                .map(MetaType::toModel)
+                .orElseGet(() -> cast(ValueToModelMapper.identity()));
         if (isLazyValue(rawType)) {
-            return mapper(cast(fromLazy(firstParameter.fromModel())), cast(toLazy((ValueToModelMapper<?, Value>) firstParameter.toModel())));
+            return mapper(cast(fromLazy(parameterFromModel)), cast(toLazy(parameterToModel)));
         }
         if (isOptional(rawType)) {
-            return mapper(cast(fromOptional(firstParameter.fromModel())), cast(toOptional((ValueToModelMapper<?, Value>) firstParameter.toModel())));
+            return mapper(cast(fromOptional(parameterFromModel)), cast(toOptional(parameterToModel)));
         }
         if (isCollection(rawType)) {
             if (isList(rawType)) {
-                return mapper(cast(fromList(firstParameter.fromModel())), cast(toMutableList(firstParameter.toModel())));
+                return mapper(cast(fromList(parameterFromModel)), cast(toMutableList(parameterToModel)));
             }
             if (isImmutableArray(rawType)) {
-                return mapper(cast(fromImmutableArray(firstParameter.fromModel())), cast(toImmutableArray(firstParameter.toModel())));
+                return mapper(cast(fromImmutableArray(parameterFromModel)), cast(toImmutableArray(parameterToModel)));
             }
             if (isSet(rawType)) {
-                return mapper(cast(fromSet(firstParameter.fromModel())), cast(toMutableSet(firstParameter.toModel())));
+                return mapper(cast(fromSet(parameterFromModel)), cast(toMutableSet(parameterToModel)));
             }
             if (isImmutableSet(rawType)) {
-                return mapper(cast(fromImmutableSet(firstParameter.fromModel())), cast(toImmutableSet(firstParameter.toModel())));
+                return mapper(cast(fromImmutableSet(parameterFromModel)), cast(toImmutableSet(parameterToModel)));
             }
             if (isImmutableCollection(rawType)) {
-                return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toImmutableArray(firstParameter.toModel())));
+                return mapper(cast(fromCollection(parameterFromModel)), cast(toImmutableArray(parameterToModel)));
             }
             if (isQueue(rawType)) {
-                return mapper(cast(fromQueue(firstParameter.fromModel())), cast(toMutableQueue(firstParameter.toModel())));
+                return mapper(cast(fromQueue(parameterFromModel)), cast(toMutableQueue(parameterToModel)));
             }
             if (isDequeue(rawType)) {
-                return mapper(cast(fromDeque(firstParameter.fromModel())), cast(toMutableDeque(firstParameter.toModel())));
+                return mapper(cast(fromDeque(parameterFromModel)), cast(toMutableDeque(parameterToModel)));
             }
             if (isStream(rawType)) {
-                return mapper(cast(fromStream(firstParameter.fromModel())), cast(toStream(firstParameter.toModel())));
+                return mapper(cast(fromStream(parameterFromModel)), cast(toStream(parameterToModel)));
             }
-            return mapper(cast(fromCollection(firstParameter.fromModel())), cast(toMutableCollection(firstParameter.toModel())));
+            return mapper(cast(fromCollection(parameterFromModel)), cast(toMutableCollection(parameterToModel)));
         }
         if (isMap(rawType) || isImmutableMap(rawType)) {
-            if (parameters.size() != 2) {
-                throw new MetaException(format(UNSUPPORTED_TYPE, type));
-            }
             MetaType<?>[] metaTypes = parameters.toArray(MetaType[]::new);
-            MetaType<?> key = metaTypes[0].compute();
-            if (isNotPrimitive(key.type())) {
-                throw new MetaException(format(UNSUPPORTED_TYPE, type));
-            }
-
-            MetaType<?> value = metaTypes[1].compute();
-            PrimitiveToModelMapper<Object> keyToModel = cast(key.toModel());
-            PrimitiveFromModelMapper<Object> keyFromModel = model -> asPrimitive(key.fromModel().map(model));
-            ValueToModelMapper<Object, Value> valueToModel = cast(value.toModel());
-            ValueFromModelMapper<Object, Value> valueFromModel = model -> value.fromModel().map(model);
-
+            boolean hasKey = metaTypes.length > 0;
+            boolean hasValue = metaTypes.length > 1;
+            PrimitiveToModelMapper<Object> keyToModel = hasKey
+                    ? cast(of(metaTypes[0].compute())
+                    .filter(metaKeyType -> isPrimitive(metaKeyType.type()))
+                    .map(MetaType::toModel)
+                    .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, metaTypes[0]))))
+                    : cast(ValueToModelMapper.identity());
+            PrimitiveFromModelMapper<Object> keyFromModel = hasKey
+                    ? cast(of(metaTypes[0].compute())
+                    .filter(metaKeyType -> isPrimitive(metaKeyType.type()))
+                    .map(MetaType::fromModel)
+                    .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, metaTypes[0]))))
+                    : cast(ValueFromModelMapper.identity());
+            ValueToModelMapper<Object, Value> valueToModel = hasValue
+                    ? cast(of(metaTypes[1].compute())
+                    .map(MetaType::toModel)
+                    .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, metaTypes[1]))))
+                    : cast(ValueToModelMapper.identity());
+            ValueFromModelMapper<Object, Value> valueFromModel = hasValue
+                    ? cast(of(metaTypes[1].compute())
+                    .map(MetaType::fromModel)
+                    .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, metaTypes[1]))))
+                    : cast(ValueFromModelMapper.identity());
             if (isImmutableMap(rawType)) {
                 EntityFromModelMapper<ImmutableMap<Object, Object>> fromMapper = fromImmutableMap(cast(keyToModel), cast(keyFromModel), valueFromModel);
                 EntityToModelMapper<ImmutableMap<Object, Object>> toMapper = toImmutableMap(keyToModel, keyFromModel, valueToModel);
