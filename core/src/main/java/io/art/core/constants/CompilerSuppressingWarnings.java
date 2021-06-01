@@ -1,5 +1,8 @@
 package io.art.core.constants;
 
+import io.art.core.annotation.*;
+
+@ForGenerator
 public interface CompilerSuppressingWarnings {
     String ALL = "all";
     String UNCHECKED = "unchecked";
