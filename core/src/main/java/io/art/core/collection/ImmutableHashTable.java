@@ -22,13 +22,14 @@ import io.art.core.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static java.lang.Math.*;
+import static java.lang.Runtime.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
 public class ImmutableHashTable<K, V> {
     private final Function<K, Integer> hasher;
-    private final Bucket<K, V>[] buckets;
+    private Bucket<K, V>[] buckets;
 
     private ImmutableHashTable(Function<K, Integer> hasher, Pair<K, V>[] elements) {
         this.hasher = hasher;
@@ -39,7 +40,7 @@ public class ImmutableHashTable<K, V> {
             Integer hash = hasher.apply(key);
             int index = abs(hash % buckets.length);
             if (isNull(buckets[index])) {
-                buckets[index] = new Bucket<>(elements.length, new Entry<>(key, value));
+                buckets[index] = new Bucket<>(elements.length - 1, new Entry<>(key, value));
                 continue;
             }
             buckets[index].add(hash, new Entry<>(key, value));
@@ -53,6 +54,11 @@ public class ImmutableHashTable<K, V> {
             return null;
         }
         return buckets[index].get(hash, key);
+    }
+
+    public void clear() {
+        buckets = null;
+        getRuntime().gc();
     }
 
     private static class Bucket<K, V> {
@@ -69,7 +75,7 @@ public class ImmutableHashTable<K, V> {
         private void add(int hash, Entry<K, V> entry) {
             int next = abs(hash % buckets.length);
             if (isNull(buckets[next])) {
-                buckets[next] = new Bucket<>(size, entry);
+                buckets[next] = new Bucket<>(size - 1, entry);
                 return;
             }
             buckets[next].add(hash, entry);
