@@ -18,26 +18,15 @@
 
 package io.art.core.extensions;
 
-import io.art.core.exception.*;
-import io.art.core.property.*;
 import lombok.experimental.*;
 import net.jpountz.xxhash.*;
-import static io.art.core.constants.AlgorithmConstants.*;
 import static io.art.core.constants.HashConstants.*;
-import static io.art.core.property.LazyProperty.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
 import static net.jpountz.xxhash.XXHashFactory.*;
-import java.security.*;
 
 @UtilityClass
 public class HashExtensions {
-    private final LazyProperty<MessageDigest> md5 = lazy(() -> wrapExceptionCall(() -> MessageDigest.getInstance(MD5), InternalRuntimeException::new));
     private static final XXHash64 DEFAULT_HASH_64 = unsafeInstance().hash64();
     private static final XXHash32 DEFAULT_HASH_32 = unsafeInstance().hash32();
-
-    public static byte[] md5(byte[] content) {
-        return md5.get().digest(content);
-    }
 
     public static long xx64(XXHash64 hash, byte[] content, long seed) {
         return hash.hash(content, 0, content.length, seed);
