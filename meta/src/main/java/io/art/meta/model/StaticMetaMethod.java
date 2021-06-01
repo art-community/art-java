@@ -29,15 +29,15 @@ public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
         super(name, returnType);
     }
 
-    public T invoke() {
+    public Object invoke() {
         throw new NotImplementedException("invoke()");
     }
 
-    public T invoke(Object argument) {
+    public Object invoke(Object argument) {
         throw new NotImplementedException("invoke(argument)");
     }
 
-    public abstract T invoke(Object[] arguments);
+    public abstract Object invoke(Object[] arguments);
 
     @Override
     public boolean isStatic() {
