@@ -27,53 +27,62 @@ import java.util.*;
 import java.util.function.*;
 
 public class ImmutableHashTable<K, V> {
-    private final int size;
-    private final Function<K, Integer> hash;
-    private final Entry<K, V>[] array;
+    private final Function<K, Integer> hasher;
+    private final Bucket<K, V>[] buckets;
 
-    private ImmutableHashTable(Function<K, Integer> hash, Pair<K, V>[] elements) {
-        this.size = elements.length;
-        this.hash = hash;
-        array = cast(new Entry[size]);
-        for (int index = 0; index < size; index++) {
-            Pair<K, V> element = elements[index];
+    private ImmutableHashTable(Function<K, Integer> hasher, Pair<K, V>[] elements) {
+        this.hasher = hasher;
+        buckets = cast(new Bucket[elements.length]);
+        for (Pair<K, V> element : elements) {
             K key = element.getFirst();
             V value = element.getSecond();
-            int base = abs(hash.apply(key) % array.length);
-            int searcher = base;
-            while (searcher >= 0 && nonNull(array[searcher])) {
-                --searcher;
+            Integer hash = hasher.apply(key);
+            int index = abs(hash % buckets.length);
+            if (isNull(buckets[index])) {
+                buckets[index] = new Bucket<>(elements.length, new Entry<>(key, value));
+                continue;
             }
-            if (searcher < 0) {
-                searcher = base;
-                while (searcher < array.length && nonNull(array[searcher])) {
-                    ++searcher;
-                }
-                array[searcher] = new Entry<>(key, value);
-                return;
-            }
-            array[searcher] = new Entry<>(key, value);
+            buckets[index].add(hash, new Entry<>(key, value));
         }
     }
 
     public V get(K key) {
-        int base = abs(hash.apply(key) % array.length);
-        int searcher = base;
-        while (searcher >= 0 && !key.equals(array[searcher].getKey())) {
-            --searcher;
+        Integer hash = hasher.apply(key);
+        int index = abs(hash % buckets.length);
+        if (isNull(buckets[index])) {
+            return null;
         }
-        if (searcher < 0) {
-            searcher = base;
-            while (searcher < array.length && !key.equals(array[searcher].getKey())) {
-                ++searcher;
-            }
-            return array[searcher].getValue();
-        }
-        return array[searcher].getValue();
+        return buckets[index].get(hash, key);
     }
 
-    public int size() {
-        return size;
+    private static class Bucket<K, V> {
+        private final int size;
+        private final Entry<K, V> entry;
+        private final Bucket<K, V>[] buckets;
+
+        private Bucket(int size, Entry<K, V> entry) {
+            this.size = size;
+            this.entry = entry;
+            buckets = cast(new Bucket[size]);
+        }
+
+        private void add(int hash, Entry<K, V> entry) {
+            int next = abs(hash % buckets.length);
+            if (isNull(buckets[next])) {
+                buckets[next] = new Bucket<>(size, entry);
+                return;
+            }
+            buckets[next].add(hash, entry);
+        }
+
+        public V get(int hash, K key) {
+            if (key.equals(entry.key)) {
+                return entry.value;
+            }
+            int next = abs(hash % buckets.length);
+            if (isNull(buckets[next])) return null;
+            return buckets[next].get(hash, key);
+        }
     }
 
     @Getter

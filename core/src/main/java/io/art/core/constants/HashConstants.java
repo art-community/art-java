@@ -18,9 +18,9 @@
 
 package io.art.core.constants;
 
-import static io.art.core.extensions.RandomExtensions.*;
+import static io.art.core.constants.SeedConstants.*;
 
 public interface HashConstants {
-    int DEFAULT_XX32_HASH_SEED = randomInt();
-    long DEFAULT_XX64_HASH_SEED = randomLong();
+    int DEFAULT_XX32_HASH_SEED = DEFAULT_SEED;
+    long DEFAULT_XX64_HASH_SEED = DEFAULT_SEED;
 }

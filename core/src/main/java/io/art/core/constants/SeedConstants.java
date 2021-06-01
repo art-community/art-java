@@ -18,6 +18,6 @@
 
 package io.art.core.constants;
 
-public interface RandomConstants {
-    int DEFAULT_RANDOM_SEED = 0x62a87ba7;
+public interface SeedConstants {
+    int DEFAULT_SEED = 0x62a8ada7;
 }
