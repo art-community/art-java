@@ -33,7 +33,6 @@ dependencies {
     implementation(project(":http"))
     implementation(project(":http"))
     implementation(project(":tarantool"))
-    implementation(project(":rocks-db"))
     implementation(project(":storage"))
     implementation(project(":resilience"))
 }

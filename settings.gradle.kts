@@ -38,7 +38,6 @@ include("tests")
 include("scheduler")
 include("graal")
 include("storage")
-include("rocks-db")
 include("meta")
 //include("metrics")
 

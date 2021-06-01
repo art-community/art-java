@@ -26,7 +26,6 @@ import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.module.*;
 import io.art.message.pack.module.*;
-import io.art.rocks.db.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
@@ -136,7 +135,6 @@ public class Activator {
         module(RsocketActivator.rsocket(initializer.rsocket()));
         module(StorageActivator.storage(initializer.storage()));
         module(TarantoolActivator.tarantool());
-        module(RocksDbActivator.rocksdb());
         return this;
     }
 

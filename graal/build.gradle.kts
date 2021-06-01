@@ -20,7 +20,6 @@ val graalVersion: String by project
 
 dependencies {
     compileOnly(project(":core"))
-    compileOnly(project(":rocks-db"))
     compileOnly(project(":logging"))
     compileOnly("com.oracle.substratevm:svm:$graalVersion")
 }
