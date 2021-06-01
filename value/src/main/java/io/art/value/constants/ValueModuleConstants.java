@@ -144,7 +144,6 @@ public interface ValueModuleConstants {
     @Getter
     @AllArgsConstructor
     enum DataFormat {
-        PROTOBUF("protobuf"),
         JSON("json"),
         YAML("yaml"),
         MESSAGE_PACK("messagePack");
@@ -152,7 +151,6 @@ public interface ValueModuleConstants {
         private final String format;
 
         public static DataFormat dataFormat(String format, DataFormat fallback) {
-            if (PROTOBUF.format.equalsIgnoreCase(format)) return PROTOBUF;
             if (JSON.format.equalsIgnoreCase(format)) return JSON;
             if (YAML.format.equalsIgnoreCase(format)) return YAML;
             if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;

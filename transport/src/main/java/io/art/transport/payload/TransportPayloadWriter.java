@@ -21,14 +21,12 @@ package io.art.transport.payload;
 import io.art.core.exception.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
-import io.art.protobuf.descriptor.*;
 import io.art.value.immutable.Value;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
-import static io.art.protobuf.module.ProtobufModule.*;
 import static io.art.value.constants.ValueModuleConstants.*;
 import static io.art.yaml.module.YamlModule.*;
 import static io.netty.buffer.ByteBufAllocator.*;
@@ -41,9 +39,6 @@ public class TransportPayloadWriter {
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Value, ByteBuf> writer = writer(dataFormat);
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final ProtobufWriter protobufWriter = protobufModule().configuration().getWriter();
 
     @Getter(lazy = true, value = PRIVATE)
     private static final JsonWriter jsonWriter = jsonModule().configuration().getWriter();
@@ -60,12 +55,6 @@ public class TransportPayloadWriter {
 
     private static Function<Value, ByteBuf> writer(DataFormat dataFormat) {
         switch (dataFormat) {
-            case PROTOBUF:
-                return value -> {
-                    ByteBuf buffer = DEFAULT.ioBuffer();
-                    getProtobufWriter().write(value, buffer);
-                    return buffer;
-                };
             case JSON:
                 return value -> {
                     ByteBuf buffer = DEFAULT.ioBuffer();

@@ -20,7 +20,6 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":value"))
     implementation(project(":logging"))
-    implementation(project(":protobuf"))
     implementation(project(":json"))
     implementation(project(":yaml"))
     implementation(project(":message-pack"))

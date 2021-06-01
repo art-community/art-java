@@ -25,7 +25,6 @@ dependencies {
     implementation(project(":scheduler"))
     implementation(project(":json"))
     implementation(project(":yaml"))
-    implementation(project(":protobuf"))
     implementation(project(":message-pack"))
     implementation(project(":transport"))
     implementation(project(":server"))

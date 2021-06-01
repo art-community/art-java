@@ -26,7 +26,6 @@ import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.module.*;
 import io.art.message.pack.module.*;
-import io.art.protobuf.module.*;
 import io.art.rocks.db.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
@@ -129,7 +128,6 @@ public class Activator {
         module(ValueActivator.value(initializer.value()));
         module(SchedulerActivator.scheduler());
         module(JsonActivator.json());
-        module(ProtobufActivator.protobuf());
         module(MessagePackActivator.messagePack());
         module(YamlActivator.yaml());
         module(CommunicatorActivator.communicator(initializer.communicator()));

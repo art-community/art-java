@@ -35,7 +35,6 @@ dependencies {
     implementation(project(":logging"))
     implementation(project(":value"))
     implementation(project(":json"))
-    implementation(project(":protobuf"))
     implementation(project(":message-pack"))
     implementation(project(":server"))
     implementation(project(":communicator"))

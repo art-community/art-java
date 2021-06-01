@@ -32,7 +32,6 @@ import java.nio.charset.*;
 public class MimeTypeDataFormatMapper {
     public static DataFormat fromMimeType(MimeType type) {
         if (APPLICATION_JSON.equals(type)) return JSON;
-        if (APPLICATION_PROTOBUF.equals(type)) return PROTOBUF;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
@@ -41,7 +40,6 @@ public class MimeTypeDataFormatMapper {
 
     public static DataFormat fromMimeType(MimeType type, DataFormat fallback) {
         if (APPLICATION_JSON.equals(type)) return JSON;
-        if (APPLICATION_PROTOBUF.equals(type)) return PROTOBUF;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
@@ -50,8 +48,6 @@ public class MimeTypeDataFormatMapper {
 
     public static MimeType toMimeType(DataFormat dataFormat) {
         switch (dataFormat) {
-            case PROTOBUF:
-                return APPLICATION_PROTOBUF;
             case JSON:
                 return APPLICATION_JSON;
             case MESSAGE_PACK:
@@ -64,8 +60,6 @@ public class MimeTypeDataFormatMapper {
 
     public static MimeType toMimeType(DataFormat dataFormat, Charset charset) {
         switch (dataFormat) {
-            case PROTOBUF:
-                return APPLICATION_PROTOBUF.withParameter(PARAM_CHARSET, charset.name());
             case JSON:
                 return APPLICATION_JSON.withParameter(PARAM_CHARSET, charset.name());
             case MESSAGE_PACK:

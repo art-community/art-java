@@ -35,4 +35,12 @@ public class MapBuilder<K, V> implements Map<K, V> {
     public static <K, V> MapBuilder<K, V> mapBuilder() {
         return new MapBuilder<>();
     }
+
+    public static <K, V> MapBuilder<K, V> mapBuilder(K key, V value) {
+        return new MapBuilder<K, V>().with(key, value);
+    }
+
+    public static <K, V> MapBuilder<K, V> mapBuilder(int size, K key, V value) {
+        return new MapBuilder<K, V>(size).with(key, value);
+    }
 }

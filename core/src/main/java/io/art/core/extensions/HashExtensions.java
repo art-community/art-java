@@ -32,8 +32,8 @@ import java.security.*;
 @UtilityClass
 public class HashExtensions {
     private final LazyProperty<MessageDigest> md5 = lazy(() -> wrapExceptionCall(() -> MessageDigest.getInstance(MD5), InternalRuntimeException::new));
-    private static final XXHash64 DEFAULT_HASH_64 = fastestInstance().hash64();
-    private static final XXHash32 DEFAULT_HASH_32 = fastestInstance().hash32();
+    private static final XXHash64 DEFAULT_HASH_64 = unsafeInstance().hash64();
+    private static final XXHash32 DEFAULT_HASH_32 = unsafeInstance().hash32();
 
     public static byte[] md5(byte[] content) {
         return md5.get().digest(content);

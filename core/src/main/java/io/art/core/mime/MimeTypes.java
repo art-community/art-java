@@ -21,9 +21,7 @@ package io.art.core.mime;
 
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.mime.MimeType.*;
-import static java.nio.charset.Charset.*;
 import static java.nio.charset.StandardCharsets.*;
-import java.nio.charset.*;
 
 public interface MimeTypes {
     MimeType ALL = mimeType(WILDCARD, WILDCARD);
