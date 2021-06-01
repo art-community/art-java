@@ -57,6 +57,21 @@ public class HashExtensions {
     }
 
 
+    public static long xx64(StreamingXXHash64 hash, byte[] content) {
+        hash.update(content, 0, content.length);
+        long value = hash.getValue();
+        hash.reset();
+        return value;
+    }
+
+    public static int xx32(StreamingXXHash32 hash, byte[] content) {
+        hash.update(content, 0, content.length);
+        int value = hash.getValue();
+        hash.reset();
+        return value;
+    }
+
+
     public static long xx64(byte[] content, long seed) {
         return xx64(DEFAULT_HASH_64, content, seed);
     }
@@ -70,7 +85,7 @@ public class HashExtensions {
         return xx64(content, DEFAULT_XX64_HASH_SEED);
     }
 
-    public static int xx32(byte[] content) {
+    public synchronized static int xx32(byte[] content) {
         return xx32(content, DEFAULT_XX32_HASH_SEED);
     }
 }

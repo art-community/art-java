@@ -18,6 +18,8 @@
 
 package io.art.core.constants;
 
+import static java.lang.System.currentTimeMillis;
+
 public interface SeedConstants {
-    int DEFAULT_SEED = 0x62a8ada7;
+    long DEFAULT_SEED = currentTimeMillis();
 }

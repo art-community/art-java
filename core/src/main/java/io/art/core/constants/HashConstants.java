@@ -21,6 +21,6 @@ package io.art.core.constants;
 import static io.art.core.constants.SeedConstants.*;
 
 public interface HashConstants {
-    int DEFAULT_XX32_HASH_SEED = DEFAULT_SEED;
+    int DEFAULT_XX32_HASH_SEED = (int) DEFAULT_SEED;
     long DEFAULT_XX64_HASH_SEED = DEFAULT_SEED;
 }
