@@ -23,6 +23,8 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 @ToString
@@ -32,18 +34,22 @@ public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
     private MetaType<T> returnType;
+    private final Set<String> modifiers;
+
+    protected MetaMethod(String name, MetaType<T> returnType, String... modifiers) {
+        this.name = name;
+        this.returnType = returnType;
+        this.parameters = map();
+        this.modifiers = setOf(modifiers);
+    }
 
     protected MetaMethod(MetaMethod<T> base) {
         this.name = base.name;
         this.returnType = base.returnType;
         this.parameters = base.parameters;
+        this.modifiers = base.modifiers;
     }
 
-    protected MetaMethod(String name, MetaType<T> returnType) {
-        this.name = name;
-        this.returnType = returnType;
-        this.parameters = map();
-    }
 
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
@@ -73,6 +79,10 @@ public abstract class MetaMethod<T> {
 
     public ImmutableMap<String, MetaParameter<?>> parameters() {
         return immutableMapOf(parameters);
+    }
+
+    public ImmutableSet<String> modifiers() {
+        return immutableSetOf(modifiers);
     }
 
     public abstract boolean isStatic();

@@ -34,9 +34,11 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
+import static java.lang.reflect.Modifier.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.*;
 
@@ -162,6 +164,7 @@ public abstract class MetaClass<T> {
     private MetaSchema<T> computeSchema() {
         MetaConstructor<T> allArgumentsConstructor = null;
         for (MetaConstructor<T> constructor : constructors) {
+            if (!constructor.modifiers().contains(Modifier.toString(PUBLIC))) continue;
             constructor.parameters().values().forEach(parameter -> parameter.type().compute());
 
             Collection<MetaField<?>> fields = this.fields.values();
@@ -228,6 +231,7 @@ public abstract class MetaClass<T> {
     }
 
     private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
+        if (!method.modifiers().contains(Modifier.toString(PUBLIC))) return false;
         if (method.isStatic()) return false;
         if (!method.parameters().isEmpty()) return false;
         if (!method.returnType().equals(field.type())) return false;

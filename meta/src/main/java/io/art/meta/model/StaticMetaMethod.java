@@ -25,8 +25,8 @@ import lombok.*;
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
 public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
-    protected StaticMetaMethod(String name, MetaType<T> returnType) {
-        super(name, returnType);
+    protected StaticMetaMethod(String name, MetaType<T> returnType, String... modifiers) {
+        super(name, returnType, modifiers);
     }
 
     public Object invoke() {
