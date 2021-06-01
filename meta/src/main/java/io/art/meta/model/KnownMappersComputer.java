@@ -81,7 +81,7 @@ class KnownMappersComputer {
                     return cast(mapper(fromCharArray, toCharArray));
                 }
             }
-            MetaType<T> component = type.toBuilder().array(false).build().compute();
+            MetaType<?> component = type.arrayComponentType().compute();
             return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.asArray(), component.toModel())));
         }
         if (isPrimitive(rawType)) {

@@ -20,7 +20,6 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.exception.*;
 import io.art.meta.registry.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
@@ -50,6 +49,7 @@ public class MetaType<T> {
     private final ImmutableSet<MetaType<?>> parameters;
     private final boolean primitive;
     private final boolean array;
+    private final MetaType<?> arrayComponentType;
     private final boolean flux;
     private final boolean mono;
     private final boolean voidType;
@@ -75,7 +75,9 @@ public class MetaType<T> {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
 
         if (nonNull(variable)) {
-            throw new ImpossibleSituationException();
+            toModel = cast(ValueToModelMapper.identity());
+            fromModel = cast(ValueFromModelMapper.identity());
+            return this;
         }
 
         MetaClass<?> metaClass = classes().get(type);
@@ -129,14 +131,14 @@ public class MetaType<T> {
                 .build();
     }
 
-    public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .array(true)
-                .parameters(immutableSetOf(parameters))
+                .arrayComponentType(arrayComponentType)
                 .build();
     }
 }
