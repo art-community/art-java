@@ -29,6 +29,9 @@ import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.constants.ArrayConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.model.KnownMappersComputer.*;
@@ -55,6 +58,8 @@ public class MetaType<T> {
     private final boolean voidType;
     private final PrimitiveType primitiveType;
     private final MetaTypeVariable variable;
+
+    private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -113,7 +118,7 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
-        return MetaType.<T>builder()
+        return cast(putIfAbsent(CACHE, new CacheKey(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
                 .flux(isFlux(type))
@@ -122,23 +127,30 @@ public class MetaType<T> {
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
-                .build();
+                .build()));
     }
 
     public static <T> MetaType<T> metaVariable(String name) {
-        return MetaType.<T>builder()
-                .variable(new MetaTypeVariable(name))
-                .build();
+        return MetaType.<T>builder().variable(new MetaTypeVariable(name)).build();
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
-        return MetaType.<T>builder()
+        return cast(putIfAbsent(CACHE, new CacheKey(type, null, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .array(true)
                 .arrayComponentType(arrayComponentType)
-                .build();
+                .build()));
+    }
+
+    @EqualsAndHashCode
+    @RequiredArgsConstructor
+    @AllArgsConstructor
+    private static class CacheKey {
+        private final Class<?> typeClass;
+        private final MetaType<?>[] parameters;
+        private MetaType<?> arrayComponentType;
     }
 }
