@@ -208,7 +208,7 @@ public abstract class MetaClass<T> {
                     gettableProperties.add(property);
                 }
 
-                if (property.type().primitive()) {
+                if (property.type().isPrimitive()) {
                     primitiveProperties.add(property);
                     continue;
                 }

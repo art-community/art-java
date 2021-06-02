@@ -21,6 +21,7 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.registry.*;
+import io.art.meta.type.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
@@ -34,7 +35,6 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.model.KnownMappersComputer.*;
-import static io.art.meta.type.TypeInspector.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -50,22 +50,21 @@ public class MetaType<T> {
     private final Class<T> type;
     private final ImmutableSet<MetaType<?>> parameters;
 
-    private final boolean primitive;
+    private final boolean isPrimitive;
+    private final boolean isFlux;
+    private final boolean isMono;
+    private final boolean isEnum;
+    private final boolean isArray;
+
     private final PrimitiveType primitiveType;
-
-    private final boolean flux;
-    private final boolean mono;
-
-    private final boolean array;
     private final MetaType<?> arrayComponentType;
-
     private final MetaTypeVariable variable;
 
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final Function<Integer, T> asArray;
+    private final Function<Integer, T> arrayFactory;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -117,7 +116,7 @@ public class MetaType<T> {
         if (nonNull(parameter)) {
             builder.variable(null)
                     .type(cast(parameter.type))
-                    .asArray(cast(parameter.asArray));
+                    .arrayFactory(cast(parameter.arrayFactory));
         }
         return builder.build();
     }
@@ -125,11 +124,12 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
         return cast(putIfAbsent(CACHE, new CacheKey(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .primitive(type.isPrimitive())
+                .isPrimitive(type.isPrimitive())
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
-                .flux(isFlux(type))
-                .mono(isMono(type))
-                .asArray(cast(arrayFactory))
+                .isFlux(TypeInspector.isFlux(type))
+                .isMono(TypeInspector.isMono(type))
+                .isEnum(type.isEnum())
+                .arrayFactory(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
                 .build()));
     }
@@ -141,10 +141,10 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return cast(putIfAbsent(CACHE, new CacheKey(type, null, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .primitive(type.isPrimitive())
+                .isPrimitive(type.isPrimitive())
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
-                .asArray(cast(arrayFactory))
-                .array(true)
+                .arrayFactory(cast(arrayFactory))
+                .isArray(true)
                 .arrayComponentType(arrayComponentType)
                 .build()));
     }

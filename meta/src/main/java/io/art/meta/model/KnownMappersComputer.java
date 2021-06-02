@@ -44,8 +44,8 @@ import java.util.*;
 class KnownMappersComputer {
     static <T> ValueMapper<T, Value> computeKnownMappers(MetaType<T> type) {
         Class<T> rawType = type.type();
-        boolean array = type.array();
-        boolean primitive = type.primitive();
+        boolean array = type.isArray();
+        boolean primitive = type.isPrimitive();
         ImmutableSet<MetaType<?>> parameters = type.parameters();
         if (isVoid(rawType)) {
             return cast(mapper(ignore -> null, ignore -> null));
@@ -81,7 +81,7 @@ class KnownMappersComputer {
                 }
             }
             MetaType<?> component = type.arrayComponentType().compute();
-            return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.asArray(), component.toModel())));
+            return cast(mapper(fromArray(component.fromModel()), toArrayRaw(component.arrayFactory(), component.toModel())));
         }
         if (isPrimitive(rawType)) {
             if (short.class.equals(rawType) || Short.class.equals(rawType)) {
