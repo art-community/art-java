@@ -21,11 +21,12 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import lombok.*;
+import java.util.*;
 
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
 public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
-    protected InstanceMetaMethod(String name, MetaType<R> returnType, String... modifiers) {
+    protected InstanceMetaMethod(String name, MetaType<R> returnType, Set<String> modifiers) {
         super(name, returnType, modifiers);
     }
 

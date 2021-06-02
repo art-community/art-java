@@ -36,9 +36,9 @@ public abstract class MetaConstructor<T> {
     private final Map<String, MetaParameter<?>> parameters;
     private final Set<String> modifiers;
 
-    protected MetaConstructor(MetaType<T> type, String... modifiers) {
+    protected MetaConstructor(MetaType<T> type, Set<String> modifiers) {
         this.type = type;
-        this.modifiers = setOf(modifiers);
+        this.modifiers = modifiers;
         parameters = map();
     }
 

@@ -24,7 +24,6 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import java.lang.reflect.*;
 import java.util.*;
 
 @ToString
@@ -36,11 +35,11 @@ public abstract class MetaMethod<T> {
     private MetaType<T> returnType;
     private final Set<String> modifiers;
 
-    protected MetaMethod(String name, MetaType<T> returnType, String... modifiers) {
+    protected MetaMethod(String name, MetaType<T> returnType, Set<String> modifiers) {
         this.name = name;
         this.returnType = returnType;
         this.parameters = map();
-        this.modifiers = setOf(modifiers);
+        this.modifiers = modifiers;
     }
 
     protected MetaMethod(MetaMethod<T> base) {

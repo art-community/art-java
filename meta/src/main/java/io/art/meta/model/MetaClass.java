@@ -51,11 +51,13 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
+    private Set<String> modifiers;
     private Map<String, MetaType<?>> variables;
     private MetaSchema<T> schema;
 
-    protected MetaClass(MetaType<T> type) {
+    protected MetaClass(MetaType<T> type, Set<String> modifiers) {
         this.type = type;
+        this.modifiers = modifiers;
         constructors = set();
         fields = map();
         methods = set();
@@ -66,6 +68,7 @@ public abstract class MetaClass<T> {
 
     protected MetaClass(MetaClass<T> base) {
         type = base.type;
+        modifiers = base.modifiers;
         constructors = base.constructors;
         fields = base.fields;
         methods = base.methods;
@@ -75,8 +78,8 @@ public abstract class MetaClass<T> {
     }
 
     @SafeVarargs
-    protected MetaClass(MetaType<T> metaType, MetaType<T>... variables) {
-        this(metaType);
+    protected MetaClass(MetaType<T> metaType, Set<String> modifiers, MetaType<T>... variables) {
+        this(metaType, modifiers);
         this.variables = stream(variables).collect(mapCollector(variable -> variable.variable().name(), identity()));
     }
 
@@ -90,10 +93,6 @@ public abstract class MetaClass<T> {
 
     protected <C extends MetaConstructor<T>> C register(C constructor) {
         return cast(putIfAbsent(constructors, constructor));
-    }
-
-    protected MetaType<?> register(MetaType<?> variable) {
-        return variables.putIfAbsent(variable.variable().name(), variable);
     }
 
     protected <C extends MetaClass<?>> C register(C metaClass) {
