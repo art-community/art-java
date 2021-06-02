@@ -121,7 +121,7 @@ public class MetaType<T> {
         return builder.build();
     }
 
-    public static <T> MetaType<T> metaType(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?>... parameters) {
+    public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
         return cast(putIfAbsent(CACHE, new CacheKey(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
                 .isPrimitive(type.isPrimitive())
@@ -129,7 +129,6 @@ public class MetaType<T> {
                 .isFlux(TypeInspector.isFlux(type))
                 .isMono(TypeInspector.isMono(type))
                 .isEnum(type.isEnum())
-                .arrayFactory(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
                 .build()));
     }

@@ -44,9 +44,13 @@ import java.util.*;
 class KnownMappersComputer {
     static <T> ValueMapper<T, Value> computeKnownMappers(MetaType<T> type) {
         Class<T> rawType = type.type();
-        boolean array = type.isArray();
-        boolean primitive = type.isPrimitive();
+        boolean isArray = type.isArray();
+        boolean isPrimitive = type.isPrimitive();
+        boolean isEnum = type.isEnum();
         ImmutableSet<MetaType<?>> parameters = type.parameters();
+        if (isEnum) {
+
+        }
         if (isVoid(rawType)) {
             return cast(mapper(ignore -> null, ignore -> null));
         }
@@ -56,8 +60,8 @@ class KnownMappersComputer {
         if (isByteArray(rawType)) {
             return cast(mapper(fromBinary, toBinary));
         }
-        if (array) {
-            if (primitive) {
+        if (isArray) {
+            if (isPrimitive) {
                 if (short.class.equals(rawType)) {
                     return cast(mapper(fromShortArray, toShortArray));
                 }
