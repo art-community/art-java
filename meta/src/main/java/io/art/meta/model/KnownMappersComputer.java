@@ -25,8 +25,11 @@ import io.art.value.mapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.extensions.StringExtensions.*;
 import static io.art.meta.constants.MetaConstants.*;
+import static io.art.meta.type.TypeInspector.isPrimitive;
 import static io.art.meta.type.TypeInspector.*;
+import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueFromModelMapper.*;
 import static io.art.value.mapper.ValueMapper.*;
 import static io.art.value.mapping.ArrayMapping.*;
@@ -34,6 +37,7 @@ import static io.art.value.mapping.BinaryMapping.*;
 import static io.art.value.mapping.EntityMapping.*;
 import static io.art.value.mapping.LazyMapping.*;
 import static io.art.value.mapping.OptionalMapping.*;
+import static io.art.value.mapping.PrimitiveMapping.toString;
 import static io.art.value.mapping.PrimitiveMapping.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
@@ -49,7 +53,7 @@ class KnownMappersComputer {
         boolean isEnum = type.isEnum();
         ImmutableSet<MetaType<?>> parameters = type.parameters();
         if (isEnum) {
-
+            return mapper(value -> fromString.map(emptyIfNull(value)), value -> type.enumFactory().apply(toString.map(asPrimitive(value))));
         }
         if (isVoid(rawType)) {
             return cast(mapper(ignore -> null, ignore -> null));

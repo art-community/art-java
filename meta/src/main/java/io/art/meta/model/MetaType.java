@@ -68,6 +68,10 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    private final Function<String, T> enumFactory;
+
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private ValueToModelMapper<Object, Value> toModel;
 
     @ToString.Exclude
@@ -122,14 +126,25 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
-        return cast(putIfAbsent(CACHE, new CacheKey(type, parameters), () -> MetaType.<T>builder()
+        return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
                 .isPrimitive(type.isPrimitive())
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .isFlux(TypeInspector.isFlux(type))
                 .isMono(TypeInspector.isMono(type))
-                .isEnum(type.isEnum())
                 .parameters(immutableSetOf(parameters))
+                .build()));
+    }
+
+    public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactor) {
+        return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
+                .type(cast(type))
+                .isPrimitive(type.isPrimitive())
+                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
+                .isFlux(TypeInspector.isFlux(type))
+                .isMono(TypeInspector.isMono(type))
+                .isEnum(true)
+                .enumFactory(enumFactor)
                 .build()));
     }
 
@@ -138,7 +153,7 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
-        return cast(putIfAbsent(CACHE, new CacheKey(type, null, arrayComponentType), () -> MetaType.<T>builder()
+        return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
                 .isPrimitive(type.isPrimitive())
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
@@ -150,10 +165,32 @@ public class MetaType<T> {
 
     @EqualsAndHashCode
     @RequiredArgsConstructor
-    @AllArgsConstructor
     private static class CacheKey {
         private final Class<?> typeClass;
-        private final MetaType<?>[] parameters;
+        private MetaType<?>[] parameters;
         private MetaType<?> arrayComponentType;
+
+        public static CacheKey of(Class<?> typeClass) {
+            return new CacheKey(typeClass);
+        }
+
+        public static CacheKey of(Class<?> typeClass, MetaType<?>[] parameters) {
+            CacheKey cacheKey = new CacheKey(typeClass);
+            cacheKey.parameters = parameters;
+            return cacheKey;
+        }
+
+        public static CacheKey of(Class<?> typeClass, MetaType<?>[] parameters, MetaType<?> arrayComponentType) {
+            CacheKey cacheKey = new CacheKey(typeClass);
+            cacheKey.parameters = parameters;
+            cacheKey.arrayComponentType = arrayComponentType;
+            return cacheKey;
+        }
+
+        public static CacheKey of(Class<?> typeClass, MetaType<?> arrayComponentType) {
+            CacheKey cacheKey = new CacheKey(typeClass);
+            cacheKey.arrayComponentType = arrayComponentType;
+            return cacheKey;
+        }
     }
 }
