@@ -23,6 +23,7 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @ToString
@@ -36,7 +37,8 @@ public abstract class MetaModule {
         return metaPackage;
     }
 
-    protected void compute() {
+    protected void compute(MetaModule... dependencies) {
+        stream(dependencies).forEach(MetaModule::compute);
         packages.values().forEach(MetaPackage::compute);
     }
 

@@ -29,7 +29,6 @@ import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -50,12 +49,16 @@ import java.util.function.*;
 public class MetaType<T> {
     private final Class<T> type;
     private final ImmutableSet<MetaType<?>> parameters;
+
     private final boolean primitive;
-    private final boolean array;
-    private final MetaType<?> arrayComponentType;
+    private final PrimitiveType primitiveType;
+
     private final boolean flux;
     private final boolean mono;
-    private final PrimitiveType primitiveType;
+
+    private final boolean array;
+    private final MetaType<?> arrayComponentType;
+
     private final MetaTypeVariable variable;
 
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
