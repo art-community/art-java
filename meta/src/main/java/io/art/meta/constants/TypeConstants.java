@@ -51,17 +51,6 @@ public interface TypeConstants {
             .put(float.class, FLOAT)
             .build();
 
-    ImmutableSet<Class<?>> PRIMITIVE_ARRAYS = immutableSetOf(
-            char[].class,
-            int[].class,
-            short[].class,
-            long[].class,
-            boolean[].class,
-            double[].class,
-            byte[].class,
-            float[].class
-    );
-
     ImmutableSet<Class<?>> COLLECTION_TYPES = immutableSetOf(
             List.class,
             Queue.class,

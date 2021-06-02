@@ -104,6 +104,9 @@ public class MetaType<T> {
                 .map(parameter -> parameter.parameterize(parameters))
                 .collect(immutableSetCollector());
         MetaTypeBuilder<?> builder = toBuilder().parameters(parametrizedTypeParameters);
+        if (Objects.nonNull(arrayComponentType)) {
+            builder.arrayComponentType(arrayComponentType.parameterize(parameters));
+        }
         if (isNull(variable)) {
             return builder.build();
         }
