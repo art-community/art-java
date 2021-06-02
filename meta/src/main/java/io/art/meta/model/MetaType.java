@@ -55,7 +55,6 @@ public class MetaType<T> {
     private final MetaType<?> arrayComponentType;
     private final boolean flux;
     private final boolean mono;
-    private final boolean voidType;
     private final PrimitiveType primitiveType;
     private final MetaTypeVariable variable;
 
@@ -123,7 +122,6 @@ public class MetaType<T> {
                 .primitive(type.isPrimitive())
                 .flux(isFlux(type))
                 .mono(isMono(type))
-                .voidType(isPrimitiveVoid(type))
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
