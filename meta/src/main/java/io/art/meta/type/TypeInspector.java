@@ -91,6 +91,10 @@ public class TypeInspector {
         return PRIMITIVE_TYPES.contains(type);
     }
 
+    public static boolean isNotPrimitive(Type type) {
+        return !isPrimitive(type);
+    }
+
     public static boolean isClass(Type type) {
         return type instanceof Class;
     }
@@ -125,10 +129,6 @@ public class TypeInspector {
 
     public static boolean isArray(Type type) {
         return isGenericArray(type) || extractClass(type).isArray();
-    }
-
-    public static boolean isNotPrimitive(Type type) {
-        return !isPrimitive(type);
     }
 
     public static boolean isPrimitiveVoid(Type type) {
