@@ -206,7 +206,6 @@ class KnownMappersComputer {
                 EntityToModelMapper<ImmutableMap<Object, Object>> toMapper = toImmutableMap(keyToModel, keyFromModel, valueToModel);
                 return mapper(cast(fromMapper), cast(toMapper));
             }
-
             EntityFromModelMapper<Map<Object, Object>> fromMapper = fromMap(keyToModel, keyFromModel, valueFromModel);
             EntityToModelMapper<Map<Object, Object>> toMapper = toMutableMap(keyToModel, valueToModel);
             return mapper(cast(fromMapper), cast(toMapper));

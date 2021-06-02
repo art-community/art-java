@@ -136,15 +136,11 @@ public class MetaType<T> {
                 .build()));
     }
 
-    public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactor) {
+    public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .isPrimitive(type.isPrimitive())
-                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
-                .isFlux(TypeInspector.isFlux(type))
-                .isMono(TypeInspector.isMono(type))
                 .isEnum(true)
-                .enumFactory(enumFactor)
+                .enumFactory(enumFactory)
                 .build()));
     }
 
@@ -155,10 +151,8 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .isPrimitive(type.isPrimitive())
-                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
-                .arrayFactory(cast(arrayFactory))
                 .isArray(true)
+                .arrayFactory(cast(arrayFactory))
                 .arrayComponentType(arrayComponentType)
                 .build()));
     }
