@@ -27,7 +27,6 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
-import static io.art.value.mapper.ValueFromModelMapper.identity;
 import static io.art.value.mapper.ValueFromModelMapper.*;
 import static io.art.value.mapper.ValueMapper.*;
 import static io.art.value.mapping.ArrayMapping.*;
@@ -52,7 +51,7 @@ class KnownMappersComputer {
             return cast(mapper(ignore -> null, ignore -> null));
         }
         if (isObject(rawType) || isValue(rawType)) {
-            return cast(mapper(identity(), ValueToModelMapper.identity()));
+            return cast(mapper(ValueFromModelMapper.identity(), ValueToModelMapper.identity()));
         }
         if (isByteArray(rawType)) {
             return cast(mapper(fromBinary, toBinary));
