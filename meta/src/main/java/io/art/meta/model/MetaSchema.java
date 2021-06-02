@@ -51,7 +51,11 @@ public class MetaSchema<T> {
     }
 
     @Builder
-    public MetaSchema(MetaConstructor<T> allArgumentsConstructor, List<MetaProperty<?>> gettableProperties, List<MetaProperty<?>> objectProperties, List<MetaProperty<?>> primitiveProperties) {
+    public MetaSchema(MetaConstructor<T> allArgumentsConstructor,
+                      List<MetaProperty<?>> gettableProperties,
+                      List<MetaProperty<?>> objectProperties,
+                      List<MetaProperty<?>> primitiveProperties
+    ) {
         this.allArgumentsConstructor = allArgumentsConstructor;
         primitiveCreators = new Creator[primitiveProperties.size()];
         objectCreators = new Creator[objectProperties.size()];

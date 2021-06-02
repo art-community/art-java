@@ -123,9 +123,9 @@ public class MetaType<T> {
         return cast(putIfAbsent(CACHE, new CacheKey(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
                 .primitive(type.isPrimitive())
+                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .flux(isFlux(type))
                 .mono(isMono(type))
-                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .asArray(cast(arrayFactory))
                 .parameters(immutableSetOf(parameters))
                 .build()));
