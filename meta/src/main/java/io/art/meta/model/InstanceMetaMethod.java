@@ -30,15 +30,15 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
         super(name, returnType, modifiers);
     }
 
-    public Object invoke(I instance) {
+    public Object invoke(I instance) throws Throwable {
         throw new NotImplementedException("invoke(instance)");
     }
 
-    public Object invoke(I instance, Object argument) {
+    public Object invoke(I instance, Object argument) throws Throwable {
         throw new NotImplementedException("invoke(instance, argument)");
     }
 
-    public abstract Object invoke(I instance, Object[] arguments);
+    public abstract Object invoke(I instance, Object[] arguments) throws Throwable;
 
     @Override
     public boolean isStatic() {

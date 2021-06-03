@@ -27,7 +27,7 @@ public class ParametrizedMetaConstructor<T> extends MetaConstructor<T> {
     }
 
     @Override
-    public T invoke(Object[] arguments) {
+    public T invoke(Object[] arguments) throws Throwable {
         return template.invoke(arguments);
     }
 }

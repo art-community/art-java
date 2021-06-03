@@ -78,6 +78,7 @@ public class MetaSchema<T> {
         }
     }
 
+    @SneakyThrows
     public T toModel(Value value) {
         Entity entity = Value.asEntity(value);
         Object[] arguments = new Object[objectCreators.length + primitiveCreators.length];
@@ -90,6 +91,7 @@ public class MetaSchema<T> {
         return allArgumentsConstructor.invoke(arguments);
     }
 
+    @SneakyThrows
     public Value fromModel(Object model) {
         EntityBuilder entityBuilder = entityBuilder();
         for (Getter getter : getterFromModel) {

@@ -51,7 +51,7 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
-    private Set<String> modifiers;
+    private final Set<String> modifiers;
     private Map<String, MetaType<?>> variables;
     private MetaSchema<T> schema;
 

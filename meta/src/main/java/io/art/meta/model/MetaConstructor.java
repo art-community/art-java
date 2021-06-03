@@ -77,13 +77,13 @@ public abstract class MetaConstructor<T> {
         return immutableSetOf(modifiers);
     }
 
-    public T invoke() {
+    public T invoke() throws Throwable {
         throw new NotImplementedException("invoke()");
     }
 
-    public T invoke(Object argument) {
+    public T invoke(Object argument) throws Throwable {
         throw new NotImplementedException("invoke(argument)");
     }
 
-    public abstract T invoke(Object[] arguments);
+    public abstract T invoke(Object[] arguments) throws Throwable;
 }
