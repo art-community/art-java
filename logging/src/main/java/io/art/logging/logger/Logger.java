@@ -20,6 +20,7 @@ package io.art.logging.logger;
 
 import io.art.logging.constants.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.extensions.StringExtensions.*;
 
 public interface Logger {
     String getName();
@@ -72,6 +73,6 @@ public interface Logger {
     boolean isTraceEnabled();
 
     default void error(Throwable throwable) {
-        error(ifEmpty(throwable.getLocalizedMessage(), throwable.getMessage()), throwable);
+        error(emptyIfNull(ifEmpty(throwable.getLocalizedMessage(), throwable.getMessage())), throwable);
     }
 }

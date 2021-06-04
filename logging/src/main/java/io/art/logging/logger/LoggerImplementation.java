@@ -25,6 +25,8 @@ import io.art.logging.messaging.*;
 import io.art.logging.model.*;
 import io.art.logging.writer.*;
 import lombok.*;
+import static com.google.common.base.Throwables.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static java.lang.Thread.*;
 import static java.text.MessageFormat.*;
@@ -166,9 +168,8 @@ public class LoggerImplementation implements Logger {
                 .dateTime(now())
                 .logger(name)
                 .level(level)
-                .message(message)
+                .message(message + NEW_LINE + getStackTraceAsString(error))
                 .thread(currentThread())
-                .exception(error)
                 .build();
     }
 

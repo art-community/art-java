@@ -30,5 +30,4 @@ public class LoggingMessage {
     Thread thread;
     LoggingLevel level;
     String message;
-    Throwable exception;
 }
