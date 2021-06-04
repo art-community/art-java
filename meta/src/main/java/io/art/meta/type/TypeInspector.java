@@ -22,11 +22,11 @@ public class TypeInspector {
     }
 
     public static boolean isFlux(Type fieldType) {
-        return extractClass(fieldType).isAssignableFrom(Flux.class);
+        return Flux.class.isAssignableFrom(extractClass(fieldType));
     }
 
     public static boolean isMono(Type fieldType) {
-        return extractClass(fieldType).isAssignableFrom(Mono.class);
+        return Mono.class.isAssignableFrom(extractClass(fieldType));
     }
 
     public static boolean isLazyValue(Type fieldType) {

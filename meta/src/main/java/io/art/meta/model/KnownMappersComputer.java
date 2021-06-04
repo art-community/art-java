@@ -20,7 +20,6 @@ package io.art.meta.model;
 
 import io.art.core.collection.*;
 import io.art.meta.exception.*;
-import io.art.value.factory.*;
 import io.art.value.immutable.*;
 import io.art.value.mapper.*;
 import io.art.value.mapper.ValueToModelMapper.*;
@@ -30,6 +29,7 @@ import static io.art.core.extensions.StringExtensions.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.isPrimitive;
 import static io.art.meta.type.TypeInspector.*;
+import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.Value.*;
 import static io.art.value.mapper.ValueFromModelMapper.*;
 import static io.art.value.mapper.ValueMapper.*;
@@ -191,7 +191,7 @@ class KnownMappersComputer {
                     .filter(metaKeyType -> isPrimitive(metaKeyType.type()))
                     .map(MetaType::fromModel)
                     .orElseThrow(() -> new MetaException(format(UNSUPPORTED_TYPE, metaTypes[0]))))
-                    : (PrimitiveFromModelMapper<Object>) model -> PrimitivesFactory.stringPrimitive(model.toString());
+                    : (PrimitiveFromModelMapper<Object>) model -> stringPrimitive(model.toString());
             ValueToModelMapper<Object, Value> valueToModel = hasValue
                     ? cast(of(metaTypes[1].compute())
                     .map(MetaType::toModel)
