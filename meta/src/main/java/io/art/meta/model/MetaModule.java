@@ -23,6 +23,7 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static java.util.Arrays.*;
 import java.util.*;
 
@@ -31,19 +32,30 @@ import java.util.*;
 @EqualsAndHashCode
 public abstract class MetaModule {
     private final Map<String, MetaPackage> packages = map();
+    private final Set<MetaClass<?>> rootClasses = set();
 
     protected <T extends MetaPackage> T register(T metaPackage) {
         packages.put(metaPackage.name(), metaPackage);
         return metaPackage;
     }
 
+    protected <T extends MetaClass<?>> T register(T metaClass) {
+        rootClasses.add(metaClass);
+        return metaClass;
+    }
+
     protected void compute(MetaModule... dependencies) {
         stream(dependencies).forEach(MetaModule::compute);
+        rootClasses.forEach(MetaClass::compute);
         packages.values().forEach(MetaPackage::compute);
     }
 
     public ImmutableMap<String, MetaPackage> packages() {
         return immutableMapOf(packages);
+    }
+
+    public ImmutableSet<MetaClass<?>> rootClasses() {
+        return immutableSetOf(rootClasses);
     }
 
     public <T extends MetaPackage> T packageOf(String name) {
