@@ -29,7 +29,9 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.logging.module.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
@@ -60,7 +62,7 @@ public class Launcher {
                     .onLoad(activator.onLoad())
                     .beforeReload(activator.beforeReload())
                     .afterReload(activator.afterReload())
-                    .mainModuleId(activator.mainModuleId())
+                    .mainModuleId(orElse(activator.mainModuleId(), DEFAULT_MAIN_MODULE_ID))
                     .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())))
                     .build();
 

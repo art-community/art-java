@@ -108,14 +108,14 @@ public class FileWriter implements LoggerWriter {
     private LocalDateTime parseFileTimeStamp(FileWriterConfiguration configuration, String name) {
         int prefixIndex = name.indexOf(configuration.getPrefix());
         if (prefixIndex == -1) {
-            int suffixIndex = name.indexOf(configuration.getSuffix());
+            int suffixIndex = name.indexOf(configuration.getExtension());
             if (suffixIndex == -1) {
                 return nullIfException(() -> parse(name, configuration.getTimestampFormat()));
             }
             return nullIfException(() -> parse(name.substring(0, suffixIndex), configuration.getTimestampFormat()));
         }
 
-        int suffixIndex = name.indexOf(configuration.getSuffix());
+        int suffixIndex = name.indexOf(configuration.getExtension());
         if (suffixIndex == -1) {
             return nullIfException(() -> parse(name.substring(prefixIndex + 1), configuration.getTimestampFormat()));
         }
@@ -137,7 +137,7 @@ public class FileWriter implements LoggerWriter {
     private void openFileStream(LocalDateTime timeStamp) {
         FileWriterConfiguration fileConfiguration = writerConfiguration.getFile();
         String timeStampString = fileConfiguration.getTimestampFormat().format(timeStamp);
-        String fileName = ifEmpty(fileConfiguration.getPrefix(), EMPTY_STRING) + timeStampString + fileConfiguration.getSuffix();
+        String fileName = ifEmpty(fileConfiguration.getPrefix(), EMPTY_STRING) + timeStampString + fileConfiguration.getExtension();
         outputStream = openFileStream(fileConfiguration.getDirectory().resolve(fileName));
         currentTimeStamp = timeStamp;
     }

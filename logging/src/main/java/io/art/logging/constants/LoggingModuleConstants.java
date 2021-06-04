@@ -46,7 +46,7 @@ public interface LoggingModuleConstants {
     }
 
     interface Defaults {
-        String DEFAULT_LOG_FILE_NAME_SUFFIX = ".log";
+        String DEFAULT_LOG_FILE_NAME_EXTENSION = ".log";
         DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
         DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;
         Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofSeconds(10);

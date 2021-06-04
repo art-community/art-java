@@ -41,7 +41,7 @@ public class FileWriterConfiguration {
     private final Path directory = context().configuration().getWorkingDirectory();
 
     @Builder.Default
-    private final String suffix = DEFAULT_LOG_FILE_NAME_SUFFIX;
+    private final String extension = DEFAULT_LOG_FILE_NAME_EXTENSION;
 
     @Builder.Default
     private final DateTimeFormatter timestampFormat = DEFAULT_LOG_FILE_TIME_STAMP_FORMAT;
@@ -54,7 +54,7 @@ public class FileWriterConfiguration {
         builder.directory(let(source.getString(DIRECTORY_KEY), Paths::get, fallback.directory));
         builder.rotationPeriod(orElse(source.getDuration(ROTATION_PERIOD_KEY), fallback.rotationPeriod));
         builder.prefix(orElse(source.getString(PREFIX_KEY), fallback.prefix));
-        builder.suffix(orElse(source.getString(SUFFIX_KEY), fallback.suffix));
+        builder.extension(orElse(source.getString(SUFFIX_KEY), fallback.extension));
         builder.timestampFormat(let(source.getString(TIMESTAMP_FORMAT_KEY),
                 pattern -> handleException(ignore -> DEFAULT_LOG_FILE_TIME_STAMP_FORMAT).call(() -> ofPattern(pattern)),
                 fallback.timestampFormat
