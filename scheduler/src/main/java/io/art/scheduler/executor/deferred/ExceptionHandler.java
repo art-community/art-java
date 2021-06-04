@@ -21,6 +21,6 @@ package io.art.scheduler.executor.deferred;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 
 @FunctionalInterface
-interface ExceptionHandler {
+public interface ExceptionHandler {
     void onException(Thread thread, ExceptionEvent event, Throwable throwable);
 }
