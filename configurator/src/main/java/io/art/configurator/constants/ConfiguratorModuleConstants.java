@@ -40,8 +40,8 @@ public interface ConfiguratorModuleConstants {
     }
 
     interface ConfiguratorKeys {
-        String MODULE_CONFIG_FILES_ENVIRONMENT = "MODULE_CONFIG_FILES";
-        String MODULE_CONFIG_FILES_PROPERTY = "module.config.files";
+        String CONFIGURATION_ENVIRONMENT = "CONFIGURATION";
+        String CONFIGURATION_PROPERTY = "configuration";
     }
 
     interface FileConfigurationExtensions {

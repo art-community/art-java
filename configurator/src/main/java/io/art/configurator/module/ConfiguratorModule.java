@@ -37,6 +37,7 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConf
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.factory.ListFactory.*;
 import static java.nio.file.Paths.*;
 import static lombok.AccessLevel.*;
 import java.io.*;
@@ -68,9 +69,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .ifPresent(source -> configure(configurator -> configurator.from(source)));
         EnvironmentConfigurationSource environment = getConfiguration().getEnvironment();
         PropertiesConfigurationSource properties = getConfiguration().getProperties();
-        List<String> configFilePaths = environment.getStringArray(MODULE_CONFIG_FILES_ENVIRONMENT).toMutable();
-        configFilePaths.addAll(properties.getStringArray(MODULE_CONFIG_FILES_PROPERTY).toMutable());
-        configureByFile(configFilePaths);
+        configureByFile(linkedListOf(environment.getString(CONFIGURATION_ENVIRONMENT), properties.getString(CONFIGURATION_PROPERTY)));
         return this;
     }
 
