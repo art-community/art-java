@@ -22,20 +22,8 @@ import io.art.logging.logger.*;
 import java.io.*;
 import java.util.function.*;
 
-public class LoggerStream extends PrintStream {
-    private final Logger logger;
-    private final BiConsumer<Logger, String> writer;
-
-    public LoggerStream(Logger logger, BiConsumer<Logger, String> writer) {
-        super(new ByteArrayOutputStream(), true);
-        this.logger = logger;
-        this.writer = writer;
-    }
-
-    @Override
-    public void flush() {
-        super.flush();
-        ByteArrayOutputStream stream = (ByteArrayOutputStream) this.out;
-        writer.accept(logger, stream.toString());
+public class LoggerPrintStream extends PrintStream {
+    public LoggerPrintStream(Logger logger, BiConsumer<Logger, String> writer) {
+        super(new LoggerOutputStream(logger, writer), true);
     }
 }
