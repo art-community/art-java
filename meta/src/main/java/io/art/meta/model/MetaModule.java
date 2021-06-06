@@ -33,6 +33,13 @@ import java.util.*;
 public abstract class MetaModule {
     private final Map<String, MetaPackage> packages = map();
     private final Set<MetaClass<?>> rootClasses = set();
+    private final List<MetaModule> dependencies;
+
+    protected MetaModule(MetaModule... dependencies) {
+        this.dependencies = asList(dependencies);
+        rootClasses.forEach(MetaClass::compute);
+        packages.values().forEach(MetaPackage::compute);
+    }
 
     protected <T extends MetaPackage> T register(T metaPackage) {
         packages.put(metaPackage.name(), metaPackage);
@@ -42,12 +49,6 @@ public abstract class MetaModule {
     protected <T extends MetaClass<?>> T register(T metaClass) {
         rootClasses.add(metaClass);
         return metaClass;
-    }
-
-    protected void compute(MetaModule... dependencies) {
-        stream(dependencies).forEach(MetaModule::compute);
-        rootClasses.forEach(MetaClass::compute);
-        packages.values().forEach(MetaPackage::compute);
     }
 
     public ImmutableMap<String, MetaPackage> packages() {
