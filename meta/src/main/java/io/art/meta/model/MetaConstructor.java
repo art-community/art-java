@@ -25,7 +25,6 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import java.lang.reflect.*;
 import java.util.*;
 
 @ToString
@@ -34,18 +33,18 @@ import java.util.*;
 public abstract class MetaConstructor<T> {
     private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
-    private final Set<String> modifiers;
+    private final boolean isPublic;
 
-    protected MetaConstructor(MetaType<T> type, Set<String> modifiers) {
+    protected MetaConstructor(MetaType<T> type, boolean isPublic) {
         this.type = type;
-        this.modifiers = modifiers;
+        this.isPublic = isPublic;
         parameters = map();
     }
 
     protected MetaConstructor(MetaConstructor<T> base) {
         this.type = base.type;
         this.parameters = base.parameters;
-        this.modifiers = base.modifiers;
+        this.isPublic = base.isPublic;
     }
 
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
@@ -73,8 +72,8 @@ public abstract class MetaConstructor<T> {
         return immutableMapOf(parameters);
     }
 
-    public ImmutableSet<String> modifiers() {
-        return immutableSetOf(modifiers);
+    public boolean isPublic() {
+        return isPublic;
     }
 
     public T invoke() throws Throwable {

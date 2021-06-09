@@ -32,10 +32,9 @@ import java.util.*;
 public class MetaField<T> {
     private final String name;
     private final MetaType<T> type;
-    private final Set<String> modifiers;
 
     protected MetaField<?> parameterize(Map<String, MetaType<?>> parameters) {
         MetaType<?> newFieldType = type.parameterize(parameters);
-        return new MetaField<>(name, newFieldType, modifiers);
+        return new MetaField<>(name, newFieldType);
     }
 }

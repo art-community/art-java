@@ -160,7 +160,7 @@ public abstract class MetaClass<T> {
     private MetaSchema<T> computeSchema() {
         MetaConstructor<T> propertiesConstructor = null;
         for (MetaConstructor<T> constructor : constructors) {
-            if (!constructor.modifiers().contains(Modifier.toString(PUBLIC))) continue;
+            if (!constructor.isPublic()) continue;
             constructor.parameters().values().forEach(parameter -> parameter.type().compute());
 
             Collection<MetaField<?>> fields = this.fields.values();
