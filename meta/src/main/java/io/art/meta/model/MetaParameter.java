@@ -33,10 +33,9 @@ public class MetaParameter<T> {
     private final int index;
     private final String name;
     private final MetaType<T> type;
-    private final Set<String> modifiers;
 
     protected MetaParameter<?> parameterize(Map<String, MetaType<?>> parameters) {
         MetaType<?> newFieldType = type.parameterize(parameters);
-        return new MetaParameter<>(index, name, newFieldType, modifiers);
+        return new MetaParameter<>(index, name, newFieldType);
     }
 }

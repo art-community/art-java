@@ -23,7 +23,6 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
 @ToString
@@ -33,20 +32,20 @@ public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
     private MetaType<T> returnType;
-    private final Set<String> modifiers;
+    private final boolean isPublic;
 
-    protected MetaMethod(String name, MetaType<T> returnType, Set<String> modifiers) {
+    protected MetaMethod(String name, MetaType<T> returnType, boolean isPublic) {
         this.name = name;
         this.returnType = returnType;
         this.parameters = map();
-        this.modifiers = modifiers;
+        this.isPublic = isPublic;
     }
 
     protected MetaMethod(MetaMethod<T> base) {
         this.name = base.name;
         this.returnType = base.returnType;
         this.parameters = base.parameters;
-        this.modifiers = base.modifiers;
+        this.isPublic = base.isPublic;
     }
 
 
@@ -80,8 +79,8 @@ public abstract class MetaMethod<T> {
         return immutableMapOf(parameters);
     }
 
-    public ImmutableSet<String> modifiers() {
-        return immutableSetOf(modifiers);
+    public boolean isPublic() {
+        return isPublic;
     }
 
     public abstract boolean isStatic();

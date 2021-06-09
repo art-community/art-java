@@ -51,13 +51,11 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
-    private final Set<String> modifiers;
     private Map<String, MetaType<?>> variables;
     private MetaSchema<T> schema;
 
-    protected MetaClass(MetaType<T> type, Set<String> modifiers) {
+    protected MetaClass(MetaType<T> type) {
         this.type = type;
-        this.modifiers = modifiers;
         constructors = set();
         fields = map();
         methods = set();
@@ -68,7 +66,6 @@ public abstract class MetaClass<T> {
 
     protected MetaClass(MetaClass<T> base) {
         type = base.type;
-        modifiers = base.modifiers;
         constructors = base.constructors;
         fields = base.fields;
         methods = base.methods;
@@ -78,8 +75,8 @@ public abstract class MetaClass<T> {
     }
 
     @SafeVarargs
-    protected MetaClass(MetaType<T> metaType, Set<String> modifiers, MetaType<T>... variables) {
-        this(metaType, modifiers);
+    protected MetaClass(MetaType<T> metaType, MetaType<T>... variables) {
+        this(metaType);
         this.variables = stream(variables).collect(mapCollector(variable -> variable.variable().name(), identity()));
     }
 
@@ -161,7 +158,7 @@ public abstract class MetaClass<T> {
     }
 
     private MetaSchema<T> computeSchema() {
-        MetaConstructor<T> allArgumentsConstructor = null;
+        MetaConstructor<T> propertiesConstructor = null;
         for (MetaConstructor<T> constructor : constructors) {
             if (!constructor.modifiers().contains(Modifier.toString(PUBLIC))) continue;
             constructor.parameters().values().forEach(parameter -> parameter.type().compute());
@@ -175,7 +172,7 @@ public abstract class MetaClass<T> {
                         .stream()
                         .anyMatch(field -> parameter.name().equals(field.name()) && parameter.type().equals(field.type()));
                 if (hasField) {
-                    allArgumentsConstructor = constructor;
+                    propertiesConstructor = constructor;
                     break;
                 }
             }
@@ -197,8 +194,8 @@ public abstract class MetaClass<T> {
 
             getter.ifPresent(metaMethod -> builder.getter(cast(metaMethod)));
 
-            if (nonNull(allArgumentsConstructor)) {
-                int constructorParameterIndex = allArgumentsConstructor.parameters().get(field.name()).index();
+            if (nonNull(propertiesConstructor)) {
+                int constructorParameterIndex = propertiesConstructor.parameters().get(field.name()).index();
                 builder.index(constructorParameterIndex);
 
                 MetaProperty<?> property = builder.build();
@@ -222,7 +219,7 @@ public abstract class MetaClass<T> {
         }
 
         return MetaSchema.<T>builder()
-                .allArgumentsConstructor(allArgumentsConstructor)
+                .allArgumentsConstructor(propertiesConstructor)
                 .primitiveProperties(primitiveProperties)
                 .gettableProperties(gettableProperties)
                 .objectProperties(objectProperties)
@@ -230,7 +227,7 @@ public abstract class MetaClass<T> {
     }
 
     private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
-        if (!method.modifiers().contains(Modifier.toString(PUBLIC))) return false;
+        if (!method.isPublic()) return false;
         if (method.isStatic()) return false;
         if (!method.parameters().isEmpty()) return false;
         if (!method.returnType().equals(field.type())) return false;
