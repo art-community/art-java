@@ -48,11 +48,11 @@ public class CauseHandler {
         return this;
     }
 
-    public <T> T getResult() {
+    public <T> T get() {
         return cast(result);
     }
 
-    public <T> T getResult(T defaultResult) {
+    public <T> T or(T defaultResult) {
         return isEmpty(result) ? defaultResult : cast(result);
     }
 }
