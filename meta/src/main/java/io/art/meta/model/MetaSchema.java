@@ -29,7 +29,7 @@ import static io.art.value.immutable.Entity.*;
 import java.util.*;
 
 public class MetaSchema<T> {
-    private final MetaConstructor<T> allArgumentsConstructor;
+    private final MetaConstructor<T> propertiesConstructor;
     private final Creator[] primitiveCreators;
     private final Creator[] objectCreators;
     private final Getter[] getterFromModel;
@@ -51,11 +51,11 @@ public class MetaSchema<T> {
     }
 
     @Builder
-    public MetaSchema(MetaConstructor<T> allArgumentsConstructor,
+    public MetaSchema(MetaConstructor<T> propertiesConstructor,
                       List<MetaProperty<?>> gettableProperties,
                       List<MetaProperty<?>> objectProperties,
                       List<MetaProperty<?>> primitiveProperties) {
-        this.allArgumentsConstructor = allArgumentsConstructor;
+        this.propertiesConstructor = propertiesConstructor;
         primitiveCreators = new Creator[primitiveProperties.size()];
         objectCreators = new Creator[objectProperties.size()];
         getterFromModel = new Getter[gettableProperties.size()];
@@ -88,7 +88,7 @@ public class MetaSchema<T> {
         for (Creator creator : objectCreators) {
             arguments[creator.index] = entity.map(creator.name, creator.mapper);
         }
-        return allArgumentsConstructor.invoke(arguments);
+        return propertiesConstructor.invoke(arguments);
     }
 
     @SneakyThrows

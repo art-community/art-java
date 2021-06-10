@@ -34,11 +34,9 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
-import static java.lang.reflect.Modifier.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
-import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.*;
 
@@ -219,7 +217,7 @@ public abstract class MetaClass<T> {
         }
 
         return MetaSchema.<T>builder()
-                .allArgumentsConstructor(propertiesConstructor)
+                .propertiesConstructor(propertiesConstructor)
                 .primitiveProperties(primitiveProperties)
                 .gettableProperties(gettableProperties)
                 .objectProperties(objectProperties)
