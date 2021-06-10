@@ -93,9 +93,17 @@ public class RsocketServer implements Server {
             server.fragment(fragmentationMtu);
         }
         apply(configuration.getResume(), resume -> server.resume(resume.toResume()));
-        Optional<SocketAddress> tcpAddress = ofNullable(configuration.getTcpServer()).map(TcpServer::configuration).map(TcpServerConfig::bindAddress).map(Supplier::get);
-        Optional<SocketAddress> webAddress = ofNullable(configuration.getHttpWebSocketServer()).map(HttpServer::configuration).map(HttpServerConfig::bindAddress).map(Supplier::get);
-        SocketAddress address = transportMode == TCP ? tcpAddress.orElseThrow(ImpossibleSituationException::new) : webAddress.orElseThrow(ImpossibleSituationException::new);
+        Optional<SocketAddress> tcpAddress = ofNullable(configuration.getTcpServer())
+                .map(TcpServer::configuration)
+                .map(TcpServerConfig::bindAddress)
+                .map(Supplier::get);
+        Optional<SocketAddress> webAddress = ofNullable(configuration.getHttpWebSocketServer())
+                .map(HttpServer::configuration)
+                .map(HttpServerConfig::bindAddress)
+                .map(Supplier::get);
+        SocketAddress address = transportMode == TCP
+                ? tcpAddress.orElseThrow(ImpossibleSituationException::new)
+                : webAddress.orElseThrow(ImpossibleSituationException::new);
         ServerTransport<CloseableChannel> transport = transportMode == TCP
                 ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
                 : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
