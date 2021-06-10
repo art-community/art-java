@@ -21,7 +21,9 @@ package io.art.core.checker;
 import io.art.core.collection.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
+import org.jetbrains.annotations.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.IdeaContracts.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
 import java.nio.*;
@@ -103,86 +105,105 @@ public class EmptinessChecker {
         return !isEmpty(buffer);
     }
 
-    @SuppressWarnings(ALL)
+    @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
     public static boolean isNotEmpty(Optional<?> optional) {
         return !isEmpty(optional);
     }
 
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(Object value) {
         String valAsString;
         return isNull(value) || (valAsString = value.toString().trim()).isEmpty() || (valAsString.equalsIgnoreCase(NULL_STRING));
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(Iterable<?> value) {
         return isNull(value) || !value.iterator().hasNext();
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(Object[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(byte[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(short[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(int[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(long[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(float[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(double[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(boolean[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(char[] content) {
         return isNull(content) || content.length == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(Map<?, ?> map) {
         return isNull(map) || map.isEmpty();
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(Collection<?> collection) {
         return isNull(collection) || collection.isEmpty();
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(ImmutableMap<?, ?> map) {
         return isNull(map) || map.isEmpty();
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(ImmutableCollection<?> collection) {
         return isNull(collection) || collection.isEmpty();
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(Stream<?> stream) {
         return isNull(stream) || stream.count() == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(ByteBuffer buffer) {
         return isNull(buffer) || buffer.remaining() == 0;
     }
 
+    @Contract(NULL_CONTRACT)
     public static boolean isEmpty(ByteBuf buffer) {
         return isNull(buffer) || buffer.readableBytes() == 0;
     }
 
-    @SuppressWarnings(ALL)
+    @Contract(NULL_CONTRACT)
+    @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
     public static boolean isEmpty(Optional<?> optional) {
         return isNull(optional) || !optional.isPresent();
     }

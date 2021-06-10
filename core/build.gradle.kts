@@ -23,6 +23,7 @@ dependencies {
     val reactorVersion: String by project
     val jctoolsVersion: String by project
     val lz4Version: String by project
+    val jetbrainsAnnotationsVersion: String by project
 
     api("org.lz4", "lz4-java", lz4Version)
             .exclude("org.slf4j")
@@ -40,4 +41,6 @@ dependencies {
     api("org.jctools", "jctools-core", jctoolsVersion)
             .exclude("com.google.guava")
             .exclude("org.slf4j")
+
+    compileOnly("org.jetbrains", "annotations", jetbrainsAnnotationsVersion)
 }

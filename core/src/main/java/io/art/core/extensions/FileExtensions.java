@@ -424,7 +424,6 @@ public class FileExtensions {
         return recursiveDelete(path.toFile());
     }
 
-    @SuppressWarnings("all")
     public static boolean recursiveDelete(File file) {
         if (isNull(file) || !file.exists()) {
             return true;
