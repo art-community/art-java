@@ -118,7 +118,6 @@ public interface ImmutableMap<K, V> {
             return this;
         }
 
-        @SuppressWarnings(UNUSED_RETURN_VALUE)
         public Builder<K, V> putAll(Map<? extends K, ? extends V> map) {
             builder.putAll(map);
             return this;
