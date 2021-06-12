@@ -144,8 +144,8 @@ public class MetaType<T> {
                 .build()));
     }
 
-    public static <T> MetaType<T> metaVariable(String name) {
-        return MetaType.<T>builder().variable(new MetaTypeVariable(name)).build();
+    public static MetaType<?> metaVariable(String name) {
+        return MetaType.builder().variable(new MetaTypeVariable(name)).build();
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
