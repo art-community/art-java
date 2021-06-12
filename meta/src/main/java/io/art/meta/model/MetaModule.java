@@ -35,7 +35,7 @@ public abstract class MetaModule {
     private final Set<MetaClass<?>> rootClasses = set();
     private final List<MetaModule> dependencies;
 
-    protected MetaModule(MetaModule... dependencies) {
+    protected MetaModule(MetaModule[] dependencies) {
         this.dependencies = asList(dependencies);
         rootClasses.forEach(MetaClass::compute);
         packages.values().forEach(MetaPackage::compute);
