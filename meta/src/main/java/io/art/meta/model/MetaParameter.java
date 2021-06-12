@@ -19,20 +19,31 @@
 package io.art.meta.model;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import lombok.*;
 import lombok.experimental.*;
 import java.util.*;
 
-@Getter
 @ToString
 @ForGenerator
 @EqualsAndHashCode
 @AllArgsConstructor
-@Accessors(fluent = true)
 public class MetaParameter<T> {
     private final int index;
     private final String name;
-    private final MetaType<T> type;
+    private final MetaType<?> type;
+
+    public int index() {
+        return index;
+    }
+
+    public String name() {
+        return name;
+    }
+
+    public MetaType<T> type() {
+        return Caster.cast(type);
+    }
 
     protected MetaParameter<?> parameterize(Map<String, MetaType<?>> parameters) {
         MetaType<?> newFieldType = type.parameterize(parameters);
