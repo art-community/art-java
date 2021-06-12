@@ -26,7 +26,7 @@ import java.util.*;
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
 public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
-    protected InstanceMetaMethod(String name, MetaType<R> returnType, boolean isPublic) {
+    protected InstanceMetaMethod(String name, MetaType<?> returnType, boolean isPublic) {
         super(name, returnType, isPublic);
     }
 

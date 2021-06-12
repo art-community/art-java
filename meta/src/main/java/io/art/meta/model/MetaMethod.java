@@ -34,9 +34,9 @@ public abstract class MetaMethod<T> {
     private MetaType<T> returnType;
     private final boolean isPublic;
 
-    protected MetaMethod(String name, MetaType<T> returnType, boolean isPublic) {
+    protected MetaMethod(String name, MetaType<?> returnType, boolean isPublic) {
         this.name = name;
-        this.returnType = returnType;
+        this.returnType = cast(returnType);
         this.parameters = map();
         this.isPublic = isPublic;
     }
