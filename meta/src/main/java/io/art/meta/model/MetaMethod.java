@@ -31,7 +31,7 @@ import java.util.*;
 public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
-    private MetaType<T> returnType;
+    private final MetaType<T> returnType;
     private final boolean isPublic;
 
     protected MetaMethod(String name, MetaType<?> returnType, boolean isPublic) {
@@ -52,15 +52,6 @@ public abstract class MetaMethod<T> {
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
-    }
-
-    protected MetaMethod<T> parameterize(Map<String, MetaType<?>> parameters) {
-        MetaMethod<T> newMethod = new ParametrizedMetaMethod<>(this);
-        newMethod.returnType = cast(returnType.parameterize(parameters));
-        for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
-            newMethod.register(parameter.getValue().parameterize(parameters));
-        }
-        return newMethod;
     }
 
     public String name() {

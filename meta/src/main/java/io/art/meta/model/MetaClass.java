@@ -25,8 +25,6 @@ import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.ListFactory.*;
@@ -34,11 +32,8 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
-import static java.util.Arrays.*;
 import static java.util.Objects.*;
-import static java.util.function.Function.*;
 import java.util.*;
-import java.util.Map.*;
 
 @ToString
 @ForGenerator
@@ -49,7 +44,7 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
-    private Map<String, MetaType<?>> variables;
+    private final Map<String, MetaType<?>> variables;
     private MetaSchema<T> schema;
 
     protected MetaClass(MetaType<T> type) {
@@ -72,12 +67,6 @@ public abstract class MetaClass<T> {
         schema = base.schema;
     }
 
-    @SafeVarargs
-    protected MetaClass(MetaType<T> metaType, MetaType<T>... variables) {
-        this(metaType);
-        this.variables = stream(variables).collect(mapCollector(variable -> variable.variable().name(), identity()));
-    }
-
     protected <F> MetaField<F> register(MetaField<F> field) {
         return cast(putIfAbsent(fields, field.name(), () -> field));
     }
@@ -93,47 +82,6 @@ public abstract class MetaClass<T> {
     protected <C extends MetaClass<?>> C register(C metaClass) {
         classes.put(metaClass.type().type(), metaClass);
         return metaClass;
-    }
-
-    protected MetaClass<T> parameterize(ImmutableSet<MetaType<?>> parameters) {
-        if (isEmpty(variables) || isEmpty(parameters)) return this;
-
-        MetaClass<T> parametrized = new ParametrizedMetaClass<>(this);
-        Map<String, MetaType<?>> variableToParameter = map();
-        int parameterIndex = 0;
-        for (MetaType<?> parameter : parameters) {
-            int variableIndex = 0;
-            for (Entry<String, MetaType<?>> variable : variables.entrySet()) {
-                if (variableIndex == parameterIndex) {
-                    variableToParameter.put(variable.getKey(), parameter);
-                    break;
-                }
-                variableIndex++;
-            }
-            parameterIndex++;
-        }
-
-        if (isEmpty(variableToParameter)) return this;
-
-        for (MetaField<?> field : fields.values()) {
-            parametrized.fields.put(field.name(), field.parameterize(variableToParameter));
-        }
-
-        for (MetaConstructor<T> constructor : constructors) {
-            parametrized.constructors.add(constructor.parameterize(variableToParameter));
-        }
-
-        for (MetaMethod<?> method : methods) {
-            parametrized.methods.add(method.parameterize(variableToParameter));
-        }
-
-        for (MetaClass<?> inner : classes.values()) {
-            classes.put(inner.type.type(), inner.parameterize(parameters));
-        }
-
-        parametrized.variables.clear();
-
-        return parametrized;
     }
 
     protected void compute() {

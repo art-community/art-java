@@ -58,7 +58,6 @@ public class MetaType<T> {
 
     private final PrimitiveType primitiveType;
     private final MetaType<?> arrayComponentType;
-    private final MetaTypeVariable variable;
 
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 
@@ -84,12 +83,6 @@ public class MetaType<T> {
     protected MetaType<T> compute() {
         if (nonNull(toModel) && nonNull(fromModel)) return this;
 
-        if (nonNull(variable)) {
-            toModel = cast(ValueToModelMapper.identity());
-            fromModel = cast(ValueFromModelMapper.identity());
-            return this;
-        }
-
         MetaClass<?> metaClass = classes().get(type);
         if (isNull(metaClass)) {
             ValueMapper<T, Value> mapper = computeKnownMappers(this);
@@ -98,31 +91,10 @@ public class MetaType<T> {
             return this;
         }
 
-        MetaClass<T> typedMetaClass = cast(metaClass.parameterize(parameters));
+        MetaClass<T> typedMetaClass = cast(metaClass);
         toModel = value -> typedMetaClass.schema().toModel(value);
         fromModel = value -> typedMetaClass.schema().fromModel(value);
         return this;
-    }
-
-    protected MetaType<?> parameterize(Map<String, MetaType<?>> parameters) {
-        ImmutableSet<MetaType<?>> parametrizedTypeParameters = this.parameters
-                .stream()
-                .map(parameter -> parameter.parameterize(parameters))
-                .collect(immutableSetCollector());
-        MetaTypeBuilder<?> builder = toBuilder().parameters(parametrizedTypeParameters);
-        if (nonNull(arrayComponentType)) {
-            builder.arrayComponentType(arrayComponentType.parameterize(parameters));
-        }
-        if (isNull(variable)) {
-            return builder.build();
-        }
-        MetaType<?> parameter = parameters.get(variable.name());
-        if (nonNull(parameter)) {
-            builder.variable(null)
-                    .type(cast(parameter.type))
-                    .arrayFactory(cast(parameter.arrayFactory));
-        }
-        return builder.build();
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
@@ -142,10 +114,6 @@ public class MetaType<T> {
                 .isEnum(true)
                 .enumFactory(enumFactory)
                 .build()));
-    }
-
-    public static MetaType<?> metaVariable(String name) {
-        return MetaType.builder().variable(new MetaTypeVariable(name)).build();
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {

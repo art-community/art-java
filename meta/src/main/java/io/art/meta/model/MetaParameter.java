@@ -44,9 +44,4 @@ public class MetaParameter<T> {
     public MetaType<T> type() {
         return Caster.cast(type);
     }
-
-    protected MetaParameter<?> parameterize(Map<String, MetaType<?>> parameters) {
-        MetaType<?> newFieldType = type.parameterize(parameters);
-        return new MetaParameter<>(index, name, newFieldType);
-    }
 }

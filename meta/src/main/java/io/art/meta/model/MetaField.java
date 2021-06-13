@@ -38,9 +38,4 @@ public class MetaField<T> {
     public MetaType<T> type() {
         return cast(type);
     }
-
-    protected MetaField<?> parameterize(Map<String, MetaType<?>> parameters) {
-        MetaType<?> newFieldType = type.parameterize(parameters);
-        return new MetaField<>(name, newFieldType);
-    }
 }

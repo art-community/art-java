@@ -24,7 +24,6 @@ import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
 @ToString
@@ -50,14 +49,6 @@ public abstract class MetaConstructor<T> {
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
-    }
-
-    protected MetaConstructor<T> parameterize(Map<String, MetaType<?>> parameters) {
-        MetaConstructor<T> newConstructor = new ParametrizedMetaConstructor<>(this);
-        for (Map.Entry<String, MetaParameter<?>> parameter : this.parameters().entrySet()) {
-            newConstructor.register(parameter.getValue().parameterize(parameters));
-        }
-        return newConstructor;
     }
 
     public MetaType<T> type() {
