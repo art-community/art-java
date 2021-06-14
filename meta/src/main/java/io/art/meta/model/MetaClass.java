@@ -57,16 +57,6 @@ public abstract class MetaClass<T> {
         MetaClassRegistry.register(this);
     }
 
-    protected MetaClass(MetaClass<T> base) {
-        type = base.type;
-        constructors = base.constructors;
-        fields = base.fields;
-        methods = base.methods;
-        variables = base.variables;
-        classes = base.classes;
-        schema = base.schema;
-    }
-
     protected <F> MetaField<F> register(MetaField<F> field) {
         return cast(putIfAbsent(fields, field.name(), () -> field));
     }

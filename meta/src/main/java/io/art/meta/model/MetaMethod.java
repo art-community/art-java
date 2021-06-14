@@ -41,14 +41,6 @@ public abstract class MetaMethod<T> {
         this.isPublic = isPublic;
     }
 
-    protected MetaMethod(MetaMethod<T> base) {
-        this.name = base.name;
-        this.returnType = base.returnType;
-        this.parameters = base.parameters;
-        this.isPublic = base.isPublic;
-    }
-
-
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;

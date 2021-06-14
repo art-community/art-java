@@ -40,12 +40,6 @@ public abstract class MetaConstructor<T> {
         parameters = map();
     }
 
-    protected MetaConstructor(MetaConstructor<T> base) {
-        this.type = base.type;
-        this.parameters = base.parameters;
-        this.isPublic = base.isPublic;
-    }
-
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
