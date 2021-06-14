@@ -96,7 +96,6 @@ public abstract class MetaClass<T> {
     private MetaSchema<T> computeSchema() {
         MetaConstructor<T> propertiesConstructor = null;
         for (MetaConstructor<T> constructor : constructors) {
-            if (!constructor.isPublic()) continue;
             constructor.parameters().values().forEach(parameter -> parameter.type().compute());
 
             Collection<MetaField<?>> fields = this.fields.values();
@@ -163,7 +162,6 @@ public abstract class MetaClass<T> {
     }
 
     private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
-        if (!method.isPublic()) return false;
         if (method.isStatic()) return false;
         if (!method.parameters().isEmpty()) return false;
         if (!method.returnType().equals(field.type())) return false;

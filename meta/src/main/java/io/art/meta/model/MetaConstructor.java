@@ -32,11 +32,9 @@ import java.util.*;
 public abstract class MetaConstructor<T> {
     private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
-    private final boolean isPublic;
 
-    protected MetaConstructor(MetaType<T> type, boolean isPublic) {
+    protected MetaConstructor(MetaType<T> type) {
         this.type = type;
-        this.isPublic = isPublic;
         parameters = map();
     }
 
@@ -55,10 +53,6 @@ public abstract class MetaConstructor<T> {
 
     public ImmutableMap<String, MetaParameter<?>> parameters() {
         return immutableMapOf(parameters);
-    }
-
-    public boolean isPublic() {
-        return isPublic;
     }
 
     public T invoke() throws Throwable {

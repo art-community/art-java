@@ -32,13 +32,11 @@ public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
     private final MetaType<T> returnType;
-    private final boolean isPublic;
 
-    protected MetaMethod(String name, MetaType<?> returnType, boolean isPublic) {
+    protected MetaMethod(String name, MetaType<?> returnType) {
         this.name = name;
         this.returnType = cast(returnType);
         this.parameters = map();
-        this.isPublic = isPublic;
     }
 
     protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
@@ -62,9 +60,6 @@ public abstract class MetaMethod<T> {
         return immutableMapOf(parameters);
     }
 
-    public boolean isPublic() {
-        return isPublic;
-    }
 
     public abstract boolean isStatic();
 }
