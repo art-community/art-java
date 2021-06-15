@@ -222,9 +222,9 @@ class DeferredEventObserver {
     private ThreadPoolExecutor createThreadPool() {
         return new ThreadPoolExecutor(
                 executor.getPoolSize(),
-                executor.getPoolSize() * 2,
+                executor.getPoolSize(),
                 0L, MILLISECONDS,
-                new LinkedBlockingQueue<>(executor.getPoolSize()),
+                new LinkedBlockingQueue<>(executor.getPoolSize() * 2),
                 threadFactory,
                 (runnable, executor) -> this.executor
                         .getExceptionHandler()
