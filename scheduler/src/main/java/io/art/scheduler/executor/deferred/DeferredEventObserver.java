@@ -179,6 +179,8 @@ class DeferredEventObserver {
                     // Ignoring exception because interrupting is normal situation when we want shutdown observer
                 } catch (Throwable throwable) {
                     executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
+                } finally {
+                    runningWorkers.remove(id);
                 }
             }
         } catch (InterruptedException | CancellationException ignore) {
@@ -197,7 +199,6 @@ class DeferredEventObserver {
         }
         for (Long id : toRemove) {
             pendingEvents.remove(id);
-            runningWorkers.remove(id).cancel(true);
         }
     }
 
