@@ -21,6 +21,7 @@ package io.art.scheduler.executor.deferred;
 import io.art.scheduler.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -56,6 +57,7 @@ class DeferredEventObserver {
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
+    private final Map<Long, Future<?>> pendingWorkers;
     private final Map<Long, Future<?>> runningWorkers;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
@@ -70,6 +72,7 @@ class DeferredEventObserver {
         delayedEvents = new DelayQueue<>();
         pendingEvents = map(executor.getPendingInitialCapacity());
         runningWorkers = map(executor.getPendingInitialCapacity());
+        pendingWorkers = concurrentMap(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
         delayedObserver.start();
@@ -159,6 +162,8 @@ class DeferredEventObserver {
             }
         } catch (InterruptedException interruptedException) {
             pendingEvents.clear();
+            pendingWorkers.values().forEach(worker -> worker.cancel(true));
+            pendingWorkers.clear();
             runningWorkers.values().forEach(worker -> worker.cancel(true));
             runningWorkers.clear();
         } catch (Throwable throwable) {
@@ -169,8 +174,12 @@ class DeferredEventObserver {
     private void observePending(Long id) {
         try {
             PriorityBlockingQueue<DeferredEvent<?>> queue;
+            Future<?> current = runningWorkers.get(id);
             while (!terminating.get() && nonNull(queue = pendingEvents.get(id))) {
+                pendingWorkers.put(id, current);
                 DeferredEvent<?> event = queue.take();
+                pendingWorkers.remove(id);
+
                 FutureTask<?> task = getTaskFromEvent(event);
                 task.run();
                 try {
@@ -183,8 +192,6 @@ class DeferredEventObserver {
             }
         } catch (InterruptedException | CancellationException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
-        } finally {
-            runningWorkers.remove(id);
         }
     }
 
@@ -199,6 +206,8 @@ class DeferredEventObserver {
         }
         for (Long id : toRemove) {
             pendingEvents.remove(id);
+            runningWorkers.remove(id);
+            apply(pendingWorkers.remove(id), worker -> worker.cancel(true));
         }
     }
 
