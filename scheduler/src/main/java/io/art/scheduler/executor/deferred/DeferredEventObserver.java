@@ -26,6 +26,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
@@ -56,7 +57,8 @@ class DeferredEventObserver {
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
-    private final Map<Long, Future<?>> runningWorkers;
+    private final Map<Long, Future<?>> activeWorkers;
+    private final Set<Long> waitingWorkers;
 
     DeferredEventObserver(DeferredExecutorImplementation executor) {
         this.executor = executor;
@@ -69,7 +71,8 @@ class DeferredEventObserver {
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
         pendingEvents = map(executor.getPendingInitialCapacity());
-        runningWorkers = map(executor.getPendingInitialCapacity());
+        activeWorkers = map(executor.getPendingInitialCapacity());
+        waitingWorkers = concurrentSet(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
         delayedObserver.start();
@@ -149,7 +152,7 @@ class DeferredEventObserver {
                     }
 
                     pendingEvents.put(id, queue);
-                    runningWorkers.put(id, pendingPool.submit(() -> observePending(id)));
+                    activeWorkers.put(id, pendingPool.submit(() -> observePending(id)));
                     continue;
                 }
 
@@ -159,8 +162,8 @@ class DeferredEventObserver {
             }
         } catch (InterruptedException interruptedException) {
             pendingEvents.clear();
-            runningWorkers.values().forEach(worker -> worker.cancel(true));
-            runningWorkers.clear();
+            activeWorkers.values().forEach(worker -> worker.cancel(true));
+            activeWorkers.clear();
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         }
@@ -170,7 +173,10 @@ class DeferredEventObserver {
         try {
             PriorityBlockingQueue<DeferredEvent<?>> queue;
             while (!terminating.get() && nonNull(queue = pendingEvents.get(id))) {
+                waitingWorkers.add(id);
                 DeferredEvent<?> event = queue.take();
+                waitingWorkers.remove(id);
+
                 FutureTask<?> task = getTaskFromEvent(event);
                 task.run();
                 try {
@@ -197,7 +203,11 @@ class DeferredEventObserver {
         }
         for (Long id : toRemove) {
             pendingEvents.remove(id);
-            runningWorkers.remove(id).cancel(true);
+            Future<?> worker = activeWorkers.remove(id);
+            if (waitingWorkers.contains(id)) {
+                worker.cancel(true);
+                waitingWorkers.remove(id);
+            }
         }
     }
 
@@ -212,7 +222,7 @@ class DeferredEventObserver {
     private ThreadPoolExecutor createThreadPool() {
         return new ThreadPoolExecutor(
                 executor.getPoolSize(),
-                executor.getPoolSize(),
+                executor.getPoolSize() * 2,
                 0L, MILLISECONDS,
                 new LinkedBlockingQueue<>(executor.getPoolSize()),
                 threadFactory,
