@@ -41,6 +41,7 @@ import static java.util.Comparator.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import java.io.*;
+import java.nio.channels.*;
 import java.nio.file.*;
 import java.text.*;
 import java.time.*;
@@ -127,6 +128,9 @@ public class FileWriter implements LoggerWriter {
         try {
             outputStream.write(message.getBytes(writerConfiguration.getCharset()));
             outputStream.flush();
+        } catch (ClosedByInterruptException interruptException) {
+            closeFileStream(outputStream);
+            openFileStream(now());
         } catch (Throwable throwable) {
             printError(getStackTraceAsString(throwable));
             closeFileStream(outputStream);
