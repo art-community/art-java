@@ -38,6 +38,7 @@ public class PeriodicExecutor {
     private final Map<String, Future<?>> cancelledTasks = concurrentMap();
     private final DeferredExecutor deferredExecutor;
     private final AtomicInteger counter = new AtomicInteger();
+    private volatile boolean terminated = false;
 
     public <T> void submit(PeriodicCallableTask<? extends T> task) {
         Future<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));
@@ -71,6 +72,7 @@ public class PeriodicExecutor {
     }
 
     public void shutdown() {
+        terminated = true;
         deferredExecutor.shutdown();
         executingTasks.clear();
         cancelledTasks.clear();
@@ -94,6 +96,7 @@ public class PeriodicExecutor {
 
     private boolean validate(String id) {
         Future<?> task;
+        if (terminated) return false;
         return isNull(task = cancelledTasks.remove(id)) || !task.isCancelled();
     }
 
