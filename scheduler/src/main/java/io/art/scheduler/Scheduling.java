@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.scheduler.manager;
+package io.art.scheduler;
 
 import io.art.core.callable.*;
 import io.art.core.runnable.*;

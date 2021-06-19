@@ -26,7 +26,7 @@ import lombok.*;
 import static io.art.core.context.Context.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static io.art.scheduler.factory.TaskFactory.*;
-import static io.art.scheduler.manager.Scheduling.*;
+import static io.art.scheduler.Scheduling.*;
 import static io.art.scheduler.module.SchedulerModuleConfiguration.*;
 import static java.time.LocalDateTime.*;
 import static java.util.Objects.*;
