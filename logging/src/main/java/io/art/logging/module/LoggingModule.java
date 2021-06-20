@@ -26,8 +26,6 @@ import io.art.logging.manager.*;
 import io.art.logging.reactor.*;
 import io.art.logging.state.*;
 import lombok.*;
-import org.fusesource.jansi.*;
-import org.fusesource.jansi.internal.*;
 import static io.art.core.context.Context.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
@@ -49,7 +47,6 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
         getLogManager().reset();
         useCustomLoggers(name -> new ReactorLogger(logger(name)));
         manager.activate();
-        Ansi.setEnabled(true);
     }
 
     @Override
@@ -60,7 +57,6 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     @Override
     public void onUnload(Context.Service contextService) {
         manager.deactivate();
-        Ansi.setEnabled(false);
     }
 
     public static StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule() {
