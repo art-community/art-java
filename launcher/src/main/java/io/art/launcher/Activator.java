@@ -21,6 +21,7 @@ package io.art.launcher;
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.collection.*;
+import io.art.core.extensions.*;
 import io.art.core.module.*;
 import io.art.http.module.*;
 import io.art.json.module.*;
@@ -139,8 +140,9 @@ public class Activator {
     }
 
 
-    public void launch() {
+    public BlockingAction launch() {
         Launcher.launch(this);
+        return new BlockingAction();
     }
 
 
@@ -150,5 +152,11 @@ public class Activator {
 
     public static Activator activator() {
         return activator(EMPTY_STRINGS);
+    }
+
+    public static class BlockingAction {
+        public void block() {
+            ThreadExtensions.block();
+        }
     }
 }
