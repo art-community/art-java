@@ -26,6 +26,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static java.util.Arrays.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
 @ToString
 @ForGenerator
@@ -34,6 +35,7 @@ public abstract class MetaModule {
     private final Map<String, MetaPackage> packages = map();
     private final Set<MetaClass<?>> rootClasses = set();
     private final List<MetaModule> dependencies;
+    private final AtomicBoolean computed = new AtomicBoolean(false);
 
     protected MetaModule(MetaModule[] dependencies) {
         this.dependencies = asList(dependencies);
@@ -62,7 +64,9 @@ public abstract class MetaModule {
     }
 
     public void compute() {
-        rootClasses.forEach(MetaClass::compute);
-        packages.values().forEach(MetaPackage::compute);
+        if (computed.compareAndSet(false, true)) {
+            rootClasses.forEach(MetaClass::compute);
+            packages.values().forEach(MetaPackage::compute);
+        }
     }
 }
