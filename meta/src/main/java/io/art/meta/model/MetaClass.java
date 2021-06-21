@@ -90,6 +90,10 @@ public abstract class MetaClass<T> {
             method.parameters().values().forEach(parameter -> parameter.type().compute());
         }
 
+        for (MetaClass<?> nested : classes.values()) {
+            nested.compute();
+        }
+
         schema = computeSchema();
     }
 
