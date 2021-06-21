@@ -64,6 +64,9 @@ public interface DateTimeConstants {
     String DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH = "dd-MM-yyyy HH:mm:ss.SSS";
     DateTimeFormatter DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT = ofPattern(DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH);
 
+    String DEFAULT_FORMAT = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH;
+    DateTimeFormatter DEFAULT_FORMATTER = DD_MM_YYYY_HH_MM_SS_24H_SSS_DASH_FORMAT;
+
     String YYYYMM = "yyyyMM";
     DateTimeFormatter YYYYMM_FORMAT = ofPattern(YYYYMM);
 
