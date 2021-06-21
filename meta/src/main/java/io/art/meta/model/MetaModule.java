@@ -37,8 +37,6 @@ public abstract class MetaModule {
 
     protected MetaModule(MetaModule[] dependencies) {
         this.dependencies = asList(dependencies);
-        rootClasses.forEach(MetaClass::compute);
-        packages.values().forEach(MetaPackage::compute);
     }
 
     protected <T extends MetaPackage> T register(T metaPackage) {
@@ -61,5 +59,10 @@ public abstract class MetaModule {
 
     public <T extends MetaPackage> T packageOf(String name) {
         return cast(packages.get(name));
+    }
+
+    public void compute() {
+        rootClasses.forEach(MetaClass::compute);
+        packages.values().forEach(MetaPackage::compute);
     }
 }
