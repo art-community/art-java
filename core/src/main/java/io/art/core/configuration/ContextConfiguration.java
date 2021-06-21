@@ -70,6 +70,8 @@ public class ContextConfiguration {
     @Builder.Default
     private final Path workingDirectory = Paths.get(getProperty(USER_DIR_PROPERTY));
     @Builder.Default
+    private final Path javaHomeDirectory = Paths.get(getProperty(JAVA_HOME_PROPERTY));
+    @Builder.Default
     private final ImmutableArray<String> arguments = emptyImmutableArray();
     @Builder.Default
     private final ImmutableMap<String, String> environment = immutableMapOf(getenv());
