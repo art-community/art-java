@@ -25,14 +25,12 @@ import io.art.meta.type.*;
 import io.art.value.constants.ValueModuleConstants.ValueType.*;
 import io.art.value.immutable.Value;
 import io.art.value.mapper.*;
-import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.TypeConstants.*;
 import static io.art.meta.model.KnownMappersComputer.*;
 import static java.util.Objects.*;
@@ -48,7 +46,7 @@ import java.util.function.*;
 @Builder(toBuilder = true)
 public class MetaType<T> {
     private final Class<T> type;
-    private final ImmutableSet<MetaType<?>> parameters;
+    private final ImmutableArray<MetaType<?>> parameters;
 
     private final boolean isPrimitive;
     private final boolean isFlux;
@@ -104,7 +102,7 @@ public class MetaType<T> {
                 .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
                 .isFlux(TypeInspector.isFlux(type))
                 .isMono(TypeInspector.isMono(type))
-                .parameters(immutableSetOf(parameters))
+                .parameters(immutableArrayOf(parameters))
                 .build()));
     }
 

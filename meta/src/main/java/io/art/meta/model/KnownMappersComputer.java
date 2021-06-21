@@ -52,7 +52,7 @@ class KnownMappersComputer {
         boolean isArray = type.isArray();
         boolean isPrimitive = type.isPrimitive();
         boolean isEnum = type.isEnum();
-        ImmutableSet<MetaType<?>> parameters = type.parameters();
+        ImmutableArray<MetaType<?>> parameters = type.parameters();
         if (isEnum) {
             return mapper(value -> fromString.map(emptyIfNull(value)), value -> type.enumFactory().apply(toString.map(asPrimitive(value))));
         }
