@@ -18,9 +18,11 @@
 
 package io.art.core.waiter;
 
+import io.art.core.wrapper.*;
 import lombok.experimental.*;
 import static io.art.core.constants.WaiterConstants.*;
 import static io.art.core.handler.ExceptionHandler.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.util.concurrent.TimeUnit.*;
 import java.time.*;
 import java.util.concurrent.*;
@@ -37,7 +39,12 @@ public class Waiter {
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
         scheduler.setMaximumPoolSize(1);
         scheduler.scheduleAtFixedRate(() -> check(condition, latch), 0L, timeout.toMillis(), MILLISECONDS);
-        return handleException(ignored -> false).call(() -> !latch.await(timeout.toMillis(), MILLISECONDS));
+        return handleException(ignored -> false).call(() -> latch.await(timeout.toMillis(), MILLISECONDS));
+    }
+
+    public static void waitTime(Duration time) {
+        CountDownLatch latch = new CountDownLatch(1);
+        ignoreException(() -> latch.await(time.toMillis(), MILLISECONDS));
     }
 
     private static void check(Supplier<Boolean> condition, CountDownLatch latch) {
