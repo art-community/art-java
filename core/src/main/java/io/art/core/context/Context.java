@@ -34,7 +34,6 @@ import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;

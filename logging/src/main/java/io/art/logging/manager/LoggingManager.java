@@ -29,6 +29,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.factory.LoggerWriterFactory.*;
 import java.io.*;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.*;
 public class LoggingManager {
     private final AtomicBoolean activated = new AtomicBoolean(false);
     private final Map<String, LoggerProcessor> processors = concurrentMap();
-    private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
+    private final Thread consumer = newThread(CONSUMER_THREAD, this::processConsuming);
     private final List<Closeable> resources = copyOnWriteList();
 
     private final LoggingQueue queue;
@@ -63,6 +64,7 @@ public class LoggingManager {
     public void deactivate() {
         if (activated.compareAndSet(true, false)) {
             consumer.interrupt();
+            ignoreException(consumer::join);
             resources.forEach(StreamsExtensions::closeQuietly);
         }
     }
