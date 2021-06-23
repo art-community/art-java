@@ -34,6 +34,7 @@ import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
@@ -42,7 +43,8 @@ import java.util.*;
 import java.util.function.*;
 
 public class Context {
-    private static Context INSTANCE;
+    private static volatile Context INSTANCE;
+    private final Thread shutdownHook = newThread(UNLOAD_THREAD, () -> INSTANCE.unload());
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
     private final Consumer<String> printer;
@@ -59,7 +61,7 @@ public class Context {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
         INSTANCE = new Context(configuration, printer);
-        getRuntime().addShutdownHook(newThread(UNLOAD_THREAD, INSTANCE::unload));
+        getRuntime().addShutdownHook(INSTANCE.shutdownHook);
     }
 
     public static void processInitialization(ImmutableSet<Module<?, ?>> modules) {
@@ -136,6 +138,14 @@ public class Context {
         }
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
+    }
+
+    public static void shutdown() {
+        if (nonNull(INSTANCE)) {
+            getRuntime().removeShutdownHook(INSTANCE.shutdownHook);
+            INSTANCE.unload();
+            System.exit(0);
+        }
     }
 
     public class Service {
