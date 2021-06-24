@@ -149,6 +149,7 @@ public class Context {
     public static void scheduleTermination() {
         Context context = context();
         if (context.terminationScheduled.compareAndSet(false, true)) {
+            getRuntime().removeShutdownHook(context.terminatorHookThread);
             context.terminatorSignal.countDown();
         }
     }

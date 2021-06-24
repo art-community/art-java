@@ -182,7 +182,7 @@ class DeferredEventObserver {
 
     private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
         List<Long> toRemove = linkedList();
-        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = pendingEvents.entrySet();
+        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = setOf(pendingEvents.entrySet());
         for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
             Long key = entry.getKey();
             if (event.getTrigger() > key && isEmpty(entry.getValue())) {
