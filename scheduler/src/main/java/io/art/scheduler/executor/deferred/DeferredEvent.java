@@ -19,10 +19,11 @@
 package io.art.scheduler.executor.deferred;
 
 import lombok.*;
-import static java.lang.System.*;
-import static java.time.ZoneId.*;
+import static io.art.core.extensions.DateTimeExtensions.*;
+import static java.time.LocalDateTime.*;
 import static java.util.Comparator.*;
 import static java.util.Objects.*;
+import static java.util.concurrent.TimeUnit.*;
 import static lombok.AccessLevel.*;
 import java.time.*;
 import java.util.concurrent.*;
@@ -40,13 +41,13 @@ class DeferredEvent<EventResultType> implements Delayed {
 
     DeferredEvent(Future<EventResultType> task, LocalDateTime triggerDateTime, int order) {
         this.task = task;
-        this.trigger = triggerDateTime.atZone(systemDefault()).toInstant().toEpochMilli();
+        this.trigger = toMillis(triggerDateTime);
         this.order = order;
     }
 
     @Override
     public long getDelay(TimeUnit unit) {
-        return unit.toNanos(trigger - currentTimeMillis());
+        return unit.convert(trigger - toMillis(now()), MILLISECONDS);
     }
 
     @Override

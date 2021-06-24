@@ -1,3 +1,5 @@
+import io.art.gradle.common.logger.info
+
 /*
  * ART
  *
@@ -40,8 +42,20 @@ subprojects {
 
     dependencies {
         val lombokVersion: String by project
+        val junitVersion: String by project
+
         compileOnly("org.projectlombok", "lombok", lombokVersion)
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
+        testCompileOnly("org.projectlombok", "lombok", lombokVersion)
+        testAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
+
+        testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
+        testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
+    }
+
+    tasks.test {
+        useJUnitPlatform()
+        addTestOutputListener { _, outputEvent -> info(outputEvent.message) }
     }
 
     java {

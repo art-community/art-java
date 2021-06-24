@@ -149,28 +149,30 @@ public class Context {
     public static void scheduleTermination() {
         Context context = context();
         if (context.terminationScheduled.compareAndSet(false, true)) {
-            getRuntime().removeShutdownHook(context.terminatorHookThread);
-            context.printer.accept("Termination scheduled");
             context.terminatorSignal.countDown();
         }
     }
 
     public static void terminateImmediately() {
         Context context = context();
+        getRuntime().removeShutdownHook(context.terminatorHookThread);
         context.unload();
-        context.printer.accept("Process termination");
         System.exit(0);
     }
 
     private void awaitTermination() {
-        ignoreException(terminatorSignal::await);
+        try {
+            terminatorSignal.await();
+        } catch (InterruptedException interruptedException) {
+            return;
+        }
         terminateImmediately();
     }
 
     private void terminationHook() {
+        terminatorThread.interrupt();
         Context context = context();
-        scheduleTermination();
-        ignoreException(context.terminatorThread::join);
+        context.unload();
     }
 
     public class Service {
