@@ -34,16 +34,22 @@ import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 public class Context {
-    private static volatile Context INSTANCE;
-    private final Thread shutdownHook = newThread(UNLOAD_THREAD, () -> INSTANCE.unload());
+    private static Context INSTANCE;
+    private final Thread terminatorHookThread = newThread(TERMINATOR_THREAD, () -> ignoreException(INSTANCE::terminationHook));
+    private final Thread terminatorThread = newThread(TERMINATOR_THREAD, this::awaitTermination);
+    private final AtomicBoolean terminationScheduled = new AtomicBoolean(false);
+    private final CountDownLatch terminatorSignal = new CountDownLatch(1);
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
     private final Consumer<String> printer;
@@ -60,7 +66,6 @@ public class Context {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
         INSTANCE = new Context(configuration, printer);
-        getRuntime().addShutdownHook(INSTANCE.shutdownHook);
     }
 
     public static void processInitialization(ImmutableSet<Module<?, ?>> modules) {
@@ -71,6 +76,8 @@ public class Context {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
         INSTANCE.load(modules);
+        INSTANCE.terminatorThread.start();
+        getRuntime().addShutdownHook(INSTANCE.terminatorHookThread);
     }
 
     public static Context context() {
@@ -139,12 +146,31 @@ public class Context {
         INSTANCE = null;
     }
 
-    public static void shutdown() {
-        if (nonNull(INSTANCE)) {
-            getRuntime().removeShutdownHook(INSTANCE.shutdownHook);
-            INSTANCE.unload();
-            System.exit(0);
+    public static void scheduleTermination() {
+        Context context = context();
+        if (context.terminationScheduled.compareAndSet(false, true)) {
+            getRuntime().removeShutdownHook(context.terminatorHookThread);
+            context.printer.accept("Termination scheduled");
+            context.terminatorSignal.countDown();
         }
+    }
+
+    public static void terminateImmediately() {
+        Context context = context();
+        context.unload();
+        context.printer.accept("Process termination");
+        System.exit(0);
+    }
+
+    private void awaitTermination() {
+        ignoreException(terminatorSignal::await);
+        terminateImmediately();
+    }
+
+    private void terminationHook() {
+        Context context = context();
+        scheduleTermination();
+        ignoreException(context.terminatorThread::join);
     }
 
     public class Service {

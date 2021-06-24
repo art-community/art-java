@@ -111,7 +111,9 @@ class DeferredEventObserver {
                 delayedObserver.interrupt();
                 delayedObserver.join();
 
-                interruptWaiters();
+                for (Long id : waitingWorkers) {
+                    activeWorkers.get(id).cancel(true);
+                }
 
                 pendingPool.shutdown();
                 fallbackExecutor.shutdown();
@@ -246,6 +248,7 @@ class DeferredEventObserver {
             runTask(event);
         }
         activeWorkers.remove(id);
+        waitingWorkers.remove(id);
         pendingEvents.remove(id);
     }
 
@@ -258,15 +261,6 @@ class DeferredEventObserver {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
-        }
-    }
-
-    private void interruptWaiters() {
-        List<Long> toRemove = linkedListOf(waitingWorkers);
-        for (Long id : toRemove) {
-            Future<?> worker = activeWorkers.get(id);
-            worker.cancel(true);
-            waitingWorkers.remove(id);
         }
     }
 
