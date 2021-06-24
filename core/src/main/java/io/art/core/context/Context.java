@@ -157,6 +157,7 @@ public class Context {
     public static void terminateImmediately() {
         Context context = context();
         getRuntime().removeShutdownHook(context.terminatorHookThread);
+        context.terminatorThread.interrupt();
         context.unload();
         System.exit(0);
     }
@@ -167,13 +168,13 @@ public class Context {
         } catch (InterruptedException interruptedException) {
             return;
         }
-        terminateImmediately();
+        context().unload();
+        System.exit(0);
     }
 
     private void terminationHook() {
         terminatorThread.interrupt();
-        Context context = context();
-        context.unload();
+        context().unload();
     }
 
     public class Service {
