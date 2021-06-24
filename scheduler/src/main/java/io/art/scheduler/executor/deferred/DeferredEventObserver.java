@@ -184,9 +184,10 @@ class DeferredEventObserver {
         List<Long> toRemove = linkedList();
         Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = setOf(pendingEvents.entrySet());
         for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
-            Long key = entry.getKey();
-            if (event.getTrigger() > key && isEmpty(entry.getValue())) {
-                toRemove.add(key);
+            Long trigger = entry.getKey();
+            PriorityBlockingQueue<DeferredEvent<?>> pendingQueue = entry.getValue();
+            if (event.getTrigger() > trigger && isEmpty(pendingQueue)) {
+                toRemove.add(trigger);
             }
         }
         for (Long id : toRemove) {
