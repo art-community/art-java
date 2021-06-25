@@ -83,7 +83,7 @@ public class SchedulingTest {
         schedule(time, task);
         ignoreException(water::await);
         assertTrue(task.completed());
-        assertEquals(SECONDS.convert(toMillis(time), MILLISECONDS), SECONDS.convert(toMillis(task.completionTimeStamp()), MILLISECONDS));
+        assertTrue(task.completionTimeStamp().isEqual(time) || task.completionTimeStamp().isAfter(time));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class SchedulingTest {
         for (int index = 0; index < tasks.size(); index++) {
             OrderedScheduledTask task = tasks.get(index);
             assertTrue(task.completed());
-            assertEquals(SECONDS.convert(toMillis(time), MILLISECONDS), SECONDS.convert(toMillis(task.completionTimeStamp()), MILLISECONDS));
+            assertTrue(task.completionTimeStamp().isEqual(time) || task.completionTimeStamp().isAfter(time));
             assertEquals(index, counter.getOrders().get(task));
         }
     }
