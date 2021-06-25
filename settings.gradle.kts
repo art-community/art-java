@@ -34,11 +34,11 @@ include("communicator")
 include("rsocket")
 include("http")
 include("tarantool")
-include("tests")
 include("scheduler")
 include("graal")
 include("storage")
 include("meta")
+//include("tests")
 //include("metrics")
 
 pluginManagement {
