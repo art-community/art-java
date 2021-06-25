@@ -42,7 +42,6 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
-import java.util.concurrent.locks.*;
 import java.util.function.*;
 
 public class Context {
@@ -156,11 +155,15 @@ public class Context {
     }
 
     public static void terminateImmediately() {
+        shutdown();
+        System.exit(0);
+    }
+
+    public static void shutdown() {
         Context context = context();
         getRuntime().removeShutdownHook(context.terminatorHookThread);
         context.terminatorThread.interrupt();
         context.unload();
-        System.exit(0);
     }
 
     private void awaitTermination() {
@@ -195,26 +198,5 @@ public class Context {
             }
             apply(configuration.getAfterReload(), Runnable::run);
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        CountDownLatch latch = new CountDownLatch(1);
-        Thread daemon = newDaemon(() -> {
-            try {
-                latch.await();
-            } catch (InterruptedException interruptedException) {
-                interruptedException.printStackTrace();
-            } finally {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException interruptedException) {
-                    interruptedException.printStackTrace();
-                }
-                System.out.println("finalize");
-            }
-        });
-        daemon.start();
-        daemon.interrupt();
-        daemon.join();
     }
 }
