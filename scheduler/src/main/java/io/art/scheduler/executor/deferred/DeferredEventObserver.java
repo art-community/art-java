@@ -68,8 +68,8 @@ class DeferredEventObserver {
         );
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
-        pendingQueues = map(executor.getPendingInitialCapacity());
-        activeWorkers = map(executor.getPendingInitialCapacity());
+        pendingQueues = concurrentMap(executor.getPendingInitialCapacity());
+        activeWorkers = concurrentMap(executor.getPendingInitialCapacity());
         waitingWorkers = concurrentSet(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
