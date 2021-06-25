@@ -29,11 +29,11 @@ import java.util.function.*;
 
 @UtilityClass
 public class Waiter {
-    public static Boolean waitCondition(Supplier<Boolean> condition) {
+    public static boolean waitCondition(Supplier<Boolean> condition) {
         return waitCondition(DEFAULT_WAIT_TIMEOUT, condition);
     }
 
-    public static Boolean waitCondition(Duration timeout, Supplier<Boolean> condition) {
+    public static boolean waitCondition(Duration timeout, Supplier<Boolean> condition) {
         CountDownLatch latch = new CountDownLatch(1);
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
         scheduler.setMaximumPoolSize(1);
