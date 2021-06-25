@@ -88,9 +88,9 @@ public class PeriodicExecutor {
 
     public void shutdown() {
         if (terminating.compareAndSet(false, true)) {
-            deferredExecutor.shutdown();
             executingTasks.clear();
             cancelledTasks.clear();
+            deferredExecutor.shutdown();
             terminated = true;
         }
     }
