@@ -27,7 +27,6 @@ import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.System.*;
 import static java.nio.ByteBuffer.*;
 import static java.nio.channels.Channels.newInputStream;
@@ -465,5 +464,14 @@ public class FileExtensions {
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+    }
+
+    public static Path touchDirectory(Path path) {
+        if (!path.toFile().exists()) {
+            if (!path.toFile().mkdirs()) {
+                throw new InternalRuntimeException(format(UNABLE_TO_CREATE_DIRECTORY, path));
+            }
+        }
+        return path;
     }
 }

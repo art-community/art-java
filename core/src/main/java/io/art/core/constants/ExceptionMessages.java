@@ -21,8 +21,6 @@ package io.art.core.constants;
 public interface ExceptionMessages {
     String CONTEXT_ALREADY_INITIALIZED = "Context already initialized";
     String MODULE_WAS_NOT_FOUND = "Module ''{0}'' was not found in context";
-    String MODULE_HAS_NOT_STATE = "Module ''{0}'' has not changesListener";
-    String BUILDER_VALIDATOR_HAS_NEXT_ERRORS = "Builder validator for ''{0}'' has next error fields:";
     String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available ''{0}'' port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";
     String COULD_NOT_FIND_AVAILABLE_PORTS_IN_THE_RANGE = "Could not find {0,number,#} available ''{1}'' ports in the range [{2,number,#}, {3,number,#}]";
     String MIME_TYPE_MUST_NOT_BE_EMPTY = "Type must not be empty";
@@ -34,6 +32,7 @@ public interface ExceptionMessages {
     String PARAMETER_ATTRIBUTE_MUST_NOT_BE_EMPTY = "Parameter 'attribute' must not be empty";
     String PARAMETER_VALUE_MUST_NOT_BE_EMPTY = "Parameter 'emit' must not be empty";
     String FILE_PATH_NOT_VALID = "File path is not valid: ''{0}''";
+    String UNABLE_TO_CREATE_DIRECTORY = "Unable to create directory: ''{0}''";
     String UNKNOWN_DURATION_TIME_UNITS = "Unknown duration time units: ''{0}''";
     String METHOD_NOT_IMPLEMENTED = "Method not implemented: ''{0}''";
     String DATA_FORMAT_IS_NULL = "Argument 'dataFormat' is null";
