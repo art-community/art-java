@@ -211,12 +211,16 @@ class DeferredEventObserver {
     private void runTask(DeferredEvent<?> event) {
         FutureTask<?> task = getTaskFromEvent(event);
         task.run();
-        try {
-            task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
-        } catch (InterruptedException | CancellationException ignore) {
-            // Ignoring exception because interrupting is normal situation when we want shutdown observer
-        } catch (Throwable throwable) {
-            executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
+        for (; ; ) {
+            try {
+                task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
+                break;
+            } catch (InterruptedException | CancellationException ignore) {
+                // Ignoring exception because interrupting is normal situation when we want shutdown observer
+            } catch (Throwable throwable) {
+                executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
+                break;
+            }
         }
     }
 
@@ -233,7 +237,7 @@ class DeferredEventObserver {
                 executor.getPoolSize(),
                 executor.getPoolSize(),
                 0L, MILLISECONDS,
-                new LinkedBlockingQueue<>(executor.getPoolSize() * 2),
+                new LinkedBlockingQueue<>(),
                 threadFactory,
                 (runnable, executor) -> this.executor
                         .getExceptionHandler()
