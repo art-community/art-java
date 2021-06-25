@@ -40,7 +40,7 @@ import java.util.concurrent.atomic.*;
 public class LoggingManager {
     private final AtomicBoolean activated = new AtomicBoolean(false);
     private final Map<String, LoggerProcessor> processors = concurrentMap();
-    private final Thread consumer = newThread(CONSUMER_THREAD, this::processConsuming);
+    private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
     private final List<Closeable> resources = copyOnWriteList();
 
     private final LoggingQueue queue;
@@ -63,7 +63,6 @@ public class LoggingManager {
 
     public void deactivate() {
         if (activated.compareAndSet(true, false)) {
-            consumer.interrupt();
             ignoreException(consumer::join);
             resources.forEach(StreamsExtensions::closeQuietly);
         }
