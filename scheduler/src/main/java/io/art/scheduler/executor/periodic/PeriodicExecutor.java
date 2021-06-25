@@ -26,7 +26,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.SCHEDULER_TERMINATED;
+import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
 import static java.util.Objects.*;
 import java.time.*;
 import java.util.*;
@@ -40,14 +40,10 @@ public class PeriodicExecutor {
     private final Map<String, Future<?>> cancelledTasks = concurrentMap();
     private final DeferredExecutor deferredExecutor;
     private final AtomicInteger counter = new AtomicInteger();
-    private final AtomicBoolean terminating = new AtomicBoolean(false);
-    private volatile boolean terminated = false;
+    private final AtomicBoolean active = new AtomicBoolean(true);
 
     public <T> void submit(PeriodicCallableTask<? extends T> task) {
-        if (terminating.get()) {
-            return;
-        }
-        if (terminated) {
+        if (!active.get()) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
         Future<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));
@@ -60,10 +56,10 @@ public class PeriodicExecutor {
     }
 
     public void execute(PeriodicRunnableTask task) {
-        if (terminating.get()) {
+        if (active.get()) {
             return;
         }
-        if (terminated) {
+        if (!active.get()) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
         Future<?> deferred = cast(executingTasks.get(task.getDelegate().getId()));
@@ -87,11 +83,10 @@ public class PeriodicExecutor {
     }
 
     public void shutdown() {
-        if (terminating.compareAndSet(false, true)) {
+        if (active.compareAndSet(true, false)) {
             executingTasks.clear();
             cancelledTasks.clear();
             deferredExecutor.shutdown();
-            terminated = true;
         }
     }
 
@@ -113,7 +108,7 @@ public class PeriodicExecutor {
 
     private boolean validate(String id) {
         Future<?> task;
-        if (terminating.get()) return false;
+        if (!active.get()) return false;
         return isNull(task = cancelledTasks.remove(id)) || !task.isCancelled();
     }
 

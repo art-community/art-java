@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class LoggingManager {
-    private final AtomicBoolean activated = new AtomicBoolean(false);
+    private final AtomicBoolean active = new AtomicBoolean(false);
     private final Map<String, LoggerProcessor> processors = concurrentMap();
     private final Thread consumer = newDaemon(CONSUMER_THREAD, this::processConsuming);
     private final List<Closeable> resources = copyOnWriteList();
@@ -51,18 +51,15 @@ public class LoggingManager {
         fallbackWriter = loggerWriter(this, configuration.getFallbackWriter());
     }
 
-    public boolean isActivated() {
-        return activated.get();
-    }
-
     public void activate() {
-        if (activated.compareAndSet(false, true)) {
+        if (active.compareAndSet(false, true)) {
             consumer.start();
         }
     }
 
     public void deactivate() {
-        if (activated.compareAndSet(true, false)) {
+        if (active.compareAndSet(true, false)) {
+            consumer.interrupt();
             ignoreException(consumer::join);
             resources.forEach(StreamsExtensions::closeQuietly);
         }
@@ -83,7 +80,7 @@ public class LoggingManager {
     }
 
     private void processConsuming() {
-        while (activated.get()) {
+        while (active.get()) {
             try {
                 apply(queue.take(), this::consume);
             } catch (InterruptedException interruptedException) {

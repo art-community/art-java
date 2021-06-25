@@ -21,7 +21,6 @@ package io.art.scheduler.executor.deferred;
 import io.art.scheduler.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
@@ -45,8 +44,7 @@ import java.util.concurrent.atomic.*;
 class DeferredEventObserver {
     private final static AtomicInteger poolCounter = new AtomicInteger(0);
     private final AtomicInteger threadCounter = new AtomicInteger(0);
-    private final AtomicBoolean terminating = new AtomicBoolean(false);
-    private volatile boolean terminated = false;
+    private final AtomicBoolean active = new AtomicBoolean(true);
 
     private final ThreadFactory threadFactory;
     private final DeferredExecutorImplementation executor;
@@ -56,7 +54,7 @@ class DeferredEventObserver {
     private final ExecutorService fallbackExecutor;
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
-    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingEvents;
+    private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingQueues;
     private final Map<Long, Future<?>> activeWorkers;
     private final Set<Long> waitingWorkers;
 
@@ -70,7 +68,7 @@ class DeferredEventObserver {
         );
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
-        pendingEvents = map(executor.getPendingInitialCapacity());
+        pendingQueues = map(executor.getPendingInitialCapacity());
         activeWorkers = map(executor.getPendingInitialCapacity());
         waitingWorkers = concurrentSet(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
@@ -79,7 +77,7 @@ class DeferredEventObserver {
     }
 
     <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> action, LocalDateTime triggerTime, int order) {
-        if (terminated) {
+        if (!active.get()) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
 
@@ -94,10 +92,6 @@ class DeferredEventObserver {
         FutureTask<? extends EventResultType> task = new FutureTask<>(wrapper);
         DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, order);
 
-        if (terminating.get()) {
-            return cast(EMPTY_FUTURE_TASK);
-        }
-
         if (!delayedEvents.offer(event)) {
             return cast(forceExecuteEvent(event));
         }
@@ -105,53 +99,14 @@ class DeferredEventObserver {
         return task;
     }
 
-    void shutdown() {
-        if (terminating.compareAndSet(false, true)) {
-            try {
-                delayedObserver.interrupt();
-                delayedObserver.join();
-
-                for (Long id : waitingWorkers) {
-                    activeWorkers.get(id).cancel(true);
-                }
-
-                pendingPool.shutdown();
-                fallbackExecutor.shutdown();
-
-                if (!executor.isAwaitOnShutdown()) {
-                    poolCounter.decrementAndGet();
-                    threadCounter.set(0);
-                    return;
-                }
-
-                try {
-                    if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
-                        executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
-                    }
-
-                    if (!fallbackExecutor.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
-                        executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
-                    }
-                } catch (InterruptedException | CancellationException ignore) {
-                    // Ignoring exception because interrupting is normal situation when we want shutdown observer
-                }
-                poolCounter.decrementAndGet();
-                threadCounter.set(0);
-            } catch (Throwable throwable) {
-                executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, throwable);
-            } finally {
-                terminated = true;
-            }
-        }
-    }
 
     private void observeDelayed() {
         try {
-            while (!terminating.get()) {
+            while (active.get()) {
                 DeferredEvent<?> event = delayedEvents.take();
-                erasePendingEvents(event);
+                erasePendingQueues(event);
                 long id = event.getTrigger();
-                PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+                PriorityBlockingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
                 if (isNull(queue)) {
                     queue = new PriorityBlockingQueue<>(executor.getPendingInitialCapacity(), comparing(DeferredEvent::getOrder));
 
@@ -160,7 +115,7 @@ class DeferredEventObserver {
                         continue;
                     }
 
-                    pendingEvents.put(id, queue);
+                    pendingQueues.put(id, queue);
                     activeWorkers.put(id, pendingPool.submit(() -> observePending(id)));
                     continue;
                 }
@@ -174,28 +129,8 @@ class DeferredEventObserver {
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         } finally {
-            if (terminating.get()) {
+            if (!active.get()) {
                 finalizeDelayedEvents();
-            }
-        }
-    }
-
-    private <EventResultType> void erasePendingEvents(DeferredEvent<? extends EventResultType> event) {
-        List<Long> toRemove = linkedList();
-        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = setOf(pendingEvents.entrySet());
-        for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
-            Long trigger = entry.getKey();
-            PriorityBlockingQueue<DeferredEvent<?>> pendingQueue = entry.getValue();
-            if (event.getTrigger() > trigger && isEmpty(pendingQueue)) {
-                toRemove.add(trigger);
-            }
-        }
-        for (Long id : toRemove) {
-            pendingEvents.remove(id);
-            Future<?> worker = activeWorkers.remove(id);
-            if (waitingWorkers.contains(id)) {
-                worker.cancel(true);
-                waitingWorkers.remove(id);
             }
         }
     }
@@ -203,9 +138,9 @@ class DeferredEventObserver {
     private void finalizeDelayedEvents() {
         DeferredEvent<?> event;
         while (nonNull(event = delayedEvents.poll())) {
-            erasePendingEvents(event);
+            erasePendingQueues(event);
             long id = event.getTrigger();
-            PriorityBlockingQueue<DeferredEvent<?>> queue = pendingEvents.get(id);
+            PriorityBlockingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
             if (isNull(queue)) {
                 queue = new PriorityBlockingQueue<>(executor.getPendingInitialCapacity(), comparing(DeferredEvent::getOrder));
 
@@ -214,7 +149,7 @@ class DeferredEventObserver {
                     continue;
                 }
 
-                pendingEvents.put(id, queue);
+                pendingQueues.put(id, queue);
                 activeWorkers.put(id, pendingPool.submit(() -> observePending(id)));
                 continue;
             }
@@ -225,10 +160,30 @@ class DeferredEventObserver {
         }
     }
 
+    private <EventResultType> void erasePendingQueues(DeferredEvent<? extends EventResultType> event) {
+        List<Long> toRemove = linkedList();
+        Set<Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>>> events = setOf(pendingQueues.entrySet());
+        for (Entry<Long, PriorityBlockingQueue<DeferredEvent<?>>> entry : events) {
+            Long trigger = entry.getKey();
+            PriorityBlockingQueue<DeferredEvent<?>> pendingQueue = entry.getValue();
+            if (event.getTrigger() > trigger && isEmpty(pendingQueue)) {
+                toRemove.add(trigger);
+            }
+        }
+        for (Long id : toRemove) {
+            pendingQueues.remove(id);
+            Future<?> worker = activeWorkers.remove(id);
+            if (waitingWorkers.contains(id)) {
+                worker.cancel(true);
+                waitingWorkers.remove(id);
+            }
+        }
+    }
+
     private void observePending(Long id) {
         PriorityBlockingQueue<DeferredEvent<?>> queue;
         try {
-            while (!terminating.get() && nonNull(queue = pendingEvents.get(id))) {
+            while (active.get() && nonNull(queue = pendingQueues.get(id))) {
                 waitingWorkers.add(id);
                 DeferredEvent<?> event = queue.take();
                 waitingWorkers.remove(id);
@@ -237,7 +192,7 @@ class DeferredEventObserver {
         } catch (InterruptedException | CancellationException ignore) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } finally {
-            if (terminating.get() && nonNull(queue = pendingEvents.get(id))) {
+            if (!active.get() && nonNull(queue = pendingQueues.get(id))) {
                 finalizePendingEvents(id, queue);
             }
         }
@@ -250,7 +205,7 @@ class DeferredEventObserver {
         }
         activeWorkers.remove(id);
         waitingWorkers.remove(id);
-        pendingEvents.remove(id);
+        pendingQueues.remove(id);
     }
 
     private void runTask(DeferredEvent<?> event) {
@@ -286,6 +241,44 @@ class DeferredEventObserver {
         );
     }
 
+
+    void shutdown() {
+        if (active.compareAndSet(true, false)) {
+            try {
+                delayedObserver.interrupt();
+                delayedObserver.join();
+
+                for (Long id : waitingWorkers) {
+                    activeWorkers.get(id).cancel(true);
+                }
+
+                pendingPool.shutdown();
+                fallbackExecutor.shutdown();
+
+                if (!executor.isAwaitOnShutdown()) {
+                    poolCounter.decrementAndGet();
+                    threadCounter.set(0);
+                    return;
+                }
+
+                try {
+                    if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
+                        executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+                    }
+
+                    if (!fallbackExecutor.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
+                        executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+                    }
+                } catch (InterruptedException | CancellationException ignore) {
+                    // Ignoring exception because interrupting is normal situation when we want shutdown observer
+                }
+                poolCounter.decrementAndGet();
+                threadCounter.set(0);
+            } catch (Throwable throwable) {
+                executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, throwable);
+            }
+        }
+    }
 
     void clear() {
         delayedEvents.clear();
