@@ -63,7 +63,7 @@ class DeferredEventObserver {
     DeferredEventObserver(DeferredExecutorImplementation executor) {
         this.executor = executor;
         int poolNumber = poolCounter.incrementAndGet();
-        threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
+        threadFactory = runnable -> newThread(SCHEDULER_NAME + DASH
                 + poolNumber + DASH
                 + SCHEDULER_THREAD_NAME + DASH
                 + threadCounter.incrementAndGet(), runnable
@@ -74,7 +74,7 @@ class DeferredEventObserver {
         activeWorkers = map(executor.getPendingInitialCapacity());
         waitingWorkers = concurrentSet(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
-        delayedObserver = newDaemon(this::observeDelayed);
+        delayedObserver = newThread(this::observeDelayed);
         delayedObserver.start();
     }
 
