@@ -30,14 +30,18 @@ import java.util.function.*;
 @UtilityClass
 public class Waiter {
     public static boolean waitCondition(Supplier<Boolean> condition) {
-        return waitCondition(DEFAULT_WAIT_TIMEOUT, condition);
+        return waitCondition(DEFAULT_WAIT_CHECK_PERIOD, DEFAULT_WAIT_TIMEOUT, condition);
     }
 
     public static boolean waitCondition(Duration timeout, Supplier<Boolean> condition) {
+        return waitCondition(DEFAULT_WAIT_CHECK_PERIOD, timeout, condition);
+    }
+
+    public static boolean waitCondition(Duration checkPeriod, Duration timeout, Supplier<Boolean> condition) {
         CountDownLatch latch = new CountDownLatch(1);
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
         scheduler.setMaximumPoolSize(1);
-        scheduler.scheduleAtFixedRate(() -> check(condition, latch), 0L, timeout.toMillis(), MILLISECONDS);
+        scheduler.scheduleAtFixedRate(() -> check(condition, latch), 0L, checkPeriod.toMillis(), MILLISECONDS);
         return handleException(ignored -> false).call(() -> latch.await(timeout.toMillis(), MILLISECONDS));
     }
 

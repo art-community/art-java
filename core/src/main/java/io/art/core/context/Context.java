@@ -46,8 +46,8 @@ import java.util.function.*;
 
 public class Context {
     private static Context INSTANCE;
-    private final Thread terminatorHookThread = newThread(TERMINATOR_THREAD, () -> ignoreException(INSTANCE::terminationHook));
-    private final Thread terminatorThread = newThread(TERMINATOR_THREAD, this::awaitTermination);
+    private final Thread terminatorHookThread = newDaemon(TERMINATOR_THREAD, () -> ignoreException(INSTANCE::terminationHook));
+    private final Thread terminatorThread = newDaemon(TERMINATOR_THREAD, this::awaitTermination);
     private final AtomicBoolean terminationScheduled = new AtomicBoolean(false);
     private final CountDownLatch terminatorSignal = new CountDownLatch(1);
     private final Map<String, Module<?, ?>> modules = map();
