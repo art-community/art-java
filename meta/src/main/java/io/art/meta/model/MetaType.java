@@ -20,19 +20,18 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.registry.*;
-import io.art.meta.type.*;
-import io.art.value.constants.ValueModuleConstants.ValueType.*;
-import io.art.value.immutable.Value;
-import io.art.value.mapper.*;
+import io.art.meta.transformer.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.meta.constants.TypeConstants.*;
-import static io.art.meta.model.KnownMappersComputer.*;
+import static io.art.meta.computer.DefaultTransformerComputer.computeDefaultTransformer;
+import static io.art.meta.computer.MetaTypeKindComputer.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -47,16 +46,11 @@ import java.util.function.*;
 public class MetaType<T> {
     private final Class<T> type;
     private final ImmutableArray<MetaType<?>> parameters;
-
-    private final boolean isPrimitive;
-    private final boolean isFlux;
-    private final boolean isMono;
-    private final boolean isEnum;
-    private final boolean isArray;
-
-    private final PrimitiveType primitiveType;
     private final MetaType<?> arrayComponentType;
+    private final MetaTypeInternalKind kind;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 
     @ToString.Exclude
@@ -69,39 +63,32 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private ValueToModelMapper<Object, Value> toModel;
+    private MetaTransformer<?> inputTransformer;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private ValueFromModelMapper<Object, Value> fromModel;
+    private Map<MetaTypeExternalKind, MetaTransformer<?>> outputTransformers;
 
     @Getter(lazy = true, value = PRIVATE)
     private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
 
     protected MetaType<T> compute() {
-        if (nonNull(toModel) && nonNull(fromModel)) return this;
+        if (nonNull(inputTransformer)) return this;
 
         MetaClass<?> metaClass = classes().get(type);
         if (isNull(metaClass)) {
-            ValueMapper<T, Value> mapper = computeKnownMappers(this);
-            toModel = cast(mapper.getToModel());
-            fromModel = cast(mapper.getFromModel());
+            inputTransformer = computeDefaultTransformer(this);
             return this;
         }
 
         MetaClass<T> typedMetaClass = cast(metaClass);
-        toModel = value -> typedMetaClass.schema().toModel(value);
-        fromModel = value -> typedMetaClass.schema().fromModel(value);
         return this;
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .isPrimitive(type.isPrimitive())
-                .primitiveType(PRIMITIVE_TYPE_MAPPINGS.get(type))
-                .isFlux(TypeInspector.isFlux(type))
-                .isMono(TypeInspector.isMono(type))
+                .kind(computeKind(type))
                 .parameters(immutableArrayOf(parameters))
                 .build()));
     }
@@ -109,7 +96,7 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .isEnum(true)
+                .kind(ENUM)
                 .enumFactory(enumFactory)
                 .build()));
     }
@@ -117,7 +104,7 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .isArray(true)
+                .kind(ARRAY)
                 .arrayFactory(cast(arrayFactory))
                 .arrayComponentType(arrayComponentType)
                 .build()));

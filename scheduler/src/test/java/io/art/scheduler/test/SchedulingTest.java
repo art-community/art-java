@@ -26,13 +26,13 @@ import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.*;
 import static io.art.core.context.TestingContext.*;
-import static io.art.core.extensions.DateTimeExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.scheduler.Scheduling.*;
 import static io.art.scheduler.module.SchedulerModule.*;
+import static io.art.scheduler.test.comparator.DateTimeApproximateComparator.*;
+import static java.time.Duration.*;
 import static java.time.LocalDateTime.*;
-import static java.util.concurrent.TimeUnit.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.*;
 import java.util.*;
@@ -83,7 +83,7 @@ public class SchedulingTest {
         schedule(time, task);
         ignoreException(water::await);
         assertTrue(task.completed());
-        assertTrue(task.completionTimeStamp().isEqual(time) || task.completionTimeStamp().isAfter(time));
+        assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
     }
 
     @Test
@@ -108,7 +108,7 @@ public class SchedulingTest {
         for (int index = 0; index < tasks.size(); index++) {
             OrderedScheduledTask task = tasks.get(index);
             assertTrue(task.completed());
-            assertTrue(task.completionTimeStamp().isEqual(time) || task.completionTimeStamp().isAfter(time));
+            assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
             assertEquals(index, counter.getOrders().get(task));
         }
     }
