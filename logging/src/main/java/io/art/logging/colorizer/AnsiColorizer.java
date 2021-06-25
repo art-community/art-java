@@ -30,7 +30,7 @@ public class AnsiColorizer {
     private final static Ansi ansi = ansi();
 
     public static String message(String message, Color color) {
-        return ansi().eraseLine().fgBright(color).a(message).reset().toString();
+        return getAnsi().eraseLine().fgBright(color).a(message).reset().toString();
     }
 
     public static String success(String message) {
