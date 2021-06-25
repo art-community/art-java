@@ -21,7 +21,6 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import java.util.*;
 
 @ToString
 @ForGenerator
@@ -30,9 +29,14 @@ import java.util.*;
 public class MetaField<T> {
     private final String name;
     private final MetaType<?> type;
+    private final boolean inherited;
 
     public String name() {
         return name;
+    }
+
+    public boolean inherited() {
+        return inherited;
     }
 
     public MetaType<T> type() {

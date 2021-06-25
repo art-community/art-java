@@ -18,19 +18,14 @@
 
 package io.art.logging.colorizer;
 
-import lombok.*;
 import lombok.experimental.*;
-import org.fusesource.jansi.*;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
 @UtilityClass
 public class AnsiColorizer {
-    @Getter(lazy = true)
-    private final static Ansi ansi = ansi();
-
     public static String message(String message, Color color) {
-        return getAnsi().eraseLine().fgBright(color).a(message).reset().toString();
+        return ansi().eraseLine().fgBright(color).a(message).reset().toString();
     }
 
     public static String success(String message) {
