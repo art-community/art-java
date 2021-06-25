@@ -56,9 +56,6 @@ public class PeriodicExecutor {
     }
 
     public void execute(PeriodicRunnableTask task) {
-        if (active.get()) {
-            return;
-        }
         if (!active.get()) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
