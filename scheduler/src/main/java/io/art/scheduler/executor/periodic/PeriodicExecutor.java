@@ -42,19 +42,6 @@ public class PeriodicExecutor {
     private final AtomicInteger counter = new AtomicInteger();
     private final AtomicBoolean active = new AtomicBoolean(true);
 
-    public <T> void submit(PeriodicCallableTask<? extends T> task) {
-        if (!active.get()) {
-            throw new SchedulerModuleException(SCHEDULER_TERMINATED);
-        }
-        Future<? extends T> deferred = cast(executingTasks.get(task.getDelegate().getId()));
-        if (nonNull(deferred)) return;
-        task = task.toBuilder()
-                .decrement(counter::decrementAndGet)
-                .order(counter.incrementAndGet())
-                .build();
-        submitTask(task);
-    }
-
     public void execute(PeriodicRunnableTask task) {
         if (!active.get()) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
@@ -95,14 +82,6 @@ public class PeriodicExecutor {
         executingTasks.put(id, deferredExecutor.execute(runnable, task.getStartTime(), task.getOrder()));
     }
 
-    private <T> void submitTask(PeriodicCallableTask<? extends T> task) {
-        String id = task.getDelegate().getId();
-        Consumer<LocalDateTime> repeat = time -> repeat(task, time);
-        Supplier<Boolean> validate = () -> validate(id);
-        RepeatableCallable<? extends T> callable = new RepeatableCallable<>(validate, repeat, task);
-        executingTasks.put(id, deferredExecutor.submit(callable, task.getStartTime(), task.getOrder()));
-    }
-
     private boolean validate(String id) {
         Future<?> task;
         if (!active.get()) return false;
@@ -115,13 +94,5 @@ public class PeriodicExecutor {
             return;
         }
         executeTask(task.toBuilder().startTime(time.plus(task.getPeriod())).build());
-    }
-
-    private void repeat(PeriodicCallableTask<?> task, LocalDateTime time) {
-        if (!validate(task.getDelegate().getId())) {
-            task.getDecrement().run();
-            return;
-        }
-        submitTask(task.toBuilder().startTime(time.plus(task.getPeriod())).build());
     }
 }

@@ -26,6 +26,6 @@ public class MetaTypeKindComputer {
         if (type.isPrimitive()) {
             if (String.class.equals(type)) return STRING;
         }
-        return ENTITY;
+        return CUSTOM;
     }
 }

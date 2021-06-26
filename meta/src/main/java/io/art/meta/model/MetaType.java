@@ -29,8 +29,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.meta.computer.DefaultTransformerComputer.computeDefaultTransformer;
 import static io.art.meta.computer.MetaTypeKindComputer.*;
+import static io.art.meta.computer.TransformersComputer.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -67,21 +67,15 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Map<MetaTypeExternalKind, MetaTransformer<?>> outputTransformers;
+    private OutputTransformers outputTransformers;
 
     @Getter(lazy = true, value = PRIVATE)
     private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
 
     protected MetaType<T> compute() {
         if (nonNull(inputTransformer)) return this;
-
-        MetaClass<?> metaClass = classes().get(type);
-        if (isNull(metaClass)) {
-            inputTransformer = computeDefaultTransformer(this);
-            return this;
-        }
-
-        MetaClass<T> typedMetaClass = cast(metaClass);
+        inputTransformer = computeInputTransformer(this);
+        outputTransformers = computeOutputTransformers(this);
         return this;
     }
 

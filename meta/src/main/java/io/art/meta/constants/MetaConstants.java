@@ -6,34 +6,65 @@ public interface MetaConstants {
     String GET_NAME = "get";
 
     enum MetaTypeInternalKind {
-        ENTITY,
-        ARRAY,
+        VOID,
         STRING,
         LONG,
         DOUBLE,
+        SHORT,
         FLOAT,
-        INT,
-        BOOL,
+        INTEGER,
         BYTE,
-        BINARY,
-        LAZY,
-        OPTIONAL,
+        CHARACTER,
+        BOOLEAN,
         DATE,
         DATE_TIME,
-        SUPPLIER,
+        DURATION,
+
+        ARRAY,
+        LONG_ARRAY,
+        DOUBLE_ARRAY,
+        FLOAT_ARRAY,
+        INTEGER_ARRAY,
+        BOOLEAN_ARRAY,
+        CHARACTER_ARRAY,
+        SHORT_ARRAY,
+        BYTE_ARRAY,
+
+        COLLECTION,
+        IMMUTABLE_COLLECTION,
+        LIST,
+        IMMUTABLE_LIST,
+        SET,
+        IMMUTABLE_SET,
+        QUEUE,
+        IMMUTABLE_QUEUE,
+        DEQUEUE,
+        IMMUTABLE_DEQUEUE,
         STREAM,
+
+        MAP,
+        IMMUTABLE_MAP,
+
         FLUX,
         MONO,
-        ENUM
+
+        LAZY,
+        OPTIONAL,
+        SUPPLIER,
+        ENUM,
+
+        CUSTOM,
     }
 
     static boolean isPrimitive(MetaTypeInternalKind kind) {
         switch (kind) {
             case LONG:
+            case SHORT:
             case DOUBLE:
             case FLOAT:
-            case INT:
-            case BOOL:
+            case INTEGER:
+            case CHARACTER:
+            case BOOLEAN:
             case BYTE:
                 return true;
             default:
@@ -48,8 +79,10 @@ public interface MetaConstants {
         LONG,
         DOUBLE,
         FLOAT,
-        INT,
-        BOOL,
+        INTEGER,
+        BOOLEAN,
+        CHARACTER,
+        SHORT,
         BYTE,
         BINARY
     }

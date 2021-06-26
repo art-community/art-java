@@ -27,13 +27,13 @@ import java.util.function.*;
 
 @AllArgsConstructor
 class RepeatableRunnable implements Runnable {
-    private final Supplier<Boolean> predicate;
+    private final Supplier<Boolean> validate;
     private final Consumer<LocalDateTime> repeat;
     private final PeriodicRunnableTask periodicTask;
 
     @Override
     public void run() {
-        if (!predicate.get()) return;
+        if (!validate.get()) return;
         LocalDateTime now = periodicTask.getStartTime();
         periodicTask.getDelegate().getAction().accept(periodicTask.getDelegate().getId());
         if (periodicTask.getMode() == FIXED) {
