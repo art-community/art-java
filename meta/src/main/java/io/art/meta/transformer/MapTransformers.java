@@ -24,7 +24,7 @@ import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
 public class MapTransformers {
-    public static MetaTransformer<Map<?, ?>> mapTransformer(MetaTransformer<Object> keyTransformer, MetaTransformer<Object> valueTransformer) {
+    public static MetaTransformer<Map<?, ?>> mapTransformer(MetaTransformer<?> keyTransformer, MetaTransformer<?> valueTransformer) {
         return new MetaTransformer<Map<?, ?>>() {
             public Map<?, ?> transform(ImmutableMap<?, ?> value) {
                 Map<?, ?> map = map(value.size());

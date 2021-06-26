@@ -268,7 +268,7 @@ public class ArrayTransformers {
         }
     };
 
-    public static MetaTransformer<Object[]> arrayTransformer(Function<Integer, Object[]> arrayFactory, MetaTransformer<Object> parameterTransformer) {
+    public static MetaTransformer<Object[]> arrayTransformer(Function<Integer, Object[]> arrayFactory, MetaTransformer<?> parameterTransformer) {
         return new MetaTransformer<Object[]>() {
             public Object[] transform(Object[] value) {
                 return transform(fixedArrayOf(value));

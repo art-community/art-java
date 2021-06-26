@@ -24,6 +24,7 @@ import io.art.core.stream.*;
 import io.art.meta.exception.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
+import reactor.core.publisher.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.NettyBufferExtensions.*;
@@ -210,4 +211,26 @@ public class SpecialTransformers {
             }
         };
     }
+
+    public static MetaTransformer<Void> VOID_TRANSFORMER = new MetaTransformer<>() {
+        @Override
+        public Void transform(Object value) {
+            return null;
+        }
+
+        @Override
+        public Void transform(Optional<?> value) {
+            return null;
+        }
+
+        @Override
+        public Void transform(Mono<?> value) {
+            return null;
+        }
+
+        @Override
+        public Void transform(Supplier<?> value) {
+            return null;
+        }
+    };
 }

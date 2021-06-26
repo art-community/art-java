@@ -21,93 +21,108 @@ package io.art.meta.computer;
 import io.art.meta.model.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.meta.transformer.ArrayTransformers.*;
+import static io.art.meta.transformer.CollectionTransformers.*;
+import static io.art.meta.transformer.ImmutableCollectionTransformers.*;
+import static io.art.meta.transformer.ImmutableMapTransformers.*;
+import static io.art.meta.transformer.MapTransformers.*;
+import static io.art.meta.transformer.PrimitiveTransformers.*;
+import static io.art.meta.transformer.ReactiveTransformers.*;
+import static io.art.meta.transformer.SpecialTransformers.*;
 
 @UtilityClass
 public class TransformersComputer {
     public static MetaTransformer<?> computeInputTransformer(MetaType<?> type) {
         switch (type.kind()) {
             case VOID:
-                break;
+                return VOID_TRANSFORMER;
             case STRING:
-                break;
+                return STRING_TRANSFORMER;
             case LONG:
-                break;
+                return LONG_TRANSFORMER;
             case DOUBLE:
-                break;
+                return DOUBLE_TRANSFORMER;
             case SHORT:
-                break;
+                return SHORT_TRANSFORMER;
             case FLOAT:
-                break;
+                return FLOAT_TRANSFORMER;
             case INTEGER:
-                break;
+                return INTEGER_TRANSFORMER;
             case BYTE:
-                break;
+                return BYTE_TRANSFORMER;
             case CHARACTER:
-                break;
+                return CHARACTER_TRANSFORMER;
             case BOOLEAN:
-                break;
+                return BOOLEAN_TRANSFORMER;
             case DATE:
-                break;
-            case DATE_TIME:
-                break;
+                return DATE_TRANSFORMER;
+            case LOCAL_DATE_TIME:
+                return LOCAL_DATE_TIME_TRANSFORMER;
+            case ZONED_DATE_TIME:
+                return ZONED_DATE_TIME_TRANSFORMER;
             case DURATION:
-                break;
+                return DURATION_TRANSFORMER;
             case ARRAY:
-                break;
+                return arrayTransformer(cast(type.arrayFactory()), computeInputTransformer(type.arrayComponentType()));
             case LONG_ARRAY:
-                break;
+                return LONG_ARRAY_TRANSFORMER;
             case DOUBLE_ARRAY:
-                break;
+                return DOUBLE_ARRAY_TRANSFORMER;
             case FLOAT_ARRAY:
-                break;
+                return FLOAT_ARRAY_TRANSFORMER;
             case INTEGER_ARRAY:
-                break;
+                return INTEGER_ARRAY_TRANSFORMER;
             case BOOLEAN_ARRAY:
-                break;
+                return BOOLEAN_ARRAY_TRANSFORMER;
             case CHARACTER_ARRAY:
-                break;
+                return CHARACTER_ARRAY_TRANSFORMER;
             case SHORT_ARRAY:
-                break;
+                return SHORT_ARRAY_TRANSFORMER;
             case BYTE_ARRAY:
-                break;
+                return BYTE_ARRAY_TRANSFORMER;
             case COLLECTION:
-                break;
+                return collectionTransformer(computeInputTransformer(type.parameters().get(0)));
             case IMMUTABLE_COLLECTION:
-                break;
+                return immutableCollectionTransformer(computeInputTransformer(type.parameters().get(0)));
             case LIST:
-                break;
-            case IMMUTABLE_LIST:
-                break;
+                return listTransformer(computeInputTransformer(type.parameters().get(0)));
+            case IMMUTABLE_ARRAY:
+                return immutableArrayTransformer(computeInputTransformer(type.parameters().get(0)));
             case SET:
-                break;
+                return setTransformer(computeInputTransformer(type.parameters().get(0)));
             case IMMUTABLE_SET:
-                break;
+                return immutableSetTransformer(computeInputTransformer(type.parameters().get(0)));
             case QUEUE:
-                break;
-            case IMMUTABLE_QUEUE:
-                break;
+                return queueTransformer(computeInputTransformer(type.parameters().get(0)));
             case DEQUEUE:
-                break;
-            case IMMUTABLE_DEQUEUE:
-                break;
+                return dequeTransformer(computeInputTransformer(type.parameters().get(0)));
             case STREAM:
-                break;
+                return streamTransformer(computeInputTransformer(type.parameters().get(0)));
             case MAP:
-                break;
+                return mapTransformer(computeInputTransformer(type.parameters().get(0)), computeInputTransformer(type.parameters().get(1)));
             case IMMUTABLE_MAP:
-                break;
+                return immutableMapTransformer(computeInputTransformer(type.parameters().get(0)), computeInputTransformer(type.parameters().get(1)));
             case FLUX:
-                break;
+                return fluxTransformer(computeInputTransformer(type.parameters().get(0)));
             case MONO:
-                break;
+                return monoTransformer(computeInputTransformer(type.parameters().get(0)));
             case LAZY:
-                break;
+                return lazyTransformer(computeInputTransformer(type.parameters().get(0)));
             case OPTIONAL:
-                break;
+                return optionalTransformer(computeInputTransformer(type.parameters().get(0)));
             case SUPPLIER:
-                break;
+                return supplierTransformer(computeInputTransformer(type.parameters().get(0)));
             case ENUM:
-                break;
+                return enumTransformer(cast(type.enumFactory()));
+            case INPUT_STREAM:
+                return INPUT_STREAM_TRANSFORMER;
+            case OUTPUT_STREAM:
+                return OUTPUT_STREAM_TRANSFORMER;
+            case NIO_BUFFER:
+                return NIO_BUFFER_TRANSFORMER;
+            case NETTY_BUFFER:
+                return NETTY_BUFFER_TRANSFORMER;
             case CUSTOM:
                 break;
         }

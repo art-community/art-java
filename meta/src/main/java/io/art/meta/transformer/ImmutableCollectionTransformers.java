@@ -33,7 +33,7 @@ import java.util.stream.*;
 
 @UtilityClass
 public class ImmutableCollectionTransformers {
-    public static MetaTransformer<ImmutableCollection<?>> immutableCollectionTransformer(MetaTransformer<Object> parameterTransformer) {
+    public static MetaTransformer<ImmutableCollection<?>> immutableCollectionTransformer(MetaTransformer<?> parameterTransformer) {
         return new MetaTransformer<ImmutableCollection<?>>() {
             public ImmutableCollection<?> transform(Object[] value) {
                 return transform(fixedArrayOf(value));
@@ -97,7 +97,7 @@ public class ImmutableCollectionTransformers {
         };
     }
 
-    public static MetaTransformer<ImmutableArray<?>> immutableArrayTransformer(MetaTransformer<Object> parameterTransformer) {
+    public static MetaTransformer<ImmutableArray<?>> immutableArrayTransformer(MetaTransformer<?> parameterTransformer) {
         return new MetaTransformer<ImmutableArray<?>>() {
             public ImmutableArray<?> transform(Object[] value) {
                 return transform(fixedArrayOf(value));
@@ -161,7 +161,7 @@ public class ImmutableCollectionTransformers {
         };
     }
 
-    public static MetaTransformer<ImmutableSet<?>> immutableSetTransformer(MetaTransformer<Object> parameterTransformer) {
+    public static MetaTransformer<ImmutableSet<?>> immutableSetTransformer(MetaTransformer<?> parameterTransformer) {
         return new MetaTransformer<ImmutableSet<?>>() {
             public ImmutableSet<?> transform(Iterable<?> value) {
                 ImmutableSet.Builder<Object> builder = immutableSetBuilder();
