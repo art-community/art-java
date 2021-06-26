@@ -44,17 +44,6 @@ public class LoggingModuleConfiguration implements ModuleConfiguration {
             .build();
 
 
-    public boolean isColored() {
-        boolean defaultColored = defaultLogger.getConfigurableWriters()
-                .stream()
-                .anyMatch(writer -> writer.getConsole().getColored());
-        boolean loggersColored = loggers.values()
-                .stream()
-                .anyMatch(logger -> logger.getConfigurableWriters().stream().anyMatch(writer -> writer.getConsole().getColored()));
-        boolean fallbackColored = fallbackWriter.getConsole().getColored();
-        return defaultColored || loggersColored || fallbackColored;
-    }
-
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<LoggingModuleConfiguration, Configurator> {
         private final LoggingModuleConfiguration configuration;
