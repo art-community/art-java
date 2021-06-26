@@ -31,23 +31,6 @@ import java.util.concurrent.*;
 
 @UtilityClass
 public class Scheduling {
-    public static <T> Future<? extends T> schedule(Callable<? extends T> task) {
-        return deferredExecutor().submit(task, now());
-    }
-
-    public static <T> Future<? extends T> schedule(LocalDateTime startTime, Callable<? extends T> task) {
-        return deferredExecutor().submit(task, startTime);
-    }
-
-
-    public static Future<?> schedule(Runnable task) {
-        return deferredExecutor().execute(task, now());
-    }
-
-    public static Future<?> schedule(LocalDateTime startTime, Runnable task) {
-        return deferredExecutor().execute(task, startTime);
-    }
-
     public static <T> Future<? extends T> schedule(ExceptionCallable<? extends T> task) {
         return deferredExecutor().submit(task, now());
     }
