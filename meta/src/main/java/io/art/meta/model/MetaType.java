@@ -49,8 +49,6 @@ public class MetaType<T> {
     private final MetaType<?> arrayComponentType;
     private final MetaTypeInternalKind kind;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 
     @ToString.Exclude
