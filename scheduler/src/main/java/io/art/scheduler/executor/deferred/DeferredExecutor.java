@@ -18,8 +18,6 @@
 
 package io.art.scheduler.executor.deferred;
 
-import io.art.core.callable.*;
-import io.art.core.runnable.*;
 import java.time.*;
 import java.util.concurrent.*;
 
@@ -31,14 +29,6 @@ public interface DeferredExecutor {
     <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime, int order);
 
     Future<?> execute(Runnable task, LocalDateTime triggerTime, int order);
-
-    <EventResultType> Future<? extends EventResultType> submit(ExceptionCallable<? extends EventResultType> eventTask, LocalDateTime triggerTime);
-
-    Future<?> execute(ExceptionRunnable task, LocalDateTime triggerTime);
-
-    <EventResultType> Future<? extends EventResultType> submit(ExceptionCallable<? extends EventResultType> eventTask, LocalDateTime triggerTime, int order);
-
-    Future<?> execute(ExceptionRunnable task, LocalDateTime triggerTime, int order);
 
     void shutdown();
 

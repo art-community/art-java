@@ -18,14 +18,10 @@
 
 package io.art.scheduler.executor.deferred;
 
-import io.art.core.callable.*;
-import io.art.core.runnable.*;
 import lombok.*;
 import static io.art.core.constants.ThreadConstants.*;
 import static io.art.core.wrapper.FunctionWrapper.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.ExceptionEvent.*;
-import static java.lang.Thread.*;
 import java.time.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -86,56 +82,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Override
     public Future<?> execute(Runnable task, LocalDateTime triggerTime, int order) {
         return submit(wrap(task), triggerTime, order);
-    }
-
-    @Override
-    public <EventResultType> Future<? extends EventResultType> submit(ExceptionCallable<? extends EventResultType> eventTask, LocalDateTime triggerTime) {
-        Callable<EventResultType> callable = () -> {
-            try {
-                return eventTask.call();
-            } catch (Throwable throwable) {
-                exceptionHandler.onException(currentThread(), TASK_EXECUTION, throwable);
-                return null;
-            }
-        };
-        return submit(callable, triggerTime);
-    }
-
-    @Override
-    public Future<?> execute(ExceptionRunnable task, LocalDateTime triggerTime) {
-        Runnable runnable = () -> {
-            try {
-                task.run();
-            } catch (Throwable throwable) {
-                exceptionHandler.onException(currentThread(), TASK_EXECUTION, throwable);
-            }
-        };
-        return execute(runnable, triggerTime);
-    }
-
-    @Override
-    public <EventResultType> Future<? extends EventResultType> submit(ExceptionCallable<? extends EventResultType> eventTask, LocalDateTime triggerTime, int order) {
-        Callable<EventResultType> callable = () -> {
-            try {
-                return eventTask.call();
-            } catch (Throwable throwable) {
-                exceptionHandler.onException(currentThread(), TASK_EXECUTION, throwable);
-                return null;
-            }
-        };
-        return submit(callable, triggerTime, order);
-    }
-
-    @Override
-    public Future<?> execute(ExceptionRunnable task, LocalDateTime triggerTime, int order) {
-        Runnable runnable = () -> {
-            try {
-                task.run();
-            } catch (Throwable throwable) {
-                exceptionHandler.onException(currentThread(), TASK_EXECUTION, throwable);
-            }
-        };
-        return execute(runnable, triggerTime, order);
     }
 
     @Override

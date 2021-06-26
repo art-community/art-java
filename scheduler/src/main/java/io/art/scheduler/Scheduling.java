@@ -18,8 +18,6 @@
 
 package io.art.scheduler;
 
-import io.art.core.callable.*;
-import io.art.core.runnable.*;
 import io.art.scheduler.model.*;
 import lombok.experimental.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.PeriodicTaskMode.*;
@@ -31,29 +29,29 @@ import java.util.concurrent.*;
 
 @UtilityClass
 public class Scheduling {
-    public static <T> Future<? extends T> schedule(ExceptionCallable<? extends T> task) {
+    public static <T> Future<? extends T> schedule(Callable<? extends T> task) {
         return deferredExecutor().submit(task, now());
     }
 
-    public static <T> Future<? extends T> schedule(LocalDateTime startTime, ExceptionCallable<? extends T> task) {
+    public static <T> Future<? extends T> schedule(LocalDateTime startTime, Callable<? extends T> task) {
         return deferredExecutor().submit(task, startTime);
     }
 
 
-    public static Future<?> schedule(ExceptionRunnable task) {
+    public static Future<?> schedule(Runnable task) {
         return deferredExecutor().execute(task, now());
     }
 
-    public static Future<?> schedule(LocalDateTime startTime, ExceptionRunnable task) {
+    public static Future<?> schedule(LocalDateTime startTime, Runnable task) {
         return deferredExecutor().execute(task, startTime);
     }
 
 
-    public static void scheduleFixedRate(Duration duration, ExceptionRunnable task) {
+    public static void scheduleFixedRate(Duration duration, Runnable task) {
         scheduleFixedRate(duration, task(task));
     }
 
-    public static void scheduleFixedRate(LocalDateTime triggerTime, Duration duration, ExceptionRunnable task) {
+    public static void scheduleFixedRate(LocalDateTime triggerTime, Duration duration, Runnable task) {
         scheduleFixedRate(triggerTime, duration, task(task));
     }
 
@@ -73,11 +71,11 @@ public class Scheduling {
     }
 
 
-    public static void scheduleDelayed(Duration delay, ExceptionRunnable task) {
+    public static void scheduleDelayed(Duration delay, Runnable task) {
         scheduleDelayed(delay, task(task));
     }
 
-    public static void scheduleDelayed(LocalDateTime triggerTime, Duration delay, ExceptionRunnable task) {
+    public static void scheduleDelayed(LocalDateTime triggerTime, Duration delay, Runnable task) {
         scheduleDelayed(triggerTime, delay, task(task));
     }
 
