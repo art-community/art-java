@@ -57,6 +57,8 @@ public interface MetaConstants {
         NETTY_BUFFER,
 
         CUSTOM,
+
+        ENTITY,
     }
 
     static boolean isPrimitive(MetaTypeInternalKind kind) {

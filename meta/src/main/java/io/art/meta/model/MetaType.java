@@ -73,7 +73,7 @@ public class MetaType<T> {
     private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
 
     protected MetaType<T> compute() {
-        if (nonNull(inputTransformer) || kind == CUSTOM) return this;
+        if (nonNull(inputTransformer) || kind == CUSTOM || kind == ENTITY) return this;
         inputTransformer = computeInputTransformer(this);
         outputTransformers = computeOutputTransformers(this);
         return this;
