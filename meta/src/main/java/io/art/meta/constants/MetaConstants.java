@@ -86,4 +86,8 @@ public interface MetaConstants {
         BYTE,
         BINARY
     }
+
+    interface Errors {
+        String OPTIONAL_IS_EMPTY = "Optional is empty";
+    }
 }

@@ -162,7 +162,7 @@ public class SetFactory {
         return ConcurrentHashMap.newKeySet(capacity);
     }
 
-    public static <T> Set<T> concurrentHashSetOf(Collection<T> elements) {
+    public static <T> Set<T> concurrentSetOf(Collection<T> elements) {
         ConcurrentHashMap.KeySetView<T, Boolean> set = ConcurrentHashMap.newKeySet();
         set.addAll(elements);
         return set;

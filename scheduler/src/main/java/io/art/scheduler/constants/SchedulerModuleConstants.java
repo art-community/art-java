@@ -20,6 +20,8 @@ package io.art.scheduler.constants;
 
 import lombok.*;
 import static io.art.core.constants.ThreadConstants.*;
+import static java.lang.Integer.*;
+import static java.lang.Math.max;
 import static java.lang.Math.*;
 import static java.time.Duration.*;
 import java.time.*;
@@ -36,6 +38,7 @@ public interface SchedulerModuleConstants {
 
     interface Defaults {
         int DEFAULT_PENDING_INITIAL_CAPACITY = 11;
+        int DEFAULT_MAXIMUM_CAPACITY = MAX_VALUE;
         int DEFAULT_SCHEDULER_POOL_SIZE = (int) max(ceil(DEFAULT_THREAD_POOL_SIZE * 0.25), 2);
         Duration DEFAULT_TASK_EXECUTION_TIMEOUT = ofMinutes(1);
     }

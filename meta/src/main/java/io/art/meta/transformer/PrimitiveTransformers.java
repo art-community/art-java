@@ -19,18 +19,33 @@
 package io.art.meta.transformer;
 
 import lombok.experimental.*;
+import static io.art.core.constants.DateTimeConstants.*;
+import static io.art.core.extensions.DateTimeExtensions.*;
 import java.time.*;
+import java.util.*;
 
 @UtilityClass
 public class PrimitiveTransformers {
-    public static final MetaTransformer<String> STRING_TRANSFORMER = new MetaTransformer<>() {
+    public static final MetaTransformer<String> STRING_TRANSFORMER = new MetaTransformer<String>() {
         @Override
         public String transform(Object value) {
             return value.toString();
         }
+
+        public String transform(Date value) {
+            return DEFAULT_FORMATTER.format(zonedFromSimpleDate(value));
+        }
+
+        public String transform(LocalDateTime value) {
+            return DEFAULT_FORMATTER.format(value);
+        }
+
+        public String transform(ZonedDateTime value) {
+            return DEFAULT_FORMATTER.format(value);
+        }
     };
 
-    public static final MetaTransformer<Integer> INT_TRANSFORMER = new MetaTransformer<Integer>() {
+    public static final MetaTransformer<Integer> INTEGER_TRANSFORMER = new MetaTransformer<Integer>() {
         public Integer transform(Number value) {
             return value.intValue();
         }
@@ -78,6 +93,18 @@ public class PrimitiveTransformers {
         public Long transform(String value) {
             return Long.parseLong(value);
         }
+
+        public Long transform(Date value) {
+            return value.getTime();
+        }
+
+        public Long transform(LocalDateTime value) {
+            return toMillis(value);
+        }
+
+        public Long transform(ZonedDateTime value) {
+            return toMillis(value);
+        }
     };
 
     public static final MetaTransformer<Byte> BYTE_TRANSFORMER = new MetaTransformer<Byte>() {
@@ -117,6 +144,48 @@ public class PrimitiveTransformers {
 
         public Duration transform(String value) {
             return Duration.parse(value);
+        }
+    };
+
+    public static final MetaTransformer<Date> DATE_TRANSFORMER = new MetaTransformer<Date>() {
+        public Date transform(Date value) {
+            return value;
+        }
+
+        public Date transform(Long value) {
+            return new Date(value);
+        }
+
+        public Date transform(String value) {
+            return toSimpleDate(ZonedDateTime.parse(value, DEFAULT_FORMATTER));
+        }
+    };
+
+    public static final MetaTransformer<LocalDateTime> LOCAL_DATE_TIME_TRANSFORMER = new MetaTransformer<LocalDateTime>() {
+        public LocalDateTime transform(LocalDateTime value) {
+            return value;
+        }
+
+        public LocalDateTime transform(Long value) {
+            return localFromMillis(value);
+        }
+
+        public LocalDateTime transform(String value) {
+            return LocalDateTime.parse(value, DEFAULT_FORMATTER);
+        }
+    };
+
+    public static final MetaTransformer<ZonedDateTime> ZONED_DATE_TIME_TRANSFORMER = new MetaTransformer<ZonedDateTime>() {
+        public ZonedDateTime transform(ZonedDateTime value) {
+            return value;
+        }
+
+        public ZonedDateTime transform(Long value) {
+            return zonedFromMillis(value);
+        }
+
+        public ZonedDateTime transform(String value) {
+            return ZonedDateTime.parse(value, DEFAULT_FORMATTER);
         }
     };
 }

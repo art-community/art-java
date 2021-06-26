@@ -93,9 +93,11 @@ class DeferredEventObserver {
         FutureTask<? extends EventResultType> task = new FutureTask<>(wrapper);
         DeferredEvent<? extends EventResultType> event = new DeferredEvent<>(task, triggerTime, order);
 
-        if (!delayedEvents.offer(event)) {
+        if (delayedEvents.size() + 1 >= executor.getDelayedQueueMaximumCapacity()) {
             return cast(forceExecuteEvent(event));
         }
+
+        delayedEvents.offer(event);
 
         return task;
     }
@@ -110,20 +112,18 @@ class DeferredEventObserver {
                 PriorityBlockingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
                 if (isNull(queue)) {
                     queue = new PriorityBlockingQueue<>(executor.getPendingInitialCapacity(), comparing(DeferredEvent::getOrder));
-
-                    if (!queue.offer(event)) {
-                        forceExecuteEvent(event);
-                        continue;
-                    }
-
+                    queue.offer(event);
                     pendingQueues.put(id, queue);
                     activeWorkers.put(id, pendingPool.submit(() -> observePending(id)));
                     continue;
                 }
 
-                if (!queue.offer(event)) {
-                    forceExecuteEvent(event);
+                if (queue.size() + 1 >= executor.getPendingQueueMaximumCapacity()) {
+                    cast(forceExecuteEvent(event));
+                    continue;
                 }
+
+                queue.offer(event);
             }
         } catch (InterruptedException interruptedException) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
@@ -144,20 +144,18 @@ class DeferredEventObserver {
             PriorityBlockingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
             if (isNull(queue)) {
                 queue = new PriorityBlockingQueue<>(executor.getPendingInitialCapacity(), comparing(DeferredEvent::getOrder));
-
-                if (!queue.offer(event)) {
-                    forceExecuteEvent(event);
-                    continue;
-                }
-
+                queue.offer(event);
                 pendingQueues.put(id, queue);
                 activeWorkers.put(id, pendingPool.submit(() -> observePending(id)));
                 continue;
             }
 
-            if (!queue.offer(event)) {
-                forceExecuteEvent(event);
+            if (queue.size() + 1 >= executor.getPendingQueueMaximumCapacity()) {
+                cast(forceExecuteEvent(event));
+                continue;
             }
+
+            queue.offer(event);
         }
     }
 

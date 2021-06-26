@@ -41,7 +41,6 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
-    private final Map<String, MetaType<?>> variables;
     //private MetaSchema<T> schema;
 
     protected MetaClass(MetaType<T> type) {
@@ -49,7 +48,6 @@ public abstract class MetaClass<T> {
         constructors = set();
         fields = map();
         methods = set();
-        variables = map();
         classes = map();
         MetaClassRegistry.register(this);
     }
@@ -105,14 +103,6 @@ public abstract class MetaClass<T> {
 
     public MetaType<T> type() {
         return type;
-    }
-
-    public MetaType<?> variable(String name) {
-        return variables.get(name);
-    }
-
-    public ImmutableMap<String, MetaType<?>> variables() {
-        return immutableMapOf(variables);
     }
 
     public <F> MetaField<F> field(String name) {

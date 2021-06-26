@@ -47,7 +47,7 @@ public class Waiter {
 
     public static void waitTime(Duration time) {
         CountDownLatch latch = new CountDownLatch(1);
-        ignoreException(() -> latch.await(time.toMillis(), MILLISECONDS));
+        wrapExceptionCall(() -> latch.await(time.toMillis(), MILLISECONDS));
     }
 
     private static void check(Supplier<Boolean> condition, CountDownLatch latch) {

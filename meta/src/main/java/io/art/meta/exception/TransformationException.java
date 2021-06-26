@@ -16,22 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.core.extensions;
+package io.art.meta.exception;
 
-import lombok.experimental.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
-import static java.util.Objects.*;
-import java.util.*;
-
-@UtilityClass
-public class OptionalExtensions {
-    @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
-    public static <T> T unwrap(Optional<T> optional) {
-        return optional.orElse(null);
+public class TransformationException extends RuntimeException {
+    public TransformationException(String message) {
+        super(message);
     }
 
-    @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
-    public static boolean isEmpty(Optional<?> optional) {
-        return isNull(optional) || !optional.isPresent();
+    public TransformationException(Throwable cause) {
+        super(cause);
     }
 }

@@ -17,9 +17,9 @@ public class DisposableProperty<T> implements Supplier<T> {
     private volatile T value;
     private final Supplier<T> loader;
     private final AtomicBoolean initialized = new AtomicBoolean();
-    private final Queue<Consumer<T>> creationConsumers = queue();
-    private final List<Consumer<T>> initializationConsumers = linkedList();
-    private final List<Consumer<T>> disposeConsumers = linkedList();
+    private volatile Queue<Consumer<T>> creationConsumers;
+    private volatile List<Consumer<T>> initializationConsumers;
+    private volatile List<Consumer<T>> disposeConsumers;
 
     public DisposableProperty<T> initialize() {
         get();
@@ -28,16 +28,19 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public DisposableProperty<T> created(Consumer<T> consumer) {
+        if (isNull(creationConsumers)) creationConsumers = queue();
         creationConsumers.add(consumer);
         return this;
     }
 
     public DisposableProperty<T> initialized(Consumer<T> consumer) {
+        if (isNull(initializationConsumers)) initializationConsumers = linkedList();
         initializationConsumers.add(consumer);
         return this;
     }
 
     public DisposableProperty<T> disposed(Consumer<T> consumer) {
+        if (isNull(disposeConsumers)) disposeConsumers = linkedList();
         disposeConsumers.add(consumer);
         return this;
     }
@@ -57,7 +60,7 @@ public class DisposableProperty<T> implements Supplier<T> {
             if (this.initialized.compareAndSet(true, false)) {
                 T current = value;
                 value = null;
-                disposeConsumers.forEach(consumer -> consumer.accept(current));
+                apply(disposeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(current)));
             }
         }
     }
@@ -69,8 +72,8 @@ public class DisposableProperty<T> implements Supplier<T> {
             if (nonNull(value)) return value;
             if (this.initialized.compareAndSet(false, true)) {
                 value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-                erase(creationConsumers, consumer -> consumer.accept(value));
-                initializationConsumers.forEach(consumer -> consumer.accept(value));
+                apply(creationConsumers, consumers -> erase(consumers, consumer -> consumer.accept(value)));
+                apply(initializationConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(value)));
             }
         }
     }

@@ -21,6 +21,8 @@ package io.art.meta.transformer;
 import io.art.core.exception.*;
 import io.art.core.property.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.extensions.OptionalExtensions.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -33,8 +35,8 @@ public interface MetaTransformer<T> {
         return transform(value.get());
     }
 
-    default T transform(Optional<?> value) {
-        return transform(value.get());
+    default T transform(@SuppressWarnings(OPTIONAL_USED_AS_FIELD) Optional<?> value) {
+        return unwrap(value.map(this::transform));
     }
 
     default T transform(Mono<?> value) {

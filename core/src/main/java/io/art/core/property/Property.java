@@ -1,6 +1,7 @@
 package io.art.core.property;
 
 import io.art.core.changes.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.QueueFactory.*;
@@ -13,11 +14,11 @@ import java.util.function.*;
 public class Property<T> implements Supplier<T> {
     private volatile DisposableProperty<T> disposable;
     private final Consumer<T> disposer;
-    private final List<Predicate<T>> predicates = linkedList();
-    private final List<Consumer<T>> changeConsumers = linkedList();
-    private final List<Consumer<T>> disposeConsumers = linkedList();
-    private final Queue<Consumer<T>> creationConsumers = queue();
-    private final List<Consumer<T>> initializationConsumers = linkedList();
+    private volatile List<Predicate<T>> predicates;
+    private volatile List<Consumer<T>> changeConsumers;
+    private volatile List<Consumer<T>> disposeConsumers;
+    private volatile Queue<Consumer<T>> creationConsumers;
+    private volatile List<Consumer<T>> initializationConsumers;
 
     public Property(Supplier<T> loader, Consumer<T> disposer) {
         disposable = DisposableProperty.disposable(loader, disposer);
@@ -52,29 +53,34 @@ public class Property<T> implements Supplier<T> {
 
 
     public Property<T> created(Consumer<T> consumer) {
+        if (isNull(creationConsumers)) creationConsumers = queue();
         creationConsumers.add(consumer);
         disposable.created(consumer);
         return this;
     }
 
     public Property<T> initialized(Consumer<T> consumer) {
+        if (isNull(initializationConsumers)) initializationConsumers = linkedList();
         initializationConsumers.add(consumer);
         disposable.initialized(consumer);
         return this;
     }
 
     public Property<T> disposed(Consumer<T> consumer) {
+        if (isNull(disposeConsumers)) disposeConsumers = linkedList();
         disposeConsumers.add(consumer);
         disposable.disposed(consumer);
         return this;
     }
 
     public Property<T> changed(Consumer<T> consumer) {
+        if (isNull(changeConsumers)) changeConsumers = linkedList();
         changeConsumers.add(consumer);
         return this;
     }
 
     public Property<T> prevent(Predicate<T> predicate) {
+        if (isNull(predicates)) predicates = linkedList();
         predicates.add(predicate);
         return this;
     }
@@ -94,24 +100,24 @@ public class Property<T> implements Supplier<T> {
 
 
     public Property<T> set(T newValue) {
-        if (predicates.stream().anyMatch(predicate -> predicate.test(newValue))) {
+        if (let(predicates, predicates -> predicates.stream().anyMatch(predicate -> predicate.test(newValue)), false)) {
             return this;
         }
         if (Objects.equals(disposable.get(), newValue)) {
             return this;
         }
         disposable = DisposableProperty.disposable(() -> newValue, disposer);
-        creationConsumers.forEach(disposable::created);
-        initializationConsumers.forEach(disposable::initialized);
-        disposeConsumers.forEach(disposable::disposed);
-        changeConsumers.forEach(consumer -> consumer.accept(newValue));
+        apply(creationConsumers, consumers -> consumers.forEach(disposable::created));
+        apply(initializationConsumers, consumers -> consumers.forEach(disposable::initialized));
+        apply(disposeConsumers, consumers -> consumers.forEach(disposable::disposed));
+        apply(changeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(newValue)));
         return this;
     }
 
     public void refresh() {
         dispose();
         T value = get();
-        changeConsumers.forEach(consumer -> consumer.accept(value));
+        apply(changeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(value)));
     }
 
     public T value() {

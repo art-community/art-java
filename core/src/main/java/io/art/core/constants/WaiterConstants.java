@@ -23,5 +23,5 @@ import java.time.*;
 
 public interface WaiterConstants {
     Duration DEFAULT_WAIT_TIMEOUT = ofSeconds(30);
-    Duration DEFAULT_WAIT_CHECK_PERIOD = ofMillis(500);
+    Duration DEFAULT_WAIT_CHECK_PERIOD = ofMillis(100);
 }

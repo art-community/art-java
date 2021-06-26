@@ -8,12 +8,17 @@ import java.util.function.*;
 @RequiredArgsConstructor(access = PRIVATE)
 public class ThreadLocalValue<T> {
     private final ThreadLocal<T> valueHolder = new ThreadLocal<>();
-    private final Supplier<T> factory;
+    private volatile Supplier<T> factory;
 
     public T get() {
         T value = valueHolder.get();
         if (isNull(value)) valueHolder.set(value = factory.get());
         return value;
+    }
+
+    public ThreadLocalValue<T> use(Supplier<T> factory) {
+        this.factory = factory;
+        return this;
     }
 
     public ThreadLocalValue<T> set(T newValue) {
@@ -22,7 +27,7 @@ public class ThreadLocalValue<T> {
     }
 
     public <R> ThreadLocalValue<R> map(Function<T, R> mapper) {
-        return new ThreadLocalValue<>(() -> mapper.apply(get()));
+        return new ThreadLocalValue<R>().use(() -> mapper.apply(get()));
     }
 
     public ThreadLocalValue<T> initialize() {
@@ -43,6 +48,6 @@ public class ThreadLocalValue<T> {
     }
 
     public static <T> ThreadLocalValue<T> threadLocal(Supplier<T> factory) {
-        return new ThreadLocalValue<>(factory);
+        return new ThreadLocalValue<T>().use(factory);
     }
 }
