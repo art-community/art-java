@@ -26,6 +26,7 @@ import lombok.experimental.*;
 import reactor.core.publisher.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import java.util.*;
 import java.util.stream.*;
@@ -36,6 +37,38 @@ public class ImmutableCollectionTransformers {
         return new MetaTransformer<ImmutableCollection<?>>() {
             public ImmutableCollection<?> transform(Object[] value) {
                 return transform(fixedArrayOf(value));
+            }
+
+            public ImmutableCollection<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableCollection<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public ImmutableCollection<?> transform(List<?> value) {
@@ -68,6 +101,38 @@ public class ImmutableCollectionTransformers {
         return new MetaTransformer<ImmutableArray<?>>() {
             public ImmutableArray<?> transform(Object[] value) {
                 return transform(fixedArrayOf(value));
+            }
+
+            public ImmutableArray<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableArray<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public ImmutableArray<?> transform(List<?> value) {
@@ -104,6 +169,38 @@ public class ImmutableCollectionTransformers {
                     builder.add(parameterTransformer.transform(element));
                 }
                 return builder.build();
+            }
+
+            public ImmutableSet<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public ImmutableSet<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public ImmutableSet<?> transform(Stream<?> value) {

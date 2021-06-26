@@ -302,6 +302,10 @@ public class ArrayTransformers {
                 return transform(box(value));
             }
 
+            public Object[] transform(short[] value) {
+                return transform(box(value));
+            }
+
             public Object[] transform(Collection<?> value) {
                 Object[] array = arrayFactory.apply(value.size());
                 int index = 0;

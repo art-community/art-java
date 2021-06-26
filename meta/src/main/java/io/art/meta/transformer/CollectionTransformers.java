@@ -25,6 +25,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.collector.QueueCollector.*;
 import static io.art.core.collector.SetCollector.*;
+import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -42,6 +43,38 @@ public class CollectionTransformers {
                     collection.add(cast(parameterTransformer.transform(element)));
                 }
                 return collection;
+            }
+
+            public Collection<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public Collection<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public Collection<?> transform(Stream<?> value) {
@@ -108,6 +141,38 @@ public class CollectionTransformers {
                 return stream(value.spliterator(), false).map(parameterTransformer::transform);
             }
 
+            public Stream<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public Stream<?> transform(boolean[] value) {
+                return transform(box(value));
+            }
+
             public Stream<?> transform(Stream<?> value) {
                 return value.map(parameterTransformer::transform);
             }
@@ -126,6 +191,38 @@ public class CollectionTransformers {
                     list.add(cast(parameterTransformer.transform(element)));
                 }
                 return list;
+            }
+
+            public List<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public List<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public List<?> transform(Stream<?> value) {
@@ -164,6 +261,38 @@ public class CollectionTransformers {
                 return set;
             }
 
+            public Set<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public Set<?> transform(boolean[] value) {
+                return transform(box(value));
+            }
+
             public Set<?> transform(Stream<?> value) {
                 return value.map(parameterTransformer::transform).collect(setCollector());
             }
@@ -198,6 +327,38 @@ public class CollectionTransformers {
                     queue.add(cast(parameterTransformer.transform(element)));
                 }
                 return queue;
+            }
+
+            public Queue<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public Queue<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public Queue<?> transform(Stream<?> value) {
@@ -235,6 +396,38 @@ public class CollectionTransformers {
                     deque.add(cast(parameterTransformer.transform(element)));
                 }
                 return deque;
+            }
+
+            public Deque<?> transform(byte[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(int[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(short[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(float[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(double[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(long[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(char[] value) {
+                return transform(box(value));
+            }
+
+            public Deque<?> transform(boolean[] value) {
+                return transform(box(value));
             }
 
             public Deque<?> transform(Stream<?> value) {
