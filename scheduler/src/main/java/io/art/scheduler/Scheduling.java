@@ -107,7 +107,7 @@ public class Scheduling {
         return periodicExecutor().getTask(taskId);
     }
 
-    public static Future<?> getCurrentTask(Future<?> task) {
+    public static Future<?> getCurrentTask() {
         return getTask(currentTaskId());
     }
 
