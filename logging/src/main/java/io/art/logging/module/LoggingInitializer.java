@@ -42,14 +42,6 @@ public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfig
         return this;
     }
 
-    public LoggingInitializer colored() {
-        return colored(true);
-    }
-
-    public LoggingInitializer colored(boolean colored) {
-        return configureDefaultWriter(writer -> writer.console(ConsoleWriterConfiguration.builder().colored(colored).build()));
-    }
-
     @Override
     public LoggingModuleConfiguration initialize(LoggingModule module) {
         return configuration;
