@@ -29,7 +29,7 @@ import java.util.function.*;
 
 public interface MetaTransformer<T> {
     default T transform(Object value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
     }
 
     default T transform(@SuppressWarnings(OPTIONAL_USED_AS_FIELD) Optional<?> value) {

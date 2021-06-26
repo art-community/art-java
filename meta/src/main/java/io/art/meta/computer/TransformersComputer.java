@@ -18,10 +18,15 @@
 
 package io.art.meta.computer;
 
+import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
+import static io.art.meta.constants.MetaConstants.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static io.art.meta.transformer.ArrayTransformers.*;
 import static io.art.meta.transformer.CollectionTransformers.*;
 import static io.art.meta.transformer.ImmutableCollectionTransformers.*;
@@ -30,6 +35,8 @@ import static io.art.meta.transformer.MapTransformers.*;
 import static io.art.meta.transformer.PrimitiveTransformers.*;
 import static io.art.meta.transformer.ReactiveTransformers.*;
 import static io.art.meta.transformer.SpecialTransformers.*;
+import static java.text.MessageFormat.*;
+import java.util.*;
 
 @UtilityClass
 public class TransformersComputer {
@@ -123,12 +130,104 @@ public class TransformersComputer {
                 return NIO_BUFFER_TRANSFORMER;
             case NETTY_BUFFER:
                 return NETTY_BUFFER_TRANSFORMER;
-            case CUSTOM:
-                break;
         }
+        throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
     }
 
     public static OutputTransformers computeOutputTransformers(MetaType<?> type) {
-
+        Map<MetaTypeExternalKind, MetaTransformer<?>> transformers = map();
+        switch (type.kind()) {
+            case VOID:
+                break;
+            case STRING:
+                transformers.put(STRING, STRING_TRANSFORMER);
+                break;
+            case LONG:
+                transformers.put(STRING, STRING_TRANSFORMER);
+            case DOUBLE:
+                break;
+            case SHORT:
+                break;
+            case FLOAT:
+                break;
+            case INTEGER:
+                break;
+            case BYTE:
+                break;
+            case CHARACTER:
+                break;
+            case BOOLEAN:
+                break;
+            case DATE:
+                break;
+            case LOCAL_DATE_TIME:
+                break;
+            case ZONED_DATE_TIME:
+                break;
+            case DURATION:
+                break;
+            case ARRAY:
+                break;
+            case LONG_ARRAY:
+                transformers.put(ARRAY, LONG_ARRAY_TRANSFORMER);
+                break;
+            case DOUBLE_ARRAY:
+                break;
+            case FLOAT_ARRAY:
+                break;
+            case INTEGER_ARRAY:
+                break;
+            case BOOLEAN_ARRAY:
+                break;
+            case CHARACTER_ARRAY:
+                break;
+            case SHORT_ARRAY:
+                break;
+            case BYTE_ARRAY:
+                break;
+            case COLLECTION:
+                break;
+            case IMMUTABLE_COLLECTION:
+                break;
+            case LIST:
+                break;
+            case IMMUTABLE_ARRAY:
+                break;
+            case SET:
+                break;
+            case IMMUTABLE_SET:
+                break;
+            case QUEUE:
+                break;
+            case DEQUEUE:
+                break;
+            case STREAM:
+                break;
+            case MAP:
+                break;
+            case IMMUTABLE_MAP:
+                break;
+            case FLUX:
+                break;
+            case MONO:
+                break;
+            case LAZY:
+                break;
+            case OPTIONAL:
+                break;
+            case SUPPLIER:
+                break;
+            case ENUM:
+                break;
+            case INPUT_STREAM:
+                break;
+            case OUTPUT_STREAM:
+                break;
+            case NIO_BUFFER:
+                break;
+            case NETTY_BUFFER:
+                break;
+        }
+        throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
     }
 }
