@@ -212,7 +212,7 @@ public class SpecialTransformers {
         };
     }
 
-    public static MetaTransformer<Void> VOID_TRANSFORMER = new MetaTransformer<>() {
+    public static MetaTransformer<Void> VOID_TRANSFORMER = new MetaTransformer<Void>() {
         @Override
         public Void transform(Object value) {
             return null;
