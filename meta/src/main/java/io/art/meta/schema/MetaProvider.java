@@ -53,7 +53,7 @@ public class MetaProvider {
 
     public String getString(String name) throws Throwable {
         MetaProperty<?> property = propertiesMap.get(name);
-        return (String) property.type().outputTransformers().get(STRING).transform(property.getter().invoke(model));
+        return (String) property.type().outputTransformers().stringTransformer().transform(property.getter().invoke(model));
     }
 
     public String getString(int index) throws Throwable {
