@@ -19,25 +19,30 @@
 package io.art.scheduler.factory;
 
 import io.art.logging.logger.*;
-import io.art.logging.module.*;
 import io.art.scheduler.model.*;
 import io.art.scheduler.module.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.logging.module.LoggingModule.*;
 import static java.util.UUID.*;
 import java.util.function.*;
 
 @UtilityClass
 public class TaskFactory {
     @Getter(lazy = true)
-    private final static Logger logger = LoggingModule.logger(SchedulerModule.class);
+    private final static Logger logger = logger(SchedulerModule.class);
+
+    private final static ThreadLocal<String> current = new ThreadLocal<>();
 
     public static RunnableTask task(Runnable runnable) {
         return task(randomUUID().toString(), runnable);
     }
 
     public static RunnableTask task(String id, Runnable runnable) {
-        return new RunnableTask(id, taskId -> runnable.run());
+        return new RunnableTask(id, taskId -> {
+            current.set(taskId);
+            runnable.run();
+        });
     }
 
     public static RunnableTask task(Consumer<String> consumer) {
@@ -45,6 +50,13 @@ public class TaskFactory {
     }
 
     public static RunnableTask task(String id, Consumer<String> consumer) {
-        return new RunnableTask(id, consumer);
+        return new RunnableTask(id, taskId -> {
+            current.set(taskId);
+            consumer.accept(taskId);
+        });
+    }
+
+    public static String currentTaskId() {
+        return current.get();
     }
 }

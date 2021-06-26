@@ -102,4 +102,16 @@ public class Scheduling {
     public static boolean cancelTask(String taskId) {
         return periodicExecutor().cancelTask(taskId);
     }
+
+    public static Future<?> getTask(String taskId) {
+        return periodicExecutor().getTask(taskId);
+    }
+
+    public static Future<?> getCurrentTask(Future<?> task) {
+        return getTask(currentTaskId());
+    }
+
+    public static boolean cancelCurrentTask() {
+        return cancelTask(currentTaskId());
+    }
 }

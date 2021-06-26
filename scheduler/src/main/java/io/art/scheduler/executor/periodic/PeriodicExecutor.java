@@ -66,6 +66,10 @@ public class PeriodicExecutor {
         return current.cancel(false);
     }
 
+    public Future<?> getTask(String taskId) {
+        return executingTasks.get(taskId);
+    }
+
     public void shutdown() {
         if (active.compareAndSet(true, false)) {
             executingTasks.clear();
