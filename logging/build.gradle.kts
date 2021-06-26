@@ -18,10 +18,8 @@
 
 dependencies {
     val sl4jVersion: String by project
-    val jansiVersion: String by project
 
     implementation(project(":core"))
 
     api("org.slf4j", "slf4j-api", sl4jVersion)
-    api("org.fusesource.jansi", "jansi", jansiVersion)
 }
