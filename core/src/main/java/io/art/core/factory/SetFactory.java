@@ -14,6 +14,10 @@ public class SetFactory {
         return new LinkedHashSet<>();
     }
 
+    public static <T> Set<T> set(int initialCapacity) {
+        return new LinkedHashSet<>(initialCapacity);
+    }
+
     public static <T> Set<T> setOf(Collection<T> elements) {
         return isEmpty(elements) ? new LinkedHashSet<>() : new LinkedHashSet<>(elements);
     }
@@ -152,7 +156,6 @@ public class SetFactory {
         for (char element : elements) builder.add(element);
         return builder.build();
     }
-
 
     public static <T> Set<T> concurrentSet() {
         return ConcurrentHashMap.newKeySet();

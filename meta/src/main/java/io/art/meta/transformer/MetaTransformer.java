@@ -18,21 +18,18 @@
 
 package io.art.meta.transformer;
 
-import io.art.core.exception.*;
-import io.art.core.property.*;
+import io.art.meta.exception.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.extensions.OptionalExtensions.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
+import static java.text.MessageFormat.*;
 import java.util.*;
 import java.util.function.*;
 
 public interface MetaTransformer<T> {
     default T transform(Object value) {
-        throw new ImpossibleSituationException();
-    }
-
-    default T transform(LazyProperty<?> value) {
-        return transform(value.get());
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVILABLE, value));
     }
 
     default T transform(@SuppressWarnings(OPTIONAL_USED_AS_FIELD) Optional<?> value) {

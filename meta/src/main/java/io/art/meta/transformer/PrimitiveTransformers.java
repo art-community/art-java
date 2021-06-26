@@ -20,6 +20,7 @@ package io.art.meta.transformer;
 
 import lombok.experimental.*;
 import static io.art.core.constants.DateTimeConstants.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.DateTimeExtensions.*;
 import java.time.*;
 import java.util.*;
@@ -42,6 +43,14 @@ public class PrimitiveTransformers {
 
         public String transform(ZonedDateTime value) {
             return DEFAULT_FORMATTER.format(value);
+        }
+
+        public String transform(char[] value) {
+            return new String(value);
+        }
+
+        public String transform(byte[] value) {
+            return new String(value, context().configuration().getCharset());
         }
     };
 

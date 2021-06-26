@@ -2,10 +2,12 @@ package io.art.core.factory;
 
 import io.art.core.collection.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 @UtilityClass
 public class MapFactory {
@@ -47,6 +49,18 @@ public class MapFactory {
 
     public static <K, V> ImmutableMap<K, V> immutableMapOf(ImmutableMap<K, V> map) {
         return new ImmutableMapImplementation<>(map);
+    }
+
+    public static <K, V> ImmutableMap<K, V> immutableLazyMap(Set<K> keys, Function<K, V> provider) {
+        return new ImmutableLazyMapImplementation<>(keys, provider);
+    }
+
+    public static <K, V> ImmutableMap<K, V> immutableLazyMapOf(Map<K, V> map, Function<?, V> valueMapper) {
+        return new ImmutableLazyMapImplementation<>(map.keySet(), key -> valueMapper.apply(cast(map.get(key))));
+    }
+
+    public static <K, V> ImmutableMap<K, V> immutableLazyMapOf(ImmutableMap<K, V> map, Function<?, V> valueMapper) {
+        return new ImmutableLazyMapImplementation<>(map.keySet(), key -> valueMapper.apply(cast(map.get(key))));
     }
 
 

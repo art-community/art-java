@@ -2,6 +2,7 @@ package io.art.core.factory;
 
 import io.art.core.collection.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.ArrayCollector.*;
@@ -10,6 +11,7 @@ import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.util.ArrayList;
 import java.util.*;
+import java.util.function.*;
 import java.util.stream.*;
 
 @UtilityClass
@@ -184,6 +186,17 @@ public class ArrayFactory {
         return isEmpty(elements) ? emptyImmutableArray() : new ImmutableArrayImplementation<>(asList(elements));
     }
 
+    public static <T> ImmutableArray<T> immutableLazyArray(IntFunction<T> provider, int size) {
+        return new ImmutableLazyArrayImplementation<>(provider, size);
+    }
+
+    public static <T> ImmutableArray<T> immutableLazyArrayOf(List<?> list, Function<?, T> mapper) {
+        return immutableLazyArray(index -> mapper.apply(cast(list.get(index))), list.size());
+    }
+
+    public static <T> ImmutableArray<T> immutableLazyArrayOf(ImmutableArray<?> list, Function<?, T> mapper) {
+        return immutableLazyArray(index -> mapper.apply(cast(list.get(index))), list.size());
+    }
 
     public static <T> List<T> dynamicArray() {
         return new ArrayList<>();

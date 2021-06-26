@@ -52,6 +52,10 @@ public interface MetaConstants {
         OPTIONAL,
         SUPPLIER,
         ENUM,
+        INPUT_STREAM,
+        OUTPUT_STREAM,
+        NIO_BUFFER,
+        NETTY_BUFFER,
 
         CUSTOM,
     }
@@ -88,6 +92,6 @@ public interface MetaConstants {
     }
 
     interface Errors {
-        String OPTIONAL_IS_EMPTY = "Optional is empty";
+        String TRANSFORMATION_NOT_AVILABLE = "Transformation is not available for value: {0}";
     }
 }

@@ -199,28 +199,4 @@ public class Context {
             apply(configuration.getAfterReload(), Runnable::run);
         }
     }
-
-    interface Tr {
-        void tr(Object obj);
-    }
-
-    static class Tr1 implements Tr {
-        public void tr(Object obj) {
-            System.out.println("obj");
-        }
-
-        public void tr(String obj) {
-            System.out.println("str");
-        }
-
-        public void tr(Integer obj) {
-            System.out.println("int");
-        }
-    }
-
-    public static void main(String[] args) {
-        new Tr1().tr("test");
-        new Tr1().tr(123);
-        new Tr1().tr(true);
-    }
 }

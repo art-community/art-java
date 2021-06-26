@@ -71,7 +71,7 @@ public interface ImmutableMap<K, V> {
         return new Builder<>();
     }
 
-    static Builder<String, String> immutableMapBuilder(int size) {
+    static <K, V> Builder<K, V> immutableMapBuilder(int size) {
         return new Builder<>(size);
     }
 
