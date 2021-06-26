@@ -175,7 +175,7 @@ public class SpecialTransformers {
     }
 
     public static MetaTransformer<Supplier<?>> supplierTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<>() {
+        return new MetaTransformer<Supplier<?>>() {
             @Override
             public Supplier<?> transform(Object value) {
                 return () -> parameterTransformer.transform(value);
@@ -188,7 +188,7 @@ public class SpecialTransformers {
     }
 
     public static MetaTransformer<Optional<?>> optionalTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<>() {
+        return new MetaTransformer<Optional<?>>() {
             @Override
             public Optional<?> transform(Object value) {
                 return ofNullable(parameterTransformer.transform(value));
