@@ -33,7 +33,7 @@ import java.util.stream.*;
 
 public class MetaTypeKindComputer {
     public static MetaTypeInternalKind computeKind(Class<?> type) {
-        if (void.class.equals(type) || Void.class.equals(type)) return VOID;
+        if (Void.class.equals(type) || void.class.equals(type)) return VOID;
         if (Long.class.equals(type) || long.class.equals(type)) return LONG;
         if (Double.class.equals(type) || double.class.equals(type)) return DOUBLE;
         if (Short.class.equals(type) || short.class.equals(type)) return SHORT;
@@ -54,7 +54,6 @@ public class MetaTypeKindComputer {
         if (float[].class.equals(type)) return FLOAT_ARRAY;
         if (char[].class.equals(type)) return CHARACTER_ARRAY;
         if (boolean[].class.equals(type)) return BOOLEAN_ARRAY;
-        if (type.isArray()) return ARRAY;
         if (List.class.isAssignableFrom(type)) return LIST;
         if (ImmutableArray.class.isAssignableFrom(type)) return IMMUTABLE_ARRAY;
         if (Set.class.isAssignableFrom(type)) return SET;
