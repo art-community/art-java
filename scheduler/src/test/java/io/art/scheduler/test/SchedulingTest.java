@@ -20,6 +20,7 @@ package io.art.scheduler.test;
 
 import io.art.logging.module.*;
 import io.art.scheduler.*;
+import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.module.*;
 import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
@@ -29,7 +30,7 @@ import static io.art.core.context.TestingContext.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.scheduler.Scheduling.*;
-import static io.art.scheduler.module.SchedulerModule.*;
+import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
 import static io.art.scheduler.test.comparator.DateTimeApproximateComparator.*;
 import static java.time.Duration.*;
 import static java.time.LocalDateTime.*;
@@ -45,8 +46,7 @@ public class SchedulingTest {
         testing(LoggingModule::new, SchedulerModule::new);
     }
 
-    @Test
-    @Order(0)
+    @RepeatedTest(1000)
     public void testSingleTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
@@ -55,8 +55,7 @@ public class SchedulingTest {
         assertTrue(task.completed());
     }
 
-    @Test
-    @Order(1)
+    @RepeatedTest(1000)
     public void testMultipleTasks() {
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
@@ -74,21 +73,20 @@ public class SchedulingTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @Test
-    @Order(2)
+    @RepeatedTest(10)
     public void testSingleDelayedTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
-        LocalDateTime time = now().plusSeconds(2);
+        LocalDateTime time = now().plusSeconds(1);
         schedule(time, task);
         ignoreException(water::await);
         assertTrue(task.completed());
         assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
     }
 
-    @Test
-    @Order(3)
+    @RepeatedTest(10)
     public void testMultipleDelayedTask() {
+        DeferredExecutor executor = deferredExecutor().build();
         CountDownLatch water = new CountDownLatch(8);
         OrderCounter counter = new OrderCounter();
         List<OrderedScheduledTask> tasks = linkedListOf(
@@ -102,8 +100,8 @@ public class SchedulingTest {
                 new OrderedScheduledTask(water, counter)
         );
         counter.initialize(tasks);
-        LocalDateTime time = now().plusSeconds(2);
-        tasks.forEach(task -> schedule(time, task));
+        LocalDateTime time = now().plusSeconds(1);
+        tasks.forEach(task -> executor.execute(task, time));
         ignoreException(water::await);
         for (int index = 0; index < tasks.size(); index++) {
             OrderedScheduledTask task = tasks.get(index);
@@ -113,9 +111,9 @@ public class SchedulingTest {
         }
     }
 
-    @Test
-    @Order(4)
+    @RepeatedTest(5000)
     public void testShutdown() {
+        DeferredExecutor executor = deferredExecutor().build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),
@@ -127,8 +125,8 @@ public class SchedulingTest {
                 new ScheduledTask(water),
                 new ScheduledTask(water)
         );
-        tasks.forEach(Scheduling::schedule);
-        deferredExecutor().shutdown();
+        tasks.forEach(task -> executor.execute(task, now()));
+        executor.shutdown();
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 }
