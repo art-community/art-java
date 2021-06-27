@@ -23,6 +23,7 @@ import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.factory.MapFactory.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @AllArgsConstructor
@@ -38,7 +39,7 @@ public class MetaProviderTemplate {
         return immutableMapOf(propertyMap);
     }
 
-    @AllArgsConstructor
+    @AllArgsConstructor(access = PRIVATE)
     public class MetaProviderInstance {
         private final Object model;
 

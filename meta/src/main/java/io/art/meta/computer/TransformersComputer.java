@@ -19,14 +19,17 @@
 package io.art.meta.computer;
 
 import io.art.core.exception.*;
+import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.transformer.ArrayTransformers.*;
 import static io.art.meta.transformer.CollectionTransformers.*;
 import static io.art.meta.transformer.ImmutableCollectionTransformers.*;
 import static io.art.meta.transformer.ImmutableMapTransformers.*;
+import static io.art.meta.transformer.ListTransformer.*;
 import static io.art.meta.transformer.MapTransformers.*;
 import static io.art.meta.transformer.PrimitiveTransformers.*;
 import static io.art.meta.transformer.ReactiveTransformers.*;
@@ -37,6 +40,7 @@ import static java.util.Objects.*;
 public class TransformersComputer {
     public static MetaTransformer<?> computeInputTransformer(MetaType<?> type) {
         if (nonNull(type.inputTransformer())) return type.inputTransformer();
+        if (type.internalKind() == UNKNOWN || type.internalKind() == ENTITY) return null;
         switch (type.internalKind()) {
             case VOID:
                 return VOID_TRANSFORMER;
@@ -132,6 +136,9 @@ public class TransformersComputer {
 
     public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
         if (nonNull(type.outputTransformer())) return type.outputTransformer();
+        if (type.externalKind() == MetaTypeExternalKind.UNKNOWN || type.externalKind() == MetaTypeExternalKind.ENTITY) {
+            return null;
+        }
         switch (type.externalKind()) {
             case LONG:
                 return LONG_TRANSFORMER;

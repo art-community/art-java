@@ -22,7 +22,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.meta.validator.MetaTypeValidator.*;
 import lombok.experimental.*;
-import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
@@ -35,6 +35,6 @@ public class MetaComputationState {
     }
 
     public static ImmutableArray<ValidationResult> getValidationErrors() {
-        return immutableArrayOf(validationResults.values());
+        return validationResults.values().stream().filter(result -> !result.isValid()).collect(immutableArrayCollector());
     }
 }

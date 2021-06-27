@@ -23,6 +23,7 @@ import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.factory.MapFactory.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import java.util.*;
 
 @Builder
@@ -57,6 +58,7 @@ public class MetaCreatorTemplate {
         return new MetaCreatorInstance();
     }
 
+    @NoArgsConstructor(access = PRIVATE)
     public class MetaCreatorInstance {
         private int filledFields;
         private final Object[] values = new Object[propertyArray.length];
