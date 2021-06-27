@@ -18,45 +18,36 @@
 
 package io.art.meta.schema;
 
+import io.art.meta.exception.*;
 import io.art.meta.model.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
+import lombok.*;
 import java.util.*;
 
+@Builder(toBuilder = true)
 public class MetaProvider {
-    private Object model;
+    private final Object model;
     private final Set<String> names;
-    private final Map<String, MetaProperty<?>> propertiesMap;
-    private final MetaProperty<?>[] propertiesArray;
+    private final Map<String, MetaProperty<?>> propertyMap;
+    private final MetaProperty<?>[] propertyArray;
 
-    public MetaProvider(Map<String, MetaProperty<?>> properties) {
-        this.propertiesMap = properties;
-        propertiesArray = new MetaProperty[properties.size()];
-        for (MetaProperty<?> property : properties.values()) {
-            propertiesArray[property.index()] = property;
-        }
-        names = properties.keySet();
-    }
-
-    public MetaProvider(Object model, Map<String, MetaProperty<?>> properties) {
-        this.model = model;
-        this.propertiesMap = properties;
-        propertiesArray = new MetaProperty[properties.size()];
-        for (MetaProperty<?> property : properties.values()) {
-            propertiesArray[property.index()] = property;
-        }
-        names = properties.keySet();
+    public MetaProvider prepare(Object model) {
+        return toBuilder().model(model).build();
     }
 
     public Set<String> names() {
         return names;
     }
 
-    public String getString(String name) throws Throwable {
-        MetaProperty<?> property = propertiesMap.get(name);
-        return (String) property.type().outputTransformers().stringTransformer().transform(property.getter().invoke(model));
+    public Object getValue(String name) {
+        return getValue(propertyMap.get(name).index());
     }
 
-    public String getString(int index) throws Throwable {
-        return (String) propertiesArray[index].getter().invoke(model);
+    public Object getValue(int index) {
+        MetaProperty<?> property = propertyArray[index];
+        try {
+            return property.type().outputTransformer().transform(property.getter().invoke(model));
+        } catch (Throwable throwable) {
+            throw new TransformationException(throwable);
+        }
     }
 }

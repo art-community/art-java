@@ -21,15 +21,19 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
+import io.art.meta.schema.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.type.TypeInspector.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @ToString
@@ -41,7 +45,8 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
-    //private MetaSchema<T> schema;
+    private MetaProvider provider;
+    private MetaCreator creator;
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
@@ -89,7 +94,70 @@ public abstract class MetaClass<T> {
             nested.compute();
         }
 
-//        schema = computeSchema();
+        MetaConstructor<T> propertiesConstructor = null;
+        for (MetaConstructor<T> constructor : constructors) {
+            constructor.parameters().values().forEach(parameter -> parameter.type().compute());
+
+            Collection<MetaField<?>> fields = this.fields.values();
+            MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
+            if (fields.size() != parameters.length) continue;
+            for (int index = 0; index < fields.size(); index++) {
+                MetaParameter<?> parameter = parameters[index];
+                boolean hasField = fields
+                        .stream()
+                        .anyMatch(field -> parameter.name().equals(field.name()) && parameter.type().equals(field.type()));
+                if (hasField) {
+                    propertiesConstructor = constructor;
+                    break;
+                }
+            }
+        }
+
+        List<MetaProperty<?>> gettableProperties = linkedList();
+        List<MetaProperty<?>> constructableProperties = linkedList();
+
+        for (MetaField<?> field : fields.values()) {
+            MetaPropertyBuilder<?> builder = MetaProperty.builder()
+                    .name(field.name())
+                    .type(cast(field.type()));
+
+            Optional<MetaMethod<?>> getter = methods
+                    .stream()
+                    .filter(method -> isGetter(field, method))
+                    .findFirst();
+
+            getter.ifPresent(metaMethod -> builder.getter(cast(metaMethod)));
+
+            if (nonNull(propertiesConstructor)) {
+                int constructorParameterIndex = propertiesConstructor.parameters().get(field.name()).index();
+                builder.index(constructorParameterIndex);
+
+                MetaProperty<?> property = builder.build();
+
+                if (getter.isPresent()) {
+                    gettableProperties.add(property);
+                }
+
+                constructableProperties.add(property);
+                continue;
+            }
+
+            if (getter.isPresent()) {
+                gettableProperties.add(builder.build());
+            }
+        }
+
+        provider = MetaProvider.builder()
+                .propertyMap()
+                .propertyArray()
+                .names()
+                .build();
+
+        creator = MetaCreator.builder()
+                .propertyMap()
+                .propertyArray()
+                .names()
+                .build();
     }
 
     private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
