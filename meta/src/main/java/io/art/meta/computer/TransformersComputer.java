@@ -76,6 +76,7 @@ public class TransformersComputer {
         if (nonNull(type.inputTransformer())) return type.inputTransformer();
         ImmutableArray<MetaType<?>> parameters = type.parameters();
         switch (type.internalKind()) {
+            case ENTITY:
             case VOID:
                 return VOID_TRANSFORMER;
             case STRING:
@@ -192,6 +193,7 @@ public class TransformersComputer {
         if (nonNull(type.outputTransformer())) return type.outputTransformer();
         ImmutableArray<MetaType<?>> parameters = type.parameters();
         switch (type.internalKind()) {
+            case ENTITY:
             case VOID:
                 return VOID_TRANSFORMER;
             case STRING:
