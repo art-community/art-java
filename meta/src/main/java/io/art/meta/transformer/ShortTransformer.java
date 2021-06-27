@@ -84,5 +84,15 @@ public class ShortTransformer implements MetaTransformer<Short> {
         return value;
     }
 
+    @Override
+    public Short fromByte(Byte value) {
+        return value.shortValue();
+    }
+
+    @Override
+    public Byte toByte(Short value) {
+        return value.byteValue();
+    }
+
     public static ShortTransformer SHORT_TRANSFORMER = new ShortTransformer();
 }

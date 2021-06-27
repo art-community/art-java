@@ -84,5 +84,15 @@ public class DoubleTransformer implements MetaTransformer<Double> {
         return value.doubleValue();
     }
 
+    @Override
+    public Double fromByte(Byte value) {
+        return value.doubleValue();
+    }
+
+    @Override
+    public Byte toByte(Double value) {
+        return value.byteValue();
+    }
+
     public static DoubleTransformer DOUBLE_TRANSFORMER = new DoubleTransformer();
 }

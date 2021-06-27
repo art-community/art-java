@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.caster.*;
 import io.art.core.exception.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.exception.*;
@@ -85,7 +86,7 @@ public interface MetaTransformer<T> {
     }
 
     default T fromByteArray(byte[] value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, Arrays.toString(value)));
     }
 
     default T fromString(String value) {
@@ -150,6 +151,8 @@ public interface MetaTransformer<T> {
                 return this::toByte;
             case BINARY:
                 return this::toByteArray;
+            case ENTITY:
+                return Caster::cast;
         }
         throw new ImpossibleSituationException();
     }
@@ -180,6 +183,8 @@ public interface MetaTransformer<T> {
                 return value -> fromByte(cast(value));
             case BINARY:
                 return value -> fromByteArray(cast(value));
+            case ENTITY:
+                return Caster::cast;
         }
         throw new ImpossibleSituationException();
     }

@@ -67,15 +67,30 @@ public class MetaCreatorTemplate {
             return MetaCreatorTemplate.this.properties();
         }
 
-        public MetaCreatorInstance put(String name, Object value) {
+        public MetaCreatorInstance put(String name, String value) {
             MetaProperty<?> property = propertyMap.get(name);
-            values[property.index()] = property.type().inputTransformer().transform(value);
+            values[property.index()] = property.type().inputTransformer().fromString(value);
             filledFields++;
             return this;
         }
 
-        public MetaCreatorInstance put(int index, Object value) {
-            values[index] = propertyArray[index].type().inputTransformer().transform(value);
+        public MetaCreatorInstance put(int index, String value) {
+            MetaProperty<?> property = propertyArray[index];
+            values[index] = property.type().inputTransformer().fromString(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(String name, List<?> value) {
+            MetaProperty<?> property = propertyMap.get(name);
+            values[property.index()] = property.type().inputTransformer().fromArray(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(int index, List<?> value) {
+            MetaProperty<?> property = propertyArray[index];
+            values[index] = property.type().inputTransformer().fromArray(value);
             filledFields++;
             return this;
         }

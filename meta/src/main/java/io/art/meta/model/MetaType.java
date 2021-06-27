@@ -22,9 +22,11 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.transformer.*;
+import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -61,11 +63,11 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private MetaTransformer inputTransformer;
+    private MetaTransformer<T> inputTransformer;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private MetaTransformer outputTransformer;
+    private MetaTransformer<T> outputTransformer;
 
     protected MetaType<T> beginComputation() {
         if (isNull(internalKind)) {
@@ -87,15 +89,14 @@ public class MetaType<T> {
             externalKind = computeExternalKind(this);
         }
         if (isNull(inputTransformer)) {
-            inputTransformer = computeInputTransformer(this);
+            inputTransformer = cast(computeInputTransformer(this));
         }
         if (isNull(outputTransformer)) {
-            outputTransformer = computeOutputTransformer(this);
+            outputTransformer = cast(computeOutputTransformer(this));
         }
         if (nonNull(arrayComponentType)) {
             arrayComponentType.completeComputation();
         }
-        if (isNull(parameters)) return;
         for (MetaType<?> parameter : parameters) {
             parameter.completeComputation();
         }
@@ -111,6 +112,7 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
                 .type(cast(type))
+                .parameters(emptyImmutableArray())
                 .enumFactory(enumFactory)
                 .build()));
     }
@@ -118,6 +120,7 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
+                .parameters(emptyImmutableArray())
                 .arrayFactory(cast(arrayFactory))
                 .arrayComponentType(arrayComponentType)
                 .build()));

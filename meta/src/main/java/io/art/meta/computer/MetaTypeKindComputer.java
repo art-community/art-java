@@ -54,7 +54,7 @@ public class MetaTypeKindComputer {
         if (type.isArray()) return ARRAY;
         if (String.class.equals(type)) return STRING;
         if (Void.class.equals(type) || void.class.equals(type)) return VOID;
-        if (Long.class.equals(type) || long.class.equals(type)) return MetaTypeInternalKind.LONG;
+        if (Long.class.equals(type) || long.class.equals(type)) return LONG;
         if (Double.class.equals(type) || double.class.equals(type)) return DOUBLE;
         if (Short.class.equals(type) || short.class.equals(type)) return SHORT;
         if (Float.class.equals(type) || float.class.equals(type)) return FLOAT;

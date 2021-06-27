@@ -19,80 +19,80 @@
 package io.art.meta.transformer;
 
 import lombok.*;
-import static java.lang.Integer.*;
+import static java.lang.Byte.*;
 import static lombok.AccessLevel.*;
 
 @NoArgsConstructor(access = PRIVATE)
-public class IntegerTransformer implements MetaTransformer<Integer> {
+public class ByteTransformer implements MetaTransformer<Byte> {
     @Override
-    public String toString(Integer value) {
+    public String toString(Byte value) {
         return value.toString();
     }
 
     @Override
-    public Integer toInteger(Integer value) {
+    public Byte toByte(Byte value) {
         return value;
     }
 
     @Override
-    public Long toLong(Integer value) {
+    public Long toLong(Byte value) {
         return value.longValue();
     }
 
     @Override
-    public Float toFloat(Integer value) {
+    public Float toFloat(Byte value) {
         return value.floatValue();
     }
 
     @Override
-    public Double toDouble(Integer value) {
+    public Double toDouble(Byte value) {
         return value.doubleValue();
     }
 
     @Override
-    public Short toShort(Integer value) {
+    public Short toShort(Byte value) {
         return value.shortValue();
     }
 
     @Override
-    public Integer fromString(String value) {
-        return parseInt(value);
+    public Integer toInteger(Byte value) {
+        return value.intValue();
     }
 
     @Override
-    public Integer fromInteger(Integer value) {
+    public Byte fromString(String value) {
+        return parseByte(value);
+    }
+
+    @Override
+    public Byte fromByte(Byte value) {
         return value;
     }
 
     @Override
-    public Integer fromLong(Long value) {
-        return value.intValue();
-    }
-
-    @Override
-    public Integer fromFloat(Float value) {
-        return value.intValue();
-    }
-
-    @Override
-    public Integer fromDouble(Double value) {
-        return value.intValue();
-    }
-
-    @Override
-    public Integer fromShort(Short value) {
-        return value.intValue();
-    }
-
-    @Override
-    public Integer fromByte(Byte value) {
-        return value.intValue();
-    }
-
-    @Override
-    public Byte toByte(Integer value) {
+    public Byte fromLong(Long value) {
         return value.byteValue();
     }
 
-    public static IntegerTransformer INTEGER_TRANSFORMER = new IntegerTransformer();
+    @Override
+    public Byte fromFloat(Float value) {
+        return value.byteValue();
+    }
+
+    @Override
+    public Byte fromDouble(Double value) {
+        return value.byteValue();
+    }
+
+    @Override
+    public Byte fromShort(Short value) {
+        return value.byteValue();
+    }
+
+    @Override
+    public Byte fromInteger(Integer value) {
+        return value.byteValue();
+    }
+
+    public static ByteTransformer BYTE_TRANSFORMER = new ByteTransformer();
 }

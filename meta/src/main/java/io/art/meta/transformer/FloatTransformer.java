@@ -84,5 +84,15 @@ public class FloatTransformer implements MetaTransformer<Float> {
         return value.floatValue();
     }
 
+    @Override
+    public Float fromByte(Byte value) {
+        return value.floatValue();
+    }
+
+    @Override
+    public Byte toByte(Float value) {
+        return value.byteValue();
+    }
+
     public static FloatTransformer FLOAT_TRANSFORMER = new FloatTransformer();
 }

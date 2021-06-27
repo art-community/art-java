@@ -84,5 +84,15 @@ public class LongTransformer implements MetaTransformer<Long> {
         return value.longValue();
     }
 
+    @Override
+    public Long fromByte(Byte value) {
+        return value.longValue();
+    }
+
+    @Override
+    public Byte toByte(Long value) {
+        return value.byteValue();
+    }
+
     public static LongTransformer LONG_TRANSFORMER = new LongTransformer();
 }
