@@ -58,7 +58,7 @@ public class MetaTypeValidator {
             case NETTY_BUFFER:
                 break;
             case ARRAY:
-                if (type.arrayComponentType().internalKind() == UNKOWN) {
+                if (type.arrayComponentType().internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is array with unknown component type", type));
                 }
                 break;
@@ -74,7 +74,7 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format("{0} is collection without parameters", type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKOWN) {
+                if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is collection with unknown component type", type));
                 }
                 break;
@@ -83,10 +83,10 @@ public class MetaTypeValidator {
                 if (type.parameters().size() != 2) {
                     return new ValidationResult(false, format("{0} is map without parameters", type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKOWN) {
+                if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is map with unknown key parameter", type));
                 }
-                if (type.parameters().get(1).internalKind() == UNKOWN) {
+                if (type.parameters().get(1).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is map with unknown value parameter", type));
                 }
                 break;
@@ -95,7 +95,7 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format("{0} is Mono without parameters", type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKOWN) {
+                if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is Mono with unknown parameter", type));
                 }
                 break;
@@ -103,7 +103,7 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format("{0} is Lazy without parameters", type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKOWN) {
+                if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is Lazy with unknown parameter", type));
                 }
                 break;
@@ -111,7 +111,7 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format("{0} is Optional without parameters", type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKOWN) {
+                if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is Optional with unknown parameter", type));
                 }
                 break;
@@ -119,7 +119,7 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format("{0} is Supplier without parameters", type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKOWN) {
+                if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format("{0} is Supplier with unknown parameter", type));
                 }
                 break;
