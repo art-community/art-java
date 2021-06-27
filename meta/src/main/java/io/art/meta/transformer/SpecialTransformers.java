@@ -39,7 +39,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class SpecialTransformers {
-    public static MetaTransformer<ByteBuf> NETTY_BUFFER_TRANSFORMER = new MetaTransformer<ByteBuf>() {
+    public static MetaTransformer NETTY_BUFFER_TRANSFORMER = new MetaTransformer() {
         public ByteBuf transform(ByteBuf value) {
             return value;
         }
@@ -69,7 +69,7 @@ public class SpecialTransformers {
         }
     };
 
-    public static MetaTransformer<ByteBuffer> NIO_BUFFER_TRANSFORMER = new MetaTransformer<ByteBuffer>() {
+    public static MetaTransformer NIO_BUFFER_TRANSFORMER = new MetaTransformer() {
         public ByteBuffer transform(ByteBuffer value) {
             return value;
         }
@@ -99,7 +99,7 @@ public class SpecialTransformers {
         }
     };
 
-    public static MetaTransformer<InputStream> INPUT_STREAM_TRANSFORMER = new MetaTransformer<InputStream>() {
+    public static MetaTransformer INPUT_STREAM_TRANSFORMER = new MetaTransformer() {
         public InputStream transform(InputStream value) {
             return value;
         }
@@ -129,7 +129,7 @@ public class SpecialTransformers {
         }
     };
 
-    public static MetaTransformer<OutputStream> OUTPUT_STREAM_TRANSFORMER = new MetaTransformer<OutputStream>() {
+    public static MetaTransformer OUTPUT_STREAM_TRANSFORMER = new MetaTransformer() {
         public OutputStream transform(OutputStream value) {
             return value;
         }
@@ -161,8 +161,8 @@ public class SpecialTransformers {
         }
     };
 
-    public static MetaTransformer<LazyProperty<?>> lazyTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<LazyProperty<?>>() {
+    public static MetaTransformer lazyTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             @Override
             public LazyProperty<?> transform(Object value) {
                 return lazy(() -> parameterTransformer.transform(value));
@@ -174,8 +174,8 @@ public class SpecialTransformers {
         };
     }
 
-    public static MetaTransformer<Supplier<?>> supplierTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Supplier<?>>() {
+    public static MetaTransformer supplierTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             @Override
             public Supplier<?> transform(Object value) {
                 return () -> parameterTransformer.transform(value);
@@ -187,8 +187,8 @@ public class SpecialTransformers {
         };
     }
 
-    public static MetaTransformer<Optional<?>> optionalTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Optional<?>>() {
+    public static MetaTransformer optionalTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             @Override
             public Optional<?> transform(Object value) {
                 return ofNullable(parameterTransformer.transform(value));
@@ -200,8 +200,8 @@ public class SpecialTransformers {
         };
     }
 
-    public static <E extends Enum<?>> MetaTransformer<E> enumTransformer(Function<String, E> enumFactory) {
-        return new MetaTransformer<E>() {
+    public static <E extends Enum<?>> MetaTransformer enumTransformer(Function<String, E> enumFactory) {
+        return new MetaTransformer() {
             public E transform(E value) {
                 return value;
             }
@@ -212,7 +212,7 @@ public class SpecialTransformers {
         };
     }
 
-    public static MetaTransformer<Void> VOID_TRANSFORMER = new MetaTransformer<Void>() {
+    public static MetaTransformer VOID_TRANSFORMER = new MetaTransformer() {
         @Override
         public Void transform(Object value) {
             return null;

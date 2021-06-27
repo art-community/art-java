@@ -18,29 +18,169 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.exception.*;
+import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.exception.*;
-import reactor.core.publisher.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
-import static io.art.core.extensions.OptionalExtensions.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 import java.util.function.*;
 
 public interface MetaTransformer<T> {
-    default T transform(Object value) {
+    default List<?> toArray(T value) {
         throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
     }
 
-    default T transform(@SuppressWarnings(OPTIONAL_USED_AS_FIELD) Optional<?> value) {
-        return unwrap(value.map(this::transform));
+    default Map<?, ?> toMap(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
     }
 
-    default T transform(Mono<?> value) {
-        return transform(value.block());
+    default byte[] toByteArray(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
     }
 
-    default T transform(Supplier<?> value) {
-        return transform(value.get());
+    default String toString(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Integer toInteger(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Long toLong(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Float toFloat(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Double toDouble(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Short toShort(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Byte toByte(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Character toCharacter(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Boolean toBoolean(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromArray(List<?> value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromMap(Map<?, ?> value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromByteArray(byte[] value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromString(String value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromInteger(Integer value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromLong(Long value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromFloat(Float value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromDouble(Double value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromShort(Short value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromCharacter(Character value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromBoolean(Boolean value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default T fromByte(Byte value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+    }
+
+    default Function<T, ?> toKind(MetaTypeExternalKind kind) {
+        switch (kind) {
+            case MAP:
+                return this::toMap;
+            case ARRAY:
+                return this::toArray;
+            case STRING:
+                return this::toString;
+            case LONG:
+                return this::toLong;
+            case DOUBLE:
+                return this::toDouble;
+            case FLOAT:
+                return this::toFloat;
+            case INTEGER:
+                return this::toInteger;
+            case BOOLEAN:
+                return this::toBoolean;
+            case CHARACTER:
+                return this::toCharacter;
+            case SHORT:
+                return this::toShort;
+            case BYTE:
+                return this::toByte;
+            case BINARY:
+                return this::toByteArray;
+        }
+        throw new ImpossibleSituationException();
+    }
+
+    default Function<?, T> fromKind(MetaTypeExternalKind kind) {
+        switch (kind) {
+            case MAP:
+                return value -> fromMap(cast(value));
+            case ARRAY:
+                return value -> fromArray(cast(value));
+            case STRING:
+                return value -> fromString(cast(value));
+            case LONG:
+                return value -> fromLong(cast(value));
+            case DOUBLE:
+                return value -> fromDouble(cast(value));
+            case FLOAT:
+                return value -> fromFloat(cast(value));
+            case INTEGER:
+                return value -> fromInteger(cast(value));
+            case BOOLEAN:
+                return value -> fromBoolean(cast(value));
+            case CHARACTER:
+                return value -> fromCharacter(cast(value));
+            case SHORT:
+                return value -> fromShort(cast(value));
+            case BYTE:
+                return value -> fromByte(cast(value));
+            case BINARY:
+                return value -> fromByteArray(cast(value));
+        }
+        throw new ImpossibleSituationException();
     }
 }

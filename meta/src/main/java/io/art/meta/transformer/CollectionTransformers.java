@@ -36,8 +36,8 @@ import java.util.stream.*;
 
 @UtilityClass
 public class CollectionTransformers {
-    public static MetaTransformer<Collection<?>> collectionTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Collection<?>>() {
+    public static MetaTransformer collectionTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             public Collection<?> transform(Iterable<?> value) {
                 Collection<?> collection = dynamicArray();
                 for (Object element : value) {
@@ -136,8 +136,8 @@ public class CollectionTransformers {
         };
     }
 
-    public static MetaTransformer<Stream<?>> streamTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Stream<?>>() {
+    public static MetaTransformer streamTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             public Stream<?> transform(Iterable<?> value) {
                 return stream(value.spliterator(), false).map(parameterTransformer::transform);
             }
@@ -184,8 +184,8 @@ public class CollectionTransformers {
         };
     }
 
-    public static MetaTransformer<List<?>> listTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<List<?>>() {
+    public static MetaTransformer listTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             public List<?> transform(Iterable<?> value) {
                 List<?> list = dynamicArray();
                 for (Object element : value) {
@@ -252,8 +252,8 @@ public class CollectionTransformers {
         };
     }
 
-    public static MetaTransformer<Set<?>> setTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Set<?>>() {
+    public static MetaTransformer setTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             public Set<?> transform(Iterable<?> value) {
                 Set<?> set = set();
                 for (Object element : value) {
@@ -320,8 +320,8 @@ public class CollectionTransformers {
         };
     }
 
-    public static MetaTransformer<Queue<?>> queueTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Queue<?>>() {
+    public static MetaTransformer queueTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             public Queue<?> transform(Iterable<?> value) {
                 Queue<?> queue = queue();
                 for (Object element : value) {
@@ -389,8 +389,8 @@ public class CollectionTransformers {
         };
     }
 
-    public static MetaTransformer<Deque<?>> dequeTransformer(MetaTransformer<?> parameterTransformer) {
-        return new MetaTransformer<Deque<?>>() {
+    public static MetaTransformer dequeTransformer(MetaTransformer parameterTransformer) {
+        return new MetaTransformer() {
             public Deque<?> transform(Iterable<?> value) {
                 Deque<?> deque = deque();
                 for (Object element : value) {

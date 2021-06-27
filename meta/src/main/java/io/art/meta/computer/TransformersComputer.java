@@ -38,7 +38,7 @@ import static java.util.Objects.*;
 
 @UtilityClass
 public class TransformersComputer {
-    public static MetaTransformer<?> computeInputTransformer(MetaType<?> type) {
+    public static MetaTransformer computeInputTransformer(MetaType<?> type) {
         if (nonNull(type.inputTransformer())) return type.inputTransformer();
         if (type.internalKind() == UNKNOWN || type.internalKind() == ENTITY) return null;
         switch (type.internalKind()) {
@@ -134,7 +134,7 @@ public class TransformersComputer {
         throw new ImpossibleSituationException();
     }
 
-    public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
+    public static MetaTransformer computeOutputTransformer(MetaType<?> type) {
         if (nonNull(type.outputTransformer())) return type.outputTransformer();
         if (type.externalKind() == MetaTypeExternalKind.UNKNOWN || type.externalKind() == MetaTypeExternalKind.ENTITY) {
             return null;
