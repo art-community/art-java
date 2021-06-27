@@ -42,7 +42,7 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
     private ImmutableMap<K, V> collect() {
         Builder<K, V> builder = immutableMapBuilder(size());
         for (K key : keys) {
-            builder.put(key, provider.apply(key));
+            let(provider.apply(key), notNull -> builder.put(key, notNull));
         }
         return builder.build();
     }

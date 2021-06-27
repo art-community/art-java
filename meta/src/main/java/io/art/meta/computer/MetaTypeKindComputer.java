@@ -84,7 +84,7 @@ public class MetaTypeKindComputer {
         if (Optional.class.equals(type)) return OPTIONAL;
         if (Supplier.class.equals(type)) return SUPPLIER;
         if (InputStream.class.isAssignableFrom(type)) return INPUT_STREAM;
-        if (OutputStream.class.isAssignableFrom(type)) return INPUT_STREAM;
+        if (OutputStream.class.isAssignableFrom(type)) return OUTPUT_STREAM;
         if (ByteBuf.class.isAssignableFrom(type)) return NETTY_BUFFER;
         if (ByteBuffer.class.isAssignableFrom(type)) return NIO_BUFFER;
         return UNKNOWN;
@@ -100,7 +100,7 @@ public class MetaTypeKindComputer {
             case LOCAL_DATE_TIME:
             case ZONED_DATE_TIME:
             case DURATION:
-                return MetaTypeExternalKind.LONG;
+                return MetaTypeExternalKind.STRING;
             case DOUBLE:
                 return MetaTypeExternalKind.DOUBLE;
             case SHORT:

@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.parser.*;
 import lombok.*;
 import static lombok.AccessLevel.*;
 import java.time.*;
@@ -31,7 +32,7 @@ public class DurationTransformer implements MetaTransformer<Duration> {
 
     @Override
     public Duration fromString(String value) {
-        return Duration.parse(value);
+        return DurationParser.parseDuration(value);
     }
 
     @Override

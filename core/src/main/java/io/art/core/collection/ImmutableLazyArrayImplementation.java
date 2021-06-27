@@ -19,6 +19,7 @@
 package io.art.core.collection;
 
 import io.art.core.property.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Spliterator.*;
@@ -57,7 +58,7 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
     private ImmutableArray<T> collect() {
         Builder<T> builder = immutableArrayBuilder(size);
         for (int index = 0; index < size; index++) {
-            builder.add(provider.apply(index));
+            let(provider.apply(index), builder::add);
         }
         return builder.build();
     }
