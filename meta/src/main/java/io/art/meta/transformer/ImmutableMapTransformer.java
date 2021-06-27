@@ -22,7 +22,6 @@ import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
@@ -34,11 +33,11 @@ public class ImmutableMapTransformer implements MetaTransformer<ImmutableMap<?, 
 
     @Override
     public ImmutableMap<?, ?> fromMap(Map<?, ?> value) {
-        Set<Object> keys = set(value.size());
+        Map<Object, Object> transformedKeys = map(value.size());
         for (Object key : value.keySet()) {
-            keys.add(let(key, keyTransformer));
+            transformedKeys.put(let(key, keyTransformer), key);
         }
-        return immutableLazyMap(keys, key -> let(value.get(key), valueTransformer));
+        return immutableLazyMap(transformedKeys.keySet(), key -> let(value.get(transformedKeys.get(key)), valueTransformer));
     }
 
     @Override
