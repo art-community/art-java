@@ -30,99 +30,99 @@ import java.util.function.*;
 
 public interface MetaTransformer<T> {
     default List<?> toArray(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Map<?, ?> toMap(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default byte[] toByteArray(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default String toString(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Integer toInteger(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Long toLong(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Float toFloat(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Double toDouble(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Short toShort(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Byte toByte(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Character toCharacter(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Boolean toBoolean(T value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromArray(List<?> value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromMap(Map<?, ?> value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromByteArray(byte[] value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, Arrays.toString(value)));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, Arrays.toString(value), getClass()));
     }
 
     default T fromString(String value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromInteger(Integer value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromLong(Long value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromFloat(Float value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromDouble(Double value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromShort(Short value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromCharacter(Character value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromBoolean(Boolean value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default T fromByte(Byte value) {
-        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value));
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
     default Function<T, ?> toKind(MetaTypeExternalKind kind) {

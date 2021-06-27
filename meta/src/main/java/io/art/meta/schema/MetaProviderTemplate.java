@@ -22,6 +22,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -44,47 +45,47 @@ public class MetaProviderTemplate {
         private final Object model;
 
         public String getString(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toString(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toString(cast(notNull)));
         }
 
         public Integer getInteger(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toInteger(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toInteger(cast(notNull)));
         }
 
         public Long getLong(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toLong(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toLong(cast(notNull)));
         }
 
         public Double getDouble(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toDouble(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toDouble(cast(notNull)));
         }
 
         public Short getShort(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toShort(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toShort(cast(notNull)));
         }
 
         public Float getFloat(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toFloat(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toFloat(cast(notNull)));
         }
 
         public Byte getByte(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toByte(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toByte(cast(notNull)));
         }
 
         public Character getCharacter(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toCharacter(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toCharacter(cast(notNull)));
         }
 
         public byte[] getByteArray(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toByteArray(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toByteArray(cast(notNull)));
         }
 
         public List<?> getArray(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toArray(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toArray(cast(notNull)));
         }
 
         public Map<?, ?> getMap(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toMap(cast(property.getter().invoke(model)));
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toMap(cast(notNull)));
         }
 
         public Object getEntity(MetaProperty<?> property) throws Throwable {

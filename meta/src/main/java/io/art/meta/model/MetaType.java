@@ -32,6 +32,7 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.computer.MetaTypeKindComputer.*;
 import static io.art.meta.computer.TransformersComputer.*;
+import static io.art.meta.registry.MetaClassRegistry.*;
 import static io.art.meta.state.MetaComputationState.*;
 import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Objects.*;
@@ -69,7 +70,14 @@ public class MetaType<T> {
     @EqualsAndHashCode.Exclude
     private MetaTransformer<T> outputTransformer;
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Getter(lazy = true)
+    private final MetaClass<?> definition = classes().get(type);
+
     protected MetaType<T> beginComputation() {
+        CACHE.clear();
+
         if (isNull(internalKind)) {
             internalKind = computeInternalKind(this);
         }
