@@ -23,10 +23,7 @@ import io.art.meta.model.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
-import static io.art.meta.constants.MetaConstants.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static io.art.meta.transformer.ArrayTransformers.*;
 import static io.art.meta.transformer.CollectionTransformers.*;
 import static io.art.meta.transformer.ImmutableCollectionTransformers.*;
@@ -37,7 +34,6 @@ import static io.art.meta.transformer.ReactiveTransformers.*;
 import static io.art.meta.transformer.SpecialTransformers.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.util.*;
 
 @UtilityClass
 public class TransformersComputer {
@@ -138,7 +134,6 @@ public class TransformersComputer {
 
     public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
         if (nonNull(type.outputTransformer())) return type.outputTransformer();
-        Map<MetaTypeExternalKind, MetaTransformer<?>> transformers = map();
         switch (type.externalKind()) {
             case LONG:
                 return LONG_TRANSFORMER;
@@ -159,8 +154,7 @@ public class TransformersComputer {
             case BOOLEAN:
                 return BOOLEAN_TRANSFORMER;
             case ARRAY:
-                transformers.put(ARRAY, listTransformer(computeOutputTransformer(type.arrayComponentType())));
-                break;
+                return listTransformer(computeOutputTransformer(type.arrayComponentType()));
             case MAP:
                 return mapTransformer(computeOutputTransformer(type.parameters().get(0)), computeOutputTransformer(type.parameters().get(1)));
         }
