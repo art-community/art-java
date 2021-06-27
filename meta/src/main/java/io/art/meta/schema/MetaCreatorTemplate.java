@@ -73,12 +73,77 @@ public class MetaCreatorTemplate {
             return this;
         }
 
+        public MetaCreatorInstance put(MetaProperty<?> property, Integer value) {
+            values[property.index()] = property.type().inputTransformer().fromInteger(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Double value) {
+            values[property.index()] = property.type().inputTransformer().fromDouble(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Long value) {
+            values[property.index()] = property.type().inputTransformer().fromLong(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Short value) {
+            values[property.index()] = property.type().inputTransformer().fromShort(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Byte value) {
+            values[property.index()] = property.type().inputTransformer().fromByte(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Float value) {
+            values[property.index()] = property.type().inputTransformer().fromFloat(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Character value) {
+            values[property.index()] = property.type().inputTransformer().fromCharacter(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Boolean value) {
+            values[property.index()] = property.type().inputTransformer().fromBoolean(value);
+            filledFields++;
+            return this;
+        }
+
         public MetaCreatorInstance put(MetaProperty<?> property, List<?> value) {
             values[property.index()] = property.type().inputTransformer().fromArray(value);
             filledFields++;
             return this;
         }
 
+        public MetaCreatorInstance put(MetaProperty<?> property, Map<?, ?> value) {
+            values[property.index()] = property.type().inputTransformer().fromMap(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, byte[] value) {
+            values[property.index()] = property.type().inputTransformer().fromByteArray(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Object value) {
+            values[property.index()] = value;
+            filledFields++;
+            return this;
+        }
 
         public Object create() throws Throwable {
             if (filledFields <= localPropertiesConstructor.parameters().size()) {

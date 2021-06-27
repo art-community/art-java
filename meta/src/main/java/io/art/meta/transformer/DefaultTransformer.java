@@ -22,6 +22,6 @@ import lombok.*;
 import static lombok.AccessLevel.*;
 
 @NoArgsConstructor(access = PRIVATE)
-public class VoidTransformer implements MetaTransformer<Void> {
-    public static VoidTransformer VOID_TRANSFORMER = new VoidTransformer();
+public class DefaultTransformer implements MetaTransformer<Void> {
+    public static DefaultTransformer DEFAULT_TRANSFORMER = new DefaultTransformer();
 }

@@ -43,12 +43,52 @@ public class MetaProviderTemplate {
     public class MetaProviderInstance {
         private final Object model;
 
+        public String getString(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toString(cast(property.getter().invoke(model)));
+        }
+
+        public Integer getInteger(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toInteger(cast(property.getter().invoke(model)));
+        }
+
+        public Long getLong(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toLong(cast(property.getter().invoke(model)));
+        }
+
+        public Double getDouble(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toDouble(cast(property.getter().invoke(model)));
+        }
+
+        public Short getShort(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toShort(cast(property.getter().invoke(model)));
+        }
+
+        public Float getFloat(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toFloat(cast(property.getter().invoke(model)));
+        }
+
+        public Byte getByte(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toByte(cast(property.getter().invoke(model)));
+        }
+
+        public Character getCharacter(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toCharacter(cast(property.getter().invoke(model)));
+        }
+
+        public byte[] getByteArray(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toByteArray(cast(property.getter().invoke(model)));
+        }
+
         public List<?> getArray(MetaProperty<?> property) throws Throwable {
             return property.type().outputTransformer().toArray(cast(property.getter().invoke(model)));
         }
 
-        public String getString(MetaProperty<?> property) throws Throwable {
-            return property.type().outputTransformer().toString(cast(property.getter().invoke(model)));
+        public Map<?, ?> getMap(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toMap(cast(property.getter().invoke(model)));
+        }
+
+        public Object getEntity(MetaProperty<?> property) throws Throwable {
+            return property.getter().invoke(model);
         }
 
         public ImmutableMap<String, MetaProperty<?>> properties() {

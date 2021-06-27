@@ -54,10 +54,9 @@ public interface MetaConstants {
         OUTPUT_STREAM,
         NIO_BUFFER,
         NETTY_BUFFER,
-
-        UNKNOWN,
-
         ENTITY,
+
+        UNKNOWN
     }
 
     enum MetaTypeExternalKind {

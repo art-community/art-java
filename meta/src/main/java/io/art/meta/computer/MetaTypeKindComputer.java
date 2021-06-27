@@ -19,6 +19,7 @@
 package io.art.meta.computer;
 
 import io.art.core.collection.*;
+import io.art.core.exception.*;
 import io.art.core.property.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
@@ -150,6 +151,6 @@ public class MetaTypeKindComputer {
             case ENTITY:
                 return MetaTypeExternalKind.ENTITY;
         }
-        return MetaTypeExternalKind.UNKNOWN;
+        throw new ImpossibleSituationException();
     }
 }
