@@ -67,33 +67,18 @@ public class MetaCreatorTemplate {
             return MetaCreatorTemplate.this.properties();
         }
 
-        public MetaCreatorInstance put(String name, String value) {
-            MetaProperty<?> property = propertyMap.get(name);
+        public MetaCreatorInstance put(MetaProperty<?> property, String value) {
             values[property.index()] = property.type().inputTransformer().fromString(value);
             filledFields++;
             return this;
         }
 
-        public MetaCreatorInstance put(int index, String value) {
-            MetaProperty<?> property = propertyArray[index];
-            values[index] = property.type().inputTransformer().fromString(value);
-            filledFields++;
-            return this;
-        }
-
-        public MetaCreatorInstance put(String name, List<?> value) {
-            MetaProperty<?> property = propertyMap.get(name);
+        public MetaCreatorInstance put(MetaProperty<?> property, List<?> value) {
             values[property.index()] = property.type().inputTransformer().fromArray(value);
             filledFields++;
             return this;
         }
 
-        public MetaCreatorInstance put(int index, List<?> value) {
-            MetaProperty<?> property = propertyArray[index];
-            values[index] = property.type().inputTransformer().fromArray(value);
-            filledFields++;
-            return this;
-        }
 
         public Object create() throws Throwable {
             if (filledFields <= localPropertiesConstructor.parameters().size()) {

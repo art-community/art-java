@@ -19,7 +19,6 @@
 package io.art.meta.schema;
 
 import io.art.core.collection.*;
-import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -44,30 +43,12 @@ public class MetaProviderTemplate {
     public class MetaProviderInstance {
         private final Object model;
 
-        public String getString(String name) {
-            return getString(propertyMap.get(name).index());
+        public List<?> getArray(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toArray(cast(property.getter().invoke(model)));
         }
 
-        public String getString(int index) {
-            MetaProperty<?> property = propertyArray[index];
-            try {
-                return property.type().outputTransformer().toString(cast(property.getter().invoke(model)));
-            } catch (Throwable throwable) {
-                throw new TransformationException(throwable);
-            }
-        }
-
-        public List<?> getArray(String name) {
-            return getArray(propertyMap.get(name).index());
-        }
-
-        public List<?> getArray(int index) {
-            MetaProperty<?> property = propertyArray[index];
-            try {
-                return property.type().outputTransformer().toArray(cast(property.getter().invoke(model)));
-            } catch (Throwable throwable) {
-                throw new TransformationException(throwable);
-            }
+        public String getString(MetaProperty<?> property) throws Throwable {
+            return property.type().outputTransformer().toString(cast(property.getter().invoke(model)));
         }
 
         public ImmutableMap<String, MetaProperty<?>> properties() {
