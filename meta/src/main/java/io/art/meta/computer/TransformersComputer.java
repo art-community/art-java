@@ -179,6 +179,8 @@ public class TransformersComputer {
                 }
             case MAP:
                 return mapTransformer(computeOutputTransformer(type.parameters().get(0)), computeOutputTransformer(type.parameters().get(1)));
+            case BINARY:
+                return BYTE_ARRAY_TRANSFORMER;
         }
         throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
     }
