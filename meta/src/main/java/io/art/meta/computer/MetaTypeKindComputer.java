@@ -39,7 +39,8 @@ public class MetaTypeKindComputer {
     @Getter(lazy = true, value = PRIVATE)
     private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
 
-    public static MetaTypeInternalKind computeKind(Class<?> type) {
+    public static MetaTypeInternalKind computeInternalKind(MetaType<?> metaType) {
+        Class<?> type = metaType.type();
         if (getClasses().containsKey(type)) return ENTITY;
         if (type.isEnum()) return ENUM;
         if (long[].class.equals(type)) return LONG_ARRAY;
@@ -52,7 +53,7 @@ public class MetaTypeKindComputer {
         if (boolean[].class.equals(type)) return BOOLEAN_ARRAY;
         if (type.isArray()) return ARRAY;
         if (Void.class.equals(type) || void.class.equals(type)) return VOID;
-        if (Long.class.equals(type) || long.class.equals(type)) return LONG;
+        if (Long.class.equals(type) || long.class.equals(type)) return MetaTypeInternalKind.LONG;
         if (Double.class.equals(type) || double.class.equals(type)) return DOUBLE;
         if (Short.class.equals(type) || short.class.equals(type)) return SHORT;
         if (Float.class.equals(type) || float.class.equals(type)) return FLOAT;
@@ -85,5 +86,69 @@ public class MetaTypeKindComputer {
         if (ByteBuf.class.isAssignableFrom(type)) return NETTY_BUFFER;
         if (ByteBuffer.class.isAssignableFrom(type)) return NIO_BUFFER;
         return CUSTOM;
+    }
+
+    public static MetaTypeExternalKind computeExternalKind(MetaType<?> type) {
+        switch (type.internalKind()) {
+            case STRING:
+            case ENUM:
+                return MetaTypeExternalKind.STRING;
+            case LONG:
+            case DATE:
+            case LOCAL_DATE_TIME:
+            case ZONED_DATE_TIME:
+            case DURATION:
+                return MetaTypeExternalKind.LONG;
+            case DOUBLE:
+                return MetaTypeExternalKind.DOUBLE;
+            case SHORT:
+                return MetaTypeExternalKind.SHORT;
+            case FLOAT:
+                return MetaTypeExternalKind.FLOAT;
+            case INTEGER:
+                return MetaTypeExternalKind.INTEGER;
+            case BYTE:
+                return MetaTypeExternalKind.BYTE;
+            case CHARACTER:
+                return MetaTypeExternalKind.CHARACTER;
+            case BOOLEAN:
+                return MetaTypeExternalKind.BOOLEAN;
+            case BYTE_ARRAY:
+            case INPUT_STREAM:
+            case OUTPUT_STREAM:
+            case NIO_BUFFER:
+            case NETTY_BUFFER:
+                return MetaTypeExternalKind.BINARY;
+            case ARRAY:
+            case LONG_ARRAY:
+            case DOUBLE_ARRAY:
+            case FLOAT_ARRAY:
+            case INTEGER_ARRAY:
+            case BOOLEAN_ARRAY:
+            case CHARACTER_ARRAY:
+            case SHORT_ARRAY:
+            case COLLECTION:
+            case IMMUTABLE_COLLECTION:
+            case LIST:
+            case IMMUTABLE_ARRAY:
+            case SET:
+            case IMMUTABLE_SET:
+            case QUEUE:
+            case DEQUEUE:
+            case STREAM:
+            case FLUX:
+                return MetaTypeExternalKind.ARRAY;
+            case MAP:
+            case IMMUTABLE_MAP:
+                return MetaTypeExternalKind.MAP;
+            case MONO:
+            case LAZY:
+            case OPTIONAL:
+            case SUPPLIER:
+                return computeExternalKind(type.parameters().get(0));
+            case ENTITY:
+                return MetaTypeExternalKind.ENTITY;
+        }
+        return MetaTypeExternalKind.CUSTOM;
     }
 }

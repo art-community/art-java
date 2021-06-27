@@ -36,12 +36,14 @@ import static io.art.meta.transformer.PrimitiveTransformers.*;
 import static io.art.meta.transformer.ReactiveTransformers.*;
 import static io.art.meta.transformer.SpecialTransformers.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass
 public class TransformersComputer {
     public static MetaTransformer<?> computeInputTransformer(MetaType<?> type) {
-        switch (type.kind()) {
+        if (nonNull(type.inputTransformer())) return type.inputTransformer();
+        switch (type.internalKind()) {
             case VOID:
                 return VOID_TRANSFORMER;
             case STRING:
@@ -134,108 +136,33 @@ public class TransformersComputer {
         throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
     }
 
-    public static Map<MetaTypeExternalKind, MetaTransformer<?>> computeOutputTransformers(MetaType<?> type) {
+    public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
+        if (nonNull(type.outputTransformer())) return type.outputTransformer();
         Map<MetaTypeExternalKind, MetaTransformer<?>> transformers = map();
-        switch (type.kind()) {
-            case VOID:
-                break;
+        switch (type.externalKind()) {
             case LONG:
+                return LONG_TRANSFORMER;
             case STRING:
+                return STRING_TRANSFORMER;
             case DOUBLE:
+                return DOUBLE_TRANSFORMER;
             case SHORT:
+                return SHORT_TRANSFORMER;
             case FLOAT:
+                return FLOAT_TRANSFORMER;
             case INTEGER:
+                return INTEGER_TRANSFORMER;
             case BYTE:
+                return BYTE_TRANSFORMER;
             case CHARACTER:
+                return CHARACTER_TRANSFORMER;
             case BOOLEAN:
-                transformers.put(STRING, STRING_TRANSFORMER);
-                transformers.put(INTEGER, INTEGER_TRANSFORMER);
-                transformers.put(FLOAT, FLOAT_TRANSFORMER);
-                transformers.put(DOUBLE, DOUBLE_TRANSFORMER);
-                transformers.put(SHORT, SHORT_TRANSFORMER);
-                transformers.put(BYTE, BYTE_TRANSFORMER);
-                transformers.put(BOOLEAN, BOOLEAN_TRANSFORMER);
-                transformers.put(CHARACTER, CHARACTER_TRANSFORMER);
-                transformers.put(LONG, LONG_TRANSFORMER);
-                break;
-            case DATE:
-                transformers.put(LONG, DATE_TRANSFORMER);
-                transformers.put(STRING, DATE_TRANSFORMER);
-                break;
-            case LOCAL_DATE_TIME:
-                transformers.put(LONG, LOCAL_DATE_TIME_TRANSFORMER);
-                transformers.put(STRING, LOCAL_DATE_TIME_TRANSFORMER);
-                break;
-            case ZONED_DATE_TIME:
-                transformers.put(LONG, ZONED_DATE_TIME_TRANSFORMER);
-                transformers.put(STRING, ZONED_DATE_TIME_TRANSFORMER);
-                break;
-            case DURATION:
-                transformers.put(LONG, DURATION_TRANSFORMER);
-                transformers.put(STRING, DURATION_TRANSFORMER);
-                break;
+                return BOOLEAN_TRANSFORMER;
             case ARRAY:
-                transformers.put(ARRAY, listTransformer(type.arrayComponentType().inputTransformer()));
-                break;
-            case COLLECTION:
-            case IMMUTABLE_COLLECTION:
-            case LIST:
-            case IMMUTABLE_ARRAY:
-            case SET:
-            case IMMUTABLE_SET:
-            case QUEUE:
-            case DEQUEUE:
-            case STREAM:
-            case FLUX:
-                transformers.put(ARRAY, listTransformer(type.parameters().get(0).inputTransformer()));
-                break;
-            case LONG_ARRAY:
-                transformers.put(ARRAY, LONG_ARRAY_TRANSFORMER);
-                break;
-            case DOUBLE_ARRAY:
-                transformers.put(ARRAY, DOUBLE_ARRAY_TRANSFORMER);
-                break;
-            case FLOAT_ARRAY:
-                transformers.put(ARRAY, FLOAT_ARRAY_TRANSFORMER);
-                break;
-            case INTEGER_ARRAY:
-                transformers.put(ARRAY, INTEGER_ARRAY_TRANSFORMER);
-                break;
-            case BOOLEAN_ARRAY:
-                transformers.put(ARRAY, BOOLEAN_ARRAY_TRANSFORMER);
-                break;
-            case CHARACTER_ARRAY:
-                transformers.put(STRING, STRING_TRANSFORMER);
-                transformers.put(ARRAY, CHARACTER_ARRAY_TRANSFORMER);
-                break;
-            case SHORT_ARRAY:
-                transformers.put(ARRAY, SHORT_ARRAY_TRANSFORMER);
-                break;
-            case BYTE_ARRAY:
-                transformers.put(STRING, STRING_TRANSFORMER);
-                transformers.put(BINARY, BYTE_ARRAY_TRANSFORMER);
-                transformers.put(ARRAY, BYTE_ARRAY_TRANSFORMER);
+                transformers.put(ARRAY, listTransformer(computeOutputTransformer(type.arrayComponentType())));
                 break;
             case MAP:
-            case IMMUTABLE_MAP:
-                transformers.put(MAP, mapTransformer(type.parameters().get(0).inputTransformer(), type.parameters().get(1).inputTransformer()));
-                break;
-            case MONO:
-            case LAZY:
-            case OPTIONAL:
-            case SUPPLIER:
-                transformers.putAll(computeOutputTransformers(type.parameters().get(0)));
-                break;
-            case ENUM:
-                transformers.put(STRING, STRING_TRANSFORMER);
-                transformers.put(INTEGER, INTEGER_TRANSFORMER);
-                break;
-            case INPUT_STREAM:
-            case OUTPUT_STREAM:
-            case NIO_BUFFER:
-            case NETTY_BUFFER:
-                transformers.put(BINARY, BYTE_ARRAY_TRANSFORMER);
-                break;
+                return mapTransformer(computeOutputTransformer(type.parameters().get(0)), computeOutputTransformer(type.parameters().get(1)));
         }
         throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
     }

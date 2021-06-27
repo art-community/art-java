@@ -61,22 +61,6 @@ public interface MetaConstants {
         ENTITY,
     }
 
-    static boolean isPrimitive(MetaTypeInternalKind kind) {
-        switch (kind) {
-            case LONG:
-            case SHORT:
-            case DOUBLE:
-            case FLOAT:
-            case INTEGER:
-            case CHARACTER:
-            case BOOLEAN:
-            case BYTE:
-                return true;
-            default:
-                return false;
-        }
-    }
-
     enum MetaTypeExternalKind {
         MAP,
         ARRAY,
@@ -89,7 +73,9 @@ public interface MetaConstants {
         CHARACTER,
         SHORT,
         BYTE,
-        BINARY
+        BINARY,
+        ENTITY,
+        CUSTOM
     }
 
     interface Errors {

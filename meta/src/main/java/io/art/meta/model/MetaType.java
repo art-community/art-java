@@ -21,7 +21,6 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.constants.MetaConstants.*;
-import io.art.meta.registry.*;
 import io.art.meta.transformer.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -33,7 +32,6 @@ import static io.art.meta.computer.MetaTypeKindComputer.*;
 import static io.art.meta.computer.TransformersComputer.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -47,7 +45,8 @@ public class MetaType<T> {
     private final Class<T> type;
     private final ImmutableArray<MetaType<?>> parameters;
     private final MetaType<?> arrayComponentType;
-    private final MetaTypeInternalKind kind;
+    private MetaTypeInternalKind internalKind;
+    private MetaTypeExternalKind externalKind;
 
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 
@@ -65,20 +64,28 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private OutputTransformers outputTransformers;
+    private MetaTransformer<?> outputTransformer;
 
 
     protected MetaType<T> compute() {
-        if (nonNull(inputTransformer) || kind == CUSTOM || kind == ENTITY) return this;
-        inputTransformer = computeInputTransformer(this);
-        outputTransformers = computeOutputTransformers(this);
+        if (isNull(internalKind)) {
+            internalKind = computeInternalKind(this);
+        }
+        if (isNull(externalKind)) {
+            externalKind = computeExternalKind(this);
+        }
+        if (isNull(inputTransformer) && internalKind != CUSTOM && internalKind != ENTITY) {
+            inputTransformer = computeInputTransformer(this);
+        }
+        if (isNull(outputTransformer) && externalKind != MetaTypeExternalKind.CUSTOM && externalKind != MetaTypeExternalKind.ENTITY) {
+            outputTransformer = computeOutputTransformer(this);
+        }
         return this;
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .kind(computeKind(type))
                 .parameters(immutableArrayOf(parameters))
                 .build()));
     }
@@ -86,7 +93,6 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .kind(computeKind(type))
                 .enumFactory(enumFactory)
                 .build()));
     }
@@ -94,7 +100,6 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .kind(computeKind(type))
                 .arrayFactory(cast(arrayFactory))
                 .arrayComponentType(arrayComponentType)
                 .build()));
