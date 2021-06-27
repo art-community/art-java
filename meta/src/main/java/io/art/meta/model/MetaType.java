@@ -78,21 +78,26 @@ public class MetaType<T> {
     protected MetaType<T> beginComputation() {
         CACHE.clear();
 
-        if (isNull(internalKind)) {
-            internalKind = computeInternalKind(this);
-        }
         if (nonNull(arrayComponentType)) {
             rememberValidation(arrayComponentType, validate(arrayComponentType.beginComputation()));
         }
-        if (isNull(parameters)) return this;
         for (MetaType<?> parameter : parameters) {
             rememberValidation(parameter, validate(parameter.beginComputation()));
+        }
+        if (isNull(internalKind)) {
+            internalKind = computeInternalKind(this);
         }
         rememberValidation(this, validate(this));
         return this;
     }
 
     protected void completeComputation() {
+        if (nonNull(arrayComponentType)) {
+            arrayComponentType.completeComputation();
+        }
+        for (MetaType<?> parameter : parameters) {
+            parameter.completeComputation();
+        }
         if (isNull(externalKind)) {
             externalKind = computeExternalKind(this);
         }
@@ -101,12 +106,6 @@ public class MetaType<T> {
         }
         if (isNull(outputTransformer)) {
             outputTransformer = cast(computeOutputTransformer(this));
-        }
-        if (nonNull(arrayComponentType)) {
-            arrayComponentType.completeComputation();
-        }
-        for (MetaType<?> parameter : parameters) {
-            parameter.completeComputation();
         }
     }
 

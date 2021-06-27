@@ -77,6 +77,6 @@ public interface MetaConstants {
     }
 
     interface Errors {
-        String TRANSFORMATION_NOT_AVAILABLE = "Transformation is not available for value: {0} by transformer: {0}";
+        String TRANSFORMATION_NOT_AVAILABLE = "Transformation is not available for value: {0} by transformer: {1}";
     }
 }

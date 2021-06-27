@@ -117,6 +117,7 @@ public class JsonModelReader {
                         break;
                     }
                     creator.put(property, parseMap(property.type(), parser));
+                    break;
                 case START_ARRAY:
                     creator.put(property, parseArray(property.type(), parser));
                     break;
@@ -175,7 +176,7 @@ public class JsonModelReader {
                     map.put(field, parser.getText());
                     break;
                 case VALUE_NUMBER_INT:
-                    map.put(field, parser.getLongValue());
+                    map.put(field, parser.getIntValue());
                     break;
                 case VALUE_NUMBER_FLOAT:
                     map.put(field, parser.getFloatValue());
