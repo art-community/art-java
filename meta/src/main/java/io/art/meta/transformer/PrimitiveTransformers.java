@@ -52,6 +52,10 @@ public class PrimitiveTransformers {
         public String transform(byte[] value) {
             return new String(value, context().configuration().getCharset());
         }
+
+        public String transform(Enum<?> value) {
+            return value.name();
+        }
     };
 
     public static final MetaTransformer<Integer> INTEGER_TRANSFORMER = new MetaTransformer<Integer>() {
@@ -61,6 +65,10 @@ public class PrimitiveTransformers {
 
         public Integer transform(String value) {
             return Integer.parseInt(value);
+        }
+
+        public Integer transform(Enum<?> value) {
+            return value.ordinal();
         }
     };
 

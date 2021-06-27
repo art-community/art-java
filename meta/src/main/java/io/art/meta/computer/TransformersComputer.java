@@ -134,98 +134,107 @@ public class TransformersComputer {
         throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
     }
 
-    public static OutputTransformers computeOutputTransformers(MetaType<?> type) {
+    public static Map<MetaTypeExternalKind, MetaTransformer<?>> computeOutputTransformers(MetaType<?> type) {
         Map<MetaTypeExternalKind, MetaTransformer<?>> transformers = map();
         switch (type.kind()) {
             case VOID:
                 break;
-            case STRING:
-                transformers.put(STRING, STRING_TRANSFORMER);
-                break;
             case LONG:
-                transformers.put(STRING, STRING_TRANSFORMER);
+            case STRING:
             case DOUBLE:
-                break;
             case SHORT:
-                break;
             case FLOAT:
-                break;
             case INTEGER:
-                break;
             case BYTE:
-                break;
             case CHARACTER:
-                break;
             case BOOLEAN:
+                transformers.put(STRING, STRING_TRANSFORMER);
+                transformers.put(INTEGER, INTEGER_TRANSFORMER);
+                transformers.put(FLOAT, FLOAT_TRANSFORMER);
+                transformers.put(DOUBLE, DOUBLE_TRANSFORMER);
+                transformers.put(SHORT, SHORT_TRANSFORMER);
+                transformers.put(BYTE, BYTE_TRANSFORMER);
+                transformers.put(BOOLEAN, BOOLEAN_TRANSFORMER);
+                transformers.put(CHARACTER, CHARACTER_TRANSFORMER);
+                transformers.put(LONG, LONG_TRANSFORMER);
                 break;
             case DATE:
+                transformers.put(LONG, DATE_TRANSFORMER);
+                transformers.put(STRING, DATE_TRANSFORMER);
                 break;
             case LOCAL_DATE_TIME:
+                transformers.put(LONG, LOCAL_DATE_TIME_TRANSFORMER);
+                transformers.put(STRING, LOCAL_DATE_TIME_TRANSFORMER);
                 break;
             case ZONED_DATE_TIME:
+                transformers.put(LONG, ZONED_DATE_TIME_TRANSFORMER);
+                transformers.put(STRING, ZONED_DATE_TIME_TRANSFORMER);
                 break;
             case DURATION:
+                transformers.put(LONG, DURATION_TRANSFORMER);
+                transformers.put(STRING, DURATION_TRANSFORMER);
                 break;
             case ARRAY:
+                transformers.put(ARRAY, listTransformer(type.arrayComponentType().inputTransformer()));
+                break;
+            case COLLECTION:
+            case IMMUTABLE_COLLECTION:
+            case LIST:
+            case IMMUTABLE_ARRAY:
+            case SET:
+            case IMMUTABLE_SET:
+            case QUEUE:
+            case DEQUEUE:
+            case STREAM:
+            case FLUX:
+                transformers.put(ARRAY, listTransformer(type.parameters().get(0).inputTransformer()));
                 break;
             case LONG_ARRAY:
                 transformers.put(ARRAY, LONG_ARRAY_TRANSFORMER);
                 break;
             case DOUBLE_ARRAY:
+                transformers.put(ARRAY, DOUBLE_ARRAY_TRANSFORMER);
                 break;
             case FLOAT_ARRAY:
+                transformers.put(ARRAY, FLOAT_ARRAY_TRANSFORMER);
                 break;
             case INTEGER_ARRAY:
+                transformers.put(ARRAY, INTEGER_ARRAY_TRANSFORMER);
                 break;
             case BOOLEAN_ARRAY:
+                transformers.put(ARRAY, BOOLEAN_ARRAY_TRANSFORMER);
                 break;
             case CHARACTER_ARRAY:
+                transformers.put(STRING, STRING_TRANSFORMER);
+                transformers.put(ARRAY, CHARACTER_ARRAY_TRANSFORMER);
                 break;
             case SHORT_ARRAY:
+                transformers.put(ARRAY, SHORT_ARRAY_TRANSFORMER);
                 break;
             case BYTE_ARRAY:
-                break;
-            case COLLECTION:
-                break;
-            case IMMUTABLE_COLLECTION:
-                break;
-            case LIST:
-                break;
-            case IMMUTABLE_ARRAY:
-                break;
-            case SET:
-                break;
-            case IMMUTABLE_SET:
-                break;
-            case QUEUE:
-                break;
-            case DEQUEUE:
-                break;
-            case STREAM:
+                transformers.put(STRING, STRING_TRANSFORMER);
+                transformers.put(BINARY, BYTE_ARRAY_TRANSFORMER);
+                transformers.put(ARRAY, BYTE_ARRAY_TRANSFORMER);
                 break;
             case MAP:
-                break;
             case IMMUTABLE_MAP:
-                break;
-            case FLUX:
+                transformers.put(MAP, mapTransformer(type.parameters().get(0).inputTransformer(), type.parameters().get(1).inputTransformer()));
                 break;
             case MONO:
-                break;
             case LAZY:
-                break;
             case OPTIONAL:
-                break;
             case SUPPLIER:
+                transformers.putAll(computeOutputTransformers(type.parameters().get(0)));
                 break;
             case ENUM:
+                transformers.put(STRING, STRING_TRANSFORMER);
+                transformers.put(INTEGER, INTEGER_TRANSFORMER);
                 break;
             case INPUT_STREAM:
-                break;
             case OUTPUT_STREAM:
-                break;
             case NIO_BUFFER:
-                break;
             case NETTY_BUFFER:
+                transformers.put(BINARY, BYTE_ARRAY_TRANSFORMER);
                 break;
         }
         throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));

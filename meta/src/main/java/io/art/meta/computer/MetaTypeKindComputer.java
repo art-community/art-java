@@ -21,9 +21,13 @@ package io.art.meta.computer;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.meta.constants.MetaConstants.*;
+import io.art.meta.model.*;
+import io.art.meta.registry.*;
 import io.netty.buffer.*;
+import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static lombok.AccessLevel.*;
 import java.io.*;
 import java.nio.*;
 import java.time.*;
@@ -32,7 +36,21 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public class MetaTypeKindComputer {
+    @Getter(lazy = true, value = PRIVATE)
+    private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
+
     public static MetaTypeInternalKind computeKind(Class<?> type) {
+        if (getClasses().containsKey(type)) return ENTITY;
+        if (type.isEnum()) return ENUM;
+        if (long[].class.equals(type)) return LONG_ARRAY;
+        if (int[].class.equals(type)) return INTEGER_ARRAY;
+        if (short[].class.equals(type)) return SHORT_ARRAY;
+        if (byte[].class.equals(type)) return BYTE_ARRAY;
+        if (double[].class.equals(type)) return DOUBLE_ARRAY;
+        if (float[].class.equals(type)) return FLOAT_ARRAY;
+        if (char[].class.equals(type)) return CHARACTER_ARRAY;
+        if (boolean[].class.equals(type)) return BOOLEAN_ARRAY;
+        if (type.isArray()) return ARRAY;
         if (Void.class.equals(type) || void.class.equals(type)) return VOID;
         if (Long.class.equals(type) || long.class.equals(type)) return LONG;
         if (Double.class.equals(type) || double.class.equals(type)) return DOUBLE;
@@ -46,14 +64,6 @@ public class MetaTypeKindComputer {
         if (LocalDateTime.class.equals(type)) return LOCAL_DATE_TIME;
         if (ZonedDateTime.class.equals(type)) return ZONED_DATE_TIME;
         if (Duration.class.equals(type)) return DURATION;
-        if (long[].class.equals(type)) return LONG_ARRAY;
-        if (int[].class.equals(type)) return INTEGER_ARRAY;
-        if (short[].class.equals(type)) return SHORT_ARRAY;
-        if (byte[].class.equals(type)) return BYTE_ARRAY;
-        if (double[].class.equals(type)) return DOUBLE_ARRAY;
-        if (float[].class.equals(type)) return FLOAT_ARRAY;
-        if (char[].class.equals(type)) return CHARACTER_ARRAY;
-        if (boolean[].class.equals(type)) return BOOLEAN_ARRAY;
         if (List.class.isAssignableFrom(type)) return LIST;
         if (ImmutableArray.class.isAssignableFrom(type)) return IMMUTABLE_ARRAY;
         if (Set.class.isAssignableFrom(type)) return SET;

@@ -67,8 +67,6 @@ public class MetaType<T> {
     @EqualsAndHashCode.Exclude
     private OutputTransformers outputTransformers;
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final static ImmutableMap<Class<?>, MetaClass<?>> classes = MetaClassRegistry.classes();
 
     protected MetaType<T> compute() {
         if (nonNull(inputTransformer) || kind == CUSTOM || kind == ENTITY) return this;
@@ -88,7 +86,7 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .kind(ENUM)
+                .kind(computeKind(type))
                 .enumFactory(enumFactory)
                 .build()));
     }
@@ -96,7 +94,7 @@ public class MetaType<T> {
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
         return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
                 .type(cast(type))
-                .kind(ARRAY)
+                .kind(computeKind(type))
                 .arrayFactory(cast(arrayFactory))
                 .arrayComponentType(arrayComponentType)
                 .build()));
