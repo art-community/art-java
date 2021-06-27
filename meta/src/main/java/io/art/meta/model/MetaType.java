@@ -86,8 +86,8 @@ public class MetaType<T> {
         }
         if (isNull(internalKind)) {
             internalKind = computeInternalKind(this);
+            rememberValidation(this, validate(this));
         }
-        rememberValidation(this, validate(this));
         return this;
     }
 

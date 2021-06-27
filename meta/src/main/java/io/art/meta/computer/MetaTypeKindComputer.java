@@ -100,7 +100,7 @@ public class MetaTypeKindComputer {
             case LOCAL_DATE_TIME:
             case ZONED_DATE_TIME:
             case DURATION:
-                return MetaTypeExternalKind.STRING;
+                return MetaTypeExternalKind.LONG;
             case DOUBLE:
                 return MetaTypeExternalKind.DOUBLE;
             case SHORT:
