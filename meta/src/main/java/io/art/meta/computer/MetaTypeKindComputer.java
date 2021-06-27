@@ -85,7 +85,7 @@ public class MetaTypeKindComputer {
         if (OutputStream.class.isAssignableFrom(type)) return INPUT_STREAM;
         if (ByteBuf.class.isAssignableFrom(type)) return NETTY_BUFFER;
         if (ByteBuffer.class.isAssignableFrom(type)) return NIO_BUFFER;
-        return UNKOWN;
+        return UNKNOWN;
     }
 
     public static MetaTypeExternalKind computeExternalKind(MetaType<?> type) {
