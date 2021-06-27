@@ -20,6 +20,7 @@ package io.art.meta.transformer;
 
 import io.art.core.collection.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
@@ -29,7 +30,7 @@ public class MapTransformers {
             public Map<?, ?> transform(ImmutableMap<?, ?> value) {
                 Map<?, ?> map = map(value.size());
                 for (Map.Entry<?, ?> entry : value.entrySet()) {
-                    map.put(cast(keyTransformer.transform(entry.getKey())), cast(valueTransformer.transform(entry.getValue())));
+                    map.put(let(entry.getKey(), notNull -> cast(keyTransformer.transform(notNull))), let(entry.getValue(), notNull -> cast(valueTransformer.transform(notNull))));
                 }
                 return map;
             }
@@ -37,7 +38,7 @@ public class MapTransformers {
             public Map<?, ?> transform(Map<?, ?> value) {
                 Map<?, ?> map = map(value.size());
                 for (Map.Entry<?, ?> entry : value.entrySet()) {
-                    map.put(cast(keyTransformer.transform(entry.getKey())), cast(valueTransformer.transform(entry.getValue())));
+                    map.put(let(entry.getKey(), notNull -> cast(keyTransformer.transform(notNull))), let(entry.getValue(), notNull -> cast(valueTransformer.transform(notNull))));
                 }
                 return map;
             }

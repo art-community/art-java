@@ -20,10 +20,14 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.state.MetaComputationState.*;
+import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Arrays.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -65,8 +69,19 @@ public abstract class MetaModule {
 
     public void compute() {
         if (computed.compareAndSet(false, true)) {
-            rootClasses.forEach(MetaClass::compute);
-            packages.values().forEach(MetaPackage::compute);
+            rootClasses.forEach(MetaClass::beginComputation);
+            packages.values().forEach(MetaPackage::beginComputation);
+
+            ImmutableArray<ValidationResult> validationErrors = getValidationErrors();
+            if (validationErrors.isEmpty()) {
+                rootClasses.forEach(MetaClass::completeComputation);
+                packages.values().forEach(MetaPackage::completeComputation);
+                return;
+            }
+
+            StringBuilder validationErrorMessage = new StringBuilder("Type computation failed. Errors:\n");
+            validationErrors.forEach(error -> validationErrorMessage.append(error.getMessage()).append(NEW_LINE));
+            throw new MetaException(validationErrorMessage.toString());
         }
     }
 }

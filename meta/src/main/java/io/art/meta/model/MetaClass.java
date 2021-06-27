@@ -26,14 +26,17 @@ import io.art.meta.registry.*;
 import io.art.meta.schema.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
-import static io.art.meta.type.TypeInspector.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
+import static java.util.function.Function.*;
 import java.util.*;
 
 @ToString
@@ -45,8 +48,8 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
-    private MetaProvider provider;
-    private MetaCreator creator;
+    private MetaProviderTemplate provider;
+    private MetaCreatorTemplate creator;
 
     protected MetaClass(MetaType<T> type) {
         this.type = type;
@@ -74,44 +77,29 @@ public abstract class MetaClass<T> {
         return metaClass;
     }
 
-    protected void compute() {
-        type.compute();
+    protected void beginComputation() {
+        type.beginComputation();
 
         for (MetaField<?> field : fields.values()) {
-            field.type().compute();
+            field.type().beginComputation();
         }
 
         for (MetaConstructor<T> constructor : constructors) {
-            constructor.parameters().values().forEach(parameter -> parameter.type().compute());
+            constructor.parameters().values().forEach(parameter -> parameter.type().beginComputation());
         }
 
         for (MetaMethod<?> method : methods) {
-            method.returnType().compute();
-            method.parameters().values().forEach(parameter -> parameter.type().compute());
+            method.returnType().beginComputation();
+            method.parameters().values().forEach(parameter -> parameter.type().beginComputation());
         }
 
         for (MetaClass<?> nested : classes.values()) {
-            nested.compute();
+            nested.beginComputation();
         }
 
-        MetaConstructor<T> propertiesConstructor = null;
-        for (MetaConstructor<T> constructor : constructors) {
-            constructor.parameters().values().forEach(parameter -> parameter.type().compute());
-
-            Collection<MetaField<?>> fields = this.fields.values();
-            MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
-            if (fields.size() != parameters.length) continue;
-            for (int index = 0; index < fields.size(); index++) {
-                MetaParameter<?> parameter = parameters[index];
-                boolean hasField = fields
-                        .stream()
-                        .anyMatch(field -> parameter.name().equals(field.name()) && parameter.type().equals(field.type()));
-                if (hasField) {
-                    propertiesConstructor = constructor;
-                    break;
-                }
-            }
-        }
+        MetaConstructor<T> noPropertiesConstructor = selectNoPropertiesConstructor();
+        MetaConstructor<T> localPropertiesConstructor = selectLocalPropertiesConstructor();
+        MetaConstructor<T> allPropertiesConstructor = selectAllPropertiesConstructor();
 
         List<MetaProperty<?>> gettableProperties = linkedList();
         List<MetaProperty<?>> constructableProperties = linkedList();
@@ -128,9 +116,9 @@ public abstract class MetaClass<T> {
 
             getter.ifPresent(metaMethod -> builder.getter(cast(metaMethod)));
 
-            if (nonNull(propertiesConstructor)) {
-                int constructorParameterIndex = propertiesConstructor.parameters().get(field.name()).index();
-                builder.index(constructorParameterIndex);
+            if (nonNull(localPropertiesConstructor) || nonNull(allPropertiesConstructor)) {
+                MetaConstructor<?> constructor = nonNull(allPropertiesConstructor) ? allPropertiesConstructor : localPropertiesConstructor;
+                builder.index(constructor.parameters().get(field.name()).index());
 
                 MetaProperty<?> property = builder.build();
 
@@ -147,17 +135,92 @@ public abstract class MetaClass<T> {
             }
         }
 
-        provider = MetaProvider.builder()
-                .propertyMap()
-                .propertyArray()
-                .names()
-                .build();
+        Map<String, MetaProperty<?>> gettablePropertyMap = gettableProperties
+                .stream()
+                .collect(mapCollector(MetaProperty::name, identity()));
+        provider = new MetaProviderTemplate(gettablePropertyMap, gettableProperties.toArray(new MetaProperty[0]));
 
-        creator = MetaCreator.builder()
-                .propertyMap()
-                .propertyArray()
-                .names()
+        Map<String, MetaProperty<?>> constructablePropertyMap = constructableProperties
+                .stream()
+                .collect(mapCollector(MetaProperty::name, identity()));
+        creator = MetaCreatorTemplate.builder()
+                .propertyMap(constructablePropertyMap)
+                .propertyArray(constructableProperties.toArray(new MetaProperty[0]))
+                .noPropertiesConstructor(noPropertiesConstructor)
+                .localPropertiesConstructor(localPropertiesConstructor)
+                .allPropertiesConstructor(allPropertiesConstructor)
                 .build();
+    }
+
+    private MetaConstructor<T> selectNoPropertiesConstructor() {
+        for (MetaConstructor<T> constructor : constructors) {
+            if (constructor.parameters().isEmpty()) return constructor;
+        }
+        return null;
+    }
+
+    private MetaConstructor<T> selectLocalPropertiesConstructor() {
+        for (MetaConstructor<T> constructor : constructors) {
+            List<MetaField<?>> localFields = this.fields.values()
+                    .stream()
+                    .filter(field -> !field.inherited())
+                    .collect(listCollector());
+            MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
+            if (localFields.size() != parameters.length) continue;
+            for (int index = 0; index < localFields.size(); index++) {
+                MetaParameter<?> parameter = parameters[index];
+                boolean hasField = localFields
+                        .stream()
+                        .anyMatch(field -> parameter.name().equals(field.name()) && parameter.type().equals(field.type()));
+                if (hasField) {
+                    return constructor;
+                }
+            }
+        }
+        return null;
+    }
+
+    private MetaConstructor<T> selectAllPropertiesConstructor() {
+        for (MetaConstructor<T> constructor : constructors) {
+            Collection<MetaField<?>> fields = this.fields.values();
+            MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
+            if (fields.size() != parameters.length) continue;
+            for (int index = 0; index < fields.size(); index++) {
+                MetaParameter<?> parameter = parameters[index];
+                boolean hasField = fields
+                        .stream()
+                        .anyMatch(field -> parameter.name().equals(field.name()) && parameter.type().equals(field.type()));
+                if (hasField) {
+                    return constructor;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected void completeComputation() {
+        type.completeComputation();
+
+        for (MetaField<?> field : fields.values()) {
+            field.type().completeComputation();
+        }
+
+        for (MetaConstructor<T> constructor : constructors) {
+            constructor.parameters().values().forEach(parameter -> parameter.type().completeComputation());
+        }
+
+        for (MetaMethod<?> method : methods) {
+            method.returnType().completeComputation();
+            method.parameters().values().forEach(parameter -> parameter.type().completeComputation());
+        }
+
+        for (MetaClass<?> nested : classes.values()) {
+            nested.beginComputation();
+        }
+
+        for (MetaConstructor<T> constructor : constructors) {
+            constructor.parameters().values().forEach(parameter -> parameter.type().completeComputation());
+        }
     }
 
     private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
@@ -166,7 +229,15 @@ public abstract class MetaClass<T> {
         if (!method.returnType().equals(field.type())) return false;
         if (method.name().equals(GET_NAME + capitalize(field.name()))) return true;
         if (method.name().equals(field.name())) return true;
-        return isBoolean(field.type().type()) && method.name().equals(IS_NAME + capitalize(field.name()));
+        return field.type().internalKind() == BOOLEAN && method.name().equals(IS_NAME + capitalize(field.name()));
+    }
+
+    public MetaProviderTemplate provider() {
+        return provider;
+    }
+
+    public MetaCreatorTemplate creator() {
+        return creator;
     }
 
     public MetaType<T> type() {

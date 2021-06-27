@@ -47,9 +47,14 @@ public abstract class MetaPackage {
         return metaClass;
     }
 
-    protected void compute() {
-        packages.values().forEach(MetaPackage::compute);
-        classes.values().forEach(MetaClass::compute);
+    protected void beginComputation() {
+        packages.values().forEach(MetaPackage::beginComputation);
+        classes.values().forEach(MetaClass::beginComputation);
+    }
+
+    protected void completeComputation() {
+        packages.values().forEach(MetaPackage::completeComputation);
+        classes.values().forEach(MetaClass::completeComputation);
     }
 
     public String name() {

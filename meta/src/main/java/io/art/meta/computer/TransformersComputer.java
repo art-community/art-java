@@ -18,12 +18,11 @@
 
 package io.art.meta.computer;
 
-import io.art.meta.exception.*;
+import io.art.core.exception.*;
 import io.art.meta.model.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.transformer.ArrayTransformers.*;
 import static io.art.meta.transformer.CollectionTransformers.*;
 import static io.art.meta.transformer.ImmutableCollectionTransformers.*;
@@ -32,7 +31,6 @@ import static io.art.meta.transformer.MapTransformers.*;
 import static io.art.meta.transformer.PrimitiveTransformers.*;
 import static io.art.meta.transformer.ReactiveTransformers.*;
 import static io.art.meta.transformer.SpecialTransformers.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 
 @UtilityClass
@@ -129,7 +127,7 @@ public class TransformersComputer {
             case NETTY_BUFFER:
                 return NETTY_BUFFER_TRANSFORMER;
         }
-        throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
+        throw new ImpossibleSituationException();
     }
 
     public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
@@ -182,6 +180,6 @@ public class TransformersComputer {
             case BINARY:
                 return BYTE_ARRAY_TRANSFORMER;
         }
-        throw new TransformationException(format(TRANSFORMER_NOT_FOUND, type));
+        throw new ImpossibleSituationException();
     }
 }

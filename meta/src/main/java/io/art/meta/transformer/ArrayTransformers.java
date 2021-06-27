@@ -23,6 +23,7 @@ import io.art.core.extensions.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
@@ -310,7 +311,7 @@ public class ArrayTransformers {
                 Object[] array = arrayFactory.apply(value.size());
                 int index = 0;
                 for (Object element : value) {
-                    array[index++] = parameterTransformer.transform(element);
+                    array[index++] = let(element, parameterTransformer::transform);
                 }
                 return array;
             }
@@ -319,7 +320,7 @@ public class ArrayTransformers {
                 Object[] array = arrayFactory.apply(value.size());
                 int index = 0;
                 for (Object element : value) {
-                    array[index++] = parameterTransformer.transform(element);
+                    array[index++] = let(element, parameterTransformer::transform);
                 }
                 return array;
             }

@@ -31,6 +31,8 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.computer.MetaTypeKindComputer.*;
 import static io.art.meta.computer.TransformersComputer.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static io.art.meta.state.MetaComputationState.*;
+import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
@@ -66,21 +68,36 @@ public class MetaType<T> {
     @EqualsAndHashCode.Exclude
     private MetaTransformer<?> outputTransformer;
 
-
-    protected MetaType<T> compute() {
+    protected MetaType<T> beginComputation() {
         if (isNull(internalKind)) {
             internalKind = computeInternalKind(this);
         }
+        rememberValidation(this, validate(this));
+        if (nonNull(arrayComponentType)) {
+            rememberValidation(arrayComponentType, validate(arrayComponentType.beginComputation()));
+        }
+        for (MetaType<?> parameter : parameters) {
+            rememberValidation(parameter, validate(parameter.beginComputation()));
+        }
+        return this;
+    }
+
+    protected void completeComputation() {
         if (isNull(externalKind)) {
             externalKind = computeExternalKind(this);
         }
-        if (isNull(inputTransformer) && internalKind != CUSTOM && internalKind != ENTITY) {
+        if (isNull(inputTransformer) && internalKind != UNKNOWN && internalKind != ENTITY) {
             inputTransformer = computeInputTransformer(this);
         }
-        if (isNull(outputTransformer) && externalKind != MetaTypeExternalKind.CUSTOM && externalKind != MetaTypeExternalKind.ENTITY) {
+        if (isNull(outputTransformer) && externalKind != MetaTypeExternalKind.UNKNOWN && externalKind != MetaTypeExternalKind.ENTITY) {
             outputTransformer = computeOutputTransformer(this);
         }
-        return this;
+        if (nonNull(arrayComponentType)) {
+            arrayComponentType.completeComputation();
+        }
+        for (MetaType<?> parameter : parameters) {
+            parameter.completeComputation();
+        }
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {

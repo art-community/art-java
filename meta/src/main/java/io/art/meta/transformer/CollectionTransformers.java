@@ -22,6 +22,7 @@ import io.art.core.collection.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.collector.QueueCollector.*;
 import static io.art.core.collector.SetCollector.*;
@@ -40,7 +41,7 @@ public class CollectionTransformers {
             public Collection<?> transform(Iterable<?> value) {
                 Collection<?> collection = dynamicArray();
                 for (Object element : value) {
-                    collection.add(cast(parameterTransformer.transform(element)));
+                    collection.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return collection;
             }
@@ -88,7 +89,7 @@ public class CollectionTransformers {
             public Collection<?> transform(ImmutableCollection<?> value) {
                 Collection<?> collection = dynamicArray(value.size());
                 for (Object element : value) {
-                    collection.add(cast(parameterTransformer.transform(element)));
+                    collection.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return collection;
             }
@@ -96,7 +97,7 @@ public class CollectionTransformers {
             public Collection<?> transform(Collection<?> value) {
                 Collection<?> collection = dynamicArray(value.size());
                 for (Object element : value) {
-                    collection.add(cast(parameterTransformer.transform(element)));
+                    collection.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return collection;
             }
@@ -104,7 +105,7 @@ public class CollectionTransformers {
             public Collection<?> transform(Queue<?> value) {
                 Collection<?> collection = queue();
                 for (Object element : value) {
-                    collection.add(cast(parameterTransformer.transform(element)));
+                    collection.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return collection;
             }
@@ -112,7 +113,7 @@ public class CollectionTransformers {
             public Collection<?> transform(Deque<?> value) {
                 Collection<?> collection = deque();
                 for (Object element : value) {
-                    collection.add(cast(parameterTransformer.transform(element)));
+                    collection.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return collection;
             }
@@ -120,7 +121,7 @@ public class CollectionTransformers {
             public Collection<?> transform(Set<?> value) {
                 Collection<?> collection = set(value.size());
                 for (Object element : value) {
-                    collection.add(cast(parameterTransformer.transform(element)));
+                    collection.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return collection;
             }
@@ -188,7 +189,7 @@ public class CollectionTransformers {
             public List<?> transform(Iterable<?> value) {
                 List<?> list = dynamicArray();
                 for (Object element : value) {
-                    list.add(cast(parameterTransformer.transform(element)));
+                    list.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return list;
             }
@@ -244,7 +245,7 @@ public class CollectionTransformers {
             public List<?> transform(Collection<?> value) {
                 List<?> list = dynamicArray(value.size());
                 for (Object element : value) {
-                    list.add(cast(parameterTransformer.transform(element)));
+                    list.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return list;
             }
@@ -256,7 +257,7 @@ public class CollectionTransformers {
             public Set<?> transform(Iterable<?> value) {
                 Set<?> set = set();
                 for (Object element : value) {
-                    set.add(cast(parameterTransformer.transform(element)));
+                    set.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return set;
             }
@@ -312,7 +313,7 @@ public class CollectionTransformers {
             public Set<?> transform(Collection<?> value) {
                 Set<?> set = set(value.size());
                 for (Object element : value) {
-                    set.add(cast(parameterTransformer.transform(element)));
+                    set.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return set;
             }
@@ -324,7 +325,7 @@ public class CollectionTransformers {
             public Queue<?> transform(Iterable<?> value) {
                 Queue<?> queue = queue();
                 for (Object element : value) {
-                    queue.add(cast(parameterTransformer.transform(element)));
+                    queue.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return queue;
             }
@@ -380,7 +381,7 @@ public class CollectionTransformers {
             public Queue<?> transform(Collection<?> value) {
                 Queue<?> queue = queue();
                 for (Object element : value) {
-                    queue.add(cast(parameterTransformer.transform(element)));
+                    queue.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return queue;
             }
@@ -393,7 +394,7 @@ public class CollectionTransformers {
             public Deque<?> transform(Iterable<?> value) {
                 Deque<?> deque = deque();
                 for (Object element : value) {
-                    deque.add(cast(parameterTransformer.transform(element)));
+                    deque.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return deque;
             }
@@ -449,7 +450,7 @@ public class CollectionTransformers {
             public Deque<?> transform(Collection<?> value) {
                 Deque<?> deque = deque();
                 for (Object element : value) {
-                    deque.add(cast(parameterTransformer.transform(element)));
+                    deque.add(let(element, notNull -> cast(parameterTransformer.transform(notNull))));
                 }
                 return deque;
             }

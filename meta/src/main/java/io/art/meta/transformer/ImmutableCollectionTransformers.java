@@ -28,6 +28,7 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static java.util.Objects.*;
 import java.util.*;
 import java.util.stream.*;
 
@@ -82,13 +83,17 @@ public class ImmutableCollectionTransformers {
             public ImmutableCollection<?> transform(Iterable<?> value) {
                 ImmutableArray.Builder<Object> builder = immutableArrayBuilder();
                 for (Object element : value) {
+                    if (isNull(element)) continue;
                     builder.add(parameterTransformer.transform(element));
                 }
                 return builder.build();
             }
 
             public ImmutableCollection<?> transform(Stream<?> value) {
-                return value.map(parameterTransformer::transform).collect(immutableArrayCollector());
+                return value
+                        .filter(Objects::nonNull)
+                        .map(parameterTransformer::transform)
+                        .collect(immutableArrayCollector());
             }
 
             public ImmutableCollection<?> transform(Flux<?> value) {
@@ -146,13 +151,17 @@ public class ImmutableCollectionTransformers {
             public ImmutableArray<?> transform(Iterable<?> value) {
                 ImmutableArray.Builder<Object> builder = immutableArrayBuilder();
                 for (Object element : value) {
+                    if (isNull(element)) continue;
                     builder.add(parameterTransformer.transform(element));
                 }
                 return builder.build();
             }
 
             public ImmutableArray<?> transform(Stream<?> value) {
-                return value.map(parameterTransformer::transform).collect(immutableArrayCollector());
+                return value
+                        .filter(Objects::nonNull)
+                        .map(parameterTransformer::transform)
+                        .collect(immutableArrayCollector());
             }
 
             public ImmutableArray<?> transform(Flux<?> value) {
@@ -166,6 +175,7 @@ public class ImmutableCollectionTransformers {
             public ImmutableSet<?> transform(Iterable<?> value) {
                 ImmutableSet.Builder<Object> builder = immutableSetBuilder();
                 for (Object element : value) {
+                    if (isNull(element)) continue;
                     builder.add(parameterTransformer.transform(element));
                 }
                 return builder.build();
@@ -204,7 +214,10 @@ public class ImmutableCollectionTransformers {
             }
 
             public ImmutableSet<?> transform(Stream<?> value) {
-                return value.map(parameterTransformer::transform).collect(immutableSetCollector());
+                return value
+                        .filter(Objects::nonNull)
+                        .map(parameterTransformer::transform)
+                        .collect(immutableSetCollector());
             }
 
             public ImmutableSet<?> transform(Flux<?> value) {
