@@ -154,7 +154,29 @@ public class TransformersComputer {
             case BOOLEAN:
                 return BOOLEAN_TRANSFORMER;
             case ARRAY:
-                return listTransformer(computeOutputTransformer(type.arrayComponentType()));
+                switch (type.internalKind()) {
+                    case ARRAY:
+                    case LONG_ARRAY:
+                    case DOUBLE_ARRAY:
+                    case FLOAT_ARRAY:
+                    case INTEGER_ARRAY:
+                    case BOOLEAN_ARRAY:
+                    case CHARACTER_ARRAY:
+                    case SHORT_ARRAY:
+                    case BYTE_ARRAY:
+                        return listTransformer(computeOutputTransformer(type.arrayComponentType()));
+                    case COLLECTION:
+                    case IMMUTABLE_COLLECTION:
+                    case LIST:
+                    case IMMUTABLE_ARRAY:
+                    case SET:
+                    case IMMUTABLE_SET:
+                    case QUEUE:
+                    case DEQUEUE:
+                    case STREAM:
+                    case FLUX:
+                        return listTransformer(computeOutputTransformer(type.parameters().get(0)));
+                }
             case MAP:
                 return mapTransformer(computeOutputTransformer(type.parameters().get(0)), computeOutputTransformer(type.parameters().get(1)));
         }
