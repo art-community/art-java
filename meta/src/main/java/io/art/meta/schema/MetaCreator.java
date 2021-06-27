@@ -22,34 +22,30 @@ import io.art.meta.model.*;
 import lombok.*;
 import java.util.*;
 
+@Builder(toBuilder = true)
 public class MetaCreator {
     private int filledFields;
-    private final Object[] values;
-    private final Map<String, MetaField<?>> fields;
+    private final Map<String, MetaProperty<?>> propertyMap;
+    private final MetaProperty<?>[] propertyArray;
     private final MetaConstructor<?> allPropertiesConstructor;
     private final MetaConstructor<?> localPropertiesConstructor;
 
-    @Builder
-    public MetaCreator(Map<String, MetaField<?>> fields, MetaConstructor<?> allPropertiesConstructor, MetaConstructor<?> localPropertiesConstructor) {
-        this.fields = fields;
-        this.values = new Object[fields.size()];
-        this.filledFields = 0;
-        this.allPropertiesConstructor = allPropertiesConstructor;
-        this.localPropertiesConstructor = localPropertiesConstructor;
-    }
+    @Builder.Default
+    private final Object[] values = new Object[propertyArray.length];
 
     public MetaCreator prepare() {
-        return new MetaCreator(fields, allPropertiesConstructor, localPropertiesConstructor);
+        return toBuilder().values(new Object[propertyArray.length]).build();
     }
 
     public MetaCreator put(String name, Object value) {
-        values[allPropertiesConstructor.parameter(name).index()] = fields.get(name).type().inputTransformer().transform(value);
+        MetaProperty<?> property = propertyMap.get(name);
+        values[property.index()] = property.type().inputTransformer().transform(value);
         filledFields++;
         return this;
     }
 
     public MetaCreator put(int index, Object value) {
-        //values[index] = fields.get(name).type().inputTransformer().transform(value);
+        values[index] = propertyArray[index].type().inputTransformer().transform(value);
         filledFields++;
         return this;
     }
