@@ -129,9 +129,6 @@ public class JsonModelWriter {
         MetaTransformer<?> transformer = type.outputTransformer();
         if (isNull(value)) return;
         switch (type.externalKind()) {
-            case MAP:
-                writeEntity(generator, name, typed(type, value));
-                break;
             case ARRAY:
                 writeArray(generator, name, typed(type, value));
                 break;
@@ -166,30 +163,36 @@ public class JsonModelWriter {
                 generator.writeBinaryField(name, transformer.toByteArray(cast(value)));
                 break;
             case ENTITY:
+                writeEntity(generator, name, typed(type, value));
+                break;
+            case MAP:
+                if (type.parameters().get(0).externalKind() != STRING) {
+                    break;
+                }
+                writeFields(generator, type.parameters().get(1), cast(value));
                 break;
         }
     }
 
     private static void writeArray(JsonGenerator generator, String name, TypedObject value) throws Throwable {
         generator.writeArrayFieldStart(name);
-        MetaType<?> elementType = orElse(value.getType().arrayComponentType(), value.getType().parameters().get(0));
+        MetaType<?> elementType = orElse(value.getType().arrayComponentType(), () -> value.getType().parameters().get(0));
         MetaTransformer<?> transformer = elementType.outputTransformer();
         List<?> array = value.getType().outputTransformer().toArray(cast(value.getObject()));
         for (Object element : array) {
             if (isNull(element)) continue;
-            MetaType<?> valueType = value.getType();
-            switch (valueType.externalKind()) {
+            switch (elementType.externalKind()) {
                 case ARRAY:
-                    writeArray(generator, typed(valueType, transformer.toArray(cast(value))));
+                    writeArray(generator, typed(elementType, transformer.toArray(cast(element))));
                     continue;
                 case MAP:
-                    if (valueType.parameters().get(0).externalKind() != STRING) {
+                    if (elementType.parameters().get(0).externalKind() != STRING) {
                         continue;
                     }
-                    writeFields(generator, valueType.parameters().get(1), cast(value.getObject()));
+                    writeFields(generator, elementType.parameters().get(1), cast(element));
                     continue;
                 case ENTITY:
-                    writeFields(generator, value);
+                    writeFields(generator, typed(elementType, element));
                     continue;
                 case BINARY:
                     generator.writeBinary(transformer.toByteArray(cast(element)));
