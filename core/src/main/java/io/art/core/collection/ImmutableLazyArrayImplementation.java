@@ -19,6 +19,7 @@
 package io.art.core.collection;
 
 import io.art.core.property.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.property.LazyProperty.*;
@@ -32,6 +33,8 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
     private final IntFunction<T> provider;
     private final int size;
     private final LazyProperty<ImmutableArray<T>> evaluated;
+
+    private final static ImmutableLazyArrayImplementation<?> EMPTY = new ImmutableLazyArrayImplementation<>(index -> null, 0);
 
     public ImmutableLazyArrayImplementation(IntFunction<T> provider, int size) {
         this.provider = provider;
@@ -134,5 +137,10 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
     @Override
     public Stream<T> parallelStream() {
         return StreamSupport.stream(spliterator(), true);
+    }
+
+
+    public static <T> ImmutableLazyArrayImplementation<T> emptyImmutableLazyArray() {
+        return cast(EMPTY);
     }
 }

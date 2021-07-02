@@ -23,6 +23,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.property.LazyProperty.*;
+import static java.util.Collections.*;
 import static java.util.Objects.*;
 import javax.annotation.*;
 import java.util.*;
@@ -32,6 +33,8 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
     private final Set<K> keys;
     private final Function<K, V> provider;
     private final LazyProperty<ImmutableMap<K, V>> evaluated;
+
+    private final static ImmutableLazyMapImplementation<?, ?> EMPTY = new ImmutableLazyMapImplementation<>(emptySet(), key -> null);
 
     public ImmutableLazyMapImplementation(Set<K> keys, Function<K, V> provider) {
         this.keys = keys;
@@ -112,5 +115,9 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
     @Override
     public Map<K, V> toMutable() {
         return evaluated.get().toMutable();
+    }
+
+    public static ImmutableLazyMapImplementation<?, ?> emptyImmutableLazyMap() {
+        return EMPTY;
     }
 }
