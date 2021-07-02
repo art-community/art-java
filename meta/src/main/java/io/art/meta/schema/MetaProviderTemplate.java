@@ -44,6 +44,10 @@ public class MetaProviderTemplate {
     public class MetaProviderInstance {
         private final Object model;
 
+        public Object getValue(MetaProperty<?> property) throws Throwable {
+            return property.getter().invoke(model);
+        }
+
         public String getString(MetaProperty<?> property) throws Throwable {
             return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toString(cast(notNull)));
         }
@@ -78,6 +82,10 @@ public class MetaProviderTemplate {
 
         public byte[] getByteArray(MetaProperty<?> property) throws Throwable {
             return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toByteArray(cast(notNull)));
+        }
+
+        public Boolean getBoolean(MetaProperty<?> property) throws Throwable {
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toBoolean(cast(notNull)));
         }
 
         public List<?> getArray(MetaProperty<?> property) throws Throwable {

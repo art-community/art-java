@@ -20,8 +20,9 @@ package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
 import io.art.core.collection.*;
+import io.art.core.exception.*;
 import io.art.json.exception.*;
-import io.art.meta.constants.*;
+import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
 import lombok.*;
@@ -40,6 +41,8 @@ import java.util.*;
 @AllArgsConstructor
 public class JsonModelReader {
     private final JsonFactory jsonFactory;
+
+    // TODO: Add type validation
 
     public <T> T read(MetaType<T> type, InputStream json) {
         if (isEmpty(json)) return null;
@@ -74,7 +77,7 @@ public class JsonModelReader {
                 case ENTITY:
                     return cast(parseEntity(type, parser));
             }
-            return null;
+            throw new ImpossibleSituationException();
         } catch (Throwable throwable) {
             throw new JsonException(throwable);
         }
@@ -112,7 +115,7 @@ public class JsonModelReader {
                 case END_ARRAY:
                     break;
                 case START_OBJECT:
-                    if (property.type().externalKind() == MetaConstants.MetaTypeExternalKind.ENTITY) {
+                    if (property.type().externalKind() == MetaTypeExternalKind.ENTITY) {
                         creator.put(property, parseEntity(property.type(), parser));
                         break;
                     }
@@ -167,7 +170,11 @@ public class JsonModelReader {
                 case END_ARRAY:
                     break;
                 case START_OBJECT:
-                    map.put(field, parseEntity(valueType, parser));
+                    if (valueType.externalKind() == MetaTypeExternalKind.ENTITY) {
+                        map.put(field, parseEntity(valueType, parser));
+                        break;
+                    }
+                    map.put(field, parseMap(valueType, parser));
                     break;
                 case START_ARRAY:
                     map.put(field, parseArray(valueType, parser));
@@ -176,7 +183,7 @@ public class JsonModelReader {
                     map.put(field, parser.getText());
                     break;
                 case VALUE_NUMBER_INT:
-                    map.put(field, parser.getIntValue());
+                    map.put(field, parser.getLongValue());
                     break;
                 case VALUE_NUMBER_FLOAT:
                     map.put(field, parser.getFloatValue());
