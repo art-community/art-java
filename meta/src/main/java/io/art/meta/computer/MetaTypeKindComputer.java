@@ -130,24 +130,26 @@ public class MetaTypeKindComputer {
             case CHARACTER_ARRAY:
             case SHORT_ARRAY:
             case COLLECTION:
-            case IMMUTABLE_COLLECTION:
             case LIST:
-            case IMMUTABLE_ARRAY:
             case SET:
             case IMMUTABLE_SET:
             case QUEUE:
             case DEQUEUE:
+                return MetaTypeExternalKind.ARRAY;
+            case IMMUTABLE_COLLECTION:
+            case IMMUTABLE_ARRAY:
             case STREAM:
             case FLUX:
-                return MetaTypeExternalKind.ARRAY;
+                return MetaTypeExternalKind.LAZY_ARRAY;
             case MAP:
-            case IMMUTABLE_MAP:
                 return MetaTypeExternalKind.MAP;
+            case IMMUTABLE_MAP:
+                return MetaTypeExternalKind.LAZY_MAP;
             case MONO:
             case LAZY:
             case OPTIONAL:
             case SUPPLIER:
-                return computeExternalKind(type.parameters().get(0));
+                return MetaTypeExternalKind.LAZY;
             case ENTITY:
                 return MetaTypeExternalKind.ENTITY;
         }

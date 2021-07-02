@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ArrayExtensions.*;
@@ -48,6 +49,16 @@ public class CharacterArrayTransformer implements MetaTransformer<char[]> {
     @Override
     public String toString(char[] value) {
         return new String(value);
+    }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(char[] value) {
+        return cast(immutableLazyArray(index -> value[index], value.length));
+    }
+
+    @Override
+    public char[] fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return unbox(value.toArray(new Character[value.size()]));
     }
 
     @Override

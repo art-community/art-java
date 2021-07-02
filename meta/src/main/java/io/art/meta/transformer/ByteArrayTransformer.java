@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.context.Context.*;
@@ -44,6 +45,16 @@ public class ByteArrayTransformer implements MetaTransformer<byte[]> {
     @Override
     public List<?> toArray(byte[] value) {
         return fixedArrayOf(box(value));
+    }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(byte[] value) {
+        return cast(immutableLazyArray(index -> value[index], value.length));
+    }
+
+    @Override
+    public byte[] fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return unbox(value.toArray(new Byte[value.size()]));
     }
 
     @Override

@@ -18,8 +18,9 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -27,28 +28,25 @@ import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class MapTransformer implements MetaTransformer<Map<?, ?>> {
-    private final Function<Object, Object> keyTransformer;
-    private final Function<Object, Object> valueTransformer;
-
     @Override
     public Map<?, ?> fromMap(Map<?, ?> value) {
-        Map<Object, Object> map = map(value.size());
-        for (Map.Entry<?, ?> entry : value.entrySet()) {
-            map.put(let(entry.getKey(), keyTransformer), let(entry.getValue(), valueTransformer));
-        }
-        return map;
+        return value;
     }
 
     @Override
     public Map<?, ?> toMap(Map<?, ?> value) {
-        Map<Object, Object> map = map(value.size());
-        for (Map.Entry<?, ?> entry : value.entrySet()) {
-            map.put(let(entry.getKey(), keyTransformer), let(entry.getValue(), valueTransformer));
-        }
-        return map;
+        return value;
     }
 
-    public static MapTransformer mapTransformer(Function<Object, Object> keyTransformer, Function<Object, Object> valueTransformer) {
-        return new MapTransformer(keyTransformer, valueTransformer);
+    @Override
+    public Map<?, ?> fromLazyMap(ImmutableLazyMapImplementation<?, ?> value) {
+        return value.toMutable();
     }
+
+    @Override
+    public ImmutableLazyMapImplementation<?, ?> toLazyMap(Map<?, ?> value) {
+        return cast(immutableLazyMapOf(value, Function.identity()));
+    }
+
+    public static MapTransformer MAP_TRANSFORMER = new MapTransformer();
 }

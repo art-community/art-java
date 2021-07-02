@@ -138,6 +138,16 @@ public class SupplierTransformer implements MetaTransformer<Supplier<?>> {
         return () -> parameterTransformer.fromBoolean(value);
     }
 
+    @Override
+    public Supplier<?> fromLazy(Supplier<?> value) {
+        return value;
+    }
+
+    @Override
+    public Supplier<?> toLazy(Supplier<?> value) {
+        return value;
+    }
+
     public static SupplierTransformer supplierTransformer(MetaTransformer<?> parameterTransformer) {
         return new SupplierTransformer(parameterTransformer);
     }

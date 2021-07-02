@@ -24,6 +24,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.property.LazyProperty.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
+import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class LazyTransformer implements MetaTransformer<LazyProperty<?>> {
@@ -137,6 +138,16 @@ public class LazyTransformer implements MetaTransformer<LazyProperty<?>> {
     @Override
     public LazyProperty<?> fromBoolean(Boolean value) {
         return lazy(() -> parameterTransformer.fromBoolean(value));
+    }
+
+    @Override
+    public LazyProperty<?> fromLazy(Supplier<?> value) {
+        return lazy(value);
+    }
+
+    @Override
+    public Supplier<?> toLazy(LazyProperty<?> value) {
+        return value;
     }
 
     public static LazyTransformer lazyTransformer(MetaTransformer<?> parameterTransformer) {

@@ -18,7 +18,9 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static lombok.AccessLevel.*;
@@ -27,27 +29,26 @@ import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class QueueTransformer implements MetaTransformer<Queue<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public Queue<?> fromArray(List<?> value) {
-        Queue<Object> queue = queue();
-        for (Object element : value) {
-            queue.add(parameterTransformer.apply(element));
-        }
-        return queue;
+        return queueOf(value);
     }
 
     @Override
     public List<?> toArray(Queue<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return fixedArrayOf(value);
     }
 
-    public static QueueTransformer queueTransformer(Function<Object, Object> parameterTransformer) {
-        return new QueueTransformer(parameterTransformer);
+    @Override
+    public Queue<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return queueOf(value);
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(Queue<?> value) {
+        List<?> array = fixedArrayOf(value);
+        return cast(immutableLazyArrayOf(array, Function.identity()));
+    }
+
+    public static QueueTransformer QUEUE_TRANSFORMER = new QueueTransformer();
 }

@@ -19,6 +19,7 @@
 package io.art.meta.transformer;
 
 import io.art.core.caster.*;
+import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.exception.*;
@@ -77,6 +78,18 @@ public interface MetaTransformer<T> {
         throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
+    default ImmutableLazyArrayImplementation<?> toLazyArray(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
+    }
+
+    default ImmutableLazyMapImplementation<?, ?> toLazyMap(T value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
+    }
+
+    default Supplier<?> toLazy(T value) {
+        return () -> value;
+    }
+
     default T fromArray(List<?> value) {
         throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
@@ -125,12 +138,30 @@ public interface MetaTransformer<T> {
         throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
     }
 
+    default T fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
+    }
+
+    default T fromLazyMap(ImmutableLazyMapImplementation<?, ?> value) {
+        throw new TransformationException(format(TRANSFORMATION_NOT_AVAILABLE, value, getClass()));
+    }
+
+    default T fromLazy(Supplier<?> value) {
+        return cast(value.get());
+    }
+
     default Function<T, ?> toKind(MetaTypeExternalKind kind) {
         switch (kind) {
             case MAP:
                 return this::toMap;
             case ARRAY:
                 return this::toArray;
+            case LAZY_MAP:
+                return this::toLazyMap;
+            case LAZY_ARRAY:
+                return this::toLazyArray;
+            case LAZY:
+                return this::toLazy;
             case STRING:
                 return this::toString;
             case LONG:
@@ -153,6 +184,8 @@ public interface MetaTransformer<T> {
                 return this::toByteArray;
             case ENTITY:
                 return Caster::cast;
+            case UNKNOWN:
+                break;
         }
         throw new ImpossibleSituationException();
     }
@@ -163,6 +196,12 @@ public interface MetaTransformer<T> {
                 return value -> fromMap(cast(value));
             case ARRAY:
                 return value -> fromArray(cast(value));
+            case LAZY_MAP:
+                return value -> fromLazyMap(cast(value));
+            case LAZY_ARRAY:
+                return value -> fromLazyArray(cast(value));
+            case LAZY:
+                return value -> fromLazy(cast(value));
             case STRING:
                 return value -> fromString(cast(value));
             case LONG:
@@ -185,6 +224,8 @@ public interface MetaTransformer<T> {
                 return value -> fromByteArray(cast(value));
             case ENTITY:
                 return Caster::cast;
+            case UNKNOWN:
+                break;
         }
         throw new ImpossibleSituationException();
     }

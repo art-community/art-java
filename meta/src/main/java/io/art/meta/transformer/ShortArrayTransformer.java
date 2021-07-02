@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ArrayExtensions.*;
@@ -43,6 +44,16 @@ public class ShortArrayTransformer implements MetaTransformer<short[]> {
     @Override
     public List<?> toArray(short[] value) {
         return fixedArrayOf(box(value));
+    }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(short[] value) {
+        return cast(immutableLazyArray(index -> value[index], value.length));
+    }
+
+    @Override
+    public short[] fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return unbox(value.toArray(new Short[value.size()]));
     }
 
     public static ShortArrayTransformer SHORT_ARRAY_TRANSFORMER = new ShortArrayTransformer();

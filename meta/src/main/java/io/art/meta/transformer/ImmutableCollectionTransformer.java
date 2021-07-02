@@ -20,35 +20,33 @@ package io.art.meta.transformer;
 
 import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class ImmutableCollectionTransformer implements MetaTransformer<ImmutableCollection<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public ImmutableCollection<?> fromArray(List<?> value) {
-        ImmutableArray.Builder<Object> builder = immutableArrayBuilder();
-        for (Object element : value) {
-            builder.add(parameterTransformer.apply(element));
-        }
-        return builder.build();
+        return immutableArrayOf(value);
     }
 
     @Override
     public List<?> toArray(ImmutableCollection<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return value.asArray().toMutable();
     }
 
-    public static ImmutableCollectionTransformer immutableCollectionTransformer(Function<Object, Object> parameterTransformer) {
-        return new ImmutableCollectionTransformer(parameterTransformer);
+    @Override
+    public ImmutableCollection<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return value;
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(ImmutableCollection<?> value) {
+        return cast(immutableLazyArrayOf(value.asArray(), identity()));
+    }
+
+    public static ImmutableCollectionTransformer IMMUTABLE_COLLECTION_TRANSFORMER = new ImmutableCollectionTransformer();
 }

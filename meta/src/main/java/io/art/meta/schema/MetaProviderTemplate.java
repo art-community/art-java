@@ -26,6 +26,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
+import java.util.function.*;
 
 @AllArgsConstructor
 public class MetaProviderTemplate {
@@ -94,6 +95,18 @@ public class MetaProviderTemplate {
 
         public Map<?, ?> getMap(MetaProperty<?> property) throws Throwable {
             return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toMap(cast(notNull)));
+        }
+
+        public Supplier<?> getLazy(MetaProperty<?> property) throws Throwable {
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toLazy(cast(notNull)));
+        }
+
+        public ImmutableLazyArrayImplementation<?> getLazyArray(MetaProperty<?> property) throws Throwable {
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toLazyArray(cast(notNull)));
+        }
+
+        public ImmutableLazyMapImplementation<?, ?> getLazyMap(MetaProperty<?> property) throws Throwable {
+            return let(property.getter().invoke(model), notNull -> property.type().outputTransformer().toLazyMap(cast(notNull)));
         }
 
         public Object getEntity(MetaProperty<?> property) throws Throwable {

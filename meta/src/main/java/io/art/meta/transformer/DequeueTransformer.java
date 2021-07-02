@@ -18,7 +18,9 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static lombok.AccessLevel.*;
@@ -27,27 +29,26 @@ import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class DequeueTransformer implements MetaTransformer<Deque<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public Deque<?> fromArray(List<?> value) {
-        Deque<Object> queue = deque();
-        for (Object element : value) {
-            queue.add(parameterTransformer.apply(element));
-        }
-        return queue;
+        return dequeOf(value);
     }
 
     @Override
     public List<?> toArray(Deque<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return fixedArrayOf(value);
     }
 
-    public static DequeueTransformer dequeTransformer(Function<Object, Object> parameterTransformer) {
-        return new DequeueTransformer(parameterTransformer);
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(Deque<?> value) {
+        List<?> array = fixedArrayOf(value);
+        return cast(immutableLazyArrayOf(array, Function.identity()));
     }
+
+    @Override
+    public Deque<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return dequeOf(value.toMutable());
+    }
+
+    public static DequeueTransformer DEQUEUE_TRANSFORMER = new DequeueTransformer();
 }

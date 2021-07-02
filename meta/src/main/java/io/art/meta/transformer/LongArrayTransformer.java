@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ArrayExtensions.*;
@@ -44,6 +45,18 @@ public class LongArrayTransformer implements MetaTransformer<long[]> {
     public List<?> toArray(long[] value) {
         return fixedArrayOf(box(value));
     }
+
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(long[] value) {
+        return cast(immutableLazyArray(index -> value[index], value.length));
+    }
+
+    @Override
+    public long[] fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return unbox(value.toArray(new Long[value.size()]));
+    }
+
 
     public static LongArrayTransformer LONG_ARRAY_TRANSFORMER = new LongArrayTransformer();
 }

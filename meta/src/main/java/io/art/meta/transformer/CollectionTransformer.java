@@ -18,7 +18,9 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -26,27 +28,26 @@ import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class CollectionTransformer implements MetaTransformer<Collection<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public Collection<?> fromArray(List<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return value;
     }
 
     @Override
     public List<?> toArray(Collection<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return fixedArrayOf(value);
     }
 
-    public static CollectionTransformer collectionTransformer(Function<Object, Object> parameterTransformer) {
-        return new CollectionTransformer(parameterTransformer);
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(Collection<?> value) {
+        List<?> array = fixedArrayOf(value);
+        return cast(immutableLazyArrayOf(array, Function.identity()));
     }
+
+    @Override
+    public Collection<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return value.toMutable();
+    }
+
+    public static CollectionTransformer COLLECTION_TRANSFORMER = new CollectionTransformer();
 }

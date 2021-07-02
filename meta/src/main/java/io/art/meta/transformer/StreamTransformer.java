@@ -22,24 +22,19 @@ import lombok.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 import java.util.stream.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class StreamTransformer implements MetaTransformer<Stream<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public Stream<?> fromArray(List<?> value) {
-        return value.stream().map(parameterTransformer);
+        return value.stream();
     }
 
     @Override
     public List<?> toArray(Stream<?> value) {
-        return value.map(parameterTransformer).collect(arrayCollector());
+        return value.collect(arrayCollector());
     }
 
-    public static StreamTransformer streamTransformer(Function<Object, Object> parameterTransformer) {
-        return new StreamTransformer(parameterTransformer);
-    }
+    public static StreamTransformer STREAM_TRANSFORMER = new StreamTransformer();
 }

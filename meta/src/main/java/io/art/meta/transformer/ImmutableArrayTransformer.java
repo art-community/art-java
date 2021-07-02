@@ -20,30 +20,33 @@ package io.art.meta.transformer;
 
 import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class ImmutableArrayTransformer implements MetaTransformer<ImmutableArray<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public ImmutableArray<?> fromArray(List<?> value) {
-        return immutableLazyArrayOf(value, parameterTransformer);
+        return immutableArrayOf(value);
     }
 
     @Override
     public List<?> toArray(ImmutableArray<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return value.toMutable();
     }
 
-    public static ImmutableArrayTransformer immutableArrayTransformer(Function<Object, Object> parameterTransformer) {
-        return new ImmutableArrayTransformer(parameterTransformer);
+    @Override
+    public ImmutableArray<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return value;
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(ImmutableArray<?> value) {
+        return cast(immutableLazyArrayOf(value, identity()));
+    }
+
+    public static ImmutableArrayTransformer IMMUTABLE_ARRAY_TRANSFORMER = new ImmutableArrayTransformer();
 }

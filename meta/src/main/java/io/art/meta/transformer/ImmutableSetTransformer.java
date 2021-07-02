@@ -20,35 +20,35 @@ package io.art.meta.transformer;
 
 import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.SetFactory.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class ImmutableSetTransformer implements MetaTransformer<ImmutableSet<?>> {
-    private final Function<Object, Object> parameterTransformer;
 
     @Override
     public ImmutableSet<?> fromArray(List<?> value) {
-        ImmutableSet.Builder<Object> builder = immutableSetBuilder();
-        for (Object element : value) {
-            builder.add(parameterTransformer.apply(element));
-        }
-        return builder.build();
+        return immutableSetOf(value);
     }
 
     @Override
     public List<?> toArray(ImmutableSet<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return fixedArrayOf(value.toMutable());
     }
 
-    public static ImmutableSetTransformer immutableSetTransformer(Function<Object, Object> parameterTransformer) {
-        return new ImmutableSetTransformer(parameterTransformer);
+    @Override
+    public ImmutableSet<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return value.asSet();
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(ImmutableSet<?> value) {
+        return cast(immutableLazyArrayOf(value.asArray(), identity()));
+    }
+
+    public static ImmutableSetTransformer IMMUTABLE_SET_TRANSFORMER = new ImmutableSetTransformer();
 }

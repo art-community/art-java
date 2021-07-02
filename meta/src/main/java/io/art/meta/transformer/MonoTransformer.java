@@ -24,6 +24,7 @@ import static io.art.core.caster.Caster.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Mono.*;
 import java.util.*;
+import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class MonoTransformer implements MetaTransformer<Mono<?>> {
@@ -137,6 +138,16 @@ public class MonoTransformer implements MetaTransformer<Mono<?>> {
     @Override
     public Mono<?> fromBoolean(Boolean value) {
         return justOrEmpty(parameterTransformer.fromBoolean(value));
+    }
+
+    @Override
+    public Mono<?> fromLazy(Supplier<?> value) {
+        return fromSupplier(value);
+    }
+
+    @Override
+    public Supplier<?> toLazy(Mono<?> value) {
+        return value::block;
     }
 
     public static MonoTransformer monoTransformer(MetaTransformer<?> parameterTransformer) {

@@ -25,6 +25,7 @@ import static io.art.core.factory.MapFactory.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
+import java.util.function.*;
 
 @Builder
 public class MetaCreatorTemplate {
@@ -135,6 +136,24 @@ public class MetaCreatorTemplate {
 
         public MetaCreatorInstance put(MetaProperty<?> property, byte[] value) {
             values[property.index()] = property.type().inputTransformer().fromByteArray(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, Supplier<?> value) {
+            values[property.index()] = property.type().inputTransformer().fromLazy(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, ImmutableLazyMapImplementation<?, ?> value) {
+            values[property.index()] = property.type().inputTransformer().fromLazyMap(value);
+            filledFields++;
+            return this;
+        }
+
+        public MetaCreatorInstance put(MetaProperty<?> property, ImmutableLazyArrayImplementation<?> value) {
+            values[property.index()] = property.type().inputTransformer().fromLazyArray(value);
             filledFields++;
             return this;
         }

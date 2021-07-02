@@ -62,6 +62,9 @@ public interface MetaConstants {
     enum MetaTypeExternalKind {
         MAP,
         ARRAY,
+        LAZY_MAP,
+        LAZY_ARRAY,
+        LAZY,
         STRING,
         LONG,
         DOUBLE,

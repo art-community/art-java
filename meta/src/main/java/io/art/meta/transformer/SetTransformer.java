@@ -18,7 +18,9 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static lombok.AccessLevel.*;
@@ -27,27 +29,26 @@ import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class SetTransformer implements MetaTransformer<Set<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public Set<?> fromArray(List<?> value) {
-        Set<Object> list = set(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return setOf(value);
     }
 
     @Override
     public List<?> toArray(Set<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return fixedArrayOf(value);
     }
 
-    public static SetTransformer setTransformer(Function<Object, Object> parameterTransformer) {
-        return new SetTransformer(parameterTransformer);
+    @Override
+    public Set<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return setOf(value);
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(Set<?> value) {
+        List<?> array = fixedArrayOf(value);
+        return cast(immutableLazyArrayOf(array, Function.identity()));
+    }
+
+    public static SetTransformer SET_TRANSFORMER = new SetTransformer();
 }

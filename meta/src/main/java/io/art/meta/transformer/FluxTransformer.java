@@ -18,29 +18,38 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
-import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class FluxTransformer implements MetaTransformer<Flux<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public Flux<?> fromArray(List<?> value) {
-        return fromIterable(value).map(parameterTransformer);
+        return fromIterable(value);
     }
 
     @Override
     public List<?> toArray(Flux<?> value) {
-        return fixedArrayOf(value.map(parameterTransformer).toIterable());
+        return fixedArrayOf(value.toIterable());
     }
 
-    public static FluxTransformer fluxTransformer(Function<Object, Object> parameterTransformer) {
-        return new FluxTransformer(parameterTransformer);
+    @Override
+    public Flux<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return Flux.fromStream(value.stream());
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(Flux<?> value) {
+        List<? extends Iterable<?>> array = fixedArrayOf(value.toIterable());
+        return cast(immutableLazyArrayOf(array, identity()));
+    }
+
+    public static FluxTransformer FLUX_TRANSFORMER = new FluxTransformer();
 }

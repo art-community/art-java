@@ -18,35 +18,35 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class ListTransformer implements MetaTransformer<List<?>> {
-    private final Function<Object, Object> parameterTransformer;
-
     @Override
     public List<?> fromArray(List<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return value;
     }
 
     @Override
     public List<?> toArray(List<?> value) {
-        List<Object> list = dynamicArray(value.size());
-        for (Object element : value) {
-            list.add(parameterTransformer.apply(element));
-        }
-        return list;
+        return value;
     }
 
-    public static ListTransformer listTransformer(Function<Object, Object> parameterTransformer) {
-        return new ListTransformer(parameterTransformer);
+    @Override
+    public List<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return value.toMutable();
     }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(List<?> value) {
+        return cast(immutableLazyArrayOf(value, identity()));
+    }
+
+    public static ListTransformer LIST_TRANSFORMER = new ListTransformer();
 }

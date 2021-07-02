@@ -24,6 +24,7 @@ import static io.art.core.extensions.OptionalExtensions.*;
 import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
+import java.util.function.*;
 
 @AllArgsConstructor(access = PRIVATE)
 public class OptionalTransformer implements MetaTransformer<Optional<?>> {
@@ -137,6 +138,16 @@ public class OptionalTransformer implements MetaTransformer<Optional<?>> {
     @Override
     public Optional<?> fromBoolean(Boolean value) {
         return ofNullable(parameterTransformer.fromBoolean(value));
+    }
+
+    @Override
+    public Optional<?> fromLazy(Supplier<?> value) {
+        return ofNullable(value.get());
+    }
+
+    @Override
+    public Supplier<?> toLazy(Optional<?> value) {
+        return value::get;
     }
 
     public static OptionalTransformer optionalTransformer(MetaTransformer<?> parameterTransformer) {

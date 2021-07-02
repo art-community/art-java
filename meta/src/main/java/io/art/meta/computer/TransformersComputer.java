@@ -33,6 +33,7 @@ import static io.art.meta.transformer.CharacterArrayTransformer.*;
 import static io.art.meta.transformer.CharacterTransformer.*;
 import static io.art.meta.transformer.CollectionTransformer.*;
 import static io.art.meta.transformer.DateTransformer.*;
+import static io.art.meta.transformer.DefaultTransformer.*;
 import static io.art.meta.transformer.DequeueTransformer.*;
 import static io.art.meta.transformer.DoubleArrayTransformer.*;
 import static io.art.meta.transformer.DoubleTransformer.*;
@@ -66,7 +67,6 @@ import static io.art.meta.transformer.ShortTransformer.*;
 import static io.art.meta.transformer.StreamTransformer.*;
 import static io.art.meta.transformer.StringTransformer.*;
 import static io.art.meta.transformer.SupplierTransformer.*;
-import static io.art.meta.transformer.DefaultTransformer.*;
 import static io.art.meta.transformer.ZonedDateTimeTransformer.*;
 import static java.util.Objects.*;
 
@@ -106,9 +106,7 @@ public class TransformersComputer {
             case DURATION:
                 return DURATION_TRANSFORMER;
             case ARRAY:
-                MetaType<?> arrayComponentType = type.arrayComponentType();
-                MetaTransformer<?> componentTransformer = computeInputTransformer(arrayComponentType);
-                return arrayTransformer(cast(type.arrayFactory()), cast(componentTransformer.fromKind(arrayComponentType.externalKind())));
+                return arrayTransformer(cast(type.arrayFactory()));
             case LONG_ARRAY:
                 return LONG_ARRAY_TRANSFORMER;
             case DOUBLE_ARRAY:
@@ -126,45 +124,31 @@ public class TransformersComputer {
             case BYTE_ARRAY:
                 return BYTE_ARRAY_TRANSFORMER;
             case COLLECTION:
-                MetaTransformer<?> parameterTransformer = computeInputTransformer(parameters.get(0));
-                return collectionTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return COLLECTION_TRANSFORMER;
             case IMMUTABLE_COLLECTION:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return immutableCollectionTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return IMMUTABLE_COLLECTION_TRANSFORMER;
             case LIST:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return listTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return LIST_TRANSFORMER;
             case IMMUTABLE_ARRAY:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return immutableArrayTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return IMMUTABLE_ARRAY_TRANSFORMER;
             case SET:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return setTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return SET_TRANSFORMER;
             case IMMUTABLE_SET:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return immutableSetTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return IMMUTABLE_SET_TRANSFORMER;
             case QUEUE:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return queueTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return QUEUE_TRANSFORMER;
             case DEQUEUE:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return dequeTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return DEQUEUE_TRANSFORMER;
             case STREAM:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return streamTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return STREAM_TRANSFORMER;
             case MAP:
-                MetaTransformer<?> keyTransformer = computeInputTransformer(parameters.get(0));
-                MetaTransformer<?> valueTransformer = computeInputTransformer(parameters.get(1));
-                return mapTransformer(cast(keyTransformer.fromKind(parameters.get(0).externalKind())), cast(valueTransformer.fromKind(parameters.get(1).externalKind())));
+                return MAP_TRANSFORMER;
             case IMMUTABLE_MAP:
-                keyTransformer = computeInputTransformer(parameters.get(0));
-                valueTransformer = computeInputTransformer(parameters.get(1));
-                return immutableMapTransformer(cast(keyTransformer.fromKind(parameters.get(0).externalKind())), cast(valueTransformer.fromKind(parameters.get(1).externalKind())));
+                return IMMUTABLE_MAP_TRANSFORMER;
             case FLUX:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
-                return fluxTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return FLUX_TRANSFORMER;
             case MONO:
-                parameterTransformer = computeInputTransformer(parameters.get(0));
+                MetaTransformer<?> parameterTransformer = computeInputTransformer(parameters.get(0));
                 return monoTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
             case LAZY:
                 parameterTransformer = computeInputTransformer(parameters.get(0));
@@ -223,9 +207,7 @@ public class TransformersComputer {
             case DURATION:
                 return DURATION_TRANSFORMER;
             case ARRAY:
-                MetaType<?> arrayComponentType = type.arrayComponentType();
-                MetaTransformer<?> componentTransformer = computeOutputTransformer(arrayComponentType);
-                return arrayTransformer(cast(type.arrayFactory()), cast(componentTransformer.fromKind(arrayComponentType.externalKind())));
+                return arrayTransformer(cast(type.arrayFactory()));
             case LONG_ARRAY:
                 return LONG_ARRAY_TRANSFORMER;
             case DOUBLE_ARRAY:
@@ -243,45 +225,31 @@ public class TransformersComputer {
             case BYTE_ARRAY:
                 return BYTE_ARRAY_TRANSFORMER;
             case COLLECTION:
-                MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return collectionTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return COLLECTION_TRANSFORMER;
             case IMMUTABLE_COLLECTION:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return immutableCollectionTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return IMMUTABLE_COLLECTION_TRANSFORMER;
             case LIST:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return listTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return LIST_TRANSFORMER;
             case IMMUTABLE_ARRAY:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return immutableArrayTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return IMMUTABLE_ARRAY_TRANSFORMER;
             case SET:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return setTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return SET_TRANSFORMER;
             case IMMUTABLE_SET:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return immutableSetTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return IMMUTABLE_SET_TRANSFORMER;
             case QUEUE:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return queueTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return QUEUE_TRANSFORMER;
             case DEQUEUE:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return dequeTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return DEQUEUE_TRANSFORMER;
             case STREAM:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return streamTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return STREAM_TRANSFORMER;
             case MAP:
-                MetaTransformer<?> keyTransformer = computeOutputTransformer(parameters.get(0));
-                MetaTransformer<?> valueTransformer = computeOutputTransformer(parameters.get(1));
-                return mapTransformer(cast(keyTransformer.toKind(parameters.get(0).externalKind())), cast(valueTransformer.toKind(parameters.get(1).externalKind())));
+                return MAP_TRANSFORMER;
             case IMMUTABLE_MAP:
-                keyTransformer = computeOutputTransformer(parameters.get(0));
-                valueTransformer = computeOutputTransformer(parameters.get(1));
-                return immutableMapTransformer(cast(keyTransformer.toKind(parameters.get(0).externalKind())), cast(valueTransformer.toKind(parameters.get(1).externalKind())));
+                return IMMUTABLE_MAP_TRANSFORMER;
             case FLUX:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return fluxTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return FLUX_TRANSFORMER;
             case MONO:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
+                MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
                 return monoTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
             case LAZY:
                 parameterTransformer = computeOutputTransformer(parameters.get(0));

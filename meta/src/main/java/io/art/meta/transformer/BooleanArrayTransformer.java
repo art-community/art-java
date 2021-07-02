@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ArrayExtensions.*;
@@ -43,6 +44,16 @@ public class BooleanArrayTransformer implements MetaTransformer<boolean[]> {
     @Override
     public List<?> toArray(boolean[] value) {
         return fixedArrayOf(box(value));
+    }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(boolean[] value) {
+        return cast(immutableLazyArray(index -> value[index], value.length));
+    }
+
+    @Override
+    public boolean[] fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return unbox(value.toArray(new Boolean[value.size()]));
     }
 
     public static BooleanArrayTransformer BOOLEAN_ARRAY_TRANSFORMER = new BooleanArrayTransformer();

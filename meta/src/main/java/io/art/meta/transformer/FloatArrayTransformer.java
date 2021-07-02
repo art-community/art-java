@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ArrayExtensions.*;
@@ -43,6 +44,17 @@ public class FloatArrayTransformer implements MetaTransformer<float[]> {
     @Override
     public List<?> toArray(float[] value) {
         return fixedArrayOf(box(value));
+    }
+
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(float[] value) {
+        return cast(immutableLazyArray(index -> value[index], value.length));
+    }
+
+    @Override
+    public float[] fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return unbox(value.toArray(new Float[value.size()]));
     }
 
     public static FloatArrayTransformer FLOAT_ARRAY_TRANSFORMER = new FloatArrayTransformer();
