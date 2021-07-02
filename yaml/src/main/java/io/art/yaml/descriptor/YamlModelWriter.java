@@ -16,13 +16,13 @@
  * limitations under the License.
  */
 
-package io.art.json.descriptor;
+package io.art.yaml.descriptor;
 
-import com.fasterxml.jackson.core.*;
-import io.art.json.exception.*;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaProviderTemplate.*;
 import io.art.meta.transformer.*;
+import io.art.yaml.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -35,8 +35,8 @@ import java.nio.charset.*;
 import java.util.*;
 
 @AllArgsConstructor
-public class JsonModelWriter {
-    private final JsonFactory jsonFactory;
+public class YamlModelWriter {
+    private final YAMLFactory yamlFactory;
 
     // TODO: Add type validation
 
@@ -44,7 +44,7 @@ public class JsonModelWriter {
         if (isNull(object)) return;
         MetaType<?> type = object.getType();
         MetaTransformer<?> transformer = type.outputTransformer();
-        try (JsonGenerator generator = jsonFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
+        try (YAMLGenerator generator = yamlFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
             switch (type.externalKind()) {
                 case ENTITY:
                     writeEntity(generator, type, object);
@@ -89,32 +89,32 @@ public class JsonModelWriter {
                     generator.writeNumber(transformer.toByte(cast(object)));
             }
         } catch (Throwable throwable) {
-            throw new JsonException(throwable);
+            throw new YamlException(throwable);
         }
     }
 
-    private static void writeEntity(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeEntity(YAMLGenerator generator, MetaType<?> type, Object value) throws Throwable {
         if (isNull(value)) return;
         generator.writeStartObject();
         writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeArray(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeArray(YAMLGenerator generator, MetaType<?> type, Object value) throws Throwable {
         if (isNull(value)) return;
         generator.writeStartArray();
         writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeEntity(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
+    private static void writeEntity(YAMLGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
         if (isNull(value)) return;
         generator.writeObjectFieldStart(name);
         writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeFields(YAMLGenerator generator, MetaType<?> type, Object value) throws Throwable {
         MetaProviderInstance provider = type.definition().provider().instantiate(value);
         for (MetaProperty<?> property : provider.properties().values()) {
             Object field = provider.getValue(property);
@@ -122,7 +122,7 @@ public class JsonModelWriter {
         }
     }
 
-    private static void writeMap(JsonGenerator generator, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+    private static void writeMap(YAMLGenerator generator, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -131,7 +131,7 @@ public class JsonModelWriter {
         }
     }
 
-    private static void writeField(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
+    private static void writeField(YAMLGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
         MetaTransformer<?> transformer = type.outputTransformer();
         if (isNull(value)) return;
         switch (type.externalKind()) {
@@ -180,7 +180,7 @@ public class JsonModelWriter {
         }
     }
 
-    private static void writeArray(JsonGenerator generator, String name, TypedObject value) throws Throwable {
+    private static void writeArray(YAMLGenerator generator, String name, TypedObject value) throws Throwable {
         generator.writeArrayFieldStart(name);
         MetaType<?> elementType = orElse(value.getType().arrayComponentType(), () -> value.getType().parameters().get(0));
         MetaTransformer<?> transformer = elementType.outputTransformer();

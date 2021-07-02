@@ -21,6 +21,7 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":value"))
+    implementation(project(":meta"))
 
     api("org.msgpack", "msgpack-core", messagePackVersion)
 }

@@ -22,6 +22,7 @@ dependencies {
 
     implementation(project(":core"))
     implementation(project(":value"))
+    implementation(project(":meta"))
 
     api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
