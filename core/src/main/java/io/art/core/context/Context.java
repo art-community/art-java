@@ -146,6 +146,10 @@ public class Context {
         INSTANCE = null;
     }
 
+    public static boolean active() {
+        return nonNull(INSTANCE) && !INSTANCE.terminationScheduled.get();
+    }
+
     public static void scheduleTermination() {
         Context context = context();
         if (context.terminationScheduled.compareAndSet(false, true)) {
