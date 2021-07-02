@@ -234,7 +234,7 @@ public class JsonModelReader {
                 case FIELD_NAME:
                 case VALUE_EMBEDDED_OBJECT:
                 case VALUE_NULL:
-                    return null;
+                    return emptyList();
                 case START_OBJECT:
                     return parseEntityArray(elementType, parser);
                 case START_ARRAY:
