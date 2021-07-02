@@ -172,26 +172,29 @@ public class JsonModelWriter {
                 writeEntity(generator, name, type, value);
                 break;
             case MAP:
+            case LAZY_MAP:
                 if (type.parameters().get(0).externalKind() != STRING) {
                     break;
                 }
-                writeMap(generator, type.parameters().get(1), cast(value));
+                writeMap(generator, type.parameters().get(1), cast(transformer.toMap(cast(value))));
                 break;
         }
     }
 
-    private static void writeArray(JsonGenerator generator, String name, TypedObject value) throws Throwable {
+    private static void writeArray(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
         generator.writeArrayFieldStart(name);
-        MetaType<?> elementType = orElse(value.getType().arrayComponentType(), () -> value.getType().parameters().get(0));
+        MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
         MetaTransformer<?> transformer = elementType.outputTransformer();
-        List<?> array = value.getType().outputTransformer().toArray(cast(value.getObject()));
+        List<?> array = type.outputTransformer().toArray(cast(value));
         for (Object element : array) {
             if (isNull(element)) continue;
             switch (elementType.externalKind()) {
                 case ARRAY:
+                case LAZY_ARRAY:
                     writeArray(generator, elementType, transformer.toArray(cast(element)));
                     continue;
                 case MAP:
+                case LAZY_MAP:
                     if (elementType.parameters().get(0).externalKind() != STRING) {
                         continue;
                     }
@@ -202,6 +205,9 @@ public class JsonModelWriter {
                     continue;
                 case BINARY:
                     generator.writeBinary(transformer.toByteArray(cast(element)));
+                    continue;
+                case LAZY:
+                    writeField(generator, name, elementType.parameters().get(0), element);
                     continue;
                 case STRING:
                     generator.writeString(transformer.toString(cast(element)));
@@ -220,7 +226,7 @@ public class JsonModelWriter {
                     continue;
                 case CHARACTER:
                     generator.writeString(EMPTY_STRING + transformer.toCharacter(cast(element)));
-                    break;
+                    continue;
                 case SHORT:
                     generator.writeNumber(transformer.toShort(cast(element)));
                     continue;

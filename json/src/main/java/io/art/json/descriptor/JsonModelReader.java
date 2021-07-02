@@ -25,6 +25,7 @@ import io.art.json.exception.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
+import io.art.meta.transformer.*;
 import lombok.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static io.art.core.caster.Caster.*;
@@ -32,6 +33,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.io.*;
@@ -46,34 +48,39 @@ public class JsonModelReader {
 
     public <T> T read(MetaType<T> type, InputStream json) {
         if (isEmpty(json)) return null;
+        MetaTransformer<T> transformer = type.inputTransformer();
         try (JsonParser parser = jsonFactory.createParser(json)) {
             JsonToken nextToken = parser.nextToken();
             if (isNull(nextToken)) return null;
             switch (type.externalKind()) {
+                case LAZY:
+                    return transformer.fromLazy(() -> read(type.parameters().get(0), json));
                 case STRING:
-                    return cast(parser.getText());
+                    return transformer.fromString(parser.getText());
                 case LONG:
-                    return cast(parser.getLongValue());
+                    return transformer.fromLong(parser.getLongValue());
                 case DOUBLE:
-                    return cast(parser.getDoubleValue());
+                    return transformer.fromDouble(parser.getDoubleValue());
                 case FLOAT:
-                    return cast(parser.getFloatValue());
+                    return transformer.fromFloat(parser.getFloatValue());
                 case INTEGER:
-                    return cast(parser.getIntValue());
+                    return transformer.fromInteger(parser.getIntValue());
                 case BOOLEAN:
-                    return cast(parser.getBooleanValue());
+                    return transformer.fromBoolean(parser.getBooleanValue());
                 case CHARACTER:
-                    return cast(parser.getText().charAt(0));
+                    return transformer.fromCharacter(parser.getText().charAt(0));
                 case SHORT:
-                    return cast(parser.getShortValue());
+                    return transformer.fromShort(parser.getShortValue());
                 case BYTE:
-                    return cast(parser.getByteValue());
+                    return transformer.fromByte(parser.getByteValue());
                 case BINARY:
-                    return cast(parser.getBinaryValue());
+                    return transformer.fromByteArray(parser.getBinaryValue());
                 case MAP:
-                    return cast(parseMap(type, parser));
+                case LAZY_MAP:
+                    return transformer.fromMap(parseMap(type, parser));
                 case ARRAY:
-                    return cast(parseArray(type, parser));
+                case LAZY_ARRAY:
+                    return transformer.fromArray(parseArray(type, parser));
                 case ENTITY:
                     return cast(parseEntity(type, parser));
             }
@@ -84,148 +91,168 @@ public class JsonModelReader {
     }
 
 
-    private static Object parseEntity(MetaType<?> type, JsonParser parser) throws Throwable {
-        JsonToken currentToken = parser.nextToken();
-        MetaClass<?> definition = type.definition();
-        MetaCreatorInstance creator = definition.creator().instantiate();
-        ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
-        do {
-            if (currentToken == END_OBJECT) {
-                return creator.create();
-            }
-            if (currentToken != FIELD_NAME) {
-                currentToken = parser.nextToken();
-                continue;
-            }
-            String field = parser.getCurrentName();
-            if (isEmpty(field)) {
-                currentToken = parser.nextToken();
-                continue;
-            }
-            MetaProperty<?> property = properties.get(field);
-            if (isNull(property)) {
-                currentToken = parser.nextToken();
-                continue;
-            }
-            switch (currentToken = parser.nextToken()) {
-                case NOT_AVAILABLE:
-                case END_OBJECT:
-                case FIELD_NAME:
-                case VALUE_EMBEDDED_OBJECT:
-                case END_ARRAY:
-                    break;
-                case START_OBJECT:
-                    if (property.type().externalKind() == MetaTypeExternalKind.ENTITY) {
-                        creator.put(property, parseEntity(property.type(), parser));
-                        break;
-                    }
-                    creator.put(property, parseMap(property.type(), parser));
-                    break;
-                case START_ARRAY:
-                    creator.put(property, parseArray(property.type(), parser));
-                    break;
-                case VALUE_STRING:
-                    creator.put(property, parser.getText());
-                    break;
-                case VALUE_NUMBER_INT:
-                    creator.put(property, parser.getLongValue());
-                    break;
-                case VALUE_NUMBER_FLOAT:
-                    creator.put(property, parser.getFloatValue());
-                    break;
-                case VALUE_TRUE:
-                    creator.put(property, true);
-                    break;
-                case VALUE_FALSE:
-                    creator.put(property, false);
-                    break;
-            }
-        } while (!parser.isClosed());
-        return creator.create();
-    }
-
-
-    private static Map<?, ?> parseMap(MetaType<?> type, JsonParser parser) throws Throwable {
-        JsonToken currentToken = parser.nextToken();
-        MetaType<?> valueType = type.parameters().get(1);
-        Map<Object, Object> map = map();
-        do {
-            if (currentToken == END_OBJECT) {
-                return map;
-            }
-            if (currentToken != FIELD_NAME) {
-                currentToken = parser.nextToken();
-                continue;
-            }
-            String field = parser.getCurrentName();
-            if (isEmpty(field)) {
-                currentToken = parser.nextToken();
-                continue;
-            }
-            switch (currentToken = parser.nextToken()) {
-                case NOT_AVAILABLE:
-                case END_OBJECT:
-                case FIELD_NAME:
-                case VALUE_EMBEDDED_OBJECT:
-                case END_ARRAY:
-                    break;
-                case START_OBJECT:
-                    if (valueType.externalKind() == MetaTypeExternalKind.ENTITY) {
-                        map.put(field, parseEntity(valueType, parser));
-                        break;
-                    }
-                    map.put(field, parseMap(valueType, parser));
-                    break;
-                case START_ARRAY:
-                    map.put(field, parseArray(valueType, parser));
-                    break;
-                case VALUE_STRING:
-                    map.put(field, parser.getText());
-                    break;
-                case VALUE_NUMBER_INT:
-                    map.put(field, parser.getLongValue());
-                    break;
-                case VALUE_NUMBER_FLOAT:
-                    map.put(field, parser.getFloatValue());
-                    break;
-                case VALUE_TRUE:
-                    map.put(field, true);
-                    break;
-                case VALUE_FALSE:
-                    map.put(field, false);
-                    break;
-            }
-        } while (!parser.isClosed());
-        return map;
-    }
-
-    private static List<?> parseArray(MetaType<?> type, JsonParser parser) throws Throwable {
-        MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
-        JsonToken currentToken = parser.nextToken();
-        switch (currentToken) {
-            case END_ARRAY:
-                return emptyList();
-            case NOT_AVAILABLE:
-            case END_OBJECT:
-            case FIELD_NAME:
-            case VALUE_EMBEDDED_OBJECT:
-            case VALUE_NULL:
-                return null;
-            case START_OBJECT:
-                return parseEntityArray(elementType, parser);
-            case START_ARRAY:
-                return parseInnerArray(elementType, parser);
-            case VALUE_STRING:
-                return parseStringArray(parser);
-            case VALUE_NUMBER_INT:
-                return parseLongArray(parser);
-            case VALUE_NUMBER_FLOAT:
-                return parseFloatArray(parser);
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                return parseBooleanArray(parser);
+    private static Object parseEntity(MetaType<?> type, JsonParser parser) {
+        if (type.externalKind() == LAZY) {
+            return type.outputTransformer().fromLazy(() -> parseEntity(type.parameters().get(0), parser));
         }
-        return null;
+        try {
+            JsonToken currentToken = parser.nextToken();
+            MetaClass<?> definition = type.definition();
+            MetaCreatorInstance creator = definition.creator().instantiate();
+            ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
+            do {
+                if (currentToken == END_OBJECT) {
+                    return creator.create();
+                }
+                if (currentToken != FIELD_NAME) {
+                    currentToken = parser.nextToken();
+                    continue;
+                }
+                String field = parser.getCurrentName();
+                if (isEmpty(field)) {
+                    currentToken = parser.nextToken();
+                    continue;
+                }
+                MetaProperty<?> property = properties.get(field);
+                if (isNull(property)) {
+                    currentToken = parser.nextToken();
+                    continue;
+                }
+                MetaType<?> propertyType = property.type();
+                MetaTransformer<?> outputTransformer = propertyType.outputTransformer();
+                switch (currentToken = parser.nextToken()) {
+                    case NOT_AVAILABLE:
+                    case END_OBJECT:
+                    case FIELD_NAME:
+                    case VALUE_EMBEDDED_OBJECT:
+                    case END_ARRAY:
+                        break;
+                    case START_OBJECT:
+                        if (propertyType.externalKind() == MetaTypeExternalKind.ENTITY) {
+                            creator.put(property, parseEntity(propertyType, parser));
+                            break;
+                        }
+                        creator.put(property, outputTransformer.fromMap(parseMap(propertyType, parser)));
+                        break;
+                    case START_ARRAY:
+                        creator.put(property, outputTransformer.fromArray(parseArray(propertyType, parser)));
+                        break;
+                    case VALUE_STRING:
+                        creator.put(property, outputTransformer.fromString(parser.getText()));
+                        break;
+                    case VALUE_NUMBER_INT:
+                        creator.put(property, outputTransformer.fromLong(parser.getLongValue()));
+                        break;
+                    case VALUE_NUMBER_FLOAT:
+                        creator.put(property, outputTransformer.fromFloat(parser.getFloatValue()));
+                        break;
+                    case VALUE_TRUE:
+                    case VALUE_FALSE:
+                        creator.put(property, outputTransformer.fromBoolean(parser.getBooleanValue()));
+                        break;
+                }
+            } while (!parser.isClosed());
+            return creator.create();
+        } catch (Throwable throwable) {
+            throw new JsonException(throwable);
+        }
+    }
+
+
+    private static Map<?, ?> parseMap(MetaType<?> type, JsonParser parser) {
+        if (type.externalKind() == LAZY) {
+            return cast(type.outputTransformer().fromLazy(() -> parseMap(type.parameters().get(0), parser)));
+        }
+        try {
+            JsonToken currentToken = parser.nextToken();
+            MetaType<?> valueType = type.parameters().get(1);
+            MetaTransformer<?> valueTransformer = valueType.outputTransformer();
+            Map<Object, Object> map = map();
+            do {
+                if (currentToken == END_OBJECT) {
+                    return map;
+                }
+                if (currentToken != FIELD_NAME) {
+                    currentToken = parser.nextToken();
+                    continue;
+                }
+                String field = parser.getCurrentName();
+                if (isEmpty(field)) {
+                    currentToken = parser.nextToken();
+                    continue;
+                }
+                switch (currentToken = parser.nextToken()) {
+                    case NOT_AVAILABLE:
+                    case END_OBJECT:
+                    case FIELD_NAME:
+                    case VALUE_EMBEDDED_OBJECT:
+                    case END_ARRAY:
+                        break;
+                    case START_OBJECT:
+                        if (valueType.externalKind() == MetaTypeExternalKind.ENTITY) {
+                            map.put(field, parseEntity(valueType, parser));
+                            break;
+                        }
+                        map.put(field, valueTransformer.fromMap(parseMap(valueType, parser)));
+                        break;
+                    case START_ARRAY:
+                        map.put(field, valueTransformer.fromArray(parseArray(valueType, parser)));
+                        break;
+                    case VALUE_STRING:
+                        map.put(field, valueTransformer.fromString(parser.getText()));
+                        break;
+                    case VALUE_NUMBER_INT:
+                        map.put(field, valueTransformer.fromLong(parser.getLongValue()));
+                        break;
+                    case VALUE_NUMBER_FLOAT:
+                        map.put(field, valueTransformer.fromFloat(parser.getFloatValue()));
+                        break;
+                    case VALUE_TRUE:
+                    case VALUE_FALSE:
+                        map.put(field, valueTransformer.fromBoolean(parser.getBooleanValue()));
+                        break;
+                }
+            } while (!parser.isClosed());
+            return map;
+        } catch (Throwable throwable) {
+            throw new JsonException(throwable);
+        }
+    }
+
+    private static List<?> parseArray(MetaType<?> type, JsonParser parser) {
+        if (type.externalKind() == LAZY) {
+            return cast(type.outputTransformer().fromLazy(() -> parseArray(type.parameters().get(0), parser)));
+        }
+        try {
+            MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
+            JsonToken currentToken = parser.nextToken();
+            switch (currentToken) {
+                case END_ARRAY:
+                    return emptyList();
+                case NOT_AVAILABLE:
+                case END_OBJECT:
+                case FIELD_NAME:
+                case VALUE_EMBEDDED_OBJECT:
+                case VALUE_NULL:
+                    return null;
+                case START_OBJECT:
+                    return parseEntityArray(elementType, parser);
+                case START_ARRAY:
+                    return parseInnerArray(elementType, parser);
+                case VALUE_STRING:
+                    return parseStringArray(parser);
+                case VALUE_NUMBER_INT:
+                    return parseLongArray(parser);
+                case VALUE_NUMBER_FLOAT:
+                    return parseFloatArray(parser);
+                case VALUE_TRUE:
+                case VALUE_FALSE:
+                    return parseBooleanArray(parser);
+            }
+            return emptyList();
+        } catch (Throwable throwable) {
+            throw new JsonException(throwable);
+        }
     }
 
 
