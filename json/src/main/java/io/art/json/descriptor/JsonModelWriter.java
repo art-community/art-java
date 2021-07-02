@@ -40,16 +40,21 @@ public class JsonModelWriter {
 
     public void write(TypedObject object, OutputStream outputStream, Charset charset) {
         if (isNull(object)) return;
-        MetaTransformer<?> transformer = object.getType().outputTransformer();
+        MetaType<?> type = object.getType();
+        MetaTransformer<?> transformer = type.outputTransformer();
         try (JsonGenerator generator = jsonFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
-            switch (object.getType().externalKind()) {
+            switch (type.externalKind()) {
                 case ENTITY:
-                    writeEntity(generator, object);
+                    writeEntity(generator, type, object);
                     return;
                 case MAP:
+                    if (type.parameters().get(0).externalKind() != STRING) {
+                        writeMap(generator, type.parameters().get(1), cast(object));
+                        break;
+                    }
                     break;
                 case ARRAY:
-                    writeArray(generator, object);
+                    writeArray(generator, type, object);
                     return;
                 case BINARY:
                     generator.writeBinary(transformer.toByteArray(cast(object)));
@@ -86,37 +91,36 @@ public class JsonModelWriter {
         }
     }
 
-    private static void writeEntity(JsonGenerator generator, TypedObject object) throws Throwable {
-        if (isNull(object)) return;
+    private static void writeEntity(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+        if (isNull(value)) return;
         generator.writeStartObject();
-        writeFields(generator, object);
+        writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeArray(JsonGenerator generator, TypedObject object) throws Throwable {
-        if (isNull(object)) return;
+    private static void writeArray(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+        if (isNull(value)) return;
         generator.writeStartArray();
-        writeFields(generator, object);
+        writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeEntity(JsonGenerator generator, String name, TypedObject object) throws Throwable {
-        if (isNull(object)) return;
+    private static void writeEntity(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
+        if (isNull(value)) return;
         generator.writeObjectFieldStart(name);
-        writeFields(generator, object);
+        writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeFields(JsonGenerator generator, TypedObject object) throws Throwable {
-        MetaType<?> type = object.getType();
-        MetaProviderInstance provider = type.definition().provider().instantiate(object.getObject());
+    private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+        MetaProviderInstance provider = type.definition().provider().instantiate(value);
         for (MetaProperty<?> property : provider.properties().values()) {
-            Object value = provider.getValue(property);
-            writeField(generator, property.name(), property.type(), value);
+            Object field = provider.getValue(property);
+            writeField(generator, property.name(), property.type(), field);
         }
     }
 
-    private static void writeFields(JsonGenerator generator, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+    private static void writeMap(JsonGenerator generator, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -163,13 +167,13 @@ public class JsonModelWriter {
                 generator.writeBinaryField(name, transformer.toByteArray(cast(value)));
                 break;
             case ENTITY:
-                writeEntity(generator, name, typed(type, value));
+                writeEntity(generator, name, type, value);
                 break;
             case MAP:
                 if (type.parameters().get(0).externalKind() != STRING) {
                     break;
                 }
-                writeFields(generator, type.parameters().get(1), cast(value));
+                writeMap(generator, type.parameters().get(1), cast(value));
                 break;
         }
     }
@@ -183,16 +187,16 @@ public class JsonModelWriter {
             if (isNull(element)) continue;
             switch (elementType.externalKind()) {
                 case ARRAY:
-                    writeArray(generator, typed(elementType, transformer.toArray(cast(element))));
+                    writeArray(generator, elementType, transformer.toArray(cast(element)));
                     continue;
                 case MAP:
                     if (elementType.parameters().get(0).externalKind() != STRING) {
                         continue;
                     }
-                    writeFields(generator, elementType.parameters().get(1), cast(element));
+                    writeMap(generator, elementType.parameters().get(1), cast(element));
                     continue;
                 case ENTITY:
-                    writeFields(generator, typed(elementType, element));
+                    writeFields(generator, elementType, element);
                     continue;
                 case BINARY:
                     generator.writeBinary(transformer.toByteArray(cast(element)));
