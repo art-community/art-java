@@ -165,6 +165,9 @@ public class MetaCreatorTemplate {
         }
 
         public Object create() throws Throwable {
+            if (filledFields == 0) {
+                return noPropertiesConstructor.invoke();
+            }
             if (filledFields <= localPropertiesConstructor.parameters().size()) {
                 return localPropertiesConstructor.invoke(values);
             }
