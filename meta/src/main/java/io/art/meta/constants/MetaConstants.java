@@ -81,5 +81,20 @@ public interface MetaConstants {
 
     interface Errors {
         String TRANSFORMATION_NOT_AVAILABLE = "Transformation is not available for value: {0} by transformer: {1}";
+        String ARRAY_WITH_UNKNOWN_TYPE = "{0} is array with unknown component type";
+        String COLLECTION_WITHOUT_PARAMETERS = "{0} is collection without parameters";
+        String COLLECTION_WITH_UNKNOWN_TYPE = "{0} is collection with unknown component type";
+        String MAP_WITHOUT_PARAMETERS = "{0} is map without parameters";
+        String MAP_WITH_UNKNOWN_KEY_TYPE = "{0} is map with unknown key parameter";
+        String MAP_WITH_UNKNOWN_VALUE_TYPE = "{0} is map with unknown value parameter";
+        String PUBLISHER_WITHOUT_PARAMETERS = "{0} is Publisher without parameters";
+        String PUBLISHER_WITH_UNKNOWN_PARAMETER = "{0} is Publisher with unknown parameter";
+        String LAZY_WIHOUT_PARAMETERS = "{0} is Lazy without parameters";
+        String LAZY_WITH_UNKNOWN_PARAMETER = "{0} is Lazy with unknown parameter";
+        String OPTIONAL_WITHOUT_PARAMETERS = "{0} is Optional without parameters";
+        String OPTION_WITH_UNKNOWN_PARAMETER = "{0} is Optional with unknown parameter";
+        String SUPPLIER_WITHOUT_PARAMETERS = "{0} is Supplier without parameters";
+        String SUPPLIER_WITH_UNKNOWN_PARAMETER = "{0} is Supplier with unknown parameter";
+        String UNKOWN_TYPE = "{0} is unkown type";
     }
 }

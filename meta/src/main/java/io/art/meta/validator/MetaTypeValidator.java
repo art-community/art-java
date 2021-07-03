@@ -21,7 +21,7 @@ package io.art.meta.validator;
 import io.art.meta.model.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.constants.StringConstants.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.text.MessageFormat.*;
 
@@ -59,7 +59,7 @@ public class MetaTypeValidator {
                 break;
             case ARRAY:
                 if (type.arrayComponentType().internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is array with unknown component type", type));
+                    return new ValidationResult(false, format(ARRAY_WITH_UNKNOWN_TYPE, type));
                 }
                 break;
             case COLLECTION:
@@ -72,59 +72,59 @@ public class MetaTypeValidator {
             case DEQUEUE:
             case STREAM:
                 if (type.parameters().isEmpty()) {
-                    return new ValidationResult(false, format("{0} is collection without parameters", type));
+                    return new ValidationResult(false, format(COLLECTION_WITHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is collection with unknown component type", type));
+                    return new ValidationResult(false, format(COLLECTION_WITH_UNKNOWN_TYPE, type));
                 }
                 break;
             case MAP:
             case IMMUTABLE_MAP:
                 if (type.parameters().size() != 2) {
-                    return new ValidationResult(false, format("{0} is map without parameters", type));
+                    return new ValidationResult(false, format(MAP_WITHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is map with unknown key parameter", type));
+                    return new ValidationResult(false, format(MAP_WITH_UNKNOWN_KEY_TYPE, type));
                 }
                 if (type.parameters().get(1).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is map with unknown value parameter", type));
+                    return new ValidationResult(false, format(MAP_WITH_UNKNOWN_VALUE_TYPE, type));
                 }
                 break;
             case FLUX:
             case MONO:
                 if (type.parameters().isEmpty()) {
-                    return new ValidationResult(false, format("{0} is Mono without parameters", type));
+                    return new ValidationResult(false, format(PUBLISHER_WITHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is Mono with unknown parameter", type));
+                    return new ValidationResult(false, format(PUBLISHER_WITH_UNKNOWN_PARAMETER, type));
                 }
                 break;
             case LAZY:
                 if (type.parameters().isEmpty()) {
-                    return new ValidationResult(false, format("{0} is Lazy without parameters", type));
+                    return new ValidationResult(false, format(LAZY_WIHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is Lazy with unknown parameter", type));
+                    return new ValidationResult(false, format(LAZY_WITH_UNKNOWN_PARAMETER, type));
                 }
                 break;
             case OPTIONAL:
                 if (type.parameters().isEmpty()) {
-                    return new ValidationResult(false, format("{0} is Optional without parameters", type));
+                    return new ValidationResult(false, format(OPTIONAL_WITHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is Optional with unknown parameter", type));
+                    return new ValidationResult(false, format(OPTION_WITH_UNKNOWN_PARAMETER, type));
                 }
                 break;
             case SUPPLIER:
                 if (type.parameters().isEmpty()) {
-                    return new ValidationResult(false, format("{0} is Supplier without parameters", type));
+                    return new ValidationResult(false, format(SUPPLIER_WITHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format("{0} is Supplier with unknown parameter", type));
+                    return new ValidationResult(false, format(SUPPLIER_WITH_UNKNOWN_PARAMETER, type));
                 }
                 break;
         }
-        return new ValidationResult(true, EMPTY_STRING);
+        return new ValidationResult(true, format(UNKOWN_TYPE, type));
     }
 
     @Getter
