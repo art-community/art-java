@@ -88,7 +88,7 @@ public class MessagePackModelReader {
             case BINARY:
                 return transformer.fromByteArray(value.asBinaryValue().asByteArray());
             case ARRAY:
-                if (type.externalKind() != ARRAY) {
+                if (type.externalKind() != ARRAY && type.externalKind() != LAZY_ARRAY) {
                     throw new MessagePackException(format(MESSAGE_PACK_ARRAY_EXCEPTION, value, type));
                 }
                 return transformer.fromLazyArray(readArray(orElse(type.arrayComponentType(), () -> type.parameters().get(0)), value.asArrayValue()));

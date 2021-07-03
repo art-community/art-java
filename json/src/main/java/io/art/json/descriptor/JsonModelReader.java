@@ -131,13 +131,13 @@ public class JsonModelReader {
                             creator.put(property, parseEntity(propertyType, parser));
                             break;
                         }
-                        if (propertyType.externalKind() != MAP) {
+                        if (propertyType.externalKind() != MAP && propertyType.externalKind() != LAZY_MAP) {
                             throw new JsonException(MessageFormat.format(JSON_OBJECT_EXCEPTION, field, propertyType));
                         }
                         creator.put(property, inputTransformer.fromMap(parseMap(propertyType, parser)));
                         break;
                     case START_ARRAY:
-                        if (propertyType.externalKind() != ARRAY) {
+                        if (propertyType.externalKind() != ARRAY && propertyType.externalKind() != LAZY_ARRAY) {
                             throw new JsonException(MessageFormat.format(JSON_ARRAY_EXCEPTION, field, propertyType));
                         }
                         creator.put(property, inputTransformer.fromArray(parseArray(propertyType, parser)));
@@ -198,13 +198,13 @@ public class JsonModelReader {
                             map.put(field, parseEntity(valueType, parser));
                             break;
                         }
-                        if (valueType.externalKind() != MAP) {
+                        if (valueType.externalKind() != MAP && valueType.externalKind() != LAZY_MAP) {
                             throw new JsonException(MessageFormat.format(JSON_OBJECT_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromMap(parseMap(valueType, parser)));
                         break;
                     case START_ARRAY:
-                        if (valueType.externalKind() != ARRAY) {
+                        if (valueType.externalKind() != ARRAY && valueType.externalKind() != LAZY_ARRAY) {
                             throw new JsonException(MessageFormat.format(JSON_ARRAY_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromArray(parseArray(valueType, parser)));
