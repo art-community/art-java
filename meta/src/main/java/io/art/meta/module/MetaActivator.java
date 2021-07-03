@@ -8,7 +8,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class MetaActivator {
-    public static ModuleActivator meta(Supplier<MetaLibrary> factory) {
+    public static ModuleActivator meta(Supplier<? extends MetaLibrary> factory) {
         factory.get().compute();
         return module(MetaModule.class, MetaModule::new);
     }

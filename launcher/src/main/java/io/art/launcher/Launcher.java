@@ -29,9 +29,9 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.logging.module.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
-import static io.art.core.constants.ContextConstants.DEFAULT_MAIN_MODULE_ID;
+import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
@@ -78,6 +78,10 @@ public class Launcher {
                     .loadSources()
                     .configure(configurator -> configurator.initialize(configuratorActivatorInitializer.get().initialize(configuratorModule)));
             ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
+
+            if (nonNull(activator.metaActivator())) {
+                builder.add(activator.metaActivator().getFactory().get());
+            }
 
             if (nonNull(activator.loggingActivator())) {
                 LoggingModule loggingModule = cast(activator.loggingActivator().getFactory().get());

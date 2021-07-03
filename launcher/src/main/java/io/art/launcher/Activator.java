@@ -28,6 +28,7 @@ import io.art.json.module.*;
 import io.art.logging.module.*;
 import io.art.message.pack.module.*;
 import io.art.meta.model.*;
+import io.art.meta.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
@@ -51,6 +52,9 @@ public class Activator {
 
     @Getter
     private ModuleActivator configuratorActivator;
+
+    @Getter
+    private ModuleActivator metaActivator;
 
     @Getter
     private ModuleActivator loggingActivator;
@@ -129,7 +133,7 @@ public class Activator {
 
 
     public static Activator activator(String[] arguments, Supplier<? extends MetaLibrary> metaFactory) {
-        metaFactory.get().compute();
+        Activator.activator.metaActivator = MetaActivator.meta(metaFactory);
         Activator.activator.configuratorActivator = ConfiguratorActivator.configurator();
         return Activator.activator.arguments(arguments);
     }
