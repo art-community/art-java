@@ -18,6 +18,7 @@
 
 dependencies {
     implementation(project(":configurator"))
+    implementation(project(":meta"))
     implementation(project(":model"))
     implementation(project(":core"))
     implementation(project(":logging"))
@@ -30,7 +31,6 @@ dependencies {
     implementation(project(":server"))
     implementation(project(":communicator"))
     implementation(project(":rsocket"))
-    implementation(project(":http"))
     implementation(project(":http"))
     implementation(project(":tarantool"))
     implementation(project(":storage"))

@@ -19,7 +19,6 @@
 package io.art.launcher;
 
 import io.art.communicator.module.*;
-import io.art.configurator.module.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.module.*;
@@ -27,6 +26,7 @@ import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.module.*;
 import io.art.message.pack.module.*;
+import io.art.meta.model.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
@@ -39,7 +39,6 @@ import lombok.experimental.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.launcher.LauncherConstants.*;
-import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -87,24 +86,6 @@ public class Activator {
         return immutableMapOf(activators);
     }
 
-    public Activator configurator() {
-        return configurator(identity());
-    }
-
-    public Activator configurator(UnaryOperator<ConfiguratorInitializer> initializer) {
-        configuratorActivator = ConfiguratorActivator.configurator(initializer);
-        return this;
-    }
-
-    public Activator logging() {
-        return logging(identity());
-    }
-
-    public Activator logging(UnaryOperator<LoggingInitializer> initializer) {
-        loggingActivator = LoggingActivator.logging(initializer);
-        return this;
-    }
-
     public Activator module(ModuleActivator activator) {
         if (activator.getId().equals(CONFIGURATOR_MODULE_ID)) {
             configuratorActivator = activator;
@@ -146,8 +127,17 @@ public class Activator {
     }
 
 
+    public static Activator activator(String[] arguments, Supplier<MetaLibrary> metaFactory) {
+        metaFactory.get().compute();
+        return Activator.activator.arguments(arguments);
+    }
+
+    public static Activator activator(Supplier<MetaLibrary> metaFactory) {
+        return activator(EMPTY_STRINGS, metaFactory);
+    }
+
     public static Activator activator(String[] arguments) {
-        return activator.arguments(arguments).configurator();
+        return Activator.activator.arguments(arguments);
     }
 
     public static Activator activator() {
