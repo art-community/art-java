@@ -38,8 +38,6 @@ import java.util.*;
 public class JsonModelWriter {
     private final JsonFactory jsonFactory;
 
-    // TODO: Add type validation
-
     public void write(TypedObject object, OutputStream outputStream, Charset charset) {
         if (isNull(object)) return;
         MetaType<?> type = object.getType();

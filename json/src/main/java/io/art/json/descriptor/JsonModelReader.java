@@ -22,7 +22,6 @@ import com.fasterxml.jackson.core.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.json.exception.*;
-import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
 import io.art.meta.transformer.*;
@@ -33,18 +32,18 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.json.constants.JsonModuleConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.io.*;
+import java.text.*;
 import java.util.*;
 
 
 @AllArgsConstructor
 public class JsonModelReader {
     private final JsonFactory jsonFactory;
-
-    // TODO: Add type validation
 
     public <T> T read(MetaType<T> type, InputStream json) {
         if (isEmpty(json)) return null;
@@ -93,7 +92,7 @@ public class JsonModelReader {
 
     private static Object parseEntity(MetaType<?> type, JsonParser parser) {
         if (type.externalKind() == LAZY) {
-            return type.outputTransformer().fromLazy(() -> parseEntity(type.parameters().get(0), parser));
+            return type.inputTransformer().fromLazy(() -> parseEntity(type.parameters().get(0), parser));
         }
         try {
             JsonToken currentToken = parser.nextToken();
@@ -119,7 +118,7 @@ public class JsonModelReader {
                     continue;
                 }
                 MetaType<?> propertyType = property.type();
-                MetaTransformer<?> outputTransformer = propertyType.outputTransformer();
+                MetaTransformer<?> inputTransformer = propertyType.inputTransformer();
                 switch (currentToken = parser.nextToken()) {
                     case NOT_AVAILABLE:
                     case END_OBJECT:
@@ -128,27 +127,33 @@ public class JsonModelReader {
                     case END_ARRAY:
                         break;
                     case START_OBJECT:
-                        if (propertyType.externalKind() == MetaTypeExternalKind.ENTITY) {
+                        if (propertyType.externalKind() == ENTITY) {
                             creator.put(property, parseEntity(propertyType, parser));
                             break;
                         }
-                        creator.put(property, outputTransformer.fromMap(parseMap(propertyType, parser)));
+                        if (propertyType.externalKind() != MAP) {
+                            throw new JsonException(MessageFormat.format(JSON_OBJECT_EXCEPTION, field, propertyType));
+                        }
+                        creator.put(property, inputTransformer.fromMap(parseMap(propertyType, parser)));
                         break;
                     case START_ARRAY:
-                        creator.put(property, outputTransformer.fromArray(parseArray(propertyType, parser)));
+                        if (propertyType.externalKind() != ARRAY) {
+                            throw new JsonException(MessageFormat.format(JSON_ARRAY_EXCEPTION, field, propertyType));
+                        }
+                        creator.put(property, inputTransformer.fromArray(parseArray(propertyType, parser)));
                         break;
                     case VALUE_STRING:
-                        creator.put(property, outputTransformer.fromString(parser.getText()));
+                        creator.put(property, inputTransformer.fromString(parser.getText()));
                         break;
                     case VALUE_NUMBER_INT:
-                        creator.put(property, outputTransformer.fromLong(parser.getLongValue()));
+                        creator.put(property, inputTransformer.fromLong(parser.getLongValue()));
                         break;
                     case VALUE_NUMBER_FLOAT:
-                        creator.put(property, outputTransformer.fromFloat(parser.getFloatValue()));
+                        creator.put(property, inputTransformer.fromFloat(parser.getFloatValue()));
                         break;
                     case VALUE_TRUE:
                     case VALUE_FALSE:
-                        creator.put(property, outputTransformer.fromBoolean(parser.getBooleanValue()));
+                        creator.put(property, inputTransformer.fromBoolean(parser.getBooleanValue()));
                         break;
                 }
             } while (!parser.isClosed());
@@ -161,12 +166,12 @@ public class JsonModelReader {
 
     private static Map<?, ?> parseMap(MetaType<?> type, JsonParser parser) {
         if (type.externalKind() == LAZY) {
-            return cast(type.outputTransformer().fromLazy(() -> parseMap(type.parameters().get(0), parser)));
+            return cast(type.inputTransformer().fromLazy(() -> parseMap(type.parameters().get(0), parser)));
         }
         try {
             JsonToken currentToken = parser.nextToken();
             MetaType<?> valueType = type.parameters().get(1);
-            MetaTransformer<?> valueTransformer = valueType.outputTransformer();
+            MetaTransformer<?> valueTransformer = valueType.inputTransformer();
             Map<Object, Object> map = map();
             do {
                 if (currentToken == END_OBJECT) {
@@ -189,13 +194,19 @@ public class JsonModelReader {
                     case END_ARRAY:
                         break;
                     case START_OBJECT:
-                        if (valueType.externalKind() == MetaTypeExternalKind.ENTITY) {
+                        if (valueType.externalKind() == ENTITY) {
                             map.put(field, parseEntity(valueType, parser));
                             break;
+                        }
+                        if (valueType.externalKind() != MAP) {
+                            throw new JsonException(MessageFormat.format(JSON_OBJECT_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromMap(parseMap(valueType, parser)));
                         break;
                     case START_ARRAY:
+                        if (valueType.externalKind() != ARRAY) {
+                            throw new JsonException(MessageFormat.format(JSON_ARRAY_EXCEPTION, field, valueType));
+                        }
                         map.put(field, valueTransformer.fromArray(parseArray(valueType, parser)));
                         break;
                     case VALUE_STRING:
@@ -221,14 +232,13 @@ public class JsonModelReader {
 
     private static List<?> parseArray(MetaType<?> type, JsonParser parser) {
         if (type.externalKind() == LAZY) {
-            return cast(type.outputTransformer().fromLazy(() -> parseArray(type.parameters().get(0), parser)));
+            return cast(type.inputTransformer().fromLazy(() -> parseArray(type.parameters().get(0), parser)));
         }
         try {
             MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
             JsonToken currentToken = parser.nextToken();
             switch (currentToken) {
                 case END_ARRAY:
-                    return emptyList();
                 case NOT_AVAILABLE:
                 case END_OBJECT:
                 case FIELD_NAME:

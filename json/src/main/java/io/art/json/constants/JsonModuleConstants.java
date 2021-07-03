@@ -19,4 +19,8 @@
 package io.art.json.constants;
 
 public interface JsonModuleConstants {
+    interface Errors {
+        String JSON_ARRAY_EXCEPTION = "Json at field {0} has array, but type {1} is not compatible with it";
+        String JSON_OBJECT_EXCEPTION = "Json at field {0} has object, but type {1} is not compatible with it";
+    }
 }
