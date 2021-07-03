@@ -29,6 +29,11 @@ tasks.withType(type = Wrapper::class) {
     gradleVersion = "7.0"
 }
 
+generator {
+    fileLogging()
+    useLocalJar(file("G:\\Development\\Projects\\art\\art-environment\\local\\projects\\art-generator\\build\\executable\\art-generator.jar").toPath())
+}
+
 allprojects {
     repositories {
         mavenCentral()

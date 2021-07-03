@@ -16,7 +16,19 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":value"))
+}
+
+generator {
+    module("Test")
+    jvm()
+    sourcesPattern {
+        exclude("src/main")
+    }
 }
