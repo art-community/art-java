@@ -43,7 +43,7 @@ public abstract class MetaPackage {
     }
 
     protected <T extends MetaClass<?>> T register(T metaClass) {
-        classes.put(metaClass.type().type(), metaClass);
+        classes.put(metaClass.definition().type(), metaClass);
         return metaClass;
     }
 

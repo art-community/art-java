@@ -19,6 +19,7 @@
 package io.art.launcher;
 
 import io.art.communicator.module.*;
+import io.art.configurator.module.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.module.*;
@@ -127,16 +128,18 @@ public class Activator {
     }
 
 
-    public static Activator activator(String[] arguments, Supplier<MetaLibrary> metaFactory) {
+    public static Activator activator(String[] arguments, Supplier<? extends MetaLibrary> metaFactory) {
         metaFactory.get().compute();
+        Activator.activator.configuratorActivator = ConfiguratorActivator.configurator();
         return Activator.activator.arguments(arguments);
     }
 
-    public static Activator activator(Supplier<MetaLibrary> metaFactory) {
+    public static Activator activator(Supplier<? extends MetaLibrary> metaFactory) {
         return activator(EMPTY_STRINGS, metaFactory);
     }
 
     public static Activator activator(String[] arguments) {
+        Activator.activator.configuratorActivator = ConfiguratorActivator.configurator();
         return Activator.activator.arguments(arguments);
     }
 

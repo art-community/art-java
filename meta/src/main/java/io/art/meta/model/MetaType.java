@@ -70,8 +70,10 @@ public class MetaType<T> {
     @EqualsAndHashCode.Exclude
     private MetaTransformer<T> outputTransformer;
 
+    @ToString.Exclude
     @Getter(lazy = true)
     @Accessors(fluent = true)
+    @EqualsAndHashCode.Exclude
     private final MetaClass<?> declaration = classes().get(type);
 
     protected MetaType<T> beginComputation() {

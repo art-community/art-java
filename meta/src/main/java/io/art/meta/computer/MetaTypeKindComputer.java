@@ -23,10 +23,10 @@ import io.art.core.exception.*;
 import io.art.core.property.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
+import io.art.meta.registry.*;
 import io.netty.buffer.*;
 import reactor.core.publisher.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
-import static io.art.meta.module.MetaModule.*;
 import java.io.*;
 import java.nio.*;
 import java.time.*;
@@ -37,7 +37,7 @@ import java.util.stream.*;
 public class MetaTypeKindComputer {
     public static MetaTypeInternalKind computeInternalKind(MetaType<?> metaType) {
         Class<?> type = metaType.type();
-        if (classes().containsKey(type)) return ENTITY;
+        if (MetaClassMutableRegistry.get().containsKey(type)) return ENTITY;
         if (type.isEnum()) return ENUM;
         if (long[].class.equals(type)) return LONG_ARRAY;
         if (int[].class.equals(type)) return INTEGER_ARRAY;
