@@ -24,18 +24,14 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
-public class MetaClassRegistry {
+public class MetaClassMutableRegistry {
     private final static Map<Class<?>, MetaClass<?>> META_CLASS_REGISTRY = map();
 
-    public static ImmutableMap<Class<?>, MetaClass<?>> classes() {
+    public static ImmutableMap<Class<?>, MetaClass<?>> get() {
         return immutableMapOf(META_CLASS_REGISTRY);
     }
 
-    public static <T> MetaClass<T> metaOf(Class<T> type) {
-        return cast(META_CLASS_REGISTRY.get(type));
-    }
-
     public static void register(MetaClass<?> metaClass) {
-        META_CLASS_REGISTRY.put(metaClass.type().type(), metaClass);
+        META_CLASS_REGISTRY.put(metaClass.definition().type(), metaClass);
     }
 }

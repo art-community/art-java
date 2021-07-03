@@ -43,7 +43,7 @@ import java.util.*;
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
-    private final MetaType<T> type;
+    private final MetaType<T> definition;
     private final Set<MetaConstructor<T>> constructors;
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
@@ -51,13 +51,13 @@ public abstract class MetaClass<T> {
     private MetaProviderTemplate provider;
     private MetaCreatorTemplate creator;
 
-    protected MetaClass(MetaType<T> type) {
-        this.type = type;
+    protected MetaClass(MetaType<T> definition) {
+        this.definition = definition;
         constructors = set();
         fields = map();
         methods = set();
         classes = map();
-        MetaClassRegistry.register(this);
+        MetaClassMutableRegistry.register(this);
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -73,12 +73,12 @@ public abstract class MetaClass<T> {
     }
 
     protected <C extends MetaClass<?>> C register(C metaClass) {
-        classes.put(metaClass.type().type(), metaClass);
+        classes.put(metaClass.definition().type(), metaClass);
         return metaClass;
     }
 
     protected void beginComputation() {
-        type.beginComputation();
+        definition.beginComputation();
 
         for (MetaField<?> field : fields.values()) {
             field.type().beginComputation();
@@ -199,7 +199,7 @@ public abstract class MetaClass<T> {
     }
 
     protected void completeComputation() {
-        type.completeComputation();
+        definition.completeComputation();
 
         for (MetaField<?> field : fields.values()) {
             field.type().completeComputation();
@@ -240,8 +240,8 @@ public abstract class MetaClass<T> {
         return creator;
     }
 
-    public MetaType<T> type() {
-        return type;
+    public MetaType<T> definition() {
+        return definition;
     }
 
     public <F> MetaField<F> field(String name) {

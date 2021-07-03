@@ -23,6 +23,7 @@ import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -37,8 +38,12 @@ public class MetaProviderTemplate {
         return new MetaProviderInstance(model);
     }
 
-    public ImmutableMap<String, MetaProperty<?>> properties() {
+    public ImmutableMap<String, MetaProperty<?>> propertyMap() {
         return immutableMapOf(propertyMap);
+    }
+
+    public ImmutableArray<MetaProperty<?>> propertyArray() {
+        return immutableArrayOf(propertyArray);
     }
 
     @AllArgsConstructor(access = PRIVATE)
@@ -114,7 +119,7 @@ public class MetaProviderTemplate {
         }
 
         public ImmutableMap<String, MetaProperty<?>> properties() {
-            return MetaProviderTemplate.this.properties();
+            return MetaProviderTemplate.this.propertyMap();
         }
     }
 }

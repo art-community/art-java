@@ -110,7 +110,7 @@ public class MessagePackModelWriter {
 
     private org.msgpack.value.MapValue writeEntity(MetaType<?> type, Object value) throws Throwable {
         MapBuilder mapBuilder = newMapBuilder();
-        MetaProviderInstance provider = type.definition().provider().instantiate(value);
+        MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         ImmutableMap<String, MetaProperty<?>> properties = provider.properties();
         for (MetaProperty<?> property : properties.values()) {
             mapBuilder.put(newString(property.name()), write(property.type(), provider.getValue(property)));

@@ -21,6 +21,7 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import lombok.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
 
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
@@ -31,11 +32,11 @@ public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
     }
 
     public Object invoke() throws Throwable {
-        throw new NotImplementedException("invoke()");
+        throw new NotImplementedException(INVOKE_WITHOUT_ARGUMENTS);
     }
 
     public Object invoke(Object argument) throws Throwable {
-        throw new NotImplementedException("invoke(argument)");
+        throw new NotImplementedException(INVOKE_ARGUMENT);
     }
 
     public abstract Object invoke(Object[] arguments) throws Throwable;

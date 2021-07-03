@@ -97,7 +97,7 @@ public class JsonModelReader {
         }
         try {
             JsonToken currentToken = parser.nextToken();
-            MetaClass<?> definition = type.definition();
+            MetaClass<?> definition = type.declaration();
             MetaCreatorInstance creator = definition.creator().instantiate();
             ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
             do {

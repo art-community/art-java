@@ -24,6 +24,7 @@ import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
 import java.util.*;
 
 @ToString
@@ -56,11 +57,11 @@ public abstract class MetaConstructor<T> {
     }
 
     public T invoke() throws Throwable {
-        throw new NotImplementedException("invoke()");
+        throw new NotImplementedException(INVOKE_WITHOUT_ARGUMENTS);
     }
 
     public T invoke(Object argument) throws Throwable {
-        throw new NotImplementedException("invoke(argument)");
+        throw new NotImplementedException(INVOKE_ARGUMENT);
     }
 
     public abstract T invoke(Object[] arguments) throws Throwable;

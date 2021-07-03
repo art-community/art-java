@@ -115,7 +115,7 @@ public class YamlModelWriter {
     }
 
     private static void writeFields(YAMLGenerator generator, MetaType<?> type, Object value) throws Throwable {
-        MetaProviderInstance provider = type.definition().provider().instantiate(value);
+        MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         for (MetaProperty<?> property : provider.properties().values()) {
             Object field = provider.getValue(property);
             writeField(generator, property.name(), property.type(), field);

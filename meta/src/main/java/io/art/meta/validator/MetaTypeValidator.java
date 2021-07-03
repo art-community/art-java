@@ -101,7 +101,7 @@ public class MetaTypeValidator {
                 break;
             case LAZY:
                 if (type.parameters().isEmpty()) {
-                    return new ValidationResult(false, format(LAZY_WIHOUT_PARAMETERS, type));
+                    return new ValidationResult(false, format(LAZY_WITHOUT_PARAMETERS, type));
                 }
                 if (type.parameters().get(0).internalKind() == UNKNOWN) {
                     return new ValidationResult(false, format(LAZY_WITH_UNKNOWN_PARAMETER, type));
@@ -124,7 +124,7 @@ public class MetaTypeValidator {
                 }
                 break;
         }
-        return new ValidationResult(true, format(UNKOWN_TYPE, type));
+        return new ValidationResult(true, format(UNKNOWN_TYPE, type));
     }
 
     @Getter

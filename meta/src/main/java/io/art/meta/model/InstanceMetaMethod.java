@@ -21,6 +21,8 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import lombok.*;
+import static io.art.meta.constants.MetaConstants.Errors.INVOKE_INSTANCE;
+import static io.art.meta.constants.MetaConstants.Errors.INVOKE_INSTANCE_ARGUMENT;
 import java.util.*;
 
 @ForGenerator
@@ -31,11 +33,11 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
     }
 
     public Object invoke(I instance) throws Throwable {
-        throw new NotImplementedException("invoke(instance)");
+        throw new NotImplementedException(INVOKE_INSTANCE);
     }
 
     public Object invoke(I instance, Object argument) throws Throwable {
-        throw new NotImplementedException("invoke(instance, argument)");
+        throw new NotImplementedException(INVOKE_INSTANCE_ARGUMENT);
     }
 
     public abstract Object invoke(I instance, Object[] arguments) throws Throwable;

@@ -26,6 +26,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.constants.MetaConstants.Errors.TYPE_COMPUTATION_FAILED;
 import static io.art.meta.state.MetaComputationState.*;
 import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Arrays.*;
@@ -35,13 +36,13 @@ import java.util.concurrent.atomic.*;
 @ToString
 @ForGenerator
 @EqualsAndHashCode
-public abstract class MetaModule {
+public abstract class MetaLibrary {
     private final Map<String, MetaPackage> packages = map();
     private final Set<MetaClass<?>> rootClasses = set();
-    private final List<MetaModule> dependencies;
+    private final List<MetaLibrary> dependencies;
     private final AtomicBoolean computed = new AtomicBoolean(false);
 
-    protected MetaModule(MetaModule[] dependencies) {
+    protected MetaLibrary(MetaLibrary[] dependencies) {
         this.dependencies = asList(dependencies);
     }
 
@@ -79,7 +80,7 @@ public abstract class MetaModule {
                 return;
             }
 
-            StringBuilder validationErrorMessage = new StringBuilder("Type computation failed. Errors:\n");
+            StringBuilder validationErrorMessage = new StringBuilder(TYPE_COMPUTATION_FAILED);
             validationErrors.forEach(error -> validationErrorMessage.append(error.getMessage()).append(NEW_LINE));
             throw new MetaException(validationErrorMessage.toString());
         }
