@@ -105,7 +105,11 @@ public class JsonModelReader implements Reader {
             ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
             do {
                 if (currentToken == END_OBJECT) {
-                    return creator.create();
+                    try {
+                        return creator.create();
+                    } catch (Throwable throwable) {
+                        throw new JsonException(throwable);
+                    }
                 }
                 if (currentToken != FIELD_NAME) {
                     currentToken = parser.nextToken();
@@ -161,9 +165,13 @@ public class JsonModelReader implements Reader {
                         break;
                 }
             } while (!parser.isClosed());
-            return creator.create();
-        } catch (Throwable throwable) {
-            throw new JsonException(throwable);
+            try {
+                return creator.create();
+            } catch (Throwable throwable) {
+                throw new JsonException(throwable);
+            }
+        } catch (IOException ioException) {
+            throw new JsonException(ioException);
         }
     }
 
@@ -229,8 +237,8 @@ public class JsonModelReader implements Reader {
                 }
             } while (!parser.isClosed());
             return map;
-        } catch (Throwable throwable) {
-            throw new JsonException(throwable);
+        } catch (IOException ioException) {
+            throw new JsonException(ioException);
         }
     }
 
@@ -264,8 +272,8 @@ public class JsonModelReader implements Reader {
                     return parseBooleanArray(parser);
             }
             return emptyList();
-        } catch (Throwable throwable) {
-            throw new JsonException(throwable);
+        } catch (IOException exception) {
+            throw new JsonException(exception);
         }
     }
 
@@ -314,7 +322,7 @@ public class JsonModelReader implements Reader {
         return array;
     }
 
-    private static List<Object> parseEntityArray(MetaType<?> type, JsonParser parser) throws Throwable {
+    private static List<Object> parseEntityArray(MetaType<?> type, JsonParser parser) throws IOException {
         List<Object> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
@@ -325,7 +333,7 @@ public class JsonModelReader implements Reader {
         return array;
     }
 
-    private static List<Object> parseInnerArray(MetaType<?> type, JsonParser parser) throws Throwable {
+    private static List<Object> parseInnerArray(MetaType<?> type, JsonParser parser) throws IOException {
         List<Object> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {

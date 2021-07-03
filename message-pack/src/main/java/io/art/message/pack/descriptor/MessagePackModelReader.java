@@ -96,7 +96,7 @@ public class MessagePackModelReader implements Reader {
                 }
                 return transformer.fromLazyArray(readArray(orElse(type.arrayComponentType(), () -> type.parameters().get(0)), value.asArrayValue()));
             case MAP:
-                if (type.externalKind() == LAZY_MAP || type.externalKind() == MAP) {
+                if (type.externalKind() == MAP || type.externalKind() == LAZY_MAP) {
                     return transformer.fromLazyMap(readMap(type.parameters().get(0), type.parameters().get(1), value.asMapValue()));
                 }
                 if (type.externalKind() != ENTITY) {

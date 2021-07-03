@@ -116,12 +116,17 @@ public class MessagePackModelWriter implements Writer {
         return newArray(values);
     }
 
-    private org.msgpack.value.MapValue writeEntity(MetaType<?> type, Object value) throws Throwable {
+    private org.msgpack.value.MapValue writeEntity(MetaType<?> type, Object value) {
         MapBuilder mapBuilder = newMapBuilder();
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         ImmutableMap<String, MetaProperty<?>> properties = provider.properties();
         for (MetaProperty<?> property : properties.values()) {
-            Object propertyValue = provider.getValue(property);
+            Object propertyValue;
+            try {
+                propertyValue = provider.getValue(property);
+            } catch (Throwable throwable) {
+                throw new MessagePackException(throwable);
+            }
             if (isNull(propertyValue)) continue;
             mapBuilder.put(newString(property.name()), write(property.type(), propertyValue));
         }

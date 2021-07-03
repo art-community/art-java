@@ -62,14 +62,14 @@ public class JsonModelWriter implements Writer {
     }
 
 
-    private static void writeEntity(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeEntity(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
         if (isNull(value)) return;
         generator.writeStartObject();
         writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeEntity(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
+    private static void writeEntity(JsonGenerator generator, String name, MetaType<?> type, Object value) throws IOException {
         if (isNull(value)) return;
         generator.writeObjectFieldStart(name);
         writeFields(generator, type, value);
@@ -77,7 +77,7 @@ public class JsonModelWriter implements Writer {
     }
 
 
-    private static void writeArray(JsonGenerator generator, String name, MetaType<?> type, List<?> value) throws Throwable {
+    private static void writeArray(JsonGenerator generator, String name, MetaType<?> type, List<?> value) throws IOException {
         generator.writeArrayFieldStart(name);
         MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
         for (Object element : value) {
@@ -88,7 +88,7 @@ public class JsonModelWriter implements Writer {
     }
 
 
-    private static void writeArray(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeArray(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
         generator.writeStartArray();
         MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
         List<?> array = type.outputTransformer().toArray(cast(value));
@@ -99,15 +99,21 @@ public class JsonModelWriter implements Writer {
         generator.writeEndArray();
     }
 
-    private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         for (MetaProperty<?> property : provider.properties().values()) {
-            Object field = provider.getValue(property);
+            Object field;
+            try {
+                field = provider.getValue(property);
+            } catch (Throwable throwable) {
+                throw new JsonException(throwable);
+            }
+            if (isNull(field)) continue;
             writeField(generator, property.name(), property.type(), field);
         }
     }
 
-    private static void writeMap(JsonGenerator generator, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+    private static void writeMap(JsonGenerator generator, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws IOException {
         generator.writeStartObject();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             Object key = entry.getKey();
@@ -118,7 +124,7 @@ public class JsonModelWriter implements Writer {
         generator.writeEndObject();
     }
 
-    private static void writeMap(JsonGenerator generator, String name, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+    private static void writeMap(JsonGenerator generator, String name, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws IOException {
         generator.writeObjectFieldStart(name);
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             Object key = entry.getKey();
@@ -129,7 +135,7 @@ public class JsonModelWriter implements Writer {
         generator.writeEndObject();
     }
 
-    private static void writeValue(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
+    private static void writeValue(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
         MetaTransformer<?> transformer = type.outputTransformer();
         switch (type.externalKind()) {
             case LAZY:
@@ -179,9 +185,8 @@ public class JsonModelWriter implements Writer {
         throw new ImpossibleSituationException();
     }
 
-    private static void writeField(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
+    private static void writeField(JsonGenerator generator, String name, MetaType<?> type, Object value) throws IOException {
         MetaTransformer<?> transformer = type.outputTransformer();
-        if (isNull(value)) return;
         switch (type.externalKind()) {
             case ARRAY:
             case LAZY_ARRAY:
