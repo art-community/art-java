@@ -30,7 +30,6 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.*;
@@ -78,11 +77,10 @@ public class JsonModelWriter implements Writer {
     }
 
 
-    private static void writeArray(JsonGenerator generator, String name, MetaType<?> type, Object value) throws Throwable {
+    private static void writeArray(JsonGenerator generator, String name, MetaType<?> type, List<?> value) throws Throwable {
         generator.writeArrayFieldStart(name);
         MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
-        List<?> array = type.outputTransformer().toArray(cast(value));
-        for (Object element : array) {
+        for (Object element : value) {
             if (isNull(element)) continue;
             writeValue(generator, elementType, element);
         }
@@ -109,13 +107,26 @@ public class JsonModelWriter implements Writer {
         }
     }
 
-    private static void writeMap(JsonGenerator generator, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+    private static void writeMap(JsonGenerator generator, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+        generator.writeStartObject();
         for (Map.Entry<String, ?> entry : map.entrySet()) {
-            String key = entry.getKey();
+            Object key = entry.getKey();
             Object value = entry.getValue();
             if (isNull(value) || isNull(key)) continue;
-            writeField(generator, key, valueType, value);
+            writeField(generator, keyType.outputTransformer().toString(cast(key)), valueType, value);
         }
+        generator.writeEndObject();
+    }
+
+    private static void writeMap(JsonGenerator generator, String name, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws Throwable {
+        generator.writeObjectFieldStart(name);
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (isNull(value) || isNull(key)) continue;
+            writeField(generator, keyType.outputTransformer().toString(cast(key)), valueType, value);
+        }
+        generator.writeEndObject();
     }
 
     private static void writeValue(JsonGenerator generator, MetaType<?> type, Object value) throws Throwable {
@@ -129,10 +140,7 @@ public class JsonModelWriter implements Writer {
                 return;
             case MAP:
             case LAZY_MAP:
-                if (type.parameters().get(0).externalKind() != STRING) {
-                    writeMap(generator, type.parameters().get(1), cast(value));
-                    break;
-                }
+                writeMap(generator, type.parameters().get(0), type.parameters().get(1), cast(value));
                 return;
             case ARRAY:
             case LAZY_ARRAY:
@@ -177,7 +185,7 @@ public class JsonModelWriter implements Writer {
         switch (type.externalKind()) {
             case ARRAY:
             case LAZY_ARRAY:
-                writeArray(generator, name, type, value);
+                writeArray(generator, name, type, transformer.toArray(cast(value)));
                 return;
             case LAZY:
                 writeField(generator, name, type.parameters().get(0), transformer.toLazy(cast(value)));
@@ -217,10 +225,7 @@ public class JsonModelWriter implements Writer {
                 return;
             case MAP:
             case LAZY_MAP:
-                if (type.parameters().get(0).externalKind() != STRING) {
-                    return;
-                }
-                writeMap(generator, type.parameters().get(1), cast(transformer.toMap(cast(value))));
+                writeMap(generator, name, type.parameters().get(0), type.parameters().get(1), cast(transformer.toMap(cast(value))));
         }
     }
 }
