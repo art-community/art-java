@@ -21,9 +21,11 @@ package io.art.json.descriptor;
 import com.fasterxml.jackson.core.*;
 import io.art.core.exception.*;
 import io.art.json.exception.*;
+import io.art.meta.descriptor.Writer;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaProviderTemplate.*;
 import io.art.meta.transformer.*;
+import io.netty.buffer.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -31,13 +33,25 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.util.Objects.*;
 import java.io.*;
+import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
 @AllArgsConstructor
-public class JsonModelWriter {
+public class JsonModelWriter implements Writer {
     private final JsonFactory jsonFactory;
 
+    @Override
+    public void write(TypedObject model, ByteBuffer buffer) {
+        write(model, buffer, JsonException::new);
+    }
+
+    @Override
+    public void write(TypedObject model, ByteBuf buffer) {
+        write(model, buffer, JsonException::new);
+    }
+
+    @Override
     public void write(TypedObject object, OutputStream outputStream, Charset charset) {
         if (isNull(object)) return;
         MetaType<?> type = object.getType();

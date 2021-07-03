@@ -20,6 +20,7 @@ package io.art.message.pack.descriptor;
 
 import io.art.core.collection.*;
 import io.art.message.pack.exception.MessagePackException;
+import io.art.meta.descriptor.Reader;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
 import io.art.meta.transformer.*;
@@ -41,7 +42,8 @@ import java.nio.*;
 import java.util.*;
 
 
-public class MessagePackModelReader {
+public class MessagePackModelReader implements Reader {
+    @Override
     public <T> T read(MetaType<T> type, InputStream inputStream) {
         try (MessageUnpacker unpacker = newDefaultUnpacker(inputStream)) {
             return read(type, unpacker.unpackValue());
@@ -50,6 +52,7 @@ public class MessagePackModelReader {
         }
     }
 
+    @Override
     public <T> T read(MetaType<T> type, ByteBuffer nioBuffer) {
         try (MessageUnpacker unpacker = newDefaultUnpacker(nioBuffer)) {
             return read(type, unpacker.unpackValue());

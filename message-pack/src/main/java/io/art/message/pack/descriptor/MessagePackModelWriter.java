@@ -21,6 +21,7 @@ package io.art.message.pack.descriptor;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.message.pack.exception.MessagePackException;
+import io.art.meta.descriptor.Writer;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaProviderTemplate.*;
 import io.art.meta.transformer.*;
@@ -39,15 +40,18 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
-public class MessagePackModelWriter {
-    public void write(TypedObject object, ByteBuffer buffer) {
-        //write(object, buffer, MessagePackException::new);
+public class MessagePackModelWriter implements Writer {
+    @Override
+    public void write(TypedObject model, ByteBuffer buffer) {
+        write(model, buffer, MessagePackException::new);
     }
 
-    public void write(TypedObject object, ByteBuf buffer) {
-        //write(object, buffer, MessagePackException::new);
+    @Override
+    public void write(TypedObject model, ByteBuf buffer) {
+        write(model, buffer, MessagePackException::new);
     }
 
+    @Override
     public void write(TypedObject object, OutputStream outputStream, Charset charset) {
         if (isNull(object)) return;
         try (MessagePacker packer = newDefaultPacker(newChannel(outputStream))) {

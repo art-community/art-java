@@ -22,6 +22,7 @@ import com.fasterxml.jackson.core.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.json.exception.*;
+import io.art.meta.descriptor.Reader;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
 import io.art.meta.transformer.*;
@@ -42,9 +43,10 @@ import java.util.*;
 
 
 @AllArgsConstructor
-public class JsonModelReader {
+public class JsonModelReader implements Reader {
     private final JsonFactory jsonFactory;
 
+    @Override
     public <T> T read(MetaType<T> type, InputStream json) {
         if (isNull(json)) return null;
         MetaTransformer<T> transformer = type.inputTransformer();
