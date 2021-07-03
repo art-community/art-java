@@ -35,10 +35,10 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.json.constants.JsonModuleConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
+import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import java.io.*;
-import java.text.*;
 import java.util.*;
 
 
@@ -136,13 +136,13 @@ public class JsonModelReader implements Reader {
                             break;
                         }
                         if (propertyType.externalKind() != MAP && propertyType.externalKind() != LAZY_MAP) {
-                            throw new JsonException(MessageFormat.format(JSON_OBJECT_EXCEPTION, field, propertyType));
+                            throw new JsonException(format(JSON_OBJECT_EXCEPTION, field, propertyType));
                         }
                         creator.put(property, inputTransformer.fromMap(parseMap(propertyType, parser)));
                         break;
                     case START_ARRAY:
                         if (propertyType.externalKind() != ARRAY && propertyType.externalKind() != LAZY_ARRAY) {
-                            throw new JsonException(MessageFormat.format(JSON_ARRAY_EXCEPTION, field, propertyType));
+                            throw new JsonException(format(JSON_ARRAY_EXCEPTION, field, propertyType));
                         }
                         creator.put(property, inputTransformer.fromArray(parseArray(propertyType, parser)));
                         break;
@@ -203,13 +203,13 @@ public class JsonModelReader implements Reader {
                             break;
                         }
                         if (valueType.externalKind() != MAP && valueType.externalKind() != LAZY_MAP) {
-                            throw new JsonException(MessageFormat.format(JSON_OBJECT_EXCEPTION, field, valueType));
+                            throw new JsonException(format(JSON_OBJECT_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromMap(parseMap(valueType, parser)));
                         break;
                     case START_ARRAY:
                         if (valueType.externalKind() != ARRAY && valueType.externalKind() != LAZY_ARRAY) {
-                            throw new JsonException(MessageFormat.format(JSON_ARRAY_EXCEPTION, field, valueType));
+                            throw new JsonException(format(JSON_ARRAY_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromArray(parseArray(valueType, parser)));
                         break;
