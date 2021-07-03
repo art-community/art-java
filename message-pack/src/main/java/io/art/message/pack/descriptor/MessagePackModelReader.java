@@ -110,7 +110,10 @@ public class MessagePackModelReader {
         Map<?, Value> mapping = map(mapValue.size());
         Map<Value, Value> rawMap = mapValue.map();
         for (Value key : mapValue.keySet()) {
-            mapping.put(cast(read(keyType, key)), rawMap.get(key));
+            if (isNull(key) || key.isNilValue()) continue;
+            Value value = rawMap.get(key);
+            if (isNull(value) || value.isNilValue()) continue;
+            mapping.put(cast(read(keyType, key)), value);
         }
         return cast(immutableLazyMap(mapping.keySet(), key -> read(valueType, mapping.get(key))));
     }

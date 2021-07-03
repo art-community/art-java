@@ -103,6 +103,10 @@ public class MessagePackModelWriter {
     private org.msgpack.value.ArrayValue writeArray(MetaType<?> elementType, List<?> array) {
         List<org.msgpack.value.Value> values = dynamicArray(array.size());
         for (Object element : array) {
+            if (isNull(element)) {
+                values.add(newNil());
+                continue;
+            }
             values.add(write(elementType, element));
         }
         return newArray(values);
@@ -113,7 +117,9 @@ public class MessagePackModelWriter {
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         ImmutableMap<String, MetaProperty<?>> properties = provider.properties();
         for (MetaProperty<?> property : properties.values()) {
-            mapBuilder.put(newString(property.name()), write(property.type(), provider.getValue(property)));
+            Object propertyValue = provider.getValue(property);
+            if (isNull(propertyValue)) continue;
+            mapBuilder.put(newString(property.name()), write(property.type(), propertyValue));
         }
         return mapBuilder.build();
     }
@@ -121,9 +127,10 @@ public class MessagePackModelWriter {
     private org.msgpack.value.MapValue writeMap(MetaType<?> keyType, MetaType<?> valueType, Map<?, ?> value) {
         MapBuilder mapBuilder = newMapBuilder();
         for (Map.Entry<?, ?> entry : value.entrySet()) {
-            Object key = entry.getKey();
-            if (isNull(key) || isNull(entry.getValue())) continue;
-            mapBuilder.put(write(keyType, key), write(valueType, value));
+            Object entryKey = entry.getKey();
+            Object entryValue = entry.getValue();
+            if (isNull(entryKey) || isNull(entryValue)) continue;
+            mapBuilder.put(write(keyType, entryKey), write(valueType, entryValue));
         }
         return mapBuilder.build();
     }

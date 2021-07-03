@@ -46,7 +46,7 @@ public class JsonModelReader {
     private final JsonFactory jsonFactory;
 
     public <T> T read(MetaType<T> type, InputStream json) {
-        if (isEmpty(json)) return null;
+        if (isNull(json)) return null;
         MetaTransformer<T> transformer = type.inputTransformer();
         try (JsonParser parser = jsonFactory.createParser(json)) {
             JsonToken nextToken = parser.nextToken();
@@ -67,7 +67,9 @@ public class JsonModelReader {
                 case BOOLEAN:
                     return transformer.fromBoolean(parser.getBooleanValue());
                 case CHARACTER:
-                    return transformer.fromCharacter(parser.getText().charAt(0));
+                    String text = parser.getText();
+                    if (isEmpty(text)) return null;
+                    return transformer.fromCharacter(text.charAt(0));
                 case SHORT:
                     return transformer.fromShort(parser.getShortValue());
                 case BYTE:

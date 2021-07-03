@@ -99,7 +99,7 @@ public class JsonModelWriter {
         for (Map.Entry<String, ?> entry : map.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
-            if (isNull(value) || isNull(entry.getKey())) continue;
+            if (isNull(value) || isNull(key)) continue;
             writeField(generator, key, valueType, value);
         }
     }
