@@ -19,7 +19,6 @@
 package io.art.meta.transformer;
 
 import lombok.*;
-import static java.lang.Character.*;
 import static lombok.AccessLevel.*;
 
 @NoArgsConstructor(access = PRIVATE)
@@ -31,7 +30,6 @@ public class CharacterTransformer implements MetaTransformer<Character> {
 
     @Override
     public Character fromString(String value) {
-        if (value.isEmpty()) return MIN_VALUE;
         return value.charAt(0);
     }
 
