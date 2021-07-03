@@ -117,6 +117,25 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
         return evaluated.get().toMutable();
     }
 
+    @Override
+    public int hashCode() {
+        return collect().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (isNull(other)) return false;
+        if (!(other instanceof ImmutableLazyMapImplementation)) return false;
+        ImmutableLazyMapImplementation<?, ?> otherMap = (ImmutableLazyMapImplementation<?, ?>) other;
+        if (size() != otherMap.size()) return false;
+        for (K key : keys) {
+            if (!Objects.equals(provider.apply(key), otherMap.get(key))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static ImmutableLazyMapImplementation<?, ?> emptyImmutableLazyMap() {
         return EMPTY;
     }

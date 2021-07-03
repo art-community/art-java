@@ -23,6 +23,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.property.LazyProperty.*;
+import static java.util.Objects.*;
 import static java.util.Spliterator.*;
 import javax.annotation.*;
 import java.util.*;
@@ -139,6 +140,24 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
         return StreamSupport.stream(spliterator(), true);
     }
 
+    @Override
+    public int hashCode() {
+        return collect().hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (isNull(other)) return false;
+        if (!(other instanceof ImmutableLazyArrayImplementation)) return false;
+        ImmutableLazyArrayImplementation<?> otherArray = (ImmutableLazyArrayImplementation<?>) other;
+        if (size != otherArray.size) return false;
+        for (int index = 0; index < size; index++) {
+            if (!Objects.equals(provider.apply(index), otherArray.get(index))) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public static <T> ImmutableLazyArrayImplementation<T> emptyImmutableLazyArray() {
         return cast(EMPTY);
