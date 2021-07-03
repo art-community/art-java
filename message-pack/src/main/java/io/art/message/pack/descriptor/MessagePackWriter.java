@@ -23,7 +23,7 @@ import io.art.value.descriptor.Writer;
 import io.art.value.immutable.*;
 import io.netty.buffer.*;
 import org.msgpack.core.*;
-import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
+import static io.art.message.pack.constants.MessagePackConstants.Errors.*;
 import static io.art.value.immutable.Value.*;
 import static java.nio.channels.Channels.*;
 import static java.text.MessageFormat.*;

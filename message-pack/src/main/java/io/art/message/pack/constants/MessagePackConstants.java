@@ -23,7 +23,9 @@ import static java.nio.charset.StandardCharsets.*;
 import static io.art.core.mime.MimeType.*;
 
 public interface MessagePackConstants {
-    interface ExceptionMessages {
+    interface Errors {
         String VALUE_TYPE_NOT_SUPPORTED = "MessagePack emit type ''{0}'' not supported";
+        String MESSAGE_PACK_ARRAY_EXCEPTION = "MessagePack {0} is array, but type {1} is not compatible with it";
+        String MESSAGE_PACK_MAP_EXCEPTION = "MessagePack {0} is map, but type {1} is not compatible with it";
     }
 }

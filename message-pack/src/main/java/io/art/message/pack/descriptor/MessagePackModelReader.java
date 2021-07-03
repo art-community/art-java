@@ -31,7 +31,7 @@ import static io.art.core.collection.ImmutableLazyArrayImplementation.*;
 import static io.art.core.collection.ImmutableLazyMapImplementation.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
+import static io.art.message.pack.constants.MessagePackConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -88,10 +88,16 @@ public class MessagePackModelReader {
             case BINARY:
                 return transformer.fromByteArray(value.asBinaryValue().asByteArray());
             case ARRAY:
+                if (type.externalKind() != ARRAY) {
+                    throw new MessagePackException(format(MESSAGE_PACK_ARRAY_EXCEPTION, value, type));
+                }
                 return transformer.fromLazyArray(readArray(orElse(type.arrayComponentType(), () -> type.parameters().get(0)), value.asArrayValue()));
             case MAP:
                 if (type.externalKind() == LAZY_MAP || type.externalKind() == MAP) {
                     return transformer.fromLazyMap(readMap(type.parameters().get(0), type.parameters().get(1), value.asMapValue()));
+                }
+                if (type.externalKind() != ENTITY) {
+                    throw new MessagePackException(format(MESSAGE_PACK_MAP_EXCEPTION, value, type));
                 }
                 return readEntity(type, value.asMapValue());
         }

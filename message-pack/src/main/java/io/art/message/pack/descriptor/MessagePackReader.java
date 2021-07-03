@@ -25,7 +25,7 @@ import io.art.value.immutable.ArrayValue;
 import io.art.value.immutable.Value;
 import org.msgpack.core.*;
 import org.msgpack.value.*;
-import static io.art.message.pack.constants.MessagePackConstants.ExceptionMessages.*;
+import static io.art.message.pack.constants.MessagePackConstants.Errors.*;
 import static io.art.value.factory.ArrayValueFactory.*;
 import static io.art.value.factory.PrimitivesFactory.*;
 import static io.art.value.immutable.BinaryValue.*;
