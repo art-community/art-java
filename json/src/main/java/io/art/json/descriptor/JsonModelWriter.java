@@ -56,7 +56,7 @@ public class JsonModelWriter implements Writer {
         MetaType<?> type = object.getType();
         try (JsonGenerator generator = jsonFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
             writeValue(generator, type, object.getObject());
-        } catch (Throwable throwable) {
+        } catch (IOException throwable) {
             throw new JsonException(throwable);
         }
     }
