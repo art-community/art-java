@@ -20,10 +20,10 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
+import io.art.meta.exception.*;
 import lombok.*;
-import static io.art.meta.constants.MetaConstants.Errors.INVOKE_INSTANCE;
-import static io.art.meta.constants.MetaConstants.Errors.INVOKE_INSTANCE_ARGUMENT;
-import java.util.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
+import static java.text.MessageFormat.*;
 
 @ForGenerator
 @EqualsAndHashCode(callSuper = true)
@@ -41,6 +41,30 @@ public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
     }
 
     public abstract Object invoke(I instance, Object[] arguments) throws Throwable;
+
+    public Object invokeCatched(I instance) {
+        try {
+            return invoke(instance);
+        } catch (Throwable throwable) {
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
+        }
+    }
+
+    public Object invokeCatched(I instance, Object argument) {
+        try {
+            return invoke(instance, argument);
+        } catch (Throwable throwable) {
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
+        }
+    }
+
+    public Object invokeCatched(I instance, Object[] arguments) {
+        try {
+            return invoke(instance, arguments);
+        } catch (Throwable throwable) {
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
+        }
+    }
 
     @Override
     public boolean isStatic() {

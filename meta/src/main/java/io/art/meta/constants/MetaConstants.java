@@ -101,5 +101,6 @@ public interface MetaConstants {
         String INVOKE_WITHOUT_ARGUMENTS = "invoke()";
         String INVOKE_ARGUMENT = "invoke(argument)";
         String TYPE_COMPUTATION_FAILED = "Type computation failed. Errors:\n";
+        String INVOCATION_ERROR = "{0} - invocation error: {1}";
     }
 }

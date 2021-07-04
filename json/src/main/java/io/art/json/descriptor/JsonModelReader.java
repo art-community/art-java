@@ -52,7 +52,7 @@ public class JsonModelReader implements Reader {
         MetaTransformer<T> transformer = type.inputTransformer();
         try (JsonParser parser = jsonFactory.createParser(json)) {
             JsonToken nextToken = parser.nextToken();
-            if (isNull(nextToken)) return null;
+            if (isNull(nextToken) || nextToken == VALUE_NULL) return null;
             switch (type.externalKind()) {
                 case LAZY:
                     return transformer.fromLazy(() -> read(type.parameters().get(0), json));
@@ -102,11 +102,7 @@ public class JsonModelReader implements Reader {
             ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
             do {
                 if (currentToken == END_OBJECT) {
-                    try {
-                        return creator.create();
-                    } catch (Throwable throwable) {
-                        throw new JsonException(throwable);
-                    }
+                    return creator.create();
                 }
                 if (currentToken != FIELD_NAME) {
                     currentToken = parser.nextToken();
@@ -166,11 +162,7 @@ public class JsonModelReader implements Reader {
                         break;
                 }
             } while (!parser.isClosed());
-            try {
-                return creator.create();
-            } catch (Throwable throwable) {
-                throw new JsonException(throwable);
-            }
+            return creator.create();
         } catch (IOException ioException) {
             throw new JsonException(ioException);
         }

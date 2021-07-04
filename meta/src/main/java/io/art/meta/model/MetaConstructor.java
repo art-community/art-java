@@ -21,10 +21,12 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
+import io.art.meta.exception.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
+import static java.text.MessageFormat.*;
 import java.util.*;
 
 @ToString
@@ -65,4 +67,28 @@ public abstract class MetaConstructor<T> {
     }
 
     public abstract T invoke(Object[] arguments) throws Throwable;
+
+    public T invokeCatched() {
+        try {
+            return invoke();
+        } catch (Throwable throwable) {
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
+        }
+    }
+
+    public T invokeCatched(Object argument) {
+        try {
+            return invoke(argument);
+        } catch (Throwable throwable) {
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
+        }
+    }
+
+    public T invokeCatched(Object[] arguments) {
+        try {
+            return invoke(arguments);
+        } catch (Throwable throwable) {
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
+        }
+    }
 }

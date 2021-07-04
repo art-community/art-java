@@ -82,7 +82,7 @@ public abstract class MetaLibrary {
 
             StringBuilder validationErrorMessage = new StringBuilder(TYPE_COMPUTATION_FAILED);
             validationErrors.forEach(error -> validationErrorMessage.append(error.getMessage()).append(NEW_LINE));
-            throw new MetaException(validationErrorMessage.toString());
+            throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), validationErrorMessage.toString());
         }
     }
 }

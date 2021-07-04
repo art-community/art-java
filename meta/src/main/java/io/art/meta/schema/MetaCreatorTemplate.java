@@ -164,14 +164,14 @@ public class MetaCreatorTemplate {
             return this;
         }
 
-        public Object create() throws Throwable {
+        public Object create() {
             if (filledFields == 0) {
-                return noPropertiesConstructor.invoke();
+                return noPropertiesConstructor.invokeCatched();
             }
             if (filledFields <= localPropertiesConstructor.parameters().size()) {
-                return localPropertiesConstructor.invoke(values);
+                return localPropertiesConstructor.invokeCatched(values);
             }
-            return allPropertiesConstructor.invoke(values);
+            return allPropertiesConstructor.invokeCatched(values);
         }
     }
 }

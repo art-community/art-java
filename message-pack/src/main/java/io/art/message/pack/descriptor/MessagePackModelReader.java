@@ -133,11 +133,7 @@ public class MessagePackModelReader implements Reader {
             MetaProperty<?> property = properties.get(key.asStringValue().toString());
             creator.put(property, read(property.type(), value));
         }
-        try {
-            return cast(creator.create());
-        } catch (Throwable throwable) {
-            throw new MessagePackException(throwable);
-        }
+        return cast(creator.create());
     }
 
     private ImmutableLazyArrayImplementation<?> readArray(MetaType<?> elementsType, org.msgpack.value.ArrayValue array) {

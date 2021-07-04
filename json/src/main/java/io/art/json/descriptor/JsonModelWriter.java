@@ -105,12 +105,7 @@ public class JsonModelWriter implements Writer {
     private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         for (MetaProperty<?> property : provider.properties().values()) {
-            Object field;
-            try {
-                field = provider.getValue(property);
-            } catch (Throwable throwable) {
-                throw new JsonException(throwable);
-            }
+            Object field = provider.getValue(property);
             if (isNull(field)) continue;
             writeField(generator, property.name(), property.type(), field);
         }
