@@ -3,6 +3,7 @@ package io.art.message.pack.test.generator;
 import io.art.message.pack.test.model.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -12,6 +13,7 @@ import java.time.*;
 import java.util.*;
 
 @UtilityClass
+@SuppressWarnings(ALL)
 public class ModelGenerator {
     public static Model generateModel() {
         Model model = Model.builder()
