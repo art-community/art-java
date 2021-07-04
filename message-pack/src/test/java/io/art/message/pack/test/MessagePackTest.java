@@ -32,7 +32,7 @@ public class MessagePackTest {
     }
 
     @Test
-    public void testMessagePackRead() {
+    public void testMessagePack() {
         MessagePackModelWriter writer = messagePackModule().configuration().getWriter();
         MessagePackModelReader reader = messagePackModule().configuration().getReader();
         Model model = generateModel();

@@ -158,14 +158,14 @@ public class MetaMessagePackTest extends MetaLibrary {
                 @Override
                 public java.lang.Object invoke(io.art.message.pack.test.MessagePackTest instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  instance.testMessagePackRead();
+                  instance.testMessagePack();
                   return null;
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.message.pack.test.MessagePackTest instance)
                     throws Throwable {
-                  instance.testMessagePackRead();
+                  instance.testMessagePack();
                   return null;
                 }
               }
