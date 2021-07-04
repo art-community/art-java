@@ -34,7 +34,7 @@ dependencies {
 }
 
 generator {
-    module("MessagePackTest")
+    module("MessagePackTest", "io.art.message.pack.test")
     jvm()
     sourcesPattern {
         exclude("src/main/**")
