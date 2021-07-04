@@ -56,13 +56,13 @@ public class Model {
     ImmutableSet<String> f37;
     Supplier<String> f38;
     LazyProperty<String> f39;
-    Mono<String> f40;
-    Flux<String> f41;
+    Mono<String> mono1;
+    Flux<String> flux;
     Stream<String> streamField;
     List<int[]> f43;
     List<byte[]> f44;
     List<String[]> f45;
-    Mono<String[]> f46;
+    Mono<String[]> mono2;
     List<byte[]>[] f47;
     List<int[]>[] f48;
     List<String[]>[] f49;

@@ -10,7 +10,6 @@ import static io.art.core.property.LazyProperty.*;
 import static java.util.Collections.*;
 import java.time.*;
 import java.util.*;
-import java.util.stream.*;
 
 @UtilityClass
 public class JsonTestModelGenerator {
@@ -55,12 +54,12 @@ public class JsonTestModelGenerator {
                 .f37(immutableSetOf("test"))
                 .f38(() -> "test")
                 .f39(lazy(() -> "test"))
-                .f40(Mono.just("test"))
-                .f41(Flux.just("test"))
+                .mono1(Mono.just("test"))
+                .flux(Flux.just("test"))
                 .f43(singletonList(new int[]{1}))
                 .f44(singletonList(new byte[]{1}))
                 .f45(singletonList(new String[]{"test"}))
-                .f46(Mono.just(new String[]{"test"}))
+                .mono2(Mono.just(new String[]{"test"}))
                 .f47(new List[]{singletonList(new byte[]{1})})
                 .f48(new List[]{singletonList(new int[]{1})})
                 .f49(new List[]{singletonList(new String[]{"test"})})
@@ -80,7 +79,7 @@ public class JsonTestModelGenerator {
                 .f65ForEmpty("")
                 .build();
         return model.toBuilder()
-                .f42(streamOf("test"))
+                .streamField(streamOf("test"))
                 .f58(model)
                 .f66(fixedArrayOf(model))
                 .f67(setOf(model))
