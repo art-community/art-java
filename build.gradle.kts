@@ -29,6 +29,10 @@ tasks.withType(type = Wrapper::class) {
     gradleVersion = "7.0"
 }
 
+generator {
+    fileLogging()
+}
+
 allprojects {
     repositories {
         mavenCentral()

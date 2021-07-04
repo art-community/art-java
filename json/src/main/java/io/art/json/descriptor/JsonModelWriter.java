@@ -81,7 +81,10 @@ public class JsonModelWriter implements Writer {
         generator.writeArrayFieldStart(name);
         MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
         for (Object element : value) {
-            if (isNull(element)) continue;
+            if (isNull(element)) {
+                generator.writeNull();
+                continue;
+            }
             writeValue(generator, elementType, element);
         }
         generator.writeEndArray();

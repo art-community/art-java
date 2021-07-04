@@ -30,9 +30,9 @@ import lombok.*;
 import static com.fasterxml.jackson.core.JsonToken.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.json.constants.JsonModuleConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.text.MessageFormat.*;
@@ -117,9 +117,6 @@ public class JsonModelReader implements Reader {
                 continue;
             }
             MetaType<?> propertyType = property.type();
-            if (propertyType.externalKind() == LAZY) {
-                propertyType = propertyType.parameters().get(0);
-            }
             switch (currentToken = parser.nextToken()) {
                 case NOT_AVAILABLE:
                 case END_OBJECT:
@@ -138,10 +135,8 @@ public class JsonModelReader implements Reader {
 
     private static Map<?, ?> parseMap(MetaType<?> type, JsonParser parser) throws IOException {
         JsonToken currentToken = parser.nextToken();
+        MetaType<?> keyType = type.parameters().get(0);
         MetaType<?> valueType = type.parameters().get(1);
-        if (valueType.externalKind() == LAZY) {
-            valueType = valueType.parameters().get(0);
-        }
         Map<Object, Object> map = map();
         do {
             if (currentToken == END_OBJECT) {
@@ -156,6 +151,7 @@ public class JsonModelReader implements Reader {
                 currentToken = parser.nextToken();
                 continue;
             }
+            MetaTransformer<?> keyTransformer = keyType.inputTransformer();
             switch (currentToken = parser.nextToken()) {
                 case NOT_AVAILABLE:
                 case END_OBJECT:
@@ -164,56 +160,19 @@ public class JsonModelReader implements Reader {
                 case END_ARRAY:
                     break;
                 case VALUE_NULL:
-                    map.put(field, null);
+                    map.put(keyTransformer.fromString(field), null);
                     break;
                 default:
-                    map.put(field, parseField(valueType, field, parser));
+                    map.put(keyTransformer.fromString(field), parseField(valueType, field, parser));
                     break;
             }
         } while (!parser.isClosed());
         return map;
     }
 
-    private static Object parseField(MetaType<?> type, String field, JsonParser parser) throws IOException {
-        MetaTransformer<?> transformer = type.inputTransformer();
-        if (type.externalKind() == LAZY) {
-            return transformer.fromLazy(() -> wrapExceptionCall(() -> parseField(type.parameters().get(0), field, parser), JsonException::new));
-        }
-        switch (parser.nextToken()) {
-            case VALUE_NULL:
-                return null;
-            case START_OBJECT:
-                if (type.externalKind() == ENTITY) {
-                    return parseEntity(type, parser);
-                }
-                if (type.externalKind() != MAP && type.externalKind() != LAZY_MAP) {
-                    throw new JsonException(format(JSON_OBJECT_FIELD_EXCEPTION, field, type));
-                }
-                return transformer.fromMap(parseMap(type, parser));
-            case START_ARRAY:
-                if (type.externalKind() != ARRAY && type.externalKind() != LAZY_ARRAY) {
-                    throw new JsonException(format(JSON_ARRAY_FIELD_EXCEPTION, field, type));
-                }
-                return transformer.fromArray(parseArray(type, parser));
-            case VALUE_STRING:
-                return transformer.fromString(parser.getText());
-            case VALUE_NUMBER_INT:
-                return transformer.fromLong(parser.getLongValue());
-            case VALUE_NUMBER_FLOAT:
-                return transformer.fromFloat(parser.getFloatValue());
-            case VALUE_TRUE:
-            case VALUE_FALSE:
-                return transformer.fromBoolean(parser.getBooleanValue());
-        }
-        throw new ImpossibleSituationException();
-    }
-
     private static List<?> parseArray(MetaType<?> type, JsonParser parser) throws IOException {
-        JsonToken currentToken = parser.nextToken();
-        MetaType<?> valueType = type.parameters().get(1);
-        if (valueType.externalKind() == LAZY) {
-            valueType = valueType.parameters().get(0);
-        }
+        JsonToken currentToken = parser.currentToken();
+        MetaType<?> elementsType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
         List<Object> array = linkedList();
         do {
             if (currentToken == END_ARRAY) {
@@ -230,19 +189,58 @@ public class JsonModelReader implements Reader {
                     array.add(null);
                     break;
                 default:
-                    array.add(parseValue(valueType, parser));
+                    array.add(parseValue(elementsType, parser));
                     break;
             }
         } while (!parser.isClosed());
         return array;
     }
 
+    private static Object parseField(MetaType<?> type, String field, JsonParser parser) throws IOException {
+        MetaTransformer<?> transformer = type.inputTransformer();
+        if (type.externalKind() == LAZY) {
+            Object value = parseField(type.parameters().get(0), field, parser);
+            return transformer.fromLazy(() -> value);
+        }
+        switch (parser.currentToken()) {
+            case VALUE_NULL:
+                return null;
+            case START_OBJECT:
+                if (type.externalKind() == ENTITY) {
+                    return parseEntity(type, parser);
+                }
+                if (type.externalKind() != MAP && type.externalKind() != LAZY_MAP) {
+                    throw new JsonException(format(JSON_OBJECT_FIELD_EXCEPTION, field, type));
+                }
+                return transformer.fromMap(parseMap(type, parser));
+            case START_ARRAY:
+                if (type.externalKind() != ARRAY && type.externalKind() != LAZY_ARRAY) {
+                    throw new JsonException(format(JSON_ARRAY_FIELD_EXCEPTION, field, type));
+                }
+                return transformer.fromArray(parseArray(type, parser));
+            case VALUE_STRING:
+                if (type.externalKind() == BINARY) {
+                    return transformer.fromByteArray(parser.getBinaryValue());
+                }
+                return transformer.fromString(parser.getText());
+            case VALUE_NUMBER_INT:
+                return transformer.fromLong(parser.getLongValue());
+            case VALUE_NUMBER_FLOAT:
+                return transformer.fromFloat(parser.getFloatValue());
+            case VALUE_TRUE:
+            case VALUE_FALSE:
+                return transformer.fromBoolean(parser.getBooleanValue());
+        }
+        throw new ImpossibleSituationException();
+    }
+
     private static Object parseValue(MetaType<?> type, JsonParser parser) throws IOException {
         MetaTransformer<?> transformer = type.inputTransformer();
         if (type.externalKind() == LAZY) {
-            return transformer.fromLazy(() -> wrapExceptionCall(() -> parseValue(type.parameters().get(0), parser), JsonException::new));
+            Object value = parseValue(type.parameters().get(0), parser);
+            return transformer.fromLazy(() -> value);
         }
-        switch (parser.nextToken()) {
+        switch (parser.currentToken()) {
             case VALUE_NULL:
                 return null;
             case START_OBJECT:
@@ -259,6 +257,9 @@ public class JsonModelReader implements Reader {
                 }
                 return transformer.fromArray(parseArray(type, parser));
             case VALUE_STRING:
+                if (type.externalKind() == BINARY) {
+                    return transformer.fromByteArray(parser.getBinaryValue());
+                }
                 return transformer.fromString(parser.getText());
             case VALUE_NUMBER_INT:
                 return transformer.fromLong(parser.getLongValue());

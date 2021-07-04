@@ -13,6 +13,7 @@ import java.util.stream.*;
 @Getter
 @EqualsAndHashCode
 @AllArgsConstructor
+@ToString
 @Builder(toBuilder = true)
 @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
 public class Model {
@@ -57,7 +58,7 @@ public class Model {
     LazyProperty<String> f39;
     Mono<String> f40;
     Flux<String> f41;
-    Stream<String> f42;
+    Stream<String> streamField;
     List<int[]> f43;
     List<byte[]> f44;
     List<String[]> f45;

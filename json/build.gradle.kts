@@ -29,6 +29,8 @@ dependencies {
 
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
+
+    testImplementation("org.assertj", "assertj-core", "+")
 }
 
 generator {
