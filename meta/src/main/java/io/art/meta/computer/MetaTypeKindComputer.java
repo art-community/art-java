@@ -88,11 +88,11 @@ public class MetaTypeKindComputer {
         switch (type.internalKind()) {
             case STRING:
             case ENUM:
+            case LOCAL_DATE_TIME:
+            case ZONED_DATE_TIME:
                 return MetaTypeExternalKind.STRING;
             case LONG:
             case DATE:
-            case LOCAL_DATE_TIME:
-            case ZONED_DATE_TIME:
             case DURATION:
                 return MetaTypeExternalKind.LONG;
             case DOUBLE:

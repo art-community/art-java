@@ -22,6 +22,7 @@ plugins {
 
 dependencies {
     val jacksonVersion: String by project
+    val assertjVersion: String by project
 
     implementation(project(":core"))
     implementation(project(":value"))
@@ -30,7 +31,7 @@ dependencies {
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
 
-    testImplementation("org.assertj", "assertj-core", "+")
+    testImplementation("org.assertj", "assertj-core", assertjVersion)
 }
 
 generator {

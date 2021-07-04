@@ -56,7 +56,7 @@ public class LazyProperty<T> implements Supplier<T> {
         if (!(other instanceof LazyProperty)) {
             return false;
         }
-        return get().equals(((LazyProperty<?>) other).get());
+        return deepEquals(get(), ((LazyProperty<?>) other).get());
     }
 
     public static <T> LazyProperty<T> lazy(Supplier<T> factory) {

@@ -20,6 +20,7 @@ package io.art.meta.transformer;
 
 import io.art.core.parser.*;
 import lombok.*;
+import static java.lang.Math.*;
 import static lombok.AccessLevel.*;
 import java.time.*;
 
@@ -43,6 +44,16 @@ public class DurationTransformer implements MetaTransformer<Duration> {
     @Override
     public Long toLong(Duration value) {
         return value.toMillis();
+    }
+
+    @Override
+    public Duration fromInteger(Integer value) {
+        return Duration.ofMillis(value);
+    }
+
+    @Override
+    public Integer toInteger(Duration value) {
+        return toIntExact(value.toMillis());
     }
 
     public static DurationTransformer DURATION_TRANSFORMER = new DurationTransformer();

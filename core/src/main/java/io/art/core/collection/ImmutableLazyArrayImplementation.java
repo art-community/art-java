@@ -18,10 +18,9 @@
 
 package io.art.core.collection;
 
+import io.art.core.factory.*;
 import io.art.core.property.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Objects.*;
 import static java.util.Spliterator.*;
@@ -33,7 +32,7 @@ import java.util.stream.*;
 public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
     private final IntFunction<T> provider;
     private final int size;
-    private final LazyProperty<ImmutableArray<T>> evaluated;
+    private final LazyProperty<List<T>> evaluated;
 
     private final static ImmutableLazyArrayImplementation<?> EMPTY = new ImmutableLazyArrayImplementation<>(index -> null, 0);
 
@@ -59,12 +58,12 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
         }
     }
 
-    private ImmutableArray<T> collect() {
-        Builder<T> builder = immutableArrayBuilder(size);
+    private List<T> collect() {
+        List<T> array = ArrayFactory.dynamicArray(size);
         for (int index = 0; index < size; index++) {
-            let(provider.apply(index), builder::add);
+            array.add(provider.apply(index));
         }
-        return builder.build();
+        return array;
     }
 
     @Override
@@ -112,7 +111,7 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
 
     @Override
     public List<T> toMutable() {
-        return evaluated.get().toMutable();
+        return evaluated.get();
     }
 
     @Override
@@ -148,11 +147,11 @@ public class ImmutableLazyArrayImplementation<T> implements ImmutableArray<T> {
     @Override
     public boolean equals(Object other) {
         if (isNull(other)) return false;
-        if (!(other instanceof ImmutableLazyArrayImplementation)) return false;
-        ImmutableLazyArrayImplementation<?> otherArray = (ImmutableLazyArrayImplementation<?>) other;
-        if (size != otherArray.size) return false;
+        if (!(other instanceof ImmutableArray)) return false;
+        ImmutableArray<?> otherArray = (ImmutableArray<?>) other;
+        if (size != otherArray.size()) return false;
         for (int index = 0; index < size; index++) {
-            if (!Objects.equals(provider.apply(index), otherArray.get(index))) {
+            if (!Objects.deepEquals(provider.apply(index), otherArray.get(index))) {
                 return false;
             }
         }

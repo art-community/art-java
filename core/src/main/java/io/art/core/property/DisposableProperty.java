@@ -95,7 +95,7 @@ public class DisposableProperty<T> implements Supplier<T> {
         if (!(other instanceof DisposableProperty)) {
             return false;
         }
-        return get().equals(((DisposableProperty<?>) other).get());
+        return deepEquals(get(), ((DisposableProperty<?>) other).get());
     }
 
     public static <T> DisposableProperty<T> disposable(Supplier<T> factory) {

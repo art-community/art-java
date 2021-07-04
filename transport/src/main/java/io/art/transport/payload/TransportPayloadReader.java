@@ -41,10 +41,10 @@ public class TransportPayloadReader {
     private final Function<ByteBuf, TransportPayload> reader = reader(dataFormat);
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final JsonReader jsonReader = jsonModule().configuration().getReader();
+    private static final JsonReader jsonReader = jsonModule().configuration().getOldReader();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getReader();
+    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getOldReader();
 
     @Getter(lazy = true, value = PRIVATE)
     private static final YamlReader yamlReader = yamlModule().configuration().getReader();

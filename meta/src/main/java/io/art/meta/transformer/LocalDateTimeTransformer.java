@@ -22,6 +22,7 @@ import lombok.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.extensions.DateTimeExtensions.*;
 import static java.time.LocalDateTime.*;
+import static java.time.ZoneId.*;
 import static lombok.AccessLevel.*;
 import java.time.*;
 
@@ -29,12 +30,12 @@ import java.time.*;
 public class LocalDateTimeTransformer implements MetaTransformer<LocalDateTime> {
     @Override
     public String toString(LocalDateTime value) {
-        return DEFAULT_FORMATTER.format(value);
+        return TRANSPORTABLE_FORMATTER.format(ZonedDateTime.of(value, systemDefault()));
     }
 
     @Override
     public LocalDateTime fromString(String value) {
-        return parse(value, DEFAULT_FORMATTER);
+        return parse(value, TRANSPORTABLE_FORMATTER);
     }
 
     @Override

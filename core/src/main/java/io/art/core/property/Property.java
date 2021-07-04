@@ -142,7 +142,7 @@ public class Property<T> implements Supplier<T> {
         if (!(other instanceof Property)) {
             return false;
         }
-        return get().equals(((Property<?>) other).get());
+        return deepEquals(get(), ((Property<?>) other).get());
     }
 
 

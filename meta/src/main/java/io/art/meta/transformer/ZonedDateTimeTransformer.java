@@ -21,7 +21,6 @@ package io.art.meta.transformer;
 import lombok.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.extensions.DateTimeExtensions.*;
-import static java.time.ZonedDateTime.*;
 import static lombok.AccessLevel.*;
 import java.time.*;
 
@@ -29,12 +28,12 @@ import java.time.*;
 public class ZonedDateTimeTransformer implements MetaTransformer<ZonedDateTime> {
     @Override
     public String toString(ZonedDateTime value) {
-        return DEFAULT_FORMATTER.format(value);
+        return TRANSPORTABLE_FORMATTER.format(value);
     }
 
     @Override
     public ZonedDateTime fromString(String value) {
-        return parse(value, DEFAULT_FORMATTER);
+        return ZonedDateTime.parse(value, TRANSPORTABLE_FORMATTER);
     }
 
     @Override

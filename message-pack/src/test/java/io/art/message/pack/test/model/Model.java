@@ -1,4 +1,4 @@
-package io.art.json.test.model;
+package io.art.message.pack.test.model;
 
 import io.art.core.collection.*;
 import io.art.core.property.*;

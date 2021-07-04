@@ -41,10 +41,10 @@ public class TransportPayloadWriter {
     private final Function<Value, ByteBuf> writer = writer(dataFormat);
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final JsonWriter jsonWriter = jsonModule().configuration().getWriter();
+    private static final JsonWriter jsonWriter = jsonModule().configuration().getOldWriter();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getWriter();
+    private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getOldWriter();
 
     @Getter(lazy = true, value = PRIVATE)
     private static final YamlWriter yamlWriter = yamlModule().configuration().getWriter();

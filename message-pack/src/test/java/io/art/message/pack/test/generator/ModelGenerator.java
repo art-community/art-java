@@ -1,6 +1,6 @@
-package io.art.json.test.generator;
+package io.art.message.pack.test.generator;
 
-import io.art.json.test.model.*;
+import io.art.message.pack.test.model.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -12,9 +12,15 @@ import java.time.*;
 import java.util.*;
 
 @UtilityClass
-public class JsonTestModelGenerator {
+public class ModelGenerator {
     public static Model generateModel() {
         Model model = Model.builder()
+                .mono2(Mono.just(new String[]{"test"}))
+                .mono1(Mono.just("test"))
+                .flux(Flux.just("test"))
+                .nullField(null)
+                .emptyString("")
+
                 .f1(1)
                 .f2((short) 1)
                 .f3(1)
@@ -54,36 +60,31 @@ public class JsonTestModelGenerator {
                 .f37(immutableSetOf("test"))
                 .f38(() -> "test")
                 .f39(lazy(() -> "test"))
-                .mono1(Mono.just("test"))
-                .flux(Flux.just("test"))
-                .f43(singletonList(new int[]{1}))
-                .f44(singletonList(new byte[]{1}))
-                .f45(singletonList(new String[]{"test"}))
-                .mono2(Mono.just(new String[]{"test"}))
-                .f47(new List[]{singletonList(new byte[]{1})})
-                .f48(new List[]{singletonList(new int[]{1})})
-                .f49(new List[]{singletonList(new String[]{"test"})})
-                .f50(singletonList(singletonList("test")))
-                .f51(singletonList(new List[]{singletonList("test")}))
-                .f52(mapOf(1, "test"))
-                .f53(mapOf("test", new String[]{"test"}))
-                .f55(mapOf("test", fixedArrayOf("test")))
-                .f56(mapOf("test", new Map[]{mapOf("test", "test")}))
-                .f57(immutableMapOf(mapOf("test", new Map[]{mapOf("test", "test")})))
-                .f59(LocalDateTime.now())
-                .f60(ZonedDateTime.now())
-                .f61(Duration.ofDays(1))
-                .f62(Model.E.FIRST)
-                .f63(Optional.of(fixedArrayOf(lazy(() -> "test"), null, lazy(() -> "test2"))))
-                .f64ForNull(null)
-                .f65ForEmpty("")
+                .f40(singletonList(new int[]{1}))
+                .f41(singletonList(new byte[]{1}))
+                .f42(singletonList(new String[]{"test"}))
+                .f43(new List[]{singletonList(new byte[]{1})})
+                .f44(new List[]{singletonList(new int[]{1})})
+                .f45(new List[]{singletonList(new String[]{"test"})})
+                .f46(singletonList(singletonList("test")))
+                .f47(singletonList(new List[]{singletonList("test")}))
+                .f48(mapOf(1, "test"))
+                .f49(mapOf("test", new String[]{"test"}))
+                .f50(mapOf("test", fixedArrayOf("test")))
+                .f51(mapOf("test", new Map[]{mapOf("test", "test")}))
+                .f52(immutableMapOf(mapOf("test", new Map[]{mapOf("test", "test")})))
+                .f54(LocalDateTime.now())
+                .f55(ZonedDateTime.now())
+                .f56(Duration.ofDays(1))
+                .f57(Model.ModelEnum.FIRST)
+                .f58(Optional.of(fixedArrayOf(lazy(() -> "test"), null, lazy(() -> "test2"))))
                 .build();
         return model.toBuilder()
-                .streamField(streamOf("test"))
-                .f58(model)
-                .f66(fixedArrayOf(model))
-                .f67(setOf(model))
-                .f68(mapOf("test", model))
+                .stream(streamOf("test"))
+                .f53(model)
+                .f59(fixedArrayOf(model))
+                .f60(setOf(model))
+                .f61(mapOf("test", model))
                 .build();
     }
 }

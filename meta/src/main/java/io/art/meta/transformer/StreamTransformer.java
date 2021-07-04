@@ -18,8 +18,12 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.stream.*;
@@ -34,6 +38,17 @@ public class StreamTransformer implements MetaTransformer<Stream<?>> {
     @Override
     public List<?> toArray(Stream<?> value) {
         return value.collect(arrayCollector());
+    }
+
+    @Override
+    public Stream<?> fromLazyArray(ImmutableLazyArrayImplementation<?> value) {
+        return value.stream();
+    }
+
+    @Override
+    public ImmutableLazyArrayImplementation<?> toLazyArray(Stream<?> value) {
+        List<?> list = value.collect(listCollector());
+        return cast(immutableLazyArrayOf(list, identity()));
     }
 
     public static StreamTransformer STREAM_TRANSFORMER = new StreamTransformer();

@@ -21,7 +21,7 @@ package io.art.core.collection;
 import io.art.core.property.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -32,7 +32,7 @@ import java.util.function.*;
 public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> {
     private final Set<K> keys;
     private final Function<K, V> provider;
-    private final LazyProperty<ImmutableMap<K, V>> evaluated;
+    private final LazyProperty<Map<K, V>> evaluated;
 
     private final static ImmutableLazyMapImplementation<?, ?> EMPTY = new ImmutableLazyMapImplementation<>(emptySet(), key -> null);
 
@@ -42,12 +42,12 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
         this.evaluated = lazy(this::collect);
     }
 
-    private ImmutableMap<K, V> collect() {
-        Builder<K, V> builder = immutableMapBuilder(size());
+    private Map<K, V> collect() {
+        Map<K, V> map = map(size());
         for (K key : keys) {
-            let(provider.apply(key), notNull -> builder.put(key, notNull));
+            map.put(key, provider.apply(key));
         }
-        return builder.build();
+        return map;
     }
 
     @Override
@@ -114,7 +114,7 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
 
     @Override
     public Map<K, V> toMutable() {
-        return evaluated.get().toMutable();
+        return evaluated.get();
     }
 
     @Override
@@ -125,11 +125,11 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
     @Override
     public boolean equals(Object other) {
         if (isNull(other)) return false;
-        if (!(other instanceof ImmutableLazyMapImplementation)) return false;
-        ImmutableLazyMapImplementation<?, ?> otherMap = (ImmutableLazyMapImplementation<?, ?>) other;
+        if (!(other instanceof ImmutableMap)) return false;
+        ImmutableMap<?, ?> otherMap = (ImmutableMap<?, ?>) other;
         if (size() != otherMap.size()) return false;
         for (K key : keys) {
-            if (!Objects.equals(provider.apply(key), otherMap.get(key))) {
+            if (!Objects.deepEquals(provider.apply(key), otherMap.get(key))) {
                 return false;
             }
         }
@@ -140,3 +140,4 @@ public class ImmutableLazyMapImplementation<K, V> implements ImmutableMap<K, V> 
         return EMPTY;
     }
 }
+

@@ -62,11 +62,11 @@ public class MessagePackModelReader implements Reader {
     }
 
     public <T> T read(MetaType<T> type, org.msgpack.value.Value value) {
+        if (isNull(value) || value.isNilValue()) return null;
         MetaTransformer<T> transformer = type.inputTransformer();
         if (type.externalKind() == LAZY) {
             return transformer.fromLazy(() -> read(type.parameters().get(0), value));
         }
-        if (isNull(value) || value.isNilValue()) return null;
         switch (value.getValueType()) {
             case NIL:
             case EXTENSION:

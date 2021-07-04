@@ -94,11 +94,7 @@ public class MessagePackModelWriter implements Writer {
             case BINARY:
                 return newBinary(transformer.toByteArray(cast(value)));
             case ENTITY:
-                try {
-                    return writeEntity(type, cast(value));
-                } catch (Throwable throwable) {
-                    throw new MessagePackException(throwable);
-                }
+                return writeEntity(type, cast(value));
         }
         throw new ImpossibleSituationException();
     }
@@ -121,12 +117,7 @@ public class MessagePackModelWriter implements Writer {
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         ImmutableMap<String, MetaProperty<?>> properties = provider.properties();
         for (MetaProperty<?> property : properties.values()) {
-            Object propertyValue;
-            try {
-                propertyValue = provider.getValue(property);
-            } catch (Throwable throwable) {
-                throw new MessagePackException(throwable);
-            }
+            Object propertyValue = provider.getValue(property);
             if (isNull(propertyValue)) continue;
             mapBuilder.put(newString(property.name()), write(property.type(), propertyValue));
         }

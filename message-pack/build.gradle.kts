@@ -16,12 +16,27 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     val messagePackVersion: String by project
+    val assertjVersion: String by project
 
     implementation(project(":core"))
     implementation(project(":value"))
     implementation(project(":meta"))
 
     api("org.msgpack", "msgpack-core", messagePackVersion)
+
+    testImplementation("org.assertj", "assertj-core", assertjVersion)
+}
+
+generator {
+    module("MessagePackTest")
+    jvm()
+    sourcesPattern {
+        exclude("src/main/**")
+    }
 }
