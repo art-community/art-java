@@ -37,7 +37,7 @@ public class FluxTransformer implements MetaTransformer<Flux<?>> {
 
     @Override
     public List<?> toArray(Flux<?> value) {
-        return fixedArrayOf(value.toIterable());
+        return dynamicArrayOf(value.toIterable());
     }
 
     @Override
@@ -47,7 +47,7 @@ public class FluxTransformer implements MetaTransformer<Flux<?>> {
 
     @Override
     public ImmutableLazyArrayImplementation<?> toLazyArray(Flux<?> value) {
-        List<? extends Iterable<?>> array = fixedArrayOf(value.toIterable());
+        List<?> array = dynamicArrayOf(value.toIterable());
         return cast(immutableLazyArrayOf(array, identity()));
     }
 

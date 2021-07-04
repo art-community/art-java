@@ -18,10 +18,7 @@
 
 package io.art.meta.transformer;
 
-import io.art.core.caster.*;
 import io.art.core.collection.*;
-import io.art.core.exception.*;
-import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
@@ -148,85 +145,5 @@ public interface MetaTransformer<T> {
 
     default T fromLazy(Supplier<?> value) {
         return cast(value.get());
-    }
-
-    default Function<T, ?> toKind(MetaTypeExternalKind kind) {
-        switch (kind) {
-            case MAP:
-                return this::toMap;
-            case ARRAY:
-                return this::toArray;
-            case LAZY_MAP:
-                return this::toLazyMap;
-            case LAZY_ARRAY:
-                return this::toLazyArray;
-            case LAZY:
-                return this::toLazy;
-            case STRING:
-                return this::toString;
-            case LONG:
-                return this::toLong;
-            case DOUBLE:
-                return this::toDouble;
-            case FLOAT:
-                return this::toFloat;
-            case INTEGER:
-                return this::toInteger;
-            case BOOLEAN:
-                return this::toBoolean;
-            case CHARACTER:
-                return this::toCharacter;
-            case SHORT:
-                return this::toShort;
-            case BYTE:
-                return this::toByte;
-            case BINARY:
-                return this::toByteArray;
-            case ENTITY:
-                return Caster::cast;
-            case UNKNOWN:
-                break;
-        }
-        throw new ImpossibleSituationException();
-    }
-
-    default Function<?, T> fromKind(MetaTypeExternalKind kind) {
-        switch (kind) {
-            case MAP:
-                return value -> fromMap(cast(value));
-            case ARRAY:
-                return value -> fromArray(cast(value));
-            case LAZY_MAP:
-                return value -> fromLazyMap(cast(value));
-            case LAZY_ARRAY:
-                return value -> fromLazyArray(cast(value));
-            case LAZY:
-                return value -> fromLazy(cast(value));
-            case STRING:
-                return value -> fromString(cast(value));
-            case LONG:
-                return value -> fromLong(cast(value));
-            case DOUBLE:
-                return value -> fromDouble(cast(value));
-            case FLOAT:
-                return value -> fromFloat(cast(value));
-            case INTEGER:
-                return value -> fromInteger(cast(value));
-            case BOOLEAN:
-                return value -> fromBoolean(cast(value));
-            case CHARACTER:
-                return value -> fromCharacter(cast(value));
-            case SHORT:
-                return value -> fromShort(cast(value));
-            case BYTE:
-                return value -> fromByte(cast(value));
-            case BINARY:
-                return value -> fromByteArray(cast(value));
-            case ENTITY:
-                return Caster::cast;
-            case UNKNOWN:
-                break;
-        }
-        throw new ImpossibleSituationException();
     }
 }

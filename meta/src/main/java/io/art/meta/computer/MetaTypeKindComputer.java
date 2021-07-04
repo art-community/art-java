@@ -19,7 +19,6 @@
 package io.art.meta.computer;
 
 import io.art.core.collection.*;
-import io.art.core.exception.*;
 import io.art.core.property.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
@@ -77,7 +76,7 @@ public class MetaTypeKindComputer {
         if (Mono.class.isAssignableFrom(type)) return MONO;
         if (LazyProperty.class.equals(type)) return LAZY;
         if (Optional.class.equals(type)) return OPTIONAL;
-        if (Supplier.class.equals(type)) return SUPPLIER;
+        if (Supplier.class.isAssignableFrom(type)) return SUPPLIER;
         if (InputStream.class.isAssignableFrom(type)) return INPUT_STREAM;
         if (OutputStream.class.isAssignableFrom(type)) return OUTPUT_STREAM;
         if (ByteBuf.class.isAssignableFrom(type)) return NETTY_BUFFER;
@@ -148,6 +147,6 @@ public class MetaTypeKindComputer {
             case ENTITY:
                 return MetaTypeExternalKind.ENTITY;
         }
-        throw new ImpossibleSituationException();
+        return MetaTypeExternalKind.UNKNOWN;
     }
 }

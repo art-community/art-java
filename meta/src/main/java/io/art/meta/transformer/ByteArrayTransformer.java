@@ -48,6 +48,16 @@ public class ByteArrayTransformer implements MetaTransformer<byte[]> {
     }
 
     @Override
+    public byte[] fromByteArray(byte[] value) {
+        return value;
+    }
+
+    @Override
+    public byte[] toByteArray(byte[] value) {
+        return value;
+    }
+
+    @Override
     public ImmutableLazyArrayImplementation<?> toLazyArray(byte[] value) {
         return cast(immutableLazyArray(index -> value[index], value.length));
     }

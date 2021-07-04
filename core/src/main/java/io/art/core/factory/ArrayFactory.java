@@ -222,6 +222,18 @@ public class ArrayFactory {
         return isEmpty(elements) ? new ArrayList<>() : new ArrayList<>(elements.toMutable());
     }
 
+    public static <T> List<T> dynamicArrayOf(Iterable<T> elements) {
+        if (isEmpty(elements)) {
+            return dynamicArray();
+        }
+        List<T> array = dynamicArray();
+        for (T element : elements) {
+            array.add(element);
+        }
+        return array;
+    }
+
+
     public static List<Long> dynamicArrayOf(long[] elements) {
         if (isEmpty(elements)) return emptyList();
         List<Long> array = dynamicArray(elements.length);
@@ -285,7 +297,7 @@ public class ArrayFactory {
 
 
     @SafeVarargs
-    public <T> Stream<T> streamOf(T... elements) {
+    public static <T> Stream<T> streamOf(T... elements) {
         return fixedArrayOf(elements).stream();
     }
 

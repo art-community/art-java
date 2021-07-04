@@ -93,7 +93,10 @@ public class JsonModelWriter implements Writer {
         MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
         List<?> array = type.outputTransformer().toArray(cast(value));
         for (Object element : array) {
-            if (isNull(element)) continue;
+            if (isNull(element)) {
+                generator.writeNull();
+                continue;
+            }
             writeValue(generator, elementType, element);
         }
         generator.writeEndArray();
@@ -139,7 +142,7 @@ public class JsonModelWriter implements Writer {
         MetaTransformer<?> transformer = type.outputTransformer();
         switch (type.externalKind()) {
             case LAZY:
-                writeValue(generator, type.parameters().get(0), transformer.toLazy(cast(value)));
+                writeValue(generator, type.parameters().get(0), transformer.toLazy(cast(value)).get());
                 return;
             case ENTITY:
                 writeEntity(generator, type, value);
@@ -193,7 +196,7 @@ public class JsonModelWriter implements Writer {
                 writeArray(generator, name, type, transformer.toArray(cast(value)));
                 return;
             case LAZY:
-                writeField(generator, name, type.parameters().get(0), transformer.toLazy(cast(value)));
+                writeField(generator, name, type.parameters().get(0), transformer.toLazy(cast(value)).get());
                 return;
             case STRING:
                 generator.writeStringField(name, transformer.toString(cast(value)));

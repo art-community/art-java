@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
 
 dependencies {
     val jacksonVersion: String by project
@@ -26,4 +29,12 @@ dependencies {
 
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
+}
+
+generator {
+    module("JsonTest")
+    jvm()
+    sourcesPattern {
+        exclude("src/main/**")
+    }
 }

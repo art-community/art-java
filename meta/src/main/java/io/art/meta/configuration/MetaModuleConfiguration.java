@@ -28,6 +28,7 @@ import lombok.*;
 @RequiredArgsConstructor
 public class MetaModuleConfiguration implements ModuleConfiguration {
     private final ImmutableMap<Class<?>, MetaClass<?>> classes;
+    private final MetaLibrary library;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<MetaModuleConfiguration, Configurator> {

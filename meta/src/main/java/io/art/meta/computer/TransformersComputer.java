@@ -149,16 +149,16 @@ public class TransformersComputer {
                 return FLUX_TRANSFORMER;
             case MONO:
                 MetaTransformer<?> parameterTransformer = computeInputTransformer(parameters.get(0));
-                return monoTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return monoTransformer(parameterTransformer);
             case LAZY:
                 parameterTransformer = computeInputTransformer(parameters.get(0));
-                return lazyTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return lazyTransformer(parameterTransformer);
             case OPTIONAL:
                 parameterTransformer = computeInputTransformer(parameters.get(0));
-                return optionalTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return optionalTransformer(parameterTransformer);
             case SUPPLIER:
                 parameterTransformer = computeInputTransformer(parameters.get(0));
-                return supplierTransformer(cast(parameterTransformer.fromKind(parameters.get(0).externalKind())));
+                return supplierTransformer(parameterTransformer);
             case ENUM:
                 return enumTransformer(cast(type.enumFactory()));
             case INPUT_STREAM:
@@ -250,16 +250,16 @@ public class TransformersComputer {
                 return FLUX_TRANSFORMER;
             case MONO:
                 MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return monoTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return monoTransformer(parameterTransformer);
             case LAZY:
                 parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return lazyTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return lazyTransformer(parameterTransformer);
             case OPTIONAL:
                 parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return optionalTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return optionalTransformer(parameterTransformer);
             case SUPPLIER:
                 parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return supplierTransformer(cast(parameterTransformer.toKind(parameters.get(0).externalKind())));
+                return supplierTransformer(parameterTransformer);
             case ENUM:
                 return enumTransformer(cast(type.enumFactory()));
             case INPUT_STREAM:

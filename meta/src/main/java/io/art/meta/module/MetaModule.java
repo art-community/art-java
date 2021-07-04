@@ -33,8 +33,15 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<MetaModuleConfiguration> metaModule = context().getStatelessModule(MetaModule.class.getSimpleName());
     private final String id = MetaModule.class.getSimpleName();
-    private final MetaModuleConfiguration configuration = new MetaModuleConfiguration(MetaClassMutableRegistry.get());
-    private final MetaModuleConfiguration.Configurator configurator = new MetaModuleConfiguration.Configurator(configuration);
+    private final MetaLibrary library;
+    private final MetaModuleConfiguration configuration;
+    private final MetaModuleConfiguration.Configurator configurator;
+
+    public MetaModule(MetaLibrary library) {
+        this.library = library;
+        configuration = new MetaModuleConfiguration(MetaClassMutableRegistry.get(), library);
+        configurator = new MetaModuleConfiguration.Configurator(configuration);
+    }
 
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {
         return getMetaModule();
@@ -46,5 +53,9 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
 
     public static <T> MetaClass<T> declaration(Class<T> type) {
         return cast(classes().get(type));
+    }
+
+    public static <T extends MetaLibrary> T library() {
+        return cast(metaModule().configuration().getLibrary());
     }
 }

@@ -95,9 +95,6 @@ public class JsonModelReader implements Reader {
 
 
     private static Object parseEntity(MetaType<?> type, JsonParser parser) {
-        if (type.externalKind() == LAZY) {
-            return type.inputTransformer().fromLazy(() -> parseEntity(type.parameters().get(0), parser));
-        }
         try {
             JsonToken currentToken = parser.nextToken();
             MetaClass<?> definition = type.declaration();
@@ -126,12 +123,16 @@ public class JsonModelReader implements Reader {
                     continue;
                 }
                 MetaType<?> propertyType = property.type();
+                if (propertyType.externalKind() == LAZY) {
+                    propertyType = propertyType.parameters().get(0);
+                }
                 MetaTransformer<?> inputTransformer = propertyType.inputTransformer();
                 switch (currentToken = parser.nextToken()) {
                     case NOT_AVAILABLE:
                     case END_OBJECT:
                     case FIELD_NAME:
                     case VALUE_EMBEDDED_OBJECT:
+                    case VALUE_NULL:
                     case END_ARRAY:
                         break;
                     case START_OBJECT:
@@ -139,13 +140,13 @@ public class JsonModelReader implements Reader {
                             creator.put(property, parseEntity(propertyType, parser));
                             break;
                         }
-                        if (propertyType.externalKind() != MAP && propertyType.externalKind() != LAZY_MAP) {
+                        if (propertyType.externalKind() != MAP && propertyType.externalKind() != LAZY_MAP && propertyType.externalKind() != LAZY) {
                             throw new JsonException(format(JSON_OBJECT_EXCEPTION, field, propertyType));
                         }
                         creator.put(property, inputTransformer.fromMap(parseMap(propertyType, parser)));
                         break;
                     case START_ARRAY:
-                        if (propertyType.externalKind() != ARRAY && propertyType.externalKind() != LAZY_ARRAY) {
+                        if (propertyType.externalKind() != ARRAY && propertyType.externalKind() != LAZY_ARRAY && propertyType.externalKind() != LAZY) {
                             throw new JsonException(format(JSON_ARRAY_EXCEPTION, field, propertyType));
                         }
                         creator.put(property, inputTransformer.fromArray(parseArray(propertyType, parser)));
@@ -177,12 +178,12 @@ public class JsonModelReader implements Reader {
 
 
     private static Map<?, ?> parseMap(MetaType<?> type, JsonParser parser) {
-        if (type.externalKind() == LAZY) {
-            return cast(type.inputTransformer().fromLazy(() -> parseMap(type.parameters().get(0), parser)));
-        }
         try {
             JsonToken currentToken = parser.nextToken();
             MetaType<?> valueType = type.parameters().get(1);
+            if (valueType.externalKind() == LAZY) {
+                valueType = valueType.parameters().get(0);
+            }
             MetaTransformer<?> valueTransformer = valueType.inputTransformer();
             Map<Object, Object> map = map();
             do {
@@ -205,18 +206,21 @@ public class JsonModelReader implements Reader {
                     case VALUE_EMBEDDED_OBJECT:
                     case END_ARRAY:
                         break;
+                    case VALUE_NULL:
+                        map.put(field, null);
+                        break;
                     case START_OBJECT:
                         if (valueType.externalKind() == ENTITY) {
                             map.put(field, parseEntity(valueType, parser));
                             break;
                         }
-                        if (valueType.externalKind() != MAP && valueType.externalKind() != LAZY_MAP) {
+                        if (valueType.externalKind() != MAP && valueType.externalKind() != LAZY_MAP && valueType.externalKind() != LAZY) {
                             throw new JsonException(format(JSON_OBJECT_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromMap(parseMap(valueType, parser)));
                         break;
                     case START_ARRAY:
-                        if (valueType.externalKind() != ARRAY && valueType.externalKind() != LAZY_ARRAY) {
+                        if (valueType.externalKind() != ARRAY && valueType.externalKind() != LAZY_ARRAY && valueType.externalKind() != LAZY) {
                             throw new JsonException(format(JSON_ARRAY_EXCEPTION, field, valueType));
                         }
                         map.put(field, valueTransformer.fromArray(parseArray(valueType, parser)));
@@ -243,11 +247,11 @@ public class JsonModelReader implements Reader {
     }
 
     private static List<?> parseArray(MetaType<?> type, JsonParser parser) {
-        if (type.externalKind() == LAZY) {
-            return cast(type.inputTransformer().fromLazy(() -> parseArray(type.parameters().get(0), parser)));
-        }
         try {
             MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
+            if (elementType.externalKind() == LAZY) {
+                elementType = elementType.parameters().get(0);
+            }
             JsonToken currentToken = parser.nextToken();
             switch (currentToken) {
                 case END_ARRAY:
@@ -258,18 +262,27 @@ public class JsonModelReader implements Reader {
                 case VALUE_NULL:
                     return emptyList();
                 case START_OBJECT:
-                    return parseEntityArray(elementType, parser);
+                    if (elementType.externalKind() == ENTITY) {
+                        return parseEntityArray(elementType, parser);
+                    }
+                    if (elementType.externalKind() != MAP && elementType.externalKind() != LAZY_MAP && elementType.externalKind() != LAZY) {
+                        throw new JsonException(format(JSON_OBJECT_EXCEPTION, "", elementType));
+                    }
+                    return parseMapArray(elementType, parser);
                 case START_ARRAY:
+                    if (elementType.externalKind() != ARRAY && elementType.externalKind() != LAZY_ARRAY && elementType.externalKind() != LAZY) {
+                        throw new JsonException(format(JSON_ARRAY_EXCEPTION, "", elementType));
+                    }
                     return parseInnerArray(elementType, parser);
                 case VALUE_STRING:
-                    return parseStringArray(parser);
+                    return parseStringArray(elementType, parser);
                 case VALUE_NUMBER_INT:
-                    return parseLongArray(parser);
+                    return parseLongArray(elementType, parser);
                 case VALUE_NUMBER_FLOAT:
-                    return parseFloatArray(parser);
+                    return parseFloatArray(elementType, parser);
                 case VALUE_TRUE:
                 case VALUE_FALSE:
-                    return parseBooleanArray(parser);
+                    return parseBooleanArray(elementType, parser);
             }
             return emptyList();
         } catch (IOException exception) {
@@ -278,45 +291,61 @@ public class JsonModelReader implements Reader {
     }
 
 
-    private static List<String> parseStringArray(JsonParser parser) throws IOException {
-        List<String> array = dynamicArrayOf();
+    private static List<?> parseStringArray(MetaType<?> type, JsonParser parser) throws IOException {
+        List<?> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
             if (currentToken != VALUE_STRING) return array;
-            array.add(parser.getText());
+            array.add(cast(type.inputTransformer().fromString(parser.getText())));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
     }
 
-    private static List<Boolean> parseBooleanArray(JsonParser parser) throws IOException {
-        List<Boolean> array = dynamicArrayOf();
+    private static List<?> parseBooleanArray(MetaType<?> type, JsonParser parser) throws IOException {
+        List<?> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
             if (currentToken != VALUE_FALSE && currentToken != VALUE_TRUE) return array;
-            array.add(parser.getBooleanValue());
+            array.add(cast(type.inputTransformer().fromBoolean(parser.getBooleanValue())));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
     }
 
-    private static List<Long> parseLongArray(JsonParser parser) throws IOException {
-        List<Long> array = dynamicArrayOf();
+    private static List<?> parseLongArray(MetaType<?> type, JsonParser parser) throws IOException {
+        List<?> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
             if (currentToken != VALUE_NUMBER_INT) return array;
-            array.add(parser.getLongValue());
+            array.add(cast(type.inputTransformer().fromLong(parser.getLongValue())));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
     }
 
-    private static List<Float> parseFloatArray(JsonParser parser) throws IOException {
-        List<Float> array = dynamicArrayOf();
+    private static List<?> parseFloatArray(MetaType<?> type, JsonParser parser) throws IOException {
+        List<?> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
             if (currentToken != VALUE_NUMBER_FLOAT) return array;
-            array.add(parser.getFloatValue());
+            array.add(cast(type.inputTransformer().fromFloat(parser.getFloatValue())));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
@@ -326,8 +355,27 @@ public class JsonModelReader implements Reader {
         List<Object> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
             if (currentToken != START_OBJECT) return array;
             array.add(parseEntity(type, parser));
+            currentToken = parser.nextToken();
+        } while (!parser.isClosed() && currentToken != END_ARRAY);
+        return array;
+    }
+
+    private static List<Object> parseMapArray(MetaType<?> type, JsonParser parser) throws IOException {
+        List<Object> array = dynamicArrayOf();
+        JsonToken currentToken = parser.currentToken();
+        do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
+            if (currentToken != START_OBJECT) return array;
+            array.add(parseMap(type, parser));
             currentToken = parser.nextToken();
         } while (!parser.isClosed() && currentToken != END_ARRAY);
         return array;
@@ -337,6 +385,10 @@ public class JsonModelReader implements Reader {
         List<Object> array = dynamicArrayOf();
         JsonToken currentToken = parser.currentToken();
         do {
+            if (currentToken == VALUE_NULL) {
+                array.add(null);
+                continue;
+            }
             if (currentToken != START_ARRAY) return array;
             array.add(parseArray(type, parser));
             currentToken = parser.nextToken();
