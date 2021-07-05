@@ -48,6 +48,7 @@ subprojects {
     dependencies {
         val lombokVersion: String by project
         val junitVersion: String by project
+        val assertjVersion: String by project
 
         compileOnly("org.projectlombok", "lombok", lombokVersion)
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
@@ -55,6 +56,7 @@ subprojects {
         testAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
 
         testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
+        testImplementation("org.assertj", "assertj-core", assertjVersion)
         testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
     }
 
