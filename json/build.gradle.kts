@@ -32,7 +32,7 @@ dependencies {
 }
 
 generator {
-    module("JsonTest")
+    module("JsonTest", "io.art.json.test")
     jvm()
     sourcesPattern {
         exclude("src/main/**")

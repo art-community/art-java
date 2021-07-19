@@ -45,7 +45,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 public class Context {
-    private static Context INSTANCE;
+    private static volatile Context INSTANCE;
     private final Thread terminatorHookThread = newDaemon(TERMINATOR_THREAD, () -> ignoreException(INSTANCE::terminationHook));
     private final Thread terminatorThread = newDaemon(TERMINATOR_THREAD, this::awaitTermination);
     private final AtomicBoolean terminationScheduled = new AtomicBoolean(false);
