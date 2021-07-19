@@ -30,10 +30,10 @@ import static java.util.Arrays.*;
 
 @UtilityClass
 public class TestingContext {
-    private final static SingletonAction initializer = singletonAction();
+    private final static SingletonAction initialize = singletonAction();
 
     public static void testing(ModuleFactory<?>... modules) {
-        initializer.run(() -> initialize(modules));
+        initialize.run(() -> initialize(modules));
     }
 
     private static void initialize(ModuleFactory<?>... modules) {
