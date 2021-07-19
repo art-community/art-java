@@ -26,7 +26,7 @@ import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.*;
-import static io.art.core.context.TestingContext.*;
+import static io.art.core.context.TestingContextFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.scheduler.Scheduling.*;

@@ -7,7 +7,7 @@ import io.art.json.test.model.*;
 import meta.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
-import static io.art.core.context.TestingContext.*;
+import static io.art.core.context.TestingContextFactory.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.json.test.generator.ModelGenerator.*;

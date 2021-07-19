@@ -8,7 +8,7 @@ import io.art.message.pack.test.model.*;
 import meta.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
-import static io.art.core.context.TestingContext.*;
+import static io.art.core.context.TestingContextFactory.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.message.pack.test.generator.ModelGenerator.*;
 import static io.art.meta.model.TypedObject.*;

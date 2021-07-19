@@ -29,7 +29,7 @@ import static io.art.core.singleton.SingletonAction.*;
 import static java.util.Arrays.*;
 
 @UtilityClass
-public class TestingContext {
+public class TestingContextFactory {
     private final static SingletonAction initialize = singletonAction();
 
     public static void testing(ModuleFactory<?>... modules) {
