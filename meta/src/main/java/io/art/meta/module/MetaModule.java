@@ -33,12 +33,10 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<MetaModuleConfiguration> metaModule = context().getStatelessModule(MetaModule.class.getSimpleName());
     private final String id = MetaModule.class.getSimpleName();
-    private final MetaLibrary library;
     private final MetaModuleConfiguration configuration;
     private final MetaModuleConfiguration.Configurator configurator;
 
     public MetaModule(MetaLibrary library) {
-        this.library = library;
         configuration = new MetaModuleConfiguration(MetaClassMutableRegistry.get(), library);
         configurator = new MetaModuleConfiguration.Configurator(configuration);
     }

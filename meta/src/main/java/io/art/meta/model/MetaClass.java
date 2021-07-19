@@ -215,7 +215,7 @@ public abstract class MetaClass<T> {
         }
 
         for (MetaClass<?> nested : classes.values()) {
-            nested.beginComputation();
+            nested.completeComputation();
         }
 
         for (MetaConstructor<T> constructor : constructors) {
