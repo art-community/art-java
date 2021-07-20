@@ -67,7 +67,7 @@ public class ChangesListener {
         return consume(action, action);
     }
 
-    public ChangesListener consume(Runnable onChange, Runnable onDispose){
+    public ChangesListener consume(Runnable onChange, Runnable onDispose) {
         changeConsumers.add(onChange);
         disposeConsumers.add(onDispose);
         return this;
