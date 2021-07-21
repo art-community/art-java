@@ -27,8 +27,10 @@ import lombok.*;
 @Getter
 public class YamlModuleConfiguration implements ModuleConfiguration {
     private final YAMLMapper objectMapper = new YAMLMapper();
-    private final YamlReader reader = new YamlReader(objectMapper.getFactory());
-    private final YamlWriter writer = new YamlWriter(objectMapper.getFactory());
+    private final YamlReader oldReader = new YamlReader(objectMapper.getFactory());
+    private final YamlWriter oldWriter = new YamlWriter(objectMapper.getFactory());
+    private final YamlModelReader reader = new YamlModelReader(objectMapper.getFactory());
+    private final YamlModelWriter writer = new YamlModelWriter(objectMapper.getFactory());
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<YamlModuleConfiguration, Configurator> {

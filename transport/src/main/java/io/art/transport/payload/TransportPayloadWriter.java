@@ -47,7 +47,7 @@ public class TransportPayloadWriter {
     private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getOldWriter();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final YamlWriter yamlWriter = yamlModule().configuration().getWriter();
+    private static final YamlWriter yamlWriter = yamlModule().configuration().getOldWriter();
 
     public ByteBuf write(Value value) {
         return getWriter().apply(value);

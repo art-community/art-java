@@ -47,7 +47,7 @@ public class TransportPayloadReader {
     private static final MessagePackReader messagePackReader = messagePackModule().configuration().getOldReader();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final YamlReader yamlReader = yamlModule().configuration().getReader();
+    private static final YamlReader yamlReader = yamlModule().configuration().getOldReader();
 
     public TransportPayload read(ByteBuf buffer) {
         return getReader().apply(buffer);

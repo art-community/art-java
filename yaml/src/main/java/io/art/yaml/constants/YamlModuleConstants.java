@@ -19,4 +19,11 @@
 package io.art.yaml.constants;
 
 public interface YamlModuleConstants {
+    interface Errors {
+        String YAML_ARRAY_FIELD_EXCEPTION = "Yaml at field {0} has array, but type {1} is not compatible with it";
+        String YAML_OBJECT_FIELD_EXCEPTION = "Yaml at field {0} has object, but type {1} is not compatible with it";
+        String YAML_ARRAY_IN_ARRAY_EXCEPTION = "Yaml has array inside array, but type {0} is not compatible with it";
+        String YAML_OBJECT_IN_ARRAY_EXCEPTION = "Yaml has object inside array, but type {0} is not compatible with it";
+    }
+
 }
