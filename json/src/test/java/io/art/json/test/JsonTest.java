@@ -20,7 +20,7 @@ public class JsonTest {
     }
 
     @Test
-    public void testJsonRead() {
+    public void testJson() {
         JsonModelWriter writer = jsonModule().configuration().getWriter();
         JsonModelReader reader = jsonModule().configuration().getReader();
         TestingMetaModel model = generateModel();

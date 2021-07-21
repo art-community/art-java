@@ -122,7 +122,6 @@ public class YamlModelReader implements Reader {
                 case NOT_AVAILABLE:
                 case END_OBJECT:
                 case FIELD_NAME:
-                case VALUE_EMBEDDED_OBJECT:
                 case VALUE_NULL:
                 case END_ARRAY:
                     break;
@@ -157,7 +156,6 @@ public class YamlModelReader implements Reader {
                 case NOT_AVAILABLE:
                 case END_OBJECT:
                 case FIELD_NAME:
-                case VALUE_EMBEDDED_OBJECT:
                 case END_ARRAY:
                     break;
                 case VALUE_NULL:
@@ -183,7 +181,6 @@ public class YamlModelReader implements Reader {
                 case NOT_AVAILABLE:
                 case END_OBJECT:
                 case FIELD_NAME:
-                case VALUE_EMBEDDED_OBJECT:
                 case END_ARRAY:
                     break;
                 case VALUE_NULL:
@@ -219,6 +216,11 @@ public class YamlModelReader implements Reader {
                     throw new YamlException(format(YAML_ARRAY_FIELD_EXCEPTION, field, type));
                 }
                 return transformer.fromArray(parseArray(type, parser));
+            case VALUE_EMBEDDED_OBJECT:
+                if (type.externalKind() != BINARY) {
+                    throw new YamlException(format(YAML_OBJECT_FIELD_EXCEPTION, field, type));
+                }
+                return transformer.fromByteArray(parser.getBinaryValue());
             case VALUE_STRING:
                 if (type.externalKind() == BINARY) {
                     return transformer.fromByteArray(parser.getBinaryValue());
@@ -257,6 +259,11 @@ public class YamlModelReader implements Reader {
                     throw new YamlException(format(YAML_ARRAY_IN_ARRAY_EXCEPTION, type));
                 }
                 return transformer.fromArray(parseArray(type, parser));
+            case VALUE_EMBEDDED_OBJECT:
+                if (type.externalKind() != BINARY) {
+                    throw new YamlException(format(YAML_ARRAY_IN_ARRAY_EXCEPTION, type));
+                }
+                return transformer.fromByteArray(parser.getBinaryValue());
             case VALUE_STRING:
                 if (type.externalKind() == BINARY) {
                     return transformer.fromByteArray(parser.getBinaryValue());

@@ -39,7 +39,7 @@ public class TestingMetaModelGenerator {
                 .f21(new long[]{1})
                 .f22(new boolean[]{true})
                 .f23(new char[]{'c'})
-                .f24(new byte[]{1})
+                .f24(new byte[]{10, 11, 14, 23})
                 .f25(new Integer[]{1})
                 .f26(new Short[]{1})
                 .f27(new Double[]{1.})
