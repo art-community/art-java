@@ -73,20 +73,19 @@ public class TestingMetaModelGenerator {
                 .f56(Duration.ofDays(1))
                 .f57(TestingMetaModel.ModelEnum.FIRST)
                 .f58(Optional.of(fixedArrayOf(lazy(() -> "test"), null, lazy(() -> "test2"))))
-                .f65(Mono.just(new String[]{"test"}))
                 .f62(Mono.just("test"))
                 .f63(Flux.just("test"))
+                .f65(Mono.just(new String[]{"test"}))
                 .f66(null)
                 .f67("")
                 .build();
 
         return model.toBuilder()
-                .f64(streamOf("test"))
                 .f53(model)
                 .f59(fixedArrayOf(model))
                 .f60(setOf(model))
                 .f61(mapOf("test", model))
-                .f61(mapOf("test", model))
+                .f64(streamOf("test"))
                 .build();
     }
 }
