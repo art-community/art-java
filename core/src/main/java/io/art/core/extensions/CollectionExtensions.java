@@ -45,11 +45,11 @@ public final class CollectionExtensions {
     }
 
     public static <T, R> ImmutableArray<R> orEmptyImmutableArray(T value, Function<T, ImmutableArray<R>> action) {
-        return value != null ? immutableArrayOf(action.apply(value)) : ImmutableArray.emptyImmutableArray();
+        return nonNull(value) ? immutableArrayOf(action.apply(value)) : ImmutableArray.emptyImmutableArray();
     }
 
     public static <K, V, R> ImmutableMap<K, V> orEmptyImmutableMap(R value, Function<R, ImmutableMap<K, V>> action) {
-        return value != null ? immutableMapOf(action.apply(value)) : ImmutableMap.emptyImmutableMap();
+        return nonNull(value) ? immutableMapOf(action.apply(value)) : ImmutableMap.emptyImmutableMap();
     }
 
 

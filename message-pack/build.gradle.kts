@@ -28,12 +28,6 @@ dependencies {
     implementation(project(":meta"))
 
     api("org.msgpack", "msgpack-core", messagePackVersion)
-}
 
-generator {
-    module("MessagePackTest", "io.art.message.pack.test")
-    jvm()
-    sourcesPattern {
-        exclude("src/main/**")
-    }
+    testImplementation(testFixtures(project(":meta")))
 }

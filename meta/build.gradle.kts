@@ -16,7 +16,23 @@
  * limitations under the License.
  */
 
+plugins {
+    `java-test-fixtures`
+    id("art-internal-jvm")
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":value"))
+
+    testFixturesImplementation(project(":core"))
+    testFixturesImplementation(project(":value"))
+}
+
+generator {
+    module("MetaTest", "io.art.meta.test")
+    jvm()
+    sourcesPattern {
+        include("src/testFixtures/**")
+    }
 }

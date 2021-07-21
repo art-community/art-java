@@ -51,10 +51,7 @@ public class LoggerConfiguration {
         LoggerConfigurationBuilder builder = LoggerConfiguration.builder();
         builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), fallback.level));
         builder.enabled(orElse(source.getBool(ENABLED_KEY), fallback.enabled));
-        builder.configurableWriters(ifEmpty(
-                source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.defaults())),
-                fallback.configurableWriters
-        ));
+        builder.configurableWriters(source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.defaults())));
         return builder.build();
     }
 

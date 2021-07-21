@@ -20,6 +20,7 @@ import io.art.gradle.common.logger.info
 
 plugins {
     `java-library`
+    `java-test-fixtures`
     id("art-internal-jvm") version "main"
 }
 
@@ -44,11 +45,11 @@ subprojects {
     group = rootProject.group
 
     apply(plugin = "java-library")
+    apply(plugin = "java-test-fixtures")
 
     dependencies {
         val lombokVersion: String by project
         val junitVersion: String by project
-        val assertjVersion: String by project
 
         compileOnly("org.projectlombok", "lombok", lombokVersion)
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
@@ -56,8 +57,11 @@ subprojects {
         testAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
 
         testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
-        testImplementation("org.assertj", "assertj-core", assertjVersion)
         testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
+
+        testFixturesCompileOnly("org.projectlombok", "lombok", lombokVersion)
+        testFixturesAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
+        testFixturesImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
     }
 
     tasks.test {

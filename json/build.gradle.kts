@@ -29,12 +29,6 @@ dependencies {
 
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
-}
 
-generator {
-    module("JsonTest", "io.art.json.test")
-    jvm()
-    sourcesPattern {
-        exclude("src/main/**")
-    }
+    testImplementation(testFixtures(project(":meta")))
 }

@@ -1,6 +1,5 @@
-package io.art.message.pack.test.generator;
+package io.art.meta.test;
 
-import io.art.message.pack.test.model.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
@@ -14,15 +13,9 @@ import java.util.*;
 
 @UtilityClass
 @SuppressWarnings(ALL)
-public class ModelGenerator {
-    public static Model generateModel() {
-        Model model = Model.builder()
-                .mono2(Mono.just(new String[]{"test"}))
-                .mono1(Mono.just("test"))
-                .flux(Flux.just("test"))
-                .nullField(null)
-                .emptyString("")
-
+public class TestingMetaModelGenerator {
+    public static TestingMetaModel generateModel() {
+        TestingMetaModel model = TestingMetaModel.builder()
                 .f1(1)
                 .f2((short) 1)
                 .f3(1)
@@ -78,14 +71,21 @@ public class ModelGenerator {
                 .f54(LocalDateTime.now())
                 .f55(ZonedDateTime.now())
                 .f56(Duration.ofDays(1))
-                .f57(Model.ModelEnum.FIRST)
+                .f57(TestingMetaModel.ModelEnum.FIRST)
                 .f58(Optional.of(fixedArrayOf(lazy(() -> "test"), null, lazy(() -> "test2"))))
+                .f65(Mono.just(new String[]{"test"}))
+                .f62(Mono.just("test"))
+                .f63(Flux.just("test"))
+                .f66(null)
+                .f67("")
                 .build();
+
         return model.toBuilder()
-                .stream(streamOf("test"))
+                .f64(streamOf("test"))
                 .f53(model)
                 .f59(fixedArrayOf(model))
                 .f60(setOf(model))
+                .f61(mapOf("test", model))
                 .f61(mapOf("test", model))
                 .build();
     }
