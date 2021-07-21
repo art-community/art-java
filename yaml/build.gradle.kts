@@ -27,4 +27,6 @@ dependencies {
     api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
+
+    testImplementation(testFixtures(project(":meta")))
 }

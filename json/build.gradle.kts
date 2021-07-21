@@ -16,10 +16,6 @@
  * limitations under the License.
  */
 
-plugins {
-    id("art-internal-jvm")
-}
-
 dependencies {
     val jacksonVersion: String by project
 
