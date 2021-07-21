@@ -212,7 +212,7 @@ public class MetaMetaTest extends MetaLibrary {
 
             private final MetaField<java.lang.String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false));
 
-            private final MetaAssertModelMethod assertModelMethod = register(new MetaAssertModelMethod());
+            private final MetaAssertEqualsMethod assertEqualsMethod = register(new MetaAssertEqualsMethod());
 
             private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
 
@@ -633,8 +633,8 @@ public class MetaMetaTest extends MetaLibrary {
               return f67Field;
             }
 
-            public MetaAssertModelMethod assertModelMethod() {
-              return assertModelMethod;
+            public MetaAssertEqualsMethod assertEqualsMethod() {
+              return assertEqualsMethod;
             }
 
             public MetaToBuilderMethod toBuilderMethod() {
@@ -1340,11 +1340,11 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public static final class MetaAssertModelMethod extends InstanceMetaMethod<io.art.meta.test.TestingMetaModel, Void> {
+            public static final class MetaAssertEqualsMethod extends InstanceMetaMethod<io.art.meta.test.TestingMetaModel, Void> {
               private final MetaParameter<io.art.meta.test.TestingMetaModel> modelParameter = register(new MetaParameter<>(0, "model",metaType(io.art.meta.test.TestingMetaModel.class)));
 
-              private MetaAssertModelMethod() {
-                super("assertModel",metaType(Void.class));
+              private MetaAssertEqualsMethod() {
+                super("assertEquals",metaType(Void.class));
               }
 
               @Override

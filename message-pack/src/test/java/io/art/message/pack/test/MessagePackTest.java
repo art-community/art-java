@@ -16,10 +16,7 @@ import static io.art.meta.test.TestingMetaModelGenerator.*;
 public class MessagePackTest {
     @BeforeAll
     public static void setup() {
-        testing(
-                meta(MetaMetaTest::new).getFactory(),
-                MessagePackModule::new
-        );
+        testing(meta(MetaMetaTest::new).getFactory(), MessagePackModule::new);
     }
 
     @Test

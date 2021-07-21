@@ -22,6 +22,7 @@ import java.util.stream.*;
 @Builder(toBuilder = true)
 @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
 public class TestingMetaModel {
+
     int f1;
     short f2;
     double f3;

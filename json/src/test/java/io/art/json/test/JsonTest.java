@@ -16,10 +16,7 @@ import static io.art.meta.test.TestingMetaModelGenerator.*;
 public class JsonTest {
     @BeforeAll
     public static void setup() {
-        testing(
-                meta(MetaMetaTest::new).getFactory(),
-                JsonModule::new
-        );
+        testing(meta(MetaMetaTest::new).getFactory(), JsonModule::new);
     }
 
     @Test
