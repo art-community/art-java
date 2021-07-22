@@ -151,10 +151,12 @@ public class Context {
     }
 
     public static void scheduleTermination() {
-        Context context = context();
-        if (context.terminationScheduled.compareAndSet(false, true)) {
-            getRuntime().removeShutdownHook(context.terminatorHookThread);
-            context.terminatorSignal.countDown();
+        if (isNull(INSTANCE)) {
+            return;
+        }
+        if (INSTANCE.terminationScheduled.compareAndSet(false, true)) {
+            getRuntime().removeShutdownHook(INSTANCE.terminatorHookThread);
+            INSTANCE.terminatorSignal.countDown();
         }
     }
 
@@ -164,10 +166,12 @@ public class Context {
     }
 
     public static void shutdown() {
-        Context context = context();
-        getRuntime().removeShutdownHook(context.terminatorHookThread);
-        context.terminatorThread.interrupt();
-        context.unload();
+        if (isNull(INSTANCE)) {
+            return;
+        }
+        getRuntime().removeShutdownHook(INSTANCE.terminatorHookThread);
+        INSTANCE.terminatorThread.interrupt();
+        INSTANCE.unload();
     }
 
     private void awaitTermination() {
@@ -176,13 +180,19 @@ public class Context {
         } catch (InterruptedException interruptedException) {
             return;
         }
-        context().unload();
+        if (isNull(INSTANCE)) {
+            return;
+        }
+        INSTANCE.unload();
         System.exit(0);
     }
 
     private void terminationHook() {
         terminatorThread.interrupt();
-        context().unload();
+        if (isNull(INSTANCE)) {
+            return;
+        }
+        INSTANCE.unload();
     }
 
     public class Service {
