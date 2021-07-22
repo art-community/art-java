@@ -12,7 +12,7 @@ import java.time.*;
 import java.util.*;
 
 @UtilityClass
-@SuppressWarnings(ALL)
+@SuppressWarnings(UNCHECKED)
 public class TestingMetaModelGenerator {
     public static TestingMetaModel generateModel() {
         TestingMetaModel model = TestingMetaModel.builder()
