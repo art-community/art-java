@@ -40,7 +40,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @TestMethodOrder(OrderAnnotation.class)
-public class SchedulingTest {
+public class SchedulerTest {
     @BeforeAll
     public static void initialize() {
         testing(LoggingModule::new, SchedulerModule::new);
