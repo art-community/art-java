@@ -166,7 +166,7 @@ public class Context {
     }
 
     public static void shutdown() {
-        if (isNull(INSTANCE)) {
+        if (isNull(INSTANCE) || INSTANCE.terminationScheduled.get()) {
             return;
         }
         getRuntime().removeShutdownHook(INSTANCE.terminatorHookThread);

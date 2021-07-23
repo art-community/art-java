@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.core.context;
+package io.art.core.initializer;
 
 import io.art.core.configuration.*;
 import io.art.core.module.*;
@@ -29,14 +29,14 @@ import static io.art.core.singleton.SingletonAction.*;
 import static java.util.Arrays.*;
 
 @UtilityClass
-public class TestingContextFactory {
+public class ContextInitializer {
     private final static SingletonAction initialize = singletonAction();
 
-    public static void testing(ModuleFactory<?>... modules) {
-        initialize.run(() -> initialize(modules));
+    public static void initialize(ModuleFactory<?>... modules) {
+        initialize.run(() -> initializeModules(modules));
     }
 
-    private static void initialize(ModuleFactory<?>... modules) {
+    private static void initializeModules(ModuleFactory<?>... modules) {
         prepareInitialization(ContextConfiguration.builder().build(), emptyConsumer());
         processInitialization(stream(modules).map(ModuleFactory::get).collect(immutableSetCollector()));
     }
