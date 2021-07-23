@@ -32,6 +32,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.constants.ContextConstants.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -78,11 +79,7 @@ public class Launcher {
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID))
                 .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())));
 
-        Consumer<String> printer = message -> {
-            if (!activator.quiet() && nonNull(loggingActivator)) {
-                logger.get().info(message);
-            }
-        };
+        Consumer<String> printer = nonNull(loggingActivator) ? message -> logger.get().info(message) : emptyConsumer();
 
         prepareInitialization(contextConfiguration.printer(printer).build());
         ModuleInitializationOperator<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
@@ -138,11 +135,7 @@ public class Launcher {
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID));
 
-        Consumer<String> printer = message -> {
-            if (!activator.quiet() && nonNull(loggingActivator)) {
-                logger.get().info(message);
-            }
-        };
+        Consumer<String> printer = nonNull(loggingActivator) ? message -> logger.get().info(message) : emptyConsumer();
 
         prepareInitialization(contextConfiguration.printer(printer).build());
         ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();

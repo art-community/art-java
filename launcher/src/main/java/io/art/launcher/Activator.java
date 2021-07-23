@@ -72,10 +72,6 @@ public class Activator {
     @Getter
     private String[] arguments;
 
-    @Setter
-    @Getter
-    private boolean quiet = false;
-
     public ImmutableMap<String, ModuleActivator> activators() {
         return immutableMapOf(activators);
     }
