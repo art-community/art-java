@@ -35,7 +35,6 @@ public class ModuleActivator {
     private final ModuleInitializationOperator<?> initializer;
     private final Set<ModuleActivator> dependencies = set();
 
-
     public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
         return ModuleActivator.builder()
                 .id(moduleClass.getSimpleName())

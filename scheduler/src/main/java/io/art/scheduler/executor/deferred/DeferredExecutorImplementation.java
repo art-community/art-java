@@ -56,10 +56,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Builder.Default
     private final Duration poolTerminationTimeout = DEFAULT_EXECUTOR_TERMINATION_TIMEOUT;
 
-    @Getter
-    @Builder.Default
-    private final boolean awaitOnShutdown = true;
-
     @Getter(lazy = true)
     private final DeferredEventObserver observer = new DeferredEventObserver(this);
 

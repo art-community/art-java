@@ -46,7 +46,6 @@ import java.util.function.*;
 @Accessors(fluent = true)
 public class Activator {
     private final static Activator activator = new Activator();
-
     private final Map<String, ModuleActivator> activators = map();
 
     @Setter

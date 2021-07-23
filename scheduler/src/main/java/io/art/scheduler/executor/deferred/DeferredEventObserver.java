@@ -246,12 +246,6 @@ class DeferredEventObserver {
                     pendingPool.shutdown();
                     fallbackExecutor.shutdown();
 
-                    if (!executor.isAwaitOnShutdown()) {
-                        poolCounter.decrementAndGet();
-                        threadCounter.set(0);
-                        return;
-                    }
-
                     try {
                         if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
                             executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
