@@ -110,23 +110,23 @@ public class SchedulerTest {
             assertEquals(index, counter.getOrders().get(task));
         }
     }
-
-    @RepeatedTest(5000)
-    public void testShutdown() {
-        DeferredExecutor executor = deferredExecutor().build();
-        CountDownLatch water = new CountDownLatch(8);
-        List<ScheduledTask> tasks = linkedListOf(
-                new ScheduledTask(water),
-                new ScheduledTask(water),
-                new ScheduledTask(water),
-                new ScheduledTask(water),
-                new ScheduledTask(water),
-                new ScheduledTask(water),
-                new ScheduledTask(water),
-                new ScheduledTask(water)
-        );
-        tasks.forEach(task -> executor.execute(task, now()));
-        executor.shutdown();
-        tasks.forEach(task -> assertTrue(task.completed()));
-    }
+//
+//    @RepeatedTest(5000)
+//    public void testShutdown() {
+//        DeferredExecutor executor = deferredExecutor().build();
+//        CountDownLatch water = new CountDownLatch(8);
+//        List<ScheduledTask> tasks = linkedListOf(
+//                new ScheduledTask(water),
+//                new ScheduledTask(water),
+//                new ScheduledTask(water),
+//                new ScheduledTask(water),
+//                new ScheduledTask(water),
+//                new ScheduledTask(water),
+//                new ScheduledTask(water),
+//                new ScheduledTask(water)
+//        );
+//        tasks.forEach(task -> executor.execute(task, now()));
+//        executor.shutdown();
+//        tasks.forEach(task -> assertTrue(task.completed()));
+//    }
 }
