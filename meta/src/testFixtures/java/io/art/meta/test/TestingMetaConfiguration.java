@@ -21,7 +21,7 @@ import java.util.stream.*;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
-public class TestingMetaModel {
+public class TestingMetaConfigurationModel {
     int f1;
     short f2;
     double f3;
@@ -45,7 +45,6 @@ public class TestingMetaModel {
     long[] f21;
     boolean[] f22;
     char[] f23;
-    byte[] f24;
     Integer[] f25;
     Short[] f26;
     Double[] f27;
@@ -62,27 +61,24 @@ public class TestingMetaModel {
     Supplier<String> f38;
     LazyProperty<String> f39;
     List<int[]> f40;
-    List<byte[]> f41;
     List<String[]> f42;
-    List<byte[]>[] f43;
     List<int[]>[] f44;
     List<String[]>[] f45;
     List<List<String>> f46;
     List<List<String>[]> f47;
-    Map<Integer, String> f48;
     Map<String, String[]> f49;
     Map<String, List<String>> f50;
     Map<String, Map<String, String>[]> f51;
     ImmutableMap<String, Map<String, String>[]> f52;
-    TestingMetaModel f53;
+    TestingMetaConfigurationModel f53;
     LocalDateTime f54;
     ZonedDateTime f55;
     Duration f56;
     ModelEnum f57;
     Optional<List<LazyProperty<String>>> f58;
-    List<TestingMetaModel> f59;
-    Set<TestingMetaModel> f60;
-    Map<String, TestingMetaModel> f61;
+    List<TestingMetaConfigurationModel> f59;
+    Set<TestingMetaConfigurationModel> f60;
+    Map<String, TestingMetaConfigurationModel> f61;
     Mono<String> f62;
     Flux<String> f63;
     Stream<String> f64;
@@ -97,7 +93,7 @@ public class TestingMetaModel {
     }
 
 
-    public void assertEquals(TestingMetaModel model) {
+    public void assertEquals(TestingMetaConfigurationModel model) {
         Assertions.assertEquals(f1, model.f1, "f1");
         Assertions.assertEquals(f2, model.f2, "f2");
         Assertions.assertEquals(f3, model.f3, "f3");
@@ -122,7 +118,6 @@ public class TestingMetaModel {
         assertArrayEquals(f21, model.f21, "f21");
         assertArrayEquals(f22, model.f22, "f22");
         assertArrayEquals(f23, model.f23, "f23");
-        assertArrayEquals(f24, model.f24, "f24");
         assertArrayEquals(f25, model.f25, "f25");
         assertArrayEquals(f26, model.f26, "f26");
         assertArrayEquals(f27, model.f27, "f27");
@@ -145,24 +140,9 @@ public class TestingMetaModel {
             assertArrayEquals(f40.get(index), model.f40.get(index), "f40");
         }
 
-        Assertions.assertEquals(f41.size(), model.f41.size(), "f41");
-        for (int index = 0; index < f41.size(); index++) {
-            assertArrayEquals(f41.get(index), model.f41.get(index), "f41");
-        }
-
         Assertions.assertEquals(f42.size(), model.f42.size(), "f42");
         for (int index = 0; index < f42.size(); index++) {
             assertArrayEquals(f42.get(index), model.f42.get(index), "f42");
-        }
-
-        Assertions.assertEquals(f43.length, model.f43.length, "f43");
-        for (int index = 0; index < f43.length; index++) {
-            List<byte[]> elements = f43[index];
-            List<byte[]> modelElements = model.f43[index];
-            Assertions.assertEquals(elements.size(), modelElements.size(), "f43");
-            for (int inner = 0; inner < elements.size(); inner++) {
-                assertArrayEquals(elements.get(inner), modelElements.get(inner), "f43");
-            }
         }
 
         Assertions.assertEquals(f44.length, model.f44.length, "f44");
@@ -193,8 +173,6 @@ public class TestingMetaModel {
             List<String>[] modelElements = model.f47.get(index);
             assertArrayEquals(elements, modelElements, "f47");
         }
-
-        Assertions.assertEquals(f48, model.f48, "f48");
 
         Assertions.assertEquals(f49.size(), model.f49.size(), "f49");
         for (Map.Entry<String, String[]> entry : f49.entrySet()) {
@@ -233,8 +211,8 @@ public class TestingMetaModel {
 
         if (nonNull(model.f60)) {
             Assertions.assertEquals(f60.size(), model.f59.size(), "f60");
-            List<TestingMetaModel> list = fixedArrayOf(f60);
-            List<TestingMetaModel> modelList = fixedArrayOf(model.f60);
+            List<TestingMetaConfigurationModel> list = fixedArrayOf(f60);
+            List<TestingMetaConfigurationModel> modelList = fixedArrayOf(model.f60);
             Assertions.assertEquals(list.size(), modelList.size(), "f60");
             for (int index = 0; index < list.size(); index++) {
                 list.get(index).assertEquals(modelList.get(index));
@@ -243,7 +221,7 @@ public class TestingMetaModel {
 
         if (nonNull(model.f61)) {
             Assertions.assertEquals(f61.size(), model.f61.size(), "f61");
-            for (Map.Entry<String, TestingMetaModel> entry : f61.entrySet()) {
+            for (Map.Entry<String, TestingMetaConfigurationModel> entry : f61.entrySet()) {
                 entry.getValue().assertEquals(model.f61.get(entry.getKey()));
             }
         }

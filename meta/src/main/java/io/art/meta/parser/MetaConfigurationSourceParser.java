@@ -8,11 +8,13 @@ import io.art.meta.schema.MetaCreatorTemplate.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 
 @UtilityClass
 public class MetaConfigurationSourceParser {
@@ -23,7 +25,12 @@ public class MetaConfigurationSourceParser {
     public <T> T parse(MetaClass<T> metaClass, ConfigurationSource source) {
         MetaCreatorInstance creator = metaClass.creator().validate(MetaException::new).instantiate();
         for (MetaProperty<?> property : creator.properties().values()) {
-            creator.putValue(property, parseValue(source.getNested(property.name()), property.type()));
+            NestedConfiguration nested = source.getNested(property.name());
+            if (isNull(nested)) {
+                creator.putNull(property);
+                continue;
+            }
+            creator.putValue(property, parseValue(nested, property.type()));
         }
         return cast(creator.create());
     }
@@ -39,7 +46,7 @@ public class MetaConfigurationSourceParser {
                 return transformer.fromMap(configuration.asMap(nested -> parseValue(nested, type.parameters().get(1))).toMutable());
             case ARRAY:
             case LAZY_ARRAY:
-                return transformer.fromArray(configuration.asArray(nested -> parseValue(nested, type.parameters().get(0))).toMutable());
+                return transformer.fromArray(configuration.asArray(nested -> parseValue(nested, orElse(type.arrayComponentType(), () -> type.parameters().get(0)))).toMutable());
             case LAZY:
                 return transformer.fromLazy(() -> parseValue(configuration, type.parameters().get(0)));
             case STRING:
@@ -71,7 +78,12 @@ public class MetaConfigurationSourceParser {
     private Object parseEntity(NestedConfiguration configuration, MetaClass<?> entityType) {
         MetaCreatorInstance creator = entityType.creator().validate(MetaException::new).instantiate();
         for (MetaProperty<?> property : creator.properties().values()) {
-            creator.putValue(property, parseValue(configuration.getNested(property.name()), property.type()));
+            NestedConfiguration nested = configuration.getNested(property.name());
+            if (isNull(nested)) {
+                creator.putNull(property);
+                continue;
+            }
+            creator.putValue(property, parseValue(nested, property.type()));
         }
         return creator.create();
     }

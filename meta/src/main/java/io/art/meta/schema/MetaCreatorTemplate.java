@@ -144,6 +144,12 @@ public class MetaCreatorTemplate {
             return this;
         }
 
+        public MetaCreatorInstance putNull(MetaProperty<?> property) {
+            values[property.index()] = null;
+            filledFields++;
+            return this;
+        }
+
         public Object create() {
             if (filledFields == 0) {
                 return noPropertiesConstructor.invokeCatched();

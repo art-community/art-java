@@ -19,6 +19,7 @@
 package io.art.core.collection;
 
 import com.google.common.collect.*;
+import static io.art.core.factory.ArrayFactory.*;
 import javax.annotation.*;
 import java.util.*;
 
@@ -40,7 +41,7 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
 
     @Override
     public List<T> toMutable() {
-        return new ArrayList<>(array);
+        return dynamicArrayOf(array);
     }
 
     @Override
