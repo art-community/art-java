@@ -17,7 +17,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 
 @UtilityClass
-public class MetaConfigurationSourceParser {
+public class MetaConfigurationParser {
     public <T> T parse(Class<T> javaClass, ConfigurationSource source) {
         return parse(declaration(javaClass), source);
     }
