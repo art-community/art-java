@@ -35,7 +35,7 @@ import java.time.format.*;
 @Builder
 public class FileWriterConfiguration {
     @Builder.Default
-    private final String prefix = context().configuration().getMainModuleId() + DASH;
+    private final String prefix = context().configuration().getMain() + DASH;
 
     @Builder.Default
     private final Path directory = context().configuration().getWorkingDirectory();

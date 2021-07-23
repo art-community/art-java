@@ -40,7 +40,6 @@ import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.launcher.LauncherConstants.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -50,18 +49,9 @@ public class Activator {
 
     private final Map<String, ModuleActivator> activators = map();
 
-    @Getter
-    private ModuleActivator configuratorActivator;
-
-    @Getter
-    private ModuleActivator metaActivator;
-
-    @Getter
-    private ModuleActivator loggingActivator;
-
     @Setter
     @Getter
-    private String mainModuleId;
+    private String main;
 
     @Setter
     @Getter
@@ -92,17 +82,13 @@ public class Activator {
     }
 
     public Activator module(ModuleActivator activator) {
-        if (activator.getId().equals(CONFIGURATOR_MODULE_ID)) {
-            configuratorActivator = activator;
-            return this;
-        }
-        if (activator.getId().equals(LOGGING_MODULE_ID)) {
-            loggingActivator = activator;
-            return this;
-        }
         activator.getDependencies().forEach(this::module);
         activators.putIfAbsent(activator.getId(), activator);
         return this;
+    }
+
+    public Activator configurable() {
+        return module(ConfiguratorActivator.configurator());
     }
 
     public Activator kit() {
@@ -110,6 +96,7 @@ public class Activator {
     }
 
     public Activator kit(ModulesInitializer initializer) {
+        module(ConfiguratorActivator.configurator(initializer.configurator()));
         module(LoggingActivator.logging(initializer.logging()));
         module(ValueActivator.value(initializer.value()));
         module(SchedulerActivator.scheduler());
@@ -133,9 +120,7 @@ public class Activator {
 
 
     public static Activator activator(String[] arguments, Supplier<? extends MetaLibrary> metaFactory) {
-        Activator.activator.metaActivator = MetaActivator.meta(metaFactory);
-        Activator.activator.configuratorActivator = ConfiguratorActivator.configurator();
-        return Activator.activator.arguments(arguments);
+        return Activator.activator.module(MetaActivator.meta(metaFactory)).arguments(arguments);
     }
 
     public static Activator activator(Supplier<? extends MetaLibrary> metaFactory) {
@@ -143,7 +128,6 @@ public class Activator {
     }
 
     public static Activator activator(String[] arguments) {
-        Activator.activator.configuratorActivator = ConfiguratorActivator.configurator();
         return Activator.activator.arguments(arguments);
     }
 

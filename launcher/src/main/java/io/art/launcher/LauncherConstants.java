@@ -32,8 +32,7 @@ public interface LauncherConstants {
     );
 
     String CONFIGURED_BY_MESSAGE = "Configured by {0}";
+    String DEFAULT_CONFIGURATION = "Configurator not activated. Using default configurations";
 
     String LAUNCHER_LOGGER = "launcher";
-    String LOGGING_MODULE_ID = "LoggingModule";
-    String CONFIGURATOR_MODULE_ID = "ConfiguratorModule";
 }

@@ -25,7 +25,6 @@ import io.art.core.module.Module;
 import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
@@ -129,7 +128,7 @@ public class Context {
             module.onLoad(service);
             ifNotEmpty(module.print(), configuration.getPrinter());
         }
-        apply(configuration.getOnLoad(), Runnable::run);
+        configuration.getOnLoad().run();
     }
 
     private void unload() {
@@ -140,7 +139,7 @@ public class Context {
             module.onUnload(service);
             this.modules.remove(module.getId());
         }
-        apply(configuration.getOnUnload(), Runnable::run);
+        configuration.getOnUnload().run();
         INSTANCE = null;
     }
 
@@ -202,7 +201,7 @@ public class Context {
                 configuration.getPrinter().accept(format(MODULE_RELOADING_START_MESSAGE, module.getId()));
                 module.beforeReload(service);
             }
-            apply(configuration.getBeforeReload(), Runnable::run);
+            configuration.getBeforeReload().run();
 
             for (Module<?, ?> module : modules.values()) {
                 configuration.getReload().accept(module);
@@ -210,7 +209,7 @@ public class Context {
                 module.afterReload(service);
                 configuration.getPrinter().accept(format(MODULE_RELOADING_END_MESSAGE, module.getId()));
             }
-            apply(configuration.getAfterReload(), Runnable::run);
+            configuration.getAfterReload().run();
         }
     }
 }

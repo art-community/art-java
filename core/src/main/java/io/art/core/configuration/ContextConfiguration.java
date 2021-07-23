@@ -49,7 +49,7 @@ import java.util.function.*;
 @Builder
 public class ContextConfiguration {
     @Builder.Default
-    private final String mainModuleId = DEFAULT_MAIN_MODULE_ID;
+    private final String main = DEFAULT_MAIN_MODULE_ID;
     @Builder.Default
     private final Charset charset = UTF_8;
     @Builder.Default
@@ -80,11 +80,16 @@ public class ContextConfiguration {
     private final ImmutableMap<String, String> properties = immutableMapOf(System.getProperties());
     @Builder.Default
     private final Consumer<String> printer = emptyConsumer();
-    private final Runnable onLoad;
-    private final Runnable onUnload;
-    private final Runnable beforeReload;
-    private final Consumer<Module<?, ?>> reload;
-    private final Runnable afterReload;
+    @Builder.Default
+    private final Consumer<Module<?, ?>> reload = emptyConsumer();
+    @Builder.Default
+    private final Runnable onLoad = emptyRunnable();
+    @Builder.Default
+    private final Runnable onUnload = emptyRunnable();
+    @Builder.Default
+    private final Runnable beforeReload = emptyRunnable();
+    @Builder.Default
+    private final Runnable afterReload = emptyRunnable();
 
     public static ContextConfiguration defaults() {
         return ContextConfiguration.builder().build();
