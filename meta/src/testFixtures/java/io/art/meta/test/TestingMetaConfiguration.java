@@ -21,7 +21,7 @@ import java.util.stream.*;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
-public class TestingMetaConfigurationModel {
+public class TestingMetaConfiguration {
     int f1;
     short f2;
     double f3;
@@ -85,7 +85,6 @@ public class TestingMetaConfigurationModel {
     Mono<String[]> f65;
     String f66;
     String f67;
-
 
     public enum ModelEnum {
         FIRST,

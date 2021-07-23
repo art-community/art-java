@@ -15,8 +15,8 @@ import java.util.*;
 
 @UtilityClass
 @SuppressWarnings(UNCHECKED)
-public class TestingMetaConfigurationModelGenerator {
-    public static TestingMetaConfigurationModel generateModel() {
+public class TestingMetaConfigurationGenerator {
+    public static TestingMetaConfiguration generateModel() {
         TestingMetaConfigurationModel model = builder()
                 .f1(1)
                 .f2((short) 1)
