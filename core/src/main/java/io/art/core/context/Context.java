@@ -49,6 +49,7 @@ public class Context {
     private final Thread terminatorHookThread = newDaemon(TERMINATOR_THREAD, () -> ignoreException(INSTANCE::terminationHook));
     private final Thread terminatorThread = newDaemon(TERMINATOR_THREAD, this::awaitTermination);
     private final AtomicBoolean terminationScheduled = new AtomicBoolean(false);
+    private final AtomicBoolean onShutdown = new AtomicBoolean(false);
     private final CountDownLatch terminatorSignal = new CountDownLatch(1);
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
@@ -151,7 +152,7 @@ public class Context {
     }
 
     public static void scheduleTermination() {
-        if (isNull(INSTANCE)) {
+        if (isNull(INSTANCE) || INSTANCE.onShutdown.get()) {
             return;
         }
         if (INSTANCE.terminationScheduled.compareAndSet(false, true)) {
@@ -169,9 +170,11 @@ public class Context {
         if (isNull(INSTANCE) || INSTANCE.terminationScheduled.get()) {
             return;
         }
-        getRuntime().removeShutdownHook(INSTANCE.terminatorHookThread);
-        INSTANCE.terminatorThread.interrupt();
-        INSTANCE.unload();
+        if (INSTANCE.onShutdown.compareAndSet(false, true)) {
+            getRuntime().removeShutdownHook(INSTANCE.terminatorHookThread);
+            INSTANCE.terminatorThread.interrupt();
+            INSTANCE.unload();
+        }
     }
 
     private void awaitTermination() {
