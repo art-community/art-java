@@ -35,6 +35,7 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.Configur
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ListFactory.*;
@@ -45,11 +46,11 @@ import java.util.*;
 
 @Getter
 public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleConfiguration, Configurator> {
-    private final String id = ConfiguratorModule.class.getSimpleName();
+    private final String id = CONFIGURATOR_MODULE_ID;
     private final ConfiguratorModuleConfiguration configuration = new ConfiguratorModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(ConfiguratorModule.class.getSimpleName());
+    private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(CONFIGURATOR_MODULE_ID);
 
     public ImmutableArray<ConfigurationSource> orderedSources() {
         return configuration.orderedSources();

@@ -25,14 +25,15 @@ import io.art.meta.model.*;
 import io.art.meta.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static lombok.AccessLevel.*;
 
 @Getter
 public class MetaModule implements StatelessModule<MetaModuleConfiguration, MetaModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<MetaModuleConfiguration> metaModule = context().getStatelessModule(MetaModule.class.getSimpleName());
-    private final String id = MetaModule.class.getSimpleName();
+    private static final StatelessModuleProxy<MetaModuleConfiguration> metaModule = context().getStatelessModule(META_MODULE_ID);
+    private final String id = META_MODULE_ID;
     private final MetaModuleConfiguration configuration;
     private final MetaModuleConfiguration.Configurator configurator;
 

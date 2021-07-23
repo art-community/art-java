@@ -26,6 +26,7 @@ import io.art.logging.manager.*;
 import io.art.logging.reactor.*;
 import io.art.logging.state.*;
 import lombok.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
@@ -35,8 +36,8 @@ import java.util.*;
 @Getter
 public class LoggingModule implements StatefulModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModuleState> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule = context().getStatefulModule(LoggingModule.class.getSimpleName());
-    private final String id = LoggingModule.class.getSimpleName();
+    private static final StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule = context().getStatefulModule(LOGGING_MODULE_ID);
+    private final String id = LOGGING_MODULE_ID;
     private final LoggingModuleConfiguration configuration = new LoggingModuleConfiguration();
     private final LoggingModuleConfiguration.Configurator configurator = new LoggingModuleConfiguration.Configurator(configuration);
     private final LoggingManager manager = new LoggingManager(configuration);
