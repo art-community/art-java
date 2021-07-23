@@ -42,7 +42,6 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
-import java.util.function.*;
 
 public class Context {
     private static volatile Context INSTANCE;
@@ -53,20 +52,18 @@ public class Context {
     private final CountDownLatch terminatorSignal = new CountDownLatch(1);
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
-    private final Consumer<String> printer;
     private final Service service;
 
-    private Context(ContextConfiguration configuration, Consumer<String> printer) {
-        this.printer = printer;
+    private Context(ContextConfiguration configuration) {
         this.configuration = configuration;
         this.service = new Context.Service();
     }
 
-    public static void prepareInitialization(ContextConfiguration configuration, Consumer<String> printer) {
+    public static void prepareInitialization(ContextConfiguration configuration) {
         if (nonNull(INSTANCE)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
-        INSTANCE = new Context(configuration, printer);
+        INSTANCE = new Context(configuration);
     }
 
     public static void processInitialization(ImmutableSet<Module<?, ?>> modules) {
@@ -127,10 +124,10 @@ public class Context {
             messages.add(format(MODULE_LOADED_MESSAGE, moduleId));
             this.modules.put(moduleId, module);
         }
-        messages.forEach(printer);
+        messages.forEach(configuration.getPrinter());
         for (Module<?, ?> module : this.modules.values()) {
             module.onLoad(service);
-            ifNotEmpty(module.print(), printer);
+            ifNotEmpty(module.print(), configuration.getPrinter());
         }
         apply(configuration.getOnLoad(), Runnable::run);
     }
@@ -139,7 +136,7 @@ public class Context {
         List<Module<?, ?>> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module<?, ?> module : modules) {
-            printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId()));
+            configuration.getPrinter().accept(format(MODULE_UNLOADED_MESSAGE, module.getId()));
             module.onUnload(service);
             this.modules.remove(module.getId());
         }
@@ -202,7 +199,7 @@ public class Context {
         public void reload() {
             for (Map.Entry<String, Module<?, ?>> entry : modules.entrySet()) {
                 Module<?, ?> module = entry.getValue();
-                printer.accept(format(MODULE_RELOADING_START_MESSAGE, module.getId()));
+                configuration.getPrinter().accept(format(MODULE_RELOADING_START_MESSAGE, module.getId()));
                 module.beforeReload(service);
             }
             apply(configuration.getBeforeReload(), Runnable::run);
@@ -211,7 +208,7 @@ public class Context {
                 configuration.getReload().accept(module);
 
                 module.afterReload(service);
-                printer.accept(format(MODULE_RELOADING_END_MESSAGE, module.getId()));
+                configuration.getPrinter().accept(format(MODULE_RELOADING_END_MESSAGE, module.getId()));
             }
             apply(configuration.getAfterReload(), Runnable::run);
         }

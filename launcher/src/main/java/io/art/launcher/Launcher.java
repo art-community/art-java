@@ -56,15 +56,14 @@ public class Launcher {
             ModuleActivator configuratorActivator = activator.configuratorActivator();
             ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
 
-            ContextConfiguration contextConfiguration = ContextConfiguration.builder()
+            ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                     .arguments(immutableArrayOf(activator.arguments()))
                     .onUnload(activator.onUnload())
                     .onLoad(activator.onLoad())
                     .beforeReload(activator.beforeReload())
                     .afterReload(activator.afterReload())
                     .mainModuleId(orElse(activator.mainModuleId(), DEFAULT_MAIN_MODULE_ID))
-                    .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())))
-                    .build();
+                    .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())));
 
             Consumer<String> printer = message -> {
                 if (!activator.quiet() && nonNull(activator.loggingActivator())) {
@@ -72,7 +71,7 @@ public class Launcher {
                 }
             };
 
-            prepareInitialization(contextConfiguration, printer);
+            prepareInitialization(contextConfiguration.printer(printer).build());
             ModuleInitializationOperator<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
             configuratorModule
                     .loadSources()

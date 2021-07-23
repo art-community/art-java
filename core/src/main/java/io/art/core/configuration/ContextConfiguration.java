@@ -82,6 +82,7 @@ public class ContextConfiguration {
     private final Runnable beforeReload;
     private final Consumer<Module<?, ?>> reload;
     private final Runnable afterReload;
+    private final Consumer<String> printer;
 
     public static ContextConfiguration defaults() {
         return ContextConfiguration.builder().build();
