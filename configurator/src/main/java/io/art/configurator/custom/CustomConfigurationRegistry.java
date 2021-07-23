@@ -1,7 +1,6 @@
 package io.art.configurator.custom;
 
 import io.art.configurator.model.*;
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
@@ -12,7 +11,6 @@ import static io.art.core.property.Property.*;
 import static java.util.Objects.*;
 import java.util.*;
 
-@ForGenerator
 public class CustomConfigurationRegistry {
     private final Map<CustomConfigurationModel, CustomConfigurator<?>> configurators = map();
 

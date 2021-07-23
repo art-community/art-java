@@ -18,9 +18,12 @@
 
 dependencies {
     implementation(project(":core"))
+    implementation(project(":meta"))
     implementation(project(":value"))
     implementation(project(":yaml-configuration"))
 
     val typesafeConfigVersion: String by project
     api("com.typesafe", "config", typesafeConfigVersion)
+
+    testImplementation(testFixtures(project(":meta")))
 }

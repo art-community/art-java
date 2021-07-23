@@ -1,4 +1,4 @@
-package io.art.meta.parser;
+package io.art.configurator.custom;
 
 import io.art.core.exception.*;
 import io.art.core.source.*;
@@ -17,7 +17,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 
 @UtilityClass
-public class MetaConfigurationParser {
+public class CustomConfigurationParser {
     public <T> T parse(Class<T> javaClass, ConfigurationSource source) {
         return parse(declaration(javaClass), source);
     }
