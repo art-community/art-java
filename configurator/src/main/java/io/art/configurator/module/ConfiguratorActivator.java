@@ -20,6 +20,8 @@ package io.art.configurator.module;
 
 import io.art.core.module.*;
 import lombok.experimental.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
+import static io.art.core.module.ModuleActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
@@ -30,11 +32,6 @@ public class ConfiguratorActivator {
     }
 
     public static ModuleActivator configurator(UnaryOperator<ConfiguratorInitializer> initializer) {
-        return ModuleActivator.builder()
-                .id(ConfiguratorModule.class.getSimpleName())
-                .initializer(() -> initializer.apply(new ConfiguratorInitializer()))
-                .factory(ConfiguratorModule::new)
-                .build();
+        return module(CONFIGURATOR_MODULE_ID, ConfiguratorModule::new, () -> initializer.apply(new ConfiguratorInitializer()));
     }
-
 }

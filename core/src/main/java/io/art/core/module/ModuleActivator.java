@@ -36,15 +36,23 @@ public class ModuleActivator {
     private final Set<ModuleActivator> dependencies = set();
 
     public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
+        return module(moduleClass.getSimpleName(), moduleFactory);
+    }
+
+    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializationOperator<?> initializer) {
+        return module(moduleClass.getSimpleName(), moduleFactory, initializer);
+    }
+
+    public static ModuleActivator module(String id, ModuleFactory<?> moduleFactory) {
         return ModuleActivator.builder()
-                .id(moduleClass.getSimpleName())
+                .id(id)
                 .factory(moduleFactory)
                 .build();
     }
 
-    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializationOperator<?> initializer) {
+    public static ModuleActivator module(String id, ModuleFactory<?> moduleFactory, ModuleInitializationOperator<?> initializer) {
         return ModuleActivator.builder()
-                .id(moduleClass.getSimpleName())
+                .id(id)
                 .initializer(initializer)
                 .factory(moduleFactory)
                 .build();

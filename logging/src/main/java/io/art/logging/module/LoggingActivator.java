@@ -20,6 +20,7 @@ package io.art.logging.module;
 
 import io.art.core.module.*;
 import lombok.experimental.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.module.ModuleActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
@@ -31,6 +32,6 @@ public class LoggingActivator {
     }
 
     public ModuleActivator logging(UnaryOperator<LoggingInitializer> initializer) {
-        return module(LoggingModule.class, LoggingModule::new, () -> initializer.apply(new LoggingInitializer()));
+        return module(LOGGING_MODULE_ID, LoggingModule::new, () -> initializer.apply(new LoggingInitializer()));
     }
 }
