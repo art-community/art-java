@@ -19,10 +19,10 @@
 package io.art.meta.module;
 
 import io.art.core.collection.*;
+import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.meta.configuration.*;
 import io.art.meta.model.*;
-import io.art.meta.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
@@ -38,8 +38,13 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     private final MetaModuleConfiguration.Configurator configurator;
 
     public MetaModule(MetaLibrary library) {
-        configuration = new MetaModuleConfiguration(MetaClassMutableRegistry.clear(), library);
+        configuration = new MetaModuleConfiguration(library);
         configurator = new MetaModuleConfiguration.Configurator(configuration);
+    }
+
+    @Override
+    public void onLoad(Context.Service contextService) {
+        configuration.getLibrary().compute();
     }
 
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {
@@ -47,7 +52,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     }
 
     public static ImmutableMap<Class<?>, MetaClass<?>> classes() {
-        return metaModule().configuration().getClasses();
+        return metaModule().configuration().getLibrary().classes();
     }
 
     public static <T> MetaClass<T> declaration(Class<T> type) {

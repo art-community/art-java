@@ -27,8 +27,6 @@ import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.module.*;
 import io.art.message.pack.module.*;
-import io.art.meta.model.*;
-import io.art.meta.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
@@ -41,7 +39,6 @@ import lombok.experimental.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
-import java.util.function.*;
 
 @Accessors(fluent = true)
 public class Activator {
@@ -82,10 +79,6 @@ public class Activator {
         return this;
     }
 
-    public Activator configurable() {
-        return module(ConfiguratorActivator.configurator());
-    }
-
     public Activator kit() {
         return kit(new ModulesInitializer());
     }
@@ -113,17 +106,8 @@ public class Activator {
         return new BlockingAction();
     }
 
-
-    public static Activator activator(String[] arguments, Supplier<? extends MetaLibrary> metaFactory) {
-        return Activator.activator.module(MetaActivator.meta(metaFactory)).arguments(arguments);
-    }
-
-    public static Activator activator(Supplier<? extends MetaLibrary> metaFactory) {
-        return activator(EMPTY_STRINGS, metaFactory);
-    }
-
     public static Activator activator(String[] arguments) {
-        return Activator.activator.arguments(arguments);
+        return activator.arguments(arguments);
     }
 
     public static Activator activator() {

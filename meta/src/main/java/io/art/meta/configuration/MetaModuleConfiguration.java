@@ -18,7 +18,6 @@
 
 package io.art.meta.configuration;
 
-import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.meta.model.*;
@@ -27,7 +26,6 @@ import lombok.*;
 @Getter
 @RequiredArgsConstructor
 public class MetaModuleConfiguration implements ModuleConfiguration {
-    private final ImmutableMap<Class<?>, MetaClass<?>> classes;
     private final MetaLibrary library;
 
     @RequiredArgsConstructor
@@ -36,6 +34,11 @@ public class MetaModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
+            return this;
+        }
+
+        @Override
+        public Configurator initialize(MetaModuleConfiguration configuration) {
             return this;
         }
     }

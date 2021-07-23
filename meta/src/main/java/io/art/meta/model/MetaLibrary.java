@@ -21,6 +21,7 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.exception.*;
+import io.art.meta.registry.*;
 import io.art.meta.validator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -37,6 +38,7 @@ import java.util.concurrent.atomic.*;
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaLibrary {
+    private ImmutableMap<Class<?>, MetaClass<?>> classes;
     private final Map<String, MetaPackage> packages = map();
     private final Set<MetaClass<?>> rootClasses = set();
     private final List<MetaLibrary> dependencies;
@@ -64,6 +66,10 @@ public abstract class MetaLibrary {
         return immutableSetOf(rootClasses);
     }
 
+    public ImmutableMap<Class<?>, MetaClass<?>> classes() {
+        return classes;
+    }
+
     public <T extends MetaPackage> T packageOf(String name) {
         return cast(packages.get(name));
     }
@@ -77,6 +83,7 @@ public abstract class MetaLibrary {
             if (validationErrors.isEmpty()) {
                 rootClasses.forEach(MetaClass::completeComputation);
                 packages.values().forEach(MetaPackage::completeComputation);
+                classes = MetaClassMutableRegistry.clear();
                 return;
             }
 

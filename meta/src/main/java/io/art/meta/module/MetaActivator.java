@@ -9,9 +9,12 @@ import java.util.function.*;
 
 @UtilityClass
 public class MetaActivator {
-    public static ModuleActivator meta(Supplier<? extends MetaLibrary> factory) {
+    public ModuleActivator meta(Supplier<? extends MetaLibrary> factory) {
+        return module(META_MODULE_ID, () -> new MetaModule(factory.get()));
+    }
+
+    public ModuleActivator meta(Supplier<? extends MetaLibrary> factory, UnaryOperator<MetaInitializer> initializer) {
         MetaLibrary library = factory.get();
-        library.compute();
-        return module(META_MODULE_ID, () -> new MetaModule(library));
+        return module(META_MODULE_ID, () -> new MetaModule(library), () -> initializer.apply(new MetaInitializer(library)));
     }
 }
