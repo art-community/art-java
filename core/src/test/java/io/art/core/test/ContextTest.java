@@ -18,13 +18,11 @@
 
 package io.art.core.test;
 
-import io.art.core.configuration.*;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import org.junit.jupiter.api.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.factory.SetFactory.*;
+import static io.art.core.initializer.ContextInitializer.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextTest {
@@ -60,9 +58,8 @@ public class ContextTest {
 
     @Test
     public void testContextShutdown() {
-        prepareInitialization(ContextConfiguration.defaults(), emptyConsumer());
         TestModule testModule = new TestModule();
-        processInitialization(immutableSetOf(testModule));
+        initialize(() -> testModule);
         shutdown();
         assertTrue(testModule.unloaded);
     }
