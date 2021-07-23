@@ -8,7 +8,6 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.meta.test.TestingMetaConfigurationModel.*;
 import static java.util.Collections.*;
 import java.time.*;
 import java.util.*;
@@ -16,8 +15,8 @@ import java.util.*;
 @UtilityClass
 @SuppressWarnings(UNCHECKED)
 public class TestingMetaConfigurationGenerator {
-    public static TestingMetaConfiguration generateModel() {
-        TestingMetaConfigurationModel model = builder()
+    public static TestingMetaConfiguration generateTestingConfiguration() {
+        TestingMetaConfiguration model = TestingMetaConfiguration.builder()
                 .f1(1)
                 .f2((short) 1)
                 .f3(1)
@@ -69,7 +68,7 @@ public class TestingMetaConfigurationGenerator {
                 .f54(LocalDateTime.parse("2021-07-23T21:01:21.2043414+03:00", TRANSPORTABLE_FORMATTER))
                 .f55(ZonedDateTime.parse("2021-07-23T21:01:21.2043414+03:00", TRANSPORTABLE_FORMATTER))
                 .f56(Duration.ofDays(1))
-                .f57(ModelEnum.FIRST)
+                .f57(TestingMetaConfiguration.ModelEnum.FIRST)
                 .f58(Optional.of(dynamicArrayOf(lazy(() -> "test"), lazy(() -> "test2"))))
                 .f62(Mono.just("test"))
                 .f63(Flux.just("test"))

@@ -70,15 +70,15 @@ public class TestingMetaConfiguration {
     Map<String, List<String>> f50;
     Map<String, Map<String, String>[]> f51;
     ImmutableMap<String, Map<String, String>[]> f52;
-    TestingMetaConfigurationModel f53;
+    TestingMetaConfiguration f53;
     LocalDateTime f54;
     ZonedDateTime f55;
     Duration f56;
     ModelEnum f57;
     Optional<List<LazyProperty<String>>> f58;
-    List<TestingMetaConfigurationModel> f59;
-    Set<TestingMetaConfigurationModel> f60;
-    Map<String, TestingMetaConfigurationModel> f61;
+    List<TestingMetaConfiguration> f59;
+    Set<TestingMetaConfiguration> f60;
+    Map<String, TestingMetaConfiguration> f61;
     Mono<String> f62;
     Flux<String> f63;
     Stream<String> f64;
@@ -92,7 +92,7 @@ public class TestingMetaConfiguration {
     }
 
 
-    public void assertEquals(TestingMetaConfigurationModel model) {
+    public void assertEquals(TestingMetaConfiguration model) {
         Assertions.assertEquals(f1, model.f1, "f1");
         Assertions.assertEquals(f2, model.f2, "f2");
         Assertions.assertEquals(f3, model.f3, "f3");
@@ -210,8 +210,8 @@ public class TestingMetaConfiguration {
 
         if (nonNull(model.f60)) {
             Assertions.assertEquals(f60.size(), model.f59.size(), "f60");
-            List<TestingMetaConfigurationModel> list = fixedArrayOf(f60);
-            List<TestingMetaConfigurationModel> modelList = fixedArrayOf(model.f60);
+            List<TestingMetaConfiguration> list = fixedArrayOf(f60);
+            List<TestingMetaConfiguration> modelList = fixedArrayOf(model.f60);
             Assertions.assertEquals(list.size(), modelList.size(), "f60");
             for (int index = 0; index < list.size(); index++) {
                 list.get(index).assertEquals(modelList.get(index));
@@ -220,7 +220,7 @@ public class TestingMetaConfiguration {
 
         if (nonNull(model.f61)) {
             Assertions.assertEquals(f61.size(), model.f61.size(), "f61");
-            for (Map.Entry<String, TestingMetaConfigurationModel> entry : f61.entrySet()) {
+            for (Map.Entry<String, TestingMetaConfiguration> entry : f61.entrySet()) {
                 entry.getValue().assertEquals(model.f61.get(entry.getKey()));
             }
         }

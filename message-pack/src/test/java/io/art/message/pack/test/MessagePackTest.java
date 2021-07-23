@@ -23,7 +23,7 @@ public class MessagePackTest {
     public void testMessagePack() {
         MessagePackModelWriter writer = messagePackModule().configuration().getWriter();
         MessagePackModelReader reader = messagePackModule().configuration().getReader();
-        TestingMetaModel model = generateModel();
+        TestingMetaModel model = generateTestingModel();
         byte[] bytes = writer.writeToBytes(typed(declaration(TestingMetaModel.class).definition(), model));
         TestingMetaModel parsed = reader.read(declaration(TestingMetaModel.class).definition(), bytes);
         parsed.assertEquals(model);

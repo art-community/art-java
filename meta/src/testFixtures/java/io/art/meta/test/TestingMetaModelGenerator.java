@@ -14,7 +14,7 @@ import java.util.*;
 @UtilityClass
 @SuppressWarnings(UNCHECKED)
 public class TestingMetaModelGenerator {
-    public static TestingMetaModel generateModel() {
+    public static TestingMetaModel generateTestingModel() {
         TestingMetaModel model = TestingMetaModel.builder()
                 .f1(1)
                 .f2((short) 1)
