@@ -23,7 +23,7 @@ import static io.art.core.singleton.SingletonAction.*;
 import static io.art.launcher.Activator.*;
 import java.util.function.*;
 
-public class TestingActivator {
+public class TestingLauncher {
     private final static SingletonAction initializer = singletonAction();
 
     public static void testing(UnaryOperator<Activator> activator) {
