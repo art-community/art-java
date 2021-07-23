@@ -26,7 +26,6 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.constants.ContextConstants.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.SystemProperties.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.network.provider.IpAddressProvider.*;
@@ -78,18 +77,12 @@ public class ContextConfiguration {
     private final ImmutableMap<String, String> environment = immutableMapOf(getenv());
     @Builder.Default
     private final ImmutableMap<String, String> properties = immutableMapOf(System.getProperties());
-    @Builder.Default
-    private final Consumer<String> printer = emptyConsumer();
-    @Builder.Default
-    private final Consumer<Module<?, ?>> reload = emptyConsumer();
-    @Builder.Default
-    private final Runnable onLoad = emptyRunnable();
-    @Builder.Default
-    private final Runnable onUnload = emptyRunnable();
-    @Builder.Default
-    private final Runnable beforeReload = emptyRunnable();
-    @Builder.Default
-    private final Runnable afterReload = emptyRunnable();
+    private final Consumer<String> printer;
+    private final Consumer<Module<?, ?>> reload;
+    private final Runnable onLoad;
+    private final Runnable onUnload;
+    private final Runnable beforeReload;
+    private final Runnable afterReload;
 
     public static ContextConfiguration defaults() {
         return ContextConfiguration.builder().build();

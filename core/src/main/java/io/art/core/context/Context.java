@@ -25,6 +25,7 @@ import io.art.core.module.Module;
 import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.ExceptionMessages.*;
 import static io.art.core.constants.LoggingMessages.*;
@@ -123,23 +124,23 @@ public class Context {
             messages.add(format(MODULE_LOADED_MESSAGE, moduleId));
             this.modules.put(moduleId, module);
         }
-        messages.forEach(configuration.getPrinter());
+        apply(configuration.getPrinter(), messages::forEach);
         for (Module<?, ?> module : this.modules.values()) {
             module.onLoad(service);
-            ifNotEmpty(module.print(), configuration.getPrinter());
+            apply(configuration.getPrinter(), printer -> ifNotEmpty(module.print(), printer));
         }
-        configuration.getOnLoad().run();
+        apply(configuration.getOnLoad(), Runnable::run);
     }
 
     private void unload() {
         List<Module<?, ?>> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module<?, ?> module : modules) {
-            configuration.getPrinter().accept(format(MODULE_UNLOADED_MESSAGE, module.getId()));
+            apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId())));
             module.onUnload(service);
             this.modules.remove(module.getId());
         }
-        configuration.getOnUnload().run();
+        apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
     }
 
@@ -198,18 +199,18 @@ public class Context {
         public void reload() {
             for (Map.Entry<String, Module<?, ?>> entry : modules.entrySet()) {
                 Module<?, ?> module = entry.getValue();
-                configuration.getPrinter().accept(format(MODULE_RELOADING_START_MESSAGE, module.getId()));
+                apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_START_MESSAGE, module.getId())));
                 module.beforeReload(service);
             }
-            configuration.getBeforeReload().run();
+            apply(configuration.getBeforeReload(), Runnable::run);
 
             for (Module<?, ?> module : modules.values()) {
-                configuration.getReload().accept(module);
+                apply(configuration.getReload(), reload -> reload.accept(module));
 
                 module.afterReload(service);
-                configuration.getPrinter().accept(format(MODULE_RELOADING_END_MESSAGE, module.getId()));
+                apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_END_MESSAGE, module.getId())));
             }
-            configuration.getAfterReload().run();
+            apply(configuration.getAfterReload(), Runnable::run);
         }
     }
 }
