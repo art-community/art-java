@@ -21,6 +21,7 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.exception.*;
+import io.art.meta.validator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
@@ -28,7 +29,6 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.state.MetaComputationState.*;
-import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Arrays.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -80,7 +80,7 @@ public abstract class MetaLibrary {
                 return;
             }
 
-            StringBuilder validationErrorMessage = new StringBuilder(TYPE_COMPUTATION_FAILED);
+            StringBuilder validationErrorMessage = new StringBuilder(META_COMPUTATION_FAILED);
             validationErrors.forEach(error -> validationErrorMessage.append(error.getMessage()).append(NEW_LINE));
             throw new MetaException(validationErrorMessage.toString());
         }

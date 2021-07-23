@@ -19,7 +19,6 @@
 package io.art.meta.validator;
 
 import io.art.meta.model.*;
-import lombok.*;
 import lombok.experimental.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
@@ -125,12 +124,5 @@ public class MetaTypeValidator {
                 break;
         }
         return new ValidationResult(true, format(UNKNOWN_TYPE, type));
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class ValidationResult {
-        private final boolean valid;
-        private final String message;
     }
 }

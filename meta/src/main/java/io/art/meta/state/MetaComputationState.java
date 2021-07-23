@@ -20,21 +20,29 @@ package io.art.meta.state;
 
 import io.art.core.collection.*;
 import io.art.meta.model.*;
-import io.art.meta.validator.MetaTypeValidator.*;
+import io.art.meta.validator.*;
 import lombok.experimental.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
 @UtilityClass
 public class MetaComputationState {
-    private final static Map<MetaType<?>, ValidationResult> validationResults = map();
+    private final static Map<MetaType<?>, ValidationResult> typeValidationResults = map();
+    private final static Map<MetaClass<?>, ValidationResult> classValidationResults = map();
 
     public static void rememberValidation(MetaType<?> type, ValidationResult result) {
-        validationResults.put(type, result);
+        typeValidationResults.put(type, result);
+    }
+
+    public static void rememberValidation(MetaClass<?> metaClass, ValidationResult result) {
+        classValidationResults.put(metaClass, result);
     }
 
     public static ImmutableArray<ValidationResult> getValidationErrors() {
-        return validationResults.values().stream().filter(result -> !result.isValid()).collect(immutableArrayCollector());
+        List<ValidationResult> results = dynamicArrayOf(typeValidationResults.values());
+        results.addAll(classValidationResults.values());
+        return results.stream().filter(result -> !result.isValid()).collect(immutableArrayCollector());
     }
 }

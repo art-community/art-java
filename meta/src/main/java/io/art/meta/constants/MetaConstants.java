@@ -100,7 +100,8 @@ public interface MetaConstants {
         String INVOKE_INSTANCE_ARGUMENT = "invoke(instance, argument)";
         String INVOKE_WITHOUT_ARGUMENTS = "invoke()";
         String INVOKE_ARGUMENT = "invoke(argument)";
-        String TYPE_COMPUTATION_FAILED = "Type computation failed. Errors:\n";
+        String META_COMPUTATION_FAILED = "Meta computation failed. Errors:\n";
         String INVOCATION_ERROR = "{0} - invocation error: {1}";
+        String CLASS_CREATOR_INVALID = "Meta class {0} creator invalid. There is no any available for creation constructors";
     }
 }
