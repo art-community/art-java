@@ -32,7 +32,7 @@ public class UdpWriterConfiguration {
     public static UdpWriterConfiguration from(ConfigurationSource source, UdpWriterConfiguration fallback) {
         UdpWriterConfiguration.UdpWriterConfigurationBuilder builder = UdpWriterConfiguration.builder();
         builder.host(orElse(source.getString(HOST_KEY), fallback.host));
-        builder.port(orElse(source.getInt(PORT_KEY), fallback.port));
+        builder.port(orElse(source.getInteger(PORT_KEY), fallback.port));
         return builder.build();
     }
 

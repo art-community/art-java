@@ -14,11 +14,11 @@ import java.util.function.*;
 
 @ForGenerator
 public interface NestedConfiguration extends ConfigurationSource {
-    Boolean asBool();
+    Boolean asBoolean();
 
     String asString();
 
-    default Integer asInt() {
+    default Integer asInteger() {
         return letIfNotEmpty(asString(), Integer::parseInt);
     }
 
@@ -38,7 +38,7 @@ public interface NestedConfiguration extends ConfigurationSource {
         return letIfNotEmpty(asString(), Short::parseShort);
     }
 
-    default Character asChar() {
+    default Character asCharacter() {
         String string = asString();
         return letIfNotEmpty(string, notEmpty -> notEmpty.charAt(0));
     }
@@ -73,7 +73,7 @@ public interface NestedConfiguration extends ConfigurationSource {
     <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper);
 
     default ImmutableArray<Boolean> asBoolArray() {
-        return asArray(NestedConfiguration::asBool);
+        return asArray(NestedConfiguration::asBoolean);
     }
 
     default ImmutableArray<String> asStringArray() {
@@ -81,7 +81,7 @@ public interface NestedConfiguration extends ConfigurationSource {
     }
 
     default ImmutableArray<Integer> asIntArray() {
-        return asArray(NestedConfiguration::asInt);
+        return asArray(NestedConfiguration::asInteger);
     }
 
     default ImmutableArray<Long> asLongArray() {
@@ -101,7 +101,7 @@ public interface NestedConfiguration extends ConfigurationSource {
     }
 
     default ImmutableArray<Character> asCharArray() {
-        return asArray(NestedConfiguration::asChar);
+        return asArray(NestedConfiguration::asCharacter);
     }
 
     default ImmutableArray<Byte> asByteArray() {

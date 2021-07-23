@@ -48,7 +48,7 @@ public class RsocketResumeConfiguration {
 
     public static RsocketResumeConfiguration rsocketResume(ConfigurationSource source) {
         RsocketResumeConfiguration configuration = new RsocketResumeConfiguration();
-        configuration.cleanupStoreOnKeepAlive = orElse(source.getBool(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
+        configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
         configuration.sessionDuration = orElse(source.getDuration(SESSION_DURATION_KEY), DEFAULT_RESUME_SESSION_DURATION);
         configuration.streamTimeout = orElse(source.getDuration(STREAM_TIMEOUT_KEY), DEFAULT_RESUME_STREAM_TIMEOUT);
         configuration.retryConfiguration = let(source.getNested(RETRY_SECTION), RsocketRetryConfiguration::rsocketRetry);
@@ -57,7 +57,7 @@ public class RsocketResumeConfiguration {
 
     public static RsocketResumeConfiguration rsocketResume(ConfigurationSource source, RsocketResumeConfiguration defaults) {
         RsocketResumeConfiguration configuration = new RsocketResumeConfiguration();
-        configuration.cleanupStoreOnKeepAlive = orElse(source.getBool(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), defaults.cleanupStoreOnKeepAlive);
+        configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), defaults.cleanupStoreOnKeepAlive);
         configuration.sessionDuration = orElse(source.getDuration(SESSION_DURATION_KEY), defaults.sessionDuration);
         configuration.streamTimeout = orElse(source.getDuration(STREAM_TIMEOUT_KEY), defaults.streamTimeout);
         configuration.retryConfiguration = let(source.getNested(RETRY_SECTION), RsocketRetryConfiguration::rsocketRetry, defaults.retryConfiguration);

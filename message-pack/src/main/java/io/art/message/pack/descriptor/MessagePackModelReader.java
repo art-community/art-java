@@ -131,7 +131,7 @@ public class MessagePackModelReader implements Reader {
             org.msgpack.value.Value value = entry.getValue();
             if (isNull(value) || value.isNilValue()) continue;
             MetaProperty<?> property = properties.get(key.asStringValue().toString());
-            creator.put(property, read(property.type(), value));
+            creator.putValue(property, read(property.type(), value));
         }
         return cast(creator.create());
     }

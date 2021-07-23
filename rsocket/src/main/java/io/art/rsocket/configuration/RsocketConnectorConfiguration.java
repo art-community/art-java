@@ -80,9 +80,9 @@ public class RsocketConnectorConfiguration {
         RsocketConnectorConfiguration configuration = new RsocketConnectorConfiguration();
         RsocketConnectorConfiguration defaults = defaults();
 
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), defaults.logging);
-        configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment);
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
+        configuration.logging = orElse(source.getBoolean(LOGGING_KEY), defaults.logging);
+        configuration.fragment = orElse(source.getInteger(FRAGMENTATION_MTU_KEY), defaults.fragment);
+        configuration.maxInboundPayloadSize = orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
         configuration.payloadDecoderMode = rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
         configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
         configuration.metaDataFormat = dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat);
@@ -100,7 +100,7 @@ public class RsocketConnectorConfiguration {
         switch (configuration.transport) {
             case TCP:
                 String host = source.getString(TRANSPORT_TCP_HOST_KEY);
-                int port = source.getInt(TRANSPORT_TCP_PORT_KEY);
+                int port = source.getInteger(TRANSPORT_TCP_PORT_KEY);
                 if (isEmpty(host)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
                 }
@@ -108,7 +108,7 @@ public class RsocketConnectorConfiguration {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_PORT_KEY)));
                 }
                 configuration.tcpClient = TcpClient.create().port(port).host(host);
-                configuration.tcpMaxFrameLength = orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength);
+                configuration.tcpMaxFrameLength = orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength);
                 break;
             case WS:
                 String url = source.getString(TRANSPORT_WS_BASE_URL_KEY);
@@ -132,13 +132,13 @@ public class RsocketConnectorConfiguration {
         ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connectorId);
         ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connectorId);
 
-        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), defaults.logging));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), defaults.logging));
 
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
         configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), defaults.metaDataFormat));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
-        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
-        configuration.fragment = listener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment));
+        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
+        configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), defaults.fragment));
         configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> rsocketKeepAlive(section, defaults.keepAlive), defaults.keepAlive));
         configuration.resume = listener.emit(let(source.getNested(RESUME_SECTION), section -> rsocketResume(section, defaults.resume), defaults.resume));
         configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, defaults.retry), defaults.retry));
@@ -151,7 +151,7 @@ public class RsocketConnectorConfiguration {
         switch (configuration.transport) {
             case TCP:
                 String host = listener.emit(source.getString(TRANSPORT_TCP_HOST_KEY));
-                Integer port = listener.emit(source.getInt(TRANSPORT_TCP_PORT_KEY));
+                Integer port = listener.emit(source.getInteger(TRANSPORT_TCP_PORT_KEY));
                 if (isEmpty(host) && isNull(defaults.tcpClient)) {
                     throw new RsocketException(format(CONFIGURATION_PARAMETER_NOT_EXISTS, combine(source.getSection(), TRANSPORT_TCP_HOST_KEY)));
                 }
@@ -162,7 +162,7 @@ public class RsocketConnectorConfiguration {
                     configuration.tcpClient = defaults.tcpClient;
                 }
                 configuration.tcpClient = orElse(configuration.tcpClient, TcpClient.create().port(port).host(host));
-                configuration.tcpMaxFrameLength = listener.emit(orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength));
+                configuration.tcpMaxFrameLength = listener.emit(orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), defaults.tcpMaxFrameLength));
                 break;
             case WS:
                 String url = listener.emit(source.getString(TRANSPORT_WS_BASE_URL_KEY));

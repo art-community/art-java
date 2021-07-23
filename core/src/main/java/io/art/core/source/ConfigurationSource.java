@@ -55,15 +55,15 @@ public interface ConfigurationSource {
 
     }
 
-    default Boolean getBool(String path) {
-        return let(getNested(path), NestedConfiguration::asBool);
+    default Boolean getBoolean(String path) {
+        return let(getNested(path), NestedConfiguration::asBoolean);
     }
 
     default String getString(String path) {
         return let(getNested(path), NestedConfiguration::asString);
     }
 
-    default Integer getInt(String path) {
+    default Integer getInteger(String path) {
         return letIfNotEmpty(getString(path), Integer::parseInt);
     }
 
@@ -83,7 +83,7 @@ public interface ConfigurationSource {
         return letIfNotEmpty(getString(path), Short::parseShort);
     }
 
-    default Character getChar(String path) {
+    default Character getCharacter(String path) {
         String string = getString(path);
         return letIfNotEmpty(string, notEmpty -> notEmpty.charAt(0));
     }

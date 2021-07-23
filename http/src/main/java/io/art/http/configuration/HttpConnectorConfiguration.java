@@ -64,9 +64,9 @@ public class HttpConnectorConfiguration {
         HttpConnectorConfiguration configuration = new HttpConnectorConfiguration();
         HttpConnectorConfiguration defaults = defaults();
 
-        configuration.logging = orElse(source.getBool(LOGGING_KEY), defaults.logging);
-        configuration.fragment = orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment);
-        configuration.maxInboundPayloadSize = orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
+        configuration.logging = orElse(source.getBoolean(LOGGING_KEY), defaults.logging);
+        configuration.fragment = orElse(source.getInteger(FRAGMENTATION_MTU_KEY), defaults.fragment);
+        configuration.maxInboundPayloadSize = orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
         configuration.payloadDecoderMode = httpPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
         configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
         configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, HttpKeepAliveConfiguration::httpKeepAlive);
@@ -91,12 +91,12 @@ public class HttpConnectorConfiguration {
         ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connectorId);
         ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connectorId);
 
-        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), defaults.logging));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), defaults.logging));
 
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
         configuration.payloadDecoderMode = listener.emit(httpPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
-        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
-        configuration.fragment = listener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), defaults.fragment));
+        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
+        configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), defaults.fragment));
         configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> httpKeepAlive(section, defaults.keepAlive), defaults.keepAlive));
         configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> httpRetry(section, defaults.retry), defaults.retry));
 

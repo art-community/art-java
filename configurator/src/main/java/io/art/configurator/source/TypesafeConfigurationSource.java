@@ -70,7 +70,7 @@ public class TypesafeConfigurationSource implements NestedConfiguration {
     }
 
     @Override
-    public Boolean asBool() {
+    public Boolean asBoolean() {
         return let(typesafeConfiguration, configuration -> configuration.getBoolean(section));
     }
 

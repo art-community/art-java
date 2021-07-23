@@ -87,7 +87,7 @@ public class YamlConfigurationSource implements NestedConfiguration {
     }
 
     @Override
-    public Boolean asBool() {
+    public Boolean asBoolean() {
         return let(configuration, JsonNode::asBoolean);
     }
 

@@ -63,6 +63,8 @@ public class MetaMetaTest extends MetaLibrary {
 
           private final MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass = register(new MetaTestingMetaModelGeneratorClass());
 
+          private final MetaTestingMetaConfigurationModelClass testingMetaConfigurationModelClass = register(new MetaTestingMetaConfigurationModelClass());
+
           private MetaTestPackage() {
             super("test");
           }
@@ -73,6 +75,10 @@ public class MetaMetaTest extends MetaLibrary {
 
           public MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass() {
             return testingMetaModelGeneratorClass;
+          }
+
+          public MetaTestingMetaConfigurationModelClass testingMetaConfigurationModelClass() {
+            return testingMetaConfigurationModelClass;
           }
 
           public static final class MetaTestingMetaModelClass extends MetaClass<io.art.meta.test.TestingMetaModel> {
@@ -5145,6 +5151,173 @@ public class MetaMetaTest extends MetaLibrary {
               @Override
               public Object invoke() throws Throwable {
                 return io.art.meta.test.TestingMetaModelGenerator.generateModel();
+              }
+            }
+          }
+
+          public static final class MetaTestingMetaConfigurationModelClass extends MetaClass<io.art.meta.test.TestingMetaConfigurationModel> {
+            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
+
+            private final MetaField<java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false));
+
+            private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
+
+            private final MetaGetF1Method getF1Method = register(new MetaGetF1Method());
+
+            private final MetaTestingMetaConfigurationModelBuilderClass testingMetaConfigurationModelBuilderClass = register(new MetaTestingMetaConfigurationModelBuilderClass());
+
+            private MetaTestingMetaConfigurationModelClass() {
+              super(metaType(io.art.meta.test.TestingMetaConfigurationModel.class));
+            }
+
+            public MetaConstructorConstructor constructor() {
+              return constructor;
+            }
+
+            public MetaField<java.lang.Integer> f1Field() {
+              return f1Field;
+            }
+
+            public MetaToBuilderMethod toBuilderMethod() {
+              return toBuilderMethod;
+            }
+
+            public MetaGetF1Method getF1Method() {
+              return getF1Method;
+            }
+
+            public MetaTestingMetaConfigurationModelBuilderClass testingMetaConfigurationModelBuilderClass(
+                ) {
+              return testingMetaConfigurationModelBuilderClass;
+            }
+
+            public static final class MetaConstructorConstructor extends MetaConstructor<io.art.meta.test.TestingMetaConfigurationModel> {
+              private final MetaParameter<java.lang.Integer> f1Parameter = register(new MetaParameter<>(0, "f1",metaType(int.class)));
+
+              private MetaConstructorConstructor() {
+                super(metaType(io.art.meta.test.TestingMetaConfigurationModel.class));
+              }
+
+              @Override
+              public io.art.meta.test.TestingMetaConfigurationModel invoke(Object[] arguments)
+                  throws Throwable {
+                return new io.art.meta.test.TestingMetaConfigurationModel((int)(arguments[0]));
+              }
+
+              @Override
+              public io.art.meta.test.TestingMetaConfigurationModel invoke(Object argument) throws
+                  Throwable {
+                return new io.art.meta.test.TestingMetaConfigurationModel((int)(argument));
+              }
+
+              public MetaParameter<java.lang.Integer> f1Parameter() {
+                return f1Parameter;
+              }
+            }
+
+            public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.meta.test.TestingMetaConfigurationModel, io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder> {
+              private MetaToBuilderMethod() {
+                super("toBuilder",metaType(io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder.class));
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingMetaConfigurationModel instance,
+                  Object[] arguments) throws Throwable {
+                return instance.toBuilder();
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingMetaConfigurationModel instance) throws
+                  Throwable {
+                return instance.toBuilder();
+              }
+            }
+
+            public static final class MetaGetF1Method extends InstanceMetaMethod<io.art.meta.test.TestingMetaConfigurationModel, java.lang.Integer> {
+              private MetaGetF1Method() {
+                super("getF1",metaType(int.class));
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingMetaConfigurationModel instance,
+                  Object[] arguments) throws Throwable {
+                return instance.getF1();
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingMetaConfigurationModel instance) throws
+                  Throwable {
+                return instance.getF1();
+              }
+            }
+
+            public static final class MetaTestingMetaConfigurationModelBuilderClass extends MetaClass<io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder> {
+              private final MetaField<java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false));
+
+              private final MetaF1Method f1Method = register(new MetaF1Method());
+
+              private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
+
+              private MetaTestingMetaConfigurationModelBuilderClass() {
+                super(metaType(io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder.class));
+              }
+
+              public MetaField<java.lang.Integer> f1Field() {
+                return f1Field;
+              }
+
+              public MetaF1Method f1Method() {
+                return f1Method;
+              }
+
+              public MetaBuildMethod buildMethod() {
+                return buildMethod;
+              }
+
+              public static final class MetaF1Method extends InstanceMetaMethod<io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder, io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder> {
+                private final MetaParameter<java.lang.Integer> f1Parameter = register(new MetaParameter<>(0, "f1",metaType(int.class)));
+
+                private MetaF1Method() {
+                  super("f1",metaType(io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.f1((int)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder instance,
+                    Object argument) throws Throwable {
+                  return instance.f1((int)(argument));
+                }
+
+                public MetaParameter<java.lang.Integer> f1Parameter() {
+                  return f1Parameter;
+                }
+              }
+
+              public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder, io.art.meta.test.TestingMetaConfigurationModel> {
+                private MetaBuildMethod() {
+                  super("build",metaType(io.art.meta.test.TestingMetaConfigurationModel.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.build();
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingMetaConfigurationModel.TestingMetaConfigurationModelBuilder instance)
+                    throws Throwable {
+                  return instance.build();
+                }
               }
             }
           }

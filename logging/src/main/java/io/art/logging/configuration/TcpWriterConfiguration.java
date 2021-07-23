@@ -32,7 +32,7 @@ public class TcpWriterConfiguration {
     public static TcpWriterConfiguration from(ConfigurationSource source, TcpWriterConfiguration fallback) {
         TcpWriterConfigurationBuilder builder = TcpWriterConfiguration.builder();
         builder.host(orElse(source.getString(HOST_KEY), fallback.host));
-        builder.port(orElse(source.getInt(PORT_KEY), fallback.port));
+        builder.port(orElse(source.getInteger(PORT_KEY), fallback.port));
         return builder.build();
     }
 

@@ -27,7 +27,6 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RetryPolicy.*;
-import static java.util.Objects.*;
 import static reactor.util.retry.Retry.*;
 import java.time.*;
 
@@ -66,8 +65,8 @@ public class RsocketRetryConfiguration {
         configuration.fixedDelayMaxAttempts = orElse(source.getLong(FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
         configuration.minBackoff = orElse(source.getDuration(BACKOFF_MIN_BACKOFF_KEY), DEFAULT_RETRY_MIN_BACKOFF);
         configuration.fixedDelay = orElse(source.getDuration(FIXED_DELAY_KEY), DEFAULT_RETRY_FIXED_DELAY);
-        configuration.max = orElse(source.getInt(MAX_KEY), DEFAULT_RETRY_MAX);
-        configuration.maxInRow = orElse(source.getInt(MAX_IN_ROW_KEY), DEFAULT_RETRY_MAX_IN_ROW);
+        configuration.max = orElse(source.getInteger(MAX_KEY), DEFAULT_RETRY_MAX);
+        configuration.maxInRow = orElse(source.getInteger(MAX_IN_ROW_KEY), DEFAULT_RETRY_MAX_IN_ROW);
         return configuration;
     }
 
@@ -78,8 +77,8 @@ public class RsocketRetryConfiguration {
         configuration.fixedDelayMaxAttempts = orElse(source.getLong(FIXED_DELAY_MAX_ATTEMPTS_KEY), defaults.fixedDelayMaxAttempts);
         configuration.minBackoff = orElse(source.getDuration(BACKOFF_MIN_BACKOFF_KEY), defaults.minBackoff);
         configuration.fixedDelay = orElse(source.getDuration(FIXED_DELAY_KEY), defaults.fixedDelay);
-        configuration.max = orElse(source.getInt(MAX_KEY), defaults.max);
-        configuration.maxInRow = orElse(source.getInt(MAX_IN_ROW_KEY), defaults.maxInRow);
+        configuration.max = orElse(source.getInteger(MAX_KEY), defaults.max);
+        configuration.maxInRow = orElse(source.getInteger(MAX_IN_ROW_KEY), defaults.maxInRow);
         return configuration;
     }
 }

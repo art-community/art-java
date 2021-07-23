@@ -44,9 +44,9 @@ public class ServiceMethodConfiguration {
         ChangesListener deactivationListener = refresher.deactivationListener();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener validationListener = refresher.validationListener();
-        configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
-        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), true));
-        configuration.validating = validationListener.emit(orElse(source.getBool(VALIDATING_KEY), true));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), true));
+        configuration.validating = validationListener.emit(orElse(source.getBoolean(VALIDATING_KEY), true));
         configuration.blockingScheduler = DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER.get();
         configuration.reader = TransportPayloadReader::new;
         configuration.writer = TransportPayloadWriter::new;

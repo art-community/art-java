@@ -30,7 +30,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
 
             configuration.clusters = tarantoolSection.getNestedMap(TARANTOOL_CLUSTERS_SECTION, clusterConfig ->
                     TarantoolClusterConfiguration.from(clusterConfig, configuration.refresher));
-            configuration.logging = orElse(tarantoolSection.getBool(TARANTOOL_LOGGING_KEY), configuration.logging);
+            configuration.logging = orElse(tarantoolSection.getBoolean(TARANTOOL_LOGGING_KEY), configuration.logging);
 
 
             configuration.refresher.clusterListeners().update(configuration.clusters.keySet());

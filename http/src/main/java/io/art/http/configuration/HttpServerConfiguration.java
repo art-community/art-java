@@ -61,10 +61,10 @@ public class HttpServerConfiguration {
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
-        configuration.logging = serverLoggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
+        configuration.logging = serverLoggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
 
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
-        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
+        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), 0));
 
         String serviceId = source.getString(SERVICE_ID_KEY);
         String methodId = source.getString(METHOD_ID_KEY);
@@ -73,7 +73,7 @@ public class HttpServerConfiguration {
             configuration.defaultServiceMethod = serverListener.emit(serviceMethod(serviceId, methodId));
         }
 
-        int port = serverListener.emit(orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT));
+        int port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), DEFAULT_PORT));
         String host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS));
 
         configuration.httpServer = HttpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));

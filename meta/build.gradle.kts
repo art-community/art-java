@@ -25,6 +25,8 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":value"))
 
+    testImplementation(project(":yaml-configuration"))
+
     testFixturesImplementation(project(":core"))
     testFixturesImplementation(project(":value"))
 }

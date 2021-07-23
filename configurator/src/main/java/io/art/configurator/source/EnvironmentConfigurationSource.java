@@ -68,7 +68,7 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
     }
 
     @Override
-    public Boolean asBool() {
+    public Boolean asBoolean() {
         return let(environment.get(section), Boolean::valueOf);
     }
 

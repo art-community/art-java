@@ -47,8 +47,8 @@ public class CommunicatorActionConfiguration {
         CommunicatorActionConfiguration configuration = new CommunicatorActionConfiguration();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();
-        configuration.logging = loggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
-        configuration.deactivated = deactivationListener.emit(orElse(source.getBool(DEACTIVATED_KEY), false));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
         configuration.blockingScheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER.get();
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
         configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));

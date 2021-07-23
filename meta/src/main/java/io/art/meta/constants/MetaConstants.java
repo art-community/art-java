@@ -103,5 +103,6 @@ public interface MetaConstants {
         String META_COMPUTATION_FAILED = "Meta computation failed. Errors:\n";
         String INVOCATION_ERROR = "{0} - invocation error: {1}";
         String CLASS_CREATOR_INVALID = "Meta class {0} creator invalid. There is no any available for creation constructors";
+        String MAP_WITH_NO_STRING_KEY = "Unable to parse configuration value in map with non-string key type: {0}";
     }
 }

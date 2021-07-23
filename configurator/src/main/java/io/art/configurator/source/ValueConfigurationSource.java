@@ -41,7 +41,7 @@ public class ValueConfigurationSource implements NestedConfiguration {
     private final Value value;
 
     @Override
-    public Boolean asBool() {
+    public Boolean asBoolean() {
         if (!isPrimitive(value)) {
             return null;
         }

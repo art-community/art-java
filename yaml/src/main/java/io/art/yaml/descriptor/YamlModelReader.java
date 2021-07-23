@@ -126,7 +126,7 @@ public class YamlModelReader implements Reader {
                 case END_ARRAY:
                     break;
                 default:
-                    creator.put(property, parseField(propertyType, field, parser));
+                    creator.putValue(property, parseField(propertyType, field, parser));
                     break;
             }
         } while (!parser.isClosed());

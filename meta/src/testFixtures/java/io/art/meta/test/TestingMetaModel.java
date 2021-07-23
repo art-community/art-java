@@ -17,8 +17,8 @@ import java.util.function.*;
 import java.util.stream.*;
 
 @Getter
-@AllArgsConstructor
 @ToString
+@AllArgsConstructor
 @Builder(toBuilder = true)
 @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
 public class TestingMetaModel {

@@ -25,7 +25,6 @@ import io.art.logging.manager.*;
 import io.art.logging.writer.*;
 import lombok.Builder;
 import lombok.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.logging.constants.LoggingLevel.*;
@@ -50,7 +49,7 @@ public class LoggerConfiguration {
     public static LoggerConfiguration from(ConfigurationSource source, LoggerConfiguration fallback) {
         LoggerConfigurationBuilder builder = LoggerConfiguration.builder();
         builder.level(LoggingLevel.parse(source.getString(LEVEL_KEY), fallback.level));
-        builder.enabled(orElse(source.getBool(ENABLED_KEY), fallback.enabled));
+        builder.enabled(orElse(source.getBoolean(ENABLED_KEY), fallback.enabled));
         builder.configurableWriters(source.getNestedArray(WRITERS_SECTION, writer -> LoggerWriterConfiguration.from(writer, LoggerWriterConfiguration.defaults())));
         return builder.build();
     }

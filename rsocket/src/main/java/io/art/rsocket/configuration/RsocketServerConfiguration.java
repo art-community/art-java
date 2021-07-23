@@ -79,13 +79,13 @@ public class RsocketServerConfiguration {
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
-        configuration.logging = serverLoggingListener.emit(orElse(source.getBool(LOGGING_KEY), false));
+        configuration.logging = serverLoggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
 
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
         configuration.defaultMetaDataFormat = serverListener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
-        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInt(FRAGMENTATION_MTU_KEY), 0));
+        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), 0));
         configuration.payloadDecoder = serverListener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : ZERO_COPY);
-        configuration.maxInboundPayloadSize = serverListener.emit(orElse(source.getInt(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK));
+        configuration.maxInboundPayloadSize = serverListener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK));
         configuration.transport = serverListener.emit(rsocketTransport(source.getString(TRANSPORT_MODE_KEY)));
         configuration.resume = serverListener.emit(source.getNested(RESUME_SECTION, RsocketResumeConfiguration::rsocketResume));
 
@@ -96,13 +96,13 @@ public class RsocketServerConfiguration {
             configuration.defaultServiceMethod = serverListener.emit(serviceMethod(serviceId, methodId));
         }
 
-        int port = serverListener.emit(orElse(source.getInt(TRANSPORT_PORT_KEY), DEFAULT_PORT));
+        int port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), DEFAULT_PORT));
         String host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS));
 
         switch (configuration.transport) {
             case TCP:
                 configuration.tcpServer = TcpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
-                configuration.tcpMaxFrameLength = serverListener.emit(orElse(source.getInt(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK));
+                configuration.tcpMaxFrameLength = serverListener.emit(orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK));
                 break;
             case WS:
                 configuration.httpWebSocketServer = HttpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
