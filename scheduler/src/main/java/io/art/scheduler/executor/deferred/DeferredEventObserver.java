@@ -48,12 +48,11 @@ class DeferredEventObserver {
     private final AtomicBoolean accepting = new AtomicBoolean(true);
     private final AtomicBoolean executing = new AtomicBoolean(true);
 
-    private final ThreadFactory threadFactory;
     private final DeferredExecutorImplementation executor;
 
     private final ThreadPoolExecutor pendingPool;
     private final Thread delayedObserver;
-    private final ExecutorService fallbackExecutor;
+    private final ExecutorService fallbackPool;
 
     private final DelayQueue<DeferredEvent<?>> delayedEvents;
     private final Map<Long, PriorityBlockingQueue<DeferredEvent<?>>> pendingQueues;
@@ -63,17 +62,17 @@ class DeferredEventObserver {
     DeferredEventObserver(DeferredExecutorImplementation executor) {
         this.executor = executor;
         int poolNumber = poolCounter.incrementAndGet();
-        threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
+        ThreadFactory threadFactory = runnable -> newDaemon(SCHEDULER_NAME + DASH
                 + poolNumber + DASH
                 + SCHEDULER_THREAD_NAME + DASH
                 + threadCounter.incrementAndGet(), runnable
         );
-        pendingPool = createThreadPool();
+        pendingPool = createThreadPool(threadFactory);
         delayedEvents = new DelayQueue<>();
         pendingQueues = concurrentMap(executor.getPendingInitialCapacity());
         activeWorkers = concurrentMap(executor.getPendingInitialCapacity());
         waitingWorkers = concurrentSet(executor.getPendingInitialCapacity());
-        fallbackExecutor = newSingleThreadExecutor(threadFactory);
+        fallbackPool = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
         delayedObserver.start();
     }
@@ -215,10 +214,10 @@ class DeferredEventObserver {
     }
 
     private Future<?> forceExecuteEvent(DeferredEvent<?> event) {
-        return fallbackExecutor.submit(getTaskFromEvent(event));
+        return fallbackPool.submit(getTaskFromEvent(event));
     }
 
-    private ThreadPoolExecutor createThreadPool() {
+    private ThreadPoolExecutor createThreadPool(ThreadFactory threadFactory) {
         return new ThreadPoolExecutor(
                 executor.getPoolSize(),
                 executor.getPoolSize(),
@@ -244,14 +243,14 @@ class DeferredEventObserver {
                     }
 
                     pendingPool.shutdown();
-                    fallbackExecutor.shutdown();
+                    fallbackPool.shutdown();
 
                     try {
                         if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
                             executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
                         }
 
-                        if (!fallbackExecutor.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
+                        if (!fallbackPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
                             executor.getExceptionHandler().onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
                         }
 
