@@ -22,6 +22,7 @@ import io.art.scheduler.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -44,7 +45,7 @@ import java.util.concurrent.atomic.*;
 class DeferredEventObserver {
     private final static AtomicInteger poolCounter = new AtomicInteger(0);
     private final AtomicInteger threadCounter = new AtomicInteger(0);
-    private final AtomicBoolean receiving = new AtomicBoolean(true);
+    private final AtomicBoolean accepting = new AtomicBoolean(true);
     private final AtomicBoolean executing = new AtomicBoolean(true);
 
     private final ThreadFactory threadFactory;
@@ -70,7 +71,7 @@ class DeferredEventObserver {
         pendingPool = createThreadPool();
         delayedEvents = new DelayQueue<>();
         pendingQueues = concurrentMap(executor.getPendingInitialCapacity());
-        activeWorkers = map(executor.getPendingInitialCapacity());
+        activeWorkers = concurrentMap(executor.getPendingInitialCapacity());
         waitingWorkers = concurrentSet(executor.getPendingInitialCapacity());
         fallbackExecutor = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
@@ -78,7 +79,7 @@ class DeferredEventObserver {
     }
 
     <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> action, LocalDateTime triggerTime, int order) {
-        if (!receiving.get()) {
+        if (!accepting.get()) {
             throw new SchedulerModuleException(SCHEDULER_TERMINATED);
         }
 
@@ -105,7 +106,7 @@ class DeferredEventObserver {
 
     private void observeDelayed() {
         try {
-            while (receiving.get()) {
+            while (accepting.get()) {
                 DeferredEvent<?> event = delayedEvents.take();
                 erasePendingQueues(event);
                 long id = event.getTrigger();
@@ -130,7 +131,7 @@ class DeferredEventObserver {
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         } finally {
-            if (!receiving.get()) {
+            if (!accepting.get()) {
                 finalizeDelayedEvents();
             }
         }
@@ -192,31 +193,20 @@ class DeferredEventObserver {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } finally {
             if (!executing.get() && nonNull(queue = pendingQueues.get(id))) {
-                finalizePendingEvents(queue);
+                erase(queue, this::runTask);
             }
-        }
-    }
-
-    private void finalizePendingEvents(PriorityBlockingQueue<DeferredEvent<?>> queue) {
-        DeferredEvent<?> event;
-        while (nonNull(event = queue.poll())) {
-            runTask(event);
         }
     }
 
     private void runTask(DeferredEvent<?> event) {
         FutureTask<?> task = getTaskFromEvent(event);
         task.run();
-        for (; ; ) {
-            try {
-                task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
-                break;
-            } catch (InterruptedException | CancellationException interruptedException) {
-                // Ignoring exception because interrupting is normal situation when we want shutdown observer
-            } catch (Throwable throwable) {
-                executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
-                break;
-            }
+        try {
+            task.get(executor.getTaskExecutionTimeout().toMillis(), MILLISECONDS);
+        } catch (InterruptedException | CancellationException interruptedException) {
+            // Ignoring exception because interrupting is normal situation when we want shutdown observer
+        } catch (Throwable throwable) {
+            executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
         }
     }
 
@@ -243,7 +233,7 @@ class DeferredEventObserver {
 
 
     void shutdown() {
-        if (receiving.compareAndSet(true, false)) {
+        if (accepting.compareAndSet(true, false)) {
             try {
                 delayedObserver.interrupt();
                 delayedObserver.join();
