@@ -38,7 +38,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     private final MetaModuleConfiguration.Configurator configurator;
 
     public MetaModule(MetaLibrary library) {
-        configuration = new MetaModuleConfiguration(MetaClassMutableRegistry.get(), library);
+        configuration = new MetaModuleConfiguration(MetaClassMutableRegistry.clear(), library);
         configurator = new MetaModuleConfiguration.Configurator(configuration);
     }
 
