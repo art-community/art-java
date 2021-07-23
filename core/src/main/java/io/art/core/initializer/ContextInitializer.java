@@ -32,7 +32,7 @@ public class ContextInitializer {
     private final static SingletonAction initialize = singletonAction();
 
     public static void initialize(ModuleFactory<?>... modules) {
-        initialize.run(() -> initializeModules(ContextConfiguration.builder().build(), modules));
+        initialize.run(() -> initializeModules(ContextConfiguration.defaults(), modules));
     }
 
     public static void initialize(ContextConfiguration configuration, ModuleFactory<?>... modules) {
