@@ -35,8 +35,6 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
-import static io.art.meta.state.MetaComputationState.*;
-import static io.art.meta.validator.MetaClassValidator.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import java.util.*;
@@ -152,8 +150,6 @@ public abstract class MetaClass<T> {
                 .localPropertiesConstructor(localPropertiesConstructor)
                 .allPropertiesConstructor(allPropertiesConstructor)
                 .build();
-
-        rememberValidation(this, validate(this));
     }
 
     private MetaConstructor<T> selectNoPropertiesConstructor() {

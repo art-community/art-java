@@ -123,7 +123,7 @@ public class MessagePackModelReader implements Reader {
 
     private <T> T readEntity(MetaType<T> type, MapValue map) {
         if (isNull(map) || map.isNilValue()) return null;
-        MetaCreatorInstance creator = type.declaration().creator().instantiate();
+        MetaCreatorInstance creator = type.declaration().creator().validate(MessagePackException::new).instantiate();
         ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
         for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.entrySet()) {
             org.msgpack.value.Value key = entry.getKey();

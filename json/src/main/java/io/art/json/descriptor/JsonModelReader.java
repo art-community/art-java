@@ -95,8 +95,8 @@ public class JsonModelReader implements Reader {
 
     private static Object parseEntity(MetaType<?> type, JsonParser parser) throws IOException {
         JsonToken currentToken = parser.nextToken();
-        MetaClass<?> definition = type.declaration();
-        MetaCreatorInstance creator = definition.creator().instantiate();
+        MetaClass<?> declaration = type.declaration();
+        MetaCreatorInstance creator = declaration.creator().validate(JsonException::new).instantiate();
         ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
         do {
             if (currentToken == END_OBJECT) {
