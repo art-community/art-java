@@ -51,4 +51,8 @@ pluginManagement {
             }
         }
     }
+    plugins {
+        val jmhVersion: String by settings
+        id("me.champeau.jmh") version jmhVersion
+    }
 }

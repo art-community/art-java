@@ -18,8 +18,9 @@
 
 plugins {
     id("art-internal-jvm")
-    id("me.champeau.jmh") version "0.6.4"
+    id("me.champeau.jmh")
 }
+
 configurations.jmh {
     exclude("org.slf4j")
 }
