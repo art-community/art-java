@@ -23,6 +23,11 @@ public class DelegateConfigurationSource implements ConfigurationSource {
     private final String path = join(NEXT_ARROW, sources.stream().map(ConfigurationSource::getPath).collect(listCollector()));
 
     @Override
+    public void refresh() {
+        sources.forEach(ConfigurationSource::refresh);
+    }
+
+    @Override
     public NestedConfiguration getNested(String path) {
         for (ConfigurationSource source : sources.reverse()) {
             NestedConfiguration nested = source.getNested(path);

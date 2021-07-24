@@ -16,10 +16,22 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     implementation(project(":core"))
     implementation(project(":meta"))
     implementation(project(":resilience"))
     implementation(project(":logging"))
     implementation(project(":transport"))
+}
+
+generator {
+    module("ServerTest", "io.art.server.test")
+    jvm()
+    sourcesPattern {
+        include("src/test/**")
+    }
 }

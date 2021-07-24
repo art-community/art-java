@@ -83,6 +83,10 @@ public class ServiceMethodSpecification {
     private final ServerModuleConfiguration configuration = serverModule().configuration();
 
     public Flux<Object> serve(Flux<Object> input) {
+        return decorateOutput(process(decorateInput(input)));
+    }
+
+    private Flux<Object> process(Flux<Object> input) {
         if (isNull(inputType)) {
             Object output = method.invoke();
 
