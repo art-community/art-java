@@ -38,5 +38,5 @@ generator {
     sourcesPattern {
         include("src/test/**")
     }
-    includeClasses("*TestService.java")
+    includeClasses("*Service.java")
 }
