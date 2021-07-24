@@ -11,10 +11,10 @@ import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.server.factory.ServiceMethodSpecificationFactory.*;
 import static io.art.server.module.ServerActivator.*;
-import static io.art.server.test.registry.TestServiceExecutionRegistry.*;
+import static io.art.server.test.registry.ServiceTestExecutionsRegistry.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ServiceMethodSpecificationTest {
+public class ServerTest {
     @BeforeAll
     public static void setup() {
         initialize(meta(MetaServerTest::new), logging(), server());

@@ -1,7 +1,7 @@
 package io.art.server.test.service;
 
 import reactor.core.publisher.*;
-import static io.art.server.test.registry.TestServiceExecutionRegistry.*;
+import static io.art.server.test.registry.ServiceTestExecutionsRegistry.*;
 
 public class TestService {
     public static void m1() {

@@ -38,7 +38,7 @@ import static org.openjdk.jmh.annotations.Mode.*;
 @Measurement(iterations = 1)
 @BenchmarkMode(AverageTime)
 @OutputTimeUnit(NANOSECONDS)
-public class ServiceSpecificationBenchmark {
+public class ServerBenchmark {
     @State(value = Scope.Benchmark)
     public static class BenchmarkState {
         MetaServerTest meta;
