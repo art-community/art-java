@@ -1,6 +1,7 @@
 package io.art.core.extensions;
 
 import lombok.experimental.*;
+import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 
@@ -18,6 +19,10 @@ public class ReactiveExtensions {
             action.run();
             emitter.complete();
         });
+    }
+
+    public <T> Publisher<T> asPublisher(Object object) {
+        return cast(object);
     }
 
     public <T> Mono<T> asMono(Object object) {

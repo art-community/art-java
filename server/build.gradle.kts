@@ -18,6 +18,10 @@
 
 plugins {
     id("art-internal-jvm")
+    id("me.champeau.jmh") version "0.6.4"
+}
+configurations.jmh {
+    exclude("org.slf4j")
 }
 
 dependencies {

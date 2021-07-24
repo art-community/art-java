@@ -5,7 +5,6 @@ import static io.art.server.test.registry.TestServiceExecutionRegistry.*;
 
 public class TestService {
     public static void m1() {
-        register("m1", new Object());
     }
 
     public static String m2() {
