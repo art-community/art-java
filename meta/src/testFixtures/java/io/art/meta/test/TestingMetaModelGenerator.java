@@ -60,7 +60,7 @@ public class TestingMetaModelGenerator {
                 .f42(singletonList(new String[]{"test"}))
                 .f43(new List[]{singletonList(new byte[]{1})})
                 .f44(new List[]{singletonList(new int[]{1})})
-                .f45(new List[]{singletonList(new String[]{"test"})})
+                .f45(new List[]{singletonList(new String[]{null, "test", null})})
                 .f46(singletonList(singletonList("test")))
                 .f47(singletonList(new List[]{singletonList("test")}))
                 .f48(mapOf(1, "test"))
