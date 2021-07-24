@@ -19,15 +19,14 @@
 package io.art.server.specification;
 
 import io.art.core.annotation.*;
-import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.server.module.ServerModule.*;
@@ -58,18 +57,6 @@ public class ServiceMethodSpecification {
         return method.getDelegate().name();
     }
 
-
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
-    );
-
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
-    );
-
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
-    );
-
-    private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
-    );
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -123,7 +110,7 @@ public class ServiceMethodSpecification {
         return empty -> {
             Object output = method.invoke();
             if (isNull(output)) return Flux.empty();
-            return Flux.just(output);
+            return just(output);
         };
     }
 
@@ -139,7 +126,7 @@ public class ServiceMethodSpecification {
             return input -> {
                 Sinks.One<Object> result = one();
                 subscribeMonoMono(input, result);
-                return result.asMono().flux();
+                return Flux.from(result.asMono());
             };
         }
 
@@ -170,7 +157,7 @@ public class ServiceMethodSpecification {
             return input -> {
                 Object output = method.invoke(input);
                 if (isNull(output)) return Flux.empty();
-                return asMono(output).flux();
+                return from(asMono(output));
             };
         }
 
@@ -185,7 +172,7 @@ public class ServiceMethodSpecification {
         return input -> {
             Object output = method.invoke(input);
             if (isNull(output)) return Flux.empty();
-            return Flux.just(output);
+            return just(output);
         };
     }
 
@@ -201,7 +188,7 @@ public class ServiceMethodSpecification {
             return input -> {
                 Sinks.One<Object> result = one();
                 subscribeBlockingMono(input, result);
-                return result.asMono().flux();
+                return from(result.asMono());
             };
         }
 
@@ -276,28 +263,20 @@ public class ServiceMethodSpecification {
 
     private Flux<Object> decorateInput(Flux<Object> input) {
         Flux<Object> result = input;
-        for (UnaryOperator<Flux<Object>> decorator : beforeInputDecorators) {
-            result = decorator.apply(result);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
-            result = decorator.apply(result);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : afterInputDecorators) {
-            result = decorator.apply(result);
+        if (isNotEmpty(inputDecorators)) {
+            for (UnaryOperator<Flux<Object>> decorator : inputDecorators) {
+                result = decorator.apply(result);
+            }
         }
         return result;
     }
 
     private Flux<Object> decorateOutput(Flux<Object> output) {
         Flux<Object> result = output;
-        for (UnaryOperator<Flux<Object>> decorator : beforeOutputDecorators) {
-            result = decorator.apply(result);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
-            result = decorator.apply(result);
-        }
-        for (UnaryOperator<Flux<Object>> decorator : afterOutputDecorators) {
-            result = decorator.apply(result);
+        if (isNotEmpty(outputDecorators)) {
+            for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
+                result = decorator.apply(result);
+            }
         }
         return result;
     }
