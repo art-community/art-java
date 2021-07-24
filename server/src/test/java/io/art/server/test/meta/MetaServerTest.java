@@ -91,6 +91,28 @@ public class MetaServerTest extends MetaLibrary {
 
               private final MetaM5Method m5Method = register(new MetaM5Method());
 
+              private final MetaM6Method m6Method = register(new MetaM6Method());
+
+              private final MetaM7Method m7Method = register(new MetaM7Method());
+
+              private final MetaM8Method m8Method = register(new MetaM8Method());
+
+              private final MetaM9Method m9Method = register(new MetaM9Method());
+
+              private final MetaM10Method m10Method = register(new MetaM10Method());
+
+              private final MetaM11Method m11Method = register(new MetaM11Method());
+
+              private final MetaM12Method m12Method = register(new MetaM12Method());
+
+              private final MetaM13Method m13Method = register(new MetaM13Method());
+
+              private final MetaM14Method m14Method = register(new MetaM14Method());
+
+              private final MetaM15Method m15Method = register(new MetaM15Method());
+
+              private final MetaM16Method m16Method = register(new MetaM16Method());
+
               private MetaTestServiceClass() {
                 super(metaType(io.art.server.test.service.TestService.class));
               }
@@ -117,6 +139,50 @@ public class MetaServerTest extends MetaLibrary {
 
               public MetaM5Method m5Method() {
                 return m5Method;
+              }
+
+              public MetaM6Method m6Method() {
+                return m6Method;
+              }
+
+              public MetaM7Method m7Method() {
+                return m7Method;
+              }
+
+              public MetaM8Method m8Method() {
+                return m8Method;
+              }
+
+              public MetaM9Method m9Method() {
+                return m9Method;
+              }
+
+              public MetaM10Method m10Method() {
+                return m10Method;
+              }
+
+              public MetaM11Method m11Method() {
+                return m11Method;
+              }
+
+              public MetaM12Method m12Method() {
+                return m12Method;
+              }
+
+              public MetaM13Method m13Method() {
+                return m13Method;
+              }
+
+              public MetaM14Method m14Method() {
+                return m14Method;
+              }
+
+              public MetaM15Method m15Method() {
+                return m15Method;
+              }
+
+              public MetaM16Method m16Method() {
+                return m16Method;
               }
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.server.test.service.TestService> {
@@ -154,22 +220,70 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaM2Method extends StaticMetaMethod<Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
+              public static final class MetaM2Method extends StaticMetaMethod<java.lang.String> {
                 private MetaM2Method() {
-                  super("m2",metaType(Void.class));
+                  super("m2",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(Object[] arguments) throws Throwable {
-                  io.art.server.test.service.TestService.m2((java.lang.String)(arguments[0]));
+                  return io.art.server.test.service.TestService.m2();
+                }
+
+                @Override
+                public Object invoke() throws Throwable {
+                  return io.art.server.test.service.TestService.m2();
+                }
+              }
+
+              public static final class MetaM3Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+                private MetaM3Method() {
+                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m3();
+                }
+
+                @Override
+                public Object invoke() throws Throwable {
+                  return io.art.server.test.service.TestService.m3();
+                }
+              }
+
+              public static final class MetaM4Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+                private MetaM4Method() {
+                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m4();
+                }
+
+                @Override
+                public Object invoke() throws Throwable {
+                  return io.art.server.test.service.TestService.m4();
+                }
+              }
+
+              public static final class MetaM5Method extends StaticMetaMethod<Void> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM5Method() {
+                  super("m5",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  io.art.server.test.service.TestService.m5((java.lang.String)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(Object argument) throws Throwable {
-                  io.art.server.test.service.TestService.m2((java.lang.String)(argument));
+                  io.art.server.test.service.TestService.m5((java.lang.String)(argument));
                   return null;
                 }
 
@@ -178,22 +292,88 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaM3Method extends StaticMetaMethod<Void> {
-                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+              public static final class MetaM6Method extends StaticMetaMethod<java.lang.String> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
-                private MetaM3Method() {
-                  super("m3",metaType(Void.class));
+                private MetaM6Method() {
+                  super("m6",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(Object[] arguments) throws Throwable {
-                  io.art.server.test.service.TestService.m3((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                  return io.art.server.test.service.TestService.m6((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m6((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM7Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM7Method() {
+                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m7((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m7((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM8Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM8Method() {
+                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m8((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m8((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM9Method extends StaticMetaMethod<Void> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM9Method() {
+                  super("m9",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  io.art.server.test.service.TestService.m9((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(Object argument) throws Throwable {
-                  io.art.server.test.service.TestService.m3((reactor.core.publisher.Mono)(argument));
+                  io.art.server.test.service.TestService.m9((reactor.core.publisher.Mono)(argument));
                   return null;
                 }
 
@@ -203,22 +383,91 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaM4Method extends StaticMetaMethod<Void> {
-                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+              public static final class MetaM10Method extends StaticMetaMethod<java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
-                private MetaM4Method() {
-                  super("m4",metaType(Void.class));
+                private MetaM10Method() {
+                  super("m10",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(Object[] arguments) throws Throwable {
-                  io.art.server.test.service.TestService.m4((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  return io.art.server.test.service.TestService.m10((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m10((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM11Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM11Method() {
+                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m11((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m11((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM12Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM12Method() {
+                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m12((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m12((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM13Method extends StaticMetaMethod<Void> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM13Method() {
+                  super("m13",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  io.art.server.test.service.TestService.m13((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(Object argument) throws Throwable {
-                  io.art.server.test.service.TestService.m4((reactor.core.publisher.Flux)(argument));
+                  io.art.server.test.service.TestService.m13((reactor.core.publisher.Flux)(argument));
                   return null;
                 }
 
@@ -228,19 +477,72 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaM5Method extends StaticMetaMethod<java.lang.String> {
-                private MetaM5Method() {
-                  super("m5",metaType(java.lang.String.class));
+              public static final class MetaM14Method extends StaticMetaMethod<java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM14Method() {
+                  super("m14",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(Object[] arguments) throws Throwable {
-                  return io.art.server.test.service.TestService.m5();
+                  return io.art.server.test.service.TestService.m14((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke() throws Throwable {
-                  return io.art.server.test.service.TestService.m5();
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m14((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM15Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM15Method() {
+                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m15((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m15((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM16Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM16Method() {
+                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(Object[] arguments) throws Throwable {
+                  return io.art.server.test.service.TestService.m16((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(Object argument) throws Throwable {
+                  return io.art.server.test.service.TestService.m16((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
                 }
               }
             }

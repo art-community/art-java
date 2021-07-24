@@ -105,18 +105,18 @@ public class ServiceMethodSpecification {
 
             if (outputType.internalKind() == MONO) {
                 Sinks.One<Object> result = Sinks.one();
-                input.subscribe(element -> processMono(result, element));
+                input.subscribe(element -> processMonoOutput(result, Mono.just(element)));
                 return result.asMono().flux();
             }
 
             if (outputType.internalKind() == FLUX) {
                 Sinks.Many<Object> result = Sinks.many().unicast().onBackpressureBuffer();
-                input.subscribe(element -> processFlux(result, element));
+                input.subscribe(element -> processFluxOutput(result, Mono.just(element)));
                 return result.asFlux();
             }
 
             Sinks.Many<Object> result = Sinks.many().unicast().onBackpressureBuffer();
-            input.subscribe(element -> processBlocking(result, element));
+            input.subscribe(element -> processBlockingOutput(result, Mono.just(element)));
             return result.asFlux();
         }
 
@@ -138,23 +138,42 @@ public class ServiceMethodSpecification {
             return Flux.just(output);
         }
 
-        return never();
+        if (isNull(outputType)) {
+            input.subscribe(method::invoke);
+            return Flux.empty();
+        }
+
+        if (outputType.internalKind() == MONO) {
+            Sinks.One<Object> result = Sinks.one();
+            input.subscribe(element -> processMonoOutput(result, element));
+            return result.asMono().flux();
+        }
+
+        if (outputType.internalKind() == FLUX) {
+            Sinks.Many<Object> result = Sinks.many().unicast().onBackpressureBuffer();
+            input.subscribe(element -> processFluxOutput(result, element));
+            return result.asFlux();
+        }
+
+        Sinks.Many<Object> result = Sinks.many().unicast().onBackpressureBuffer();
+        input.subscribe(element -> processBlockingOutput(result, element));
+        return result.asFlux();
     }
 
-    private void processBlocking(Sinks.Many<Object> result, Object element) {
-        Object output = method.invoke(Mono.just(element));
+    private void processBlockingOutput(Sinks.Many<Object> result, Object element) {
+        Object output = method.invoke(element);
         if (isNull(output)) return;
         result.emitNext(output, FAIL_FAST);
     }
 
-    private void processFlux(Sinks.Many<Object> result, Object element) {
-        Object output = method.invoke(Mono.just(element));
+    private void processFluxOutput(Sinks.Many<Object> result, Object element) {
+        Object output = method.invoke(element);
         if (isNull(output)) return;
-        asFlux(output).subscribe(resultElement -> processBlocking(result, resultElement));
+        asFlux(output).subscribe(resultElement -> result.emitNext(resultElement, FAIL_FAST));
     }
 
-    private void processMono(Sinks.One<Object> result, Object element) {
-        Object output = method.invoke(Mono.just(element));
+    private void processMonoOutput(Sinks.One<Object> result, Object element) {
+        Object output = method.invoke(element);
         if (isNull(output)) return;
         asMono(output).subscribe(resultElement -> result.emitValue(resultElement, FAIL_FAST));
     }
