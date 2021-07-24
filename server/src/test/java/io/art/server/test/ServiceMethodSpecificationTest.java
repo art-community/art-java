@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServiceMethodSpecificationTest {
     @BeforeAll
     public static void setup() {
-        initialize(meta(MetaServerTest::new).getFactory(), logging().getFactory(), server().getFactory());
+        initialize(meta(MetaServerTest::new), logging(), server());
     }
 
     @Test

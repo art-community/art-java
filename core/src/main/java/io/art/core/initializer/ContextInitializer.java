@@ -23,6 +23,7 @@ import io.art.core.module.*;
 import io.art.core.singleton.*;
 import lombok.experimental.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.configuration.ContextConfiguration.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.singleton.SingletonAction.*;
 import static java.util.Arrays.*;
@@ -32,11 +33,19 @@ public class ContextInitializer {
     private final static SingletonAction initialize = singletonAction();
 
     public static void initialize(ModuleFactory<?>... modules) {
-        initialize.run(() -> initializeModules(ContextConfiguration.defaults(), modules));
+        initialize.run(() -> initializeModules(defaults(), modules));
     }
 
     public static void initialize(ContextConfiguration configuration, ModuleFactory<?>... modules) {
         initialize.run(() -> initializeModules(configuration, modules));
+    }
+
+    public static void initialize(ModuleActivator... modules) {
+        initialize(defaults(), modules);
+    }
+
+    public static void initialize(ContextConfiguration configuration, ModuleActivator... modules) {
+        initialize(configuration, stream(modules).map(ModuleActivator::getFactory).toArray(ModuleFactory[]::new));
     }
 
     private static void initializeModules(ContextConfiguration configuration, ModuleFactory<?>... modules) {

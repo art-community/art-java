@@ -1,7 +1,6 @@
 package io.art.configurator.test;
 
 import io.art.configuration.yaml.source.*;
-import io.art.core.initializer.*;
 import io.art.core.source.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
@@ -10,6 +9,7 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.configurator.custom.CustomConfigurationParser.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaConfigurationGenerator.*;
@@ -19,7 +19,7 @@ import java.net.*;
 public class CustomConfigurationParserTest {
     @BeforeAll
     public static void setup() {
-        ContextInitializer.initialize(meta(MetaMetaTest::new).getFactory());
+        initialize(meta(MetaMetaTest::new));
     }
 
     @Test
