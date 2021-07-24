@@ -19,7 +19,7 @@
 
 dependencies {
     implementation(project(":core"))
-    implementation(project(":value"))
+    implementation(project(":meta"))
     implementation(project(":resilience"))
     implementation(project(":logging"))
     implementation(project(":transport"))

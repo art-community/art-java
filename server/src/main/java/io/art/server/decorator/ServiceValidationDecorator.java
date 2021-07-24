@@ -63,7 +63,7 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
         return configuration()
                 .getRegistry()
                 .findMethodById(serviceMethodId)
-                .map(ServiceMethodSpecification::getInputMapper)
+                .map(ServiceMethodSpecification::getInputType)
                 .isPresent();
     }
 

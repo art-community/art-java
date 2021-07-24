@@ -27,10 +27,8 @@ import lombok.*;
 @Getter
 public class JsonModuleConfiguration implements ModuleConfiguration {
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final JsonReader oldReader = new JsonReader(objectMapper.getFactory());
-    private final JsonWriter oldWriter = new JsonWriter(objectMapper.getFactory());
-    private final JsonModelReader reader = new JsonModelReader(objectMapper.getFactory());
-    private final JsonModelWriter writer = new JsonModelWriter(objectMapper.getFactory());
+    private final JsonReader reader = new JsonReader(objectMapper.getFactory());
+    private final JsonWriter writer = new JsonWriter(objectMapper.getFactory());
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<JsonModuleConfiguration, Configurator> {

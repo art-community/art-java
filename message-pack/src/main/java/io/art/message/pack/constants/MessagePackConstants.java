@@ -18,10 +18,6 @@
 
 package io.art.message.pack.constants;
 
-import io.art.core.mime.*;
-import static java.nio.charset.StandardCharsets.*;
-import static io.art.core.mime.MimeType.*;
-
 public interface MessagePackConstants {
     interface Errors {
         String VALUE_TYPE_NOT_SUPPORTED = "MessagePack emit type ''{0}'' not supported";

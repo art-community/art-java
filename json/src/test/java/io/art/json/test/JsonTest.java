@@ -21,8 +21,8 @@ public class JsonTest {
 
     @Test
     public void testJson() {
-        JsonModelWriter writer = jsonModule().configuration().getWriter();
-        JsonModelReader reader = jsonModule().configuration().getReader();
+        JsonWriter writer = jsonModule().configuration().getWriter();
+        JsonReader reader = jsonModule().configuration().getReader();
         TestingMetaModel model = generateTestingModel();
         String json = writer.writeToString(typed(declaration(TestingMetaModel.class).definition(), model));
         TestingMetaModel parsed = reader.read(declaration(TestingMetaModel.class).definition(), json);

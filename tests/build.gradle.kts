@@ -30,10 +30,9 @@ dependencies {
 
     implementation(project(":launcher"))
     implementation(project(":configurator"))
-    implementation(project(":model"))
     implementation(project(":core"))
     implementation(project(":logging"))
-    implementation(project(":value"))
+    implementation(project(":meta"))
     implementation(project(":json"))
     implementation(project(":message-pack"))
     implementation(project(":server"))

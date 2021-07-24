@@ -21,7 +21,8 @@ package io.art.transport.payload;
 import io.art.core.exception.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
-import io.art.value.constants.ValueModuleConstants.*;
+import io.art.meta.model.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
@@ -38,29 +39,29 @@ public class TransportPayloadReader {
     private final DataFormat dataFormat;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<ByteBuf, TransportPayload> reader = reader(dataFormat);
+    private final BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader = reader(dataFormat);
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final JsonReader jsonReader = jsonModule().configuration().getOldReader();
+    private static final JsonReader jsonReader = jsonModule().configuration().getReader();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getOldReader();
+    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getReader();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final YamlReader yamlReader = yamlModule().configuration().getOldReader();
+    private static final YamlReader yamlReader = yamlModule().configuration().getReader();
 
-    public TransportPayload read(ByteBuf buffer) {
-        return getReader().apply(buffer);
+    public TransportPayload read(ByteBuf buffer, MetaType<?> type) {
+        return getReader().apply(buffer, type);
     }
 
-    private static Function<ByteBuf, TransportPayload> reader(DataFormat dataFormat) {
+    private static BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader(DataFormat dataFormat) {
         switch (dataFormat) {
             case JSON:
-                return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getJsonReader().read(buffer)));
+                return (buffer, type) -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getJsonReader().read(type, buffer)));
             case MESSAGE_PACK:
-                return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getMessagePackReader().read(buffer)));
+                return (buffer, type) -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getMessagePackReader().read(type, buffer)));
             case YAML:
-                return buffer -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getYamlReader().read(buffer)));
+                return (buffer, type) -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getYamlReader().read(type, buffer)));
         }
         throw new ImpossibleSituationException();
     }

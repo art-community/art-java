@@ -19,14 +19,18 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.core.exception.*;
 import io.art.json.exception.*;
-import io.art.value.descriptor.Writer;
-import io.art.value.immutable.Value;
-import io.art.value.immutable.*;
+import io.art.meta.descriptor.Writer;
+import io.art.meta.model.*;
+import io.art.meta.schema.MetaProviderTemplate.*;
+import io.art.meta.transformer.*;
 import io.netty.buffer.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.value.immutable.Value.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
@@ -37,187 +41,197 @@ public class JsonWriter implements Writer {
     private final JsonFactory jsonFactory;
 
     @Override
-    public void write(Value value, ByteBuffer buffer) {
-        write(value, buffer, JsonException::new);
+    public void write(TypedObject model, ByteBuffer buffer) {
+        write(model, buffer, JsonException::new);
     }
 
     @Override
-    public void write(Value value, ByteBuf buffer) {
-        write(value, buffer, JsonException::new);
+    public void write(TypedObject model, ByteBuf buffer) {
+        write(model, buffer, JsonException::new);
     }
 
     @Override
-    public void write(Value value, OutputStream outputStream, Charset charset) {
-        if (valueIsNull(value)) {
-            return;
-        }
-
+    public void write(TypedObject object, OutputStream outputStream, Charset charset) {
+        if (isNull(object)) return;
+        MetaType<?> type = object.getType();
         try (JsonGenerator generator = jsonFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
-            switch (value.getType()) {
-                case ENTITY:
-                    writeJsonEntity(generator, asEntity(value));
-                    return;
-                case ARRAY:
-                    writeArray(generator, asArray(value));
-                    return;
-                case BINARY:
-                    generator.writeBinary(asBinary(value).getContent());
-                    return;
-                case STRING:
-                    generator.writeString(asPrimitive(value).getString());
-                    return;
-                case LONG:
-                    generator.writeNumber(asPrimitive(value).getLong());
-                    return;
-                case DOUBLE:
-                    generator.writeNumber(asPrimitive(value).getDouble());
-                    return;
-                case FLOAT:
-                    generator.writeNumber(asPrimitive(value).getFloat());
-                    return;
-                case INT:
-                    generator.writeNumber(asPrimitive(value).getInt());
-                    return;
-                case BOOL:
-                    generator.writeBoolean(asPrimitive(value).getBool());
-                    return;
-                case BYTE:
-                    generator.writeNumber(asPrimitive(value).getByte());
-            }
-        } catch (IOException ioException) {
-            throw new JsonException(ioException);
+            writeValue(generator, type, object.getObject());
+        } catch (IOException throwable) {
+            throw new JsonException(throwable);
         }
     }
 
-    private static void writeJsonEntity(JsonGenerator generator, Entity entity) throws IOException {
-        if (valueIsNull(entity)) return;
+
+    private static void writeEntity(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
+        if (isNull(value)) return;
         generator.writeStartObject();
-        writeJsonFields(generator, entity);
+        writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeJsonEntity(JsonGenerator jsonGenerator, String name, Entity entity) throws IOException {
-        if (valueIsNull(entity)) return;
-        jsonGenerator.writeObjectFieldStart(name);
-        writeJsonFields(jsonGenerator, entity);
-        jsonGenerator.writeEndObject();
+    private static void writeEntity(JsonGenerator generator, String name, MetaType<?> type, Object value) throws IOException {
+        if (isNull(value)) return;
+        generator.writeObjectFieldStart(name);
+        writeFields(generator, type, value);
+        generator.writeEndObject();
     }
 
-    private static void writeJsonFields(JsonGenerator generator, Entity entity) throws IOException {
-        Set<Primitive> keys = entity.asMap().keySet();
-        for (Primitive key : keys) {
-            if (valueIsNull(key)) continue;
-            Value value = entity.get(key);
-            if (valueIsNull(value)) continue;
-            writeField(generator, key.getString(), value);
+
+    private static void writeArray(JsonGenerator generator, String name, MetaType<?> type, List<?> value) throws IOException {
+        generator.writeArrayFieldStart(name);
+        MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
+        for (Object element : value) {
+            if (isNull(element)) {
+                generator.writeNull();
+                continue;
+            }
+            writeValue(generator, elementType, element);
+        }
+        generator.writeEndArray();
+    }
+
+
+    private static void writeArray(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
+        generator.writeStartArray();
+        MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
+        List<?> array = type.outputTransformer().toArray(cast(value));
+        for (Object element : array) {
+            if (isNull(element)) {
+                generator.writeNull();
+                continue;
+            }
+            writeValue(generator, elementType, element);
+        }
+        generator.writeEndArray();
+    }
+
+    private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
+        MetaProviderInstance provider = type.declaration().provider().instantiate(value);
+        for (MetaProperty<?> property : provider.properties().values()) {
+            Object field = provider.getValue(property);
+            if (isNull(field)) continue;
+            writeField(generator, property.name(), property.type(), field);
         }
     }
 
-    private static void writeArray(JsonGenerator jsonGenerator, String fieldName, ArrayValue array) throws IOException {
-        if (valueIsNull(array)) return;
-        jsonGenerator.writeArrayFieldStart(fieldName);
-        for (int index = 0; index < array.size(); index++) {
-            Value value = array.get(index);
-            if (valueIsNull(value)) continue;
-            writeArrayElement(jsonGenerator, value);
+    private static void writeMap(JsonGenerator generator, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws IOException {
+        generator.writeStartObject();
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (isNull(value) || isNull(key)) continue;
+            writeField(generator, keyType.outputTransformer().toString(cast(key)), valueType, value);
         }
-        jsonGenerator.writeEndArray();
+        generator.writeEndObject();
     }
 
-    private static void writeArray(JsonGenerator jsonGenerator, ArrayValue array) throws IOException {
-        if (valueIsNull(array)) return;
-        jsonGenerator.writeStartArray();
-        for (int index = 0; index < array.size(); index++) {
-            Value value = array.get(index);
-            if (valueIsNull(value)) continue;
-            writeArrayElement(jsonGenerator, value);
+    private static void writeMap(JsonGenerator generator, String name, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws IOException {
+        generator.writeObjectFieldStart(name);
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (isNull(value) || isNull(key)) continue;
+            writeField(generator, keyType.outputTransformer().toString(cast(key)), valueType, value);
         }
-        jsonGenerator.writeEndArray();
+        generator.writeEndObject();
     }
 
-
-    private static void writeField(JsonGenerator jsonGenerator, String name, Value value) throws IOException {
-        if (valueIsNull(value)) return;
-        switch (value.getType()) {
-            case ENTITY:
-                writeJsonEntity(jsonGenerator, name, asEntity(value));
-                return;
-            case ARRAY:
-                writeArray(jsonGenerator, name, asArray(value));
-                return;
-            case BINARY:
-                jsonGenerator.writeBinaryField(name, asBinary(value).getContent());
-                return;
-            case STRING:
-            case INT:
-            case DOUBLE:
-            case LONG:
-            case BOOL:
-            case BYTE:
-            case FLOAT:
-                writeField(jsonGenerator, name, asPrimitive(value));
-        }
-    }
-
-    private static void writeField(JsonGenerator jsonGenerator, String name, Primitive value) throws IOException {
-        if (valueIsNull(value)) return;
-        switch (value.getType()) {
-            case STRING:
-                jsonGenerator.writeStringField(name, value.getString());
-                return;
-            case INT:
-                jsonGenerator.writeNumberField(name, value.getInt());
-                return;
-            case DOUBLE:
-                jsonGenerator.writeNumberField(name, value.getDouble());
-                return;
-            case LONG:
-                jsonGenerator.writeNumberField(name, value.getLong());
-                return;
-            case BOOL:
-                jsonGenerator.writeBooleanField(name, value.getBool());
-                return;
-            case BYTE:
-                jsonGenerator.writeNumberField(name, value.getByte());
-                return;
-            case FLOAT:
-                jsonGenerator.writeNumberField(name, value.getFloat());
-        }
-    }
-
-
-    private static void writeArrayElement(JsonGenerator jsonGenerator, Value value) throws IOException {
-        if (valueIsNull(value)) return;
-        switch (value.getType()) {
-            case ARRAY:
-                writeArray(jsonGenerator, asArray(cast(value)));
+    private static void writeValue(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
+        MetaTransformer<?> transformer = type.outputTransformer();
+        switch (type.externalKind()) {
+            case LAZY:
+                writeValue(generator, type.parameters().get(0), transformer.toLazy(cast(value)).get());
                 return;
             case ENTITY:
-                writeJsonEntity(jsonGenerator, asEntity(cast(value)));
+                writeEntity(generator, type, value);
+                return;
+            case MAP:
+            case LAZY_MAP:
+                writeMap(generator, type.parameters().get(0), type.parameters().get(1), cast(value));
+                return;
+            case ARRAY:
+            case LAZY_ARRAY:
+                writeArray(generator, type, value);
                 return;
             case BINARY:
-                jsonGenerator.writeBinary(asBinary(value).getContent());
+                generator.writeBinary(transformer.toByteArray(cast(value)));
                 return;
             case STRING:
-                jsonGenerator.writeString(asPrimitive(value).getString());
-                return;
-            case INT:
-                jsonGenerator.writeNumber(asPrimitive(value).getInt());
-                return;
-            case BOOL:
-                jsonGenerator.writeBoolean(asPrimitive(value).getBool());
-                return;
-            case DOUBLE:
-                jsonGenerator.writeNumber(asPrimitive(value).getDouble());
+                generator.writeString(transformer.toString(cast(value)));
                 return;
             case LONG:
-                jsonGenerator.writeNumber(asPrimitive(value).getLong());
+                generator.writeNumber(transformer.toLong(cast(value)));
                 return;
-            case BYTE:
-                jsonGenerator.writeNumber(asPrimitive(value).getByte());
+            case DOUBLE:
+                generator.writeNumber(transformer.toDouble(cast(value)));
                 return;
             case FLOAT:
-                jsonGenerator.writeNumber(asPrimitive(value).getFloat());
+                generator.writeNumber(transformer.toFloat(cast(value)));
+                return;
+            case INTEGER:
+                generator.writeNumber(transformer.toInteger(cast(value)));
+                return;
+            case BOOLEAN:
+                generator.writeBoolean(transformer.toBoolean(cast(value)));
+                return;
+            case CHARACTER:
+                generator.writeString(EMPTY_STRING + transformer.toCharacter(cast(value)));
+                return;
+            case SHORT:
+                generator.writeNumber(transformer.toShort(cast(value)));
+                return;
+            case BYTE:
+                generator.writeNumber(transformer.toByte(cast(value)));
+        }
+        throw new ImpossibleSituationException();
+    }
+
+    private static void writeField(JsonGenerator generator, String name, MetaType<?> type, Object value) throws IOException {
+        MetaTransformer<?> transformer = type.outputTransformer();
+        switch (type.externalKind()) {
+            case ARRAY:
+            case LAZY_ARRAY:
+                writeArray(generator, name, type, transformer.toArray(cast(value)));
+                return;
+            case LAZY:
+                writeField(generator, name, type.parameters().get(0), transformer.toLazy(cast(value)).get());
+                return;
+            case STRING:
+                generator.writeStringField(name, transformer.toString(cast(value)));
+                return;
+            case INTEGER:
+                generator.writeNumberField(name, transformer.toInteger(cast(value)));
+                return;
+            case DOUBLE:
+                generator.writeNumberField(name, transformer.toDouble(cast(value)));
+                return;
+            case LONG:
+                generator.writeNumberField(name, transformer.toLong(cast(value)));
+                return;
+            case BOOLEAN:
+                generator.writeBooleanField(name, transformer.toBoolean(cast(value)));
+                return;
+            case CHARACTER:
+                generator.writeStringField(name, EMPTY_STRING + transformer.toCharacter(cast(value)));
+                return;
+            case SHORT:
+                generator.writeNumberField(name, transformer.toShort(cast(value)));
+                return;
+            case BYTE:
+                generator.writeNumberField(name, transformer.toByte(cast(value)));
+                return;
+            case FLOAT:
+                generator.writeNumberField(name, transformer.toFloat(cast(value)));
+                return;
+            case BINARY:
+                generator.writeBinaryField(name, transformer.toByteArray(cast(value)));
+                return;
+            case ENTITY:
+                writeEntity(generator, name, type, value);
+                return;
+            case MAP:
+            case LAZY_MAP:
+                writeMap(generator, name, type.parameters().get(0), type.parameters().get(1), cast(transformer.toMap(cast(value))));
         }
     }
 }

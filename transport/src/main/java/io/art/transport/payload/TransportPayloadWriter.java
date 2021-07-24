@@ -21,13 +21,13 @@ package io.art.transport.payload;
 import io.art.core.exception.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
-import io.art.value.immutable.Value;
+import io.art.meta.model.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
-import static io.art.value.constants.ValueModuleConstants.*;
 import static io.art.yaml.module.YamlModule.*;
 import static io.netty.buffer.ByteBufAllocator.*;
 import static lombok.AccessLevel.*;
@@ -38,22 +38,22 @@ public class TransportPayloadWriter {
     private final DataFormat dataFormat;
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Value, ByteBuf> writer = writer(dataFormat);
+    private final Function<TypedObject, ByteBuf> writer = writer(dataFormat);
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final JsonWriter jsonWriter = jsonModule().configuration().getOldWriter();
+    private static final JsonWriter jsonWriter = jsonModule().configuration().getWriter();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getOldWriter();
+    private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getWriter();
 
     @Getter(lazy = true, value = PRIVATE)
-    private static final YamlWriter yamlWriter = yamlModule().configuration().getOldWriter();
+    private static final YamlWriter yamlWriter = yamlModule().configuration().getWriter();
 
-    public ByteBuf write(Value value) {
+    public ByteBuf write(TypedObject value) {
         return getWriter().apply(value);
     }
 
-    private static Function<Value, ByteBuf> writer(DataFormat dataFormat) {
+    private static Function<TypedObject, ByteBuf> writer(DataFormat dataFormat) {
         switch (dataFormat) {
             case JSON:
                 return value -> {

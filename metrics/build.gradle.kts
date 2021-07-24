@@ -23,7 +23,7 @@ dependencies {
     val dropwizrdMetricsJvmVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":value"))
+    implementation(project(":meta"))
     implementation(project(":logging"))
     implementation(project(":server"))
 

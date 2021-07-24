@@ -19,14 +19,18 @@
 package io.art.yaml.descriptor;
 
 import com.fasterxml.jackson.dataformat.yaml.*;
-import io.art.value.descriptor.Writer;
-import io.art.value.immutable.Value;
-import io.art.value.immutable.*;
+import io.art.core.exception.*;
+import io.art.meta.descriptor.Writer;
+import io.art.meta.model.*;
+import io.art.meta.schema.MetaProviderTemplate.*;
+import io.art.meta.transformer.*;
 import io.art.yaml.exception.*;
 import io.netty.buffer.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.value.immutable.Value.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
@@ -34,190 +38,200 @@ import java.util.*;
 
 @AllArgsConstructor
 public class YamlWriter implements Writer {
-    private final YAMLFactory yamlFactory;
+    private final YAMLFactory jsonFactory;
 
     @Override
-    public void write(Value value, ByteBuffer buffer) {
-        write(value, buffer, YamlException::new);
+    public void write(TypedObject model, ByteBuffer buffer) {
+        write(model, buffer, YamlException::new);
     }
 
     @Override
-    public void write(Value value, ByteBuf buffer) {
-        write(value, buffer, YamlException::new);
+    public void write(TypedObject model, ByteBuf buffer) {
+        write(model, buffer, YamlException::new);
     }
 
     @Override
-    public void write(Value value, OutputStream outputStream, Charset charset) {
-        if (valueIsNull(value)) {
-            return;
-        }
-        try (YAMLGenerator generator = yamlFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
-            switch (value.getType()) {
-                case ENTITY:
-                    writeYamlEntity(generator, asEntity(value));
-                    return;
-                case ARRAY:
-                    writeArray(generator, asArray(value));
-                    return;
-                case BINARY:
-                    generator.writeBinary(asBinary(value).getContent());
-                    return;
-                case STRING:
-                    generator.writeString(asPrimitive(value).getString());
-                    return;
-                case LONG:
-                    generator.writeNumber(asPrimitive(value).getLong());
-                    return;
-                case DOUBLE:
-                    generator.writeNumber(asPrimitive(value).getDouble());
-                    return;
-                case FLOAT:
-                    generator.writeNumber(asPrimitive(value).getFloat());
-                    return;
-                case INT:
-                    generator.writeNumber(asPrimitive(value).getInt());
-                    return;
-                case BOOL:
-                    generator.writeBoolean(asPrimitive(value).getBool());
-                    return;
-                case BYTE:
-                    generator.writeNumber(asPrimitive(value).getByte());
-            }
-        } catch (IOException ioException) {
-            throw new YamlException(ioException);
+    public void write(TypedObject object, OutputStream outputStream, Charset charset) {
+        if (isNull(object)) return;
+        MetaType<?> type = object.getType();
+        try (YAMLGenerator generator = jsonFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
+            writeValue(generator, type, object.getObject());
+        } catch (IOException throwable) {
+            throw new YamlException(throwable);
         }
     }
 
 
-    private static void writeYamlEntity(YAMLGenerator generator, Entity entity) throws IOException {
-        if (valueIsNull(entity)) return;
+    private static void writeEntity(YAMLGenerator generator, MetaType<?> type, Object value) throws IOException {
+        if (isNull(value)) return;
         generator.writeStartObject();
-        writeYamlFields(generator, entity);
+        writeFields(generator, type, value);
         generator.writeEndObject();
     }
 
-    private static void writeYamlEntity(YAMLGenerator yamlGenerator, String name, Entity entity) throws IOException {
-        if (valueIsNull(entity)) return;
-        yamlGenerator.writeObjectFieldStart(name);
-        writeYamlFields(yamlGenerator, entity);
-        yamlGenerator.writeEndObject();
+    private static void writeEntity(YAMLGenerator generator, String name, MetaType<?> type, Object value) throws IOException {
+        if (isNull(value)) return;
+        generator.writeObjectFieldStart(name);
+        writeFields(generator, type, value);
+        generator.writeEndObject();
     }
 
-    private static void writeYamlFields(YAMLGenerator generator, Entity entity) throws IOException {
-        Set<Primitive> keys = entity.asMap().keySet();
-        for (Primitive key : keys) {
-            if (valueIsNull(key)) continue;
-            Value value = entity.get(key);
-            if (valueIsNull(value)) continue;
-            writeField(generator, key.getString(), value);
+
+    private static void writeArray(YAMLGenerator generator, String name, MetaType<?> type, List<?> value) throws IOException {
+        generator.writeArrayFieldStart(name);
+        MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
+        for (Object element : value) {
+            if (isNull(element)) {
+                generator.writeNull();
+                continue;
+            }
+            writeValue(generator, elementType, element);
+        }
+        generator.writeEndArray();
+    }
+
+
+    private static void writeArray(YAMLGenerator generator, MetaType<?> type, Object value) throws IOException {
+        generator.writeStartArray();
+        MetaType<?> elementType = orElse(type.arrayComponentType(), () -> type.parameters().get(0));
+        List<?> array = type.outputTransformer().toArray(cast(value));
+        for (Object element : array) {
+            if (isNull(element)) {
+                generator.writeNull();
+                continue;
+            }
+            writeValue(generator, elementType, element);
+        }
+        generator.writeEndArray();
+    }
+
+    private static void writeFields(YAMLGenerator generator, MetaType<?> type, Object value) throws IOException {
+        MetaProviderInstance provider = type.declaration().provider().instantiate(value);
+        for (MetaProperty<?> property : provider.properties().values()) {
+            Object field = provider.getValue(property);
+            if (isNull(field)) continue;
+            writeField(generator, property.name(), property.type(), field);
         }
     }
 
-    private static void writeArray(YAMLGenerator yamlGenerator, String fieldName, ArrayValue array) throws IOException {
-        if (valueIsNull(array)) return;
-        yamlGenerator.writeArrayFieldStart(fieldName);
-        for (int index = 0; index < array.size(); index++) {
-            Value value = array.get(index);
-            if (valueIsNull(value)) continue;
-            writeArrayElement(yamlGenerator, value);
+    private static void writeMap(YAMLGenerator generator, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws IOException {
+        generator.writeStartObject();
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (isNull(value) || isNull(key)) continue;
+            writeField(generator, keyType.outputTransformer().toString(cast(key)), valueType, value);
         }
-        yamlGenerator.writeEndArray();
+        generator.writeEndObject();
     }
 
-    private static void writeArray(YAMLGenerator yamlGenerator, ArrayValue array) throws IOException {
-        if (valueIsNull(array)) return;
-        yamlGenerator.writeStartArray();
-        for (int index = 0; index < array.size(); index++) {
-            Value value = array.get(index);
-            if (valueIsNull(value)) continue;
-            writeArrayElement(yamlGenerator, value);
+    private static void writeMap(YAMLGenerator generator, String name, MetaType<?> keyType, MetaType<?> valueType, Map<String, ?> map) throws IOException {
+        generator.writeObjectFieldStart(name);
+        for (Map.Entry<String, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+            if (isNull(value) || isNull(key)) continue;
+            writeField(generator, keyType.outputTransformer().toString(cast(key)), valueType, value);
         }
-        yamlGenerator.writeEndArray();
+        generator.writeEndObject();
     }
 
-
-    private static void writeField(YAMLGenerator yamlGenerator, String name, Value value) throws IOException {
-        if (valueIsNull(value)) return;
-        switch (value.getType()) {
-            case ENTITY:
-                writeYamlEntity(yamlGenerator, name, asEntity(value));
-                return;
-            case ARRAY:
-                writeArray(yamlGenerator, name, asArray(value));
-                return;
-            case BINARY:
-                yamlGenerator.writeBinaryField(name, asBinary(value).getContent());
-                return;
-            case STRING:
-            case INT:
-            case DOUBLE:
-            case LONG:
-            case BOOL:
-            case BYTE:
-            case FLOAT:
-                writeField(yamlGenerator, name, asPrimitive(value));
-        }
-    }
-
-    private static void writeField(YAMLGenerator yamlGenerator, String name, Primitive value) throws IOException {
-        if (valueIsNull(value)) return;
-        switch (value.getType()) {
-            case STRING:
-                yamlGenerator.writeStringField(name, value.getString());
-                return;
-            case INT:
-                yamlGenerator.writeNumberField(name, value.getInt());
-                return;
-            case DOUBLE:
-                yamlGenerator.writeNumberField(name, value.getDouble());
-                return;
-            case LONG:
-                yamlGenerator.writeNumberField(name, value.getLong());
-                return;
-            case BOOL:
-                yamlGenerator.writeBooleanField(name, value.getBool());
-                return;
-            case BYTE:
-                yamlGenerator.writeNumberField(name, value.getByte());
-                return;
-            case FLOAT:
-                yamlGenerator.writeNumberField(name, value.getFloat());
-        }
-    }
-
-
-    private static void writeArrayElement(YAMLGenerator yamlGenerator, Value value) throws IOException {
-        if (valueIsNull(value)) return;
-        switch (value.getType()) {
-            case ARRAY:
-                writeArray(yamlGenerator, asArray(cast(value)));
+    private static void writeValue(YAMLGenerator generator, MetaType<?> type, Object value) throws IOException {
+        MetaTransformer<?> transformer = type.outputTransformer();
+        switch (type.externalKind()) {
+            case LAZY:
+                writeValue(generator, type.parameters().get(0), transformer.toLazy(cast(value)).get());
                 return;
             case ENTITY:
-                writeYamlEntity(yamlGenerator, asEntity(cast(value)));
+                writeEntity(generator, type, value);
+                return;
+            case MAP:
+            case LAZY_MAP:
+                writeMap(generator, type.parameters().get(0), type.parameters().get(1), cast(value));
+                return;
+            case ARRAY:
+            case LAZY_ARRAY:
+                writeArray(generator, type, value);
                 return;
             case BINARY:
-                yamlGenerator.writeBinary(asBinary(value).getContent());
+                generator.writeBinary(transformer.toByteArray(cast(value)));
                 return;
             case STRING:
-                yamlGenerator.writeString(asPrimitive(value).getString());
-                return;
-            case INT:
-                yamlGenerator.writeNumber(asPrimitive(value).getInt());
-                return;
-            case BOOL:
-                yamlGenerator.writeBoolean(asPrimitive(value).getBool());
-                return;
-            case DOUBLE:
-                yamlGenerator.writeNumber(asPrimitive(value).getDouble());
+                generator.writeString(transformer.toString(cast(value)));
                 return;
             case LONG:
-                yamlGenerator.writeNumber(asPrimitive(value).getLong());
+                generator.writeNumber(transformer.toLong(cast(value)));
                 return;
-            case BYTE:
-                yamlGenerator.writeNumber(asPrimitive(value).getByte());
+            case DOUBLE:
+                generator.writeNumber(transformer.toDouble(cast(value)));
                 return;
             case FLOAT:
-                yamlGenerator.writeNumber(asPrimitive(value).getFloat());
+                generator.writeNumber(transformer.toFloat(cast(value)));
+                return;
+            case INTEGER:
+                generator.writeNumber(transformer.toInteger(cast(value)));
+                return;
+            case BOOLEAN:
+                generator.writeBoolean(transformer.toBoolean(cast(value)));
+                return;
+            case CHARACTER:
+                generator.writeString(EMPTY_STRING + transformer.toCharacter(cast(value)));
+                return;
+            case SHORT:
+                generator.writeNumber(transformer.toShort(cast(value)));
+                return;
+            case BYTE:
+                generator.writeNumber(transformer.toByte(cast(value)));
+        }
+        throw new ImpossibleSituationException();
+    }
+
+    private static void writeField(YAMLGenerator generator, String name, MetaType<?> type, Object value) throws IOException {
+        MetaTransformer<?> transformer = type.outputTransformer();
+        switch (type.externalKind()) {
+            case ARRAY:
+            case LAZY_ARRAY:
+                writeArray(generator, name, type, transformer.toArray(cast(value)));
+                return;
+            case LAZY:
+                writeField(generator, name, type.parameters().get(0), transformer.toLazy(cast(value)).get());
+                return;
+            case STRING:
+                generator.writeStringField(name, transformer.toString(cast(value)));
+                return;
+            case INTEGER:
+                generator.writeNumberField(name, transformer.toInteger(cast(value)));
+                return;
+            case DOUBLE:
+                generator.writeNumberField(name, transformer.toDouble(cast(value)));
+                return;
+            case LONG:
+                generator.writeNumberField(name, transformer.toLong(cast(value)));
+                return;
+            case BOOLEAN:
+                generator.writeBooleanField(name, transformer.toBoolean(cast(value)));
+                return;
+            case CHARACTER:
+                generator.writeStringField(name, EMPTY_STRING + transformer.toCharacter(cast(value)));
+                return;
+            case SHORT:
+                generator.writeNumberField(name, transformer.toShort(cast(value)));
+                return;
+            case BYTE:
+                generator.writeNumberField(name, transformer.toByte(cast(value)));
+                return;
+            case FLOAT:
+                generator.writeNumberField(name, transformer.toFloat(cast(value)));
+                return;
+            case BINARY:
+                generator.writeBinaryField(name, transformer.toByteArray(cast(value)));
+                return;
+            case ENTITY:
+                writeEntity(generator, name, type, value);
+                return;
+            case MAP:
+            case LAZY_MAP:
+                writeMap(generator, name, type.parameters().get(0), type.parameters().get(1), cast(transformer.toMap(cast(value))));
         }
     }
 }

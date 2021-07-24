@@ -21,8 +21,8 @@ public class MessagePackTest {
 
     @Test
     public void testMessagePack() {
-        MessagePackModelWriter writer = messagePackModule().configuration().getWriter();
-        MessagePackModelReader reader = messagePackModule().configuration().getReader();
+        MessagePackWriter writer = messagePackModule().configuration().getWriter();
+        MessagePackReader reader = messagePackModule().configuration().getReader();
         TestingMetaModel model = generateTestingModel();
         byte[] bytes = writer.writeToBytes(typed(declaration(TestingMetaModel.class).definition(), model));
         TestingMetaModel parsed = reader.read(declaration(TestingMetaModel.class).definition(), bytes);

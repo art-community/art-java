@@ -24,7 +24,6 @@ dependencies {
     val messagePackVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":value"))
     implementation(project(":meta"))
 
     api("org.msgpack", "msgpack-core", messagePackVersion)

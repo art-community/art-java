@@ -21,7 +21,6 @@ dependencies {
     val jacksonVersion: String by project
 
     implementation(project(":core"))
-    implementation(project(":value"))
     implementation(project(":meta"))
 
     api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)

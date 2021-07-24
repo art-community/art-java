@@ -21,8 +21,8 @@ public class YamlTest {
 
     @Test
     public void testYaml() {
-        YamlModelWriter writer = yamlModule().configuration().getWriter();
-        YamlModelReader reader = yamlModule().configuration().getReader();
+        YamlWriter writer = yamlModule().configuration().getWriter();
+        YamlReader reader = yamlModule().configuration().getReader();
         TestingMetaModel model = generateTestingModel();
         String yaml = writer.writeToString(typed(declaration(TestingMetaModel.class).definition(), model));
         TestingMetaModel parsed = reader.read(declaration(TestingMetaModel.class).definition(), yaml);

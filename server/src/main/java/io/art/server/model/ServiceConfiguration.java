@@ -23,12 +23,12 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.server.refresher.*;
 import io.art.transport.payload.*;
-import io.art.value.constants.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static io.art.server.constants.ServerModuleConstants.Defaults.*;
+import static io.art.transport.constants.TransportModuleConstants.*;
 import java.util.function.*;
 
 @Getter
@@ -38,8 +38,8 @@ public class ServiceConfiguration {
     private boolean validating;
     private Scheduler blockingScheduler;
     private ImmutableMap<String, ServiceMethodConfiguration> methods;
-    private Function<ValueModuleConstants.DataFormat, TransportPayloadReader> reader;
-    private Function<ValueModuleConstants.DataFormat, TransportPayloadWriter> writer;
+    private Function<DataFormat, TransportPayloadReader> reader;
+    private Function<DataFormat, TransportPayloadWriter> writer;
 
     public static ServiceConfiguration from(ServerModuleRefresher refresher, ConfigurationSource source) {
         ServiceConfiguration configuration = new ServiceConfiguration();

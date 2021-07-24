@@ -151,7 +151,7 @@ public class HttpRouter {
                 .apply(cast(exception));
         return isNull(result) ?
                 Flux.empty() :
-                Flux.just(specification.getOutputMapper().map(cast(result)));
+                Flux.just(specification.getOutputType().map(cast(result)));
     }
 
     private Context setContext(Context context) {

@@ -25,10 +25,8 @@ import lombok.*;
 
 @Getter
 public class MessagePackModuleConfiguration implements ModuleConfiguration {
-    private final MessagePackReader oldReader = new MessagePackReader();
-    private final MessagePackWriter oldWriter = new MessagePackWriter();
-    private final MessagePackModelReader reader = new MessagePackModelReader();
-    private final MessagePackModelWriter writer = new MessagePackModelWriter();
+    private final MessagePackReader reader = new MessagePackReader();
+    private final MessagePackWriter writer = new MessagePackWriter();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<MessagePackModuleConfiguration, Configurator> {

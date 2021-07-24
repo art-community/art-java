@@ -19,7 +19,6 @@
 package io.art.transport.payload;
 
 import io.art.core.property.*;
-import io.art.value.immutable.Value;
 import io.netty.buffer.*;
 import lombok.*;
 
@@ -28,7 +27,7 @@ public class TransportPayload {
     @Getter
     private final ByteBuf data;
 
-    private final LazyProperty<Value> valueProvider;
+    private final LazyProperty<?> valueProvider;
 
     private static final TransportPayload EMPTY = new TransportPayload(null, null);
 
@@ -40,7 +39,7 @@ public class TransportPayload {
         return EMPTY;
     }
 
-    public Value getValue() {
+    public Object getValue() {
         return valueProvider.get();
     }
 }
