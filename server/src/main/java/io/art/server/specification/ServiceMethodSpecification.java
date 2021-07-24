@@ -23,11 +23,9 @@ import io.art.core.collection.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
-import io.art.server.decorator.*;
 import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
@@ -42,11 +40,7 @@ import java.util.function.*;
 @ForGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
-    @Getter
-    private final String serviceId;
-
-    @Getter
-    private final String methodId;
+    private final MetaMethodInvoker method;
 
     @Getter
     private final MetaType<?> inputType;
@@ -54,23 +48,25 @@ public class ServiceMethodSpecification {
     @Getter
     private final MetaType<?> outputType;
 
-    private final MetaMethodInvoker method;
+    public String getServiceId() {
+        return method.getOwner().definition().type().getName();
+    }
+
+    public String getMethodId() {
+        return method.getDelegate().name();
+    }
+
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeInputDecorators = immutableArrayOf(
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> afterInputDecorators = immutableArrayOf(
-            new ServiceLoggingDecorator(this, INPUT),
-            new ServiceDeactivationDecorator(this),
-            new ServiceStateDecorator(this)
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> beforeOutputDecorators = immutableArrayOf(
     );
 
     private final ImmutableArray<UnaryOperator<Flux<Object>>> afterOutputDecorators = immutableArrayOf(
-            new ServiceLoggingDecorator(this, OUTPUT),
-            new ServiceDeactivationDecorator(this)
     );
 
     @Singular("inputDecorator")
@@ -109,39 +105,58 @@ public class ServiceMethodSpecification {
 
             if (outputType.internalKind() == MONO) {
                 Sinks.One<Object> result = Sinks.one();
-                input.subscribe(element -> asMono(method.invoke(Mono.just(element))).subscribe(resultElement -> result.emitValue(resultElement, FAIL_FAST)));
+                input.subscribe(element -> processMono(result, element));
                 return result.asMono().flux();
             }
 
             if (outputType.internalKind() == FLUX) {
                 Sinks.Many<Object> result = Sinks.many().unicast().onBackpressureBuffer();
-                input.subscribe(element -> asFlux(method.invoke(Mono.just(element))).subscribe(resultElement -> result.emitNext(resultElement, FAIL_FAST)));
+                input.subscribe(element -> processFlux(result, element));
                 return result.asFlux();
             }
 
             Sinks.Many<Object> result = Sinks.many().unicast().onBackpressureBuffer();
-            input.subscribe(element -> result.emitNext(method.invoke(Mono.just(element)), FAIL_FAST));
+            input.subscribe(element -> processBlocking(result, element));
             return result.asFlux();
         }
 
         if (inputType.internalKind() == FLUX) {
-            if (isNull(outputType)) {
-                method.invoke(input);
+            Object output = method.invoke(input);
+
+            if (isNull(outputType) || isNull(output)) {
                 return Flux.empty();
             }
 
             if (outputType.internalKind() == MONO) {
-                return asMono(method.invoke(input)).flux();
+                return asMono(output).flux();
             }
 
             if (outputType.internalKind() == FLUX) {
-                return asFlux(method.invoke(input));
+                return asFlux(output);
             }
 
-            return Flux.just(method.invoke(input));
+            return Flux.just(output);
         }
 
         return never();
+    }
+
+    private void processBlocking(Sinks.Many<Object> result, Object element) {
+        Object output = method.invoke(Mono.just(element));
+        if (isNull(output)) return;
+        result.emitNext(output, FAIL_FAST);
+    }
+
+    private void processFlux(Sinks.Many<Object> result, Object element) {
+        Object output = method.invoke(Mono.just(element));
+        if (isNull(output)) return;
+        asFlux(output).subscribe(resultElement -> processBlocking(result, resultElement));
+    }
+
+    private void processMono(Sinks.One<Object> result, Object element) {
+        Object output = method.invoke(Mono.just(element));
+        if (isNull(output)) return;
+        asMono(output).subscribe(resultElement -> result.emitValue(resultElement, FAIL_FAST));
     }
 
     private Flux<Object> decorateInput(Flux<Object> input) {

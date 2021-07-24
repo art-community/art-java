@@ -2,6 +2,7 @@ package io.art.meta.invoker;
 
 
 import io.art.meta.model.*;
+import lombok.*;
 import static io.art.core.singleton.SingletonsRegistry.*;
 import java.util.function.*;
 
@@ -10,17 +11,25 @@ public class MetaMethodInvoker {
     private final Function<Object, Object> invokeOneParameter;
     private final Function<Object[], Object> invokeWithParameters;
 
-    public MetaMethodInvoker(MetaClass<?> owner, MetaMethod<Object> method) {
-        if (method.isStatic()) {
-            invokeWithoutParameters = ((StaticMetaMethod<?>) method)::invokeCatched;
-            invokeOneParameter = ((StaticMetaMethod<?>) method)::invokeCatched;
-            invokeWithParameters = ((StaticMetaMethod<?>) method)::invokeCatched;
+    @Getter
+    private final MetaClass<?> owner;
+
+    @Getter
+    private final MetaMethod<?> delegate;
+
+    public MetaMethodInvoker(MetaClass<?> owner, MetaMethod<?> delegate) {
+        this.owner = owner;
+        this.delegate = delegate;
+        if (delegate.isStatic()) {
+            invokeWithoutParameters = ((StaticMetaMethod<?>) delegate)::invokeCatched;
+            invokeOneParameter = ((StaticMetaMethod<?>) delegate)::invokeCatched;
+            invokeWithParameters = ((StaticMetaMethod<?>) delegate)::invokeCatched;
             return;
         }
         Object singleton = singleton(owner.definition().type(), owner.creator().noPropertiesConstructor()::invokeCatched);
-        invokeWithoutParameters = () -> ((InstanceMetaMethod<Object, Object>) method).invokeCatched(singleton);
-        invokeOneParameter = argument -> ((InstanceMetaMethod<Object, Object>) method).invokeCatched(singleton, argument);
-        invokeWithParameters = arguments -> ((InstanceMetaMethod<Object, Object>) method).invokeCatched(singleton, arguments);
+        invokeWithoutParameters = () -> ((InstanceMetaMethod<Object, Object>) delegate).invokeCatched(singleton);
+        invokeOneParameter = argument -> ((InstanceMetaMethod<Object, Object>) delegate).invokeCatched(singleton, argument);
+        invokeWithParameters = arguments -> ((InstanceMetaMethod<Object, Object>) delegate).invokeCatched(singleton, arguments);
     }
 
     public Object invoke() {

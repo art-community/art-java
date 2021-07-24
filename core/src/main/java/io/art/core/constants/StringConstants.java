@@ -22,6 +22,7 @@ import static java.util.regex.Pattern.*;
 import java.util.regex.*;
 
 public interface StringConstants {
+    int ASCII_CASE_DIFFERENCE_VALUE = 32;
     String ART_BANNER = "Welcome to ART!";
     String TRUE_NUMERIC = "1";
     String FALSE_NUMERIC = "0";

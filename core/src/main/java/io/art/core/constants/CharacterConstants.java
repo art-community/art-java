@@ -49,4 +49,5 @@ public interface CharacterConstants {
     char PIPE = '|';
     char EXCLAMATION_MARK = '1';
     char NEW_LINE = '\n';
+    char BLANK = ' ';
 }
