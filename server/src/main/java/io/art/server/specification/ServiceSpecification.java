@@ -20,6 +20,7 @@ package io.art.server.specification;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;

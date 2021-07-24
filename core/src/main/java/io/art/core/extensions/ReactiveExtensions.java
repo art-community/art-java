@@ -2,6 +2,7 @@ package io.art.core.extensions;
 
 import lombok.experimental.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 
 @UtilityClass
 public class ReactiveExtensions {
@@ -17,5 +18,13 @@ public class ReactiveExtensions {
             action.run();
             emitter.complete();
         });
+    }
+
+    public <T> Mono<T> asMono(Object object) {
+        return cast(object);
+    }
+
+    public <T> Flux<T> asFlux(Object object) {
+        return cast(object);
     }
 }
