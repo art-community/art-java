@@ -25,7 +25,7 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingMessages.*;
+import static io.art.communicator.constants.CommunicatorConstants.LoggingMessages.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;

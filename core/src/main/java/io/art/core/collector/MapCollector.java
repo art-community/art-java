@@ -19,7 +19,7 @@
 package io.art.core.collector;
 
 import lombok.experimental.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static java.text.MessageFormat.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;

@@ -4,7 +4,7 @@ import io.art.communicator.action.*;
 import io.art.communicator.exception.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.Errors.*;
+import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.constants.StringConstants.*;

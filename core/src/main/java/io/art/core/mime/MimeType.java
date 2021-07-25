@@ -25,7 +25,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CharacterConstants.DOUBLE_QUOTES;
 import static io.art.core.constants.CharacterConstants.SEMICOLON;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.MimeTypeConstants.*;
 import static io.art.core.constants.StringConstants.EQUAL;
 import static io.art.core.constants.StringConstants.PLUS;

@@ -20,7 +20,7 @@ package io.art.core.extensions;
 
 import io.art.core.exception.*;
 import lombok.experimental.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.ThreadConstants.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.text.MessageFormat.*;

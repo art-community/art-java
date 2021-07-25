@@ -23,7 +23,7 @@ import lombok.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
 import static java.text.MessageFormat.*;
 
 public class DefaultExceptionHandler implements ExceptionHandler {
@@ -31,7 +31,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     private final static Logger logger = logger(DefaultExceptionHandler.class);
 
     @Override
-    public void onException(Thread thread, ExceptionMessages.ExceptionEvent event, Throwable throwable) {
+    public void onException(Thread thread, Errors.ExceptionEvent event, Throwable throwable) {
         String message = format(EXCEPTION_OCCURRED_DURING, event.getMessage(), thread.getName(), getStackTraceAsString(throwable));
         getLogger().error(message);
     }

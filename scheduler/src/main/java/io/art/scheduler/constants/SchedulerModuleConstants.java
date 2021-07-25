@@ -47,7 +47,7 @@ public interface SchedulerModuleConstants {
         String CONFIGURATOR_REFRESH_DURATION = "configurator.refresh.duration";
     }
 
-    interface ExceptionMessages {
+    interface Errors {
         String EXCEPTION_OCCURRED_DURING = "Exception occurred during {0} on thread {1}: {2}";
         String AWAIT_TERMINATION_EXCEPTION = "Await termination failed";
         String SCHEDULER_TERMINATED = "Scheduler terminated";

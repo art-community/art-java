@@ -3,7 +3,7 @@ package io.art.core.property;
 import io.art.core.exception.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.QueueFactory.*;

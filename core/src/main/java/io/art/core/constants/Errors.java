@@ -18,7 +18,7 @@
 
 package io.art.core.constants;
 
-public interface ExceptionMessages {
+public interface Errors {
     String CONTEXT_ALREADY_INITIALIZED = "Context already initialized";
     String MODULE_WAS_NOT_FOUND = "Module ''{0}'' was not found in context";
     String COULD_NOT_FIND_AVAILABLE_PORT_AFTER_ATTEMPTS = "Could not find an available ''{0}'' port in the range [{1,number,#}, {2,number,#}] after {3,number,#} attempts";

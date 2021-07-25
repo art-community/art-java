@@ -30,7 +30,7 @@ import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
+import static io.art.server.constants.ServerConstants.LoggingMessages.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;

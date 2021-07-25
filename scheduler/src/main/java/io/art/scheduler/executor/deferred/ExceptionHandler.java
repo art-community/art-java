@@ -18,7 +18,7 @@
 
 package io.art.scheduler.executor.deferred;
 
-import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
 
 @FunctionalInterface
 public interface ExceptionHandler {

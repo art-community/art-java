@@ -24,7 +24,7 @@ import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.constants.BufferConstants.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static java.lang.System.*;

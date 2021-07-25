@@ -25,7 +25,7 @@ import io.art.server.refresher.*;
 import io.art.transport.payload.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import java.util.function.*;
 

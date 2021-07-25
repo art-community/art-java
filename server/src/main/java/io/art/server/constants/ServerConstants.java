@@ -18,10 +18,7 @@
 
 package io.art.server.constants;
 
-public interface ServerModuleConstants {
-    interface Defaults {
-    }
-
+public interface ServerConstants {
     interface ConfigurationKeys {
         String SERVER_SECTION = "server";
         String SERVER_SERVICES_KEY = "services";
@@ -39,9 +36,6 @@ public interface ServerModuleConstants {
         String SERVICE_OUTPUT_DATA = "Service ''{0}.{1}'' output:\n{2}";
         String SERVICE_COMPLETED_MESSAGE = "Service completed: ''{0}.{1}''";
         String SERVICE_FAILED_MESSAGE = "Service failed: ''{0}.{1}''";
-    }
-
-    interface ExceptionMessages {
     }
 
     interface StateKeys {

@@ -22,7 +22,7 @@ import io.art.core.mime.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.exception.*;
 import lombok.experimental.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.MimeTypeConstants.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;

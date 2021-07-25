@@ -27,7 +27,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ContextConstants.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;

@@ -26,7 +26,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.scheduler.constants.SchedulerModuleConstants.ExceptionMessages.*;
+import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
 import static java.util.Objects.*;
 import java.time.*;
 import java.util.*;

@@ -18,7 +18,7 @@
 
 package io.art.configurator.exception;
 
-import static io.art.configurator.constants.ConfiguratorModuleConstants.ExceptionMessages.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.Errors.*;
 import static java.text.MessageFormat.*;
 
 public class UnknownConfigurationFileExtensionException extends RuntimeException {

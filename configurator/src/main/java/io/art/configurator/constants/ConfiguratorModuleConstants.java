@@ -61,7 +61,7 @@ public interface ConfiguratorModuleConstants {
         );
     }
 
-    interface ExceptionMessages {
+    interface Errors {
         String UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION = "Unknown configuration source file extension: ''{0}''";
         String CONFIGURATION_WAS_NOT_FOUND = "Configuration was not found in section {0}";
     }

@@ -18,7 +18,7 @@
 
 package io.art.core.exception;
 
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static java.text.MessageFormat.*;
 
 public class NotImplementedException extends RuntimeException  {

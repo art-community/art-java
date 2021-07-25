@@ -18,7 +18,7 @@
 
 package io.art.rsocket.constants;
 
-import io.art.communicator.constants.CommunicatorModuleConstants.*;
+import io.art.communicator.constants.CommunicatorConstants.*;
 import io.art.core.property.*;
 import io.rsocket.util.*;
 import lombok.*;
@@ -30,7 +30,7 @@ public interface RsocketModuleConstants {
     EmptyPayload EMPTY_PAYLOAD = EmptyPayload.INSTANCE;
     LazyProperty<Mono<EmptyPayload>> EMPTY_PAYLOAD_MONO = lazy(() -> Mono.just(EmptyPayload.INSTANCE));
 
-    interface ExceptionMessages {
+    interface Errors {
         String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
     }

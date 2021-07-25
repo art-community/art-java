@@ -23,7 +23,7 @@ import lombok.experimental.*;
 import static io.art.core.constants.CharacterConstants.NEW_LINE;
 import static io.art.core.constants.CharacterConstants.SPACE;
 import static io.art.core.constants.DurationConstants.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.RegExps.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.lang.Character.*;

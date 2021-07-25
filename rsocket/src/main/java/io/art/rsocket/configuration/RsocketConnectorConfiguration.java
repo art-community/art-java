@@ -35,7 +35,7 @@ import static io.art.rsocket.configuration.RsocketKeepAliveConfiguration.*;
 import static io.art.rsocket.configuration.RsocketResumeConfiguration.*;
 import static io.art.rsocket.configuration.RsocketRetryConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;

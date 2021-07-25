@@ -23,7 +23,7 @@ import io.art.core.source.*;
 import lombok.*;
 
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
-import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
+import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 
 @Getter
 @Builder(toBuilder = true)

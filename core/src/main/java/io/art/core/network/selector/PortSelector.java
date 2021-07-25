@@ -19,7 +19,7 @@
 package io.art.core.network.selector;
 
 import lombok.experimental.*;
-import static io.art.core.constants.ExceptionMessages.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.factory.TreeFactory.tree;
 import static io.art.core.factory.TreeFactory.treeOf;
