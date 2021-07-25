@@ -18,19 +18,18 @@
 
 package io.art.scheduler.test;
 
-import io.art.core.initializer.*;
-import io.art.logging.module.*;
 import io.art.scheduler.*;
 import io.art.scheduler.executor.deferred.*;
-import io.art.scheduler.module.*;
 import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.scheduler.Scheduling.*;
 import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
+import static io.art.scheduler.module.SchedulerActivator.*;
 import static io.art.scheduler.test.comparator.DateTimeApproximateComparator.*;
 import static java.time.Duration.*;
 import static java.time.LocalDateTime.*;
@@ -42,8 +41,8 @@ import java.util.concurrent.*;
 @TestMethodOrder(OrderAnnotation.class)
 public class SchedulerTest {
     @BeforeAll
-    public static void initialize() {
-        ContextInitializer.initialize(LoggingModule::new, SchedulerModule::new);
+    public static void setup() {
+        initialize(scheduler());
     }
 
     @RepeatedTest(1000)
