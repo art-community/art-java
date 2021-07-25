@@ -22,17 +22,10 @@ import io.art.core.module.*;
 import io.art.server.configuration.*;
 import io.art.server.configuration.ServerModuleConfiguration.*;
 import io.art.server.refresher.*;
-import io.art.server.registry.*;
 import io.art.server.state.*;
 import lombok.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.StringExtensions.*;
-import static io.art.core.factory.SetFactory.*;
-import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
-import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 
 @Getter
 public class ServerModule implements StatefulModule<ServerModuleConfiguration, Configurator, ServerModuleState> {
@@ -46,16 +39,5 @@ public class ServerModule implements StatefulModule<ServerModuleConfiguration, C
 
     public static StatefulModuleProxy<ServerModuleConfiguration, ServerModuleState> serverModule() {
         return getServerModule();
-    }
-
-    public static ServiceMethodRegistry specifications() {
-        return serverModule().configuration().getRegistry();
-    }
-
-    @Override
-    public String print() {
-        Set<String> messages = set();
-        messages.add(format(SERVICE_REGISTRATION_MESSAGE, toCommaDelimitedString(specifications().getMethods().keySet())));
-        return toDelimitedString(messages, NEW_LINE);
     }
 }

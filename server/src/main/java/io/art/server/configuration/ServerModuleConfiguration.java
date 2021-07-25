@@ -28,11 +28,8 @@ import io.art.server.registry.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import lombok.*;
-import reactor.core.scheduler.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
-import static io.art.server.constants.ServerModuleConstants.Defaults.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -50,24 +47,13 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
 
     @Getter
-    private ServiceMethodRegistry registry = new ServiceMethodRegistry();
-
-    @Getter
-    private Scheduler blockingScheduler;
+    private final ServiceMethodRegistry registry = new ServiceMethodRegistry();
 
     @Getter
     private Function<DataFormat, TransportPayloadReader> reader;
 
     @Getter
     private Function<DataFormat, TransportPayloadWriter> writer;
-
-    public Scheduler getBlockingScheduler(ServiceMethodIdentifier id) {
-        return getMethodConfiguration(id)
-                .map(ServiceMethodConfiguration::getBlockingScheduler)
-                .orElseGet(() -> ofNullable(configurations.get(id.getServiceId()))
-                        .map(ServiceConfiguration::getBlockingScheduler)
-                        .orElse(blockingScheduler));
-    }
 
     public TransportPayloadReader getReader(ServiceMethodIdentifier id, DataFormat dataFormat) {
         return getMethodConfiguration(id)
@@ -133,7 +119,6 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            configuration.blockingScheduler = DEFAULT_SERVICE_METHOD_BLOCKING_SCHEDULER.get();
             configuration.reader = TransportPayloadReader::new;
             configuration.writer = TransportPayloadWriter::new;
             configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
@@ -145,7 +130,6 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator initialize(ServerModuleConfiguration configuration) {
-            apply(configuration.getRegistry(), registry -> this.configuration.registry = registry);
             return this;
         }
     }

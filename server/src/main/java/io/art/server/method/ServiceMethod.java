@@ -51,6 +51,9 @@ public class ServiceMethod {
     @Getter
     private final MetaType<?> outputType;
 
+    @Getter
+    private final MetaType<?> exceptionType;
+
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 
@@ -85,93 +88,123 @@ public class ServiceMethod {
     private Function<Flux<Object>, Flux<Object>> emptyInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return empty -> {
-                invoker.invoke();
-                return Flux.empty();
+                try {
+                    invoker.invoke();
+                    return Flux.empty();
+                } catch (Throwable throwable) {
+                    return Flux.error(throwable);
+                }
             };
         }
 
         if (outputType.internalKind() == MONO || outputType.internalKind() == FLUX) {
             return empty -> {
-                Object output = invoker.invoke();
-                if (isNull(output)) return Flux.empty();
-                return from(asPublisher(output));
+                try {
+                    Object output = invoker.invoke();
+                    if (isNull(output)) return Flux.empty();
+                    return from(asPublisher(output));
+                } catch (Throwable throwable) {
+                    return Flux.error(throwable);
+                }
             };
         }
 
         return empty -> {
-            Object output = invoker.invoke();
-            if (isNull(output)) return Flux.empty();
-            return just(output);
+            try {
+                Object output = invoker.invoke();
+                if (isNull(output)) return Flux.empty();
+                return just(output);
+            } catch (Throwable throwable) {
+                return Flux.error(throwable);
+            }
         };
     }
 
     private Function<Flux<Object>, Flux<Object>> monoInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return input -> {
-                subscribeMonoEmpty(input);
-                return Flux.empty();
+                Sinks.One<Object> sink = one();
+                subscribeMonoEmpty(input, sink);
+                return Flux.from(sink.asMono());
             };
         }
 
         if (outputType.internalKind() == MONO) {
             return input -> {
-                Sinks.One<Object> result = one();
-                subscribeMonoMono(input, result);
-                return Flux.from(result.asMono());
+                Sinks.One<Object> sink = one();
+                subscribeMonoMono(input, sink);
+                return Flux.from(sink.asMono());
             };
         }
 
         if (outputType.internalKind() == FLUX) {
             return input -> {
-                Sinks.Many<Object> result = many().unicast().onBackpressureBuffer();
-                subscribeMonoFlux(input, result);
-                return result.asFlux();
+                Sinks.Many<Object> sink = many().unicast().onBackpressureBuffer();
+                subscribeMonoFlux(input, sink);
+                return sink.asFlux();
             };
         }
 
         return input -> {
-            Sinks.Many<Object> result = many().unicast().onBackpressureBuffer();
-            subscribeMonoBlocking(input, result);
-            return result.asFlux();
+            Sinks.Many<Object> sink = many().unicast().onBackpressureBuffer();
+            subscribeMonoBlocking(input, sink);
+            return sink.asFlux();
         };
     }
 
     private Function<Flux<Object>, Flux<Object>> fluxInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return input -> {
-                invoker.invoke(input);
-                return Flux.empty();
+                try {
+                    invoker.invoke(input);
+                    return Flux.empty();
+                } catch (Throwable throwable) {
+                    return Flux.error(throwable);
+                }
             };
         }
 
         if (outputType.internalKind() == MONO) {
             return input -> {
-                Object output = invoker.invoke(input);
-                if (isNull(output)) return Flux.empty();
-                return from(asMono(output));
+                try {
+                    Object output = invoker.invoke(input);
+                    if (isNull(output)) return Flux.empty();
+                    return from(asMono(output));
+                } catch (Throwable throwable) {
+                    return Flux.error(throwable);
+                }
             };
         }
 
         if (outputType.internalKind() == FLUX) {
             return input -> {
-                Object output = invoker.invoke(input);
-                if (isNull(output)) return Flux.empty();
-                return asFlux(output);
+                try {
+                    Object output = invoker.invoke(input);
+                    if (isNull(output)) return Flux.empty();
+                    return asFlux(output);
+                } catch (Throwable throwable) {
+                    return Flux.error(throwable);
+                }
             };
         }
 
         return input -> {
-            Object output = invoker.invoke(input);
-            if (isNull(output)) return Flux.empty();
-            return just(output);
+            try {
+                Object output = invoker.invoke(input);
+                if (isNull(output)) return Flux.empty();
+                return just(output);
+            } catch (Throwable throwable) {
+                return Flux.error(throwable);
+            }
         };
     }
 
     private Function<Flux<Object>, Flux<Object>> blockingInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return input -> {
-                subscribeBlockingEmpty(input);
-                return Flux.empty();
+                Sinks.One<Object> sink = one();
+                subscribeBlockingEmpty(input, sink);
+                return Flux.from(sink.asMono());
             };
         }
 
@@ -185,70 +218,97 @@ public class ServiceMethod {
 
         if (outputType.internalKind() == FLUX) {
             return input -> {
-                Sinks.Many<Object> result = many().unicast().onBackpressureBuffer();
-                subscribeBlockingFlux(input, result);
-                return result.asFlux();
+                Sinks.Many<Object> sink = many().unicast().onBackpressureBuffer();
+                subscribeBlockingFlux(input, sink);
+                return sink.asFlux();
             };
         }
 
         return input -> {
-            Sinks.Many<Object> result = many().unicast().onBackpressureBuffer();
-            subscribeBlockingBlocking(input, result);
-            return result.asFlux();
+            Sinks.Many<Object> sink = many().unicast().onBackpressureBuffer();
+            subscribeBlockingBlocking(input, sink);
+            return sink.asFlux();
         };
     }
 
 
-    private void subscribeBlockingBlocking(Flux<Object> input, Many<Object> result) {
-        input.subscribe(element -> emitBlockingOutput(result, element));
+    private void subscribeBlockingBlocking(Flux<Object> input, Many<Object> sink) {
+        input.subscribe(element -> emitBlockingOutput(element, sink));
     }
 
-    private void subscribeBlockingFlux(Flux<Object> input, Sinks.Many<Object> result) {
-        input.subscribe(element -> emitFluxOutput(result, element));
+    private void subscribeBlockingFlux(Flux<Object> input, Sinks.Many<Object> sink) {
+        input.subscribe(element -> emitFluxOutput(element, sink));
     }
 
-    private void subscribeBlockingMono(Flux<Object> input, Sinks.One<Object> result) {
-        input.subscribe(element -> emitMonoOutput(result, element));
+    private void subscribeBlockingMono(Flux<Object> input, Sinks.One<Object> sink) {
+        input.subscribe(element -> emitMonoOutput(element, sink));
     }
 
-    private void subscribeBlockingEmpty(Flux<Object> input) {
-        input.subscribe(invoker::invoke);
-    }
-
-
-    private void subscribeMonoBlocking(Flux<Object> input, Sinks.Many<Object> result) {
-        input.subscribe(element -> emitBlockingOutput(result, Mono.just(element)));
-    }
-
-    private void subscribeMonoFlux(Flux<Object> input, Sinks.Many<Object> result) {
-        input.subscribe(element -> emitFluxOutput(result, Mono.just(element)));
-    }
-
-    private void subscribeMonoMono(Flux<Object> input, Sinks.One<Object> result) {
-        input.subscribe(element -> emitMonoOutput(result, Mono.just(element)));
-    }
-
-    private void subscribeMonoEmpty(Flux<Object> input) {
-        input.subscribe(element -> invoker.invoke(Mono.just(element)));
+    private void subscribeBlockingEmpty(Flux<Object> input, Sinks.One<Object> sink) {
+        input.subscribe(element -> emitEmptyOutput(element, sink));
     }
 
 
-    private void emitBlockingOutput(Sinks.Many<Object> result, Object element) {
-        Object output = invoker.invoke(element);
-        if (isNull(output)) return;
-        result.emitNext(output, FAIL_FAST);
+    private void subscribeMonoBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
+        input.subscribe(element -> emitBlockingOutput(Mono.just(element), sink));
     }
 
-    private void emitFluxOutput(Sinks.Many<Object> result, Object element) {
-        Object output = invoker.invoke(element);
-        if (isNull(output)) return;
-        asFlux(output).subscribe(resultElement -> result.emitNext(resultElement, FAIL_FAST));
+    private void subscribeMonoFlux(Flux<Object> input, Sinks.Many<Object> sink) {
+        input.subscribe(element -> emitFluxOutput(Mono.just(element), sink));
     }
 
-    private void emitMonoOutput(Sinks.One<Object> result, Object element) {
-        Object output = invoker.invoke(element);
-        if (isNull(output)) return;
-        asMono(output).subscribe(resultElement -> result.emitValue(resultElement, FAIL_FAST));
+    private void subscribeMonoMono(Flux<Object> input, Sinks.One<Object> sink) {
+        input.subscribe(element -> emitMonoOutput(Mono.just(element), sink));
+    }
+
+    private void subscribeMonoEmpty(Flux<Object> input, Sinks.One<Object> sink) {
+        input.subscribe(element -> emitEmptyOutput(Mono.just(element), sink));
+    }
+
+
+    private void emitEmptyOutput(Object element, Sinks.One<Object> sink) {
+        try {
+            invoker.invoke(element);
+            sink.emitEmpty(FAIL_FAST);
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+        }
+    }
+
+    private void emitBlockingOutput(Object element, Sinks.Many<Object> sink) {
+        try {
+            Object output = invoker.invoke(element);
+            if (isNull(output)) return;
+            sink.emitNext(output, FAIL_FAST);
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+        }
+    }
+
+    private void emitFluxOutput(Object element, Sinks.Many<Object> sink) {
+        try {
+            Object output = invoker.invoke(element);
+            if (isNull(output)) return;
+            asFlux(output)
+                    .doOnNext(resultElement -> sink.emitNext(resultElement, FAIL_FAST))
+                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
+                    .subscribe();
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+        }
+    }
+
+    private void emitMonoOutput(Object element, Sinks.One<Object> sink) {
+        try {
+            Object output = invoker.invoke(element);
+            if (isNull(output)) return;
+            asMono(output)
+                    .doOnNext(resultElement -> sink.emitValue(resultElement, FAIL_FAST))
+                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
+                    .subscribe();
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+        }
     }
 
 

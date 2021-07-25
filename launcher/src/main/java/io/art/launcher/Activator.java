@@ -30,9 +30,6 @@ import io.art.message.pack.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.server.module.*;
-import io.art.storage.module.*;
-import io.art.tarantool.module.*;
-import io.art.value.module.*;
 import io.art.yaml.module.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -86,7 +83,6 @@ public class Activator {
     public Activator kit(ModulesInitializer initializer) {
         module(ConfiguratorActivator.configurator(initializer.configurator()));
         module(LoggingActivator.logging(initializer.logging()));
-        module(ValueActivator.value(initializer.value()));
         module(SchedulerActivator.scheduler());
         module(JsonActivator.json());
         module(MessagePackActivator.messagePack());
@@ -95,8 +91,8 @@ public class Activator {
         module(ServerActivator.server(initializer.server()));
         module(HttpActivator.http(initializer.http()));
         module(RsocketActivator.rsocket(initializer.rsocket()));
-        module(StorageActivator.storage(initializer.storage()));
-        module(TarantoolActivator.tarantool());
+//        module(StorageActivator.storage(initializer.storage()));
+//        module(TarantoolActivator.tarantool());
         return this;
     }
 
