@@ -70,10 +70,10 @@ public class CommunicatorAction implements Managed {
     private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Supplier<Object> producer = producer();
+    private final Supplier<Object> producer = selectProducer();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Object> handler = handler();
+    private final Function<Object, Object> handler = selectHandler();
 
     @Override
     public void initialize() {
@@ -95,7 +95,7 @@ public class CommunicatorAction implements Managed {
         return cast(getHandler().apply(input));
     }
 
-    private Supplier<Object> producer() {
+    private Supplier<Object> selectProducer() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return () -> {
                 try {
@@ -138,9 +138,9 @@ public class CommunicatorAction implements Managed {
         };
     }
 
-    private Function<Object, Object> handler() {
+    private Function<Object, Object> selectHandler() {
         if (isNull(inputType)) {
-            Supplier<Object> producer = producer();
+            Supplier<Object> producer = selectProducer();
             return empty -> producer.get();
         }
 
@@ -200,8 +200,7 @@ public class CommunicatorAction implements Managed {
             if (outputType.internalKind() == MONO) {
                 return input -> {
                     try {
-                        Flux<Object> output = process(asFlux(input));
-                        return output.last();
+                        return process(asFlux(input)).last();
                     } catch (Throwable throwable) {
                         throw new CommunicationException(throwable);
                     }
@@ -260,8 +259,7 @@ public class CommunicatorAction implements Managed {
 
         return input -> {
             try {
-                Flux<Object> output = process(Flux.just(input));
-                return cast(blockFirst(output));
+                return blockFirst(process(Flux.just(input)));
             } catch (Throwable throwable) {
                 throw new CommunicationException(throwable);
             }

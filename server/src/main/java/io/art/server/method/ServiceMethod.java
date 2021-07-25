@@ -19,16 +19,15 @@
 package io.art.server.method;
 
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
+import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import static reactor.core.publisher.Sinks.*;
@@ -58,10 +57,11 @@ public class ServiceMethod {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    private final LazyProperty<Function<Flux<Object>, Flux<Object>>> handler = lazy(this::selectHandler);
+    @Getter(lazy = true, value = PRIVATE)
+    private final Function<Flux<Object>, Flux<Object>> handler = selectHandler();
 
     public Flux<Object> serve(Flux<Object> input) {
-        return decorateOutput(handler.get().apply(decorateInput(input)));
+        return decorateOutput(getHandler().apply(decorateInput(input)));
     }
 
     private Function<Flux<Object>, Flux<Object>> selectHandler() {
