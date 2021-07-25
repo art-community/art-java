@@ -36,7 +36,6 @@ public class ServerTest {
         assertEquals("test", serviceMethod(serviceClass, serviceClass.m4Method()).serve(Flux.empty()).blockFirst(), "m4");
         assertNotNull(executions().get("m4"), "m4");
 
-
         serviceMethod(serviceClass, serviceClass.m5Method()).serve(Flux.just("test"));
         assertEquals("test", executions().get("m5"), "m5");
 

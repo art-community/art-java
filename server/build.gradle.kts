@@ -33,6 +33,7 @@ generator {
     module("ServerTest", "io.art.server.test")
     jvm()
     sourcesPattern {
+        exclude("src/java/**")
         include("src/test/**")
     }
     includeClasses("*Service.java")
