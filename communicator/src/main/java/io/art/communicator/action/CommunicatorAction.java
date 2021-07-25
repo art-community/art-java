@@ -18,23 +18,18 @@
 
 package io.art.communicator.action;
 
-import io.art.communicator.configuration.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.meta.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.property.Property.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
-import static java.util.Optional.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
@@ -61,13 +56,8 @@ public class CommunicatorAction implements Managed {
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
-
     @Getter
     private final CommunicatorActionImplementation implementation;
-
-    private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
 
     @Getter(lazy = true, value = PRIVATE)
     private final Supplier<Object> producer = selectProducer();
@@ -77,14 +67,12 @@ public class CommunicatorAction implements Managed {
 
     @Override
     public void initialize() {
-        communicatorConfiguration.initialize();
         implementation.initialize();
     }
 
     @Override
     public void dispose() {
         implementation.dispose();
-        communicatorConfiguration.dispose();
     }
 
     public <T> T communicate() {
@@ -288,9 +276,5 @@ public class CommunicatorAction implements Managed {
             }
         }
         return result;
-    }
-
-    private Optional<CommunicatorProxyConfiguration> communicatorConfiguration() {
-        return ofNullable(getConfiguration().getConfigurations().get(id));
     }
 }
