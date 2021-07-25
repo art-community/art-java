@@ -85,7 +85,7 @@ public class CommunicatorAction implements Managed {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return () -> {
                 try {
-                    process(Flux.empty());
+                    process(Flux.empty()).subscribe();
                     return null;
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
@@ -132,7 +132,7 @@ public class CommunicatorAction implements Managed {
             if (isNull(outputType) || outputType.internalKind() == VOID) {
                 return input -> {
                     try {
-                        process(Flux.from(asMono(input)));
+                        process(Flux.from(asMono(input))).subscribe();
                         return null;
                     } catch (Throwable throwable) {
                         throw new CommunicatorException(throwable);
@@ -173,7 +173,7 @@ public class CommunicatorAction implements Managed {
             if (isNull(outputType) || outputType.internalKind() == VOID) {
                 return input -> {
                     try {
-                        process(asFlux(input));
+                        process(asFlux(input)).subscribe();
                         return null;
                     } catch (Throwable throwable) {
                         throw new CommunicatorException(throwable);
@@ -213,7 +213,7 @@ public class CommunicatorAction implements Managed {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return input -> {
                 try {
-                    process(Flux.just(input));
+                    process(Flux.just(input)).subscribe();
                     return null;
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
