@@ -5,6 +5,7 @@ import io.art.communicator.test.meta.*;
 import io.art.communicator.test.meta.MetaCommunicatorTest.MetaIoPackage.MetaArtPackage.MetaCommunicatorPackage.MetaTestPackage.MetaProxyPackage.*;
 import io.art.communicator.test.proxy.*;
 import org.junit.jupiter.api.*;
+import reactor.core.publisher.*;
 import static io.art.communicator.test.factory.TestCommunicatorActionFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.initializer.ContextInitializer.*;
@@ -21,6 +22,6 @@ public class CommunicatorTest {
     public void testCommunicatorActionExecution() {
         MetaTestCommunicatorClass communicatorClass = cast(declaration(TestCommunicator.class));
         CommunicatorAction action = communicatorAction(communicatorClass, communicatorClass.m1Method());
-        action.communicate();
+        action.communicate(Flux.just("test"));
     }
 }
