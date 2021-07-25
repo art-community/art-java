@@ -24,7 +24,7 @@ import io.art.communicator.test.proxy.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.proxy.CommunicatorProxyFactory.*;
+import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.test.factory.TestCommunicatorActionFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.initializer.ContextInitializer.*;

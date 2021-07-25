@@ -5,7 +5,7 @@ import io.art.communicator.test.meta.MetaCommunicatorTest.MetaIoPackage.MetaArtP
 import io.art.communicator.test.proxy.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.proxy.CommunicatorProxyFactory.*;
+import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.test.factory.TestCommunicatorActionFactory.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
 import static io.art.core.caster.Caster.*;
