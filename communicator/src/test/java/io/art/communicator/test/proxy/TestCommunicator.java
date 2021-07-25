@@ -10,7 +10,7 @@ public interface TestCommunicator {
     Mono<String> m3();
 
     Flux<String> m4();
-    
+
     void m5(String input);
 
     String m6(String input);
