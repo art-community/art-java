@@ -16,33 +16,33 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
-public class BetweenLongValidationExpression extends ValidationExpression<Long> {
-    private final long lowerValue;
-    private final long greaterValue;
+public class BetweenIntValidationExpression extends ValidationExpression<Integer> {
+    private final int lowerValue;
+    private final int greaterValue;
 
-    BetweenLongValidationExpression(long lowerValue, long greaterValue) {
-        super(BETWEEN_LONG);
+    BetweenIntValidationExpression(int lowerValue, int greaterValue) {
+        super(BETWEEN_INT);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
     }
 
-    BetweenLongValidationExpression(long lowerValue, long greaterValue, Function<? extends ValidationExpression<?>, String> factory) {
-        super(BETWEEN_LONG);
+    BetweenIntValidationExpression(int lowerValue, int greaterValue, Function<BetweenIntValidationExpression, String> factory) {
+        super(BETWEEN_INT);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
         this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String field, Long value) {
-        return super.evaluate(field, value) && value > lowerValue && value < greaterValue;
+    public boolean evaluate(String field, Integer value) {
+        return super.evaluate(field, value) && value < lowerValue && value > greaterValue;
     }
 
     @Override

@@ -16,30 +16,34 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
-public class NotNullValidationExpression extends ValidationExpression<Object> {
-    NotNullValidationExpression() {
-        super(NOT_NULL);
+public class EqualsValidationExpression extends ValidationExpression<Object> {
+    private final Object other;
+
+    EqualsValidationExpression(Object other) {
+        super(EQUALS);
+        this.other = other;
     }
 
-    NotNullValidationExpression(Function<NotNullValidationExpression, String> factory) {
-        super(NOT_NULL);
+    EqualsValidationExpression(Object other, Function<EqualsValidationExpression, String> factory) {
+        super(EQUALS);
+        this.other = other;
         this.messageFactory = factory;
     }
 
     @Override
     public boolean evaluate(String field, Object value) {
-        return super.evaluate(field, value);
+        return super.evaluate(field, value) && value.equals(other);
     }
 
     @Override
     public String formatErrorMessage() {
-        return format(NULL_VALIDATION_ERROR, field);
+        return format(NOT_EQUALS_VALIDATION_ERROR, field, value, other);
     }
 }

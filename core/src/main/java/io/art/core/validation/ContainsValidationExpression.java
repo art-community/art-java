@@ -16,34 +16,35 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
+import java.util.*;
 import java.util.function.*;
 
-public class NotEqualsValidationExpression extends ValidationExpression<Object> {
-    private final Object other;
+public class ContainsValidationExpression extends ValidationExpression<Object> {
+    private final List<?> list;
 
-    NotEqualsValidationExpression(Object other) {
-        super(NOT_EQUALS);
-        this.other = other;
+    ContainsValidationExpression(List<?> objectList) {
+        super(CONTAINS);
+        this.list = objectList;
     }
 
-    NotEqualsValidationExpression(Object other, Function<NotEqualsValidationExpression, String> factory) {
-        super(NOT_EQUALS);
-        this.other = other;
+    ContainsValidationExpression(List<?> objectList, Function<ContainsValidationExpression, String> factory) {
+        super(CONTAINS);
+        this.list = objectList;
         this.messageFactory = factory;
     }
 
     @Override
     public boolean evaluate(String field, Object value) {
-        return super.evaluate(field, value) && !value.equals(other);
+        return super.evaluate(field, value) && list.contains(value);
     }
 
     @Override
     public String formatErrorMessage() {
-        return format(EQUALS_VALIDATION_ERROR, field, value, other);
+        return format(NOT_CONTAINS_VALIDATION_ERROR, field, value, list.toString());
     }
 }

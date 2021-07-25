@@ -80,6 +80,10 @@ public class NullityChecker {
         return condition ? value : null;
     }
 
+    public static <T> T orNull(Supplier<T> value, Boolean condition) {
+        return condition ? value.get() : null;
+    }
+
     public static <T, R> R orNull(T value, Predicate<T> condition, Function<T, R> action) {
         return condition.test(value) ? action.apply(value) : null;
     }

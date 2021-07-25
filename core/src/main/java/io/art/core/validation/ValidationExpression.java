@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import io.art.server.constants.ServerModuleConstants.*;
+import io.art.core.constants.ValidationConstants.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static java.util.Objects.*;

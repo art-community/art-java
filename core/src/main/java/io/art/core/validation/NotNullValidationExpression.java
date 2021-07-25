@@ -16,35 +16,30 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
-import java.util.*;
 import java.util.function.*;
 
-public class ContainsValidationExpression extends ValidationExpression<Object> {
-    private final List<?> list;
-
-    ContainsValidationExpression(List<?> objectList) {
-        super(CONTAINS);
-        this.list = objectList;
+public class NotNullValidationExpression extends ValidationExpression<Object> {
+    NotNullValidationExpression() {
+        super(NOT_NULL);
     }
 
-    ContainsValidationExpression(List<?> objectList, Function<ContainsValidationExpression, String> factory) {
-        super(CONTAINS);
-        this.list = objectList;
+    NotNullValidationExpression(Function<NotNullValidationExpression, String> factory) {
+        super(NOT_NULL);
         this.messageFactory = factory;
     }
 
     @Override
     public boolean evaluate(String field, Object value) {
-        return super.evaluate(field, value) && list.contains(value);
+        return super.evaluate(field, value);
     }
 
     @Override
     public String formatErrorMessage() {
-        return format(NOT_CONTAINS_VALIDATION_ERROR, field, value, list.toString());
+        return format(NULL_VALIDATION_ERROR, field);
     }
 }

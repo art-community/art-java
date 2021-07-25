@@ -16,31 +16,34 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
-import java.util.*;
 import java.util.function.*;
 
-public class NotEmptyMapValidationExpression extends ValidationExpression<Map<?, ?>> {
-    NotEmptyMapValidationExpression() {
-        super(NOT_EMPTY_MAP);
+public class NotEqualsValidationExpression extends ValidationExpression<Object> {
+    private final Object other;
+
+    NotEqualsValidationExpression(Object other) {
+        super(NOT_EQUALS);
+        this.other = other;
     }
 
-    NotEmptyMapValidationExpression(Function<NotEmptyMapValidationExpression, String> factory) {
-        super(NOT_EMPTY_MAP);
+    NotEqualsValidationExpression(Object other, Function<NotEqualsValidationExpression, String> factory) {
+        super(NOT_EQUALS);
+        this.other = other;
         this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String field, Map<?, ?> value) {
-        return super.evaluate(field, value) && !value.isEmpty();
+    public boolean evaluate(String field, Object value) {
+        return super.evaluate(field, value) && !value.equals(other);
     }
 
     @Override
     public String formatErrorMessage() {
-        return format(EMPTY_VALIDATION_ERROR, field);
+        return format(EQUALS_VALIDATION_ERROR, field, value, other);
     }
 }

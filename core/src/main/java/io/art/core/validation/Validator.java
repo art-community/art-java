@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import io.art.server.exception.*;
+import io.art.core.exception.*;
 import lombok.*;
 
 @AllArgsConstructor

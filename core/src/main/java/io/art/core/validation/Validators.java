@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;

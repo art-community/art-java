@@ -16,26 +16,26 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.*;
 import java.util.function.*;
 
-public class NotEmptyCollectionValidationExpression extends ValidationExpression<Collection<?>> {
-    NotEmptyCollectionValidationExpression() {
-        super(NOT_EMPTY_COLLECTION);
+public class NotEmptyMapValidationExpression extends ValidationExpression<Map<?, ?>> {
+    NotEmptyMapValidationExpression() {
+        super(NOT_EMPTY_MAP);
     }
 
-    NotEmptyCollectionValidationExpression(Function<NotEmptyCollectionValidationExpression, String> factory) {
-        super(NOT_EMPTY_COLLECTION);
+    NotEmptyMapValidationExpression(Function<NotEmptyMapValidationExpression, String> factory) {
+        super(NOT_EMPTY_MAP);
         this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String field, Collection<?> value) {
+    public boolean evaluate(String field, Map<?, ?> value) {
         return super.evaluate(field, value) && !value.isEmpty();
     }
 

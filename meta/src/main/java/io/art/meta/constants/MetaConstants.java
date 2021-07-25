@@ -79,6 +79,10 @@ public interface MetaConstants {
         UNKNOWN
     }
 
+    enum MetaTypeModifiers {
+        VALIDATABLE
+    }
+
     interface Errors {
         String TRANSFORMATION_NOT_AVAILABLE = "Transformation is not available for value: {0} by transformer: {1}";
         String ARRAY_WITH_UNKNOWN_TYPE = "{0} is array with unknown component type";

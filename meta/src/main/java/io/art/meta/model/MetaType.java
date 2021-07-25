@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.validation.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.transformer.*;
 import lombok.Builder;
@@ -30,8 +31,10 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.computer.MetaTypeKindComputer.*;
 import static io.art.meta.computer.TransformersComputer.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.meta.state.MetaComputationState.*;
 import static io.art.meta.validator.MetaTypeValidator.*;
@@ -39,20 +42,26 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
-@Getter
 @ToString
 @ForGenerator
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(toBuilder = true)
 public class MetaType<T> {
+    @Getter
     private final Class<T> type;
-    private final ImmutableArray<MetaType<?>> parameters;
-    private final MetaType<?> arrayComponentType;
-    private MetaTypeInternalKind internalKind;
-    private MetaTypeExternalKind externalKind;
 
-    private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
+    @Getter
+    private final ImmutableArray<MetaType<?>> parameters;
+
+    @Getter
+    private final MetaType<?> arrayComponentType;
+
+    @Getter
+    private MetaTypeInternalKind internalKind;
+
+    @Getter
+    private MetaTypeExternalKind externalKind;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -72,12 +81,23 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @Getter(lazy = true)
-    @Accessors(fluent = true)
     @EqualsAndHashCode.Exclude
     private final MetaClass<?> declaration = classes().get(type);
 
+    private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
+
+    private final Set<MetaTypeModifiers> modifiers = set();
+
+    public ImmutableSet<MetaTypeModifiers> modifiers() {
+        return immutableSetOf(modifiers);
+    }
+
     protected MetaType<T> beginComputation() {
         CACHE.clear();
+
+        if (Validatable.class.isAssignableFrom(type)) {
+            modifiers.add(VALIDATABLE);
+        }
 
         if (nonNull(arrayComponentType)) {
             rememberValidation(arrayComponentType, validate(arrayComponentType.beginComputation()));

@@ -16,35 +16,33 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
-import lombok.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
-import static io.art.server.constants.ServerModuleConstants.ValidationExpressionTypes.*;
+import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
+import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
-@Getter
-public class BetweenDoubleValidationExpression extends ValidationExpression<Double> {
-    private final double lowerValue;
-    private final double greaterValue;
+public class BetweenLongValidationExpression extends ValidationExpression<Long> {
+    private final long lowerValue;
+    private final long greaterValue;
 
-    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue) {
-        super(BETWEEN_DOUBLE);
+    BetweenLongValidationExpression(long lowerValue, long greaterValue) {
+        super(BETWEEN_LONG);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
     }
 
-    BetweenDoubleValidationExpression(Double lowerValue, Double greaterValue, Function<BetweenDoubleValidationExpression, String> factory) {
-        super(BETWEEN_DOUBLE);
+    BetweenLongValidationExpression(long lowerValue, long greaterValue, Function<? extends ValidationExpression<?>, String> factory) {
+        super(BETWEEN_LONG);
         this.lowerValue = lowerValue;
         this.greaterValue = greaterValue;
         this.messageFactory = factory;
     }
 
     @Override
-    public boolean evaluate(String field, Double value) {
-        return super.evaluate(field, value) && value < lowerValue && value > greaterValue;
+    public boolean evaluate(String field, Long value) {
+        return super.evaluate(field, value) && value > lowerValue && value < greaterValue;
     }
 
     @Override

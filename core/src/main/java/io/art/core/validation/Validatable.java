@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.server.validation;
+package io.art.core.validation;
 
 public interface Validatable {
     default void onValidating(Validator validator) {
