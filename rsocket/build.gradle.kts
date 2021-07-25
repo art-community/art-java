@@ -16,6 +16,10 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     val rsocketVersion: String by project
     val nettyVersion: String by project
@@ -42,4 +46,12 @@ dependencies {
 
     api("io.netty", "netty-all", nettyVersion)
             .exclude("org.slf4j")
+}
+
+generator {
+    module("Rsocket", "io.art.rsocket")
+    jvm()
+    sourcesPattern {
+        include("src/main/**")
+    }
 }

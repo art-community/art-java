@@ -20,27 +20,12 @@ package io.art.rsocket.model;
 
 import io.art.core.model.*;
 import io.art.transport.constants.TransportModuleConstants.*;
-import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;
-import static io.art.value.constants.ValueModuleConstants.Fields.*;
-import static io.art.value.factory.PrimitivesFactory.*;
-import static io.art.value.immutable.Entity.*;
-import static io.art.value.mapping.ServiceMethodMapping.*;
 
 @ToString
 @Builder(toBuilder = true)
 public class RsocketSetupPayload {
     private final DataFormat dataFormat;
     private final DataFormat metadataFormat;
-    private final ServiceMethodIdentifier serviceMethod;
-
-    public Entity toEntity() {
-        EntityBuilder entityBuilder = entityBuilder()
-                .put(SETUP_PAYLOAD_DATA_FORMAT_FIELD, stringPrimitive(dataFormat.getFormat()))
-                .put(SETUP_PAYLOAD_META_DATA_FORMAT_FIELD, stringPrimitive(metadataFormat.getFormat()));
-        apply(serviceMethod, () -> entityBuilder.put(stringPrimitive(SERVICE_METHOD_IDENTIFIERS_KEY), fromServiceMethod(serviceMethod)));
-        return entityBuilder.build();
-    }
+    private final ServiceMethodIdentifier id;
 }

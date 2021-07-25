@@ -26,7 +26,6 @@ import io.art.rsocket.refresher.*;
 import io.art.rsocket.server.*;
 import lombok.*;
 import reactor.core.*;
-import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
@@ -43,20 +42,24 @@ public class RsocketManager {
     }
 
     public void initializeCommunicators() {
+/*
         communicatorModule()
                 .configuration()
                 .getRegistry()
                 .getByProtocol(RSOCKET)
                 .values()
                 .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::initialize));
+*/
     }
 
     public void disposeCommunicators() {
+/*
         communicatorModule().configuration()
                 .getRegistry()
                 .getByProtocol(RSOCKET)
                 .values()
                 .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::dispose));
+*/
     }
 
     public void initializeServer() {

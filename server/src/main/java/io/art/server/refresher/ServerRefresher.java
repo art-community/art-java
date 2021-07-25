@@ -19,6 +19,8 @@ public class ServerRefresher {
         validationListener.produce();
     }
 
+
+
     @Getter
     @Accessors(fluent = true)
     public class Consumer {

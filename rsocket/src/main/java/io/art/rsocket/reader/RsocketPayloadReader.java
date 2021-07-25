@@ -18,15 +18,17 @@
 
 package io.art.rsocket.reader;
 
+import io.art.meta.model.*;
 import io.art.transport.payload.*;
 import io.rsocket.*;
 import lombok.experimental.*;
 
 @UtilityClass
 public class RsocketPayloadReader {
-    public static TransportPayload readRsocketPayload(TransportPayloadReader reader, Payload payload) {
-        TransportPayload transportPayload = reader.read(payload.sliceData());
+    public static TransportPayload readRsocketPayload(TransportPayloadReader reader, Payload payload, MetaType<?> type) {
+        TransportPayload transportPayload = reader.read(payload.sliceData(), type);
         payload.release(payload.refCnt());
+
         return transportPayload;
     }
 }

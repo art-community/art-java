@@ -30,7 +30,6 @@ import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.refresher.*;
 import io.art.transport.payload.*;
-import io.art.value.immutable.Value;
 import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -41,7 +40,6 @@ import lombok.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
-import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
@@ -56,7 +54,6 @@ import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.toMimeType;
-import static io.art.value.mime.MimeTypeDataFormatMapper.*;
 import static io.rsocket.core.RSocketClient.*;
 import static io.rsocket.util.ByteBufPayload.*;
 import static java.text.MessageFormat.*;
@@ -70,6 +67,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketCommunicatorAction.class);
+/*
 
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorAction communicatorAction = communicatorAction();
@@ -80,23 +78,19 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     private final Property<Function<Flux<Value>, Flux<Value>>> communication = property(this::communication)
             .listenProperties(client);
-
-    @Override
-    public void initialize() {
-        client.initialize();
-    }
+*/
 
     @Override
     public void dispose() {
-        client.dispose();
+        //client.dispose();
     }
 
     @Override
-    public Flux<Value> communicate(Flux<Value> input) {
-        return communication.get().apply(input);
+    public Flux<Object> communicate(Flux<Object> input) {
+        return null;
     }
 
-    private RSocketClient createClient() {
+/*    private RSocketClient createClient() {
         RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
         RSocketConnector connector = RSocketConnector.create()
                 .payloadDecoder(connectorConfiguration.getPayloadDecoderMode() == PayloadDecoderMode.ZERO_COPY ? PayloadDecoder.ZERO_COPY : PayloadDecoder.DEFAULT)
@@ -111,7 +105,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
         RsocketSetupPayload setupPayload = RsocketSetupPayload.builder()
                 .dataFormat(connectorConfiguration.getDataFormat())
                 .metadataFormat(connectorConfiguration.getMetaDataFormat())
-                .serviceMethod(getCommunicatorAction().getTargetServiceMethod())
+                .id(getCommunicatorAction().getTargetServiceMethod())
                 .build();
         Payload payload = DefaultPayload.create(setupPayloadWriter.write(setupPayload.toEntity()).nioBuffer());
         connector.setupPayload(payload);
@@ -223,5 +217,5 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
 
     private RsocketModuleRefresher.Consumer consumer() {
         return rsocketModule().configuration().getConsumer();
-    }
+    }*/
 }
