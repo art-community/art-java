@@ -25,6 +25,7 @@ import io.art.logging.logger.*;
 import io.art.server.configuration.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
@@ -49,7 +50,7 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     public ServiceLoggingDecorator(ServiceMethodIdentifier id, MethodDecoratorScope scope) {
         this.scope = scope;
         this.id = id;
-        enabled = property(() -> configuration().isLogging(id)).listenConsumer(() -> configuration()
+        enabled = property(() -> withLogging() && configuration().isLogging(id)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .loggingConsumer());
     }
