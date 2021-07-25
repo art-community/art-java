@@ -27,9 +27,9 @@ import lombok.*;
 
 @ForGenerator
 public class ServerInitializer implements ModuleInitializer<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModule> {
-    private ServiceSpecificationRegistry registry;
+    private ServiceMethodRegistry registry;
 
-    public ServerInitializer registry(ServiceSpecificationRegistry registry) {
+    public ServerInitializer registry(ServiceMethodRegistry registry) {
         this.registry = registry;
         return this;
     }
@@ -43,7 +43,7 @@ public class ServerInitializer implements ModuleInitializer<ServerModuleConfigur
 
     @Getter
     private static class Initial extends ServerModuleConfiguration {
-        private ServiceSpecificationRegistry registry;
+        private ServiceMethodRegistry registry;
 
         public Initial(ServerModuleRefresher refresher) {
             super(refresher);

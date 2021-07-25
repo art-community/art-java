@@ -23,32 +23,28 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.server.method.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.immutableSetOf;
+import static io.art.core.factory.SetFactory.*;
 import static java.util.Optional.*;
 import java.util.*;
 
 @ForGenerator
-public class ServiceSpecificationRegistry {
-    private final Map<String, ServiceSpecification> services = map();
-
-    public Optional<ServiceSpecification> get(String serviceId) {
-        return ofNullable(services.get(serviceId));
-    }
+public class ServiceMethodRegistry {
+    private final Map<ServiceMethodIdentifier, ServiceMethod> methods = map();
 
     public Optional<ServiceMethod> findMethodById(ServiceMethodIdentifier id) {
-        return get(id.getServiceId()).map(service -> service.getMethods().get(id.getMethodId()));
+        return ofNullable(methods.get(id));
     }
 
-    public ImmutableSet<String> identifiers() {
-        return immutableSetOf(services.keySet());
+    public ImmutableSet<ServiceMethodIdentifier> identifiers() {
+        return immutableSetOf(methods.keySet());
     }
 
-    public ServiceSpecificationRegistry register(String id, ServiceSpecification specification) {
-        services.put(id, specification);
+    public ServiceMethodRegistry register(ServiceMethodIdentifier id, ServiceMethod method) {
+        methods.put(id, method);
         return this;
     }
 
-    public ImmutableMap<String, ServiceSpecification> getServices() {
-        return immutableMapOf(services);
+    public ImmutableMap<ServiceMethodIdentifier, ServiceMethod> getMethods() {
+        return immutableMapOf(methods);
     }
 }

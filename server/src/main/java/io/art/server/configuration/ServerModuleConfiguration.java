@@ -50,7 +50,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
 
     @Getter
-    private ServiceSpecificationRegistry registry = new ServiceSpecificationRegistry();
+    private ServiceMethodRegistry registry = new ServiceMethodRegistry();
 
     @Getter
     private Scheduler blockingScheduler;
