@@ -88,7 +88,7 @@ public class CommunicatorAction implements Managed {
                     process(Flux.empty());
                     return null;
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -98,7 +98,7 @@ public class CommunicatorAction implements Managed {
                 try {
                     return process(Flux.empty()).last();
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -108,7 +108,7 @@ public class CommunicatorAction implements Managed {
                 try {
                     return process(Flux.empty());
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -117,7 +117,7 @@ public class CommunicatorAction implements Managed {
             try {
                 return blockFirst(process(Flux.empty()));
             } catch (Throwable throwable) {
-                throw new CommunicationException(throwable);
+                throw new CommunicatorException(throwable);
             }
         };
     }
@@ -135,7 +135,7 @@ public class CommunicatorAction implements Managed {
                         process(Flux.from(asMono(input)));
                         return null;
                     } catch (Throwable throwable) {
-                        throw new CommunicationException(throwable);
+                        throw new CommunicatorException(throwable);
                     }
                 };
             }
@@ -145,7 +145,7 @@ public class CommunicatorAction implements Managed {
                     try {
                         return process(Flux.from(asMono(input))).last();
                     } catch (Throwable throwable) {
-                        throw new CommunicationException(throwable);
+                        throw new CommunicatorException(throwable);
                     }
                 };
             }
@@ -155,7 +155,7 @@ public class CommunicatorAction implements Managed {
                     try {
                         return process(Flux.from(asMono(input)));
                     } catch (Throwable throwable) {
-                        throw new CommunicationException(throwable);
+                        throw new CommunicatorException(throwable);
                     }
                 };
             }
@@ -164,7 +164,7 @@ public class CommunicatorAction implements Managed {
                 try {
                     return blockFirst(process(Flux.from(asMono(input))));
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -176,7 +176,7 @@ public class CommunicatorAction implements Managed {
                         process(asFlux(input));
                         return null;
                     } catch (Throwable throwable) {
-                        throw new CommunicationException(throwable);
+                        throw new CommunicatorException(throwable);
                     }
                 };
             }
@@ -186,7 +186,7 @@ public class CommunicatorAction implements Managed {
                     try {
                         return process(asFlux(input)).last();
                     } catch (Throwable throwable) {
-                        throw new CommunicationException(throwable);
+                        throw new CommunicatorException(throwable);
                     }
                 };
             }
@@ -196,7 +196,7 @@ public class CommunicatorAction implements Managed {
                     try {
                         return process(asFlux(input));
                     } catch (Throwable throwable) {
-                        throw new CommunicationException(throwable);
+                        throw new CommunicatorException(throwable);
                     }
                 };
             }
@@ -205,7 +205,7 @@ public class CommunicatorAction implements Managed {
                 try {
                     return blockFirst(process(asFlux(input)));
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -216,7 +216,7 @@ public class CommunicatorAction implements Managed {
                     process(Flux.just(input));
                     return null;
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -226,7 +226,7 @@ public class CommunicatorAction implements Managed {
                 try {
                     return process(Flux.just(input)).last();
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -236,7 +236,7 @@ public class CommunicatorAction implements Managed {
                 try {
                     return process(Flux.just(input));
                 } catch (Throwable throwable) {
-                    throw new CommunicationException(throwable);
+                    throw new CommunicatorException(throwable);
                 }
             };
         }
@@ -245,7 +245,7 @@ public class CommunicatorAction implements Managed {
             try {
                 return blockFirst(process(Flux.just(input)));
             } catch (Throwable throwable) {
-                throw new CommunicationException(throwable);
+                throw new CommunicatorException(throwable);
             }
         };
     }
