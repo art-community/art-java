@@ -11,7 +11,6 @@ import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegist
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.ContextInitializer.*;
-import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +19,7 @@ import java.util.*;
 public class CommunicatorTest {
     @BeforeAll
     public static void setup() {
-        initialize(meta(MetaCommunicatorTest::new), logging());
+        initialize(meta(MetaCommunicatorTest::new));
     }
 
     @Test
