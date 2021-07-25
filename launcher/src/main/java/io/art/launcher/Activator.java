@@ -18,16 +18,13 @@
 
 package io.art.launcher;
 
-import io.art.communicator.module.*;
 import io.art.configurator.module.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.module.*;
-import io.art.http.module.*;
 import io.art.json.module.*;
 import io.art.logging.module.*;
 import io.art.message.pack.module.*;
-import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
 import io.art.yaml.module.*;
 import lombok.*;
@@ -86,9 +83,9 @@ public class Activator {
         module(JsonActivator.json());
         module(MessagePackActivator.messagePack());
         module(YamlActivator.yaml());
-        module(CommunicatorActivator.communicator(initializer.communicator()));
-        module(HttpActivator.http(initializer.http()));
-        module(RsocketActivator.rsocket(initializer.rsocket()));
+//        module(CommunicatorActivator.communicator(initializer.communicator()));
+//        module(HttpActivator.http(initializer.http()));
+//        module(RsocketActivator.rsocket(initializer.rsocket()));
 //        module(StorageActivator.storage(initializer.storage()));
 //        module(TarantoolActivator.tarantool());
         return this;

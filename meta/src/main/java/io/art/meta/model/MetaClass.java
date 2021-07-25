@@ -38,6 +38,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import java.util.*;
+import java.util.function.*;
 
 @ToString
 @ForGenerator
@@ -262,5 +263,9 @@ public abstract class MetaClass<T> {
 
     public ImmutableMap<Class<?>, MetaClass<?>> classes() {
         return immutableMapOf(classes);
+    }
+
+    public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+        return null;
     }
 }
