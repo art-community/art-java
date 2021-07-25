@@ -63,18 +63,22 @@ public class MetaType<T> {
     @Getter
     private MetaTypeExternalKind externalKind;
 
+    @Getter
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Function<Integer, T> arrayFactory;
 
+    @Getter
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private final Function<String, T> enumFactory;
 
+    @Getter
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private MetaTransformer<T> inputTransformer;
 
+    @Getter
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private MetaTransformer<T> outputTransformer;
