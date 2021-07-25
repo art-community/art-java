@@ -18,8 +18,8 @@
 
 package io.art.server.state;
 
+import io.art.core.model.*;
 import io.art.core.module.*;
-import io.art.server.method.*;
 import lombok.*;
 import reactor.util.context.*;
 import static io.art.server.constants.ServerModuleConstants.StateKeys.*;
@@ -45,11 +45,11 @@ public class ServerModuleState implements ModuleState {
     @Builder(toBuilder = true)
     public static class ServerThreadLocalState {
         private final ContextView context;
-        private final ServiceMethod specification;
+        private final ServiceMethodIdentifier id;
 
         public static ServerThreadLocalState fromContext(ContextView context) {
-            ServiceMethod specification = context.get(SERVICE_METHOD_ID);
-            return new ServerThreadLocalState(context, specification);
+            ServiceMethodIdentifier id = context.get(SERVICE_METHOD_ID);
+            return new ServerThreadLocalState(context, id);
         }
     }
 }

@@ -2,8 +2,10 @@ package io.art.server.test;
 
 import io.art.server.test.meta.*;
 import io.art.server.test.meta.MetaServerTest.MetaIoPackage.MetaArtPackage.MetaServerPackage.MetaTestPackage.MetaServicePackage.*;
+import io.art.server.test.service.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.logging.module.LoggingActivator.*;
@@ -22,8 +24,7 @@ public class ServerTest {
 
     @Test
     public void testServiceMethodExecution() {
-        MetaServerTest meta = library();
-        MetaTestServiceClass serviceClass = meta.ioPackage().artPackage().serverPackage().testPackage().servicePackage().testServiceClass();
+        MetaTestServiceClass serviceClass = cast(declaration(TestService.class));
 
         serviceMethod(serviceClass, serviceClass.m1Method()).serve(Flux.empty());
         assertNotNull(executions().get("m1"), "m1");
