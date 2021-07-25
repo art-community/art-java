@@ -46,7 +46,9 @@ subprojects {
     apply(plugin = "java-library")
     apply(plugin = "java-test-fixtures")
 
-    configurations.findByName("jmh")?.exclude("org.slf4j")
+    afterEvaluate {
+        configurations.findByName("jmh")?.exclude("org.slf4j")
+    }
 
     dependencies {
         val lombokVersion: String by project
