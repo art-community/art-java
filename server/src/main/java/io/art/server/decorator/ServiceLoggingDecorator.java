@@ -23,12 +23,10 @@ import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
-import io.art.server.specification.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
@@ -39,8 +37,8 @@ import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final MethodDecoratorScope scope;
-    private final ServiceMethodSpecification specification;
     private final Property<Boolean> enabled;
+    ServiceMethodIdentifier id;
 
     @Getter(lazy = true, value = PRIVATE)
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
@@ -48,11 +46,10 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(ServiceLoggingDecorator.class.getName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
-    public ServiceLoggingDecorator(ServiceMethodSpecification specification, MethodDecoratorScope scope) {
+    public ServiceLoggingDecorator(ServiceMethodIdentifier id, MethodDecoratorScope scope) {
         this.scope = scope;
-        this.specification = specification;
-        ServiceMethodIdentifier serviceMethod = serviceMethod(specification.getServiceId(), specification.getMethodId());
-        enabled = property(() -> configuration().isLogging(serviceMethod)).listenConsumer(() -> configuration()
+        this.id = id;
+        enabled = property(() -> configuration().isLogging(id)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .loggingConsumer());
     }
@@ -62,29 +59,29 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         return getDecorator().apply(input);
     }
 
-    private void logSubscribe(ServiceMethodSpecification specification) {
+    private void logSubscribe() {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_SUBSCRIBED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
+        getLogger().info(format(SERVICE_SUBSCRIBED_MESSAGE, id.getServiceId(), id.getMethodId()));
     }
 
-    private void logComplete(ServiceMethodSpecification specification) {
+    private void logComplete() {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_COMPLETED_MESSAGE, specification.getServiceId(), specification.getMethodId()));
+        getLogger().info(format(SERVICE_COMPLETED_MESSAGE, id.getServiceId(), id.getMethodId()));
     }
 
-    private void logInput(Object data, ServiceMethodSpecification specification) {
+    private void logInput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_INPUT_DATA, specification.getServiceId(), specification.getMethodId(), data));
+        getLogger().info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), data));
     }
 
-    private void logOutput(Object data, ServiceMethodSpecification specification) {
+    private void logOutput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_OUTPUT_DATA, specification.getServiceId(), specification.getMethodId(), data));
+        getLogger().info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), data));
     }
 
-    private void logException(Throwable exception, ServiceMethodSpecification specification) {
+    private void logException(Throwable exception) {
         if (!enabled.get()) return;
-        getLogger().error(format(SERVICE_FAILED_MESSAGE, specification.getServiceId(), specification.getMethodId()), exception);
+        getLogger().error(format(SERVICE_FAILED_MESSAGE, id.getServiceId(), id.getMethodId()), exception);
     }
 
     @SuppressWarnings(CONSTANT_CONDITIONS)
@@ -92,14 +89,14 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
         switch (scope) {
             case INPUT:
                 return input -> input
-                        .doOnSubscribe(subscription -> logSubscribe(specification))
-                        .doOnNext(data -> logInput(data, specification))
-                        .doOnError(exception -> logException(exception, specification));
+                        .doOnSubscribe(subscription -> logSubscribe())
+                        .doOnNext(this::logInput)
+                        .doOnError(this::logException);
             case OUTPUT:
                 return output -> output
-                        .doOnNext(data -> logOutput(data, specification))
-                        .doOnError(exception -> logException(exception, specification))
-                        .doOnComplete(() -> logComplete(specification));
+                        .doOnNext(this::logOutput)
+                        .doOnError(this::logException)
+                        .doOnComplete(this::logComplete);
         }
         return UnaryOperator.identity();
     }

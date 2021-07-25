@@ -23,7 +23,7 @@ import io.art.core.model.*;
 import io.art.http.configuration.*;
 import io.art.http.exception.*;
 import io.art.http.state.*;
-import io.art.server.specification.*;
+import io.art.server.method.*;
 import io.art.transport.payload.*;
 import io.art.value.constants.ValueModuleConstants.*;
 import io.art.value.immutable.*;
@@ -57,25 +57,25 @@ public class HttpRouter {
                 HttpMethodType httpMethodType = methodValue.getMethod();
                 switch (httpMethodType) {
                     case GET:
-                        routes.get(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        routes.get(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
                         break;
                     case POST:
-                        routes.post(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        routes.post(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
                         break;
                     case PUT:
-                        routes.put(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        routes.put(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
                         break;
                     case DELETE:
-                        routes.delete(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        routes.delete(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
                         break;
                     case OPTIONS:
-                        routes.options(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        routes.options(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
                         break;
                     case HEAD:
-                        routes.head(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethod(service.getKey(), method.getKey())), request, response));
+                        routes.head(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
                         break;
                     case WEBSOCKET:
-                        routes.ws(methodValue.getPath(), (inbound, outbound) -> handleWebsocket(findSpecification(serviceMethod(service.getKey(), method.getKey())), inbound, outbound));
+                        routes.ws(methodValue.getPath(), (inbound, outbound) -> handleWebsocket(findSpecification(serviceMethodId(service.getKey(), method.getKey())), inbound, outbound));
                         break;
                     case FILE:
                         routes.file(methodValue.getPath(), methodValue.getFilePath());
@@ -88,7 +88,7 @@ public class HttpRouter {
         }
     }
 
-    private Publisher<Void> handleWebsocket(ServiceMethodSpecification specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
+    private Publisher<Void> handleWebsocket(ServiceMethod specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
         DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(
                 () -> fromMimeType(MimeType.valueOf(inbound.headers().get(CONTENT_TYPE))),
@@ -98,10 +98,10 @@ public class HttpRouter {
                 ignored -> defaultDataFormat);
         TransportPayloadReader reader = specification
                 .getConfiguration()
-                .getReader(serviceMethod(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
+                .getReader(serviceMethodId(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
         TransportPayloadWriter writer = specification
                 .getConfiguration()
-                .getWriter(serviceMethod(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
+                .getWriter(serviceMethodId(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
         return inbound.receive()
                 .map(reader::read)
                 .map(TransportPayload::getValue)
@@ -112,7 +112,7 @@ public class HttpRouter {
 
     }
 
-    private Publisher<Void> handleHttp(ServiceMethodSpecification specification, HttpServerRequest request, HttpServerResponse response) {
+    private Publisher<Void> handleHttp(ServiceMethod specification, HttpServerRequest request, HttpServerResponse response) {
         DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(
                 () -> fromMimeType(MimeType.valueOf(request.requestHeaders().get(CONTENT_TYPE))),
@@ -124,10 +124,10 @@ public class HttpRouter {
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
         TransportPayloadReader reader = specification
                 .getConfiguration()
-                .getReader(serviceMethod(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
+                .getReader(serviceMethodId(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
         TransportPayloadWriter writer = specification
                 .getConfiguration()
-                .getWriter(serviceMethod(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
+                .getWriter(serviceMethodId(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
 
         return request.receive()
                 .map(reader::read)
@@ -145,7 +145,7 @@ public class HttpRouter {
                 .thenMany(response.send(unicast.asFlux()));
     }
 
-    private Flux<Value> mapException(ServiceMethodSpecification specification, Throwable exception) {
+    private Flux<Value> mapException(ServiceMethod specification, Throwable exception) {
         Object result = httpModule().configuration().getServerConfiguration()
                 .getExceptionMapper()
                 .apply(cast(exception));
@@ -159,13 +159,13 @@ public class HttpRouter {
         return context;
     }
 
-    private ServiceMethodSpecification findSpecification(ServiceMethodIdentifier serviceMethodId) {
+    private ServiceMethod findSpecification(ServiceMethodIdentifier serviceMethodId) {
         return specifications()
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
     }
 
-    private HttpMethodConfiguration findMethodConfiguration(ServiceMethodSpecification specification) {
+    private HttpMethodConfiguration findMethodConfiguration(ServiceMethod specification) {
         return httpModule().configuration().getServerConfiguration()
                 .getServices().get(specification.getServiceId())
                 .getMethods().get(specification.getMethodId());

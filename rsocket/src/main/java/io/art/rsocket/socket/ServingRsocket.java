@@ -26,8 +26,7 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.state.*;
 import io.art.server.configuration.*;
-import io.art.server.specification.*;
-import io.art.transport.constants.*;
+import io.art.server.method.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.art.value.immutable.*;
@@ -60,7 +59,7 @@ public class ServingRsocket implements RSocket {
     private final RSocket requesterSocket;
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final RsocketSetupPayload setupPayload;
-    private final ServiceMethodSpecification specification;
+    private final ServiceMethod specification;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -137,7 +136,7 @@ public class ServingRsocket implements RSocket {
         moduleState.removeRequester(this);
     }
 
-    private ServiceMethodSpecification findSpecification(ServiceMethodIdentifier serviceMethodId) {
+    private ServiceMethod findSpecification(ServiceMethodIdentifier serviceMethodId) {
         return specifications()
                 .findMethodById(serviceMethodId)
                 .orElseThrow(() -> new RsocketException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));

@@ -31,7 +31,7 @@ public class ServiceMethodIdentifier {
     String serviceId;
     String methodId;
 
-    public static ServiceMethodIdentifier serviceMethod(String serviceId, String methodId) {
+    public static ServiceMethodIdentifier serviceMethodId(String serviceId, String methodId) {
         return putIfAbsent(CACHE, EMPTY_STRING + serviceId + methodId, () -> new ServiceMethodIdentifier(serviceId, methodId));
     }
 }

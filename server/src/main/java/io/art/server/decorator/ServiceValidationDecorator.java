@@ -23,8 +23,8 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
+import io.art.server.method.*;
 import io.art.server.refresher.*;
-import io.art.server.specification.*;
 import io.art.server.validation.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -47,10 +47,10 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final Property<Boolean> deactivated;
     private final LazyProperty<Boolean> hasInput;
 
-    public ServiceValidationDecorator(ServiceMethodIdentifier serviceMethod) {
-        enabled = property(() -> configuration().isValidating(serviceMethod)).listenConsumer(() -> consumer().validationConsumer());
-        deactivated = property(() -> configuration().isDeactivated(serviceMethod)).listenConsumer(() -> consumer().deactivationConsumer());
-        hasInput = lazy(() -> hasInput(serviceMethod));
+    public ServiceValidationDecorator(ServiceMethodIdentifier id) {
+        enabled = property(() -> configuration().isValidating(id)).listenConsumer(() -> consumer().validationConsumer());
+        deactivated = property(() -> configuration().isDeactivated(id)).listenConsumer(() -> consumer().deactivationConsumer());
+        hasInput = lazy(() -> hasInput(id));
     }
 
     @Override
@@ -63,7 +63,7 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
         return configuration()
                 .getRegistry()
                 .findMethodById(serviceMethodId)
-                .map(ServiceMethodSpecification::getInputType)
+                .map(ServiceMethod::getInputType)
                 .isPresent();
     }
 

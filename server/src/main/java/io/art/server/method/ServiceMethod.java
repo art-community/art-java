@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
-package io.art.server.specification;
+package io.art.server.method;
 
-import io.art.core.annotation.*;
+import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
@@ -37,10 +37,11 @@ import static reactor.core.publisher.Sinks.*;
 import java.util.*;
 import java.util.function.*;
 
-@Builder(toBuilder = true)
-@ForGenerator
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class ServiceMethodSpecification {
+@Builder
+public class ServiceMethod {
+    @Getter
+    private final ServiceMethodIdentifier id;
+
     @Getter
     private final MetaMethodInvoker invoker;
 
@@ -65,7 +66,6 @@ public class ServiceMethodSpecification {
         return decorateOutput(handler.get().apply(decorateInput(input)));
     }
 
-
     private Function<Flux<Object>, Flux<Object>> selectHandler() {
         if (isNull(inputType)) {
             return emptyInputHandler();
@@ -81,7 +81,6 @@ public class ServiceMethodSpecification {
 
         return blockingInputHandler();
     }
-
 
     private Function<Flux<Object>, Flux<Object>> emptyInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {

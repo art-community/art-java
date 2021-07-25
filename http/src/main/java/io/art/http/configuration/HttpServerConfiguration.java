@@ -70,7 +70,7 @@ public class HttpServerConfiguration {
         String methodId = source.getString(METHOD_ID_KEY);
 
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
-            configuration.defaultServiceMethod = serverListener.emit(serviceMethod(serviceId, methodId));
+            configuration.defaultServiceMethod = serverListener.emit(serviceMethodId(serviceId, methodId));
         }
 
         int port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), DEFAULT_PORT));

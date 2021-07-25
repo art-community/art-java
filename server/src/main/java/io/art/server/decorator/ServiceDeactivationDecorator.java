@@ -22,10 +22,8 @@ import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
-import io.art.server.specification.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.server.module.ServerModule.*;
@@ -37,9 +35,8 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
     private static final Logger logger = logger(ServiceDeactivationDecorator.class);
     private final Property<Boolean> enabled;
 
-    public ServiceDeactivationDecorator(ServiceMethodSpecification specification) {
-        ServiceMethodIdentifier serviceMethodId = serviceMethod(specification.getServiceId(), specification.getMethodId());
-        this.enabled = property(enabled(serviceMethodId)).listenConsumer(() -> configuration()
+    public ServiceDeactivationDecorator(ServiceMethodIdentifier id) {
+        this.enabled = property(enabled(id)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .deactivationConsumer());
     }

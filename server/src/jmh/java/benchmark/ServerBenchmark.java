@@ -18,7 +18,7 @@
 
 package benchmark;
 
-import io.art.server.specification.*;
+import io.art.server.method.*;
 import io.art.server.test.meta.*;
 import io.art.server.test.meta.MetaServerTest.MetaIoPackage.MetaArtPackage.MetaServerPackage.MetaTestPackage.MetaServicePackage.*;
 import org.openjdk.jmh.annotations.*;
@@ -28,7 +28,7 @@ import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
-import static io.art.server.factory.ServiceMethodSpecificationFactory.*;
+import static io.art.server.factory.ServiceMethodFactory.*;
 import static io.art.server.module.ServerActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
@@ -43,44 +43,44 @@ public class ServerBenchmark {
     public static class BenchmarkState {
         MetaServerTest meta;
         MetaBenchmarkServiceClass serviceClass;
-        ServiceMethodSpecification m1;
-        ServiceMethodSpecification m2;
-        ServiceMethodSpecification m3;
-        ServiceMethodSpecification m4;
-        ServiceMethodSpecification m5;
-        ServiceMethodSpecification m6;
-        ServiceMethodSpecification m7;
-        ServiceMethodSpecification m8;
-        ServiceMethodSpecification m9;
-        ServiceMethodSpecification m10;
-        ServiceMethodSpecification m11;
-        ServiceMethodSpecification m12;
-        ServiceMethodSpecification m13;
-        ServiceMethodSpecification m14;
-        ServiceMethodSpecification m15;
-        ServiceMethodSpecification m16;
+        ServiceMethod m1;
+        ServiceMethod m2;
+        ServiceMethod m3;
+        ServiceMethod m4;
+        ServiceMethod m5;
+        ServiceMethod m6;
+        ServiceMethod m7;
+        ServiceMethod m8;
+        ServiceMethod m9;
+        ServiceMethod m10;
+        ServiceMethod m11;
+        ServiceMethod m12;
+        ServiceMethod m13;
+        ServiceMethod m14;
+        ServiceMethod m15;
+        ServiceMethod m16;
 
         @Setup
         public void setup() {
             initialize(meta(MetaServerTest::new), logging(), server());
             meta = library();
             serviceClass = meta.ioPackage().artPackage().serverPackage().testPackage().servicePackage().benchmarkServiceClass();
-            m1 = forMethod(serviceClass, serviceClass.m1Method());
-            m2 = forMethod(serviceClass, serviceClass.m2Method());
-            m3 = forMethod(serviceClass, serviceClass.m3Method());
-            m4 = forMethod(serviceClass, serviceClass.m4Method());
-            m5 = forMethod(serviceClass, serviceClass.m5Method());
-            m6 = forMethod(serviceClass, serviceClass.m6Method());
-            m7 = forMethod(serviceClass, serviceClass.m7Method());
-            m8 = forMethod(serviceClass, serviceClass.m8Method());
-            m9 = forMethod(serviceClass, serviceClass.m9Method());
-            m10 = forMethod(serviceClass, serviceClass.m10Method());
-            m11 = forMethod(serviceClass, serviceClass.m11Method());
-            m12 = forMethod(serviceClass, serviceClass.m12Method());
-            m13 = forMethod(serviceClass, serviceClass.m13Method());
-            m14 = forMethod(serviceClass, serviceClass.m14Method());
-            m15 = forMethod(serviceClass, serviceClass.m15Method());
-            m16 = forMethod(serviceClass, serviceClass.m16Method());
+            m1 = serviceMethod(serviceClass, serviceClass.m1Method());
+            m2 = serviceMethod(serviceClass, serviceClass.m2Method());
+            m3 = serviceMethod(serviceClass, serviceClass.m3Method());
+            m4 = serviceMethod(serviceClass, serviceClass.m4Method());
+            m5 = serviceMethod(serviceClass, serviceClass.m5Method());
+            m6 = serviceMethod(serviceClass, serviceClass.m6Method());
+            m7 = serviceMethod(serviceClass, serviceClass.m7Method());
+            m8 = serviceMethod(serviceClass, serviceClass.m8Method());
+            m9 = serviceMethod(serviceClass, serviceClass.m9Method());
+            m10 = serviceMethod(serviceClass, serviceClass.m10Method());
+            m11 = serviceMethod(serviceClass, serviceClass.m11Method());
+            m12 = serviceMethod(serviceClass, serviceClass.m12Method());
+            m13 = serviceMethod(serviceClass, serviceClass.m13Method());
+            m14 = serviceMethod(serviceClass, serviceClass.m14Method());
+            m15 = serviceMethod(serviceClass, serviceClass.m15Method());
+            m16 = serviceMethod(serviceClass, serviceClass.m16Method());
         }
     }
 

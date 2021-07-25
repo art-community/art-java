@@ -21,7 +21,7 @@ package io.art.server.registry;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.server.specification.*;
+import io.art.server.method.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.immutableSetOf;
 import static java.util.Optional.*;
@@ -35,7 +35,7 @@ public class ServiceSpecificationRegistry {
         return ofNullable(services.get(serviceId));
     }
 
-    public Optional<ServiceMethodSpecification> findMethodById(ServiceMethodIdentifier id) {
+    public Optional<ServiceMethod> findMethodById(ServiceMethodIdentifier id) {
         return get(id.getServiceId()).map(service -> service.getMethods().get(id.getMethodId()));
     }
 
