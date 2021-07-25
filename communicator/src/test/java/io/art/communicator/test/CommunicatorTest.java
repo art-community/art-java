@@ -4,8 +4,10 @@ import io.art.communicator.action.*;
 import io.art.communicator.test.meta.*;
 import io.art.communicator.test.meta.MetaCommunicatorTest.MetaIoPackage.MetaArtPackage.MetaCommunicatorPackage.MetaTestPackage.MetaProxyPackage.*;
 import io.art.communicator.test.proxy.*;
+import io.art.core.collection.*;
+import io.art.meta.model.*;
 import org.junit.jupiter.api.*;
-import reactor.core.publisher.*;
+import static io.art.communicator.proxy.CommunicatorProxyFactory.*;
 import static io.art.communicator.test.factory.TestCommunicatorActionFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.initializer.ContextInitializer.*;
@@ -21,7 +23,12 @@ public class CommunicatorTest {
     @Test
     public void testCommunicatorActionExecution() {
         MetaTestCommunicatorClass communicatorClass = cast(declaration(TestCommunicator.class));
-        CommunicatorAction action = communicatorAction(communicatorClass, communicatorClass.m1Method());
-        action.communicate(Flux.just("test"));
+        ImmutableMap<MetaMethod<?>, CommunicatorAction> actions = ImmutableMap.<MetaMethod<?>, CommunicatorAction>immutableMapBuilder()
+                .put(communicatorClass.m1Method(), communicatorAction(communicatorClass, communicatorClass.m1Method()))
+                .put(communicatorClass.m2Method(), communicatorAction(communicatorClass, communicatorClass.m2Method()))
+                .build();
+        TestCommunicator communicator = communicatorProxy(communicatorClass, actions);
+        communicator.m1();
+        communicator.m2();
     }
 }
