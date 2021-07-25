@@ -19,7 +19,6 @@
 package io.art.launcher;
 
 import io.art.configurator.module.*;
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
@@ -44,7 +43,6 @@ import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-@ForGenerator
 public class Launcher {
     private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
 

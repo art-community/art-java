@@ -18,7 +18,6 @@
 
 package io.art.core.source;
 
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.parser.*;
@@ -32,7 +31,6 @@ import java.time.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForGenerator
 public interface ConfigurationSource {
     String getSection();
 

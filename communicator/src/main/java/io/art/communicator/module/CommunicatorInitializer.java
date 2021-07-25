@@ -21,11 +21,9 @@ package io.art.communicator.module;
 import io.art.communicator.configuration.*;
 import io.art.communicator.refresher.*;
 import io.art.communicator.registry.*;
-import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.*;
 
-@ForGenerator
 public class CommunicatorInitializer implements ModuleInitializer<CommunicatorModuleConfiguration, CommunicatorModuleConfiguration.Configurator, CommunicatorModule> {
     private CommunicatorProxyRegistry registry;
 

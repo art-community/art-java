@@ -19,12 +19,10 @@
 package io.art.communicator.registry;
 
 import io.art.communicator.action.*;
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
-@ForGenerator
 public class CommunicatorActionRegistry {
     private final Map<String, CommunicatorAction> actions = map();
 

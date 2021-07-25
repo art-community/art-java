@@ -18,7 +18,6 @@
 
 package io.art.http.module;
 
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.http.configuration.*;
@@ -26,7 +25,6 @@ import io.art.http.refresher.*;
 import lombok.*;
 
 @Getter
-@ForGenerator
 public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguration, HttpModuleConfiguration.Configurator, HttpModule> {
     private HttpServerConfiguration serverConfiguration;
     private boolean activateServer;

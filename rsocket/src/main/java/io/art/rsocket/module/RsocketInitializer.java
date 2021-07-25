@@ -18,13 +18,11 @@
 
 package io.art.rsocket.module;
 
-import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 
-@ForGenerator
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private boolean activateServer;
     private boolean activateCommunicator;

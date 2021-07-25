@@ -21,7 +21,6 @@ package io.art.communicator.registry;
 import io.art.communicator.action.*;
 import io.art.communicator.constants.CommunicatorModuleConstants.*;
 import io.art.communicator.proxy.*;
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -29,7 +28,6 @@ import static io.art.core.factory.MapFactory.*;
 import static java.util.Optional.*;
 import java.util.*;
 
-@ForGenerator
 public class CommunicatorProxyRegistry {
     private final Map<String, CommunicatorProxy> proxies = map();
 

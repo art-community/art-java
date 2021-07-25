@@ -18,7 +18,6 @@
 
 package io.art.logging.module;
 
-import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.logging.configuration.*;
 import io.art.logging.configuration.LoggerConfiguration.*;
@@ -28,7 +27,6 @@ import static io.art.core.factory.ArrayFactory.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@ForGenerator
 public class LoggingInitializer implements ModuleInitializer<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModule> {
     private final Initial configuration = new Initial();
 

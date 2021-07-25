@@ -21,14 +21,12 @@ package io.art.configurator.module;
 import io.art.configurator.configuration.*;
 import io.art.configurator.custom.*;
 import io.art.configurator.model.*;
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import lombok.*;
 import static java.util.Objects.*;
 
-@ForGenerator
 public class ConfiguratorInitializer implements ModuleInitializer<ConfiguratorModuleConfiguration, ConfiguratorModuleConfiguration.Configurator, ConfiguratorModule> {
     private CustomConfigurationRegistry registry = new CustomConfigurationRegistry();
 

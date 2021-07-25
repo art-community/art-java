@@ -20,13 +20,10 @@ package io.art.launcher;
 
 import io.art.communicator.module.*;
 import io.art.configurator.module.*;
-import io.art.core.annotation.*;
 import io.art.http.module.*;
 import io.art.logging.module.*;
 import io.art.rsocket.module.*;
 import io.art.server.module.*;
-import io.art.storage.module.*;
-import io.art.value.module.*;
 import lombok.*;
 import lombok.experimental.*;
 import static java.util.function.UnaryOperator.*;
@@ -34,17 +31,15 @@ import java.util.function.*;
 
 @Getter
 @Setter
-@ForGenerator
 @Accessors(fluent = true)
 public class ModulesInitializer {
     private UnaryOperator<ConfiguratorInitializer> configurator = identity();
     private UnaryOperator<LoggingInitializer> logging = identity();
     private UnaryOperator<ServerInitializer> server = identity();
     private UnaryOperator<CommunicatorInitializer> communicator = identity();
-    private UnaryOperator<ValueInitializer> value = identity();
     private UnaryOperator<RsocketInitializer> rsocket = identity();
     private UnaryOperator<HttpInitializer> http = identity();
-    private UnaryOperator<StorageInitializer> storage = identity();
+    //private UnaryOperator<StorageInitializer> storage = identity();
 
     public static ModulesInitializer modules() {
         return new ModulesInitializer();

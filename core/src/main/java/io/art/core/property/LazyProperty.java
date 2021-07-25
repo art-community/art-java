@@ -1,18 +1,15 @@
 package io.art.core.property;
 
-import io.art.core.annotation.*;
 import static io.art.core.property.DisposableProperty.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
-@ForGenerator
 public class LazyProperty<T> implements Supplier<T> {
     private final DisposableProperty<T> disposable;
 
     public LazyProperty(Supplier<T> loader) {
         disposable = disposable(loader);
     }
-
 
     public LazyProperty<T> initialize() {
         disposable.get();

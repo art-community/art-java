@@ -18,7 +18,6 @@
 
 package io.art.server.registry;
 
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.server.method.*;
@@ -27,7 +26,6 @@ import static io.art.core.factory.SetFactory.*;
 import static java.util.Optional.*;
 import java.util.*;
 
-@ForGenerator
 public class ServiceMethodRegistry {
     private final Map<ServiceMethodIdentifier, ServiceMethod> methods = map();
 

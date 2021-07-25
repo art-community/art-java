@@ -18,14 +18,12 @@
 
 package io.art.server.module;
 
-import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.server.configuration.*;
 import io.art.server.refresher.*;
 import io.art.server.registry.*;
 import lombok.*;
 
-@ForGenerator
 public class ServerInitializer implements ModuleInitializer<ServerModuleConfiguration, ServerModuleConfiguration.Configurator, ServerModule> {
     private ServiceMethodRegistry registry;
 

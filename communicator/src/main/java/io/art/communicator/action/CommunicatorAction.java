@@ -23,15 +23,12 @@ import io.art.communicator.decorator.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.implementation.*;
 import io.art.communicator.mapper.*;
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.value.immutable.Value;
-import io.art.value.mapper.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import reactor.core.scheduler.*;
@@ -50,7 +47,6 @@ import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForGenerator
 @Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CommunicatorAction implements Managed {
