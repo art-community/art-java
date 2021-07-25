@@ -23,8 +23,8 @@ public class ServerModuleRefresher implements ModuleRefresher {
     @Getter
     @Accessors(fluent = true)
     public class Consumer {
-        private final ChangesConsumer loggingConsumer = loggingListener.consumer();
         private final ChangesConsumer deactivationConsumer = deactivationListener.consumer();
+        private final ChangesConsumer loggingConsumer = loggingListener.consumer();
         private final ChangesConsumer validationConsumer = validationListener.consumer();
     }
 }
