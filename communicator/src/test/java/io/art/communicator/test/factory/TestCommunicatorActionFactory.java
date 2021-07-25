@@ -19,10 +19,10 @@ import static java.util.Objects.*;
 @UtilityClass
 public class TestCommunicatorActionFactory {
     public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method) {
-        return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), owner, method);
+        return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method);
     }
 
-    public CommunicatorAction communicatorAction(CommunicatorActionIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
+    public CommunicatorAction communicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         CommunicatorConfiguration configuration = CommunicatorConfiguration.builder().refresher(new CommunicatorRefresher()).build();
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
@@ -33,8 +33,12 @@ public class TestCommunicatorActionFactory {
                 .inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT))
                 .outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
         if (nonNull(inputType)) {
-            return builder.inputType(inputType).build();
+            CommunicatorAction action = builder.inputType(inputType).build();
+            action.initialize();
+            return action;
         }
-        return builder.build();
+        CommunicatorAction action = builder.build();
+        action.initialize();
+        return action;
     }
 }

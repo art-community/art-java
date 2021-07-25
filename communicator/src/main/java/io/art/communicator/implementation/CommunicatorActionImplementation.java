@@ -18,9 +18,17 @@
 
 package io.art.communicator.implementation;
 
-import io.art.core.managed.*;
+import io.art.core.model.*;
 import reactor.core.publisher.*;
 
-public interface CommunicatorActionImplementation extends Managed {
+public interface CommunicatorActionImplementation {
+    default void initialize(CommunicatorActionIdentifier id) {
+
+    }
+
+    default void dispose() {
+
+    }
+
     Flux<Object> communicate(Flux<Object> input);
 }
