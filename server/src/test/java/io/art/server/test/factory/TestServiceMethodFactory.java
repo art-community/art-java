@@ -26,7 +26,7 @@ public class TestServiceMethodFactory {
     public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         boolean validatable = nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE);
-        ServerConfiguration configuration = new ServerConfiguration(new ServerRefresher());
+        ServerConfiguration configuration = ServerConfiguration.builder().refresher(new ServerRefresher()).build();
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())

@@ -18,21 +18,18 @@
 
 package io.art.server.configuration;
 
-import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.server.model.*;
 import io.art.server.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
 import java.util.function.*;
 
 
-@RequiredArgsConstructor
+@Builder
 public class ServerConfiguration {
     private final ServerRefresher refresher;
 
@@ -40,18 +37,21 @@ public class ServerConfiguration {
     private final ServerRefresher.Consumer consumer = refresher.consumer();
 
     @Getter
-    private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
+    @Singular("service")
+    private final Map<String, ServiceConfiguration> services;
 
     @Getter
-    private Function<DataFormat, TransportPayloadReader> reader;
+    @Builder.Default
+    private final Function<DataFormat, TransportPayloadReader> reader = TransportPayloadReader::new;
 
     @Getter
-    private Function<DataFormat, TransportPayloadWriter> writer;
+    @Builder.Default
+    private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
 
     public TransportPayloadReader getReader(ServiceMethodIdentifier id, DataFormat dataFormat) {
         return getMethodConfiguration(id)
                 .map(ServiceMethodConfiguration::getReader)
-                .orElseGet(() -> ofNullable(configurations.get(id.getServiceId()))
+                .orElseGet(() -> ofNullable(services.get(id.getServiceId()))
                         .map(ServiceConfiguration::getReader)
                         .orElse(reader)).apply(dataFormat);
     }
@@ -59,13 +59,13 @@ public class ServerConfiguration {
     public TransportPayloadWriter getWriter(ServiceMethodIdentifier id, DataFormat dataFormat) {
         return getMethodConfiguration(id)
                 .map(ServiceMethodConfiguration::getWriter)
-                .orElseGet(() -> ofNullable(configurations.get(id.getServiceId()))
+                .orElseGet(() -> ofNullable(services.get(id.getServiceId()))
                         .map(ServiceConfiguration::getWriter)
                         .orElse(writer)).apply(dataFormat);
     }
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
-        return ofNullable(configurations.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
+        return ofNullable(services.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
     }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
@@ -87,7 +87,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = configurations.get(identifier.getServiceId());
+        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
@@ -95,7 +95,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkMethod(ServiceMethodIdentifier identifier, Function<ServiceMethodConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = configurations.get(identifier.getServiceId());
+        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
