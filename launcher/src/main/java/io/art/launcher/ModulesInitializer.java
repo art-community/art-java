@@ -23,7 +23,6 @@ import io.art.configurator.module.*;
 import io.art.http.module.*;
 import io.art.logging.module.*;
 import io.art.rsocket.module.*;
-import io.art.server.module.*;
 import lombok.*;
 import lombok.experimental.*;
 import static java.util.function.UnaryOperator.*;
@@ -35,7 +34,6 @@ import java.util.function.*;
 public class ModulesInitializer {
     private UnaryOperator<ConfiguratorInitializer> configurator = identity();
     private UnaryOperator<LoggingInitializer> logging = identity();
-    private UnaryOperator<ServerInitializer> server = identity();
     private UnaryOperator<CommunicatorInitializer> communicator = identity();
     private UnaryOperator<RsocketInitializer> rsocket = identity();
     private UnaryOperator<HttpInitializer> http = identity();

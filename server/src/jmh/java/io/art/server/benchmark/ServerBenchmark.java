@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package benchmark;
+package io.art.server.benchmark;
 
 import io.art.server.method.*;
 import io.art.server.test.meta.*;

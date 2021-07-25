@@ -29,7 +29,6 @@ import io.art.logging.module.*;
 import io.art.message.pack.module.*;
 import io.art.rsocket.module.*;
 import io.art.scheduler.module.*;
-import io.art.server.module.*;
 import io.art.yaml.module.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -88,7 +87,6 @@ public class Activator {
         module(MessagePackActivator.messagePack());
         module(YamlActivator.yaml());
         module(CommunicatorActivator.communicator(initializer.communicator()));
-        module(ServerActivator.server(initializer.server()));
         module(HttpActivator.http(initializer.http()));
         module(RsocketActivator.rsocket(initializer.rsocket()));
 //        module(StorageActivator.storage(initializer.storage()));
