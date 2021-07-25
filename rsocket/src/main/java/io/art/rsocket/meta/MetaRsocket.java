@@ -76,6 +76,12 @@ public class MetaRsocket extends MetaLibrary {
 
             private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
 
+            private final MetaGetDataFormatMethod getDataFormatMethod = register(new MetaGetDataFormatMethod());
+
+            private final MetaGetMetadataFormatMethod getMetadataFormatMethod = register(new MetaGetMetadataFormatMethod());
+
+            private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod());
+
             private final MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilderClass = register(new MetaRsocketSetupPayloadBuilderClass());
 
             private MetaRsocketSetupPayloadClass() {
@@ -100,6 +106,18 @@ public class MetaRsocket extends MetaLibrary {
               return toBuilderMethod;
             }
 
+            public MetaGetDataFormatMethod getDataFormatMethod() {
+              return getDataFormatMethod;
+            }
+
+            public MetaGetMetadataFormatMethod getMetadataFormatMethod() {
+              return getMetadataFormatMethod;
+            }
+
+            public MetaGetIdMethod getIdMethod() {
+              return getIdMethod;
+            }
+
             public MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilderClass() {
               return rsocketSetupPayloadBuilderClass;
             }
@@ -110,15 +128,69 @@ public class MetaRsocket extends MetaLibrary {
               }
 
               @Override
-              public Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
-                  Object[] arguments) throws Throwable {
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
+                  java.lang.Object[] arguments) throws Throwable {
                 return instance.toBuilder();
               }
 
               @Override
-              public Object invoke(io.art.rsocket.model.RsocketSetupPayload instance) throws
-                  Throwable {
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance)
+                  throws Throwable {
                 return instance.toBuilder();
+              }
+            }
+
+            public static final class MetaGetDataFormatMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload, io.art.transport.constants.TransportModuleConstants.DataFormat> {
+              private MetaGetDataFormatMethod() {
+                super("getDataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf));
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                return instance.getDataFormat();
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance)
+                  throws Throwable {
+                return instance.getDataFormat();
+              }
+            }
+
+            public static final class MetaGetMetadataFormatMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload, io.art.transport.constants.TransportModuleConstants.DataFormat> {
+              private MetaGetMetadataFormatMethod() {
+                super("getMetadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf));
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                return instance.getMetadataFormat();
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance)
+                  throws Throwable {
+                return instance.getMetadataFormat();
+              }
+            }
+
+            public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload, io.art.core.model.ServiceMethodIdentifier> {
+              private MetaGetIdMethod() {
+                super("getId",metaType(io.art.core.model.ServiceMethodIdentifier.class));
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                return instance.getId();
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance)
+                  throws Throwable {
+                return instance.getId();
               }
             }
 
@@ -179,16 +251,16 @@ public class MetaRsocket extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object[] arguments) throws Throwable {
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.dataFormat((io.art.transport.constants.TransportModuleConstants.DataFormat)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object argument) throws Throwable {
+                    java.lang.Object argument) throws Throwable {
                   return instance.dataFormat((io.art.transport.constants.TransportModuleConstants.DataFormat)(argument));
                 }
 
@@ -206,16 +278,16 @@ public class MetaRsocket extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object[] arguments) throws Throwable {
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.metadataFormat((io.art.transport.constants.TransportModuleConstants.DataFormat)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object argument) throws Throwable {
+                    java.lang.Object argument) throws Throwable {
                   return instance.metadataFormat((io.art.transport.constants.TransportModuleConstants.DataFormat)(argument));
                 }
 
@@ -233,16 +305,16 @@ public class MetaRsocket extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object[] arguments) throws Throwable {
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.id((io.art.core.model.ServiceMethodIdentifier)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object argument) throws Throwable {
+                    java.lang.Object argument) throws Throwable {
                   return instance.id((io.art.core.model.ServiceMethodIdentifier)(argument));
                 }
 
@@ -257,14 +329,14 @@ public class MetaRsocket extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
-                    Object[] arguments) throws Throwable {
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.build();
                 }
 
                 @Override
-                public Object invoke(
+                public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance)
                     throws Throwable {
                   return instance.build();

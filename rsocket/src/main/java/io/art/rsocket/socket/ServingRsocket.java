@@ -22,7 +22,6 @@ import io.art.core.exception.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.state.*;
 import io.art.server.configuration.*;
@@ -35,15 +34,14 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.context.*;
 import static io.art.meta.model.TypedObject.*;
+import static io.art.meta.module.MetaModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.model.RsocketSetupPayload.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
@@ -57,35 +55,40 @@ public class ServingRsocket implements RSocket {
     private final ServiceMethod serviceMethod;
 
     public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration rsocketConfiguration) {
-      /*  moduleState.registerRequester(this.requesterSocket = requesterSocket);
+        moduleState.registerRequester(this.requesterSocket = requesterSocket);
         DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), rsocketConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), rsocketConfiguration.getDefaultMetaDataFormat());
+
         Function<DataFormat, TransportPayloadReader> setupReader = rsocketConfiguration.getServerConfiguration().getReader();
-        TransportPayload setupPayloadData = setupReader.apply(dataFormat).read(payload.sliceData());
+
+        TransportPayload setupPayloadData = setupReader.apply(dataFormat).read(payload.sliceData(), declaration(RsocketSetupPayload.class).definition());
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
                 .metadataFormat(metaDataFormat);
-        Entity serviceIdentifiers;
-        if (!setupPayloadData.isEmpty() && isEntity(setupPayloadData.getValue()) && nonNull(serviceIdentifiers = asEntity(asEntity(setupPayloadData.getValue()).get(SERVICE_METHOD_IDENTIFIERS_KEY)))) {
-            ServiceMethodIdentifier serviceMethodId = toServiceMethod(serviceIdentifiers);
+
+        if (!setupPayloadData.isEmpty()) {
+            ServiceMethodIdentifier serviceMethodId = ((RsocketSetupPayload)setupPayloadData.getValue()).getId();
             if (nonNull(serviceMethodId)) {
                 setupPayload = setupPayloadBuilder.id(serviceMethodId).build();
                 serviceMethod = findSpecification(serviceMethodId);
+
                 ServerConfiguration configuration = serviceMethod.getConfiguration();
                 dataReader = configuration.getReader(serviceMethodId, dataFormat);
                 dataWriter = configuration.getWriter(serviceMethodId, dataFormat);
                 return;
             }
         }
+
         ServiceMethodIdentifier defaultServiceMethod = rsocketConfiguration.getDefaultServiceMethod();
         if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.id(defaultServiceMethod).build();
             serviceMethod = findSpecification(defaultServiceMethod);
+
             ServerConfiguration configuration = serviceMethod.getConfiguration();
             dataReader = configuration.getReader(defaultServiceMethod, dataFormat);
             dataWriter = configuration.getWriter(defaultServiceMethod, dataFormat);
             return;
-        }*/
+        }
         throw new ImpossibleSituationException();
     }
 

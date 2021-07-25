@@ -22,10 +22,10 @@ import io.art.core.model.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 
-@ToString
+@Value
 @Builder(toBuilder = true)
 public class RsocketSetupPayload {
-    private final DataFormat dataFormat;
-    private final DataFormat metadataFormat;
-    private final ServiceMethodIdentifier id;
+    DataFormat dataFormat;
+    DataFormat metadataFormat;
+    ServiceMethodIdentifier id;
 }
