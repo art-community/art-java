@@ -4,8 +4,8 @@ import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.communicator.configuration.*;
 import io.art.communicator.decorator.*;
+import io.art.communicator.implementation.*;
 import io.art.communicator.refresher.*;
-import io.art.communicator.test.proxy.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
@@ -18,17 +18,17 @@ import static java.util.Objects.*;
 
 @UtilityClass
 public class TestCommunicatorActionFactory {
-    public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method) {
-        return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method);
+    public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method, CommunicatorActionImplementation implementation) {
+        return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method, implementation);
     }
 
-    public CommunicatorAction communicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method) {
+    public CommunicatorAction communicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, CommunicatorActionImplementation implementation) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         CommunicatorConfiguration configuration = CommunicatorConfiguration.builder().refresher(new CommunicatorRefresher()).build();
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(method.returnType())
-                .implementation(new TestCommunicatorImplementation())
+                .implementation(implementation)
                 .inputDecorator(new CommunicatorDeactivationDecorator(id, configuration))
                 .inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT))
                 .outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
