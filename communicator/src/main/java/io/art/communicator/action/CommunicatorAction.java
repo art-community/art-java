@@ -64,10 +64,16 @@ public class CommunicatorAction implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
 
-    private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
-
     @Getter
     private final CommunicatorActionImplementation implementation;
+
+    private final Property<Optional<CommunicatorProxyConfiguration>> communicatorConfiguration = property(this::communicatorConfiguration);
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final Supplier<Object> producer = producer();
+
+    @Getter(lazy = true, value = PRIVATE)
+    private final Function<Object, Object> handler = handler();
 
     @Override
     public void initialize() {
@@ -82,81 +88,188 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate() {
-        Flux<Object> output = implementation.communicate(Flux.empty());
-        if (isNull(outputType) || outputType.internalKind() == VOID || isNull(output)) {
-            return null;
-        }
-
-        if (outputType.internalKind() == MONO) {
-            return cast(output.last());
-        }
-
-        if (outputType.internalKind() == FLUX) {
-            return cast(output);
-        }
-
-        return cast(blockFirst(output));
+        return cast(getProducer().get());
     }
 
     public <T> T communicate(Object input) {
-        if (isNull(inputType)) {
-            return communicate();
-        }
+        return cast(getHandler().apply(input));
+    }
 
-        if (inputType.internalKind() == MONO) {
-            Flux<Object> output = implementation.communicate(asMono(input).flux());
-            if (isNull(outputType) || outputType.internalKind() == VOID) {
-                if (isNull(output)) {
-                    return null;
-                }
-            }
-
-            if (outputType.internalKind() == MONO) {
-                return cast(output.last());
-            }
-
-            if (outputType.internalKind() == FLUX) {
-                return cast(output);
-            }
-
-            return cast(blockFirst(output));
-        }
-
-        if (inputType.internalKind() == FLUX) {
-            Flux<Object> output = implementation.communicate(asFlux(input));
-            if (isNull(outputType) || outputType.internalKind() == VOID) {
-                if (isNull(output)) {
-                    return null;
-                }
-            }
-
-            if (outputType.internalKind() == MONO) {
-                return cast(output.last());
-            }
-
-            if (outputType.internalKind() == FLUX) {
-                return cast(output);
-            }
-
-            return cast(blockFirst(output));
-        }
-
-        Flux<Object> output = implementation.communicate(Flux.just(input));
+    private Supplier<Object> producer() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
-            if (isNull(output)) {
-                return null;
-            }
+            return () -> {
+                try {
+                    process(Flux.empty());
+                    return null;
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
         }
 
         if (outputType.internalKind() == MONO) {
-            return cast(output.last());
+            return () -> {
+                try {
+                    Flux<Object> output = process(Flux.empty());
+                    return output.last();
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
         }
 
         if (outputType.internalKind() == FLUX) {
-            return cast(output);
+            return () -> {
+                try {
+                    return process(Flux.empty());
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
         }
 
-        return cast(blockFirst(output));
+        return () -> {
+            try {
+                Flux<Object> output = process(Flux.empty());
+                return blockFirst(output);
+            } catch (Throwable throwable) {
+                throw new CommunicationException(throwable);
+            }
+        };
+    }
+
+    private Function<Object, Object> handler() {
+        if (isNull(inputType)) {
+            Supplier<Object> producer = producer();
+            return empty -> producer.get();
+        }
+
+        if (inputType.internalKind() == MONO) {
+            if (isNull(outputType) || outputType.internalKind() == VOID) {
+                return input -> {
+                    try {
+                        process(Flux.from(asMono(input)));
+                        return null;
+                    } catch (Throwable throwable) {
+                        throw new CommunicationException(throwable);
+                    }
+                };
+            }
+
+            if (outputType.internalKind() == MONO) {
+                return input -> {
+                    try {
+                        return process(Flux.from(asMono(input))).last();
+                    } catch (Throwable throwable) {
+                        throw new CommunicationException(throwable);
+                    }
+                };
+            }
+
+            if (outputType.internalKind() == FLUX) {
+                return input -> {
+                    try {
+                        return process(Flux.from(asMono(input)));
+                    } catch (Throwable throwable) {
+                        throw new CommunicationException(throwable);
+                    }
+                };
+            }
+
+            return input -> {
+                try {
+                    return blockFirst(process(Flux.from(asMono(input))));
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
+        }
+
+        if (inputType.internalKind() == FLUX) {
+            if (isNull(outputType) || outputType.internalKind() == VOID) {
+                return input -> {
+                    try {
+                        process(asFlux(input));
+                        return null;
+                    } catch (Throwable throwable) {
+                        throw new CommunicationException(throwable);
+                    }
+                };
+            }
+
+            if (outputType.internalKind() == MONO) {
+                return input -> {
+                    try {
+                        Flux<Object> output = process(asFlux(input));
+                        return output.last();
+                    } catch (Throwable throwable) {
+                        throw new CommunicationException(throwable);
+                    }
+                };
+            }
+
+            if (outputType.internalKind() == FLUX) {
+                return input -> {
+                    try {
+                        return process(asFlux(input));
+                    } catch (Throwable throwable) {
+                        throw new CommunicationException(throwable);
+                    }
+                };
+            }
+
+            return input -> {
+                try {
+                    return blockFirst(process(asFlux(input)));
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
+        }
+
+        if (isNull(outputType) || outputType.internalKind() == VOID) {
+            return input -> {
+                try {
+                    process(Flux.just(input));
+                    return null;
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
+        }
+
+        if (outputType.internalKind() == MONO) {
+            return input -> {
+                try {
+                    return process(Flux.just(input)).last();
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
+        }
+
+        if (outputType.internalKind() == FLUX) {
+            return input -> {
+                try {
+                    return process(Flux.just(input));
+                } catch (Throwable throwable) {
+                    throw new CommunicationException(throwable);
+                }
+            };
+        }
+
+        return input -> {
+            try {
+                Flux<Object> output = process(Flux.just(input));
+                return cast(blockFirst(output));
+            } catch (Throwable throwable) {
+                throw new CommunicationException(throwable);
+            }
+        };
+    }
+
+    private Flux<Object> process(Flux<Object> input) {
+        return decorateOutput(implementation.communicate(decorateInput(input)));
     }
 
     private Flux<Object> decorateInput(Flux<Object> input) {
@@ -179,19 +292,7 @@ public class CommunicatorAction implements Managed {
         return result;
     }
 
-
-    private Flux<Object> mapException(Throwable throwable) {
-        if (throwable instanceof Error) {
-            throw (Error) throwable;
-        }
-        if (throwable instanceof RuntimeException) {
-            throw (RuntimeException) throwable;
-        }
-        throw new CommunicationException(throwable);
-    }
-
     private Optional<CommunicatorProxyConfiguration> communicatorConfiguration() {
         return ofNullable(getConfiguration().getConfigurations().get(id));
     }
-
 }
