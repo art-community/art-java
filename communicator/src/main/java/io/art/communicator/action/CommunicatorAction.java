@@ -98,8 +98,7 @@ public class CommunicatorAction implements Managed {
         if (outputType.internalKind() == MONO) {
             return () -> {
                 try {
-                    Flux<Object> output = process(Flux.empty());
-                    return output.last();
+                    return process(Flux.empty()).last();
                 } catch (Throwable throwable) {
                     throw new CommunicationException(throwable);
                 }
@@ -118,8 +117,7 @@ public class CommunicatorAction implements Managed {
 
         return () -> {
             try {
-                Flux<Object> output = process(Flux.empty());
-                return blockFirst(output);
+                return blockFirst(process(Flux.empty()));
             } catch (Throwable throwable) {
                 throw new CommunicationException(throwable);
             }
