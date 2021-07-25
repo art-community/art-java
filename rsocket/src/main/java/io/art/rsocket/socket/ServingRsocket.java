@@ -76,7 +76,7 @@ public class ServingRsocket implements RSocket {
             if (nonNull(serviceMethodId)) {
                 setupPayload = setupPayloadBuilder.serviceMethod(serviceMethodId).build();
                 specification = findSpecification(serviceMethodId);
-                ServerModuleConfiguration configuration = specification.getConfiguration();
+                ServerConfiguration configuration = specification.getConfiguration();
                 dataReader = configuration.getReader(serviceMethodId, dataFormat);
                 dataWriter = configuration.getWriter(serviceMethodId, dataFormat);
                 return;
@@ -86,7 +86,7 @@ public class ServingRsocket implements RSocket {
         if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
             specification = findSpecification(defaultServiceMethod);
-            ServerModuleConfiguration configuration = specification.getConfiguration();
+            ServerConfiguration configuration = specification.getConfiguration();
             dataReader = configuration.getReader(defaultServiceMethod, dataFormat);
             dataWriter = configuration.getWriter(defaultServiceMethod, dataFormat);
             return;

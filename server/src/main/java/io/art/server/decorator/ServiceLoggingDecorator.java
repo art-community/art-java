@@ -31,7 +31,6 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.LoggingMessages.*;
-import static io.art.server.module.ServerModule.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -39,7 +38,7 @@ import java.util.function.*;
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final MethodDecoratorScope scope;
     private final Property<Boolean> enabled;
-    ServiceMethodIdentifier id;
+    private final ServiceMethodIdentifier id;
 
     @Getter(lazy = true, value = PRIVATE)
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
@@ -47,10 +46,10 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(ServiceLoggingDecorator.class.getName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
-    public ServiceLoggingDecorator(ServiceMethodIdentifier id, MethodDecoratorScope scope) {
+    public ServiceLoggingDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration, MethodDecoratorScope scope) {
         this.scope = scope;
         this.id = id;
-        enabled = property(() -> withLogging() && configuration().isLogging(id)).listenConsumer(() -> configuration()
+        enabled = property(() -> withLogging() && configuration.isLogging(id)).listenConsumer(() -> configuration
                 .getConsumer()
                 .loggingConsumer());
     }
@@ -100,9 +99,5 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
                         .doOnComplete(this::logComplete);
         }
         return UnaryOperator.identity();
-    }
-
-    private ServerModuleConfiguration configuration() {
-        return serverModule().configuration();
     }
 }

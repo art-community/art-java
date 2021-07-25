@@ -26,7 +26,6 @@ import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.server.module.ServerModule.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
@@ -34,9 +33,11 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(ServiceDeactivationDecorator.class);
     private final Property<Boolean> enabled;
+    private final ServerConfiguration configuration;
 
-    public ServiceDeactivationDecorator(ServiceMethodIdentifier id) {
-        this.enabled = property(enabled(id)).listenConsumer(() -> configuration()
+    public ServiceDeactivationDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration) {
+        this.configuration = configuration;
+        this.enabled = property(enabled(id)).listenConsumer(() -> configuration
                 .getConsumer()
                 .deactivationConsumer());
     }
@@ -46,12 +47,7 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
         return input.filter(ignored -> enabled.get());
     }
 
-
-    private ServerModuleConfiguration configuration() {
-        return serverModule().configuration();
-    }
-
     private Supplier<Boolean> enabled(ServiceMethodIdentifier serviceMethodId) {
-        return () -> !configuration().isDeactivated(serviceMethodId);
+        return () -> !configuration.isDeactivated(serviceMethodId);
     }
 }

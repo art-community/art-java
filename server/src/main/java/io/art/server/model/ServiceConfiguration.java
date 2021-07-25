@@ -38,7 +38,7 @@ public class ServiceConfiguration {
     private Function<DataFormat, TransportPayloadReader> reader;
     private Function<DataFormat, TransportPayloadWriter> writer;
 
-    public static ServiceConfiguration from(ServerModuleRefresher refresher, ConfigurationSource source) {
+    public static ServiceConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
         ServiceConfiguration configuration = new ServiceConfiguration();
         ChangesListener deactivationListener = refresher.deactivationListener();
         ChangesListener loggingListener = refresher.loggingListener();

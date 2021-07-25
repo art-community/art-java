@@ -20,15 +20,12 @@ package io.art.server.configuration;
 
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.core.module.*;
-import io.art.core.source.*;
 import io.art.server.model.*;
 import io.art.server.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.server.constants.ServerModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -36,11 +33,11 @@ import java.util.function.*;
 
 
 @RequiredArgsConstructor
-public class ServerModuleConfiguration implements ModuleConfiguration {
-    private final ServerModuleRefresher refresher;
+public class ServerConfiguration {
+    private final ServerRefresher refresher;
 
     @Getter(lazy = true)
-    private final ServerModuleRefresher.Consumer consumer = refresher.consumer();
+    private final ServerRefresher.Consumer consumer = refresher.consumer();
 
     @Getter
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
@@ -107,27 +104,5 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
             return defaultValue;
         }
         return mapper.apply(methodConfiguration);
-    }
-
-    @RequiredArgsConstructor
-    public static class Configurator implements ModuleConfigurator<ServerModuleConfiguration, Configurator> {
-        private final ServerModuleConfiguration configuration;
-
-        @Override
-        public Configurator from(ConfigurationSource source) {
-            configuration.reader = TransportPayloadReader::new;
-            configuration.writer = TransportPayloadWriter::new;
-            configuration.configurations = ofNullable(source.getNested(SERVER_SECTION))
-                    .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
-                    .orElse(emptyImmutableMap());
-            configuration.refresher.produce();
-            return this;
-        }
-
-        @Override
-        public Configurator initialize(ServerModuleConfiguration configuration) {
-            configuration.configurations = configuration.getConfigurations();
-            return this;
-        }
     }
 }

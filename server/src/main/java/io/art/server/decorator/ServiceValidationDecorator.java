@@ -24,14 +24,12 @@ import io.art.core.property.*;
 import io.art.core.validation.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
-import io.art.server.refresher.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.validation.Validators.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
@@ -45,9 +43,9 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final Property<Boolean> deactivated;
     private final boolean validatableInput;
 
-    public ServiceValidationDecorator(ServiceMethodIdentifier id, boolean validatableInput) {
-        enabled = property(() -> configuration().isValidating(id)).listenConsumer(() -> consumer().validationConsumer());
-        deactivated = property(() -> configuration().isDeactivated(id)).listenConsumer(() -> consumer().deactivationConsumer());
+    public ServiceValidationDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration, boolean validatableInput) {
+        enabled = property(() -> configuration.isValidating(id)).listenConsumer(() -> configuration.getConsumer().validationConsumer());
+        deactivated = property(() -> configuration.isDeactivated(id)).listenConsumer(() -> configuration.getConsumer().deactivationConsumer());
         this.validatableInput = validatableInput;
     }
 
@@ -68,11 +66,4 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
         return !enabled.get() || deactivated.get() || !validatableInput;
     }
 
-    private ServerModuleRefresher.Consumer consumer() {
-        return configuration().getConsumer();
-    }
-
-    private ServerModuleConfiguration configuration() {
-        return serverModule().configuration();
-    }
 }

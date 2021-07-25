@@ -8,7 +8,7 @@ import static io.art.core.changes.ChangesListener.*;
 
 @Getter
 @Accessors(fluent = true)
-public class ServerModuleRefresher implements ModuleRefresher {
+public class ServerRefresher implements ModuleRefresher {
     private final ChangesListener deactivationListener = changesListener();
     private final ChangesListener loggingListener = changesListener();
     private final ChangesListener validationListener = changesListener();
