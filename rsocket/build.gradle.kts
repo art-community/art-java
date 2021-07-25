@@ -54,4 +54,5 @@ generator {
     sourcesPattern {
         include("src/main/**")
     }
+    includeClasses("**model**")
 }
