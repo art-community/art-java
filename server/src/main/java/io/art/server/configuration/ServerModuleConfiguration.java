@@ -24,7 +24,6 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.model.*;
 import io.art.server.refresher.*;
-import io.art.server.registry.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import lombok.*;
@@ -45,9 +44,6 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private ImmutableMap<String, ServiceConfiguration> configurations = emptyImmutableMap();
-
-    @Getter
-    private final ServiceMethodRegistry registry = new ServiceMethodRegistry();
 
     @Getter
     private Function<DataFormat, TransportPayloadReader> reader;
@@ -130,6 +126,7 @@ public class ServerModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator initialize(ServerModuleConfiguration configuration) {
+            configuration.configurations = configuration.getConfigurations();
             return this;
         }
     }

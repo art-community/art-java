@@ -22,14 +22,12 @@ import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
-import io.art.server.configuration.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
-import static io.art.server.module.ServerModule.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
@@ -59,9 +57,6 @@ public class ServiceMethod {
 
     @Singular("outputDecorator")
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
-
-    @Getter(lazy = true)
-    private final ServerModuleConfiguration configuration = serverModule().configuration();
 
     private final LazyProperty<Function<Flux<Object>, Flux<Object>>> handler = lazy(this::selectHandler);
 
