@@ -18,7 +18,6 @@
 
 package io.art.communicator.decorator;
 
-import io.art.communicator.action.*;
 import io.art.communicator.configuration.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -36,9 +35,9 @@ public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Obj
     private final Property<Boolean> enabled;
     private final CommunicatorConfiguration configuration;
 
-    public CommunicatorDeactivationDecorator(CommunicatorAction action, CommunicatorConfiguration configuration) {
+    public CommunicatorDeactivationDecorator(CommunicatorActionIdentifier id, CommunicatorConfiguration configuration) {
         this.configuration = configuration;
-        this.enabled = property(enabled(action.getId())).listenConsumer(() -> configuration
+        this.enabled = property(enabled(id)).listenConsumer(() -> configuration
                 .getConsumer()
                 .deactivationConsumer());
     }
@@ -48,7 +47,7 @@ public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Obj
         return input.filter(ignored -> enabled.get());
     }
 
-    private Supplier<Boolean> enabled(CommunicatorActionIdentifier communicatorAction) {
-        return () -> !configuration.isDeactivated(communicatorAction);
+    private Supplier<Boolean> enabled(CommunicatorActionIdentifier id) {
+        return () -> !configuration.isDeactivated(id);
     }
 }

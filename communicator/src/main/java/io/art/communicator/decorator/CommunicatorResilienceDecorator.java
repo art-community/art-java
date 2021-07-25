@@ -18,7 +18,6 @@
 
 package io.art.communicator.decorator;
 
-import io.art.communicator.action.*;
 import io.art.communicator.configuration.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -52,10 +51,10 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
     private final CommunicatorConfiguration configuration;
     private final CommunicatorActionIdentifier id;
 
-    public CommunicatorResilienceDecorator(CommunicatorAction action, CommunicatorConfiguration configuration) {
+    public CommunicatorResilienceDecorator(CommunicatorActionIdentifier id, CommunicatorConfiguration configuration) {
         this.configuration = configuration;
-        id = action.getId();
-        this.resilienceConfiguration = property(resilienceConfiguration(action.getId())).listenConsumer(() -> configuration
+        this.id = id;
+        this.resilienceConfiguration = property(resilienceConfiguration(id)).listenConsumer(() -> configuration
                 .getConsumer()
                 .resilienceConsumer());
     }

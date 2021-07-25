@@ -18,14 +18,15 @@
 
 package io.art.communicator.decorator;
 
-import io.art.communicator.action.*;
 import io.art.communicator.configuration.*;
 import io.art.core.constants.*;
+import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingMessages.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
@@ -35,9 +36,8 @@ import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>> {
-    private final CommunicatorConfiguration configuration;
     private final MethodDecoratorScope scope;
-    private final CommunicatorAction action;
+    private final CommunicatorActionIdentifier id;
     private final Property<Boolean> enabled;
 
     @Getter(lazy = true, value = PRIVATE)
@@ -46,11 +46,10 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
     @Getter(lazy = true, value = PRIVATE)
     private final Logger logger = logger(CommunicatorLoggingDecorator.class.getName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
-    public CommunicatorLoggingDecorator(CommunicatorAction action, CommunicatorConfiguration configuration, MethodDecoratorScope scope) {
-        this.configuration = configuration;
+    public CommunicatorLoggingDecorator(CommunicatorActionIdentifier id, CommunicatorConfiguration configuration, MethodDecoratorScope scope) {
         this.scope = scope;
-        this.action = action;
-        enabled = property(() -> configuration.isLogging(action.getId())).listenConsumer(() -> configuration
+        this.id = id;
+        enabled = property(() -> withLogging() && configuration.isLogging(id)).listenConsumer(() -> configuration
                 .getConsumer()
                 .loggingConsumer());
     }
@@ -60,29 +59,29 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
         return getDecorator().apply(input);
     }
 
-    private void logSubscribe(CommunicatorAction action) {
+    private void logSubscribe() {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_SUBSCRIBED_MESSAGE, action.getId().getCommunicatorId(), action.getId().getActionId()));
+        getLogger().info(format(COMMUNICATOR_SUBSCRIBED_MESSAGE, id.getCommunicatorId(), id.getActionId()));
     }
 
-    private void logComplete(CommunicatorAction action) {
+    private void logComplete() {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_COMPLETED_MESSAGE, action.getId().getCommunicatorId(), action.getId().getActionId()));
+        getLogger().info(format(COMMUNICATOR_COMPLETED_MESSAGE, id.getCommunicatorId(), id.getActionId()));
     }
 
-    private void logInput(Object data, CommunicatorAction action) {
+    private void logInput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_INPUT_DATA, action.getId().getCommunicatorId(), action.getId().getActionId(), data));
+        getLogger().info(format(COMMUNICATOR_INPUT_DATA, id.getCommunicatorId(), id.getActionId(), data));
     }
 
-    private void logOutput(Object data, CommunicatorAction action) {
+    private void logOutput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_OUTPUT_DATA, action.getId().getCommunicatorId(), action.getId().getActionId(), data));
+        getLogger().info(format(COMMUNICATOR_OUTPUT_DATA, id.getCommunicatorId(), id.getActionId(), data));
     }
 
-    private void logException(Throwable exception, CommunicatorAction action) {
+    private void logException(Throwable exception) {
         if (!enabled.get()) return;
-        getLogger().error(format(COMMUNICATOR_FAILED_MESSAGE, action.getId().getCommunicatorId(), action.getId().getActionId()), exception);
+        getLogger().error(format(COMMUNICATOR_FAILED_MESSAGE, id.getCommunicatorId(), id.getActionId()), exception);
     }
 
     @SuppressWarnings(CONSTANT_CONDITIONS)
@@ -90,14 +89,14 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
         switch (scope) {
             case INPUT:
                 return input -> input
-                        .doOnSubscribe(subscription -> logSubscribe(action))
-                        .doOnNext(data -> logInput(data, action))
-                        .doOnError(exception -> logException(exception, action));
+                        .doOnSubscribe(subscription -> logSubscribe())
+                        .doOnNext(this::logInput)
+                        .doOnError(this::logException);
             case OUTPUT:
                 return output -> output
-                        .doOnNext(data -> logOutput(data, action))
-                        .doOnError(exception -> logException(exception, action))
-                        .doOnComplete(() -> logComplete(action));
+                        .doOnNext(this::logOutput)
+                        .doOnError(this::logException)
+                        .doOnComplete(this::logComplete);
         }
         return UnaryOperator.identity();
     }

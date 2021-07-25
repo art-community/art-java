@@ -27,6 +27,7 @@ import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
@@ -264,7 +265,7 @@ public class CommunicatorAction implements Managed {
     }
 
     private Flux<Object> decorateOutput(Flux<Object> output) {
-        Flux<Object> result = output;
+        Flux<Object> result = orElse(output, Flux::empty);
         if (isNotEmpty(outputDecorators)) {
             for (UnaryOperator<Flux<Object>> decorator : outputDecorators) {
                 result = decorator.apply(result);

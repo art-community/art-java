@@ -21,10 +21,6 @@ plugins {
     id("me.champeau.jmh")
 }
 
-configurations.jmh {
-    exclude("org.slf4j")
-}
-
 dependencies {
     implementation(project(":core"))
     implementation(project(":meta"))

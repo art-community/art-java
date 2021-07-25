@@ -16,6 +16,10 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+    id("me.champeau.jmh")
+}
 
 dependencies {
     implementation(project(":core"))
@@ -23,4 +27,13 @@ dependencies {
     implementation(project(":resilience"))
     implementation(project(":logging"))
     implementation(project(":transport"))
+}
+
+generator {
+    module("CommunicatorTest", "io.art.communicator.test")
+    jvm()
+    sourcesPattern {
+        include("src/test/**")
+    }
+    includeClasses("*Communicator.java")
 }
