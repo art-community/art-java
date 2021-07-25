@@ -24,6 +24,7 @@ import io.art.rsocket.configuration.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import lombok.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
@@ -44,7 +45,7 @@ public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     }
 
     private boolean enabled() {
-        return let(configuration().getServerConfiguration(), RsocketServerConfiguration::isLogging, false);
+        return withLogging() && let(configuration().getServerConfiguration(), RsocketServerConfiguration::isLogging, false);
     }
 
     private RsocketModuleConfiguration configuration() {

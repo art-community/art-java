@@ -28,7 +28,6 @@ public class RsocketPayloadReader {
     public static TransportPayload readRsocketPayload(TransportPayloadReader reader, Payload payload, MetaType<?> type) {
         TransportPayload transportPayload = reader.read(payload.sliceData(), type);
         payload.release(payload.refCnt());
-
         return transportPayload;
     }
 }

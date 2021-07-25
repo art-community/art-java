@@ -24,6 +24,7 @@ import io.art.rsocket.configuration.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import lombok.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
@@ -51,7 +52,7 @@ public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
     }
 
     private boolean enabled() {
-        return let(configuration().getCommunicatorConfiguration(), configuration -> configuration.isLogging(connectorId), false);
+        return withLogging() && let(configuration().getCommunicatorConfiguration(), configuration -> configuration.isLogging(connectorId), false);
     }
 
     private RsocketModuleConfiguration configuration() {
