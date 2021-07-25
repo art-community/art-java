@@ -175,7 +175,7 @@ public class RsocketCommunicatorAction implements CommunicatorActionImplementati
     }
 
     private Function<Flux<Value>, Flux<Value>> communication() {
-        CommunicatorModuleConfiguration configuration = communicatorModule().configuration();
+        CommunicatorConfiguration configuration = communicatorModule().configuration();
         TransportPayloadReader reader = configuration.getReader(communicatorActionId, connectorConfiguration().getDataFormat());
         TransportPayloadWriter writer = configuration.getWriter(communicatorActionId, connectorConfiguration().getDataFormat());
         RSocketClient client = this.client.get();

@@ -27,7 +27,7 @@ public class TransportPayload {
     @Getter
     private final ByteBuf data;
 
-    private final LazyProperty<?> valueProvider;
+    private final LazyProperty<?> value;
 
     private static final TransportPayload EMPTY = new TransportPayload(null, null);
 
@@ -40,6 +40,6 @@ public class TransportPayload {
     }
 
     public Object getValue() {
-        return valueProvider.get();
+        return value.get();
     }
 }

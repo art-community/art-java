@@ -25,7 +25,6 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
@@ -35,10 +34,11 @@ public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Obj
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(CommunicatorDeactivationDecorator.class);
     private final Property<Boolean> enabled;
+    private final CommunicatorConfiguration configuration;
 
-    public CommunicatorDeactivationDecorator(CommunicatorAction action) {
-        CommunicatorActionIdentifier communicatorAction = communicatorAction(action.getId(), action.getActionId());
-        this.enabled = property(enabled(communicatorAction)).listenConsumer(() -> configuration()
+    public CommunicatorDeactivationDecorator(CommunicatorAction action, CommunicatorConfiguration configuration) {
+        this.configuration = configuration;
+        this.enabled = property(enabled(action.getId())).listenConsumer(() -> configuration
                 .getConsumer()
                 .deactivationConsumer());
     }
@@ -48,12 +48,7 @@ public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Obj
         return input.filter(ignored -> enabled.get());
     }
 
-
-    private CommunicatorModuleConfiguration configuration() {
-        return communicatorModule().configuration();
-    }
-
     private Supplier<Boolean> enabled(CommunicatorActionIdentifier communicatorAction) {
-        return () -> !configuration().isDeactivated(communicatorAction);
+        return () -> !configuration.isDeactivated(communicatorAction);
     }
 }

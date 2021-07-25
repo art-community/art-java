@@ -24,33 +24,30 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import io.art.transport.payload.*;
-import io.art.value.constants.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
-import static io.art.communicator.constants.CommunicatorModuleConstants.Defaults.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
+import static io.art.transport.constants.TransportModuleConstants.*;
 import java.util.function.*;
 
 @Getter
 public class CommunicatorProxyConfiguration {
     private boolean logging;
     private boolean deactivated;
-    private Scheduler blockingScheduler;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
     private ImmutableMap<String, String> connectors;
     private ResilienceConfiguration resilienceConfiguration;
-    private Function<ValueModuleConstants.DataFormat, TransportPayloadReader> reader;
-    private Function<ValueModuleConstants.DataFormat, TransportPayloadWriter> writer;
+    private Function<DataFormat, TransportPayloadReader> reader;
+    private Function<DataFormat, TransportPayloadWriter> writer;
 
-    public static CommunicatorProxyConfiguration from(CommunicatorModuleRefresher refresher, ConfigurationSource source) {
+    public static CommunicatorProxyConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorProxyConfiguration configuration = new CommunicatorProxyConfiguration();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.blockingScheduler = DEFAULT_COMMUNICATOR_BLOCKING_SCHEDULER.get();
         configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
         configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
         configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));

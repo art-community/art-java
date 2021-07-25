@@ -47,9 +47,6 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final MetaType<?> outputType;
 
-    @Getter
-    private final MetaType<?> exceptionType;
-
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
 

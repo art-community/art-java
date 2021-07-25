@@ -57,11 +57,17 @@ public class TransportPayloadReader {
     private static BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader(DataFormat dataFormat) {
         switch (dataFormat) {
             case JSON:
-                return (buffer, type) -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getJsonReader().read(type, buffer)));
+                return (buffer, type) -> buffer.capacity() == 0
+                        ? emptyTransportPayload()
+                        : new TransportPayload(buffer, lazy(() -> getJsonReader().read(type, buffer)));
             case MESSAGE_PACK:
-                return (buffer, type) -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getMessagePackReader().read(type, buffer)));
+                return (buffer, type) -> buffer.capacity() == 0
+                        ? emptyTransportPayload()
+                        : new TransportPayload(buffer, lazy(() -> getMessagePackReader().read(type, buffer)));
             case YAML:
-                return (buffer, type) -> buffer.capacity() == 0 ? emptyTransportPayload() : new TransportPayload(buffer, lazy(() -> getYamlReader().read(type, buffer)));
+                return (buffer, type) -> buffer.capacity() == 0
+                        ? emptyTransportPayload()
+                        : new TransportPayload(buffer, lazy(() -> getYamlReader().read(type, buffer)));
         }
         throw new ImpossibleSituationException();
     }

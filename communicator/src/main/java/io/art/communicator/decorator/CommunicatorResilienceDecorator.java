@@ -37,7 +37,6 @@ import io.github.resilience4j.timelimiter.*;
 import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.resilience.module.ResilienceModule.*;
@@ -50,11 +49,13 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(CommunicatorResilienceDecorator.class);
     private final Property<ResilienceConfiguration> resilienceConfiguration;
-    private final CommunicatorActionIdentifier communicatorAction;
+    private final CommunicatorConfiguration configuration;
+    private final CommunicatorActionIdentifier id;
 
-    public CommunicatorResilienceDecorator(CommunicatorAction action) {
-        communicatorAction = communicatorAction(action.getId(), action.getActionId());
-        this.resilienceConfiguration = property(resilienceConfiguration(communicatorAction)).listenConsumer(() -> configuration()
+    public CommunicatorResilienceDecorator(CommunicatorAction action, CommunicatorConfiguration configuration) {
+        this.configuration = configuration;
+        id = action.getId();
+        this.resilienceConfiguration = property(resilienceConfiguration(action.getId())).listenConsumer(() -> configuration
                 .getConsumer()
                 .resilienceConsumer());
     }
@@ -72,33 +73,29 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
         Publisher<Object> decorated = input;
 
         if (nonNull(rateLimiter)) {
-            decorated = RateLimiterOperator.of(rateLimiter(communicatorAction.toString(), rateLimiter)).apply(input);
+            decorated = RateLimiterOperator.of(rateLimiter(id.toString(), rateLimiter)).apply(input);
         }
 
         if (nonNull(timeLimiter)) {
-            decorated = TimeLimiterOperator.of(timeLimiter(communicatorAction.toString(), timeLimiter)).apply(input);
+            decorated = TimeLimiterOperator.of(timeLimiter(id.toString(), timeLimiter)).apply(input);
         }
 
         if (nonNull(bulkhead)) {
-            decorated = BulkheadOperator.of(bulkhead(communicatorAction.toString(), bulkhead)).apply(input);
+            decorated = BulkheadOperator.of(bulkhead(id.toString(), bulkhead)).apply(input);
         }
 
         if (nonNull(circuitBreaker)) {
-            decorated = CircuitBreakerOperator.of(circuitBreaker(communicatorAction.toString(), circuitBreaker)).apply(input);
+            decorated = CircuitBreakerOperator.of(circuitBreaker(id.toString(), circuitBreaker)).apply(input);
         }
 
         if (nonNull(retry)) {
-            decorated = RetryOperator.of(retry(communicatorAction.toString(), retry)).apply(input);
+            decorated = RetryOperator.of(retry(id.toString(), retry)).apply(input);
         }
 
         return from(decorated);
     }
 
-    private CommunicatorModuleConfiguration configuration() {
-        return communicatorModule().configuration();
-    }
-
     private Supplier<ResilienceConfiguration> resilienceConfiguration(CommunicatorActionIdentifier communicatorAction) {
-        return () -> configuration().getResilienceConfiguration(communicatorAction);
+        return () -> configuration.getResilienceConfiguration(communicatorAction);
     }
 }
