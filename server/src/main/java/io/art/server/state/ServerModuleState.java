@@ -48,7 +48,7 @@ public class ServerModuleState implements ModuleState {
         private final ServiceMethod specification;
 
         public static ServerThreadLocalState fromContext(ContextView context) {
-            ServiceMethod specification = context.get(SPECIFICATION_KEY);
+            ServiceMethod specification = context.get(SERVICE_METHOD_ID);
             return new ServerThreadLocalState(context, specification);
         }
     }

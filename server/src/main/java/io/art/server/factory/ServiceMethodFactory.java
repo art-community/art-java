@@ -23,6 +23,7 @@ public class ServiceMethodFactory {
                 .id(id)
                 .outputType(method.returnType())
                 .invoker(new MetaMethodInvoker(owner, method))
+                .inputDecorator(new ServiceStateDecorator(id))
                 .inputDecorator(new ServiceDeactivationDecorator(id))
                 .inputDecorator(new ServiceValidationDecorator(id))
                 .inputDecorator(new ServiceLoggingDecorator(id, INPUT))

@@ -78,6 +78,6 @@ public interface ServerModuleConstants {
     }
 
     interface StateKeys {
-        String SPECIFICATION_KEY = "specification";
+        String SERVICE_METHOD_ID = "serviceMethodId";
     }
 }

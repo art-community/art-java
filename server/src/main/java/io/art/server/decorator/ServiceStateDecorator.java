@@ -1,6 +1,6 @@
 package io.art.server.decorator;
 
-import io.art.server.method.*;
+import io.art.core.model.*;
 import io.art.server.state.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -15,7 +15,7 @@ import java.util.function.*;
 public class ServiceStateDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
     private static final ServerModuleState moduleState = serverModule().state();
-    private final ServiceMethod specification;
+    private final ServiceMethodIdentifier id;
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
@@ -27,6 +27,6 @@ public class ServiceStateDecorator implements UnaryOperator<Flux<Object>> {
     }
 
     private Context saveContext(Context context) {
-        return context.putNonNull(SPECIFICATION_KEY, specification);
+        return context.putNonNull(SERVICE_METHOD_ID, id);
     }
 }

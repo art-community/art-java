@@ -137,7 +137,7 @@ public class HttpRouter {
                 .map(writer::write)
                 .contextWrite(ctx -> setContext(ctx
                         .put(HttpContext.class, HttpContext.from(request, response))
-                        .put(SPECIFICATION_KEY, specification))
+                        .put(SERVICE_METHOD_ID, specification))
                 )
                 .doOnNext(unicast::tryEmitNext)
                 .doOnComplete(unicast::tryEmitComplete)
