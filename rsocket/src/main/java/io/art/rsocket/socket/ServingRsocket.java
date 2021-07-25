@@ -43,6 +43,7 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.rsocket.state.RsocketModuleState.RsocketThreadLocalState.*;
 import static io.art.server.module.ServerModule.*;
+import static io.art.transport.mime.MimeTypeDataFormatMapper.fromMimeType;
 import static io.art.value.constants.ValueModuleConstants.*;
 import static io.art.value.constants.ValueModuleConstants.Fields.*;
 import static io.art.value.immutable.Value.*;
@@ -61,11 +62,11 @@ public class ServingRsocket implements RSocket {
     private final RsocketSetupPayload setupPayload;
     private final ServiceMethod specification;
 
-    public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration serverConfiguration) {
+    public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketServerConfiguration rsocketConfiguration) {
         moduleState.registerRequester(this.requesterSocket = requesterSocket);
-        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), serverConfiguration.getDefaultDataFormat());
-        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), serverConfiguration.getDefaultMetaDataFormat());
-        Function<DataFormat, TransportPayloadReader> setupReader = serverModule().configuration().getReader();
+        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), rsocketConfiguration.getDefaultDataFormat());
+        DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), rsocketConfiguration.getDefaultMetaDataFormat());
+        Function<DataFormat, TransportPayloadReader> setupReader = rsocketConfiguration.getServerConfiguration().getReader();
         TransportPayload setupPayloadData = setupReader.apply(dataFormat).read(payload.sliceData());
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(dataFormat)
@@ -82,7 +83,7 @@ public class ServingRsocket implements RSocket {
                 return;
             }
         }
-        ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
+        ServiceMethodIdentifier defaultServiceMethod = rsocketConfiguration.getDefaultServiceMethod();
         if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.serviceMethod(defaultServiceMethod).build();
             specification = findSpecification(defaultServiceMethod);

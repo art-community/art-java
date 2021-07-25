@@ -23,6 +23,7 @@ import io.art.core.source.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.refresher.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
@@ -37,8 +38,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.ExceptionMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
-import static io.art.value.constants.ValueModuleConstants.*;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;

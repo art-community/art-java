@@ -19,12 +19,11 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.changes.*;
-import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.refresher.*;
-import io.art.value.constants.ValueModuleConstants.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.netty.http.server.*;
@@ -38,7 +37,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.DEFAULT;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
 
@@ -47,7 +46,6 @@ import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
 public class RsocketServerConfiguration {
     private TcpServer tcpServer;
     private HttpServer httpWebSocketServer;
-    private ImmutableMap<String, RsocketServiceConfiguration> services;
     private ServiceMethodIdentifier defaultServiceMethod;
     private int tcpMaxFrameLength;
     private boolean logging;
@@ -108,8 +106,6 @@ public class RsocketServerConfiguration {
                 configuration.httpWebSocketServer = HttpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
                 break;
         }
-
-        configuration.services = source.getNestedMap(SERVICES_KEY, service -> RsocketServiceConfiguration.from(configuration, service));
 
         return configuration;
     }
