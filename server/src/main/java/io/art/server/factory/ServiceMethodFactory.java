@@ -19,17 +19,18 @@ public class ServiceMethodFactory {
     }
 
     public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
+        boolean hasInput = isNotEmpty(method.parameters());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())
                 .invoker(new MetaMethodInvoker(owner, method))
                 .inputDecorator(new ServiceStateDecorator(id))
                 .inputDecorator(new ServiceDeactivationDecorator(id))
-                .inputDecorator(new ServiceValidationDecorator(id))
+                .inputDecorator(new ServiceValidationDecorator(id, hasInput))
                 .inputDecorator(new ServiceLoggingDecorator(id, INPUT))
-                .outputDecorator(new ServiceValidationDecorator(id))
+                .outputDecorator(new ServiceValidationDecorator(id, hasInput))
                 .outputDecorator(new ServiceLoggingDecorator(id, OUTPUT));
-        if (isNotEmpty(method.parameters())) {
+        if (hasInput) {
             return builder.inputType(immutableArrayOf(method.parameters().values()).get(0).type()).build();
         }
         return builder.build();

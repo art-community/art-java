@@ -23,12 +23,10 @@ import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
 import io.art.server.exception.*;
-import io.art.server.method.*;
 import io.art.server.refresher.*;
 import io.art.server.validation.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.core.property.LazyProperty.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.server.constants.ServerModuleConstants.ValidationErrorPatterns.*;
@@ -45,26 +43,18 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
     private final Property<Boolean> enabled;
     private final Property<Boolean> deactivated;
-    private final LazyProperty<Boolean> hasInput;
+    private final boolean hasInput;
 
-    public ServiceValidationDecorator(ServiceMethodIdentifier id) {
+    public ServiceValidationDecorator(ServiceMethodIdentifier id, boolean hasInput) {
         enabled = property(() -> configuration().isValidating(id)).listenConsumer(() -> consumer().validationConsumer());
         deactivated = property(() -> configuration().isDeactivated(id)).listenConsumer(() -> consumer().deactivationConsumer());
-        hasInput = lazy(() -> hasInput(id));
+        this.hasInput = hasInput;
     }
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
         if (disabled()) return input;
         return input.switchIfEmpty(error(NULL_EXCEPTION.fillInStackTrace())).doOnNext(this::validateReactiveData);
-    }
-
-    private boolean hasInput(ServiceMethodIdentifier serviceMethodId) {
-        return configuration()
-                .getRegistry()
-                .findMethodById(serviceMethodId)
-                .map(ServiceMethod::getInputType)
-                .isPresent();
     }
 
     private void validateReactiveData(Object data) {
@@ -75,7 +65,7 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     }
 
     private boolean disabled() {
-        return !enabled.get() || deactivated.get() || !hasInput.get();
+        return !enabled.get() || deactivated.get() || !hasInput;
     }
 
     private ServerModuleRefresher.Consumer consumer() {
