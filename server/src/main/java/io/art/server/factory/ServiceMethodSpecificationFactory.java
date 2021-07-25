@@ -12,7 +12,7 @@ public class ServiceMethodSpecificationFactory {
     public ServiceMethodSpecification forMethod(MetaClass<?> owner, MetaMethod<?> method) {
         ServiceMethodSpecification.ServiceMethodSpecificationBuilder builder = ServiceMethodSpecification.builder()
                 .outputType(method.returnType())
-                .method(new MetaMethodInvoker(owner, method));
+                .invoker(new MetaMethodInvoker(owner, method));
         if (isNotEmpty(method.parameters())) {
             return builder.inputType(immutableArrayOf(method.parameters().values()).get(0).type()).build();
         }

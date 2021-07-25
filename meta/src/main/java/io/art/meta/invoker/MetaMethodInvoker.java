@@ -3,6 +3,7 @@ package io.art.meta.invoker;
 
 import io.art.meta.model.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.singleton.SingletonsRegistry.*;
 import java.util.function.*;
 
@@ -27,9 +28,9 @@ public class MetaMethodInvoker {
             return;
         }
         Object singleton = singleton(owner.definition().type(), owner.creator().noPropertiesConstructor()::invokeCatched);
-        invokeWithoutParameters = () -> ((InstanceMetaMethod<Object, Object>) delegate).invokeCatched(singleton);
-        invokeOneParameter = argument -> ((InstanceMetaMethod<Object, Object>) delegate).invokeCatched(singleton, argument);
-        invokeWithParameters = arguments -> ((InstanceMetaMethod<Object, Object>) delegate).invokeCatched(singleton, arguments);
+        invokeWithoutParameters = () -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton));
+        invokeOneParameter = argument -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton), argument);
+        invokeWithParameters = arguments -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton), arguments);
     }
 
     public Object invoke() {

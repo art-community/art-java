@@ -41,22 +41,14 @@ import java.util.function.*;
 @ForGenerator
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethodSpecification {
-    private final MetaMethodInvoker method;
+    @Getter
+    private final MetaMethodInvoker invoker;
 
     @Getter
     private final MetaType<?> inputType;
 
     @Getter
     private final MetaType<?> outputType;
-
-    public String getServiceId() {
-        return method.getOwner().definition().type().getName();
-    }
-
-    public String getMethodId() {
-        return method.getDelegate().name();
-    }
-
 
     @Singular("inputDecorator")
     private final List<UnaryOperator<Flux<Object>>> inputDecorators;
@@ -94,21 +86,21 @@ public class ServiceMethodSpecification {
     private Function<Flux<Object>, Flux<Object>> emptyInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return empty -> {
-                method.invoke();
+                invoker.invoke();
                 return Flux.empty();
             };
         }
 
         if (outputType.internalKind() == MONO || outputType.internalKind() == FLUX) {
             return empty -> {
-                Object output = method.invoke();
+                Object output = invoker.invoke();
                 if (isNull(output)) return Flux.empty();
                 return from(asPublisher(output));
             };
         }
 
         return empty -> {
-            Object output = method.invoke();
+            Object output = invoker.invoke();
             if (isNull(output)) return Flux.empty();
             return just(output);
         };
@@ -148,14 +140,14 @@ public class ServiceMethodSpecification {
     private Function<Flux<Object>, Flux<Object>> fluxInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return input -> {
-                method.invoke(input);
+                invoker.invoke(input);
                 return Flux.empty();
             };
         }
 
         if (outputType.internalKind() == MONO) {
             return input -> {
-                Object output = method.invoke(input);
+                Object output = invoker.invoke(input);
                 if (isNull(output)) return Flux.empty();
                 return from(asMono(output));
             };
@@ -163,14 +155,14 @@ public class ServiceMethodSpecification {
 
         if (outputType.internalKind() == FLUX) {
             return input -> {
-                Object output = method.invoke(input);
+                Object output = invoker.invoke(input);
                 if (isNull(output)) return Flux.empty();
                 return asFlux(output);
             };
         }
 
         return input -> {
-            Object output = method.invoke(input);
+            Object output = invoker.invoke(input);
             if (isNull(output)) return Flux.empty();
             return just(output);
         };
@@ -221,7 +213,7 @@ public class ServiceMethodSpecification {
     }
 
     private void subscribeBlockingEmpty(Flux<Object> input) {
-        input.subscribe(method::invoke);
+        input.subscribe(invoker::invoke);
     }
 
 
@@ -238,24 +230,24 @@ public class ServiceMethodSpecification {
     }
 
     private void subscribeMonoEmpty(Flux<Object> input) {
-        input.subscribe(element -> method.invoke(Mono.just(element)));
+        input.subscribe(element -> invoker.invoke(Mono.just(element)));
     }
 
 
     private void emitBlockingOutput(Sinks.Many<Object> result, Object element) {
-        Object output = method.invoke(element);
+        Object output = invoker.invoke(element);
         if (isNull(output)) return;
         result.emitNext(output, FAIL_FAST);
     }
 
     private void emitFluxOutput(Sinks.Many<Object> result, Object element) {
-        Object output = method.invoke(element);
+        Object output = invoker.invoke(element);
         if (isNull(output)) return;
         asFlux(output).subscribe(resultElement -> result.emitNext(resultElement, FAIL_FAST));
     }
 
     private void emitMonoOutput(Sinks.One<Object> result, Object element) {
-        Object output = method.invoke(element);
+        Object output = invoker.invoke(element);
         if (isNull(output)) return;
         asMono(output).subscribe(resultElement -> result.emitValue(resultElement, FAIL_FAST));
     }
