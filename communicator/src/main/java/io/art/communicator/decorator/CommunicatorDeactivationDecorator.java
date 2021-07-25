@@ -26,7 +26,6 @@ import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.module.CommunicatorModule.*;
-import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
@@ -38,7 +37,7 @@ public class CommunicatorDeactivationDecorator implements UnaryOperator<Flux<Obj
     private final Property<Boolean> enabled;
 
     public CommunicatorDeactivationDecorator(CommunicatorAction action) {
-        CommunicatorActionIdentifier communicatorAction = communicatorAction(action.getCommunicatorId(), action.getActionId());
+        CommunicatorActionIdentifier communicatorAction = communicatorAction(action.getId(), action.getActionId());
         this.enabled = property(enabled(communicatorAction)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .deactivationConsumer());

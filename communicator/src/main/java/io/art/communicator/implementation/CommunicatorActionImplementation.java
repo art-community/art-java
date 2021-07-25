@@ -19,9 +19,8 @@
 package io.art.communicator.implementation;
 
 import io.art.core.managed.*;
-import io.art.value.immutable.Value;
 import reactor.core.publisher.*;
 
 public interface CommunicatorActionImplementation extends Managed {
-    Flux<Value> communicate(Flux<Value> input);
+    Flux<Object> communicate(Flux<Object> input);
 }

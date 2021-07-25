@@ -19,9 +19,8 @@
 package io.art.rsocket.model;
 
 import io.art.core.model.*;
-import io.art.value.builder.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.value.constants.ValueModuleConstants.*;
-import io.art.value.immutable.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Fields.*;

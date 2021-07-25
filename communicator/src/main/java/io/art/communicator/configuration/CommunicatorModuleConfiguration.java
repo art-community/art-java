@@ -25,8 +25,8 @@ import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
-import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import reactor.core.scheduler.*;
 import static io.art.communicator.constants.CommunicatorModuleConstants.ConfigurationKeys.*;
@@ -70,7 +70,7 @@ public class CommunicatorModuleConfiguration implements ModuleConfiguration {
     }
 
     public Scheduler getBlockingScheduler(String communicatorId, String actionId) {
-        return getActionConfiguration(communicatorAction(communicatorId, actionId))
+        return getActionConfiguration(communicatorActionId(communicatorId, actionId))
                 .map(CommunicatorActionConfiguration::getBlockingScheduler)
                 .orElseGet(() -> ofNullable(getConfigurations().get(communicatorId))
                         .map(CommunicatorProxyConfiguration::getBlockingScheduler)

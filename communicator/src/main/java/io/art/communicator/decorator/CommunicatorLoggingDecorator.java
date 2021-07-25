@@ -30,7 +30,6 @@ import static io.art.communicator.constants.CommunicatorModuleConstants.LoggingM
 import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static java.text.MessageFormat.*;
@@ -51,7 +50,7 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
     public CommunicatorLoggingDecorator(CommunicatorAction action, MethodDecoratorScope scope) {
         this.scope = scope;
         this.action = action;
-        CommunicatorActionIdentifier communicatorAction = communicatorAction(action.getCommunicatorId(), action.getActionId());
+        CommunicatorActionIdentifier communicatorAction = communicatorAction(action.getId(), action.getActionId());
         enabled = property(() -> configuration().isLogging(communicatorAction)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .loggingConsumer());
@@ -64,27 +63,27 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
 
     private void logSubscribe(CommunicatorAction action) {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_SUBSCRIBED_MESSAGE, action.getCommunicatorId(), action.getActionId()));
+        getLogger().info(format(COMMUNICATOR_SUBSCRIBED_MESSAGE, action.getId(), action.getActionId()));
     }
 
     private void logComplete(CommunicatorAction action) {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_COMPLETED_MESSAGE, action.getCommunicatorId(), action.getActionId()));
+        getLogger().info(format(COMMUNICATOR_COMPLETED_MESSAGE, action.getId(), action.getActionId()));
     }
 
     private void logInput(Object data, CommunicatorAction action) {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_INPUT_DATA, action.getCommunicatorId(), action.getActionId(), data));
+        getLogger().info(format(COMMUNICATOR_INPUT_DATA, action.getId(), action.getActionId(), data));
     }
 
     private void logOutput(Object data, CommunicatorAction action) {
         if (!enabled.get()) return;
-        getLogger().info(format(COMMUNICATOR_OUTPUT_DATA, action.getCommunicatorId(), action.getActionId(), data));
+        getLogger().info(format(COMMUNICATOR_OUTPUT_DATA, action.getId(), action.getActionId(), data));
     }
 
     private void logException(Throwable exception, CommunicatorAction action) {
         if (!enabled.get()) return;
-        getLogger().error(format(COMMUNICATOR_FAILED_MESSAGE, action.getCommunicatorId(), action.getActionId()), exception);
+        getLogger().error(format(COMMUNICATOR_FAILED_MESSAGE, action.getId(), action.getActionId()), exception);
     }
 
     @SuppressWarnings(CONSTANT_CONDITIONS)

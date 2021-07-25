@@ -38,7 +38,6 @@ import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.module.CommunicatorModule.*;
-import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.resilience.module.ResilienceModule.*;
@@ -54,7 +53,7 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
     private final CommunicatorActionIdentifier communicatorAction;
 
     public CommunicatorResilienceDecorator(CommunicatorAction action) {
-        communicatorAction = communicatorAction(action.getCommunicatorId(), action.getActionId());
+        communicatorAction = communicatorAction(action.getId(), action.getActionId());
         this.resilienceConfiguration = property(resilienceConfiguration(communicatorAction)).listenConsumer(() -> configuration()
                 .getConsumer()
                 .resilienceConsumer());

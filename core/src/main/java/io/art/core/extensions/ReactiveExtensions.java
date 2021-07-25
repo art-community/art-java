@@ -1,5 +1,8 @@
 package io.art.core.extensions;
 
+import io.art.core.reactive.BlockingFirstSubscriber;
+import io.art.core.reactive.BlockingLastSubscriber;
+import io.art.core.reactive.BlockingMonoSubscriber;
 import lombok.experimental.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
@@ -31,5 +34,23 @@ public class ReactiveExtensions {
 
     public <T> Flux<T> asFlux(Object object) {
         return cast(object);
+    }
+
+    public <T> T blockFirst(Flux<T> flux) {
+        BlockingFirstSubscriber<T> subscriber = new BlockingFirstSubscriber<>();
+        flux.subscribe(subscriber);
+        return subscriber.blockingGet();
+    }
+
+    public <T> T blockLast(Flux<T> flux) {
+        BlockingLastSubscriber<T> subscriber = new BlockingLastSubscriber<>();
+        flux.subscribe(subscriber);
+        return subscriber.blockingGet();
+    }
+
+    public <T> T blockLast(Mono<T> mono) {
+        BlockingMonoSubscriber<T> subscriber = new BlockingMonoSubscriber<>();
+        mono.subscribe(subscriber);
+        return subscriber.blockingGet();
     }
 }
