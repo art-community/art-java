@@ -32,8 +32,6 @@ public interface DeferredExecutor {
 
     void shutdown();
 
-    void clear();
-
     static DeferredExecutorImplementation.DeferredExecutorImplementationBuilder deferredExecutor() {
         return DeferredExecutorImplementation.builder();
     }

@@ -47,7 +47,7 @@ public class SchedulerTest {
         initialize(scheduler());
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(2)
     public void testSingleTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);

@@ -19,12 +19,14 @@
 package io.art.logging.manager;
 
 import io.art.core.extensions.*;
+import io.art.core.runnable.*;
 import io.art.logging.configuration.*;
 import io.art.logging.messaging.*;
 import io.art.logging.model.*;
 import io.art.logging.state.*;
 import io.art.logging.writer.*;
 import lombok.*;
+import static com.google.common.base.Throwables.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ListFactory.*;
@@ -60,7 +62,7 @@ public class LoggingManager {
     public void deactivate() {
         if (active.compareAndSet(true, false)) {
             consumer.interrupt();
-            ignoreException(consumer::join);
+            ignoreException((ExceptionRunnable) consumer::join, exception -> System.err.println(getStackTraceAsString(exception)));
             resources.forEach(StreamsExtensions::closeQuietly);
         }
     }

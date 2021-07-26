@@ -92,9 +92,4 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     public void shutdown() {
         getObserver().shutdown();
     }
-
-    @Override
-    public void clear() {
-        getObserver().clear();
-    }
 }
