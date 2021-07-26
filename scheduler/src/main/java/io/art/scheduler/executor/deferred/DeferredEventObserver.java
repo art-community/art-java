@@ -145,7 +145,8 @@ class DeferredEventObserver {
         Set<Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>>> events = setOf(pendingQueues.entrySet());
         for (Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>> entry : events) {
             Long trigger = entry.getKey();
-            if (event.getTrigger() > trigger && entry.getValue().isEmpty()) {
+            PriorityWaitingQueue<DeferredEvent<?>> queue = entry.getValue();
+            if (event.getTrigger() > trigger && nonNull(queue) && queue.isEmpty()) {
                 pendingQueues.remove(trigger);
             }
         }

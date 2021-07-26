@@ -37,6 +37,7 @@ public class PriorityWaitingQueue<T> {
             }
 
             queue.offer(element);
+            System.out.println("signal");
             available.signal();
             return true;
         } finally {
@@ -50,8 +51,10 @@ public class PriorityWaitingQueue<T> {
             lock.lockInterruptibly();
             T result;
             while (isNull(result = queue.poll()) && !terminated) {
+                System.out.println("await");
                 available.await();
             }
+            System.out.println("process");
             if (terminated) {
                 CollectionExtensions.erase(queue, eraser);
                 return null;
