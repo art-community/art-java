@@ -79,6 +79,7 @@ public class ServingRsocket implements RSocket {
             }
         }
 
+
         ServiceMethodIdentifier defaultServiceMethod = rsocketConfiguration.getDefaultServiceMethod();
         if (nonNull(defaultServiceMethod)) {
             setupPayload = setupPayloadBuilder.id(defaultServiceMethod).build();
