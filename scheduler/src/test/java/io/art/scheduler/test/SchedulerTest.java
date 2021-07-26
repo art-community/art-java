@@ -18,6 +18,7 @@
 
 package io.art.scheduler.test;
 
+import io.art.core.runnable.*;
 import io.art.scheduler.*;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.test.counter.*;
@@ -33,6 +34,7 @@ import static io.art.scheduler.module.SchedulerActivator.*;
 import static io.art.scheduler.test.comparator.DateTimeApproximateComparator.*;
 import static java.time.Duration.*;
 import static java.time.LocalDateTime.*;
+import static java.util.concurrent.TimeUnit.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.time.*;
 import java.util.*;
@@ -50,7 +52,7 @@ public class SchedulerTest {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         schedule(task);
-        ignoreException(water::await);
+        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
         assertTrue(task.completed());
     }
 
@@ -68,7 +70,7 @@ public class SchedulerTest {
                 new ScheduledTask(water)
         );
         tasks.forEach(Scheduling::schedule);
-        ignoreException(water::await);
+        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
@@ -78,7 +80,7 @@ public class SchedulerTest {
         ScheduledTask task = new ScheduledTask(water);
         LocalDateTime time = now().plusSeconds(1);
         schedule(time, task);
-        ignoreException(water::await);
+        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
         assertTrue(task.completed());
         assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
     }
@@ -101,7 +103,7 @@ public class SchedulerTest {
         counter.initialize(tasks);
         LocalDateTime time = now().plusSeconds(1);
         tasks.forEach(task -> executor.execute(task, time));
-        ignoreException(water::await);
+        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
         for (int index = 0; index < tasks.size(); index++) {
             OrderedScheduledTask task = tasks.get(index);
             assertTrue(task.completed());

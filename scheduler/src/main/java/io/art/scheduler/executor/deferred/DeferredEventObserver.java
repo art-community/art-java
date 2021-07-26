@@ -21,6 +21,7 @@ package io.art.scheduler.executor.deferred;
 import io.art.scheduler.exception.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.ThreadExtensions.*;
@@ -171,10 +172,9 @@ class DeferredEventObserver {
         }
         for (Long id : toRemove) {
             pendingQueues.remove(id);
-            Future<?> worker = activeWorkers.remove(id);
+            Future<?> worker = activeWorkers.get(id);
             if (waitingWorkers.contains(id)) {
                 worker.cancel(true);
-                waitingWorkers.remove(id);
             }
         }
     }
@@ -183,9 +183,12 @@ class DeferredEventObserver {
         PriorityBlockingQueue<DeferredEvent<?>> queue;
         try {
             while (executing.get() && nonNull(queue = pendingQueues.get(id))) {
-                waitingWorkers.add(id);
-                DeferredEvent<?> event = queue.take();
-                waitingWorkers.remove(id);
+                DeferredEvent<?> event = queue.poll();
+                if (isNull(event)) {
+                    waitingWorkers.add(id);
+                    event = queue.take();
+                    waitingWorkers.remove(id);
+                }
                 runTask(event);
             }
         } catch (InterruptedException | CancellationException interruptedException) {
@@ -194,6 +197,8 @@ class DeferredEventObserver {
             if (!executing.get() && nonNull(queue = pendingQueues.get(id))) {
                 erase(queue, this::runTask);
             }
+            waitingWorkers.remove(id);
+            activeWorkers.remove(id);
         }
     }
 
@@ -239,8 +244,9 @@ class DeferredEventObserver {
                 delayedObserver.join();
 
                 if (executing.compareAndSet(true, false)) {
+
                     for (Long id : waitingWorkers) {
-                        activeWorkers.get(id).cancel(true);
+                        apply(activeWorkers.get(id), worker -> worker.cancel(true));
                     }
 
                     pendingPool.shutdown();

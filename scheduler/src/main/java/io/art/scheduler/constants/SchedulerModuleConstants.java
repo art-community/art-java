@@ -39,8 +39,8 @@ public interface SchedulerModuleConstants {
     interface Defaults {
         int DEFAULT_PENDING_INITIAL_CAPACITY = 11;
         int DEFAULT_MAXIMUM_CAPACITY = MAX_VALUE;
-        int DEFAULT_SCHEDULER_POOL_SIZE = (int) max(ceil(DEFAULT_THREAD_POOL_SIZE * 0.25), 2);
-        Duration DEFAULT_TASK_EXECUTION_TIMEOUT = ofMinutes(1);
+        int DEFAULT_SCHEDULER_POOL_SIZE = 1;
+        Duration DEFAULT_TASK_EXECUTION_TIMEOUT = ofSeconds(30);
     }
 
     interface ConfigurationKeys {
