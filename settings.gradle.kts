@@ -53,6 +53,8 @@ pluginManagement {
     }
     plugins {
         val jmhVersion: String by settings
+        val internalPluginVersion: String by settings
         id("me.champeau.jmh") version jmhVersion
+        id("art-internal-jvm") version internalPluginVersion
     }
 }

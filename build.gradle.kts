@@ -21,7 +21,7 @@ import io.art.gradle.common.logger.info
 plugins {
     `java-library`
     `java-test-fixtures`
-    id("art-internal-jvm") version "main"
+    id("art-internal-jvm")
 }
 
 group = "io.art.java"
