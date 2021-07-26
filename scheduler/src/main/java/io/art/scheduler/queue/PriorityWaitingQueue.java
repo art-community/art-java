@@ -69,6 +69,7 @@ public class PriorityWaitingQueue<T> {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
+            if (terminated) return;
             terminated = true;
             available.signal();
         } finally {
@@ -79,6 +80,15 @@ public class PriorityWaitingQueue<T> {
     public void erase() {
         if (terminated) {
             CollectionExtensions.erase(queue, eraser);
+        }
+    }
+
+    public boolean isEmpty() {
+        lock.lock();
+        try {
+            return queue.isEmpty();
+        } finally {
+            lock.unlock();
         }
     }
 }

@@ -97,6 +97,7 @@ public class DelayWaitingQueue<T extends Delayed> {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
+            if (terminated) return;
             terminated = true;
             available.signal();
         } finally {

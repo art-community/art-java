@@ -21,11 +21,9 @@ package io.art.scheduler.executor.deferred;
 import io.art.scheduler.exception.*;
 import io.art.scheduler.queue.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
-import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
@@ -144,18 +142,12 @@ class DeferredEventObserver {
     }
 
     private <EventResultType> void erasePendingQueues(DeferredEvent<? extends EventResultType> event) {
-        List<Long> toRemove = linkedList();
         Set<Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>>> events = setOf(pendingQueues.entrySet());
         for (Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>> entry : events) {
             Long trigger = entry.getKey();
-            PriorityWaitingQueue<DeferredEvent<?>> pendingQueue = entry.getValue();
-            if (event.getTrigger() > trigger && isEmpty(pendingQueue)) {
-                toRemove.add(trigger);
+            if (event.getTrigger() > trigger && entry.getValue().isEmpty()) {
+                pendingQueues.remove(trigger);
             }
-        }
-
-        for (Long id : toRemove) {
-            pendingQueues.remove(id);
         }
     }
 
@@ -212,8 +204,14 @@ class DeferredEventObserver {
         if (accepting.compareAndSet(true, false)) {
             ExceptionHandler exceptionHandler = executor.getExceptionHandler();
             try {
+                delayedEvents.terminate();
                 delayedObserver.join();
                 if (executing.compareAndSet(true, false)) {
+
+                    for (PriorityWaitingQueue<DeferredEvent<?>> queue : pendingQueues.values()) {
+                        queue.terminate();
+                    }
+
                     pendingPool.shutdown();
                     fallbackPool.shutdown();
 
