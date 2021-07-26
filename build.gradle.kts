@@ -31,7 +31,9 @@ tasks.withType(type = Wrapper::class) {
 }
 
 generator {
-    fileLogging()
+    main {
+        fileLogging()
+    }
 }
 
 allprojects {
