@@ -100,19 +100,17 @@ class DeferredEventObserver {
         try {
             while (accepting.get()) {
                 DeferredEvent<?> event = delayedEvents.take();
-                erasePendingQueues(event);
+                if (isNull(event)) continue;
+                removeEmptyPendingQueues();
                 long id = event.getTrigger();
                 PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
                 if (isNull(queue)) {
                     queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
-                    System.out.println("offer 1");
                     queue.offer(event);
                     pendingQueues.put(id, queue);
                     pendingPool.submit(() -> observePending(id));
                     continue;
                 }
-
-                System.out.println("offer 2");
 
                 if (!queue.offer(event)) {
                     cast(forceExecuteEvent(event));
@@ -122,13 +120,13 @@ class DeferredEventObserver {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
         } finally {
             if (!accepting.get()) {
-                delayedEvents.terminate();
+                delayedEvents.erase();
             }
         }
     }
 
     private void finalizeDelayedEvent(DeferredEvent<?> event) {
-        erasePendingQueues(event);
+        removeEmptyPendingQueues();
         long id = event.getTrigger();
         PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
         if (isNull(queue)) {
@@ -144,19 +142,18 @@ class DeferredEventObserver {
         }
     }
 
-    private <EventResultType> void erasePendingQueues(DeferredEvent<? extends EventResultType> event) {
+    private void removeEmptyPendingQueues() {
         Set<Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>>> events = setOf(pendingQueues.entrySet());
         for (Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>> entry : events) {
             Long trigger = entry.getKey();
             PriorityWaitingQueue<DeferredEvent<?>> queue = entry.getValue();
-            if (event.getTrigger() > trigger && nonNull(queue) && queue.isEmpty()) {
+            if (nonNull(queue) && queue.isEmpty()) {
                 pendingQueues.remove(trigger).terminate();
             }
         }
     }
 
     private void observePending(Long id) {
-        System.out.println(Thread.currentThread().getName());
         PriorityWaitingQueue<DeferredEvent<?>> queue;
         try {
             while (executing.get() && nonNull(queue = pendingQueues.get(id))) {
@@ -166,7 +163,7 @@ class DeferredEventObserver {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } finally {
             if (!executing.get() && nonNull(queue = pendingQueues.get(id))) {
-                queue.terminate();
+                queue.erase();
             }
         }
     }

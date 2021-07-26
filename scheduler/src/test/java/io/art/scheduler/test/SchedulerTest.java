@@ -19,7 +19,6 @@
 package io.art.scheduler.test;
 
 import io.art.core.runnable.*;
-import io.art.scheduler.*;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
@@ -47,7 +46,7 @@ public class SchedulerTest {
         initialize(scheduler());
     }
 
-    @RepeatedTest(2)
+    @RepeatedTest(1000)
     public void testSingleTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
@@ -58,6 +57,7 @@ public class SchedulerTest {
 
     @RepeatedTest(1000)
     public void testMultipleTasks() {
+        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),
@@ -69,7 +69,7 @@ public class SchedulerTest {
                 new ScheduledTask(water),
                 new ScheduledTask(water)
         );
-        tasks.forEach(Scheduling::schedule);
+        tasks.forEach(task -> executor.execute(task, now()));
         ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
         tasks.forEach(task -> assertTrue(task.completed()));
     }
@@ -87,7 +87,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testMultipleDelayedTask() {
-        DeferredExecutor executor = deferredExecutor().build();
+        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         OrderCounter counter = new OrderCounter();
         List<OrderedScheduledTask> tasks = linkedListOf(
@@ -114,7 +114,7 @@ public class SchedulerTest {
 
     @RepeatedTest(5000)
     public void testShutdown() {
-        DeferredExecutor executor = deferredExecutor().build();
+        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),

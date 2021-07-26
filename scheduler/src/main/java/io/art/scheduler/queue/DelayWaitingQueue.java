@@ -51,7 +51,6 @@ public class DelayWaitingQueue<T extends Delayed> {
             lock.lockInterruptibly();
             for (; ; ) {
                 if (terminated) {
-                    CollectionExtensions.erase(queue, eraser);
                     return null;
                 }
 
@@ -100,6 +99,15 @@ public class DelayWaitingQueue<T extends Delayed> {
             if (terminated) return;
             terminated = true;
             available.signal();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void erase() {
+        lock.lock();
+        try {
+            CollectionExtensions.erase(queue, eraser);
         } finally {
             lock.unlock();
         }

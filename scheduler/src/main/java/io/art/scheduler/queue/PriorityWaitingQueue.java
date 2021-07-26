@@ -35,6 +35,7 @@ public class PriorityWaitingQueue<T> {
             if (queue.size() + 1 > maximumCapacity) {
                 return false;
             }
+
             queue.offer(element);
             available.signal();
             return true;
@@ -50,10 +51,6 @@ public class PriorityWaitingQueue<T> {
             T result;
             while (isNull(result = queue.poll()) && !terminated) {
                 available.await();
-            }
-            if (terminated) {
-                CollectionExtensions.erase(queue, eraser);
-                return null;
             }
             return result;
         } catch (InterruptedException interruptedException) {
@@ -77,8 +74,11 @@ public class PriorityWaitingQueue<T> {
     }
 
     public void erase() {
-        if (terminated) {
+        lock.lock();
+        try {
             CollectionExtensions.erase(queue, eraser);
+        } finally {
+            lock.unlock();
         }
     }
 
