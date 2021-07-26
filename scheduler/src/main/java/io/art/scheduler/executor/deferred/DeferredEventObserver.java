@@ -105,13 +105,16 @@ class DeferredEventObserver {
                 PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
                 if (isNull(queue)) {
                     queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
+                    System.out.println("offer 1");
                     queue.offer(event);
                     pendingQueues.put(id, queue);
                     pendingPool.submit(() -> observePending(id));
                     continue;
                 }
 
-                if (queue.offer(event)) {
+                System.out.println("offer 2");
+
+                if (!queue.offer(event)) {
                     cast(forceExecuteEvent(event));
                 }
             }
@@ -147,12 +150,13 @@ class DeferredEventObserver {
             Long trigger = entry.getKey();
             PriorityWaitingQueue<DeferredEvent<?>> queue = entry.getValue();
             if (event.getTrigger() > trigger && nonNull(queue) && queue.isEmpty()) {
-                pendingQueues.remove(trigger);
+                pendingQueues.remove(trigger).terminate();
             }
         }
     }
 
     private void observePending(Long id) {
+        System.out.println(Thread.currentThread().getName());
         PriorityWaitingQueue<DeferredEvent<?>> queue;
         try {
             while (executing.get() && nonNull(queue = pendingQueues.get(id))) {
