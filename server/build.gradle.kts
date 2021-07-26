@@ -30,10 +30,12 @@ dependencies {
 }
 
 generator {
-    module("ServerTest", "io.art.server.test")
-    jvm()
-    sourcesPattern {
-        include("src/test/**")
+    source {
+        module("ServerTest", "io.art.server.test")
+        jvm()
+        sourcesPattern {
+            include("src/test/**")
+        }
+        includeClasses("*Service.java")
     }
-    includeClasses("*Service.java")
 }

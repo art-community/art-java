@@ -30,9 +30,11 @@ dependencies {
 }
 
 generator {
-    module("MetaTest", "io.art.meta.test")
-    jvm()
-    sourcesPattern {
-        include("src/testFixtures/**")
+    source {
+        module("MetaTest", "io.art.meta.test")
+        jvm()
+        sourcesPattern {
+            include("src/testFixtures/**")
+        }
     }
 }
