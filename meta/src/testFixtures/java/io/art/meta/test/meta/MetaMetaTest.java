@@ -63,9 +63,9 @@ public class MetaMetaTest extends MetaLibrary {
 
           private final MetaTestingMetaConfigurationClass testingMetaConfigurationClass = register(new MetaTestingMetaConfigurationClass());
 
-          private final MetaTestingMetaModelClass testingMetaModelClass = register(new MetaTestingMetaModelClass());
-
           private final MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass = register(new MetaTestingMetaModelGeneratorClass());
+
+          private final MetaTestingMetaModelClass testingMetaModelClass = register(new MetaTestingMetaModelClass());
 
           private MetaTestPackage() {
             super("test");
@@ -80,12 +80,12 @@ public class MetaMetaTest extends MetaLibrary {
             return testingMetaConfigurationClass;
           }
 
-          public MetaTestingMetaModelClass testingMetaModelClass() {
-            return testingMetaModelClass;
-          }
-
           public MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass() {
             return testingMetaModelGeneratorClass;
+          }
+
+          public MetaTestingMetaModelClass testingMetaModelClass() {
+            return testingMetaModelClass;
           }
 
           public static final class MetaTestingMetaConfigurationGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaConfigurationGenerator> {
@@ -4933,6 +4933,34 @@ public class MetaMetaTest extends MetaLibrary {
                     throws Throwable {
                   return instance.build();
                 }
+              }
+            }
+          }
+
+          public static final class MetaTestingMetaModelGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaModelGenerator> {
+            private final MetaGenerateTestingModelMethod generateTestingModelMethod = register(new MetaGenerateTestingModelMethod());
+
+            private MetaTestingMetaModelGeneratorClass() {
+              super(metaType(io.art.meta.test.TestingMetaModelGenerator.class));
+            }
+
+            public MetaGenerateTestingModelMethod generateTestingModelMethod() {
+              return generateTestingModelMethod;
+            }
+
+            public static final class MetaGenerateTestingModelMethod extends StaticMetaMethod<io.art.meta.test.TestingMetaModel> {
+              private MetaGenerateTestingModelMethod() {
+                super("generateTestingModel",metaType(io.art.meta.test.TestingMetaModel.class));
+              }
+
+              @Override
+              public Object invoke(Object[] arguments) throws Throwable {
+                return io.art.meta.test.TestingMetaModelGenerator.generateTestingModel();
+              }
+
+              @Override
+              public Object invoke() throws Throwable {
+                return io.art.meta.test.TestingMetaModelGenerator.generateTestingModel();
               }
             }
           }
@@ -9979,34 +10007,6 @@ public class MetaMetaTest extends MetaLibrary {
                     Throwable {
                   return instance.build();
                 }
-              }
-            }
-          }
-
-          public static final class MetaTestingMetaModelGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaModelGenerator> {
-            private final MetaGenerateTestingModelMethod generateTestingModelMethod = register(new MetaGenerateTestingModelMethod());
-
-            private MetaTestingMetaModelGeneratorClass() {
-              super(metaType(io.art.meta.test.TestingMetaModelGenerator.class));
-            }
-
-            public MetaGenerateTestingModelMethod generateTestingModelMethod() {
-              return generateTestingModelMethod;
-            }
-
-            public static final class MetaGenerateTestingModelMethod extends StaticMetaMethod<io.art.meta.test.TestingMetaModel> {
-              private MetaGenerateTestingModelMethod() {
-                super("generateTestingModel",metaType(io.art.meta.test.TestingMetaModel.class));
-              }
-
-              @Override
-              public Object invoke(Object[] arguments) throws Throwable {
-                return io.art.meta.test.TestingMetaModelGenerator.generateTestingModel();
-              }
-
-              @Override
-              public Object invoke() throws Throwable {
-                return io.art.meta.test.TestingMetaModelGenerator.generateTestingModel();
               }
             }
           }
