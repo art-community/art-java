@@ -18,9 +18,11 @@
 
 package io.art.scheduler.executor.deferred;
 
+import io.art.core.checker.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import static com.google.common.base.Throwables.*;
+import static io.art.core.checker.ModuleChecker.withLogging;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
@@ -32,6 +34,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onException(Thread thread, Errors.ExceptionEvent event, Throwable throwable) {
+        if (!withLogging()) return;
         String message = format(EXCEPTION_OCCURRED_DURING, event.getMessage(), thread.getName(), getStackTraceAsString(throwable));
         getLogger().error(message);
     }
