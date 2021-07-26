@@ -90,10 +90,10 @@ public class MetaTypeKindComputer {
             case ENUM:
             case LOCAL_DATE_TIME:
             case ZONED_DATE_TIME:
+            case DURATION:
                 return MetaTypeExternalKind.STRING;
             case LONG:
             case DATE:
-            case DURATION:
                 return MetaTypeExternalKind.LONG;
             case DOUBLE:
                 return MetaTypeExternalKind.DOUBLE;

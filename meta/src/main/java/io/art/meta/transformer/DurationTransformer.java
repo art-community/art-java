@@ -18,6 +18,7 @@
 
 package io.art.meta.transformer;
 
+import io.art.core.format.*;
 import io.art.core.parser.*;
 import lombok.*;
 import static java.lang.Math.*;
@@ -28,7 +29,7 @@ import java.time.*;
 public class DurationTransformer implements MetaTransformer<Duration> {
     @Override
     public String toString(Duration value) {
-        return value.toString();
+        return DurationFormatter.format(value);
     }
 
     @Override
