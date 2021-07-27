@@ -76,77 +76,6 @@ public class TransformersComputer {
         if (nonNull(type.inputTransformer())) return type.inputTransformer();
         ImmutableArray<MetaType<?>> parameters = type.parameters();
         switch (type.internalKind()) {
-            case ENTITY:
-            case VOID:
-                return DEFAULT_TRANSFORMER;
-            case STRING:
-                return STRING_TRANSFORMER;
-            case LONG:
-                return LONG_TRANSFORMER;
-            case DOUBLE:
-                return DOUBLE_TRANSFORMER;
-            case SHORT:
-                return SHORT_TRANSFORMER;
-            case FLOAT:
-                return FLOAT_TRANSFORMER;
-            case INTEGER:
-                return INTEGER_TRANSFORMER;
-            case BYTE:
-                return BYTE_TRANSFORMER;
-            case CHARACTER:
-                return CHARACTER_TRANSFORMER;
-            case BOOLEAN:
-                return BOOLEAN_TRANSFORMER;
-            case DATE:
-                return DATE_TRANSFORMER;
-            case LOCAL_DATE_TIME:
-                return LOCAL_DATE_TIME_TRANSFORMER;
-            case ZONED_DATE_TIME:
-                return ZONED_DATE_TIME_TRANSFORMER;
-            case DURATION:
-                return DURATION_TRANSFORMER;
-            case ARRAY:
-                return arrayTransformer(cast(type.arrayFactory()));
-            case LONG_ARRAY:
-                return LONG_ARRAY_TRANSFORMER;
-            case DOUBLE_ARRAY:
-                return DOUBLE_ARRAY_TRANSFORMER;
-            case FLOAT_ARRAY:
-                return FLOAT_ARRAY_TRANSFORMER;
-            case INTEGER_ARRAY:
-                return INTEGER_ARRAY_TRANSFORMER;
-            case BOOLEAN_ARRAY:
-                return BOOLEAN_ARRAY_TRANSFORMER;
-            case CHARACTER_ARRAY:
-                return CHARACTER_ARRAY_TRANSFORMER;
-            case SHORT_ARRAY:
-                return SHORT_ARRAY_TRANSFORMER;
-            case BYTE_ARRAY:
-                return BYTE_ARRAY_TRANSFORMER;
-            case COLLECTION:
-                return COLLECTION_TRANSFORMER;
-            case IMMUTABLE_COLLECTION:
-                return IMMUTABLE_COLLECTION_TRANSFORMER;
-            case LIST:
-                return LIST_TRANSFORMER;
-            case IMMUTABLE_ARRAY:
-                return IMMUTABLE_ARRAY_TRANSFORMER;
-            case SET:
-                return SET_TRANSFORMER;
-            case IMMUTABLE_SET:
-                return IMMUTABLE_SET_TRANSFORMER;
-            case QUEUE:
-                return QUEUE_TRANSFORMER;
-            case DEQUEUE:
-                return DEQUEUE_TRANSFORMER;
-            case STREAM:
-                return STREAM_TRANSFORMER;
-            case MAP:
-                return MAP_TRANSFORMER;
-            case IMMUTABLE_MAP:
-                return IMMUTABLE_MAP_TRANSFORMER;
-            case FLUX:
-                return FLUX_TRANSFORMER;
             case MONO:
                 MetaTransformer<?> parameterTransformer = computeInputTransformer(parameters.get(0));
                 return monoTransformer(parameterTransformer);
@@ -159,23 +88,33 @@ public class TransformersComputer {
             case SUPPLIER:
                 parameterTransformer = computeInputTransformer(parameters.get(0));
                 return supplierTransformer(parameterTransformer);
-            case ENUM:
-                return enumTransformer(cast(type.enumFactory()));
-            case INPUT_STREAM:
-                return INPUT_STREAM_TRANSFORMER;
-            case OUTPUT_STREAM:
-                return OUTPUT_STREAM_TRANSFORMER;
-            case NIO_BUFFER:
-                return NIO_BUFFER_TRANSFORMER;
-            case NETTY_BUFFER:
-                return NETTY_BUFFER_TRANSFORMER;
+            default:
+                return computeSimpleTransformer(type);
         }
-        throw new ImpossibleSituationException();
     }
 
     public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
         if (nonNull(type.outputTransformer())) return type.outputTransformer();
         ImmutableArray<MetaType<?>> parameters = type.parameters();
+        switch(type.internalKind()) {
+            case MONO:
+                MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
+                return monoTransformer(parameterTransformer);
+            case LAZY:
+                parameterTransformer = computeOutputTransformer(parameters.get(0));
+                return lazyTransformer(parameterTransformer);
+            case OPTIONAL:
+                parameterTransformer = computeOutputTransformer(parameters.get(0));
+                return optionalTransformer(parameterTransformer);
+            case SUPPLIER:
+                parameterTransformer = computeOutputTransformer(parameters.get(0));
+                return supplierTransformer(parameterTransformer);
+            default:
+                return computeSimpleTransformer(type);
+        }
+    }
+
+    private MetaTransformer<?> computeSimpleTransformer(MetaType<?> type) {
         switch (type.internalKind()) {
             case ENTITY:
             case VOID:
@@ -248,18 +187,6 @@ public class TransformersComputer {
                 return IMMUTABLE_MAP_TRANSFORMER;
             case FLUX:
                 return FLUX_TRANSFORMER;
-            case MONO:
-                MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return monoTransformer(parameterTransformer);
-            case LAZY:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return lazyTransformer(parameterTransformer);
-            case OPTIONAL:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return optionalTransformer(parameterTransformer);
-            case SUPPLIER:
-                parameterTransformer = computeOutputTransformer(parameters.get(0));
-                return supplierTransformer(parameterTransformer);
             case ENUM:
                 return enumTransformer(cast(type.enumFactory()));
             case INPUT_STREAM:
