@@ -1,13 +1,13 @@
 package io.art.communicator.test.proxy;
 
-import io.art.communicator.implementation.*;
+import io.art.communicator.*;
 import io.art.core.model.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 
-public class TestCommunicatorImplementation implements CommunicatorActionImplementation {
+public class TestCommunication implements Communication {
     private CommunicatorActionIdentifier id;
 
     @Override

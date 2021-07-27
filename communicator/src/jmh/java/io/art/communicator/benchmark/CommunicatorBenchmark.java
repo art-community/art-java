@@ -50,7 +50,7 @@ public class CommunicatorBenchmark {
             initialize(meta(MetaCommunicatorTest::new));
             meta = library();
             communicatorClass = cast(meta.classes().get(TestCommunicator.class));
-            communicator = communicatorProxy(communicatorClass, method -> communicatorAction(communicatorClass, method, new BenchmarkCommunicatorImplementation()));
+            communicator = communicatorProxy(communicatorClass, method -> communicatorAction(communicatorClass, method, new BenchmarkCommunication()));
         }
     }
 

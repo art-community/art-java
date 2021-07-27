@@ -18,51 +18,17 @@
 
 package io.art.rsocket.communicator;
 
-import io.art.communicator.action.*;
-import io.art.communicator.configuration.*;
-import io.art.communicator.implementation.*;
-import io.art.core.exception.*;
+import io.art.communicator.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.logging.logger.*;
-import io.art.rsocket.configuration.*;
-import io.art.rsocket.interceptor.*;
-import io.art.rsocket.model.*;
-import io.art.rsocket.refresher.*;
-import io.art.transport.payload.*;
-import io.rsocket.*;
-import io.rsocket.core.*;
-import io.rsocket.frame.decoder.*;
-import io.rsocket.plugins.*;
-import io.rsocket.transport.netty.client.*;
-import io.rsocket.util.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.netty.http.client.*;
-import reactor.netty.tcp.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
-import static io.art.core.constants.MethodProcessingMode.*;
-import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
-import static io.art.rsocket.manager.RsocketManager.*;
-import static io.art.rsocket.module.RsocketModule.*;
-import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.toMimeType;
-import static io.rsocket.core.RSocketClient.*;
-import static io.rsocket.util.ByteBufPayload.*;
-import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import java.util.function.*;
 
 @Builder(toBuilder = true)
-public class RsocketCommunicatorAction implements CommunicatorActionImplementation {
+public class RsocketCommunicatorAction implements Communication {
     private final CommunicatorActionIdentifier communicatorActionId;
 
     @Getter(lazy = true, value = PRIVATE)

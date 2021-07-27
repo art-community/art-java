@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.communicator.implementation;
+package io.art.communicator;
 
 import io.art.core.model.*;
 import reactor.core.publisher.*;
 
-public interface CommunicatorActionImplementation {
+public interface Communication {
     default void initialize(CommunicatorActionIdentifier id) {
 
     }

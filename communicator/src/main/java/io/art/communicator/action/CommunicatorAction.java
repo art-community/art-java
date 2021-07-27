@@ -18,8 +18,8 @@
 
 package io.art.communicator.action;
 
+import io.art.communicator.*;
 import io.art.communicator.exception.*;
-import io.art.communicator.implementation.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
@@ -55,7 +55,7 @@ public class CommunicatorAction implements Managed {
     private final List<UnaryOperator<Flux<Object>>> outputDecorators;
 
     @Getter
-    private final CommunicatorActionImplementation implementation;
+    private final Communication communication;
 
     @Getter(lazy = true, value = PRIVATE)
     private final Supplier<Object> producer = selectProducer();
@@ -65,12 +65,12 @@ public class CommunicatorAction implements Managed {
 
     @Override
     public void initialize() {
-        implementation.initialize(id);
+        communication.initialize(id);
     }
 
     @Override
     public void dispose() {
-        implementation.dispose();
+        communication.dispose();
     }
 
     public <T> T communicate() {
@@ -251,7 +251,7 @@ public class CommunicatorAction implements Managed {
     }
 
     private Flux<Object> process(Flux<Object> input) {
-        return decorateOutput(implementation.communicate(decorateInput(input)));
+        return decorateOutput(communication.communicate(decorateInput(input)));
     }
 
     private Flux<Object> decorateInput(Flux<Object> input) {

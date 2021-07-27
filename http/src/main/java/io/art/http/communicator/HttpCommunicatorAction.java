@@ -18,8 +18,8 @@
 
 package io.art.http.communicator;
 
+import io.art.communicator.*;
 import io.art.communicator.action.*;
-import io.art.communicator.implementation.*;
 import io.art.core.exception.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
@@ -46,7 +46,7 @@ import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @Builder(toBuilder = true)
-public class HttpCommunicatorAction implements CommunicatorActionImplementation {
+public class HttpCommunicatorAction implements Communication {
     private final CommunicatorActionIdentifier communicatorActionId;
 
     @Getter(lazy = true, value = PRIVATE)
