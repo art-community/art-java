@@ -23,8 +23,6 @@ import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.MethodOrderer.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -40,14 +38,13 @@ import java.time.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-@TestMethodOrder(OrderAnnotation.class)
 public class SchedulerTest {
     @BeforeAll
     public static void setup() {
         initialize(scheduler());
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(10)
     public void testCommonSingleTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
@@ -56,7 +53,7 @@ public class SchedulerTest {
         assertTrue(task.completed());
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(10)
     public void testOneThreadSingleTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -66,7 +63,7 @@ public class SchedulerTest {
         assertTrue(task.completed());
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(10)
     public void testTenThreadsSingleTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -77,7 +74,7 @@ public class SchedulerTest {
     }
 
 
-    @RepeatedTest(1000)
+    @RepeatedTest(10)
     public void testCommonMultipleTasks() {
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
@@ -95,7 +92,7 @@ public class SchedulerTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(10)
     public void testOneThreadMultipleTasks() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
@@ -114,7 +111,7 @@ public class SchedulerTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @RepeatedTest(1000)
+    @RepeatedTest(10)
     public void testTenThreadsMultipleTasks() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
@@ -255,7 +252,7 @@ public class SchedulerTest {
     }
 
 
-    @RepeatedTest(5000)
+    @RepeatedTest(100)
     public void testOneThreadShutdown() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -267,7 +264,7 @@ public class SchedulerTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @RepeatedTest(5000)
+    @RepeatedTest(100)
     public void testTenThreadsShutdown() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
@@ -310,8 +307,7 @@ public class SchedulerTest {
     }
 
 
-    @SuppressWarnings(RESULT_IGNORED)
     private void await(CountDownLatch water) throws InterruptedException {
-        water.await(30, SECONDS);
+        assertTrue(water.await(30, SECONDS));
     }
 }
