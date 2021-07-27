@@ -2,6 +2,7 @@ package io.art.scheduler.queue;
 
 import io.art.core.extensions.*;
 import lombok.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.factory.QueueFactory.*;
 import static java.lang.Thread.*;
 import static java.util.Objects.*;
@@ -45,6 +46,7 @@ public class DelayWaitingQueue<T extends Delayed> {
         }
     }
 
+    @SuppressWarnings(RESULT_IGNORED)
     public T take() {
         final ReentrantLock lock = this.lock;
         try {

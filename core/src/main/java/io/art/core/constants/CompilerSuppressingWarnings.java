@@ -12,4 +12,5 @@ public interface CompilerSuppressingWarnings {
     String UNSTABLE_API_USAGE = "UnstableApiUsage";
     String CONSTANT_CONDITIONS = "ConstantConditions";
     String UNUSED = "unused";
+    String RESULT_IGNORED = "ResultOfMethodCallIgnored";
 }

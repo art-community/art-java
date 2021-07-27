@@ -18,12 +18,13 @@
 
 package io.art.scheduler.test;
 
-import io.art.core.runnable.*;
+import io.art.scheduler.*;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.MethodOrderer.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -47,16 +48,55 @@ public class SchedulerTest {
     }
 
     @RepeatedTest(1000)
-    public void testSingleTask() {
+    public void testCommonSingleTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         schedule(task);
-        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
         assertTrue(task.completed());
     }
 
     @RepeatedTest(1000)
-    public void testMultipleTasks() {
+    public void testOneThreadSingleTask() {
+        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        CountDownLatch water = new CountDownLatch(1);
+        ScheduledTask task = new ScheduledTask(water);
+        executor.execute(task, now());
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        assertTrue(task.completed());
+    }
+
+    @RepeatedTest(1000)
+    public void testTenThreadsSingleTask() {
+        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        CountDownLatch water = new CountDownLatch(1);
+        ScheduledTask task = new ScheduledTask(water);
+        executor.execute(task, now());
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        assertTrue(task.completed());
+    }
+
+
+    @RepeatedTest(1000)
+    public void testCommonMultipleTasks() {
+        CountDownLatch water = new CountDownLatch(8);
+        List<ScheduledTask> tasks = linkedListOf(
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water)
+        );
+        tasks.forEach(Scheduling::schedule);
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        tasks.forEach(task -> assertTrue(task.completed()));
+    }
+
+    @RepeatedTest(1000)
+    public void testOneThreadMultipleTasks() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
@@ -70,23 +110,94 @@ public class SchedulerTest {
                 new ScheduledTask(water)
         );
         tasks.forEach(task -> executor.execute(task, now()));
-        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
+    @RepeatedTest(1000)
+    public void testTenThreadsMultipleTasks() {
+        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        CountDownLatch water = new CountDownLatch(8);
+        List<ScheduledTask> tasks = linkedListOf(
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water)
+        );
+        tasks.forEach(task -> executor.execute(task, now()));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        tasks.forEach(task -> assertTrue(task.completed()));
+    }
+
+
     @RepeatedTest(10)
-    public void testSingleDelayedTask() {
+    public void testCommonSingleDelayedTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         LocalDateTime time = now().plusSeconds(1);
         schedule(time, task);
-        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
         assertTrue(task.completed());
         assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
     }
 
     @RepeatedTest(10)
-    public void testMultipleDelayedTask() {
+    public void testOneThreadSingleDelayedTask() {
+        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        CountDownLatch water = new CountDownLatch(1);
+        ScheduledTask task = new ScheduledTask(water);
+        LocalDateTime time = now().plusSeconds(1);
+        executor.execute(task, time);
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        assertTrue(task.completed());
+        assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
+    }
+
+    @RepeatedTest(10)
+    public void testTenThreadsSingleDelayedTask() {
+        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        CountDownLatch water = new CountDownLatch(1);
+        ScheduledTask task = new ScheduledTask(water);
+        LocalDateTime time = now().plusSeconds(1);
+        executor.execute(task, time);
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        assertTrue(task.completed());
+        assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
+    }
+
+
+    @RepeatedTest(10)
+    public void testCommonMultipleDelayedTask() {
+        CountDownLatch water = new CountDownLatch(8);
+        OrderCounter counter = new OrderCounter();
+        List<OrderedScheduledTask> tasks = linkedListOf(
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter)
+        );
+        counter.initialize(tasks);
+        LocalDateTime time = now().plusSeconds(1);
+        tasks.forEach(task -> schedule(time, task));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        for (int index = 0; index < tasks.size(); index++) {
+            OrderedScheduledTask task = tasks.get(index);
+            assertTrue(task.completed());
+            assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
+            assertEquals(index, counter.getOrders().get(task));
+        }
+    }
+
+    @RepeatedTest(10)
+    public void testOneThreadMultipleDelayedTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         OrderCounter counter = new OrderCounter();
@@ -103,7 +214,7 @@ public class SchedulerTest {
         counter.initialize(tasks);
         LocalDateTime time = now().plusSeconds(1);
         tasks.forEach(task -> executor.execute(task, time));
-        ignoreException((ExceptionRunnable) () -> water.await(30, SECONDS), exception -> System.err.println(exception.getMessage()));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
         for (int index = 0; index < tasks.size(); index++) {
             OrderedScheduledTask task = tasks.get(index);
             assertTrue(task.completed());
@@ -112,9 +223,53 @@ public class SchedulerTest {
         }
     }
 
+    @RepeatedTest(10)
+    public void testTenThreadsMultipleDelayedTask() {
+        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        CountDownLatch water = new CountDownLatch(12);
+        OrderCounter counter = new OrderCounter();
+        List<OrderedScheduledTask> tasks = linkedListOf(
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter),
+                new OrderedScheduledTask(water, counter)
+        );
+        counter.initialize(tasks);
+        LocalDateTime time = now().plusSeconds(1);
+        tasks.forEach(task -> executor.execute(task, time));
+        ignoreException(() -> await(water), exception -> System.err.println(exception.getMessage()));
+        for (int index = 0; index < tasks.size(); index++) {
+            OrderedScheduledTask task = tasks.get(index);
+            assertTrue(task.completed());
+            assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
+            assertEquals(index, counter.getOrders().get(task));
+        }
+    }
+
+
     @RepeatedTest(5000)
-    public void testShutdown() {
+    public void testOneThreadShutdown() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        CountDownLatch water = new CountDownLatch(1);
+        List<ScheduledTask> tasks = linkedListOf(
+                new ScheduledTask(water)
+        );
+        tasks.forEach(task -> executor.execute(task, now()));
+        executor.shutdown();
+        tasks.forEach(task -> assertTrue(task.completed()));
+    }
+
+    @RepeatedTest(5000)
+    public void testTenThreadsShutdown() {
+        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),
@@ -126,8 +281,37 @@ public class SchedulerTest {
                 new ScheduledTask(water),
                 new ScheduledTask(water)
         );
-        tasks.forEach(task -> executor.execute(task, now()));
+        DeferredExecutor firstExecutor = executor;
+        tasks.forEach(task -> firstExecutor.execute(task, now()));
         executor.shutdown();
         tasks.forEach(task -> assertTrue(task.completed()));
+
+        executor = deferredExecutor().poolSize(10).build();
+        water = new CountDownLatch(12);
+        tasks = linkedListOf(
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water),
+                new ScheduledTask(water)
+        );
+        DeferredExecutor secondExecutor = executor;
+        tasks.forEach(task -> secondExecutor.execute(task, now()));
+        executor.shutdown();
+        tasks.forEach(task -> assertTrue(task.completed()));
+
+    }
+
+
+    @SuppressWarnings(RESULT_IGNORED)
+    private void await(CountDownLatch water) throws InterruptedException {
+        water.await(30, SECONDS);
     }
 }

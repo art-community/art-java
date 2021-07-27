@@ -66,7 +66,7 @@ class DeferredEventObserver {
                 + threadCounter.incrementAndGet(), runnable
         );
         pendingPool = createThreadPool(threadFactory);
-        delayedEvents = new DelayWaitingQueue<>(executor.getDelayedQueueMaximumCapacity(), this::finalizeDelayedEvent);
+        delayedEvents = new DelayWaitingQueue<>(executor.getDelayedQueueMaximumCapacity(), this::offerPendingEvent);
         pendingQueues = concurrentMap(executor.getPendingInitialCapacity());
         fallbackPool = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
@@ -102,25 +102,7 @@ class DeferredEventObserver {
             while (accepting.get()) {
                 DeferredEvent<?> event = delayedEvents.take();
                 if (isNull(event)) continue;
-                long id = event.getTrigger();
-                pendingLock.lock();
-
-                try {
-                    PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
-                    if (isNull(queue)) {
-                        queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
-                        queue.offer(event);
-                        pendingQueues.put(id, queue);
-                        pendingPool.submit(() -> observePending(id));
-                        continue;
-                    }
-
-                    if (!queue.offer(event)) {
-                        cast(forceExecuteEvent(event));
-                    }
-                } finally {
-                    pendingLock.unlock();
-                }
+                offerPendingEvent(event);
             }
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_OBSERVING, throwable);
@@ -131,7 +113,7 @@ class DeferredEventObserver {
         }
     }
 
-    private void finalizeDelayedEvent(DeferredEvent<?> event) {
+    private void offerPendingEvent(DeferredEvent<?> event) {
         long id = event.getTrigger();
         pendingLock.lock();
         try {
@@ -143,7 +125,6 @@ class DeferredEventObserver {
                 pendingPool.submit(() -> observePending(id));
                 return;
             }
-
             if (!queue.offer(event)) {
                 cast(forceExecuteEvent(event));
             }
@@ -177,16 +158,20 @@ class DeferredEventObserver {
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
         } finally {
-            pendingLock.lock();
-            try {
-                PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(event.getTrigger());
-                if (nonNull(queue) && queue.isEmpty()) {
-                    pendingQueues.remove(event.getTrigger());
-                    queue.terminate();
-                }
-            } finally {
-                pendingLock.unlock();
+            removePendingQueue(event);
+        }
+    }
+
+    private void removePendingQueue(DeferredEvent<?> event) {
+        pendingLock.lock();
+        try {
+            PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(event.getTrigger());
+            if (nonNull(queue) && queue.isEmpty()) {
+                pendingQueues.remove(event.getTrigger());
+                queue.terminate();
             }
+        } finally {
+            pendingLock.unlock();
         }
     }
 
