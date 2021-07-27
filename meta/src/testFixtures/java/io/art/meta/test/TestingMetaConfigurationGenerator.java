@@ -2,6 +2,7 @@ package io.art.meta.test;
 
 import lombok.experimental.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.DateTimeConstants.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -12,6 +13,7 @@ import java.time.*;
 import java.util.*;
 
 @UtilityClass
+@SuppressWarnings(UNCHECKED)
 public class TestingMetaConfigurationGenerator {
     public static TestingMetaConfiguration generateTestingConfiguration() {
         TestingMetaConfiguration model = TestingMetaConfiguration.builder()
