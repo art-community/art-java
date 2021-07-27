@@ -41,12 +41,10 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
     private final Property<Boolean> enabled;
     private final Property<Boolean> deactivated;
-    private final boolean validatableInput;
 
-    public ServiceValidationDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration, boolean validatableInput) {
+    public ServiceValidationDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration) {
         enabled = property(() -> configuration.isValidating(id)).listenConsumer(() -> configuration.getConsumer().validationConsumer());
         deactivated = property(() -> configuration.isDeactivated(id)).listenConsumer(() -> configuration.getConsumer().deactivationConsumer());
-        this.validatableInput = validatableInput;
     }
 
     @Override
@@ -63,7 +61,6 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
     }
 
     private boolean disabled() {
-        return !enabled.get() || deactivated.get() || !validatableInput;
+        return !enabled.get() || deactivated.get();
     }
-
 }

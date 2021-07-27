@@ -31,10 +31,14 @@ public class ServiceMethodTestFactory {
                 .id(id)
                 .outputType(method.returnType())
                 .invoker(new MetaMethodInvoker(owner, method))
-                .inputDecorator(new ServiceDeactivationDecorator(id, configuration))
-                .inputDecorator(new ServiceValidationDecorator(id, configuration, validatable))
-                .inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT))
-                .outputDecorator(new ServiceValidationDecorator(id, configuration, validatable))
+                .inputDecorator(new ServiceDeactivationDecorator(id, configuration));
+
+        if (validatable) {
+            builder.inputDecorator(new ServiceValidationDecorator(id, configuration));
+        }
+
+        builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT))
+                .outputDecorator(new ServiceDeactivationDecorator(id, configuration))
                 .outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT));
         if (nonNull(inputType)) {
             return builder.inputType(inputType).build();
