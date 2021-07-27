@@ -14,7 +14,6 @@ import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 
 @UtilityClass
 public class CustomConfigurationParser {
@@ -25,12 +24,7 @@ public class CustomConfigurationParser {
     public <T> T parse(MetaClass<T> metaClass, ConfigurationSource source) {
         MetaCreatorInstance creator = metaClass.creator().validate(MetaException::new).instantiate();
         for (MetaProperty<?> property : creator.properties().values()) {
-            NestedConfiguration nested = source.getNested(property.name());
-            if (isNull(nested)) {
-                creator.putNull(property);
-                continue;
-            }
-            creator.putValue(property, parseValue(nested, property.type()));
+            apply(source.getNested(property.name()), nested -> creator.putValue(property, parseValue(nested, property.type())));
         }
         return cast(creator.create());
     }
@@ -78,12 +72,7 @@ public class CustomConfigurationParser {
     private Object parseEntity(NestedConfiguration configuration, MetaClass<?> entityType) {
         MetaCreatorInstance creator = entityType.creator().validate(MetaException::new).instantiate();
         for (MetaProperty<?> property : creator.properties().values()) {
-            NestedConfiguration nested = configuration.getNested(property.name());
-            if (isNull(nested)) {
-                creator.putNull(property);
-                continue;
-            }
-            creator.putValue(property, parseValue(nested, property.type()));
+            apply(configuration.getNested(property.name()), nested -> creator.putValue(property, parseValue(nested, property.type())));
         }
         return creator.create();
     }

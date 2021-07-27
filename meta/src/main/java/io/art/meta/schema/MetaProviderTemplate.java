@@ -21,13 +21,10 @@ package io.art.meta.schema;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 
 @AllArgsConstructor
 public class MetaProviderTemplate {
@@ -50,71 +47,7 @@ public class MetaProviderTemplate {
     public class MetaProviderInstance {
         private final Object model;
 
-        public Object getValue(MetaProperty<?> property)  {
-            return property.getter().invokeCatched(model);
-        }
-
-        public String getString(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toString(cast(notNull)));
-        }
-
-        public Integer getInteger(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toInteger(cast(notNull)));
-        }
-
-        public Long getLong(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toLong(cast(notNull)));
-        }
-
-        public Double getDouble(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toDouble(cast(notNull)));
-        }
-
-        public Short getShort(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toShort(cast(notNull)));
-        }
-
-        public Float getFloat(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toFloat(cast(notNull)));
-        }
-
-        public Byte getByte(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toByte(cast(notNull)));
-        }
-
-        public Character getCharacter(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toCharacter(cast(notNull)));
-        }
-
-        public byte[] getByteArray(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toByteArray(cast(notNull)));
-        }
-
-        public Boolean getBoolean(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toBoolean(cast(notNull)));
-        }
-
-        public List<?> getArray(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toArray(cast(notNull)));
-        }
-
-        public Map<?, ?> getMap(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toMap(cast(notNull)));
-        }
-
-        public Supplier<?> getLazy(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toLazy(cast(notNull)));
-        }
-
-        public ImmutableLazyArrayImplementation<?> getLazyArray(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toLazyArray(cast(notNull)));
-        }
-
-        public ImmutableLazyMapImplementation<?, ?> getLazyMap(MetaProperty<?> property)  {
-            return let(property.getter().invokeCatched(model), notNull -> property.type().outputTransformer().toLazyMap(cast(notNull)));
-        }
-
-        public Object getEntity(MetaProperty<?> property)  {
+        public Object getValue(MetaProperty<?> property) {
             return property.getter().invokeCatched(model);
         }
 

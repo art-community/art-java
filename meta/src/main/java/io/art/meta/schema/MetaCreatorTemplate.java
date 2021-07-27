@@ -78,74 +78,8 @@ public class MetaCreatorTemplate {
             return MetaCreatorTemplate.this.properties();
         }
 
-        public MetaCreatorInstance put(MetaProperty<?> property, String value) {
-            return putValue(property, property.type().inputTransformer().fromString(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Integer value) {
-            return putValue(property, property.type().inputTransformer().fromInteger(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Double value) {
-            return putValue(property, property.type().inputTransformer().fromDouble(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Long value) {
-            return putValue(property, property.type().inputTransformer().fromLong(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Short value) {
-            return putValue(property, property.type().inputTransformer().fromShort(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Byte value) {
-            return putValue(property, property.type().inputTransformer().fromByte(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Float value) {
-            return putValue(property, property.type().inputTransformer().fromFloat(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Character value) {
-            return putValue(property, property.type().inputTransformer().fromCharacter(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Boolean value) {
-            return putValue(property, property.type().inputTransformer().fromBoolean(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, List<?> value) {
-            return putValue(property, property.type().inputTransformer().fromArray(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Map<?, ?> value) {
-            return putValue(property, property.type().inputTransformer().fromMap(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, byte[] value) {
-            return putValue(property, property.type().inputTransformer().fromByteArray(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, Supplier<?> value) {
-            return putValue(property, property.type().inputTransformer().fromLazy(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, ImmutableLazyMapImplementation<?, ?> value) {
-            return putValue(property, property.type().inputTransformer().fromLazyMap(value));
-        }
-
-        public MetaCreatorInstance put(MetaProperty<?> property, ImmutableLazyArrayImplementation<?> value) {
-            return putValue(property, property.type().inputTransformer().fromLazyArray(value));
-        }
-
         public MetaCreatorInstance putValue(MetaProperty<?> property, Object value) {
             values[property.index()] = value;
-            filledFields++;
-            return this;
-        }
-
-        public MetaCreatorInstance putNull(MetaProperty<?> property) {
-            values[property.index()] = null;
             filledFields++;
             return this;
         }
