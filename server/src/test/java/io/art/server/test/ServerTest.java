@@ -10,7 +10,7 @@ import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
-import static io.art.server.test.factory.TestServiceMethodFactory.*;
+import static io.art.server.test.factory.ServiceMethodTestFactory.*;
 import static io.art.server.test.registry.ServiceTestExecutionsRegistry.*;
 import static org.junit.jupiter.api.Assertions.*;
 

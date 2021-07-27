@@ -18,7 +18,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static java.util.Objects.*;
 
 @UtilityClass
-public class TestServiceMethodFactory {
+public class ServiceMethodTestFactory {
     public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<?> method) {
         return serviceMethod(serviceMethodId(owner.definition().type().getSimpleName(), method.name()), owner, method);
     }

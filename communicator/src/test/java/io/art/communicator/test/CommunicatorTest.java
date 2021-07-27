@@ -6,7 +6,7 @@ import io.art.communicator.test.proxy.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.communicator.test.factory.TestCommunicatorActionFactory.*;
+import static io.art.communicator.test.factory.CommunicatorActionTestFactory.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ReactiveExtensions.*;

@@ -27,7 +27,7 @@ import reactor.core.publisher.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
-import static io.art.server.test.factory.TestServiceMethodFactory.*;
+import static io.art.server.test.factory.ServiceMethodTestFactory.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
 

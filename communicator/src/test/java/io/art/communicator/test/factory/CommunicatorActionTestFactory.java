@@ -17,7 +17,7 @@ import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static java.util.Objects.*;
 
 @UtilityClass
-public class TestCommunicatorActionFactory {
+public class CommunicatorActionTestFactory {
     public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method, CommunicatorActionImplementation implementation) {
         return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method, implementation);
     }
