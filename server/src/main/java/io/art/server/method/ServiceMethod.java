@@ -278,6 +278,7 @@ public class ServiceMethod {
             sink.emitComplete(FAIL_FAST);
         } catch (Throwable throwable) {
             sink.emitError(throwable, FAIL_FAST);
+            sink.emitComplete(FAIL_FAST);
         }
     }
 
@@ -292,6 +293,7 @@ public class ServiceMethod {
                     .subscribe();
         } catch (Throwable throwable) {
             sink.emitError(throwable, FAIL_FAST);
+            sink.emitComplete(FAIL_FAST);
         }
     }
 
