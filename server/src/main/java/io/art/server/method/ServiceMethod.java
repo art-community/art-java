@@ -270,8 +270,12 @@ public class ServiceMethod {
     private void emitBlockingOutput(Object element, Sinks.Many<Object> sink) {
         try {
             Object output = invoker.invoke(element);
-            if (isNull(output)) return;
+            if (isNull(output)) {
+                sink.emitComplete(FAIL_FAST);
+                return;
+            }
             sink.emitNext(output, FAIL_FAST);
+            sink.emitComplete(FAIL_FAST);
         } catch (Throwable throwable) {
             sink.emitError(throwable, FAIL_FAST);
         }
@@ -282,6 +286,7 @@ public class ServiceMethod {
             Object output = invoker.invoke(element);
             if (isNull(output)) return;
             asFlux(output)
+                    .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                     .doOnNext(resultElement -> sink.emitNext(resultElement, FAIL_FAST))
                     .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
                     .subscribe();
