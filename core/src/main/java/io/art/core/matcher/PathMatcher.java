@@ -21,6 +21,10 @@ public class PathMatcher {
         }
 
         if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
+            if (matchStart) {
+                return true;
+            }
+
             if (pattern.length() == 2 && pattern.charAt(1) == WILDCARD) {
                 return false;
             }
