@@ -15,17 +15,12 @@ public class PathMatcher {
     private final boolean matchStart;
     private final boolean trimTokens;
 
-
     public boolean isMatch(String pattern, String path) {
         if (pattern.isEmpty()) {
             return path.isEmpty();
         }
 
         if (path.isEmpty() && pattern.charAt(0) == pathSeparator) {
-            if (matchStart) {
-                return true;
-            }
-
             if (pattern.length() == 2 && pattern.charAt(1) == WILDCARD) {
                 return false;
             }
@@ -39,7 +34,7 @@ public class PathMatcher {
                 return path.isEmpty() || path.charAt(0) != pathSeparator && isMatch(pattern, path.substring(1));
             }
 
-            if (doubleWildcardMatch(pattern, path)) {
+            if (pattern.charAt(1) == WILDCARD && doubleWildcardMatch(pattern, path)) {
                 return true;
             }
 
@@ -55,8 +50,15 @@ public class PathMatcher {
 
         int pointer = skipBlanks(path);
 
-        return !path.isEmpty() && (equals(path.charAt(pointer), patternStart) || patternStart == QUESTION)
-                && isMatch(pattern.substring(1), path.substring(pointer + 1));
+        if (path.isEmpty()) {
+            return false;
+        }
+
+        if (!equals(path.charAt(pointer), patternStart) && patternStart != QUESTION) {
+            return false;
+        }
+
+        return isMatch(pattern.substring(1), path.substring(pointer + 1));
     }
 
     public static boolean matches(String pattern, String path) {
@@ -71,12 +73,7 @@ public class PathMatcher {
         return PathMatcher.builder().build().isMatch(pattern, path.toAbsolutePath().toString());
     }
 
-
     private boolean doubleWildcardMatch(String pattern, String path) {
-        if (pattern.charAt(1) != WILDCARD) {
-            return false;
-        }
-
         if (pattern.length() > 2) {
             return isMatch(pattern.substring(3), path);
         }
