@@ -21,7 +21,6 @@ package io.art.communicator.decorator;
 import io.art.communicator.configuration.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.logging.logger.*;
 import io.art.resilience.configuration.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
@@ -33,20 +32,15 @@ import io.github.resilience4j.reactor.retry.*;
 import io.github.resilience4j.reactor.timelimiter.*;
 import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
-import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.Property.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.resilience.module.ResilienceModule.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
 
 public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Object>> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(CommunicatorResilienceDecorator.class);
     private final Property<ResilienceConfiguration> resilienceConfiguration;
     private final CommunicatorConfiguration configuration;
     private final CommunicatorActionIdentifier id;
