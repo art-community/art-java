@@ -5,6 +5,7 @@ import lombok.*;
 import static io.art.core.factory.QueueFactory.*;
 import static java.util.Objects.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.*;
 import java.util.function.*;
 
@@ -12,7 +13,7 @@ import java.util.function.*;
 public class PriorityWaitingQueue<T> {
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition available = lock.newCondition();
-    private boolean terminated = false;
+    private final AtomicBoolean terminated = new AtomicBoolean(false);
 
     private final int maximumCapacity;
     private final Consumer<T> eraser;
@@ -28,7 +29,7 @@ public class PriorityWaitingQueue<T> {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
-            if (terminated) {
+            if (terminated.get()) {
                 return false;
             }
 
@@ -49,7 +50,10 @@ public class PriorityWaitingQueue<T> {
         try {
             lock.lockInterruptibly();
             T result;
-            while (isNull(result = queue.poll()) && !terminated) {
+            while (isNull(result = queue.poll())) {
+                if (terminated.get()) {
+                    break;
+                }
                 available.await();
             }
             return result;
@@ -65,9 +69,9 @@ public class PriorityWaitingQueue<T> {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
-            if (terminated) return;
-            terminated = true;
-            available.signal();
+            if (terminated.compareAndSet(false, true)) {
+                available.signal();
+            }
         } finally {
             lock.unlock();
         }

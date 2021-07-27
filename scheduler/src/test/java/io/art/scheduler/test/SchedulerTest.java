@@ -303,9 +303,7 @@ public class SchedulerTest {
         tasks.forEach(task -> secondExecutor.execute(task, now()));
         executor.shutdown();
         tasks.forEach(task -> assertTrue(task.completed()));
-
     }
-
 
     private void await(CountDownLatch water) throws InterruptedException {
         assertTrue(water.await(30, SECONDS));

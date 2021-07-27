@@ -9,6 +9,7 @@ import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.*;
 import java.util.concurrent.locks.*;
 import java.util.function.*;
 
@@ -17,7 +18,7 @@ public class DelayWaitingQueue<T extends Delayed> {
     private final PriorityQueue<T> queue = priorityQueue(Delayed::compareTo);
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition available = lock.newCondition();
-    private boolean terminated = false;
+    private AtomicBoolean terminated = new AtomicBoolean(false);
     private Thread leader = null;
 
     private final int maximumCapacity;
@@ -27,7 +28,7 @@ public class DelayWaitingQueue<T extends Delayed> {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
-            if (terminated) {
+            if (terminated.get()) {
                 return false;
             }
 
@@ -52,7 +53,7 @@ public class DelayWaitingQueue<T extends Delayed> {
         try {
             lock.lockInterruptibly();
             for (; ; ) {
-                if (terminated) {
+                if (terminated.get()) {
                     return null;
                 }
 
@@ -98,9 +99,9 @@ public class DelayWaitingQueue<T extends Delayed> {
         final ReentrantLock lock = this.lock;
         lock.lock();
         try {
-            if (terminated) return;
-            terminated = true;
-            available.signal();
+            if (terminated.compareAndSet(false, true)) {
+                available.signal();
+            }
         } finally {
             lock.unlock();
         }
