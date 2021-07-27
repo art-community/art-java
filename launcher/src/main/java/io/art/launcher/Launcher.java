@@ -44,10 +44,10 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 public class Launcher {
-    private static final AtomicBoolean LAUNCHED = new AtomicBoolean(false);
+    private static final AtomicBoolean launched = new AtomicBoolean(false);
 
     public static void launch(Activator activator) {
-        if (LAUNCHED.compareAndSet(false, true)) {
+        if (launched.compareAndSet(false, true)) {
             ModuleActivator configurator = activator.activators().get(CONFIGURATOR_MODULE_ID);
             if (nonNull(configurator)) {
                 configuredLaunch(activator, configurator);
