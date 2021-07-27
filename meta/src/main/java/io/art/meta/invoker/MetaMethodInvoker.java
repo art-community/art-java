@@ -7,8 +7,8 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.singleton.SingletonsRegistry.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.text.*;
 import java.util.function.*;
 
 public class MetaMethodInvoker {
@@ -33,7 +33,7 @@ public class MetaMethodInvoker {
         }
         MetaConstructor<?> constructor = owner.creator().noPropertiesConstructor();
         if (isNull(constructor)) {
-            throw new MetaException(MessageFormat.format(UNABLE_TO_CREATE_SINGLETON, owner.definition().type().getName()));
+            throw new MetaException(format(UNABLE_TO_CREATE_SINGLETON, owner.definition().type().getName()));
         }
         Object singleton = singleton(owner.definition().type(), constructor::invokeCatched);
         invokeWithoutParameters = () -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton));
