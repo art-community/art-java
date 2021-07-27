@@ -158,6 +158,10 @@ class DeferredEventObserver {
         try {
             while (executing.get() && nonNull(queue = pendingQueues.get(id))) {
                 apply(queue.take(), this::runTask);
+                if (queue.isEmpty() && delayedEvents.isEmpty()) {
+                    pendingQueues.remove(id);
+                    return;
+                }
             }
         } catch (CancellationException interruptedException) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer

@@ -112,4 +112,13 @@ public class DelayWaitingQueue<T extends Delayed> {
             lock.unlock();
         }
     }
+
+    public boolean isEmpty() {
+        lock.lock();
+        try {
+            return queue.isEmpty();
+        } finally {
+            lock.unlock();
+        }
+    }
 }

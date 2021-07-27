@@ -55,7 +55,7 @@ public class SchedulerTest {
         assertTrue(task.completed());
     }
 
-    @RepeatedTest(1)
+    @RepeatedTest(1000)
     public void testMultipleTasks() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
