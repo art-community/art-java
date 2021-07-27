@@ -44,7 +44,7 @@ public class SchedulerTest {
         initialize(scheduler());
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testCommonSingleTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
@@ -53,7 +53,7 @@ public class SchedulerTest {
         assertTrue(task.completed());
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testOneThreadSingleTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -63,7 +63,7 @@ public class SchedulerTest {
         assertTrue(task.completed());
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testTenThreadsSingleTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -74,7 +74,7 @@ public class SchedulerTest {
     }
 
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testCommonMultipleTasks() {
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
@@ -92,7 +92,7 @@ public class SchedulerTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testOneThreadMultipleTasks() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
@@ -111,7 +111,7 @@ public class SchedulerTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testTenThreadsMultipleTasks() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
@@ -131,7 +131,7 @@ public class SchedulerTest {
     }
 
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testCommonSingleDelayedTask() {
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
@@ -142,7 +142,7 @@ public class SchedulerTest {
         assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testOneThreadSingleDelayedTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -154,7 +154,7 @@ public class SchedulerTest {
         assertTrue(isAfterOrEqual(task.completionTimeStamp(), time, ofMillis(100)));
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testTenThreadsSingleDelayedTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -167,7 +167,7 @@ public class SchedulerTest {
     }
 
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testCommonMultipleDelayedTask() {
         CountDownLatch water = new CountDownLatch(8);
         OrderCounter counter = new OrderCounter();
@@ -193,7 +193,7 @@ public class SchedulerTest {
         }
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testOneThreadMultipleDelayedTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
@@ -220,7 +220,7 @@ public class SchedulerTest {
         }
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testTenThreadsMultipleDelayedTask() {
         DeferredExecutor executor = deferredExecutor().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(12);

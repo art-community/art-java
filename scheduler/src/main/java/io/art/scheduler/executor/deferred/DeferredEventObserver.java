@@ -63,8 +63,8 @@ class DeferredEventObserver {
                 + threadCounter.incrementAndGet(), runnable
         );
         pendingPool = createThreadPool(threadFactory);
-        delayedEvents = new DelayWaitingQueue<>(executor.getDelayedQueueMaximumCapacity(), this::offerPendingEvent);
-        pendingQueues = concurrentMap(executor.getPendingInitialCapacity());
+        delayedEvents = new DelayWaitingQueue<>(executor.getMaximumCapacity(), this::offerPendingEvent);
+        pendingQueues = concurrentMap(executor.getInitialCapacity());
         fallbackPool = newSingleThreadExecutor(threadFactory);
         delayedObserver = newDaemon(this::observeDelayed);
         delayedObserver.start();
@@ -118,7 +118,11 @@ class DeferredEventObserver {
         try {
             PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
             if (isNull(queue)) {
-                queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
+                if (pendingQueues.size() + 1 > executor.getMaximumCapacity()) {
+                    cast(forceExecuteEvent(event));
+                    return;
+                }
+                queue = new PriorityWaitingQueue<>(executor.getMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
                 queue.offer(event);
                 pendingQueues.put(id, queue);
                 pendingPool.submit(() -> observePending(id));
