@@ -25,7 +25,6 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.ExceptionEvent.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
@@ -36,9 +35,9 @@ import static java.util.concurrent.Executors.*;
 import static java.util.concurrent.TimeUnit.*;
 import java.time.*;
 import java.util.*;
-import java.util.Map.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
+import java.util.concurrent.locks.*;
 
 
 class DeferredEventObserver {
@@ -48,6 +47,8 @@ class DeferredEventObserver {
     private final AtomicBoolean executing = new AtomicBoolean(true);
 
     private final DeferredExecutorImplementation executor;
+
+    private final ReentrantLock pendingLock = new ReentrantLock();
 
     private final ThreadPoolExecutor pendingPool;
     private final Thread delayedObserver;
@@ -101,19 +102,24 @@ class DeferredEventObserver {
             while (accepting.get()) {
                 DeferredEvent<?> event = delayedEvents.take();
                 if (isNull(event)) continue;
-                removeEmptyPendingQueues();
                 long id = event.getTrigger();
-                PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
-                if (isNull(queue)) {
-                    queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
-                    queue.offer(event);
-                    pendingQueues.put(id, queue);
-                    pendingPool.submit(() -> observePending(id));
-                    continue;
-                }
+                pendingLock.lock();
 
-                if (!queue.offer(event)) {
-                    cast(forceExecuteEvent(event));
+                try {
+                    PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
+                    if (isNull(queue)) {
+                        queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
+                        queue.offer(event);
+                        pendingQueues.put(id, queue);
+                        pendingPool.submit(() -> observePending(id));
+                        continue;
+                    }
+
+                    if (!queue.offer(event)) {
+                        cast(forceExecuteEvent(event));
+                    }
+                } finally {
+                    pendingLock.unlock();
                 }
             }
         } catch (Throwable throwable) {
@@ -126,30 +132,23 @@ class DeferredEventObserver {
     }
 
     private void finalizeDelayedEvent(DeferredEvent<?> event) {
-        removeEmptyPendingQueues();
         long id = event.getTrigger();
-        PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
-        if (isNull(queue)) {
-            queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
-            queue.offer(event);
-            pendingQueues.put(id, queue);
-            pendingPool.submit(() -> observePending(id));
-            return;
-        }
-
-        if (!queue.offer(event)) {
-            cast(forceExecuteEvent(event));
-        }
-    }
-
-    private void removeEmptyPendingQueues() {
-        Set<Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>>> events = setOf(pendingQueues.entrySet());
-        for (Entry<Long, PriorityWaitingQueue<DeferredEvent<?>>> entry : events) {
-            Long trigger = entry.getKey();
-            PriorityWaitingQueue<DeferredEvent<?>> queue = entry.getValue();
-            if (nonNull(queue) && queue.isEmpty()) {
-                pendingQueues.remove(trigger).terminate();
+        pendingLock.lock();
+        try {
+            PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(id);
+            if (isNull(queue)) {
+                queue = new PriorityWaitingQueue<>(executor.getPendingQueueMaximumCapacity(), this::runTask, comparing(DeferredEvent::getOrder));
+                queue.offer(event);
+                pendingQueues.put(id, queue);
+                pendingPool.submit(() -> observePending(id));
+                return;
             }
+
+            if (!queue.offer(event)) {
+                cast(forceExecuteEvent(event));
+            }
+        } finally {
+            pendingLock.unlock();
         }
     }
 
@@ -158,10 +157,6 @@ class DeferredEventObserver {
         try {
             while (executing.get() && nonNull(queue = pendingQueues.get(id))) {
                 apply(queue.take(), this::runTask);
-                if (queue.isEmpty() && delayedEvents.isEmpty()) {
-                    pendingQueues.remove(id);
-                    return;
-                }
             }
         } catch (CancellationException interruptedException) {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
@@ -181,6 +176,17 @@ class DeferredEventObserver {
             // Ignoring exception because interrupting is normal situation when we want shutdown observer
         } catch (Throwable throwable) {
             executor.getExceptionHandler().onException(currentThread(), TASK_EXECUTION, throwable);
+        } finally {
+            pendingLock.lock();
+            try {
+                PriorityWaitingQueue<DeferredEvent<?>> queue = pendingQueues.get(event.getTrigger());
+                if (nonNull(queue) && queue.isEmpty()) {
+                    pendingQueues.remove(event.getTrigger());
+                    queue.terminate();
+                }
+            } finally {
+                pendingLock.unlock();
+            }
         }
     }
 
