@@ -37,7 +37,9 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.module.LoggingModule.*;
@@ -84,11 +86,10 @@ public class RsocketServer implements Server {
     }
 
     private CloseableChannel createServer() {
-        RsocketServerConfiguration configuration = this.configuration.getServerConfiguration();
+        RsocketServerConfiguration configuration = this.configuration.getServerTransportConfiguration();
         TransportMode transportMode = configuration.getTransport();
         int fragmentationMtu = configuration.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createAcceptor)
-                .maxInboundPayloadSize(configuration.getMaxInboundPayloadSize());
+        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(configuration.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
@@ -111,12 +112,12 @@ public class RsocketServer implements Server {
                 .interceptors(this::configureInterceptors)
                 .payloadDecoder(configuration.getPayloadDecoder())
                 .bind(transport);
-        if (configuration.isLogging()) {
+        if (withLogging() && configuration.isLogging()) {
             bind = bind
                     .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, address)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
-        return bind.block();
+        return block(bind);
     }
 
     private void configureInterceptors(InterceptorRegistry registry) {
@@ -130,17 +131,17 @@ public class RsocketServer implements Server {
 
     private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requesterSocket) {
         Mono<RSocket> socket = Mono.create(emitter -> createSocket(payload, requesterSocket, emitter));
-        return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+        return socket.doOnError(throwable -> withLogging(() -> getLogger().error(throwable.getMessage(), throwable)));
     }
 
     private void createSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
-        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requester, configuration.getServerConfiguration()));
+        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requester, configuration));
         ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
 
     private void setupCloser(CloseableChannel channel) {
         this.closer = channel.onClose();
-        if (configuration.getServerConfiguration().isLogging()) {
+        if (withLogging() && configuration.getServerTransportConfiguration().isLogging()) {
             this.closer = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
         }
     }

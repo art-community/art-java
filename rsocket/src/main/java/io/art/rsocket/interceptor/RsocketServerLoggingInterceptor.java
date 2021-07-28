@@ -45,7 +45,7 @@ public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     }
 
     private boolean enabled() {
-        return withLogging() && let(configuration().getServerConfiguration(), RsocketServerConfiguration::isLogging, false);
+        return withLogging() && let(configuration().getServerTransportConfiguration(), RsocketServerConfiguration::isLogging, false);
     }
 
     private RsocketModuleConfiguration configuration() {

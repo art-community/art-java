@@ -17,4 +17,16 @@ public class ModuleChecker {
     public static boolean withMeta() {
         return context().hasModule(META_MODULE_ID);
     }
+
+    public static void withLogging(Runnable action) {
+        if (withLogging()) action.run();
+    }
+
+    public static void withConfigurator(Runnable action) {
+        if (withConfigurator()) action.run();
+    }
+
+    public static void withMeta(Runnable action) {
+        if (withMeta()) action.run();
+    }
 }

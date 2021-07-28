@@ -31,7 +31,7 @@ public interface RsocketModuleConstants {
     LazyProperty<Mono<EmptyPayload>> EMPTY_PAYLOAD_MONO = lazy(() -> Mono.just(EmptyPayload.INSTANCE));
 
     interface Errors {
-        String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
+        String SERVICE_METHOD_NOT_FOUND = "Service method was not found for service method identifiers: {0}";
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
     }
 

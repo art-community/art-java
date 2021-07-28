@@ -48,7 +48,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         Initial initial = new Initial(module.getRefresher());
         initial.activateCommunicator = activateCommunicator;
         initial.activateServer = activateServer;
-        initial.serverConfiguration = initial.serverConfiguration.toBuilder()
+        initial.serverTransportConfiguration = initial.serverTransportConfiguration.toBuilder()
                 .logging(serverLogging)
                 .build();
         return initial;
@@ -58,7 +58,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     public static class Initial extends RsocketModuleConfiguration {
         private boolean activateServer;
         private boolean activateCommunicator;
-        private RsocketServerConfiguration serverConfiguration = super.getServerConfiguration();
+        private RsocketServerConfiguration serverTransportConfiguration = super.getServerTransportConfiguration();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

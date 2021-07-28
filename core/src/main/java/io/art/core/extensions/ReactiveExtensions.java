@@ -48,7 +48,7 @@ public class ReactiveExtensions {
         return subscriber.blockingGet();
     }
 
-    public <T> T blockLast(Mono<T> mono) {
+    public <T> T block(Mono<T> mono) {
         BlockingMonoSubscriber<T> subscriber = new BlockingMonoSubscriber<>();
         mono.subscribe(subscriber);
         return subscriber.blockingGet();
