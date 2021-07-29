@@ -18,20 +18,15 @@
 
 package io.art.communicator.benchmark;
 
-import io.art.communicator.action.*;
 import io.art.communicator.test.meta.*;
 import io.art.communicator.test.meta.MetaCommunicatorTest.MetaIoPackage.MetaArtPackage.MetaCommunicatorPackage.MetaTestPackage.MetaProxyPackage.*;
 import io.art.communicator.test.proxy.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.factory.CommunicatorActionFactory.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.meta.module.MetaActivator.*;
-import static io.art.meta.module.MetaModule.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
 
@@ -43,16 +38,13 @@ import static org.openjdk.jmh.annotations.Mode.*;
 public class CommunicatorBenchmark {
     @State(value = Scope.Benchmark)
     public static class BenchmarkState {
-        MetaCommunicatorTest meta;
         MetaTestCommunicatorClass communicatorClass;
         TestCommunicator communicator;
 
         @Setup
         public void setup() {
             initialize(meta(MetaCommunicatorTest::new));
-            meta = library();
-            communicatorClass = cast(meta.classes().get(TestCommunicator.class));
-            communicator = communicatorProxy(communicatorClass, method -> apply(preconfiguredCommunicatorAction(communicatorClass, method, new BenchmarkCommunication()), CommunicatorAction::initialize));
+            communicator = preconfiguredCommunicatorProxy(TestCommunicator.class, BenchmarkCommunication::new);
         }
     }
 

@@ -18,11 +18,12 @@
 
 package io.art.communicator;
 
+import io.art.communicator.action.*;
 import io.art.core.model.*;
 import reactor.core.publisher.*;
 
 public interface Communication {
-    default void initialize(CommunicatorActionIdentifier id) {
+    default void initialize(CommunicatorAction id) {
 
     }
 

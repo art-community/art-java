@@ -65,7 +65,7 @@ public class CommunicatorAction implements Managed {
 
     @Override
     public void initialize() {
-        communication.initialize(id);
+        communication.initialize(this);
     }
 
     @Override

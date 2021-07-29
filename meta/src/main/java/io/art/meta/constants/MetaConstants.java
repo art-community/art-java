@@ -109,5 +109,6 @@ public interface MetaConstants {
         String CLASS_CREATOR_INVALID = "Meta class {0} creator invalid. There is no any available for creation constructors";
         String MAP_WITH_NO_STRING_KEY = "Unable to parse configuration value in map with non-string key type: {0}";
         String UNABLE_TO_CREATE_SINGLETON = "Class {0} hasn't 0-args constructor. We can't use it for method invoker";
+        String META_CLASS_FOR_CLASS_NOT_EXISTS = "Class {0} hasn't meta class. Check Meta Library class";
     }
 }
