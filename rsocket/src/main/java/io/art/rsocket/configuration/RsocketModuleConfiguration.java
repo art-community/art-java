@@ -18,8 +18,9 @@
 
 package io.art.rsocket.configuration;
 
-import io.art.core.model.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
@@ -27,10 +28,9 @@ import io.art.server.method.*;
 import io.art.server.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.factory.MapFactory.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
-import java.util.*;
 
 @RequiredArgsConstructor
 public class RsocketModuleConfiguration implements ModuleConfiguration {
@@ -47,7 +47,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketServerConfiguration serverTransportConfiguration;
 
     @Getter
-    private Map<ServiceMethodIdentifier, ServiceMethod> services;
+    private ImmutableArray<LazyProperty<ServiceMethod>> serviceProviders;
 
     @Getter
     private RsocketCommunicatorConfiguration communicatorConfiguration;
@@ -64,7 +64,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         consumer = refresher.consumer();
         serverConfiguration = ServerConfiguration.builder().refresher(serverRefresher).build();
         serverTransportConfiguration = RsocketServerConfiguration.defaults();
-        services = map();
+        serviceProviders = emptyImmutableArray();
         activateServer = false;
         activateCommunicator = false;
     }
@@ -95,6 +95,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.activateServer = configuration.isActivateServer();
             this.configuration.serverTransportConfiguration = configuration.getServerTransportConfiguration();
             this.configuration.serverConfiguration = configuration.getServerConfiguration();
+            this.configuration.serviceProviders = configuration.getServiceProviders();
             return this;
         }
     }

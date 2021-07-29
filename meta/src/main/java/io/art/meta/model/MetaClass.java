@@ -145,6 +145,7 @@ public abstract class MetaClass<T> {
                 .stream()
                 .collect(mapCollector(MetaProperty::name, identity()));
         creator = MetaCreatorTemplate.builder()
+                .owner(this)
                 .propertyMap(constructablePropertyMap)
                 .propertyArray(constructableProperties.toArray(new MetaProperty[0]))
                 .noPropertiesConstructor(noPropertiesConstructor)

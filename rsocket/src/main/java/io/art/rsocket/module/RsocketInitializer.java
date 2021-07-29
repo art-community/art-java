@@ -18,20 +18,24 @@
 
 package io.art.rsocket.module;
 
-import io.art.core.model.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.method.*;
 import lombok.*;
-import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.ListFactory.*;
+import static io.art.core.property.LazyProperty.*;
 import java.util.*;
+import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private boolean activateServer;
     private boolean activateCommunicator;
     private boolean serverLogging;
-    private Map<ServiceMethodIdentifier, ServiceMethod> services = map();
+    private List<LazyProperty<ServiceMethod>> services = linkedList();
 
     public RsocketInitializer activateServer() {
         activateServer = true;
@@ -48,8 +52,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         return this;
     }
 
-    public RsocketInitializer register(ServiceMethod serviceMethod) {
-        services.put(serviceMethod.getId(), serviceMethod);
+    public RsocketInitializer register(Supplier<ServiceMethod> serviceMethod) {
+        services.add(lazy(serviceMethod));
         return this;
     }
 
@@ -61,7 +65,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.serverTransportConfiguration = initial.serverTransportConfiguration.toBuilder()
                 .logging(serverLogging)
                 .build();
-        initial.services = initial.services;
+        initial.services = immutableArrayOf(services);
         return initial;
     }
 
@@ -70,7 +74,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private boolean activateServer;
         private boolean activateCommunicator;
         private RsocketServerConfiguration serverTransportConfiguration = super.getServerTransportConfiguration();
-        private Map<ServiceMethodIdentifier, ServiceMethod> services = super.getServices();
+        private ImmutableArray<LazyProperty<ServiceMethod>> services = super.getServiceProviders();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

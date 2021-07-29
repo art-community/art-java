@@ -34,6 +34,7 @@ import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
@@ -115,18 +116,7 @@ public class Launcher {
 
         Consumer<String> printer = activator.activators().containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
-        prepareInitialization(contextConfiguration.printer(printer).build());
-        ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
-
-        for (ModuleActivator moduleActivator : activators.values()) {
-            Module<?, ?> module = moduleActivator.getFactory().get();
-            ModuleInitializationOperator<?> initializer = moduleActivator.getInitializer();
-            if (nonNull(initializer)) {
-                module.configure(configurator -> configurator.initialize(cast(initializer.get().initialize(cast(module)))));
-            }
-            builder.add(module);
-        }
-        processInitialization(builder.build());
+        initialize(contextConfiguration.printer(printer).build(), activators.values().toArray(new ModuleActivator[0]));
 
         printer.accept(DEFAULT_CONFIGURATION);
         LAUNCHED_MESSAGES.forEach(printer);

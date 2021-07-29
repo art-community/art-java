@@ -24,6 +24,7 @@ import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
+import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import io.art.server.configuration.*;
 import io.art.server.method.*;
@@ -52,9 +53,11 @@ public class ServingRsocket implements RSocket {
     private final TransportPayloadWriter dataWriter;
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final ServiceMethod serviceMethod;
+    private final RsocketServer server;
     private final RsocketModuleConfiguration moduleConfiguration;
 
-    public ServingRsocket(ConnectionSetupPayload payload, RSocket requesterSocket, RsocketModuleConfiguration configuration) {
+    public ServingRsocket(ConnectionSetupPayload payload, RsocketServer server, RsocketModuleConfiguration configuration) {
+        this.server = server;
         moduleConfiguration = configuration;
         RsocketServerConfiguration transportConfiguration = configuration.getServerTransportConfiguration();
         ServerConfiguration serverConfiguration = configuration.getServerConfiguration();
@@ -144,6 +147,6 @@ public class ServingRsocket implements RSocket {
     }
 
     private ServiceMethod findServiceMethod(ServiceMethodIdentifier serviceMethodId) {
-        return orThrow(moduleConfiguration.getServices().get(serviceMethodId), () -> new RsocketException(format(SERVICE_METHOD_NOT_FOUND, serviceMethodId)));
+        return orThrow(server.getServices().get(serviceMethodId), () -> new RsocketException(format(SERVICE_METHOD_NOT_FOUND, serviceMethodId)));
     }
 }

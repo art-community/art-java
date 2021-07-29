@@ -18,7 +18,9 @@
 
 package io.art.rsocket.server;
 
+import io.art.core.collection.*;
 import io.art.core.exception.*;
+import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.runnable.*;
 import io.art.logging.logger.*;
@@ -27,6 +29,7 @@ import io.art.rsocket.interceptor.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.socket.*;
 import io.art.server.*;
+import io.art.server.method.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.plugins.*;
@@ -39,6 +42,7 @@ import reactor.netty.http.server.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -63,8 +67,14 @@ public class RsocketServer implements Server {
     private final Property<CloseableChannel> channel;
     private volatile Mono<Void> closer;
 
+    @Getter
+    private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> services;
+
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
+        services = configuration.getServiceProviders()
+                .stream()
+                .collect(immutableMapCollector(provider -> provider.get().getId(), LazyProperty::get));
         channel = property(this::createServer, this::disposeServer)
                 .listenConsumer(refresher.consumer()::serverConsumer)
                 .initialized(this::setupCloser);
@@ -135,7 +145,7 @@ public class RsocketServer implements Server {
     }
 
     private void createSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
-        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, requester, configuration));
+        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, this, configuration));
         ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
 

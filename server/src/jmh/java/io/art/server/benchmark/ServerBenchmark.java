@@ -27,7 +27,7 @@ import reactor.core.publisher.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
-import static io.art.server.test.factory.ServiceMethodTestFactory.*;
+import static io.art.server.factory.ServiceMethodFactory.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
 
@@ -63,22 +63,22 @@ public class ServerBenchmark {
             initialize(meta(MetaServerTest::new));
             meta = library();
             serviceClass = meta.ioPackage().artPackage().serverPackage().testPackage().servicePackage().benchmarkServiceClass();
-            m1 = serviceMethod(serviceClass, serviceClass.m1Method());
-            m2 = serviceMethod(serviceClass, serviceClass.m2Method());
-            m3 = serviceMethod(serviceClass, serviceClass.m3Method());
-            m4 = serviceMethod(serviceClass, serviceClass.m4Method());
-            m5 = serviceMethod(serviceClass, serviceClass.m5Method());
-            m6 = serviceMethod(serviceClass, serviceClass.m6Method());
-            m7 = serviceMethod(serviceClass, serviceClass.m7Method());
-            m8 = serviceMethod(serviceClass, serviceClass.m8Method());
-            m9 = serviceMethod(serviceClass, serviceClass.m9Method());
-            m10 = serviceMethod(serviceClass, serviceClass.m10Method());
-            m11 = serviceMethod(serviceClass, serviceClass.m11Method());
-            m12 = serviceMethod(serviceClass, serviceClass.m12Method());
-            m13 = serviceMethod(serviceClass, serviceClass.m13Method());
-            m14 = serviceMethod(serviceClass, serviceClass.m14Method());
-            m15 = serviceMethod(serviceClass, serviceClass.m15Method());
-            m16 = serviceMethod(serviceClass, serviceClass.m16Method());
+            m1 = preconfiguredServiceMethod(serviceClass, serviceClass.m1Method());
+            m2 = preconfiguredServiceMethod(serviceClass, serviceClass.m2Method());
+            m3 = preconfiguredServiceMethod(serviceClass, serviceClass.m3Method());
+            m4 = preconfiguredServiceMethod(serviceClass, serviceClass.m4Method());
+            m5 = preconfiguredServiceMethod(serviceClass, serviceClass.m5Method());
+            m6 = preconfiguredServiceMethod(serviceClass, serviceClass.m6Method());
+            m7 = preconfiguredServiceMethod(serviceClass, serviceClass.m7Method());
+            m8 = preconfiguredServiceMethod(serviceClass, serviceClass.m8Method());
+            m9 = preconfiguredServiceMethod(serviceClass, serviceClass.m9Method());
+            m10 = preconfiguredServiceMethod(serviceClass, serviceClass.m10Method());
+            m11 = preconfiguredServiceMethod(serviceClass, serviceClass.m11Method());
+            m12 = preconfiguredServiceMethod(serviceClass, serviceClass.m12Method());
+            m13 = preconfiguredServiceMethod(serviceClass, serviceClass.m13Method());
+            m14 = preconfiguredServiceMethod(serviceClass, serviceClass.m14Method());
+            m15 = preconfiguredServiceMethod(serviceClass, serviceClass.m15Method());
+            m16 = preconfiguredServiceMethod(serviceClass, serviceClass.m16Method());
         }
     }
 
