@@ -31,8 +31,8 @@ import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 
 @Getter
 public class MetaModule implements StatelessModule<MetaModuleConfiguration, MetaModuleConfiguration.Configurator> {
@@ -62,7 +62,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
 
     public static <T> MetaClass<T> declaration(Class<T> type) {
         MetaClass<?> metaClass = classes().get(type);
-        if (Objects.isNull(metaClass)) {
+        if (isNull(metaClass)) {
             throw new MetaException(format(META_CLASS_FOR_CLASS_NOT_EXISTS, type));
         }
         return cast(metaClass);
