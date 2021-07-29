@@ -63,7 +63,10 @@ public class ContextInitializer {
             Module<?, ?> module = activator.getFactory().get();
             ModuleInitializationOperator<?> initializer = activator.getInitializer();
             if (nonNull(initializer)) {
-                initializer.get().initialize(cast(module));
+                ModuleConfigurator<?, ?> configurator = module.getConfigurator();
+                if (nonNull(configurator)) {
+                    configurator.initialize(cast(initializer.get().initialize(cast(module))));
+                }
             }
             builder.add(module);
         }
