@@ -4,7 +4,8 @@ import io.art.core.extensions.*;
 import io.art.core.property.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.meta.*;
-import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.*;
+import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaServicePackage.*;
+import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.initializer.Initializer.*;
@@ -19,7 +20,7 @@ import static io.art.server.factory.ServiceMethodFactory.*;
 public class RsocketTest {
     @BeforeAll
     public static void setup() {
-        LazyProperty<MetaRsocketServiceClass> declaration = lazy(() -> cast(declaration(RsocketService.class)));
+        LazyProperty<MetaTestRsocketServiceClass> declaration = lazy(() -> cast(declaration(TestRsocketService.class)));
         initialize(
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 logging(),
