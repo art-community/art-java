@@ -25,7 +25,7 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;

@@ -5,7 +5,7 @@ import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import io.art.yaml.descriptor.*;
 import org.junit.jupiter.api.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;

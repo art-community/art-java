@@ -35,7 +35,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     private boolean activateServer;
     private boolean activateCommunicator;
     private boolean serverLogging;
-    private List<LazyProperty<ServiceMethod>> services = linkedList();
+    private final List<LazyProperty<ServiceMethod>> services = linkedList();
 
     public RsocketInitializer activateServer() {
         activateServer = true;

@@ -24,7 +24,7 @@ import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.scheduler.Scheduling.*;
 import static io.art.scheduler.executor.deferred.DeferredExecutor.*;

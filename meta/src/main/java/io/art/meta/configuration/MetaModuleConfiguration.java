@@ -19,6 +19,7 @@
 package io.art.meta.configuration;
 
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.meta.model.*;
 import lombok.*;
@@ -26,7 +27,11 @@ import lombok.*;
 @Getter
 @RequiredArgsConstructor
 public class MetaModuleConfiguration implements ModuleConfiguration {
-    private final MetaLibrary library;
+    private final LazyProperty<? extends MetaLibrary> library;
+
+    public MetaLibrary getLibrary() {
+        return library.get();
+    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<MetaModuleConfiguration, Configurator> {

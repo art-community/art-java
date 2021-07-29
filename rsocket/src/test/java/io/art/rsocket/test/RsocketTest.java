@@ -3,12 +3,11 @@ package io.art.rsocket.test;
 import io.art.core.extensions.*;
 import io.art.core.property.*;
 import io.art.meta.test.meta.*;
-import io.art.rsocket.meta.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
@@ -22,13 +21,13 @@ public class RsocketTest {
     public static void setup() {
         LazyProperty<MetaRsocketServiceClass> declaration = lazy(() -> cast(declaration(RsocketService.class)));
         initialize(
-                meta(() -> new MetaRsocketTest(new MetaRsocket(new MetaMetaTest()))),
+                meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 logging(),
+                json(),
                 rsocket(rsocket -> rsocket
-                        .register(() -> serviceMethod(declaration.get(), declaration.get().mMethod()))
+                        .register(() -> preconfiguredServiceMethod(declaration.get(), declaration.get().mMethod()))
                         .activateServer()
-                        .serverLogging(true)),
-                json()
+                        .serverLogging(true))
         );
     }
 

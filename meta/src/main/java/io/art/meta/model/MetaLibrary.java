@@ -26,11 +26,11 @@ import io.art.meta.validator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.state.MetaComputationState.*;
-import static java.util.Arrays.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -41,11 +41,11 @@ public abstract class MetaLibrary {
     private ImmutableMap<Class<?>, MetaClass<?>> classes;
     private final Map<String, MetaPackage> packages = map();
     private final Set<MetaClass<?>> rootClasses = set();
-    private final List<MetaLibrary> dependencies;
+    private final List<MetaLibrary> dependencies = linkedList();
     private final AtomicBoolean computed = new AtomicBoolean(false);
 
     protected MetaLibrary(MetaLibrary[] dependencies) {
-        this.dependencies = asList(dependencies);
+        this.dependencies.addAll(linkedListOf(dependencies));
     }
 
     protected <T extends MetaPackage> T register(T metaPackage) {
@@ -74,9 +74,12 @@ public abstract class MetaLibrary {
         return cast(packages.get(name));
     }
 
-    public void compute() {
+    public void compute(List<MetaLibrary> dependencies) {
+        for (MetaLibrary dependency : this.dependencies) {
+            dependency.compute(dependency.dependencies);
+        }
         for (MetaLibrary dependency : dependencies) {
-            dependency.compute();
+            dependency.compute(dependency.dependencies);
         }
         if (computed.compareAndSet(false, true)) {
             rootClasses.forEach(MetaClass::beginComputation);

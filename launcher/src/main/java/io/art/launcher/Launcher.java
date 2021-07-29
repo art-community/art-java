@@ -34,7 +34,7 @@ import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;

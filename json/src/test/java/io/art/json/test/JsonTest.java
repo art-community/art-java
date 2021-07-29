@@ -5,7 +5,7 @@ import io.art.json.descriptor.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.meta.model.TypedObject.*;

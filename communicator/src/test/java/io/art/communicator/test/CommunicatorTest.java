@@ -7,7 +7,7 @@ import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;

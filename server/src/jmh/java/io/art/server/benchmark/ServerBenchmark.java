@@ -24,7 +24,7 @@ import io.art.server.test.meta.MetaServerTest.MetaIoPackage.MetaArtPackage.MetaS
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.server.factory.ServiceMethodFactory.*;

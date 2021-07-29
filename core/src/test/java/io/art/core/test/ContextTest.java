@@ -22,7 +22,7 @@ import io.art.core.context.*;
 import io.art.core.module.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.initializer.ContextInitializer.*;
+import static io.art.core.initializer.Initializer.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextTest {

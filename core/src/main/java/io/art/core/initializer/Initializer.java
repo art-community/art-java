@@ -32,11 +32,11 @@ import static java.util.Arrays.*;
 import static java.util.Objects.*;
 
 @UtilityClass
-public class ContextInitializer {
+public class Initializer {
     private final static SingletonAction initialize = singletonAction();
 
     public static void initialize(ModuleFactory<?>... modules) {
-        initialize.run(() -> initializeModules(defaults(), modules));
+        initialize(defaults(), modules);
     }
 
     public static void initialize(ContextConfiguration configuration, ModuleFactory<?>... modules) {

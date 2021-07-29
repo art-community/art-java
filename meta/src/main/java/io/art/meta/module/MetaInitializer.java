@@ -19,6 +19,7 @@
 package io.art.meta.module;
 
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.meta.configuration.*;
 import io.art.meta.configuration.MetaModuleConfiguration.*;
 import io.art.meta.model.*;
@@ -27,7 +28,7 @@ import lombok.*;
 public class MetaInitializer implements ModuleInitializer<MetaModuleConfiguration, Configurator, MetaModule> {
     private final Initial configuration;
 
-    public MetaInitializer(MetaLibrary library) {
+    public MetaInitializer(LazyProperty<? extends MetaLibrary> library) {
         configuration = new Initial(library);
     }
 
@@ -38,7 +39,7 @@ public class MetaInitializer implements ModuleInitializer<MetaModuleConfiguratio
 
     @Getter
     private static class Initial extends MetaModuleConfiguration {
-        public Initial(MetaLibrary library) {
+        public Initial(LazyProperty<? extends MetaLibrary> library) {
             super(library);
         }
     }
