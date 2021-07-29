@@ -75,6 +75,9 @@ public abstract class MetaLibrary {
     }
 
     public void compute() {
+        for (MetaLibrary dependency : dependencies) {
+            dependency.compute();
+        }
         if (computed.compareAndSet(false, true)) {
             rootClasses.forEach(MetaClass::beginComputation);
             packages.values().forEach(MetaPackage::beginComputation);
@@ -83,7 +86,7 @@ public abstract class MetaLibrary {
             if (validationErrors.isEmpty()) {
                 rootClasses.forEach(MetaClass::completeComputation);
                 packages.values().forEach(MetaPackage::completeComputation);
-                classes = MetaClassMutableRegistry.clear();
+                classes = MetaClassMutableRegistry.get();
                 return;
             }
 

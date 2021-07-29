@@ -46,6 +46,7 @@ import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
+import java.util.*;
 import java.util.function.*;
 
 public class ServingRsocket implements RSocket {
@@ -107,10 +108,12 @@ public class ServingRsocket implements RSocket {
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
         TransportPayload payloadValue = readRsocketPayload(dataReader, payload, serviceMethod.getInputType());
-        Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
+        Flux<Object> input = payloadValue.isEmpty() ? empty() : let(payloadValue.getValue(), Flux::just, empty());
         return serviceMethod
                 .serve(input)
-                .map(value -> ByteBufPayload.create(dataWriter.write(typed(serviceMethod.getOutputType(), value))))
+                .map(value -> dataWriter.write(typed(serviceMethod.getOutputType(), value)))
+                .filter(Objects::nonNull)
+                .map(ByteBufPayload::create)
                 .last(EMPTY_PAYLOAD);
     }
 

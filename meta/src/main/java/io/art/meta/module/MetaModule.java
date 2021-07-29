@@ -23,6 +23,7 @@ import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.meta.configuration.*;
 import io.art.meta.model.*;
+import io.art.meta.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
@@ -45,6 +46,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     @Override
     public void onLoad(Context.Service contextService) {
         configuration.getLibrary().compute();
+        MetaClassMutableRegistry.clear();
     }
 
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {
