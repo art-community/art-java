@@ -30,8 +30,8 @@ dependencies {
 }
 
 generator {
-    source {
-        module("ServerTest", "io.art.server.test")
+    source("ServerTest") {
+        modulePackage( "io.art.server.test")
         jvm()
         sourcesPattern {
             include("src/test/**")

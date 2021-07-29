@@ -3,6 +3,7 @@ package io.art.rsocket.test;
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.meta.*;
+import io.art.server.method.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.json.module.JsonActivator.*;
@@ -15,7 +16,12 @@ public class RsocketTest {
     public static void setup() {
         initialize(meta(() -> new MetaRsocket(new MetaMetaTest())),
                 logging(),
-                rsocket(rsocket -> rsocket.activateServer().serverLogging(true)),
+                rsocket(rsocket -> rsocket
+                        .register(ServiceMethod.builder()
+                                .id()
+                                .build())
+                        .activateServer()
+                        .serverLogging(true)),
                 json()
         );
     }

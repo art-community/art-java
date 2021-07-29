@@ -53,12 +53,19 @@ dependencies {
 }
 
 generator {
-    source {
-        module("Rsocket", "io.art.rsocket")
+    source("Rsocket") {
+        modulePackage("io.art.rsocket")
         jvm()
         sourcesPattern {
             include("src/main/**")
         }
         includeClasses("**model**")
+    }
+    source("RsocketTest") {
+        modulePackage("io.art.rsocket.test")
+        jvm()
+        sourcesPattern {
+            include("src/test/**")
+        }
     }
 }

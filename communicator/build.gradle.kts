@@ -30,8 +30,8 @@ dependencies {
 }
 
 generator {
-    source {
-        module("CommunicatorTest", "io.art.communicator.test")
+    source("CommunicatorTest") {
+        modulePackage( "io.art.communicator.test")
         jvm()
         sourcesPattern {
             include("src/test/**")

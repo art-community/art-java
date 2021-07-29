@@ -18,15 +18,20 @@
 
 package io.art.rsocket.module;
 
+import io.art.core.model.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
+import io.art.server.method.*;
 import lombok.*;
+import static io.art.core.factory.MapFactory.*;
+import java.util.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private boolean activateServer;
     private boolean activateCommunicator;
     private boolean serverLogging;
+    private Map<ServiceMethodIdentifier, ServiceMethod> services = map();
 
     public RsocketInitializer activateServer() {
         activateServer = true;
@@ -43,6 +48,11 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         return this;
     }
 
+    public RsocketInitializer register(ServiceMethod serviceMethod) {
+        services.put(serviceMethod.getId(), serviceMethod);
+        return this;
+    }
+
     @Override
     public RsocketModuleConfiguration initialize(RsocketModule module) {
         Initial initial = new Initial(module.getRefresher());
@@ -51,6 +61,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.serverTransportConfiguration = initial.serverTransportConfiguration.toBuilder()
                 .logging(serverLogging)
                 .build();
+        initial.services = initial.services;
         return initial;
     }
 
@@ -59,6 +70,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private boolean activateServer;
         private boolean activateCommunicator;
         private RsocketServerConfiguration serverTransportConfiguration = super.getServerTransportConfiguration();
+        private Map<ServiceMethodIdentifier, ServiceMethod> services = super.getServices();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);
