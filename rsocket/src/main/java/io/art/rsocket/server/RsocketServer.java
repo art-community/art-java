@@ -68,13 +68,10 @@ public class RsocketServer implements Server {
     private volatile Mono<Void> closer;
 
     @Getter
-    private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> services;
+    private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> services;
 
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
-        services = configuration.getServiceProviders()
-                .stream()
-                .collect(immutableMapCollector(provider -> provider.get().getId(), LazyProperty::get));
         channel = property(this::createServer, this::disposeServer)
                 .listenConsumer(refresher.consumer()::serverConsumer)
                 .initialized(this::setupCloser);
@@ -82,6 +79,9 @@ public class RsocketServer implements Server {
 
     @Override
     public void initialize() {
+        services = configuration.getServiceProviders()
+                .stream()
+                .collect(immutableMapCollector(provider -> provider.get().getId(), LazyProperty::get));
         channel.initialize();
     }
 
