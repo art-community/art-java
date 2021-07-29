@@ -18,7 +18,6 @@
 
 package io.art.rsocket.model;
 
-import io.art.core.model.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 
@@ -27,5 +26,6 @@ import lombok.*;
 public class RsocketSetupPayload {
     DataFormat dataFormat;
     DataFormat metadataFormat;
-    ServiceMethodIdentifier id;
+    String serviceId;
+    String methodId;
 }

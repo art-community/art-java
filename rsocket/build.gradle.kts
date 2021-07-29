@@ -31,7 +31,7 @@ dependencies {
     implementation(project(":transport"))
     implementation(project(":server"))
     implementation(project(":communicator"))
-    implementation(project(":json"))
+
 
     api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
             .exclude("io.zipkin.brave")
@@ -48,6 +48,7 @@ dependencies {
     api("io.netty", "netty-all", nettyVersion)
             .exclude("org.slf4j")
 
+    testImplementation(project(":json"))
     testImplementation(testFixtures(project(":meta")))
 }
 

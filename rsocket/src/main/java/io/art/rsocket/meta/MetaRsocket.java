@@ -72,7 +72,9 @@ public class MetaRsocket extends MetaLibrary {
 
             private final MetaField<io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = register(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false));
 
-            private final MetaField<io.art.core.model.ServiceMethodIdentifier> idField = register(new MetaField<>("id",metaType(io.art.core.model.ServiceMethodIdentifier.class),false));
+            private final MetaField<java.lang.String> serviceIdField = register(new MetaField<>("serviceId",metaType(java.lang.String.class),false));
+
+            private final MetaField<java.lang.String> methodIdField = register(new MetaField<>("methodId",metaType(java.lang.String.class),false));
 
             private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
 
@@ -80,7 +82,9 @@ public class MetaRsocket extends MetaLibrary {
 
             private final MetaGetMetadataFormatMethod getMetadataFormatMethod = register(new MetaGetMetadataFormatMethod());
 
-            private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod());
+            private final MetaGetServiceIdMethod getServiceIdMethod = register(new MetaGetServiceIdMethod());
+
+            private final MetaGetMethodIdMethod getMethodIdMethod = register(new MetaGetMethodIdMethod());
 
             private final MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilderClass = register(new MetaRsocketSetupPayloadBuilderClass());
 
@@ -98,8 +102,12 @@ public class MetaRsocket extends MetaLibrary {
               return metadataFormatField;
             }
 
-            public MetaField<io.art.core.model.ServiceMethodIdentifier> idField() {
-              return idField;
+            public MetaField<java.lang.String> serviceIdField() {
+              return serviceIdField;
+            }
+
+            public MetaField<java.lang.String> methodIdField() {
+              return methodIdField;
             }
 
             public MetaToBuilderMethod toBuilderMethod() {
@@ -114,8 +122,12 @@ public class MetaRsocket extends MetaLibrary {
               return getMetadataFormatMethod;
             }
 
-            public MetaGetIdMethod getIdMethod() {
-              return getIdMethod;
+            public MetaGetServiceIdMethod getServiceIdMethod() {
+              return getServiceIdMethod;
+            }
+
+            public MetaGetMethodIdMethod getMethodIdMethod() {
+              return getMethodIdMethod;
             }
 
             public MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilderClass() {
@@ -176,21 +188,39 @@ public class MetaRsocket extends MetaLibrary {
               }
             }
 
-            public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload, io.art.core.model.ServiceMethodIdentifier> {
-              private MetaGetIdMethod() {
-                super("getId",metaType(io.art.core.model.ServiceMethodIdentifier.class));
+            public static final class MetaGetServiceIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload, java.lang.String> {
+              private MetaGetServiceIdMethod() {
+                super("getServiceId",metaType(java.lang.String.class));
               }
 
               @Override
               public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
                   java.lang.Object[] arguments) throws Throwable {
-                return instance.getId();
+                return instance.getServiceId();
               }
 
               @Override
               public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance)
                   throws Throwable {
-                return instance.getId();
+                return instance.getServiceId();
+              }
+            }
+
+            public static final class MetaGetMethodIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload, java.lang.String> {
+              private MetaGetMethodIdMethod() {
+                super("getMethodId",metaType(java.lang.String.class));
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                return instance.getMethodId();
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.rsocket.model.RsocketSetupPayload instance)
+                  throws Throwable {
+                return instance.getMethodId();
               }
             }
 
@@ -199,13 +229,17 @@ public class MetaRsocket extends MetaLibrary {
 
               private final MetaField<io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = register(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false));
 
-              private final MetaField<io.art.core.model.ServiceMethodIdentifier> idField = register(new MetaField<>("id",metaType(io.art.core.model.ServiceMethodIdentifier.class),false));
+              private final MetaField<java.lang.String> serviceIdField = register(new MetaField<>("serviceId",metaType(java.lang.String.class),false));
+
+              private final MetaField<java.lang.String> methodIdField = register(new MetaField<>("methodId",metaType(java.lang.String.class),false));
 
               private final MetaDataFormatMethod dataFormatMethod = register(new MetaDataFormatMethod());
 
               private final MetaMetadataFormatMethod metadataFormatMethod = register(new MetaMetadataFormatMethod());
 
-              private final MetaIdMethod idMethod = register(new MetaIdMethod());
+              private final MetaServiceIdMethod serviceIdMethod = register(new MetaServiceIdMethod());
+
+              private final MetaMethodIdMethod methodIdMethod = register(new MetaMethodIdMethod());
 
               private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
 
@@ -223,8 +257,12 @@ public class MetaRsocket extends MetaLibrary {
                 return metadataFormatField;
               }
 
-              public MetaField<io.art.core.model.ServiceMethodIdentifier> idField() {
-                return idField;
+              public MetaField<java.lang.String> serviceIdField() {
+                return serviceIdField;
+              }
+
+              public MetaField<java.lang.String> methodIdField() {
+                return methodIdField;
               }
 
               public MetaDataFormatMethod dataFormatMethod() {
@@ -235,8 +273,12 @@ public class MetaRsocket extends MetaLibrary {
                 return metadataFormatMethod;
               }
 
-              public MetaIdMethod idMethod() {
-                return idMethod;
+              public MetaServiceIdMethod serviceIdMethod() {
+                return serviceIdMethod;
+              }
+
+              public MetaMethodIdMethod methodIdMethod() {
+                return methodIdMethod;
               }
 
               public MetaBuildMethod buildMethod() {
@@ -297,29 +339,55 @@ public class MetaRsocket extends MetaLibrary {
                 }
               }
 
-              public static final class MetaIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder, io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder> {
-                private final MetaParameter<io.art.core.model.ServiceMethodIdentifier> idParameter = register(new MetaParameter<>(0, "id",metaType(io.art.core.model.ServiceMethodIdentifier.class)));
+              public static final class MetaServiceIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder, io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder> {
+                private final MetaParameter<java.lang.String> serviceIdParameter = register(new MetaParameter<>(0, "serviceId",metaType(java.lang.String.class)));
 
-                private MetaIdMethod() {
-                  super("id",metaType(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class));
+                private MetaServiceIdMethod() {
+                  super("serviceId",metaType(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class));
                 }
 
                 @Override
                 public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.id((io.art.core.model.ServiceMethodIdentifier)(arguments[0]));
+                  return instance.serviceId((java.lang.String)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
                     io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
                     java.lang.Object argument) throws Throwable {
-                  return instance.id((io.art.core.model.ServiceMethodIdentifier)(argument));
+                  return instance.serviceId((java.lang.String)(argument));
                 }
 
-                public MetaParameter<io.art.core.model.ServiceMethodIdentifier> idParameter() {
-                  return idParameter;
+                public MetaParameter<java.lang.String> serviceIdParameter() {
+                  return serviceIdParameter;
+                }
+              }
+
+              public static final class MetaMethodIdMethod extends InstanceMetaMethod<io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder, io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder> {
+                private final MetaParameter<java.lang.String> methodIdParameter = register(new MetaParameter<>(0, "methodId",metaType(java.lang.String.class)));
+
+                private MetaMethodIdMethod() {
+                  super("methodId",metaType(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class));
+                }
+
+                @Override
+                public java.lang.Object invoke(
+                    io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.methodId((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public java.lang.Object invoke(
+                    io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder instance,
+                    java.lang.Object argument) throws Throwable {
+                  return instance.methodId((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> methodIdParameter() {
+                  return methodIdParameter;
                 }
               }
 

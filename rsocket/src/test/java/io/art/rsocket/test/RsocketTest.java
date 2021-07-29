@@ -1,5 +1,6 @@
 package io.art.rsocket.test;
 
+import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.meta.*;
 import org.junit.jupiter.api.*;
@@ -11,13 +12,16 @@ import static io.art.rsocket.module.RsocketActivator.*;
 
 public class RsocketTest {
     @BeforeAll
-    public void setup() {
-        initialize(meta(() -> new MetaRsocket(new MetaMetaTest())), logging(), rsocket(), json());
+    public static void setup() {
+        initialize(meta(() -> new MetaRsocket(new MetaMetaTest())),
+                logging(),
+                rsocket(rsocket -> rsocket.activateServer().serverLogging(true)),
+                json()
+        );
     }
 
     @Test
     public void test() {
-
+        ThreadExtensions.block();
     }
-
 }

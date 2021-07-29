@@ -71,8 +71,10 @@ public class ServingRsocket implements RSocket {
                 .metadataFormat(metaDataFormat);
 
         if (!setupPayloadData.isEmpty()) {
-            ServiceMethodIdentifier serviceMethodId = ((RsocketSetupPayload) setupPayloadData.getValue()).getId();
-            if (nonNull(serviceMethodId)) {
+            RsocketSetupPayload setupPayloadDataValue = (RsocketSetupPayload) setupPayloadData.getValue();
+            if (nonNull(setupPayloadDataValue)) {
+                ServiceMethodIdentifier serviceMethodId = new ServiceMethodIdentifier(setupPayloadDataValue.getServiceId(), setupPayloadDataValue.getMethodId());
+
                 //setupPayload = setupPayloadBuilder.id(serviceMethodId).build();
                 serviceMethod = findServiceMethod(serviceMethodId);
                 dataReader = serverConfiguration.getReader(serviceMethodId, dataFormat);

@@ -35,23 +35,19 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private final RsocketModuleRefresher refresher;
-
-    @Getter(lazy = true)
-    private final ServerRefresher serverRefresher = refresher.serverRefresher();
-
-    @Getter(lazy = true)
-    private final RsocketModuleRefresher.Consumer consumer = refresher.consumer();
+    private final ServerRefresher serverRefresher;
 
     @Getter
-    private ServerConfiguration serverConfiguration = ServerConfiguration.builder()
-            .refresher(getServerRefresher())
-            .build();
+    private RsocketModuleRefresher.Consumer consumer;
 
     @Getter
-    private RsocketServerConfiguration serverTransportConfiguration = RsocketServerConfiguration.defaults();
+    private ServerConfiguration serverConfiguration;
 
     @Getter
-    private Map<ServiceMethodIdentifier, ServiceMethod> services = map();
+    private RsocketServerConfiguration serverTransportConfiguration;
+
+    @Getter
+    private Map<ServiceMethodIdentifier, ServiceMethod> services;
 
     @Getter
     private RsocketCommunicatorConfiguration communicatorConfiguration;
@@ -61,6 +57,17 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private boolean activateCommunicator;
+
+    public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
+        this.refresher = refresher;
+        serverRefresher = refresher.serverRefresher();
+        consumer = refresher.consumer();
+        serverConfiguration = ServerConfiguration.builder().refresher(serverRefresher).build();
+        serverTransportConfiguration = RsocketServerConfiguration.defaults();
+        services = map();
+        activateServer = false;
+        activateCommunicator = false;
+    }
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<RsocketModuleConfiguration, Configurator> {

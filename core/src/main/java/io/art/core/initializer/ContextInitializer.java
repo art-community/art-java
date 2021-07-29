@@ -19,14 +19,17 @@
 package io.art.core.initializer;
 
 import io.art.core.configuration.*;
+import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.singleton.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.configuration.ContextConfiguration.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.singleton.SingletonAction.*;
 import static java.util.Arrays.*;
+import static java.util.Objects.*;
 
 @UtilityClass
 public class ContextInitializer {
@@ -45,11 +48,25 @@ public class ContextInitializer {
     }
 
     public static void initialize(ContextConfiguration configuration, ModuleActivator... modules) {
-        initialize(configuration, stream(modules).map(ModuleActivator::getFactory).toArray(ModuleFactory[]::new));
+        initializeModules(configuration, modules);
     }
 
     private static void initializeModules(ContextConfiguration configuration, ModuleFactory<?>... modules) {
         prepareInitialization(configuration);
         processInitialization(stream(modules).map(ModuleFactory::get).collect(immutableSetCollector()));
+    }
+
+    private static void initializeModules(ContextConfiguration configuration, ModuleActivator... modules) {
+        prepareInitialization(configuration);
+        Builder<Module<?, ?>> builder = immutableSetBuilder();
+        for (ModuleActivator activator : modules) {
+            Module<?, ?> module = activator.getFactory().get();
+            ModuleInitializationOperator<?> initializer = activator.getInitializer();
+            if (nonNull(initializer)) {
+                initializer.get().initialize(cast(module));
+            }
+            builder.add(module);
+        }
+        processInitialization(builder.build());
     }
 }
