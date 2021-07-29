@@ -25,17 +25,14 @@ import io.art.core.property.*;
 import io.art.meta.configuration.*;
 import io.art.meta.exception.*;
 import io.art.meta.model.*;
-import io.art.meta.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
-import java.util.function.*;
 
 @Getter
 public class MetaModule implements StatelessModule<MetaModuleConfiguration, MetaModuleConfiguration.Configurator> {
@@ -52,10 +49,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
 
     @Override
     public void onLoad(Context.Service contextService) {
-        List<MetaLibrary> dependencies = MetaLibraryMutableRegistry.get().stream().map(Supplier::get).collect(listCollector());
-        configuration.getLibrary().compute(dependencies);
-        MetaClassMutableRegistry.clear();
-        MetaLibraryMutableRegistry.clear();
+        configuration.getLibrary().compute();
     }
 
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {

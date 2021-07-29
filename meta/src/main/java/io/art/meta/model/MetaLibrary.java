@@ -25,6 +25,7 @@ import io.art.meta.registry.*;
 import io.art.meta.validator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -33,6 +34,7 @@ import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.state.MetaComputationState.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @ToString
 @ForGenerator
@@ -74,14 +76,26 @@ public abstract class MetaLibrary {
         return cast(packages.get(name));
     }
 
-    public void compute(List<MetaLibrary> dependencies) {
-        for (MetaLibrary dependency : this.dependencies) {
-            dependency.compute(dependency.dependencies);
+    public void compute() {
+        List<MetaLibrary> registryDependencies = MetaLibraryMutableRegistry
+                .get()
+                .stream()
+                .map(Supplier::get)
+                .collect(listCollector());
+        for (MetaLibrary dependency : registryDependencies) {
+            dependency.computeLibrary();
         }
-        for (MetaLibrary dependency : dependencies) {
-            dependency.compute(dependency.dependencies);
-        }
+        computeLibrary();
+        MetaClassMutableRegistry.clear();
+        MetaLibraryMutableRegistry.clear();
+    }
+
+    private void computeLibrary() {
         if (computed.compareAndSet(false, true)) {
+            for (MetaLibrary dependency : this.dependencies) {
+                dependency.computeLibrary();
+            }
+
             rootClasses.forEach(MetaClass::beginComputation);
             packages.values().forEach(MetaPackage::beginComputation);
 
