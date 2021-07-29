@@ -77,6 +77,7 @@ public abstract class MetaLibrary {
     }
 
     public void compute() {
+        if (computed.get()) return;
         List<MetaLibrary> registryDependencies = MetaLibraryMutableRegistry
                 .get()
                 .stream()
