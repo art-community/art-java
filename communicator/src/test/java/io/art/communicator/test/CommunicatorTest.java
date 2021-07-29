@@ -27,8 +27,7 @@ public class CommunicatorTest {
     @Test
     public void testCommunicatorActionExecution() {
         MetaTestCommunicatorClass communicatorClass = cast(declaration(TestCommunicator.class));
-        TestCommunication testCommunication = new TestCommunication();
-        TestCommunicator communicator = communicatorProxy(communicatorClass, method -> apply(preconfiguredCommunicatorAction(communicatorClass, method, testCommunication), CommunicatorAction::initialize));
+        TestCommunicator communicator = communicatorProxy(communicatorClass, method -> apply(preconfiguredCommunicatorAction(communicatorClass, method, new TestCommunication()), CommunicatorAction::initialize));
         Map<String, Object> executions = executions();
 
         communicator.m1();
