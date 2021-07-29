@@ -1,4 +1,4 @@
-package io.art.communicator.test.factory;
+package io.art.communicator.factory;
 
 import io.art.communicator.*;
 import io.art.communicator.action.*;
@@ -17,12 +17,28 @@ import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static java.util.Objects.*;
 
 @UtilityClass
-public class CommunicatorActionTestFactory {
-    public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method, Communication implementation) {
-        return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method, implementation);
+public class CommunicatorActionFactory {
+    public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method, Communication communication) {
+        return communicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method, communication);
     }
 
     public CommunicatorAction communicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {
+        MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
+        CommunicatorActionBuilder builder = CommunicatorAction.builder()
+                .id(id)
+                .outputType(method.returnType())
+                .communication(communication);
+        if (nonNull(inputType)) {
+            return builder.inputType(inputType).build();
+        }
+        return builder.build();
+    }
+
+    public CommunicatorAction preconfiguredCommunicatorAction(MetaClass<?> owner, MetaMethod<?> method, Communication communication) {
+        return preconfiguredCommunicatorAction(communicatorActionId(owner.definition().type().getSimpleName(), method.name()), method, communication);
+    }
+
+    public CommunicatorAction preconfiguredCommunicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         CommunicatorConfiguration configuration = CommunicatorConfiguration.builder().refresher(new CommunicatorRefresher()).build();
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
@@ -33,12 +49,8 @@ public class CommunicatorActionTestFactory {
                 .inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT))
                 .outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
         if (nonNull(inputType)) {
-            CommunicatorAction action = builder.inputType(inputType).build();
-            action.initialize();
-            return action;
+            return builder.inputType(inputType).build();
         }
-        CommunicatorAction action = builder.build();
-        action.initialize();
-        return action;
+        return builder.build();
     }
 }

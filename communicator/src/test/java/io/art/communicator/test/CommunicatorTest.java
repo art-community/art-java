@@ -1,14 +1,16 @@
 package io.art.communicator.test;
 
+import io.art.communicator.action.*;
 import io.art.communicator.test.meta.*;
 import io.art.communicator.test.meta.MetaCommunicatorTest.MetaIoPackage.MetaArtPackage.MetaCommunicatorPackage.MetaTestPackage.MetaProxyPackage.*;
 import io.art.communicator.test.proxy.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
+import static io.art.communicator.factory.CommunicatorActionFactory.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.communicator.test.factory.CommunicatorActionTestFactory.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.ContextInitializer.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -25,7 +27,8 @@ public class CommunicatorTest {
     @Test
     public void testCommunicatorActionExecution() {
         MetaTestCommunicatorClass communicatorClass = cast(declaration(TestCommunicator.class));
-        TestCommunicator communicator = communicatorProxy(communicatorClass, method -> communicatorAction(communicatorClass, method, new TestCommunication()));
+        TestCommunication testCommunication = new TestCommunication();
+        TestCommunicator communicator = communicatorProxy(communicatorClass, method -> apply(preconfiguredCommunicatorAction(communicatorClass, method, testCommunication), CommunicatorAction::initialize));
         Map<String, Object> executions = executions();
 
         communicator.m1();
