@@ -30,10 +30,8 @@ public class MetaClassMutableRegistry {
         return immutableMapOf(META_CLASS_REGISTRY);
     }
 
-    public static ImmutableMap<Class<?>, MetaClass<?>> clear() {
-        ImmutableMap<Class<?>, MetaClass<?>> classes = get();
+    public static void clear() {
         META_CLASS_REGISTRY.clear();
-        return classes;
     }
 
     public static void register(MetaClass<?> metaClass) {

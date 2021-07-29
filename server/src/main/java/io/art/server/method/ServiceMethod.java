@@ -18,8 +18,8 @@
 
 package io.art.server.method;
 
+import io.art.core.invoker.*;
 import io.art.core.model.*;
-import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -40,7 +40,7 @@ public class ServiceMethod {
     private final ServiceMethodIdentifier id;
 
     @Getter
-    private final MetaMethodInvoker invoker;
+    private final Invoker invoker;
 
     @Getter
     private final MetaType<?> inputType;

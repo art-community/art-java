@@ -22,15 +22,15 @@ public class ServiceMethodFactory {
         return preconfiguredServiceMethod(serviceMethodId(owner, method), owner, method);
     }
 
-    public ServiceMethod defaultServiceMethod(MetaClass<?> owner, MetaMethod<?> method) {
-        return defaultServiceMethod(serviceMethodId(owner, method), owner, method);
+    public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<?> method) {
+        return serviceMethod(serviceMethodId(owner, method), owner, method);
     }
 
-    public static ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<?> method) {
         return ServiceMethodIdentifier.serviceMethodId(owner.definition().type().getSimpleName(), method.name());
     }
 
-    public ServiceMethod defaultServiceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)

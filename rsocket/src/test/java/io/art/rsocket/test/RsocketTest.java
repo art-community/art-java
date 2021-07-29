@@ -25,7 +25,7 @@ public class RsocketTest {
                 meta(() -> new MetaRsocketTest(new MetaRsocket(new MetaMetaTest()))),
                 logging(),
                 rsocket(rsocket -> rsocket
-                        .register(() -> defaultServiceMethod(declaration.get(), declaration.get().mMethod()))
+                        .register(() -> serviceMethod(declaration.get(), declaration.get().mMethod()))
                         .activateServer()
                         .serverLogging(true)),
                 json()

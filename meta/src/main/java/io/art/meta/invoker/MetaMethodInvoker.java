@@ -1,6 +1,7 @@
 package io.art.meta.invoker;
 
 
+import io.art.core.invoker.*;
 import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import lombok.*;
@@ -11,7 +12,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
-public class MetaMethodInvoker {
+public class MetaMethodInvoker implements Invoker {
     private final Supplier<Object> invokeWithoutParameters;
     private final Function<Object, Object> invokeOneParameter;
     private final Function<Object[], Object> invokeWithParameters;
@@ -41,14 +42,17 @@ public class MetaMethodInvoker {
         invokeWithParameters = arguments -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton), arguments);
     }
 
+    @Override
     public Object invoke() {
         return invokeWithoutParameters.get();
     }
 
+    @Override
     public Object invoke(Object argument) {
         return invokeOneParameter.apply(argument);
     }
 
+    @Override
     public Object invoke(Object[] arguments) {
         return invokeWithParameters.apply(arguments);
     }
