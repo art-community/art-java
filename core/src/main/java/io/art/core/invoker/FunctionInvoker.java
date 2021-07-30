@@ -5,22 +5,22 @@ import java.util.function.*;
 
 @Builder
 public class FunctionInvoker implements Invoker {
-    private final Supplier<Object> noArgumentsFunction;
-    private final Function<Object, Object> oneArgumentFunction;
-    private final Function<Object[], Object> argumentsFunction;
+    private final Supplier<Object> noArguments;
+    private final Function<Object, Object> oneArgument;
+    private final Function<Object[], Object> manyArguments;
 
     @Override
     public Object invoke() {
-        return noArgumentsFunction.get();
+        return noArguments.get();
     }
 
     @Override
     public Object invoke(Object argument) {
-        return oneArgumentFunction.apply(argument);
+        return oneArgument.apply(argument);
     }
 
     @Override
     public Object invoke(Object[] arguments) {
-        return argumentsFunction.apply(arguments);
+        return manyArguments.apply(arguments);
     }
 }

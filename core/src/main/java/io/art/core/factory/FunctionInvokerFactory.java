@@ -14,14 +14,14 @@ public class FunctionInvokerFactory {
     }
 
     public static FunctionInvoker noArgumentsInvoker(Supplier<Object> noArgumentsFunction) {
-        return FunctionInvoker.builder().noArgumentsFunction(noArgumentsFunction).build();
+        return FunctionInvoker.builder().noArguments(noArgumentsFunction).build();
     }
 
     public static FunctionInvoker oneArgumentInvoker(Function<Object, Object> oneArgumentFunction) {
-        return FunctionInvoker.builder().oneArgumentFunction(oneArgumentFunction).build();
+        return FunctionInvoker.builder().oneArgument(oneArgumentFunction).build();
     }
 
     public static FunctionInvoker invoker(Function<Object[], Object> argumentsFunction) {
-        return FunctionInvoker.builder().argumentsFunction(argumentsFunction).build();
+        return FunctionInvoker.builder().manyArguments(argumentsFunction).build();
     }
 }
