@@ -94,6 +94,7 @@ public class RsocketServer implements Server {
     @Override
     public void dispose() {
         tcpChannel.dispose();
+        httpChannel.dispose();
     }
 
     @Override
@@ -162,11 +163,11 @@ public class RsocketServer implements Server {
     }
 
     private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Mono<RSocket> socket = Mono.create(emitter -> createSocket(payload, requesterSocket, emitter));
+        Mono<RSocket> socket = Mono.create(emitter -> setupSocket(payload, requesterSocket, emitter));
         return socket.doOnError(throwable -> withLogging(() -> getLogger().error(throwable.getMessage(), throwable)));
     }
 
-    private void createSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
+    private void setupSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
         ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, serviceMethods, configuration));
         ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
