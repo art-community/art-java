@@ -23,6 +23,7 @@ import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
 import io.art.transport.payload.*;
 import io.rsocket.frame.decoder.*;
+import io.rsocket.plugins.*;
 import lombok.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -50,7 +51,8 @@ public class RsocketTcpServerConfiguration {
                                           DataFormat defaultDataFormat,
                                           DataFormat defaultMetaDataFormat,
                                           Function<DataFormat, TransportPayloadReader> setupReader,
-                                          UnaryOperator<TcpServer> decorator) {
+                                          UnaryOperator<TcpServer> decorator,
+                                          UnaryOperator<InterceptorRegistry> interceptors) {
         this.maxFrameLength = maxFrameLength;
         this.decorator = decorator;
         this.common = RsocketCommonServerConfiguration.builder()
@@ -65,6 +67,7 @@ public class RsocketTcpServerConfiguration {
                 .defaultDataFormat(defaultDataFormat)
                 .defaultMetaDataFormat(defaultMetaDataFormat)
                 .setupReader(setupReader)
+                .interceptors(interceptors)
                 .build();
     }
 

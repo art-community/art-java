@@ -25,6 +25,7 @@ import io.art.rsocket.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.rsocket.frame.decoder.*;
+import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -54,6 +55,7 @@ public class RsocketCommonServerConfiguration {
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
     private Function<DataFormat, TransportPayloadReader> setupReader;
+    private UnaryOperator<InterceptorRegistry> interceptors;
 
     public static RsocketCommonServerConfiguration defaults() {
         RsocketCommonServerConfiguration configuration = RsocketCommonServerConfiguration.builder().build();
@@ -66,6 +68,7 @@ public class RsocketCommonServerConfiguration {
         configuration.port = DEFAULT_PORT;
         configuration.host = BROADCAST_IP_ADDRESS;
         configuration.setupReader = TransportPayloadReader::new;
+        configuration.interceptors = UnaryOperator.identity();
         return configuration;
     }
 

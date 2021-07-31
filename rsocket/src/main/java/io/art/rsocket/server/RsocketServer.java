@@ -123,9 +123,9 @@ public class RsocketServer implements Server {
         }
         apply(serverConfiguration.getResume(), resume -> server.resume(resume.toResume()));
         Mono<CloseableChannel> bind = server
-                .interceptors(registry -> registry
+                .interceptors(registry -> serverConfiguration.getInterceptors().apply(registry
                         .forResponder(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))
-                        .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration)))
+                        .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))))
                 .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
         if (withLogging() && serverConfiguration.isLogging()) {

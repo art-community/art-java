@@ -24,6 +24,7 @@ import io.art.rsocket.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.rsocket.frame.decoder.*;
+import io.rsocket.plugins.*;
 import lombok.*;
 import reactor.netty.http.server.*;
 import java.util.function.*;
@@ -45,7 +46,8 @@ public class RsocketHttpServerConfiguration {
                                            DataFormat defaultDataFormat,
                                            DataFormat defaultMetaDataFormat,
                                            Function<DataFormat, TransportPayloadReader> setupReader,
-                                           UnaryOperator<HttpServer> decorator) {
+                                           UnaryOperator<HttpServer> decorator,
+                                           UnaryOperator<InterceptorRegistry> interceptors) {
         this.decorator = decorator;
         this.common = RsocketCommonServerConfiguration.builder()
                 .port(port)
@@ -59,6 +61,7 @@ public class RsocketHttpServerConfiguration {
                 .defaultDataFormat(defaultDataFormat)
                 .defaultMetaDataFormat(defaultMetaDataFormat)
                 .setupReader(setupReader)
+                .interceptors(interceptors)
                 .build();
     }
 
