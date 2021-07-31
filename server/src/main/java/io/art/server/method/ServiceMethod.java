@@ -21,6 +21,8 @@ package io.art.server.method;
 import io.art.core.invoker.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.transport.constants.TransportModuleConstants.*;
+import io.art.transport.payload.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -56,6 +58,14 @@ public class ServiceMethod {
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Flux<Object>, Flux<Object>> handler = selectHandler();
+
+    @Getter
+    @Builder.Default
+    private final Function<DataFormat, TransportPayloadReader> reader = TransportPayloadReader::new;
+
+    @Getter
+    @Builder.Default
+    private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
 
     public Flux<Object> serve(Flux<Object> input) {
         return decorateOutput(getHandler().apply(decorateInput(input)));

@@ -24,6 +24,7 @@ import io.art.core.source.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
+import io.art.transport.payload.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
 import reactor.netty.http.server.*;
@@ -40,6 +41,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -56,6 +58,7 @@ public class RsocketServerConfiguration {
     private RsocketModuleConstants.TransportMode transport;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
+    private Function<DataFormat, TransportPayloadReader> setupReader;
 
     public static RsocketServerConfiguration defaults() {
         RsocketServerConfiguration configuration = RsocketServerConfiguration.builder().build();
@@ -68,11 +71,13 @@ public class RsocketServerConfiguration {
         configuration.transport = TCP;
         configuration.tcpServer = TcpServer.create().port(DEFAULT_PORT).host(BROADCAST_IP_ADDRESS);
         configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
+        configuration.setupReader = TransportPayloadReader::new;
         return configuration;
     }
 
     public static RsocketServerConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
         RsocketServerConfiguration configuration = RsocketServerConfiguration.builder().build();
+        configuration.setupReader = TransportPayloadReader::new;
 
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();

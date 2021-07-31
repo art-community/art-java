@@ -20,7 +20,6 @@ public class ServerRefresher {
     }
 
 
-
     @Getter
     @Accessors(fluent = true)
     public class Consumer {

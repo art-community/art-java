@@ -21,31 +21,25 @@ package io.art.server.configuration;
 import io.art.core.changes.*;
 import io.art.core.source.*;
 import io.art.server.refresher.*;
-import io.art.transport.constants.TransportModuleConstants.*;
-import io.art.transport.payload.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
-import java.util.function.*;
 
 @Getter
+@Builder(toBuilder = true)
 public class ServiceMethodConfiguration {
     private boolean deactivated;
     private boolean logging;
     private boolean validating;
-    private Function<DataFormat, TransportPayloadReader> reader;
-    private Function<DataFormat, TransportPayloadWriter> writer;
 
     public static ServiceMethodConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
-        ServiceMethodConfiguration configuration = new ServiceMethodConfiguration();
+        ServiceMethodConfiguration configuration = ServiceMethodConfiguration.builder().build();
         ChangesListener deactivationListener = refresher.deactivationListener();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener validationListener = refresher.validationListener();
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), true));
         configuration.validating = validationListener.emit(orElse(source.getBoolean(VALIDATING_KEY), true));
-        configuration.reader = TransportPayloadReader::new;
-        configuration.writer = TransportPayloadWriter::new;
         return configuration;
     }
 }

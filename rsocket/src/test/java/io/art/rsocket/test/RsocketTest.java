@@ -18,7 +18,10 @@ public class RsocketTest {
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 logging(),
                 json(),
-                rsocket(rsocket -> rsocket.server(server -> server.logging().forClass(TestRsocketService.class)))
+                rsocket(rsocket -> rsocket.server(server -> server
+                        .tcp(tcp -> tcp.port(1234))
+                        .configure(configurator -> configurator.logging(false))
+                        .forClass(TestRsocketService.class)))
         );
     }
 

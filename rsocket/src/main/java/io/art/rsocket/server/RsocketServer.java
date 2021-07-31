@@ -53,7 +53,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static java.text.MessageFormat.*;
 import static java.util.Optional.*;
-import static java.util.function.Function.*;
+import static java.util.function.Function.identity;
 import static lombok.AccessLevel.*;
 import java.net.*;
 import java.util.*;

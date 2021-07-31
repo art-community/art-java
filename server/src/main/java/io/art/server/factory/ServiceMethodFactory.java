@@ -45,7 +45,7 @@ public class ServiceMethodFactory {
     public ServiceMethod preconfiguredServiceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         boolean validatable = nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE);
-        ServerConfiguration configuration = ServerConfiguration.builder().refresher(new ServerRefresher()).build();
+        ServerConfiguration configuration = ServerConfiguration.defaults(new ServerRefresher());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())

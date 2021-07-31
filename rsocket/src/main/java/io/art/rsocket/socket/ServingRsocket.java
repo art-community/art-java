@@ -65,7 +65,7 @@ public class ServingRsocket implements RSocket {
         DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), transportConfiguration.getDefaultDataFormat());
         DataFormat metaDataFormat = fromMimeType(MimeType.valueOf(payload.metadataMimeType()), transportConfiguration.getDefaultMetaDataFormat());
 
-        Function<DataFormat, TransportPayloadReader> setupReader = serverConfiguration.getReader();
+        Function<DataFormat, TransportPayloadReader> setupReader = transportConfiguration.getSetupReader();
 
         TransportPayload setupPayloadData = setupReader.apply(dataFormat).read(payload.sliceData(), declaration(RsocketSetupPayload.class).definition());
         RsocketSetupPayloadBuilder setupPayloadBuilder = RsocketSetupPayload.builder()
@@ -79,8 +79,8 @@ public class ServingRsocket implements RSocket {
 
                 //setupPayload = setupPayloadBuilder.id(serviceMethodId).build();
                 serviceMethod = findServiceMethod(serviceMethodId);
-                dataReader = serverConfiguration.getReader(serviceMethodId, dataFormat);
-                dataWriter = serverConfiguration.getWriter(serviceMethodId, dataFormat);
+                dataReader = serviceMethod.getReader().apply(dataFormat);
+                dataWriter = serviceMethod.getWriter().apply(dataFormat);
                 return;
             }
         }
@@ -89,8 +89,8 @@ public class ServingRsocket implements RSocket {
         if (nonNull(defaultServiceMethod)) {
             //setupPayload = setupPayloadBuilder.id(defaultServiceMethod).build();
             serviceMethod = findServiceMethod(defaultServiceMethod);
-            dataReader = serverConfiguration.getReader(defaultServiceMethod, dataFormat);
-            dataWriter = serverConfiguration.getWriter(defaultServiceMethod, dataFormat);
+            dataReader = serviceMethod.getReader().apply(dataFormat);
+            dataWriter = serviceMethod.getWriter().apply(dataFormat);
             return;
         }
         throw new ImpossibleSituationException();

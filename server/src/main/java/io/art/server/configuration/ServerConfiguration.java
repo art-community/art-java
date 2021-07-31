@@ -18,49 +18,32 @@
 
 package io.art.server.configuration;
 
+import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.core.source.*;
 import io.art.server.refresher.*;
-import io.art.transport.constants.TransportModuleConstants.*;
-import io.art.transport.payload.*;
 import lombok.*;
+import static io.art.core.collection.ImmutableMap.*;
+import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
 import java.util.function.*;
 
 
-@Builder
 public class ServerConfiguration {
     private final ServerRefresher refresher;
 
-    @Getter(lazy = true)
-    private final ServerRefresher.Consumer consumer = refresher.consumer();
+    @Getter
+    private final ServerRefresher.Consumer consumer;
 
     @Getter
-    private final Map<String, ServiceConfiguration> serviceConfigurations;
+    private ImmutableMap<String, ServiceConfiguration> serviceConfigurations;
 
-    @Getter
-    @Builder.Default
-    private final Function<DataFormat, TransportPayloadReader> reader = TransportPayloadReader::new;
-
-    @Getter
-    @Builder.Default
-    private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
-
-    public TransportPayloadReader getReader(ServiceMethodIdentifier id, DataFormat dataFormat) {
-        return getMethodConfiguration(id)
-                .map(ServiceMethodConfiguration::getReader)
-                .orElseGet(() -> ofNullable(serviceConfigurations.get(id.getServiceId()))
-                        .map(ServiceConfiguration::getReader)
-                        .orElse(reader)).apply(dataFormat);
-    }
-
-    public TransportPayloadWriter getWriter(ServiceMethodIdentifier id, DataFormat dataFormat) {
-        return getMethodConfiguration(id)
-                .map(ServiceMethodConfiguration::getWriter)
-                .orElseGet(() -> ofNullable(serviceConfigurations.get(id.getServiceId()))
-                        .map(ServiceConfiguration::getWriter)
-                        .orElse(writer)).apply(dataFormat);
+    private ServerConfiguration(ServerRefresher refresher) {
+        this.refresher = refresher;
+        this.serviceConfigurations = emptyImmutableMap();
+        this.consumer = refresher.consumer();
     }
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
@@ -103,5 +86,18 @@ public class ServerConfiguration {
             return defaultValue;
         }
         return mapper.apply(methodConfiguration);
+    }
+
+    public static ServerConfiguration defaults(ServerRefresher refresher) {
+        return new ServerConfiguration(refresher);
+    }
+
+    public static ServerConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
+        ServerConfiguration configuration = new ServerConfiguration(refresher);
+        configuration.serviceConfigurations = ofNullable(source.getNested(SERVER_SECTION))
+                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
+                .orElse(emptyImmutableMap());
+        configuration.refresher.produce();
+        return configuration;
     }
 }
