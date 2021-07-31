@@ -31,6 +31,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class RsocketModuleConfiguration implements ModuleConfiguration {
@@ -44,7 +45,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private ServerConfiguration serverConfiguration;
 
     @Getter
-    private RsocketServerConfiguration serverTransportConfiguration;
+    private RsocketTcpServerConfiguration tcpServerConfiguration;
+
+    @Getter
+    private RsocketHttpServerConfiguration httpServerConfiguration;
 
     @Getter
     private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders;
@@ -53,7 +57,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketCommunicatorConfiguration communicatorConfiguration;
 
     @Getter
-    private boolean activateServer;
+    private boolean enableTcpServer;
+
+    @Getter
+    private boolean enableHttpServer;
 
     @Getter
     private boolean activateCommunicator;
@@ -63,9 +70,11 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         serverRefresher = refresher.serverRefresher();
         consumer = refresher.consumer();
         serverConfiguration = ServerConfiguration.defaults(refresher.serverRefresher());
-        serverTransportConfiguration = RsocketServerConfiguration.defaults();
+        tcpServerConfiguration = RsocketTcpServerConfiguration.defaults();
+        httpServerConfiguration = RsocketHttpServerConfiguration.defaults();
         serviceMethodProviders = lazy(ImmutableArray::emptyImmutableArray);
-        activateServer = false;
+        enableTcpServer = false;
+        enableHttpServer = false;
         activateCommunicator = false;
     }
 
@@ -75,19 +84,21 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator from(ConfigurationSource source) {
-            ofNullable(source.getNested(RSOCKET_SECTION))
-                    .map(rsocket -> rsocket.getNested(SERVER_SECTION))
-                    .map(server -> RsocketServerConfiguration.from(configuration.refresher, server))
-                    .ifPresent(serverConfiguration -> configuration.serverTransportConfiguration = serverConfiguration);
-            ofNullable(source.getNested(RSOCKET_SECTION))
-                    .map(rsocket -> rsocket.getNested(SERVER_SECTION))
+            Optional<NestedConfiguration> serverSection = ofNullable(source.getNested(RSOCKET_SECTION))
+                    .map(rsocket -> rsocket.getNested(SERVER_SECTION));
+            serverSection
+                    .map(server -> RsocketTcpServerConfiguration.from(configuration.refresher, configuration.tcpServerConfiguration, server))
+                    .ifPresent(serverConfiguration -> configuration.tcpServerConfiguration = serverConfiguration);
+            serverSection
+                    .map(server -> RsocketHttpServerConfiguration.from(configuration.refresher, configuration.httpServerConfiguration, server))
+                    .ifPresent(serverConfiguration -> configuration.httpServerConfiguration = serverConfiguration);
+            serverSection
                     .map(server -> ServerConfiguration.from(configuration.serverRefresher, server))
                     .ifPresent(serverConfiguration -> configuration.serverConfiguration = serverConfiguration);
             ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))
                     .map(communicator -> RsocketCommunicatorConfiguration.from(configuration.refresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
-            configuration.serverTransportConfiguration = orElse(configuration.serverTransportConfiguration, RsocketServerConfiguration::defaults);
             configuration.serverConfiguration = orElse(configuration.serverConfiguration, () -> ServerConfiguration.defaults(configuration.serverRefresher));
             configuration.refresher.produce();
             return this;
@@ -96,9 +107,11 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator initialize(RsocketModuleConfiguration configuration) {
             this.configuration.activateCommunicator = configuration.isActivateCommunicator();
-            this.configuration.activateServer = configuration.isActivateServer();
+            this.configuration.enableTcpServer = configuration.isEnableTcpServer();
+            this.configuration.enableHttpServer = configuration.isEnableHttpServer();
             this.configuration.serverConfiguration = configuration.getServerConfiguration();
-            this.configuration.serverTransportConfiguration = configuration.getServerTransportConfiguration();
+            this.configuration.tcpServerConfiguration = configuration.getTcpServerConfiguration();
+            this.configuration.httpServerConfiguration = configuration.getHttpServerConfiguration();
             this.configuration.serviceMethodProviders = configuration.getServiceMethodProviders();
             return this;
         }

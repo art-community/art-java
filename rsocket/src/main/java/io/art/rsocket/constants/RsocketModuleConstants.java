@@ -137,25 +137,6 @@ public interface RsocketModuleConstants {
 
     @Getter
     @AllArgsConstructor
-    enum TransportMode {
-        TCP("tcp"),
-        WS("ws");
-
-        private final String transport;
-
-        public static TransportMode rsocketTransport(String transport) {
-            return rsocketTransport(transport, TCP);
-        }
-
-        public static TransportMode rsocketTransport(String transport, TransportMode fallback) {
-            if (TCP.transport.equalsIgnoreCase(transport)) return TCP;
-            if (WS.transport.equalsIgnoreCase(transport)) return WS;
-            return fallback;
-        }
-    }
-
-    @Getter
-    @AllArgsConstructor
     enum RetryPolicy {
         BACKOFF("backoff"),
         FIXED_DELAY("fixedDelay"),

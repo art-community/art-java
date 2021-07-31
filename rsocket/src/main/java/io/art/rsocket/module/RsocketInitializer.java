@@ -29,7 +29,6 @@ import lombok.*;
 import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
-    private boolean activateServer;
     private boolean activateCommunicator;
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
 
@@ -39,7 +38,6 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     }
 
     public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator> registrator) {
-        activateServer = true;
         registrator.apply(serverConfigurator);
         return this;
     }
@@ -48,17 +46,22 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     public RsocketModuleConfiguration initialize(RsocketModule module) {
         Initial initial = new Initial(module.getRefresher());
         initial.activateCommunicator = activateCommunicator;
-        initial.activateServer = activateServer;
-        initial.serverTransportConfiguration = serverConfigurator.configure(initial.serverTransportConfiguration);
+        initial.enableTcpServer = serverConfigurator.enableTcp();
+        initial.enableHttpServer = serverConfigurator.enableHttp();
+        initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
+        initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
+        initial.httpServerConfiguration = serverConfigurator.configure(initial.httpServerConfiguration);
         initial.serviceMethodProviders = serverConfigurator.serviceMethods();
         return initial;
     }
 
     @Getter
     public static class Initial extends RsocketModuleConfiguration {
-        private boolean activateServer;
         private boolean activateCommunicator;
-        private RsocketServerConfiguration serverTransportConfiguration = super.getServerTransportConfiguration();
+        private boolean enableTcpServer = super.isEnableTcpServer();
+        private boolean enableHttpServer = super.isEnableHttpServer();
+        private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServerConfiguration();
+        private RsocketHttpServerConfiguration httpServerConfiguration = super.getHttpServerConfiguration();
         private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders = super.getServiceMethodProviders();
 
         public Initial(RsocketModuleRefresher refresher) {

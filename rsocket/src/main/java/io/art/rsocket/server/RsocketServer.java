@@ -19,7 +19,6 @@
 package io.art.rsocket.server;
 
 import io.art.core.collection.*;
-import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.runnable.*;
@@ -48,16 +47,10 @@ import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static java.text.MessageFormat.*;
-import static java.util.Optional.*;
-import static java.util.function.Function.identity;
+import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
-import java.net.*;
-import java.util.*;
-import java.util.function.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
@@ -65,16 +58,21 @@ public class RsocketServer implements Server {
     private static final Logger logger = logger(RsocketServer.class);
 
     private final RsocketModuleConfiguration configuration;
-    private final Property<CloseableChannel> channel;
+    private final Property<CloseableChannel> tcpChannel;
+    private final Property<CloseableChannel> httpChannel;
 
     private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
-    private volatile Mono<Void> closer;
+    private volatile Mono<Void> tcpCloser;
+    private volatile Mono<Void> httpCloser;
 
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
-        channel = property(this::createServer, this::disposeServer)
+        tcpChannel = property(this::createTcpServer, this::disposeTcpServer)
                 .listenConsumer(refresher.consumer()::serverConsumer)
-                .initialized(this::setupCloser);
+                .initialized(this::setupTcpCloser);
+        httpChannel = property(this::createHttpServer, this::disposeHttpServer)
+                .listenConsumer(refresher.consumer()::serverConsumer)
+                .initialized(this::setupHttpCloser);
     }
 
     @Override
@@ -83,49 +81,65 @@ public class RsocketServer implements Server {
                 .get()
                 .stream()
                 .collect(immutableMapCollector(ServiceMethod::getId, identity()));
-        channel.initialize();
+
+        if (configuration.isEnableTcpServer()) {
+            tcpChannel.initialize();
+        }
+
+        if (configuration.isEnableHttpServer()) {
+            httpChannel.initialize();
+        }
     }
 
     @Override
     public void dispose() {
-        channel.dispose();
+        tcpChannel.dispose();
     }
 
     @Override
     public boolean available() {
-        return channel.initialized();
+        return tcpChannel.initialized() || httpChannel.initialized();
     }
 
-    private CloseableChannel createServer() {
-        RsocketServerConfiguration configuration = this.configuration.getServerTransportConfiguration();
-        TransportMode transportMode = configuration.getTransport();
-        int fragmentationMtu = configuration.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(configuration.getMaxInboundPayloadSize());
+    private CloseableChannel createTcpServer() {
+        RsocketTcpServerConfiguration configuration = this.configuration.getTcpServerConfiguration();
+        RsocketCommonServerConfiguration common = configuration.getCommon();
+        int fragmentationMtu = common.getFragmentationMtu();
+        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(common.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
-        apply(configuration.getResume(), resume -> server.resume(resume.toResume()));
-        Optional<SocketAddress> tcpAddress = ofNullable(configuration.getTcpServer())
-                .map(TcpServer::configuration)
-                .map(TcpServerConfig::bindAddress)
-                .map(Supplier::get);
-        Optional<SocketAddress> webAddress = ofNullable(configuration.getHttpWebSocketServer())
-                .map(HttpServer::configuration)
-                .map(HttpServerConfig::bindAddress)
-                .map(Supplier::get);
-        SocketAddress address = transportMode == TCP
-                ? tcpAddress.orElseThrow(ImpossibleSituationException::new)
-                : webAddress.orElseThrow(ImpossibleSituationException::new);
-        ServerTransport<CloseableChannel> transport = transportMode == TCP
-                ? TcpServerTransport.create(configuration.getTcpServer(), configuration.getTcpMaxFrameLength())
-                : WebsocketServerTransport.create(configuration.getHttpWebSocketServer());
+        apply(common.getResume(), resume -> server.resume(resume.toResume()));
+        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(TcpServer.create().port(common.getPort()), configuration.getMaxFrameLength());
         Mono<CloseableChannel> bind = server
                 .interceptors(this::configureInterceptors)
-                .payloadDecoder(configuration.getPayloadDecoder())
+                .payloadDecoder(common.getPayloadDecoder())
                 .bind(transport);
-        if (withLogging() && configuration.isLogging()) {
+        if (withLogging() && common.isLogging()) {
             bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, address)))
+                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, common.getHost())))
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+        }
+        return block(bind);
+    }
+
+    private CloseableChannel createHttpServer() {
+        RsocketHttpServerConfiguration configuration = this.configuration.getHttpServerConfiguration();
+        RsocketCommonServerConfiguration common = configuration.getCommon();
+        int fragmentationMtu = common.getFragmentationMtu();
+        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(common.getMaxInboundPayloadSize());
+        if (fragmentationMtu > 0) {
+            server.fragment(fragmentationMtu);
+        }
+        apply(common.getResume(), resume -> server.resume(resume.toResume()));
+        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(HttpServer.create().port(common.getPort()));
+        Mono<CloseableChannel> bind = server
+                .interceptors(this::configureInterceptors)
+                .payloadDecoder(common.getPayloadDecoder())
+                .bind(transport);
+        if (withLogging() && common.isLogging()) {
+            bind = bind
+                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, common.getHost())))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return block(bind);
@@ -135,9 +149,16 @@ public class RsocketServer implements Server {
         registry.forResponder(new RsocketServerLoggingInterceptor()).forRequester(new RsocketServerLoggingInterceptor());
     }
 
-    private void disposeServer(Disposable server) {
+    private void disposeTcpServer(Disposable server) {
+        if (!configuration.isEnableTcpServer()) return;
         disposeRsocket(server);
-        closer.block();
+        tcpCloser.block();
+    }
+
+    private void disposeHttpServer(Disposable server) {
+        if (!configuration.isEnableHttpServer()) return;
+        disposeRsocket(server);
+        httpCloser.block();
     }
 
     private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requesterSocket) {
@@ -150,10 +171,17 @@ public class RsocketServer implements Server {
         ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
 
-    private void setupCloser(CloseableChannel channel) {
-        this.closer = channel.onClose();
-        if (withLogging() && configuration.getServerTransportConfiguration().isLogging()) {
-            this.closer = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+    private void setupTcpCloser(CloseableChannel channel) {
+        this.tcpCloser = channel.onClose();
+        if (withLogging() && configuration.getTcpServerConfiguration().getCommon().isLogging()) {
+            this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        }
+    }
+
+    private void setupHttpCloser(CloseableChannel channel) {
+        this.httpCloser = channel.onClose();
+        if (withLogging() && configuration.getHttpServerConfiguration().getCommon().isLogging()) {
+            this.httpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
         }
     }
 }

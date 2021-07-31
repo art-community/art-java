@@ -54,7 +54,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void launch(Context.Service contextService) {
-        if (configuration.isActivateServer()) {
+        if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
             manager.initializeServer();
         }
         if (configuration.isActivateCommunicator()) {
@@ -64,7 +64,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void unload(Context.Service contextService) {
-        if (configuration.isActivateServer()) {
+        if (configuration.isEnableTcpServer()) {
             manager.disposeServer();
         }
         if (configuration.isActivateCommunicator()) {

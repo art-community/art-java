@@ -15,8 +15,8 @@ public class ServiceMethodConfigurator {
     private final ServerConfiguration configuration;
 
     private boolean loggable;
-    private boolean validatable;
-    private boolean deactivating;
+    private boolean validatable = true;
+    private boolean deactivable = true;
 
     public ServiceMethodConfigurator loggable() {
         return loggable(true);
@@ -33,13 +33,13 @@ public class ServiceMethodConfigurator {
     }
 
     public ServiceMethodConfigurator deactivable(boolean deactivable) {
-        this.deactivating = deactivable;
+        this.deactivable = deactivable;
         return this;
     }
 
     UnaryOperator<ServiceMethodBuilder> configure() {
         UnaryOperator<ServiceMethodBuilder> decorator = UnaryOperator.identity();
-        if (deactivating) {
+        if (deactivable) {
             decorator = then(decorator, builder -> builder.inputDecorator(new ServiceDeactivationDecorator(id, configuration)));
         }
         if (loggable) {
@@ -48,7 +48,7 @@ public class ServiceMethodConfigurator {
         if (validatable) {
             decorator = then(decorator, builder -> builder.inputDecorator(new ServiceValidationDecorator(id, configuration)));
         }
-        if (deactivating) {
+        if (deactivable) {
             decorator = then(decorator, builder -> builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration)));
         }
         if (loggable) {

@@ -58,7 +58,7 @@ public class ServingRsocket implements RSocket {
 
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketModuleConfiguration configuration) {
         this.serviceMethods = serviceMethods;
-        RsocketServerConfiguration transportConfiguration = configuration.getServerTransportConfiguration();
+        RsocketTcpServerConfiguration transportConfiguration = configuration.getTcpServerConfiguration();
         ServerConfiguration serverConfiguration = configuration.getServerConfiguration();
         //moduleState.registerRequester(this.requesterSocket = requesterSocket);
 

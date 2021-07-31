@@ -3,35 +3,43 @@ package io.art.rsocket.module;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
-import io.art.rsocket.configuration.RsocketServerConfiguration.*;
+import io.art.rsocket.configuration.RsocketHttpServerConfiguration.*;
+import io.art.rsocket.configuration.RsocketTcpServerConfiguration.*;
 import io.art.server.method.*;
 import io.art.server.registrator.*;
 import lombok.*;
 import lombok.experimental.*;
-import reactor.netty.http.server.*;
-import reactor.netty.tcp.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
 @Setter
 @Accessors(fluent = true)
 public class RsocketServerConfigurator extends ServerConfigurator {
-    private UnaryOperator<TcpServer> tcpServer = UnaryOperator.identity();
-    private UnaryOperator<HttpServer> httpWebSocketServer = UnaryOperator.identity();
-    private UnaryOperator<RsocketServerConfigurationBuilder> decorator;
+    private boolean tcp;
+    private boolean http;
 
-    public RsocketServerConfigurator tcp(UnaryOperator<TcpServer> decorator) {
-        this.tcpServer = decorator;
+    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpDecorator = UnaryOperator.identity();
+    private UnaryOperator<RsocketHttpServerConfigurationBuilder> httpDecorator = UnaryOperator.identity();
+
+    public RsocketServerConfigurator tcp() {
+        this.tcp = true;
         return this;
     }
 
-    public RsocketServerConfigurator http(UnaryOperator<HttpServer> decorator) {
-        this.httpWebSocketServer = decorator;
+    public RsocketServerConfigurator http() {
+        this.http = true;
         return this;
     }
 
-    public RsocketServerConfigurator configure(UnaryOperator<RsocketServerConfigurationBuilder> decorator) {
-        this.decorator = decorator;
+    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurationBuilder> decorator) {
+        this.tcp = true;
+        this.tcpDecorator = decorator;
+        return this;
+    }
+
+    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurationBuilder> decorator) {
+        this.http = true;
+        this.httpDecorator = decorator;
         return this;
     }
 
@@ -39,13 +47,20 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         super(() -> rsocketModule().configuration().getServerConfiguration());
     }
 
+    RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
+        return tcpDecorator.apply(current.toBuilder()).build();
+    }
 
-    RsocketServerConfiguration configure(RsocketServerConfiguration current) {
-        return decorator
-                .apply(current.toBuilder()
-                        .tcpServer(tcpServer.apply(current.getTcpServer()))
-                        .httpWebSocketServer(httpWebSocketServer.apply(current.getHttpWebSocketServer())))
-                .build();
+    RsocketHttpServerConfiguration configure(RsocketHttpServerConfiguration current) {
+        return httpDecorator.apply(current.toBuilder()).build();
+    }
+
+    boolean enableTcp() {
+        return tcp;
+    }
+
+    boolean enableHttp() {
+        return http;
     }
 
     LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods() {

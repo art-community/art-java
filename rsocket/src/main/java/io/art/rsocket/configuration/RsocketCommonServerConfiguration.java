@@ -21,76 +21,72 @@ package io.art.rsocket.configuration;
 import io.art.core.changes.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
-import io.art.rsocket.constants.*;
 import io.art.rsocket.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.rsocket.frame.decoder.*;
 import lombok.*;
-import reactor.netty.http.server.*;
-import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.DEFAULT;
-import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.TransportMode.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
+import static java.util.Optional.*;
 import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
-public class RsocketServerConfiguration {
-    private TcpServer tcpServer;
-    private HttpServer httpWebSocketServer;
+public class RsocketCommonServerConfiguration {
+    private int port;
+    private String host;
     private ServiceMethodIdentifier defaultServiceMethod;
-    private int tcpMaxFrameLength;
     private boolean logging;
     private int fragmentationMtu;
     private RsocketResumeConfiguration resume;
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
-    private RsocketModuleConstants.TransportMode transport;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
     private Function<DataFormat, TransportPayloadReader> setupReader;
 
-    public static RsocketServerConfiguration defaults() {
-        RsocketServerConfiguration configuration = RsocketServerConfiguration.builder().build();
+    public static RsocketCommonServerConfiguration defaults() {
+        RsocketCommonServerConfiguration configuration = RsocketCommonServerConfiguration.builder().build();
         configuration.defaultDataFormat = JSON;
         configuration.defaultMetaDataFormat = JSON;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
         configuration.payloadDecoder = ZERO_COPY;
         configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
-        configuration.transport = TCP;
-        configuration.tcpServer = TcpServer.create().port(DEFAULT_PORT).host(BROADCAST_IP_ADDRESS);
-        configuration.tcpMaxFrameLength = FRAME_LENGTH_MASK;
+        configuration.port = DEFAULT_PORT;
+        configuration.host = BROADCAST_IP_ADDRESS;
         configuration.setupReader = TransportPayloadReader::new;
         return configuration;
     }
 
-    public static RsocketServerConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
-        RsocketServerConfiguration configuration = RsocketServerConfiguration.builder().build();
+    public static RsocketCommonServerConfiguration from(RsocketModuleRefresher refresher, RsocketCommonServerConfiguration current, ConfigurationSource source) {
+        RsocketCommonServerConfiguration configuration = RsocketCommonServerConfiguration.builder().build();
         configuration.setupReader = TransportPayloadReader::new;
 
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
-        configuration.logging = serverLoggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
+        configuration.logging = serverLoggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
 
-        configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
-        configuration.defaultMetaDataFormat = serverListener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
-        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), 0));
-        configuration.payloadDecoder = serverListener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY)) == DEFAULT ? PayloadDecoder.DEFAULT : ZERO_COPY);
-        configuration.maxInboundPayloadSize = serverListener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), FRAME_LENGTH_MASK));
-        configuration.transport = serverListener.emit(rsocketTransport(source.getString(TRANSPORT_MODE_KEY)));
-        configuration.resume = serverListener.emit(source.getNested(RESUME_SECTION, RsocketResumeConfiguration::rsocketResume));
+        configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), current.defaultDataFormat));
+        configuration.defaultMetaDataFormat = serverListener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), current.defaultMetaDataFormat));
+        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), current.fragmentationMtu));
+        configuration.payloadDecoder = serverListener.emit(ofNullable(source.getString(PAYLOAD_DECODER_KEY))
+                .map(PayloadDecoderMode::rsocketPayloadDecoder)
+                .map(decoder -> decoder == DEFAULT ? PayloadDecoder.DEFAULT : ZERO_COPY)
+                .orElse(current.payloadDecoder));
+        configuration.maxInboundPayloadSize = serverListener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
+        configuration.resume = serverListener.emit(orElse(source.getNested(RESUME_SECTION, RsocketResumeConfiguration::rsocketResume), current.resume));
 
         String serviceId = source.getString(SERVICE_ID_KEY);
         String methodId = source.getString(METHOD_ID_KEY);
@@ -98,19 +94,11 @@ public class RsocketServerConfiguration {
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
             configuration.defaultServiceMethod = serverListener.emit(serviceMethodId(serviceId, methodId));
         }
+        configuration.defaultServiceMethod = orElse(configuration.defaultServiceMethod, current.defaultServiceMethod);
 
-        int port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), DEFAULT_PORT));
-        String host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS));
+        configuration.port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
 
-        switch (configuration.transport) {
-            case TCP:
-                configuration.tcpServer = TcpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
-                configuration.tcpMaxFrameLength = serverListener.emit(orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), FRAME_LENGTH_MASK));
-                break;
-            case WS:
-                configuration.httpWebSocketServer = HttpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
-                break;
-        }
+        configuration.host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
 
         return configuration;
     }

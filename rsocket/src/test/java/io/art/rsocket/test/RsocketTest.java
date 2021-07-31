@@ -4,6 +4,7 @@ import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
+import io.art.server.registrator.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
@@ -18,10 +19,11 @@ public class RsocketTest {
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 logging(),
                 json(),
-                rsocket(rsocket -> rsocket.server(server -> server
-                        .tcp(tcp -> tcp.port(1234))
-                        .configure(configurator -> configurator.logging(false))
-                        .forClass(TestRsocketService.class)))
+                rsocket(rsocket -> rsocket
+                        .server(server -> server
+                                .tcp(tcp -> tcp.port(1234).logging(false))
+                                .http(http -> http.port(1234).logging(false))
+                                .forClass(TestRsocketService.class, ServiceMethodConfigurator::loggable)))
         );
     }
 
