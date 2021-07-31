@@ -44,7 +44,7 @@ public class CommunicatorBenchmark {
         @Setup
         public void setup() {
             initialize(meta(MetaCommunicatorTest::new));
-            communicator = preconfiguredCommunicatorProxy(TestCommunicator.class, new BenchmarkCommunication());
+            communicator = preconfiguredCommunicatorProxy(TestCommunicator.class, BenchmarkCommunication::new);
         }
     }
 

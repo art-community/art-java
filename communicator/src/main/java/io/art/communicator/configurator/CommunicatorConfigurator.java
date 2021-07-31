@@ -26,7 +26,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public abstract class CommunicatorConfigurator {
     private final Supplier<CommunicatorConfiguration> configurationProvider;
-    private final Communication communication;
+    private final Supplier<? extends Communication> communication;
     private final List<PackageBasedRegistration> packageBased = linkedList();
     private final List<ClassBasedRegistration> classBased = linkedList();
 
@@ -96,7 +96,7 @@ public abstract class CommunicatorConfigurator {
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(metaMethod.returnType())
-                .communication(communication);
+                .communication(communication.get());
         UnaryOperator<CommunicatorActionBuilder> configurator = decorator.apply(new CommunicatorActionConfigurator(id, configurationProvider.get())).configure();
         if (nonNull(inputType)) {
             return configurator.apply(builder.inputType(inputType)).build();

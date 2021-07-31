@@ -19,20 +19,15 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.*;
-import io.art.core.model.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.transport.mime.MimeTypeDataFormatMapper.toMimeType;
 import static lombok.AccessLevel.*;
 
-@Builder(toBuilder = true)
-public class RsocketCommunicatorAction implements Communication {
-    private final CommunicatorActionIdentifier communicatorActionId;
-
+public class RsocketCommunication implements Communication {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RsocketCommunicatorAction.class);
+    private final static Logger logger = logger(RsocketCommunication.class);
 /*
 
     @Getter(lazy = true, value = PRIVATE)

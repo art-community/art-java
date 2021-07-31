@@ -21,19 +21,19 @@ import java.util.function.*;
 
 @UtilityClass
 public class CommunicatorProxyFactory {
-    public static <T> T communicatorProxy(MetaClass<T> proxyClass, Communication communication) {
-        return createCommunicatorProxy(proxyClass, method -> apply(communicatorAction(proxyClass, method, communication), CommunicatorAction::initialize));
+    public static <T> T communicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
+        return createCommunicatorProxy(proxyClass, method -> apply(communicatorAction(proxyClass, method, communication.get()), CommunicatorAction::initialize));
     }
 
-    public static <T> T preconfiguredCommunicatorProxy(MetaClass<T> proxyClass, Communication communication) {
-        return createCommunicatorProxy(proxyClass, method -> apply(preconfiguredCommunicatorAction(proxyClass, method, communication), CommunicatorAction::initialize));
+    public static <T> T preconfiguredCommunicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
+        return createCommunicatorProxy(proxyClass, method -> apply(preconfiguredCommunicatorAction(proxyClass, method, communication.get()), CommunicatorAction::initialize));
     }
 
-    public static <T> T communicatorProxy(Class<T> proxyClass, Communication communication) {
+    public static <T> T communicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
         return communicatorProxy(declaration(proxyClass), communication);
     }
 
-    public static <T> T preconfiguredCommunicatorProxy(Class<T> proxyClass, Communication communication) {
+    public static <T> T preconfiguredCommunicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
         return preconfiguredCommunicatorProxy(declaration(proxyClass), communication);
     }
 
