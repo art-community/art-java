@@ -34,13 +34,16 @@ import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.logging.module.LoggingModule.*;
 import static java.text.MessageFormat.*;
+import static java.util.Collections.*;
 import static java.util.Objects.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -60,7 +63,7 @@ public class Launcher {
     }
 
     private static void configuredLaunch(Activator activator, ModuleActivator configuratorActivator) {
-        ImmutableMap<String, ModuleActivator> activators = activator.activators();
+        ImmutableMap<String, ModuleActivator> activators = sort(activator);
 
         LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
@@ -75,7 +78,7 @@ public class Launcher {
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID))
                 .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())));
 
-        Consumer<String> printer = activator.activators().containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
+        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         prepareInitialization(contextConfiguration.printer(printer).build());
         ModuleInitializationOperator<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
@@ -102,7 +105,7 @@ public class Launcher {
     }
 
     private static void defaultLaunch(Activator activator) {
-        ImmutableMap<String, ModuleActivator> activators = activator.activators();
+        ImmutableMap<String, ModuleActivator> activators = sort(activator);
 
         LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
@@ -114,11 +117,36 @@ public class Launcher {
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID));
 
-        Consumer<String> printer = activator.activators().containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
+        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         initialize(contextConfiguration.printer(printer).build(), activators.values().toArray(new ModuleActivator[0]));
 
         printer.accept(DEFAULT_CONFIGURATION);
         LAUNCHED_MESSAGES.forEach(printer);
+    }
+
+    private static ImmutableMap<String, ModuleActivator> sort(Activator activator) {
+        Map<String, ModuleActivator> activators = activator.activators().toMutable();
+        Map<String, ModuleActivator> preLoadingModules = map();
+        Map<String, ModuleActivator> postLoadingModules = map();
+
+        for (String module : MODULE_PRE_LOADING_ORDER) {
+            if (activators.containsKey(module)) {
+                preLoadingModules.put(module, activators.remove(module));
+            }
+        }
+
+        List<String> postLoadingOrder = dynamicArrayOf(MODULE_POST_LOADING_ORDER.toMutable());
+        reverse(postLoadingOrder);
+        for (String module : postLoadingOrder) {
+            if (activators.containsKey(module)) {
+                postLoadingModules.put(module, activators.remove(module));
+            }
+        }
+
+        activators.forEach(preLoadingModules::put);
+        postLoadingModules.forEach(preLoadingModules::put);
+
+        return immutableMapOf(activators);
     }
 }

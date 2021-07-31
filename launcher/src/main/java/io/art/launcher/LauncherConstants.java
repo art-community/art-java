@@ -19,6 +19,7 @@
 package io.art.launcher;
 
 import io.art.core.collection.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.factory.SetFactory.*;
 
 public interface LauncherConstants {
@@ -35,4 +36,13 @@ public interface LauncherConstants {
     String DEFAULT_CONFIGURATION = "Configurator not activated. Using default configurations";
 
     String LAUNCHER_LOGGER = "launcher";
+
+    ImmutableSet<String> MODULE_PRE_LOADING_ORDER = ImmutableSet.<String>immutableSetBuilder()
+            .add(CONFIGURATOR_MODULE_ID)
+            .add(LOGGING_MODULE_ID)
+            .build();
+
+    ImmutableSet<String> MODULE_POST_LOADING_ORDER = ImmutableSet.<String>immutableSetBuilder()
+            .add(META_MODULE_ID)
+            .build();
 }
