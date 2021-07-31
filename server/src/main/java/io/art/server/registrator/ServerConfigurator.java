@@ -70,18 +70,11 @@ public abstract class ServerConfigurator {
     private ImmutableArray<ServiceMethod> createServiceMethods() {
         ImmutableArray.Builder<ServiceMethod> methods = immutableArrayBuilder();
         for (PackageBasedRegistration registration : packageBased) {
-            for (MetaClass<?> metaClass : registration.servicePackage.get().classes().values()) {
-                for (MetaMethod<?> method : metaClass.methods()) {
-                    methods.add(createServiceMethod(metaClass, method, registration.decorator));
-                }
-            }
+            registerPackages(methods, fixedArrayOf(registration.servicePackage.get()), registration.decorator);
         }
 
         for (ClassBasedRegistration registration : classBased) {
-            MetaClass<?> metaClass = registration.serviceClass.get();
-            for (MetaMethod<?> method : metaClass.methods()) {
-                methods.add(createServiceMethod(metaClass, method, registration.decorator));
-            }
+            registerMethods(methods, registration.serviceClass.get(), registration.decorator);
         }
 
         for (MethodBasedRegistration registration : methodBased) {
@@ -89,6 +82,26 @@ public abstract class ServerConfigurator {
         }
 
         return methods.build();
+    }
+
+    private void registerPackages(ImmutableArray.Builder<ServiceMethod> builder, Collection<MetaPackage> packages, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        for (MetaPackage metaPackage : packages) {
+            registerPackages(builder, metaPackage.packages().values(), decorator);
+            registerClasses(builder, metaPackage.classes().values(), decorator);
+        }
+    }
+
+    private void registerClasses(ImmutableArray.Builder<ServiceMethod> builder, Collection<MetaClass<?>> classes, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        for (MetaClass<?> metaClass : classes) {
+            registerClasses(builder, metaClass.classes().values(), decorator);
+            registerMethods(builder, metaClass, decorator);
+        }
+    }
+
+    private void registerMethods(ImmutableArray.Builder<ServiceMethod> builder, MetaClass<?> metaClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        for (MetaMethod<?> method : metaClass.methods()) {
+            builder.add(createServiceMethod(metaClass, method, decorator));
+        }
     }
 
     private ServiceMethod createServiceMethod(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
