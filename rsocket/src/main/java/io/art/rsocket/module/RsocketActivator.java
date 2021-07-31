@@ -34,9 +34,7 @@ public class RsocketActivator {
     }
 
     public ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
-        if (withMeta()) {
-            registerMetaLibrary(MetaRsocket.class, MetaRsocket::new);
-        }
+        withMeta(() -> registerMetaLibrary(MetaRsocket.class, MetaRsocket::new));
         return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()));
     }
 }
