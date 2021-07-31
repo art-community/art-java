@@ -21,6 +21,7 @@ package io.art.rsocket.module;
 import io.art.core.module.*;
 import io.art.rsocket.meta.*;
 import lombok.experimental.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.module.ModuleActivator.*;
 import static io.art.meta.registry.MetaLibraryMutableRegistry.*;
 import static java.util.function.UnaryOperator.*;
@@ -33,7 +34,9 @@ public class RsocketActivator {
     }
 
     public ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
-        registerMetaLibrary(MetaRsocket.class, MetaRsocket::new);
+        if (withMeta()) {
+            registerMetaLibrary(MetaRsocket.class, MetaRsocket::new);
+        }
         return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()));
     }
 }
