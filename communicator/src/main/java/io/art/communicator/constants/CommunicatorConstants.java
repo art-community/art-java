@@ -36,11 +36,11 @@ public interface CommunicatorConstants {
 
     interface ConfigurationKeys {
         String COMMUNICATOR_SECTION = "communicator";
-        String PROXIES_SECTION = "proxies";
+        String TARGETS_SECTION = "targets";
         String ACTIONS_SECTION = "actions";
         String LOGGING_KEY = "logging";
         String DEACTIVATED_KEY = "deactivated";
-        String CONNECTORS_KEY = "connectors";
+        String CONNECTOR_KEY = "connector";
     }
 
     interface CommunicatorProtocol {

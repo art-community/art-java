@@ -23,35 +23,29 @@ import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
-import io.art.transport.payload.*;
 import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
-import static io.art.transport.constants.TransportModuleConstants.*;
-import java.util.function.*;
 
 @Getter
+@Builder(toBuilder = true)
 public class CommunicatorProxyConfiguration {
     private boolean logging;
     private boolean deactivated;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
-    private ImmutableMap<String, String> connectors;
+    private String connector;
     private ResilienceConfiguration resilienceConfiguration;
-    private Function<DataFormat, TransportPayloadReader> reader;
-    private Function<DataFormat, TransportPayloadWriter> writer;
 
     public static CommunicatorProxyConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
-        CommunicatorProxyConfiguration configuration = new CommunicatorProxyConfiguration();
+        CommunicatorProxyConfiguration configuration = CommunicatorProxyConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.connectors = source.getNestedMap(CONNECTORS_KEY, NestedConfiguration::asString);
+        configuration.connector = source.getString(CONNECTOR_KEY);
         configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
         configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
-        configuration.reader = TransportPayloadReader::new;
-        configuration.writer = TransportPayloadWriter::new;
         return configuration;
     }
 }

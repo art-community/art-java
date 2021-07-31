@@ -19,11 +19,13 @@
 package io.art.communicator.configuration;
 
 import io.art.communicator.refresher.*;
+import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.core.source.*;
 import io.art.resilience.configuration.*;
-import io.art.transport.constants.TransportModuleConstants.*;
-import io.art.transport.payload.*;
-import lombok.*;
+import lombok.Builder;
+import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -32,47 +34,24 @@ import java.util.function.*;
 @Builder
 public class CommunicatorConfiguration {
     private final CommunicatorRefresher refresher;
+    private final CommunicatorRefresher.Consumer consumer;
+    private ImmutableMap<String, CommunicatorProxyConfiguration> communicatorConfigurations;
 
-    @Getter(lazy = true)
-    private final CommunicatorRefresher.Consumer consumer = refresher.consumer();
+    private CommunicatorConfiguration(CommunicatorRefresher refresher) {
+        this.refresher = refresher;
+        this.communicatorConfigurations = emptyImmutableMap();
+        this.consumer = refresher.consumer();
+    }
 
-    @Getter
-    @Singular("communicator")
-    private final Map<String, CommunicatorProxyConfiguration> communicators;
-
-    @Getter
-    @Builder.Default
-    private final Function<DataFormat, TransportPayloadReader> reader = TransportPayloadReader::new;
-
-    @Getter
-    @Builder.Default
-    private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
-
-    public Optional<String> findConnectorId(String protocol, CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicators.get(id.getCommunicatorId());
-        Optional<String> connectorId = ofNullable(proxyConfiguration).map(configuration -> configuration.getConnectors().get(protocol));
+    public Optional<String> findConnectorId(CommunicatorActionIdentifier id) {
+        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(id.getCommunicatorId());
+        Optional<String> connectorId = ofNullable(proxyConfiguration).map(CommunicatorProxyConfiguration::getConnector);
         if (connectorId.isPresent()) return connectorId;
-        return getActionConfiguration(id).map(configuration -> configuration.getConnectors().get(protocol));
-    }
-
-    public TransportPayloadReader getReader(CommunicatorActionIdentifier id, DataFormat dataFormat) {
-        return getActionConfiguration(id)
-                .map(CommunicatorActionConfiguration::getReader)
-                .orElseGet(() -> ofNullable(getCommunicators().get(id.getCommunicatorId()))
-                        .map(CommunicatorProxyConfiguration::getReader)
-                        .orElse(reader)).apply(dataFormat);
-    }
-
-    public TransportPayloadWriter getWriter(CommunicatorActionIdentifier id, DataFormat dataFormat) {
-        return getActionConfiguration(id)
-                .map(CommunicatorActionConfiguration::getWriter)
-                .orElseGet(() -> ofNullable(getCommunicators().get(id.getCommunicatorId()))
-                        .map(CommunicatorProxyConfiguration::getWriter)
-                        .orElse(writer)).apply(dataFormat);
+        return getActionConfiguration(id).map(CommunicatorActionConfiguration::getConnector);
     }
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicators.get(id.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(id.getCommunicatorId());
         return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
@@ -95,7 +74,7 @@ public class CommunicatorConfiguration {
     }
 
     private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorProxyConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicators.get(identifier.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {
             return defaultValue;
         }
@@ -103,7 +82,7 @@ public class CommunicatorConfiguration {
     }
 
     private <T> T checkAction(CommunicatorActionIdentifier identifier, Function<CommunicatorActionConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicators.get(identifier.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {
             return defaultValue;
         }
@@ -112,5 +91,19 @@ public class CommunicatorConfiguration {
             return defaultValue;
         }
         return mapper.apply(actionConfiguration);
+    }
+
+
+    public static CommunicatorConfiguration defaults(CommunicatorRefresher refresher) {
+        return new CommunicatorConfiguration(refresher);
+    }
+
+    public static CommunicatorConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
+        CommunicatorConfiguration configuration = new CommunicatorConfiguration(refresher);
+        configuration.communicatorConfigurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(configuration.refresher, service)))
+                .orElse(emptyImmutableMap());
+        configuration.refresher.produce();
+        return configuration;
     }
 }
