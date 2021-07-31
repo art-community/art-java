@@ -24,36 +24,23 @@ import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.method.*;
+import io.art.server.registrator.*;
 import lombok.*;
-import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.ListFactory.*;
-import static io.art.core.property.LazyProperty.*;
-import java.util.*;
 import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private boolean activateServer;
     private boolean activateCommunicator;
-    private boolean serverLogging;
-    private final List<LazyProperty<ServiceMethod>> services = linkedList();
-
-    public RsocketInitializer activateServer() {
-        activateServer = true;
-        return this;
-    }
-
-    public RsocketInitializer serverLogging(boolean logging) {
-        this.serverLogging = logging;
-        return this;
-    }
+    private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
 
     public RsocketInitializer activateCommunicator() {
         activateCommunicator = true;
         return this;
     }
 
-    public RsocketInitializer register(Supplier<ServiceMethod> serviceMethod) {
-        services.add(lazy(serviceMethod));
+    public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator> registrator) {
+        activateServer = true;
+        registrator.apply(serverConfigurator);
         return this;
     }
 
@@ -63,9 +50,9 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.activateCommunicator = activateCommunicator;
         initial.activateServer = activateServer;
         initial.serverTransportConfiguration = initial.serverTransportConfiguration.toBuilder()
-                .logging(serverLogging)
+                .logging(serverConfigurator.hasLogging())
                 .build();
-        initial.serviceProviders = immutableArrayOf(services);
+        initial.serviceMethodProviders = serverConfigurator.serviceMethodProviders();
         return initial;
     }
 
@@ -74,7 +61,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private boolean activateServer;
         private boolean activateCommunicator;
         private RsocketServerConfiguration serverTransportConfiguration = super.getServerTransportConfiguration();
-        private ImmutableArray<LazyProperty<ServiceMethod>> serviceProviders = super.getServiceProviders();
+        private ImmutableArray<LazyProperty<ServiceMethod>> serviceMethodProviders = super.getServiceMethodProviders();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

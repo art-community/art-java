@@ -20,14 +20,12 @@ package io.art.rsocket.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
-import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.manager.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.state.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static lombok.AccessLevel.*;
 
@@ -35,8 +33,6 @@ import static lombok.AccessLevel.*;
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RsocketModule.class.getSimpleName());
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RsocketModule.class);
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleState state = new RsocketModuleState();
     private final RsocketModuleRefresher refresher = new RsocketModuleRefresher();

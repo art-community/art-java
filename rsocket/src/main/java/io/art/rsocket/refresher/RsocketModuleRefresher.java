@@ -18,12 +18,11 @@ public class RsocketModuleRefresher implements ModuleRefresher {
     private final Consumer consumer = new Consumer();
     private final ServerRefresher serverRefresher = new ServerRefresher();
 
-    public RsocketModuleRefresher produce() {
+    public void produce() {
         serverListener.produce();
         serverLoggingListener.produce();
         connectorListeners.produce();
         connectorLoggingListeners.produce();
-        return this;
     }
 
     @Getter

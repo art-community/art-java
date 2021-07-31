@@ -34,7 +34,7 @@ import static reactor.core.publisher.Sinks.*;
 import java.util.*;
 import java.util.function.*;
 
-@Builder
+@Builder(toBuilder = true)
 public class ServiceMethod {
     @Getter
     private final ServiceMethodIdentifier id;

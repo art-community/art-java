@@ -9,4 +9,9 @@ public class FunctionExtensions {
         action.accept(target);
         return target;
     }
+
+    public <T> UnaryOperator<T> then(UnaryOperator<T> current, UnaryOperator<T> next) {
+        return value -> next.apply(current.apply(value));
+    }
+
 }

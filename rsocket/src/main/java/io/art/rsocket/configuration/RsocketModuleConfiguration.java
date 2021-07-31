@@ -47,7 +47,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketServerConfiguration serverTransportConfiguration;
 
     @Getter
-    private ImmutableArray<LazyProperty<ServiceMethod>> serviceProviders;
+    private ImmutableArray<LazyProperty<ServiceMethod>> serviceMethodProviders;
 
     @Getter
     private RsocketCommunicatorConfiguration communicatorConfiguration;
@@ -64,7 +64,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         consumer = refresher.consumer();
         serverConfiguration = ServerConfiguration.builder().refresher(serverRefresher).build();
         serverTransportConfiguration = RsocketServerConfiguration.defaults();
-        serviceProviders = emptyImmutableArray();
+        serviceMethodProviders = emptyImmutableArray();
         activateServer = false;
         activateCommunicator = false;
     }
@@ -95,7 +95,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.activateServer = configuration.isActivateServer();
             this.configuration.serverTransportConfiguration = configuration.getServerTransportConfiguration();
             this.configuration.serverConfiguration = configuration.getServerConfiguration();
-            this.configuration.serviceProviders = configuration.getServiceProviders();
+            this.configuration.serviceMethodProviders = configuration.getServiceMethodProviders();
             return this;
         }
     }

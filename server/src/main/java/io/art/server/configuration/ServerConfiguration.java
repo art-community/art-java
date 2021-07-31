@@ -37,8 +37,7 @@ public class ServerConfiguration {
     private final ServerRefresher.Consumer consumer = refresher.consumer();
 
     @Getter
-    @Singular("service")
-    private final Map<String, ServiceConfiguration> services;
+    private final Map<String, ServiceConfiguration> serviceConfigurations;
 
     @Getter
     @Builder.Default
@@ -51,7 +50,7 @@ public class ServerConfiguration {
     public TransportPayloadReader getReader(ServiceMethodIdentifier id, DataFormat dataFormat) {
         return getMethodConfiguration(id)
                 .map(ServiceMethodConfiguration::getReader)
-                .orElseGet(() -> ofNullable(services.get(id.getServiceId()))
+                .orElseGet(() -> ofNullable(serviceConfigurations.get(id.getServiceId()))
                         .map(ServiceConfiguration::getReader)
                         .orElse(reader)).apply(dataFormat);
     }
@@ -59,13 +58,13 @@ public class ServerConfiguration {
     public TransportPayloadWriter getWriter(ServiceMethodIdentifier id, DataFormat dataFormat) {
         return getMethodConfiguration(id)
                 .map(ServiceMethodConfiguration::getWriter)
-                .orElseGet(() -> ofNullable(services.get(id.getServiceId()))
+                .orElseGet(() -> ofNullable(serviceConfigurations.get(id.getServiceId()))
                         .map(ServiceConfiguration::getWriter)
                         .orElse(writer)).apply(dataFormat);
     }
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
-        return ofNullable(services.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
+        return ofNullable(serviceConfigurations.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
     }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
@@ -87,7 +86,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
+        ServiceConfiguration serviceConfiguration = serviceConfigurations.get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
@@ -95,7 +94,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkMethod(ServiceMethodIdentifier identifier, Function<ServiceMethodConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
+        ServiceConfiguration serviceConfiguration = serviceConfigurations.get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
