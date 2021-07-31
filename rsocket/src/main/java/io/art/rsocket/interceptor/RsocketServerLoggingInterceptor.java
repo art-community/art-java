@@ -25,18 +25,24 @@ import io.rsocket.*;
 import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(RsocketServerLoggingInterceptor.class);
 
-    private final Property<Boolean> enabled = property(this::enabled).listenConsumer(() -> configuration()
-            .getConsumer()
-            .serverLoggingConsumer());
+    private final RsocketCommonServerConfiguration serverConfiguration;
+    private final Property<Boolean> enabled;
+
+    public RsocketServerLoggingInterceptor(RsocketModuleConfiguration moduleConfiguration, RsocketCommonServerConfiguration serverConfiguration) {
+        this.serverConfiguration = serverConfiguration;
+        enabled = property(this::enabled).listenConsumer(() -> moduleConfiguration
+                .getConsumer()
+                .serverLoggingConsumer());
+    }
 
     @Override
     public RSocket apply(RSocket rsocket) {
@@ -44,10 +50,6 @@ public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     }
 
     private boolean enabled() {
-        return withLogging() && let(configuration().getTcpServerConfiguration(), RsocketTcpServerConfiguration::isLogging, false);
-    }
-
-    private RsocketModuleConfiguration configuration() {
-        return rsocketModule().configuration();
+        return withLogging() && let(serverConfiguration, RsocketCommonServerConfiguration::isLogging, false);
     }
 }

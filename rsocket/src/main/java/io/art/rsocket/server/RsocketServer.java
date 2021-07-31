@@ -31,7 +31,6 @@ import io.art.server.*;
 import io.art.server.method.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
-import io.rsocket.plugins.*;
 import io.rsocket.transport.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
@@ -103,51 +102,38 @@ public class RsocketServer implements Server {
     }
 
     private CloseableChannel createTcpServer() {
-        RsocketTcpServerConfiguration configuration = this.configuration.getTcpServerConfiguration();
-        RsocketCommonServerConfiguration common = configuration.getCommon();
-        int fragmentationMtu = common.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(common.getMaxInboundPayloadSize());
-        if (fragmentationMtu > 0) {
-            server.fragment(fragmentationMtu);
-        }
-        apply(common.getResume(), resume -> server.resume(resume.toResume()));
-        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(TcpServer.create().port(common.getPort()), configuration.getMaxFrameLength());
-        Mono<CloseableChannel> bind = server
-                .interceptors(this::configureInterceptors)
-                .payloadDecoder(common.getPayloadDecoder())
-                .bind(transport);
-        if (withLogging() && common.isLogging()) {
-            bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, common.getHost())))
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-        }
-        return block(bind);
+        RsocketTcpServerConfiguration tcp = this.configuration.getTcpServerConfiguration();
+        RsocketCommonServerConfiguration common = tcp.getCommon();
+        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(TcpServer.create().port(common.getPort()), tcp.getMaxFrameLength());
+        return createServer(common, transport);
     }
 
     private CloseableChannel createHttpServer() {
-        RsocketHttpServerConfiguration configuration = this.configuration.getHttpServerConfiguration();
-        RsocketCommonServerConfiguration common = configuration.getCommon();
-        int fragmentationMtu = common.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(common.getMaxInboundPayloadSize());
+        RsocketHttpServerConfiguration http = this.configuration.getHttpServerConfiguration();
+        RsocketCommonServerConfiguration common = http.getCommon();
+        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(HttpServer.create().port(common.getPort()));
+        return createServer(common, transport);
+    }
+
+    private CloseableChannel createServer(RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
+        int fragmentationMtu = serverConfiguration.getFragmentationMtu();
+        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(serverConfiguration.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
-        apply(common.getResume(), resume -> server.resume(resume.toResume()));
-        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(HttpServer.create().port(common.getPort()));
+        apply(serverConfiguration.getResume(), resume -> server.resume(resume.toResume()));
         Mono<CloseableChannel> bind = server
-                .interceptors(this::configureInterceptors)
-                .payloadDecoder(common.getPayloadDecoder())
+                .interceptors(registry -> registry
+                        .forResponder(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))
+                        .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration)))
+                .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
-        if (withLogging() && common.isLogging()) {
+        if (withLogging() && serverConfiguration.isLogging()) {
             bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, common.getHost())))
+                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, serverConfiguration.getHost())))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return block(bind);
-    }
-
-    private void configureInterceptors(InterceptorRegistry registry) {
-        registry.forResponder(new RsocketServerLoggingInterceptor()).forRequester(new RsocketServerLoggingInterceptor());
     }
 
     private void disposeTcpServer(Disposable server) {
