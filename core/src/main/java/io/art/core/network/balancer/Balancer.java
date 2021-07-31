@@ -1,6 +1,6 @@
 package io.art.core.network.balancer;
 
-import java.util.Collection;
+import java.util.*;
 
 public interface Balancer<T> {
 
@@ -10,7 +10,7 @@ public interface Balancer<T> {
 
     void updateEndpoints(Collection<T> endpoints);
 
-    enum BalancerMethod{
+    enum BalancerMethod {
         ROUND_ROBIN
     }
 }

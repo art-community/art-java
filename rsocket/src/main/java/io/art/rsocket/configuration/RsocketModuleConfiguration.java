@@ -18,6 +18,8 @@
 
 package io.art.rsocket.configuration;
 
+import io.art.communicator.configuration.*;
+import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -27,6 +29,8 @@ import io.art.server.configuration.*;
 import io.art.server.method.*;
 import io.art.server.refresher.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
@@ -36,12 +40,16 @@ import java.util.*;
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private final RsocketModuleRefresher refresher;
     private final ServerRefresher serverRefresher;
+    private final CommunicatorRefresher communicatorRefresher;
 
     @Getter
     private RsocketModuleRefresher.Consumer consumer;
 
     @Getter
     private ServerConfiguration serverConfiguration;
+
+    @Getter
+    private CommunicatorConfiguration communicatorConfiguration;
 
     @Getter
     private RsocketTcpServerConfiguration tcpServerConfiguration;
@@ -53,7 +61,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders;
 
     @Getter
-    private RsocketCommunicatorConfiguration communicatorConfiguration;
+    private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations;
+
+    @Getter
+    private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations;
 
     @Getter
     private boolean enableTcpServer;
@@ -67,6 +78,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
         this.refresher = refresher;
         serverRefresher = new ServerRefresher();
+        communicatorRefresher = new CommunicatorRefresher();
         consumer = refresher.consumer();
         serverConfiguration = ServerConfiguration.defaults(serverRefresher);
         tcpServerConfiguration = RsocketTcpServerConfiguration.defaults();
@@ -75,6 +87,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         enableTcpServer = false;
         enableHttpServer = false;
         activateCommunicator = false;
+        tcpConnectorConfigurations = emptyImmutableMap();
+        httpConnectorConfigurations = emptyImmutableMap();
     }
 
     @RequiredArgsConstructor
@@ -94,12 +108,29 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             serverSection
                     .map(server -> ServerConfiguration.from(configuration.serverRefresher, server))
                     .ifPresent(serverConfiguration -> configuration.serverConfiguration = serverConfiguration);
-            ofNullable(source.getNested(RSOCKET_SECTION))
-                    .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))
-                    .map(communicator -> RsocketCommunicatorConfiguration.from(configuration.refresher, communicator))
+
+            Optional<NestedConfiguration> communicatorSection = ofNullable(source.getNested(RSOCKET_SECTION))
+                    .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION));
+
+            communicatorSection
+                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectorConfigurations.get(nested.getPath()),
+                            current -> RsocketTcpConnectorConfiguration.from(configuration.refresher, current, nested),
+                            RsocketTcpConnectorConfiguration.from(configuration.refresher, nested)
+                    )))
+                    .ifPresent(communicatorConfiguration -> configuration.tcpConnectorConfigurations = communicatorConfiguration);
+            communicatorSection
+                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.httpConnectorConfigurations.get(nested.getPath()),
+                            current -> RsocketHttpConnectorConfiguration.from(configuration.refresher, current, nested),
+                            RsocketHttpConnectorConfiguration.from(configuration.refresher, nested)
+                    )))
+                    .ifPresent(communicatorConfiguration -> configuration.httpConnectorConfigurations = communicatorConfiguration);
+            communicatorSection
+                    .map(communicator -> CommunicatorConfiguration.from(configuration.communicatorRefresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
+
             configuration.refresher.produce();
             configuration.serverRefresher.produce();
+            configuration.communicatorRefresher.produce();
             return this;
         }
 
@@ -112,6 +143,9 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.tcpServerConfiguration = configuration.getTcpServerConfiguration();
             this.configuration.httpServerConfiguration = configuration.getHttpServerConfiguration();
             this.configuration.serviceMethodProviders = configuration.getServiceMethodProviders();
+            this.configuration.httpConnectorConfigurations = configuration.getHttpConnectorConfigurations();
+            this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
+            this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
             return this;
         }
     }

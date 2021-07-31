@@ -23,7 +23,7 @@ import io.art.core.property.*;
 import io.rsocket.util.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.core.constants.StringConstants.SLASH;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import java.time.*;
 
@@ -79,6 +79,9 @@ public interface RsocketModuleConstants {
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";
 
+        String BALANCER_KEY = "balancer";
+        String GROUP_KEY = "group";
+        String SINGLE_KEY = "single";
         String TRANSPORT_SECTION = "transport";
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.port";
@@ -173,6 +176,25 @@ public interface RsocketModuleConstants {
         public static PayloadDecoderMode rsocketPayloadDecoder(String decoder, PayloadDecoderMode fallback) {
             if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
             if (DEFAULT.decoder.equalsIgnoreCase(decoder)) return DEFAULT;
+            return fallback;
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum BalancerMethod {
+        ROUND_ROBIN("roundRobin"),
+        WEIGHTED("weighted");
+
+        private final String method;
+
+        public static BalancerMethod rsocketBalancer(String method) {
+            return rsocketBalancer(method, WEIGHTED);
+        }
+
+        public static BalancerMethod rsocketBalancer(String method, BalancerMethod fallback) {
+            if (ROUND_ROBIN.method.equalsIgnoreCase(method)) return ROUND_ROBIN;
+            if (WEIGHTED.method.equalsIgnoreCase(method)) return WEIGHTED;
             return fallback;
         }
     }

@@ -38,8 +38,9 @@ import static io.rsocket.frame.FrameLengthCodec.*;
 
 @Getter
 @Builder(toBuilder = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketCommonConnectorConfiguration {
-    private String connectorId;
+    private String connector;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
     private int fragment;
@@ -54,8 +55,9 @@ public class RsocketCommonConnectorConfiguration {
     private int port;
     private String host;
 
-    public static RsocketCommonConnectorConfiguration defaults() {
+    public static RsocketCommonConnectorConfiguration defaults(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
+        configuration.connector = connector;
         configuration.logging = false;
         configuration.fragment = 0;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
@@ -71,10 +73,10 @@ public class RsocketCommonConnectorConfiguration {
 
     public static RsocketCommonConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommonConnectorConfiguration current, ConfigurationSource source) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
-        configuration.connectorId = source.getParent();
+        configuration.connector = current.connector;
 
-        ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connectorId);
-        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connectorId);
+        ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
+        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connector);
 
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
 
