@@ -21,16 +21,15 @@ package io.art.http.module;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.http.configuration.*;
-import io.art.http.refresher.*;
 import io.art.http.manager.*;
+import io.art.http.refresher.*;
 import io.art.http.state.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.netty.http.server.*;
-
 import static io.art.core.context.Context.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.http.configuration.HttpModuleConfiguration.*;
+import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -59,7 +58,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     }
 
     @Override
-    public void onLoad(Context.Service contextService) {
+    public void launch(Context.Service contextService) {
         if (configuration.isActivateServer()) {
             manager.initializeServer();
         }
@@ -69,7 +68,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     }
 
     @Override
-    public void onUnload(Context.Service contextService) {
+    public void unload(Context.Service contextService) {
         manager.disposeCommunicators();
         manager.disposeServer();
     }

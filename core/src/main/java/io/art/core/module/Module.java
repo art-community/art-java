@@ -26,16 +26,20 @@ import java.util.function.*;
 public interface Module<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configuration, Configurator>> {
     String getId();
 
-    default void onLoad(Context.Service contextService) {
+    default void load(Context.Service contextService) {
     }
 
-    default void onUnload(Context.Service contextService) {
+    default void unload(Context.Service contextService) {
     }
 
     default void beforeReload(Context.Service contextService) {
     }
 
     default void afterReload(Context.Service contextService) {
+    }
+
+    default void launch(Context.Service contextService) {
+
     }
 
     default String print() {

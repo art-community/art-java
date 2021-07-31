@@ -55,7 +55,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     }
 
     @Override
-    public void onLoad(Context.Service contextService) {
+    public void launch(Context.Service contextService) {
         Duration duration = configuration.getRefreshDuration();
         if (isNull(duration)) return;
         scheduleDelayed(now().plus(duration), duration, task(REFRESHER_TASK, contextService::reload));
@@ -74,7 +74,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     }
 
     @Override
-    public void onUnload(Context.Service contextService) {
+    public void unload(Context.Service contextService) {
         configuration.getDeferredExecutor().shutdown();
         configuration.getPeriodicExecutor().shutdown();
     }

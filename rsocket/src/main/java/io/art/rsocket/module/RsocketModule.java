@@ -48,8 +48,12 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void onLoad(Context.Service contextService) {
+    public void load(Context.Service contextService) {
         withMeta(() -> registerMetaLibrary(MetaRsocket.class, MetaRsocket::new));
+    }
+
+    @Override
+    public void launch(Context.Service contextService) {
         if (configuration.isActivateServer()) {
             manager.initializeServer();
         }
@@ -59,7 +63,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void onUnload(Context.Service contextService) {
+    public void unload(Context.Service contextService) {
         if (configuration.isActivateServer()) {
             manager.disposeServer();
         }

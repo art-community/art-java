@@ -44,7 +44,7 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     private final LoggingModuleState state = new LoggingModuleState(manager);
 
     @Override
-    public void onLoad(Context.Service contextService) {
+    public void launch(Context.Service contextService) {
         getLogManager().reset();
         useCustomLoggers(name -> new ReactorLogger(logger(name)));
         manager.activate();
@@ -56,7 +56,7 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     }
 
     @Override
-    public void onUnload(Context.Service contextService) {
+    public void unload(Context.Service contextService) {
         manager.deactivate();
     }
 

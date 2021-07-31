@@ -125,10 +125,16 @@ public class Context {
             this.modules.put(moduleId, module);
         }
         apply(configuration.getPrinter(), messages::forEach);
+
         for (Module<?, ?> module : this.modules.values()) {
-            module.onLoad(service);
+            module.load(service);
             apply(configuration.getPrinter(), printer -> ifNotEmpty(module.print(), printer));
         }
+
+        for (Module<?, ?> module : this.modules.values()) {
+            module.launch(service);
+        }
+
         apply(configuration.getOnLoad(), Runnable::run);
     }
 
@@ -137,7 +143,7 @@ public class Context {
         reverse(modules);
         for (Module<?, ?> module : modules) {
             apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId())));
-            module.onUnload(service);
+            module.unload(service);
             this.modules.remove(module.getId());
         }
         apply(configuration.getOnUnload(), Runnable::run);

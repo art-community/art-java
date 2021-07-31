@@ -50,8 +50,8 @@ public class ContextTest {
         }
 
         @Override
-        public void onUnload(Context.Service contextService) {
-            StatelessModule.super.onUnload(contextService);
+        public void unload(Context.Service contextService) {
+            StatelessModule.super.unload(contextService);
             unloaded = true;
         }
     }
