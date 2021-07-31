@@ -34,8 +34,8 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 @Builder(toBuilder = true)
 public class RsocketTcpClientGroupConfiguration {
     private String connector;
-    private BalancerMethod balancer;
     private ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations;
+    private BalancerMethod balancer;
 
     public static RsocketTcpClientGroupConfiguration defaults(String connector) {
         RsocketTcpClientGroupConfiguration configuration = RsocketTcpClientGroupConfiguration.builder().build();

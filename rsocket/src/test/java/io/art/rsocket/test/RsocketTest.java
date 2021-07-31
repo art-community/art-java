@@ -4,7 +4,7 @@ import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
-import io.art.server.registrator.*;
+import io.art.server.configurator.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;

@@ -23,8 +23,8 @@ import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
+import io.art.server.configurator.*;
 import io.art.server.method.*;
-import io.art.server.registrator.*;
 import lombok.*;
 import java.util.function.*;
 

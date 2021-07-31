@@ -1,4 +1,4 @@
-package io.art.server.registrator;
+package io.art.server.configurator;
 
 import io.art.core.model.*;
 import io.art.server.configuration.*;
