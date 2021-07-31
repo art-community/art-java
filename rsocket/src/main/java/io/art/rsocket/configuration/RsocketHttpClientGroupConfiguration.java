@@ -34,13 +34,13 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 @Builder(toBuilder = true)
 public class RsocketHttpClientGroupConfiguration {
     private String connector;
-    private BalancerMethod method;
-    private ImmutableSet<RsocketHttpClientConfiguration> configurations;
+    private BalancerMethod balancer;
+    private ImmutableSet<RsocketHttpClientConfiguration> clientsConfigurations;
 
     public static RsocketHttpClientGroupConfiguration defaults(String connector) {
         RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
-        configuration.method = ROUND_ROBIN;
-        configuration.configurations = emptyImmutableSet();
+        configuration.balancer = ROUND_ROBIN;
+        configuration.clientsConfigurations = emptyImmutableSet();
         configuration.connector = connector;
         return configuration;
     }
@@ -48,8 +48,8 @@ public class RsocketHttpClientGroupConfiguration {
     public static RsocketHttpClientGroupConfiguration from(RsocketModuleRefresher refresher, RsocketHttpClientGroupConfiguration current, ConfigurationSource source) {
         RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
-        configuration.method = rsocketBalancer(source.getString(BALANCER_KEY), current.method);
-        configuration.configurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> RsocketHttpClientConfiguration.from(
+        configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
+        configuration.clientsConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> RsocketHttpClientConfiguration.from(
                 refresher,
                 RsocketHttpClientConfiguration.defaults(current.connector),
                 nested

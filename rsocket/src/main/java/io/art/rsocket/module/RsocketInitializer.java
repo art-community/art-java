@@ -29,23 +29,16 @@ import lombok.*;
 import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
-    private boolean activateCommunicator;
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
 
-    public RsocketInitializer activateCommunicator() {
-        activateCommunicator = true;
-        return this;
-    }
-
-    public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator> registrator) {
-        registrator.apply(serverConfigurator);
+    public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator> configurator) {
+        configurator.apply(serverConfigurator);
         return this;
     }
 
     @Override
     public RsocketModuleConfiguration initialize(RsocketModule module) {
         Initial initial = new Initial(module.getRefresher());
-        initial.activateCommunicator = activateCommunicator;
         initial.enableTcpServer = serverConfigurator.enableTcp();
         initial.enableHttpServer = serverConfigurator.enableHttp();
         initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
@@ -57,7 +50,6 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
 
     @Getter
     public static class Initial extends RsocketModuleConfiguration {
-        private boolean activateCommunicator;
         private boolean enableTcpServer = super.isEnableTcpServer();
         private boolean enableHttpServer = super.isEnableHttpServer();
         private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServerConfiguration();
