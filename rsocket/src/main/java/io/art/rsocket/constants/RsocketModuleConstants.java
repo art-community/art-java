@@ -23,6 +23,7 @@ import io.art.core.property.*;
 import io.rsocket.util.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.StringConstants.SLASH;
 import static io.art.core.property.LazyProperty.*;
 import java.time.*;
 
@@ -128,6 +129,7 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_RESUME_STREAM_TIMEOUT = Duration.ofHours(1);
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
+        String DEFAULT_HTTP_PATH = SLASH;
     }
 
     interface Fields {

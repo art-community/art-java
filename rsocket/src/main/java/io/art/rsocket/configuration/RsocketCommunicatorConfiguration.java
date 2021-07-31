@@ -23,26 +23,26 @@ import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.configuration.RsocketConnectorConfiguration.*;
+import static io.art.rsocket.configuration.RsocketCommonConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 
 @Getter
 public class RsocketCommunicatorConfiguration {
-    private RsocketConnectorConfiguration defaultConnectorConfiguration;
-    private ImmutableMap<String, RsocketConnectorConfiguration> connectorConfigurations;
+    private RsocketCommonConnectorConfiguration defaultConnectorConfiguration;
+    private ImmutableMap<String, RsocketCommonConnectorConfiguration> connectorConfigurations;
 
     public boolean isLogging(String connectorId) {
         return ofNullable(connectorConfigurations)
                 .map(configurations -> configurations.get(connectorId))
-                .map(RsocketConnectorConfiguration::isLogging)
-                .orElseGet(() -> let(defaultConnectorConfiguration, RsocketConnectorConfiguration::isLogging, false));
+                .map(RsocketCommonConnectorConfiguration::isLogging)
+                .orElseGet(() -> let(defaultConnectorConfiguration, RsocketCommonConnectorConfiguration::isLogging, false));
     }
 
     public static RsocketCommunicatorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
         RsocketCommunicatorConfiguration configuration = new RsocketCommunicatorConfiguration();
-        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketConnectorConfiguration::rsocketConnector, defaults());
-        configuration.connectorConfigurations = source.getNestedMap(CONNECTORS_KEY, connector -> rsocketConnector(refresher, configuration.defaultConnectorConfiguration, connector));
+        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), RsocketCommonConnectorConfiguration::from, defaults());
+        configuration.connectorConfigurations = source.getNestedMap(CONNECTORS_KEY, connector -> RsocketCommonConnectorConfiguration.from(refresher, configuration.defaultConnectorConfiguration, connector));
         return configuration;
     }
 }
