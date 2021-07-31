@@ -61,7 +61,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private boolean activateServer;
         private boolean activateCommunicator;
         private RsocketServerConfiguration serverTransportConfiguration = super.getServerTransportConfiguration();
-        private ImmutableArray<LazyProperty<ServiceMethod>> serviceMethodProviders = super.getServiceMethodProviders();
+        private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders = super.getServiceMethodProviders();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

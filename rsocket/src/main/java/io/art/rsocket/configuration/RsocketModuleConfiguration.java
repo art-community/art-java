@@ -29,6 +29,7 @@ import io.art.server.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.property.LazyProperty.lazy;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 
@@ -47,7 +48,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketServerConfiguration serverTransportConfiguration;
 
     @Getter
-    private ImmutableArray<LazyProperty<ServiceMethod>> serviceMethodProviders;
+    private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders;
 
     @Getter
     private RsocketCommunicatorConfiguration communicatorConfiguration;
@@ -64,7 +65,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         consumer = refresher.consumer();
         serverConfiguration = ServerConfiguration.builder().refresher(serverRefresher).build();
         serverTransportConfiguration = RsocketServerConfiguration.defaults();
-        serviceMethodProviders = emptyImmutableArray();
+        serviceMethodProviders = lazy(ImmutableArray::emptyImmutableArray);
         activateServer = false;
         activateCommunicator = false;
     }

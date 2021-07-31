@@ -24,7 +24,7 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return logging;
     }
 
-    ImmutableArray<LazyProperty<ServiceMethod>> serviceMethodProviders() {
+    LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders() {
         return get();
     }
 

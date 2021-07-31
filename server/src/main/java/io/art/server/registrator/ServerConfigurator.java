@@ -63,12 +63,16 @@ public abstract class ServerConfigurator {
     }
 
 
-    protected ImmutableArray<LazyProperty<ServiceMethod>> get() {
-        ImmutableArray.Builder<LazyProperty<ServiceMethod>> methods = immutableArrayBuilder();
+    protected LazyProperty<ImmutableArray<ServiceMethod>> get() {
+        return lazy(this::createServiceMethods);
+    }
+
+    private ImmutableArray<ServiceMethod> createServiceMethods() {
+        ImmutableArray.Builder<ServiceMethod> methods = immutableArrayBuilder();
         for (PackageBasedRegistration registration : packageBased) {
             for (MetaClass<?> metaClass : registration.servicePackage.get().classes().values()) {
                 for (MetaMethod<?> method : metaClass.methods()) {
-                    methods.add(lazy(() -> createServiceMethod(metaClass, method, registration.decorator)));
+                    methods.add(createServiceMethod(metaClass, method, registration.decorator));
                 }
             }
         }
@@ -76,12 +80,12 @@ public abstract class ServerConfigurator {
         for (ClassBasedRegistration registration : classBased) {
             MetaClass<?> metaClass = registration.serviceClass.get();
             for (MetaMethod<?> method : metaClass.methods()) {
-                methods.add(lazy(() -> createServiceMethod(metaClass, method, registration.decorator)));
+                methods.add(createServiceMethod(metaClass, method, registration.decorator));
             }
         }
 
         for (MethodBasedRegistration registration : methodBased) {
-            methods.add(lazy(() -> createServiceMethod(registration.serviceClass.get(), registration.serviceMethod.get(), registration.decorator)));
+            methods.add(createServiceMethod(registration.serviceClass.get(), registration.serviceMethod.get(), registration.decorator));
         }
 
         return methods.build();
