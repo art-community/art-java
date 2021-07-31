@@ -18,13 +18,13 @@
 
 package io.art.rsocket.socket;
 
+import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
-import io.art.rsocket.server.*;
 import io.art.rsocket.state.*;
 import io.art.server.configuration.*;
 import io.art.server.method.*;
@@ -54,12 +54,10 @@ public class ServingRsocket implements RSocket {
     private final TransportPayloadWriter dataWriter;
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final ServiceMethod serviceMethod;
-    private final RsocketServer server;
-    private final RsocketModuleConfiguration moduleConfiguration;
+    private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
 
-    public ServingRsocket(ConnectionSetupPayload payload, RsocketServer server, RsocketModuleConfiguration configuration) {
-        this.server = server;
-        moduleConfiguration = configuration;
+    public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketModuleConfiguration configuration) {
+        this.serviceMethods = serviceMethods;
         RsocketServerConfiguration transportConfiguration = configuration.getServerTransportConfiguration();
         ServerConfiguration serverConfiguration = configuration.getServerConfiguration();
         //moduleState.registerRequester(this.requesterSocket = requesterSocket);
@@ -150,6 +148,6 @@ public class ServingRsocket implements RSocket {
     }
 
     private ServiceMethod findServiceMethod(ServiceMethodIdentifier serviceMethodId) {
-        return orThrow(server.getServices().get(serviceMethodId), () -> new RsocketException(format(SERVICE_METHOD_NOT_FOUND, serviceMethodId)));
+        return orThrow(serviceMethods.get(serviceMethodId), () -> new RsocketException(format(SERVICE_METHOD_NOT_FOUND, serviceMethodId)));
     }
 }

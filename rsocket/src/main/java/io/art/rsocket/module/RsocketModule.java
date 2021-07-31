@@ -22,10 +22,13 @@ import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.manager.*;
+import io.art.rsocket.meta.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.state.*;
 import lombok.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.context.Context.*;
+import static io.art.meta.registry.MetaLibraryMutableRegistry.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static lombok.AccessLevel.*;
 
@@ -46,6 +49,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void onLoad(Context.Service contextService) {
+        withMeta(() -> registerMetaLibrary(MetaRsocket.class, MetaRsocket::new));
         if (configuration.isActivateServer()) {
             manager.initializeServer();
         }

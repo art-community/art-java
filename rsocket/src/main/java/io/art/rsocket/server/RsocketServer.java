@@ -65,10 +65,9 @@ public class RsocketServer implements Server {
 
     private final RsocketModuleConfiguration configuration;
     private final Property<CloseableChannel> channel;
-    private volatile Mono<Void> closer;
 
-    @Getter
-    private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> services;
+    private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
+    private volatile Mono<Void> closer;
 
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
@@ -79,7 +78,7 @@ public class RsocketServer implements Server {
 
     @Override
     public void initialize() {
-        services = configuration.getServiceMethodProviders()
+        serviceMethods = configuration.getServiceMethodProviders()
                 .stream()
                 .collect(immutableMapCollector(provider -> provider.get().getId(), LazyProperty::get));
         channel.initialize();
@@ -145,7 +144,7 @@ public class RsocketServer implements Server {
     }
 
     private void createSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
-        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, this, configuration));
+        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, serviceMethods, configuration));
         ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
 

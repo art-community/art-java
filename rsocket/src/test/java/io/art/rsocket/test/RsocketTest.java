@@ -18,7 +18,7 @@ public class RsocketTest {
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 logging(),
                 json(),
-                rsocket(rsocket -> rsocket.server(server -> server.logging().register(TestRsocketService.class)))
+                rsocket(rsocket -> rsocket.server(server -> server.logging().forClass(TestRsocketService.class)))
         );
     }
 

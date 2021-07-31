@@ -11,55 +11,80 @@ import io.art.server.method.ServiceMethod.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.util.Objects.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
 public abstract class ServerConfigurator {
     private final Supplier<ServerConfiguration> configurationProvider;
-    private final List<LazyProperty<ServiceMethod>> methods = linkedList();
+    private final List<PackageBasedRegistration> packageBased = linkedList();
+    private final List<ClassBasedRegistration> classBased = linkedList();
+    private final List<MethodBasedRegistration> methodBased = linkedList();
 
-    public ServerConfigurator register(MetaPackage servicePackage) {
-        return register(servicePackage, UnaryOperator.identity());
+    public ServerConfigurator forPackage(Supplier<MetaPackage> servicePackage) {
+        return forPackage(servicePackage, identity());
     }
 
-    public ServerConfigurator register(Class<?> serviceClass) {
-        return register(declaration(serviceClass), UnaryOperator.identity());
-    }
-
-    public ServerConfigurator register(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod) {
-        return register(serviceClass, serviceMethod, UnaryOperator.identity());
-    }
-
-    public ServerConfigurator register(MetaPackage servicePackage, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        servicePackage.classes().values().forEach(serviceClass -> register(serviceClass, decorator));
+    public ServerConfigurator forPackage(Supplier<MetaPackage> servicePackage, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        packageBased.add(new PackageBasedRegistration(servicePackage, decorator));
         return this;
     }
 
-    public ServerConfigurator register(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        MetaClass<?> metaClass = declaration(serviceClass);
-        metaClass.methods().forEach(method -> register(metaClass, method, decorator));
+
+    public ServerConfigurator forClass(Class<?> serviceClass) {
+        return forClass(() -> declaration(serviceClass), identity());
+    }
+
+    public ServerConfigurator forClass(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        return forClass(() -> declaration(serviceClass), decorator);
+    }
+
+    public ServerConfigurator forClass(Supplier<MetaClass<?>> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        classBased.add(new ClassBasedRegistration(serviceClass, decorator));
         return this;
     }
 
-    public ServerConfigurator register(MetaClass<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        serviceClass.methods().forEach(method -> register(serviceClass, method, decorator));
+
+    public ServerConfigurator forMethod(Supplier<MetaClass<?>> serviceClass, Supplier<MetaMethod<?>> serviceMethod) {
+        return forMethod(serviceClass, serviceMethod, identity());
+    }
+
+    public ServerConfigurator forMethod(Supplier<MetaClass<?>> serviceClass, Supplier<MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        methodBased.add(new MethodBasedRegistration(serviceClass, serviceMethod, decorator));
         return this;
     }
 
-    public ServerConfigurator register(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        methods.add(lazy(() -> createServiceMethod(serviceClass, serviceMethod, decorator)));
-        return this;
-    }
 
     protected ImmutableArray<LazyProperty<ServiceMethod>> get() {
-        return immutableArrayOf(methods);
+        ImmutableArray.Builder<LazyProperty<ServiceMethod>> methods = immutableArrayBuilder();
+        for (PackageBasedRegistration registration : packageBased) {
+            for (MetaClass<?> metaClass : registration.servicePackage.get().classes().values()) {
+                for (MetaMethod<?> method : metaClass.methods()) {
+                    methods.add(lazy(() -> createServiceMethod(metaClass, method, registration.decorator)));
+                }
+            }
+        }
+
+        for (ClassBasedRegistration registration : classBased) {
+            MetaClass<?> metaClass = registration.serviceClass.get();
+            for (MetaMethod<?> method : metaClass.methods()) {
+                methods.add(lazy(() -> createServiceMethod(metaClass, method, registration.decorator)));
+            }
+        }
+
+        for (MethodBasedRegistration registration : methodBased) {
+            methods.add(lazy(() -> createServiceMethod(registration.serviceClass.get(), registration.serviceMethod.get(), registration.decorator)));
+        }
+
+        return methods.build();
     }
 
     private ServiceMethod createServiceMethod(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
@@ -74,5 +99,25 @@ public abstract class ServerConfigurator {
             return configurator.apply(builder.inputType(inputType)).build();
         }
         return configurator.apply(builder).build();
+    }
+
+
+    @RequiredArgsConstructor
+    private static class ClassBasedRegistration {
+        final Supplier<MetaClass<?>> serviceClass;
+        final UnaryOperator<ServiceMethodConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class PackageBasedRegistration {
+        final Supplier<MetaPackage> servicePackage;
+        final UnaryOperator<ServiceMethodConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class MethodBasedRegistration {
+        final Supplier<MetaClass<?>> serviceClass;
+        final Supplier<MetaMethod<?>> serviceMethod;
+        final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 }
