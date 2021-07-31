@@ -67,6 +67,7 @@ public abstract class ServerConfigurator {
         return lazy(this::createServiceMethods);
     }
 
+
     private ImmutableArray<ServiceMethod> createServiceMethods() {
         ImmutableArray.Builder<ServiceMethod> methods = immutableArrayBuilder();
         for (PackageBasedRegistration registration : packageBased) {
@@ -117,7 +118,6 @@ public abstract class ServerConfigurator {
         }
         return configurator.apply(builder).build();
     }
-
 
     @RequiredArgsConstructor
     private static class ClassBasedRegistration {

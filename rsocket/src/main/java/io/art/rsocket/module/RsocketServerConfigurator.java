@@ -18,8 +18,8 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     private boolean tcp;
     private boolean http;
 
-    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpDecorator = UnaryOperator.identity();
-    private UnaryOperator<RsocketHttpServerConfigurationBuilder> httpDecorator = UnaryOperator.identity();
+    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = UnaryOperator.identity();
+    private UnaryOperator<RsocketHttpServerConfigurationBuilder> httpConfigurator = UnaryOperator.identity();
 
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
@@ -31,15 +31,15 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return this;
     }
 
-    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurationBuilder> decorator) {
+    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurationBuilder> configurator) {
         this.tcp = true;
-        this.tcpDecorator = decorator;
+        this.tcpConfigurator = configurator;
         return this;
     }
 
-    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurationBuilder> decorator) {
+    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurationBuilder> configurator) {
         this.http = true;
-        this.httpDecorator = decorator;
+        this.httpConfigurator = configurator;
         return this;
     }
 
@@ -48,11 +48,11 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     }
 
     RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
-        return tcpDecorator.apply(current.toBuilder()).build();
+        return tcpConfigurator.apply(current.toBuilder()).build();
     }
 
     RsocketHttpServerConfiguration configure(RsocketHttpServerConfiguration current) {
-        return httpDecorator.apply(current.toBuilder()).build();
+        return httpConfigurator.apply(current.toBuilder()).build();
     }
 
     boolean enableTcp() {

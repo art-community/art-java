@@ -27,7 +27,6 @@ import io.art.server.configuration.*;
 import io.art.server.method.*;
 import io.art.server.refresher.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
@@ -67,9 +66,9 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
     public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
         this.refresher = refresher;
-        serverRefresher = refresher.serverRefresher();
+        serverRefresher = new ServerRefresher();
         consumer = refresher.consumer();
-        serverConfiguration = ServerConfiguration.defaults(refresher.serverRefresher());
+        serverConfiguration = ServerConfiguration.defaults(serverRefresher);
         tcpServerConfiguration = RsocketTcpServerConfiguration.defaults();
         httpServerConfiguration = RsocketHttpServerConfiguration.defaults();
         serviceMethodProviders = lazy(ImmutableArray::emptyImmutableArray);
@@ -99,8 +98,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION))
                     .map(communicator -> RsocketCommunicatorConfiguration.from(configuration.refresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
-            configuration.serverConfiguration = orElse(configuration.serverConfiguration, () -> ServerConfiguration.defaults(configuration.serverRefresher));
             configuration.refresher.produce();
+            configuration.serverRefresher.produce();
             return this;
         }
 
