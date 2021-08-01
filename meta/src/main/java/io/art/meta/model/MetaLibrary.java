@@ -19,19 +19,25 @@
 package io.art.meta.model;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.meta.exception.*;
 import io.art.meta.registry.*;
 import io.art.meta.validator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.state.MetaComputationState.*;
+import static java.lang.String.*;
+import static java.util.Objects.*;
+import static java.util.Optional.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
@@ -72,8 +78,19 @@ public abstract class MetaLibrary {
         return classes;
     }
 
-    public <T extends MetaPackage> T packageOf(String name) {
-        return cast(packages.get(name));
+    public <T extends MetaPackage> Optional<T> packageOf(String name) {
+        String[] parts = name.split(ESCAPED_DOT);
+        if (isEmpty(parts)) {
+            return empty();
+        }
+        MetaPackage root = packages.get(parts[0]);
+        if (isNull(root)) return empty();
+        if (parts.length == 1) return of(cast(root));
+        Optional<MetaPackage> found = root.packageOf(join(DOT, skip(1, parts)));
+        if (found.isPresent()) {
+            return found.map(Caster::cast);
+        }
+        return empty();
     }
 
     public void compute() {

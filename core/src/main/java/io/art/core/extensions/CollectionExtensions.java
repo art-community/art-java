@@ -25,6 +25,7 @@ import static io.art.core.collector.SetCollector.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static java.lang.System.*;
 import static java.util.Arrays.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
@@ -170,5 +171,11 @@ public final class CollectionExtensions {
         Map<K, V> firstMutable = first.toMutable();
         second.forEach(firstMutable::put);
         return immutableMapOf(firstMutable);
+    }
+
+    public <T> T[] skip(int count, T[] array) {
+        arraycopy(array, count, array, 0, array.length - 1);
+        array = Arrays.copyOf(array, array.length - 1);
+        return array;
     }
 }

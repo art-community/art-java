@@ -19,10 +19,20 @@
 package io.art.meta.model;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.EmptinessChecker.isEmpty;
+import static io.art.core.constants.StringConstants.DOT;
+import static io.art.core.constants.StringConstants.ESCAPED_DOT;
+import static io.art.core.extensions.CollectionExtensions.skip;
 import static io.art.core.factory.MapFactory.*;
+import static java.lang.String.join;
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import java.util.*;
 
 @ToString
@@ -69,8 +79,19 @@ public abstract class MetaPackage {
         return immutableMapOf(classes);
     }
 
-    public MetaPackage packageOf(String name) {
-        return cast(packages.get(name));
+    public Optional<MetaPackage> packageOf(String name) {
+        String[] parts = name.split(ESCAPED_DOT);
+        if (isEmpty(parts)) {
+            return empty();
+        }
+        MetaPackage root = packages.get(parts[0]);
+        if (isNull(root)) return empty();
+        if (parts.length == 1) return of(root);
+        Optional<MetaPackage> found = root.packageOf(join(DOT, skip(1, parts)));
+        if (found.isPresent()) {
+            return found.map(Caster::cast);
+        }
+        return empty();
     }
 
     public <T> MetaClass<T> classOf(Class<T> type) {
