@@ -7,7 +7,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 
 @Getter
-@Builder(toBuilder = true)
+ @Builder(toBuilder = true)
 public class RsocketTcpConnectorConfiguration {
     private String id;
     private RsocketTcpClientGroupConfiguration groupConfiguration;

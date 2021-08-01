@@ -38,8 +38,10 @@ public class RsocketTcpClientConfiguration {
     private UnaryOperator<TcpClient> decorator;
 
     @Builder(toBuilder = true)
-    private RsocketTcpClientConfiguration(UnaryOperator<TcpClient> decorator,
-                                          String connectorId,
+    private RsocketTcpClientConfiguration(int port,
+                                          String host,
+                                          UnaryOperator<TcpClient> decorator,
+                                          String connector,
                                           PayloadDecoderMode payloadDecoderMode,
                                           int maxInboundPayloadSize,
                                           int fragment,
@@ -53,7 +55,9 @@ public class RsocketTcpClientConfiguration {
         this.maxFrameLength = maxFrameLength;
         this.decorator = decorator;
         common = RsocketCommonConnectorConfiguration.builder()
-                .connector(connectorId)
+                .port(port)
+                .host(host)
+                .connector(connector)
                 .payloadDecoderMode(payloadDecoderMode)
                 .maxInboundPayloadSize(maxInboundPayloadSize)
                 .fragment(fragment)

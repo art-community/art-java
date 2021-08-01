@@ -2,6 +2,9 @@ package io.art.rsocket.test;
 
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
+import io.art.rsocket.configuration.*;
+import io.art.rsocket.constants.*;
+import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
 import io.art.server.configurator.*;
@@ -10,6 +13,7 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.ROUND_ROBIN;
 import static io.art.rsocket.module.RsocketActivator.*;
 
 public class RsocketTest {
@@ -20,6 +24,17 @@ public class RsocketTest {
                 logging(),
                 json(),
                 rsocket(rsocket -> rsocket
+                        .communicator(communicator -> communicator
+                                .tcp(TestRsocketCommunicator.class, connector -> connector
+                                        .singleConfiguration(RsocketTcpClientConfiguration.builder()
+                                                .port(1234)
+                                                .build())
+                                        .groupConfiguration(RsocketTcpClientGroupConfiguration.builder()
+                                                .balancer(ROUND_ROBIN)
+                                                .clientConfigurations()
+                                                .build())
+                                )
+                        )
                         .server(server -> server
                                 .tcp(tcp -> tcp.port(1234).logging(false))
                                 .http(http -> http.port(1234).logging(false))

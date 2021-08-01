@@ -39,9 +39,11 @@ public class RsocketHttpClientConfiguration {
     private UnaryOperator<HttpClient> decorator;
 
     @Builder(toBuilder = true)
-    private RsocketHttpClientConfiguration(String path,
+    private RsocketHttpClientConfiguration(int port,
+                                           String host,
+                                           String path,
+                                           String connector,
                                            UnaryOperator<HttpClient> decorator,
-                                           String connectorId,
                                            PayloadDecoderMode payloadDecoderMode,
                                            int maxInboundPayloadSize,
                                            int fragment,
@@ -55,7 +57,9 @@ public class RsocketHttpClientConfiguration {
         this.path = path;
         this.decorator = decorator;
         common = RsocketCommonConnectorConfiguration.builder()
-                .connector(connectorId)
+                .connector(connector)
+                .port(port)
+                .host(host)
                 .payloadDecoderMode(payloadDecoderMode)
                 .maxInboundPayloadSize(maxInboundPayloadSize)
                 .fragment(fragment)
