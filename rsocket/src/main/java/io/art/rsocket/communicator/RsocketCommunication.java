@@ -19,164 +19,267 @@
 package io.art.rsocket.communicator;
 
 import io.art.communicator.*;
+import io.art.communicator.action.*;
+import io.art.core.exception.*;
+import io.art.core.property.*;
 import io.art.logging.logger.*;
+import io.art.rsocket.configuration.*;
+import io.art.rsocket.interceptor.*;
+import io.art.rsocket.model.*;
+import io.art.transport.payload.*;
+import io.rsocket.*;
+import io.rsocket.core.*;
+import io.rsocket.frame.decoder.*;
+import io.rsocket.loadbalance.*;
+import io.rsocket.plugins.*;
+import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.netty.http.client.*;
+import reactor.netty.tcp.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static io.art.core.factory.ListFactory.*;
+import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static io.art.meta.model.TypedObject.*;
+import static io.art.meta.module.MetaModule.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
+import static io.art.rsocket.manager.RsocketManager.*;
+import static io.art.rsocket.module.RsocketModule.*;
+import static io.art.rsocket.reader.RsocketPayloadReader.*;
+import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
+import static io.rsocket.core.RSocketClient.*;
+import static io.rsocket.util.DefaultPayload.*;
+import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import java.util.*;
+import java.util.function.*;
 
+@RequiredArgsConstructor
 public class RsocketCommunication implements Communication {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketCommunication.class);
-/*
+    private final RsocketModuleConfiguration configuration;
+    private CommunicatorAction action;
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final CommunicatorAction communicatorAction = communicatorAction();
-
-    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> consumer()
+    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> configuration.getConsumer()
             .connectorConsumers()
-            .consumerFor(connectorConfiguration().getConnectorId()));
+            .consumerFor(connectorConfiguration().getConnector()));
 
-    private final Property<Function<Flux<Value>, Flux<Value>>> communication = property(this::communication)
+    private final Property<Function<Flux<Object>, Flux<Object>>> communication = property(this::communication)
             .listenProperties(client);
-*/
+
+    @Override
+    public void initialize(CommunicatorAction action) {
+        this.action = action;
+        client.initialize();
+    }
 
     @Override
     public void dispose() {
-        //client.dispose();
+        client.dispose();
     }
 
     @Override
     public Flux<Object> communicate(Flux<Object> input) {
-        return null;
+        return communication.get().apply(input);
     }
 
-/*    private RSocketClient createClient() {
-        RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
-        RSocketConnector connector = RSocketConnector.create()
-                .payloadDecoder(connectorConfiguration.getPayloadDecoderMode() == PayloadDecoderMode.ZERO_COPY ? PayloadDecoder.ZERO_COPY : PayloadDecoder.DEFAULT)
-                .dataMimeType(toMimeType(connectorConfiguration.getDataFormat()).toString())
-                .metadataMimeType(toMimeType(connectorConfiguration.getMetaDataFormat()).toString())
-                .fragment(connectorConfiguration.getFragment())
-                .interceptors(registry -> configureInterceptors(connectorConfiguration, registry));
-        apply(connectorConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
-        apply(connectorConfiguration.getResume(), resume -> connector.resume(resume.toResume()));
-        apply(connectorConfiguration.getRetry(), retry -> connector.reconnect(retry.toRetry()));
-        TransportPayloadWriter setupPayloadWriter = communicatorModule().configuration().getWriter(communicatorActionId, connectorConfiguration.getDataFormat());
-        RsocketSetupPayload setupPayload = RsocketSetupPayload.builder()
-                .dataFormat(connectorConfiguration.getDataFormat())
-                .metadataFormat(connectorConfiguration.getMetaDataFormat())
-                .id(getCommunicatorAction().getTargetServiceMethod())
-                .build();
-        Payload payload = DefaultPayload.create(setupPayloadWriter.write(setupPayload.toEntity()).nioBuffer());
-        connector.setupPayload(payload);
-        switch (connectorConfiguration.getTransport()) {
-            case TCP:
-                TcpClient tcpClient = connectorConfiguration.getTcpClient();
-                int tcpMaxFrameLength = connectorConfiguration.getTcpMaxFrameLength();
-                Mono<RSocket> socket = connector
-                        .connect(TcpClientTransport.create(tcpClient, tcpMaxFrameLength))
-                        .doOnTerminate(payload::release)
-                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-                if (connectorConfiguration.isLogging()) {
-                    socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)));
-                }
-                return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
-            case WS:
-                HttpClient httpWebSocketClient = connectorConfiguration.getHttpWebSocketClient();
-                String httpWebSocketPath = connectorConfiguration.getHttpWebSocketPath();
-                socket = connector
-                        .connect(WebsocketClientTransport.create(httpWebSocketClient, httpWebSocketPath))
-                        .doOnTerminate(payload::release)
-                        .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-                if (connectorConfiguration.isLogging()) {
-                    socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, connectorConfiguration.getConnectorId(), setupPayload)));
-                }
-                return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+    private RSocketClient createClient() {
+        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = configuration.getTcpConnectorConfigurations().get(action.getConnector());
+        RsocketHttpConnectorConfiguration httpConnectorConfiguration = configuration.getHttpConnectorConfigurations().get(action.getConnector());
+        if (nonNull(tcpConnectorConfiguration)) {
+            return createTcpClient(tcpConnectorConfiguration);
+        }
+        if (nonNull(httpConnectorConfiguration)) {
+            return createHttpClient(httpConnectorConfiguration);
         }
         throw new ImpossibleSituationException();
     }
 
-    private void configureInterceptors(RsocketConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
-        String connectorId = connectorConfiguration.getConnectorId();
-        registry.forResponder(new RsocketConnectorLoggingInterceptor(connectorId))
-                .forRequester(new RsocketConnectorLoggingInterceptor(connectorId));
+    private RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration) {
+        RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
+        TransportPayloadWriter setupPayloadWriter = action.getWriter().apply(commonConfiguration.getDataFormat());
+        RsocketSetupPayload setupPayload = RsocketSetupPayload.builder()
+                .dataFormat(commonConfiguration.getDataFormat())
+                .metadataFormat(commonConfiguration.getMetaDataFormat())
+                .build();
+        Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
+        RSocketConnector connector = createConnector(commonConfiguration, payload);
+        RsocketTcpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
+        if (nonNull(groupConfiguration)) {
+            List<LoadbalanceTarget> targets = linkedList();
+            for (RsocketTcpClientConfiguration clientConfiguration : groupConfiguration.getClientConfigurations()) {
+                RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
+                TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
+                        .host(commonClientConfiguration.getHost())
+                        .port(commonClientConfiguration.getPort()));
+                TcpClientTransport transport = TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength());
+                String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
+                targets.add(LoadbalanceTarget.from(key, transport));
+            }
+            Mono<RSocket> socket = LoadbalanceRSocketClient.builder(Flux.just(targets))
+                    .loadbalanceStrategy(groupConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
+                    .connector(connector)
+                    .build()
+                    .source();
+            socket = socket
+                    .doOnTerminate(payload::release)
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            if (commonConfiguration.isLogging()) {
+                socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
+            }
+            return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        }
+        RsocketTcpClientConfiguration clientConfiguration = connectorConfiguration.getSingleConfiguration();
+        RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
+        TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
+                .host(commonClientConfiguration.getHost())
+                .port(commonClientConfiguration.getPort()));
+        Mono<RSocket> socket = connector
+                .connect(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength()))
+                .doOnTerminate(payload::release)
+                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+        if (commonConfiguration.isLogging()) {
+            socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
+        }
+        return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+    }
+
+    private RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration) {
+        RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
+        TransportPayloadWriter setupPayloadWriter = action.getWriter().apply(commonConfiguration.getDataFormat());
+        RsocketSetupPayload setupPayload = RsocketSetupPayload.builder()
+                .dataFormat(commonConfiguration.getDataFormat())
+                .metadataFormat(commonConfiguration.getMetaDataFormat())
+                .build();
+        Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
+        RSocketConnector connector = createConnector(commonConfiguration, payload);
+        RsocketHttpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
+        if (nonNull(groupConfiguration)) {
+            List<LoadbalanceTarget> targets = linkedList();
+            for (RsocketHttpClientConfiguration clientConfiguration : groupConfiguration.getClientConfigurations()) {
+                RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
+                HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
+                        .host(commonClientConfiguration.getHost())
+                        .port(commonClientConfiguration.getPort()));
+                WebsocketClientTransport transport = WebsocketClientTransport.create(client, clientConfiguration.getPath());
+                String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
+                targets.add(LoadbalanceTarget.from(key, transport));
+            }
+            Mono<RSocket> socket = LoadbalanceRSocketClient.builder(Flux.just(targets))
+                    .loadbalanceStrategy(groupConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
+                    .connector(connector)
+                    .build()
+                    .source();
+            socket = socket
+                    .doOnTerminate(payload::release)
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            if (commonConfiguration.isLogging()) {
+                socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
+            }
+            return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        }
+        RsocketHttpClientConfiguration clientConfiguration = connectorConfiguration.getSingleConfiguration();
+        RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
+        HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
+                .host(commonClientConfiguration.getHost())
+                .port(commonClientConfiguration.getPort()));
+        Mono<RSocket> socket = connector
+                .connect(WebsocketClientTransport.create(client, clientConfiguration.getPath()))
+                .doOnTerminate(payload::release)
+                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+        if (commonConfiguration.isLogging()) {
+            socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
+        }
+        return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+    }
+
+    private RSocketConnector createConnector(RsocketCommonConnectorConfiguration commonConfiguration, Payload payload) {
+        RSocketConnector connector = RSocketConnector.create()
+                .payloadDecoder(commonConfiguration.getPayloadDecoderMode() == ZERO_COPY ? PayloadDecoder.ZERO_COPY : PayloadDecoder.DEFAULT)
+                .dataMimeType(toMimeType(commonConfiguration.getDataFormat()).toString())
+                .metadataMimeType(toMimeType(commonConfiguration.getMetaDataFormat()).toString())
+                .fragment(commonConfiguration.getFragment())
+                .interceptors(registry -> configureInterceptors(commonConfiguration, registry));
+        apply(commonConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
+        apply(commonConfiguration.getResume(), resume -> connector.resume(resume.toResume()));
+        apply(commonConfiguration.getRetry(), retry -> connector.reconnect(retry.toRetry()));
+
+        return connector.setupPayload(payload);
+    }
+
+    private void configureInterceptors(RsocketCommonConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
+        registry.forResponder(new RsocketConnectorLoggingInterceptor(configuration, connectorConfiguration))
+                .forRequester(new RsocketConnectorLoggingInterceptor(configuration, connectorConfiguration));
     }
 
     private void disposeClient(RSocketClient rsocket) {
-        RsocketConnectorConfiguration connectorConfiguration = connectorConfiguration();
+        RsocketCommonConnectorConfiguration connectorConfiguration = connectorConfiguration();
         disposeRsocket(rsocket);
-        if (connectorConfiguration.isLogging()) {
-            getLogger().info(format(COMMUNICATOR_STOPPED, connectorConfiguration.getConnectorId()));
+        if (withLogging() && connectorConfiguration.isLogging()) {
+            getLogger().info(format(COMMUNICATOR_STOPPED, connectorConfiguration.getConnector()));
         }
     }
 
-    @SuppressWarnings(CONSTANT_CONDITIONS)
-    private CommunicatorAction communicatorAction() {
-        return communicatorModule()
-                .configuration()
-                .getRegistry()
-                .findActionById(communicatorActionId)
-                .orElseThrow(ImpossibleSituationException::new);
+    private RsocketCommonConnectorConfiguration connectorConfiguration() {
+        return rsocketModule().configuration()
+                .getTcpConnectorConfigurations()
+                .get(action.getConnector())
+                .getCommonConfiguration();
     }
 
-    private RsocketConnectorConfiguration connectorConfiguration() {
-        RsocketCommunicatorConfiguration communicatorConfiguration = rsocketModule().configuration().getCommunicatorConfiguration();
-        return communicatorModule()
-                .configuration()
-                .findConnectorId(RSOCKET.getProtocol(), communicatorActionId)
-                .map(communicatorConfiguration.getConnectorConfigurations()::get)
-                .orElseGet(() -> communicatorConfiguration.getConnectorConfigurations().get(communicatorActionId.getCommunicatorId()));
-    }
-
-    private Function<Flux<Value>, Flux<Value>> communication() {
-        CommunicatorConfiguration configuration = communicatorModule().configuration();
-        TransportPayloadReader reader = configuration.getReader(communicatorActionId, connectorConfiguration().getDataFormat());
-        TransportPayloadWriter writer = configuration.getWriter(communicatorActionId, connectorConfiguration().getDataFormat());
+    private Function<Flux<Object>, Flux<Object>> communication() {
+        TransportPayloadReader reader = action.getReader().apply(connectorConfiguration().getDataFormat());
+        TransportPayloadWriter writer = action.getWriter().apply(connectorConfiguration().getDataFormat());
         RSocketClient client = this.client.get();
         switch (communicationMode()) {
             case FIRE_AND_FORGET:
-                return input -> cast(client.fireAndForget(input.map(value -> create(writer.write(value))).last(EMPTY_PAYLOAD)).flux());
+                return input -> cast(client.fireAndForget(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD)).flux());
             case REQUEST_RESPONSE:
                 return input -> client
-                        .requestResponse(input.map(value -> create(writer.write(value))).last(EMPTY_PAYLOAD))
+                        .requestResponse(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD))
                         .flux()
-                        .map(payload -> readRsocketPayload(reader, payload))
+                        .map(payload -> readRsocketPayload(reader, payload, action.getInputType()))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case REQUEST_STREAM:
                 return input -> client
-                        .requestStream(input.map(value -> create(writer.write(value))).last(EMPTY_PAYLOAD))
-                        .map(payload -> readRsocketPayload(reader, payload))
+                        .requestStream(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD))
+                        .map(payload -> readRsocketPayload(reader, payload, action.getInputType()))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
-                        .requestChannel(input.map(value -> create(writer.write(value))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
-                        .map(payload -> readRsocketPayload(reader, payload))
+                        .requestChannel(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
+                        .map(payload -> readRsocketPayload(reader, payload, action.getInputType()))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case METADATA_PUSH:
-                return input -> cast(client.metadataPush(input.map(value -> create(writer.write(value))).last(EMPTY_PAYLOAD)).flux());
+                return input -> cast(client.metadataPush(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD)).flux());
         }
         throw new ImpossibleSituationException();
     }
 
     private CommunicationMode communicationMode() {
-        CommunicatorAction communicatorAction = getCommunicatorAction();
-        if (isNull(communicatorAction.getOutputMapper())) {
+        if (isNull(action.getOutputType())) {
             return FIRE_AND_FORGET;
         }
-        if (communicatorAction.getInputMode() == FLUX) {
+        if (action.getInputType().internalKind() == FLUX) {
             return REQUEST_CHANNEL;
         }
-        if (communicatorAction.getOutputMode() == FLUX) {
+        if (action.getInputType().internalKind() == FLUX) {
             return REQUEST_STREAM;
         }
         return REQUEST_RESPONSE;
     }
-
-    private RsocketModuleRefresher.Consumer consumer() {
-        return rsocketModule().configuration().getConsumer();
-    }*/
 }

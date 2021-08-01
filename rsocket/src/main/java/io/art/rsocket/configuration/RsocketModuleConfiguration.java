@@ -115,14 +115,14 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             Optional<NestedConfiguration> communicatorSection = ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION));
             communicatorSection
-                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectorConfigurations.get(nested.getPath()),
+                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectorConfigurations.get(nested.getSection()),
                             current -> RsocketTcpConnectorConfiguration.from(configuration.refresher, current, nested),
                             RsocketTcpConnectorConfiguration.from(configuration.refresher, nested)
                     )))
                     .ifPresent(communicatorConfiguration -> configuration.tcpConnectorConfigurations = merge(configuration.tcpConnectorConfigurations, communicatorConfiguration));
 
             communicatorSection
-                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.httpConnectorConfigurations.get(nested.getPath()),
+                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.httpConnectorConfigurations.get(nested.getSection()),
                             current -> RsocketHttpConnectorConfiguration.from(configuration.refresher, current, nested),
                             RsocketHttpConnectorConfiguration.from(configuration.refresher, nested)
                     )))

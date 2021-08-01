@@ -19,9 +19,7 @@
 package io.art.rsocket.configuration;
 
 import io.art.core.source.*;
-import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
-import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -33,7 +31,7 @@ import java.util.function.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketHttpClientConfiguration {
     @EqualsAndHashCode.Include
-    private RsocketCommonConnectorConfiguration common;
+    private RsocketCommonClientConfiguration commonConfiguration;
     @EqualsAndHashCode.Include
     private String path;
     private UnaryOperator<HttpClient> decorator;
@@ -43,32 +41,13 @@ public class RsocketHttpClientConfiguration {
                                            String host,
                                            String path,
                                            String connector,
-                                           UnaryOperator<HttpClient> decorator,
-                                           PayloadDecoderMode payloadDecoderMode,
-                                           int maxInboundPayloadSize,
-                                           int fragment,
-                                           RsocketKeepAliveConfiguration keepAlive,
-                                           RsocketResumeConfiguration resume,
-                                           RsocketRetryConfiguration retry,
-                                           boolean logging,
-                                           DataFormat dataFormat,
-                                           DataFormat metaDataFormat
-    ) {
+                                           UnaryOperator<HttpClient> decorator) {
         this.path = path;
         this.decorator = decorator;
-        common = RsocketCommonConnectorConfiguration.builder()
+        commonConfiguration = RsocketCommonClientConfiguration.builder()
                 .connector(connector)
                 .port(port)
                 .host(host)
-                .payloadDecoderMode(payloadDecoderMode)
-                .maxInboundPayloadSize(maxInboundPayloadSize)
-                .fragment(fragment)
-                .keepAlive(keepAlive)
-                .resume(resume)
-                .retry(retry)
-                .logging(logging)
-                .dataFormat(dataFormat)
-                .metaDataFormat(metaDataFormat)
                 .build();
     }
 
@@ -76,7 +55,7 @@ public class RsocketHttpClientConfiguration {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
         configuration.path = DEFAULT_HTTP_PATH;
         configuration.decorator = UnaryOperator.identity();
-        configuration.common = RsocketCommonConnectorConfiguration.defaults(connector);
+        configuration.commonConfiguration = RsocketCommonClientConfiguration.defaults(connector);
         return configuration;
     }
 
@@ -84,7 +63,7 @@ public class RsocketHttpClientConfiguration {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
         configuration.decorator = current.decorator;
         configuration.path = orElse(source.getString(TRANSPORT_WS_PATH_KEY), current.path);
-        configuration.common = RsocketCommonConnectorConfiguration.from(refresher, current.common, source);
+        configuration.commonConfiguration = RsocketCommonClientConfiguration.from(refresher, current.commonConfiguration, source);
         return configuration;
     }
 }

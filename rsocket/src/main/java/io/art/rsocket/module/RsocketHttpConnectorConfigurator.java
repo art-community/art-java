@@ -1,6 +1,7 @@
 package io.art.rsocket.module;
 
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.RsocketHttpClientConfiguration.*;
 import lombok.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
@@ -11,6 +12,7 @@ public class RsocketHttpConnectorConfigurator {
     private final String connector;
     private RsocketHttpClientGroupConfiguration group;
     private RsocketHttpClientConfiguration single;
+    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator;
 
     public RsocketHttpConnectorConfigurator roundRobin(UnaryOperator<RsocketHttpClientGroupConfigurator> configurator) {
         group = configurator.apply(new RsocketHttpClientGroupConfigurator(connector, ROUND_ROBIN)).configure();
@@ -27,9 +29,16 @@ public class RsocketHttpConnectorConfigurator {
         return this;
     }
 
+    public RsocketHttpConnectorConfigurator configure(UnaryOperator<RsocketCommonConnectorConfigurationBuilder> configurator) {
+        this.commonConfigurator = configurator;
+        return this;
+    }
+
     RsocketHttpConnectorConfiguration configure() {
         return RsocketHttpConnectorConfiguration.builder()
-                .connector(connector)
+                .commonConfiguration(commonConfigurator.apply(RsocketCommonConnectorConfiguration.builder()
+                        .connector(connector))
+                        .build())
                 .groupConfiguration(group)
                 .singleConfiguration(single)
                 .build();

@@ -23,7 +23,7 @@ import io.art.core.model.*;
 import reactor.core.publisher.*;
 
 public interface Communication {
-    default void initialize(CommunicatorAction id) {
+    default void initialize(CommunicatorAction action) {
 
     }
 

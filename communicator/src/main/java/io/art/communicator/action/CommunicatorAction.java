@@ -23,6 +23,7 @@ import io.art.communicator.exception.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.transport.payload.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -30,6 +31,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static io.art.transport.constants.TransportModuleConstants.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -66,6 +68,14 @@ public class CommunicatorAction implements Managed {
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Object> handler = selectHandler();
+
+    @Getter
+    @Builder.Default
+    private final Function<DataFormat, TransportPayloadReader> reader = TransportPayloadReader::new;
+
+    @Getter
+    @Builder.Default
+    private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
 
     @Override
     public void initialize() {

@@ -9,13 +9,13 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 @Getter
 @Builder(toBuilder = true)
 public class RsocketTcpConnectorConfiguration {
-    private String connector;
+    private RsocketCommonConnectorConfiguration commonConfiguration;
     private RsocketTcpClientGroupConfiguration groupConfiguration;
     private RsocketTcpClientConfiguration singleConfiguration;
 
     public static RsocketTcpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
         RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
-        configuration.connector = current.connector;
+        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, current.commonConfiguration, source);
         configuration.groupConfiguration = orElse(
                 source.getNested(GROUP_KEY, nested -> RsocketTcpClientGroupConfiguration.from(refresher, current.groupConfiguration, source)),
                 current.groupConfiguration
@@ -29,14 +29,15 @@ public class RsocketTcpConnectorConfiguration {
 
     public static RsocketTcpConnectorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
         RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
-        configuration.connector = source.getSection();
+        String connector = configuration.commonConfiguration.getConnector();
+        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, source);
         configuration.groupConfiguration = orElse(
-                source.getNested(GROUP_KEY, nested -> RsocketTcpClientGroupConfiguration.from(refresher, RsocketTcpClientGroupConfiguration.defaults(configuration.connector), source)),
-                RsocketTcpClientGroupConfiguration.defaults(configuration.connector)
+                source.getNested(GROUP_KEY, nested -> RsocketTcpClientGroupConfiguration.from(refresher, RsocketTcpClientGroupConfiguration.defaults(connector), source)),
+                RsocketTcpClientGroupConfiguration.defaults(connector)
         );
         configuration.singleConfiguration = orElse(
-                source.getNested(SINGLE_KEY, nested -> RsocketTcpClientConfiguration.from(refresher, RsocketTcpClientConfiguration.defaults(configuration.connector), source)),
-                RsocketTcpClientConfiguration.defaults(configuration.connector)
+                source.getNested(SINGLE_KEY, nested -> RsocketTcpClientConfiguration.from(refresher, RsocketTcpClientConfiguration.defaults(connector), source)),
+                RsocketTcpClientConfiguration.defaults(connector)
         );
         return configuration;
     }

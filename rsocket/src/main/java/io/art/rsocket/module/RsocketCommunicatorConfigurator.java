@@ -38,7 +38,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     }
 
     RsocketCommunicatorConfigurator() {
-        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), RsocketCommunication::new);
+        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()));
     }
 
     ImmutableMap<String, RsocketTcpConnectorConfiguration> configureTcp() {
