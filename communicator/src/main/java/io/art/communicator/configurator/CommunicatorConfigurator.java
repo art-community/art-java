@@ -96,6 +96,7 @@ public abstract class CommunicatorConfigurator {
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(metaMethod.returnType())
+                .connector(id.getCommunicatorId())
                 .communication(communication.get());
         UnaryOperator<CommunicatorActionBuilder> configurator = decorator.apply(new CommunicatorActionConfigurator(id, configurationProvider.get())).configure();
         if (nonNull(inputType)) {

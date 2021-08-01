@@ -2,7 +2,6 @@ package io.art.rsocket.test;
 
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
-import io.art.rsocket.configuration.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
@@ -12,7 +11,6 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 
 public class RsocketTest {
@@ -24,14 +22,11 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp(TestRsocketCommunicator.class, connector -> connector
-                                        .singleConfiguration(RsocketTcpClientConfiguration.builder()
-                                                .port(1234)
-                                                .build())
-                                        .groupConfiguration(RsocketTcpClientGroupConfiguration.builder()
-                                                .balancer(ROUND_ROBIN)
-                                                .build()))
-                                .forClass(TestRsocketCommunicator.class)
+                                .tcp("server", tcp -> tcp
+                                        .weighted(group -> group
+                                                .client(client -> client.port(1234).host("1.1.1.1"))
+                                                .client(client -> client.port(1234).host("1.1.1.2"))))
+                                .forClass(TestRsocketCommunicator.class, action -> action.to("server"))
                         )
                         .server(server -> server
                                 .tcp(tcp -> tcp.port(1234).logging(false))

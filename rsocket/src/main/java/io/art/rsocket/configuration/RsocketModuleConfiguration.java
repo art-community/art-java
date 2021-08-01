@@ -31,6 +31,7 @@ import io.art.server.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
@@ -116,13 +117,15 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                             current -> RsocketTcpConnectorConfiguration.from(configuration.refresher, current, nested),
                             RsocketTcpConnectorConfiguration.from(configuration.refresher, nested)
                     )))
-                    .ifPresent(communicatorConfiguration -> configuration.tcpConnectorConfigurations = communicatorConfiguration);
+                    .ifPresent(communicatorConfiguration -> configuration.tcpConnectorConfigurations = merge(configuration.tcpConnectorConfigurations, communicatorConfiguration));
+
             communicatorSection
                     .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.httpConnectorConfigurations.get(nested.getPath()),
                             current -> RsocketHttpConnectorConfiguration.from(configuration.refresher, current, nested),
                             RsocketHttpConnectorConfiguration.from(configuration.refresher, nested)
                     )))
-                    .ifPresent(communicatorConfiguration -> configuration.httpConnectorConfigurations = communicatorConfiguration);
+                    .ifPresent(communicatorConfiguration -> configuration.httpConnectorConfigurations = merge(configuration.httpConnectorConfigurations, communicatorConfiguration));
+
             communicatorSection
                     .map(communicator -> CommunicatorConfiguration.from(configuration.communicatorRefresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);

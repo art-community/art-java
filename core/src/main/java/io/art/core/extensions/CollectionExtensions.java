@@ -163,4 +163,12 @@ public final class CollectionExtensions {
             elementConsumer.accept(element);
         }
     }
+
+    public static <K, V> ImmutableMap<K, V> merge(ImmutableMap<K, V> first, ImmutableMap<K, V> second) {
+        if (isNull(first)) return second;
+        if (isNull(second)) return first;
+        Map<K, V> firstMutable = first.toMutable();
+        second.forEach(firstMutable::put);
+        return immutableMapOf(firstMutable);
+    }
 }

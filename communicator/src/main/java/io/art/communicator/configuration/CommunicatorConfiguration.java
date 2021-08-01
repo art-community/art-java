@@ -35,23 +35,23 @@ import java.util.function.*;
 public class CommunicatorConfiguration {
     private final CommunicatorRefresher refresher;
     private final CommunicatorRefresher.Consumer consumer;
-    private ImmutableMap<String, CommunicatorProxyConfiguration> communicatorConfigurations;
+    private ImmutableMap<String, CommunicatorProxyConfiguration> proxyConfigurations;
 
     private CommunicatorConfiguration(CommunicatorRefresher refresher) {
         this.refresher = refresher;
-        this.communicatorConfigurations = emptyImmutableMap();
+        this.proxyConfigurations = emptyImmutableMap();
         this.consumer = refresher.consumer();
     }
 
     public Optional<String> findConnectorId(CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(id.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(id.getCommunicatorId());
         Optional<String> connectorId = ofNullable(proxyConfiguration).map(CommunicatorProxyConfiguration::getConnector);
         if (connectorId.isPresent()) return connectorId;
         return getActionConfiguration(id).map(CommunicatorActionConfiguration::getConnector);
     }
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(id.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(id.getCommunicatorId());
         return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
@@ -74,7 +74,7 @@ public class CommunicatorConfiguration {
     }
 
     private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorProxyConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(identifier.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {
             return defaultValue;
         }
@@ -82,7 +82,7 @@ public class CommunicatorConfiguration {
     }
 
     private <T> T checkAction(CommunicatorActionIdentifier identifier, Function<CommunicatorActionConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = communicatorConfigurations.get(identifier.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {
             return defaultValue;
         }
@@ -100,7 +100,7 @@ public class CommunicatorConfiguration {
 
     public static CommunicatorConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorConfiguration configuration = new CommunicatorConfiguration(refresher);
-        configuration.communicatorConfigurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
+        configuration.proxyConfigurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
                 .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(configuration.refresher, service)))
                 .orElse(emptyImmutableMap());
         configuration.refresher.produce();
