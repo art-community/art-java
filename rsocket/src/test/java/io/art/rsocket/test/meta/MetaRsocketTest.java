@@ -164,12 +164,18 @@ public class MetaRsocketTest extends MetaLibrary {
           public static final class MetaCommunicatorPackage extends MetaPackage {
             private final MetaTestRsocketCommunicatorClass testRsocketCommunicatorClass = register(new MetaTestRsocketCommunicatorClass());
 
+            private final MetaTestRsocketOtherCommunicatorClass testRsocketOtherCommunicatorClass = register(new MetaTestRsocketOtherCommunicatorClass());
+
             private MetaCommunicatorPackage() {
               super("communicator");
             }
 
             public MetaTestRsocketCommunicatorClass testRsocketCommunicatorClass() {
               return testRsocketCommunicatorClass;
+            }
+
+            public MetaTestRsocketOtherCommunicatorClass testRsocketOtherCommunicatorClass() {
+              return testRsocketOtherCommunicatorClass;
             }
 
             public static final class MetaTestRsocketCommunicatorClass extends MetaClass<io.art.rsocket.test.communicator.TestRsocketCommunicator> {
@@ -220,6 +226,66 @@ public class MetaRsocketTest extends MetaLibrary {
                 private final Function<Object, Object> mInvocation;
 
                 public MetaTestRsocketCommunicatorProxy(
+                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                  super(invocations);
+                  mInvocation = invocations.get(mMethod);
+                }
+
+                @Override
+                public void m(java.lang.String req) {
+                  mInvocation.apply(req);
+                }
+              }
+            }
+
+            public static final class MetaTestRsocketOtherCommunicatorClass extends MetaClass<io.art.rsocket.test.communicator.TestRsocketOtherCommunicator> {
+              private final MetaMMethod mMethod = register(new MetaMMethod());
+
+              private MetaTestRsocketOtherCommunicatorClass() {
+                super(metaType(io.art.rsocket.test.communicator.TestRsocketOtherCommunicator.class));
+              }
+
+              public MetaMMethod mMethod() {
+                return mMethod;
+              }
+
+              @Override
+              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                return new MetaTestRsocketOtherCommunicatorProxy(invocations);
+              }
+
+              public static final class MetaMMethod extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocketOtherCommunicator, Void> {
+                private final MetaParameter<java.lang.String> reqParameter = register(new MetaParameter<>(0, "req",metaType(java.lang.String.class)));
+
+                private MetaMMethod() {
+                  super("m",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.rsocket.test.communicator.TestRsocketOtherCommunicator instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m((java.lang.String)(arguments[0]));
+                  return null;
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.rsocket.test.communicator.TestRsocketOtherCommunicator instance,
+                    Object argument) throws Throwable {
+                  instance.m((java.lang.String)(argument));
+                  return null;
+                }
+
+                public MetaParameter<java.lang.String> reqParameter() {
+                  return reqParameter;
+                }
+              }
+
+              public class MetaTestRsocketOtherCommunicatorProxy extends MetaProxy implements io.art.rsocket.test.communicator.TestRsocketOtherCommunicator {
+                private final Function<Object, Object> mInvocation;
+
+                public MetaTestRsocketOtherCommunicatorProxy(
                     Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   mInvocation = invocations.get(mMethod);

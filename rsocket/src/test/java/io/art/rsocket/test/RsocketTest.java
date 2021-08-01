@@ -21,11 +21,12 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp(TestRsocketCommunicator.class, http -> http.configure(common -> common.logging(true)))
-                                .forClass(TestRsocketCommunicator.class))
+                                .tcp("test", tcp -> tcp.configure(common -> common.logging(true)))
+                                .forClass(TestRsocketOtherCommunicator.class, action -> action.connector("test").target("test"))
+                                .forClass(TestRsocketCommunicator.class, action -> action.connector("test").target("test")))
                         .server(server -> server
-                                .tcp(http -> http.common(common -> common.logging(true)))
-                                .forClass(TestRsocketService.class)))
+                                .tcp(tcp -> tcp.common(common -> common.logging(true)))
+                                .forClass(TestRsocketService.class, service -> service.serviceId("test"))))
         );
     }
 

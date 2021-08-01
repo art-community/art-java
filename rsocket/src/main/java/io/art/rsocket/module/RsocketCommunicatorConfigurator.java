@@ -12,7 +12,7 @@ import lombok.experimental.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.rsocket.module.RsocketModule.*;
-import static java.util.function.UnaryOperator.identity;
+import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -63,7 +63,6 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     ImmutableMap<String, RsocketTcpConnectorConfiguration> configureTcp() {
         return immutableMapOf(tcpConnectors);
     }
-
 
     ImmutableMap<String, RsocketHttpConnectorConfiguration> configureHttp() {
         return immutableMapOf(httpConnectors);
