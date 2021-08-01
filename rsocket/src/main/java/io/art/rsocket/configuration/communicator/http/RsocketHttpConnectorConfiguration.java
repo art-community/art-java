@@ -1,7 +1,7 @@
 package io.art.rsocket.configuration.communicator.http;
 
 import io.art.communicator.configurator.*;
-import io.art.communicator.proxy.*;
+import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.core.source.*;

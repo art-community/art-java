@@ -1,6 +1,6 @@
 package io.art.rsocket;
 
-import io.art.communicator.proxy.*;
+import io.art.communicator.model.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.rsocket.module.RsocketModule.*;

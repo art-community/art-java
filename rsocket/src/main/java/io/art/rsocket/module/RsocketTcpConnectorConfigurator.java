@@ -1,7 +1,7 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.configurator.*;
-import io.art.communicator.proxy.*;
+import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.rsocket.communicator.*;
@@ -9,6 +9,7 @@ import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
@@ -19,9 +20,9 @@ public class RsocketTcpConnectorConfigurator extends CommunicatorConfigurator {
     private RsocketTcpClientConfiguration single;
     private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
 
-    RsocketTcpConnectorConfigurator(String connector) {
+    RsocketTcpConnectorConfigurator(Class<? extends Connector> connector) {
         super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()));
-        this.connector = connector;
+        this.connector = normalizeToId(connector);
     }
 
     public RsocketTcpConnectorConfigurator roundRobin(UnaryOperator<RsocketTcpClientGroupConfigurator> configurator) {
@@ -50,12 +51,12 @@ public class RsocketTcpConnectorConfigurator extends CommunicatorConfigurator {
     RsocketTcpConnectorConfiguration configure() {
         return RsocketTcpConnectorConfiguration.builder()
                 .commonConfiguration(commonConfigurator.apply(RsocketCommonConnectorConfiguration.defaults(connector).toBuilder()).build())
-                .groupConfiguration(group)
+                .groupConfiguration(orElse(group, RsocketTcpClientGroupConfiguration.defaults(connector)))
                 .singleConfiguration(orElse(single, RsocketTcpClientConfiguration.defaults(connector)))
                 .build();
     }
 
-    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxies() {
+    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> proxies() {
         return get();
     }
 }

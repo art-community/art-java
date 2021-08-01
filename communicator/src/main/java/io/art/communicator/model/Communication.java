@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.communicator;
+package io.art.communicator.model;
 
 import io.art.communicator.action.*;
 import io.art.core.model.*;

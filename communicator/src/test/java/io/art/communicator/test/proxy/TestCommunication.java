@@ -1,7 +1,7 @@
 package io.art.communicator.test.proxy;
 
-import io.art.communicator.*;
 import io.art.communicator.action.*;
+import io.art.communicator.model.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
 import static io.art.core.checker.NullityChecker.*;

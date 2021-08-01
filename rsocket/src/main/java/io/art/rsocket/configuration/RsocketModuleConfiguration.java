@@ -19,7 +19,7 @@
 package io.art.rsocket.configuration;
 
 import io.art.communicator.configuration.*;
-import io.art.communicator.proxy.*;
+import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;

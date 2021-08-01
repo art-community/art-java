@@ -1,5 +1,7 @@
 package io.art.rsocket.test.communicator;
 
-public interface TestRsocketCommunicator {
+import io.art.communicator.model.*;
+
+public interface TestRsocketCommunicator extends Communicator {
     void m(String req);
 }

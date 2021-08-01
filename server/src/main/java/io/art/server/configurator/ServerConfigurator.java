@@ -15,6 +15,7 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.util.Objects.*;
@@ -107,7 +108,7 @@ public abstract class ServerConfigurator {
 
     private ServiceMethod createServiceMethod(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(serviceMethod.parameters().values()).get(0).type(), isNotEmpty(serviceMethod.parameters()));
-        ServiceMethodIdentifier id = serviceMethodId(serviceId(serviceClass.definition().type()), serviceMethod.name());
+        ServiceMethodIdentifier id = serviceMethodId(normalizeToId(serviceClass.definition().type()), serviceMethod.name());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(serviceMethod.returnType())

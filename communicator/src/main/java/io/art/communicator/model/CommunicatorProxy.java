@@ -1,4 +1,4 @@
-package io.art.communicator.proxy;
+package io.art.communicator.model;
 
 import io.art.communicator.action.*;
 import io.art.core.collection.*;

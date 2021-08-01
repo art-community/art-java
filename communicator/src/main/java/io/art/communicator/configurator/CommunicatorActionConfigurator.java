@@ -16,7 +16,6 @@ public class CommunicatorActionConfigurator {
     private final CommunicatorActionIdentifier id;
     private final CommunicatorConfiguration configuration;
 
-    private String connector;
     private String targetServiceId;
     private String targetMethodId;
     private boolean loggable;

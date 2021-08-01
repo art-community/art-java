@@ -1,6 +1,6 @@
 package io.art.communicator.test.proxy;
 
-import io.art.communicator.*;
+import io.art.communicator.model.*;
 import reactor.core.publisher.*;
 
 public class BenchmarkCommunication implements Communication {

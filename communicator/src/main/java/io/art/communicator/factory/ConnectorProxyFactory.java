@@ -1,7 +1,7 @@
 package io.art.communicator.factory;
 
 import io.art.communicator.exception.*;
-import io.art.communicator.proxy.*;
+import io.art.communicator.model.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
@@ -17,14 +17,14 @@ import java.util.function.*;
 
 @UtilityClass
 public class ConnectorProxyFactory {
-    public static <T> T createConnectorProxy(MetaClass<T> connectorClass, Function<MetaMethod<?>, CommunicatorProxy<?>> provider) {
-        Function<MetaClass<?>, Object> creator = proxy -> proxy.creator().instantiate();
+    public static <T extends Connector> T createConnectorProxy(MetaClass<T> connectorClass) {
+        Function<MetaClass<?>, Connector> creator = proxy -> cast(proxy.creator().validate(CommunicatorException::new).instantiate());
 
-        Map<MetaMethod<?>, CommunicatorProxy<?>> proxies = connectorClass.methods()
+        Map<MetaMethod<?>, MetaClass<?>> proxies = connectorClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() == 0)
-                .filter(method -> nonNull(method.returnType().declaration()))
-                .collect(mapCollector(identity(), provider));
+                .filter(method -> nonNull(method.returnType().declaration()) && Connector.class.isAssignableFrom(method.returnType().type()))
+                .collect(mapCollector(identity(), method -> method.returnType().declaration()));
 
         if (proxies.size() != connectorClass.methods().size()) {
             String invalidMethods = connectorClass.methods().stream()

@@ -55,7 +55,6 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
         initial.httpServerConfiguration = serverConfigurator.configure(initial.httpServerConfiguration);
         initial.serviceMethodProvider = serverConfigurator.serviceMethods();
-        initial.connectorProvider = communicatorConfigurator.communicatorProxies();
         initial.tcpConnectorConfigurations = communicatorConfigurator.configureTcp();
         initial.httpConnectorConfigurations = communicatorConfigurator.configureHttp();
         return initial;
@@ -68,7 +67,6 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServerConfiguration();
         private RsocketHttpServerConfiguration httpServerConfiguration = super.getHttpServerConfiguration();
         private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider = super.getServiceMethodProvider();
-        private LazyProperty<ImmutableMap<Class<?>, Connector>> connectorProvider = super.getConnectorProvider();
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = super.getTcpConnectorConfigurations();
         private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = super.getHttpConnectorConfigurations();
 

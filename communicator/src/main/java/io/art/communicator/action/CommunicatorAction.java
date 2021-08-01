@@ -18,8 +18,8 @@
 
 package io.art.communicator.action;
 
-import io.art.communicator.*;
 import io.art.communicator.exception.*;
+import io.art.communicator.model.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;

@@ -1,10 +1,10 @@
 package io.art.communicator.factory;
 
-import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.communicator.configuration.*;
 import io.art.communicator.decorator.*;
+import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;

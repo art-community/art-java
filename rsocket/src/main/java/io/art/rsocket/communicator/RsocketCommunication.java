@@ -18,8 +18,8 @@
 
 package io.art.rsocket.communicator;
 
-import io.art.communicator.*;
 import io.art.communicator.action.*;
+import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
