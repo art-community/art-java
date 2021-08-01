@@ -18,6 +18,7 @@
 
 package io.art.rsocket.module;
 
+import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -29,6 +30,7 @@ import io.art.rsocket.refresher.*;
 import io.art.server.configurator.*;
 import io.art.server.method.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
@@ -56,6 +58,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.serviceMethodProvider = serverConfigurator.serviceMethods();
         initial.tcpConnectorConfigurations = communicatorConfigurator.configureTcp();
         initial.httpConnectorConfigurations = communicatorConfigurator.configureHttp();
+        initial.connectorProvider = cast(communicatorConfigurator.connectors());
+        initial.communicatorProvider = cast(communicatorConfigurator.communicators());
         return initial;
     }
 
@@ -68,6 +72,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider = super.getServiceMethodProvider();
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = super.getTcpConnectorConfigurations();
         private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = super.getHttpConnectorConfigurations();
+        private LazyProperty<ImmutableMap<Class<?>, ? extends Connector>> connectorProvider = super.getConnectorProvider();
+        private LazyProperty<ImmutableMap<Class<?>, ? extends Communicator>> communicatorProvider = super.getCommunicatorProvider();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

@@ -1,8 +1,9 @@
 package io.art.communicator.test.proxy;
 
+import io.art.communicator.model.*;
 import reactor.core.publisher.*;
 
-public interface TestCommunicator {
+public interface TestCommunicator extends Communicator {
     void m1();
 
     String m2();

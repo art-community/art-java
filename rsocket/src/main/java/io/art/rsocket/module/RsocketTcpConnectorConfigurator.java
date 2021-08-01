@@ -1,29 +1,22 @@
 package io.art.rsocket.module;
 
-import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
-import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
+import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
-public class RsocketTcpConnectorConfigurator extends CommunicatorConfigurator {
+@RequiredArgsConstructor
+public class RsocketTcpConnectorConfigurator {
     private final String connector;
     private RsocketTcpClientGroupConfiguration group;
     private RsocketTcpClientConfiguration single;
     private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
-
-    RsocketTcpConnectorConfigurator(Class<? extends Connector> connector) {
-        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()));
-        this.connector = normalizeToId(connector);
-    }
 
     public RsocketTcpConnectorConfigurator roundRobin(UnaryOperator<RsocketTcpClientGroupConfigurator> configurator) {
         group = configurator.apply(new RsocketTcpClientGroupConfigurator(connector, ROUND_ROBIN)).configure();
@@ -54,9 +47,5 @@ public class RsocketTcpConnectorConfigurator extends CommunicatorConfigurator {
                 .groupConfiguration(orElse(group, RsocketTcpClientGroupConfiguration.defaults(connector)))
                 .singleConfiguration(orElse(single, RsocketTcpClientConfiguration.defaults(connector)))
                 .build();
-    }
-
-    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> proxies() {
-        return get();
     }
 }

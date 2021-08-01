@@ -32,25 +32,25 @@ public abstract class CommunicatorConfigurator {
     private final List<ClassBasedRegistration> classBased = linkedList();
 
 
-    public CommunicatorConfigurator configureProxy(Class<?> proxyClass) {
-        return configureProxy(() -> declaration(proxyClass), identity());
+    public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass) {
+        return configure(() -> declaration(communicatorClass), identity());
     }
 
-    public CommunicatorConfigurator configureProxy(Class<?> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        return configureProxy(() -> declaration(proxyClass), decorator);
+    public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        return configure(() -> declaration(communicatorClass), decorator);
     }
 
-    public CommunicatorConfigurator configureProxy(Supplier<MetaClass<?>> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        classBased.add(new ClassBasedRegistration(proxyClass, decorator));
+    public CommunicatorConfigurator configure(Supplier<MetaClass<? extends Communicator>> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        classBased.add(new ClassBasedRegistration(communicatorClass, decorator));
         return this;
     }
 
-    protected LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> get() {
+    protected LazyProperty<ImmutableMap<Class<?>, Communicator>> get() {
         return lazy(this::createProxies);
     }
 
-    private ImmutableMap<Class<?>, CommunicatorProxy<?>> createProxies() {
-        ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> proxies = immutableMapBuilder();
+    private ImmutableMap<Class<?>, Communicator> createProxies() {
+        ImmutableMap.Builder<Class<?>, Communicator> proxies = immutableMapBuilder();
 
         for (ClassBasedRegistration registration : classBased) {
             registerMethods(proxies, registration.proxyClass.get(), registration.decorator);
@@ -59,8 +59,8 @@ public abstract class CommunicatorConfigurator {
         return proxies.build();
     }
 
-    private void registerMethods(ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> builder, MetaClass<?> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        CommunicatorProxy<?> proxy = createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator));
+    private void registerMethods(ImmutableMap.Builder<Class<?>, Communicator> builder, MetaClass<? extends Communicator> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        Communicator proxy = createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator)).getProxy();
         builder.put(metaClass.definition().type(), proxy);
     }
 
@@ -81,7 +81,7 @@ public abstract class CommunicatorConfigurator {
 
     @RequiredArgsConstructor
     private static class ClassBasedRegistration {
-        final Supplier<MetaClass<?>> proxyClass;
+        final Supplier<MetaClass<? extends Communicator>> proxyClass;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 }

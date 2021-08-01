@@ -22,23 +22,23 @@ import java.util.function.*;
 
 @UtilityClass
 public class CommunicatorProxyFactory {
-    public static <T> CommunicatorProxy<T> communicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
+    public static <T extends Communicator> CommunicatorProxy<T> communicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
         return createCommunicatorProxy(proxyClass, method -> apply(communicatorAction(proxyClass, method, communication.get()), CommunicatorAction::initialize));
     }
 
-    public static <T> CommunicatorProxy<T> preconfiguredCommunicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
+    public static <T extends Communicator> CommunicatorProxy<T> preconfiguredCommunicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
         return createCommunicatorProxy(proxyClass, method -> apply(preconfiguredCommunicatorAction(proxyClass, method, communication.get()), CommunicatorAction::initialize));
     }
 
-    public static <T> CommunicatorProxy<T> communicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
+    public static <T extends Communicator> CommunicatorProxy<T> communicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
         return communicatorProxy(declaration(proxyClass), communication);
     }
 
-    public static <T> CommunicatorProxy<T> preconfiguredCommunicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
+    public static <T extends Communicator> CommunicatorProxy<T> preconfiguredCommunicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
         return preconfiguredCommunicatorProxy(declaration(proxyClass), communication);
     }
 
-    public static <T> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<?>, CommunicatorAction> provider) {
+    public static <T extends Communicator> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<?>, CommunicatorAction> provider) {
         Function<CommunicatorAction, Object> noArguments = CommunicatorAction::communicate;
         BiFunction<CommunicatorAction, Object, Object> oneArgument = CommunicatorAction::communicate;
 
