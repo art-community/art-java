@@ -28,8 +28,7 @@ public class RsocketTest {
                                 .tcp(TestRsocketCommunicator.class, tcp -> tcp
                                         .weighted(group -> group.client(client -> client.port(1234)))
                                         .configure(builder -> builder.logging(true).dataFormat(JSON)))
-                                .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable)
-                        )
+                                .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable))
                         .server(server -> server
                                 .tcp(tcp -> tcp.port(1234).logging(true))
                                 .forClass(TestRsocketService.class, ServiceMethodConfigurator::loggable)))
