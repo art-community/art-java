@@ -12,7 +12,7 @@ import lombok.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;
@@ -30,64 +30,64 @@ public abstract class CommunicatorConfigurator {
     private final List<PackageBasedRegistration> packageBased = linkedList();
     private final List<ClassBasedRegistration> classBased = linkedList();
 
-    public CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage) {
+    protected CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage) {
         return forPackage(proxyPackage, identity());
     }
 
-    public CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    protected CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         packageBased.add(new PackageBasedRegistration(proxyPackage, decorator));
         return this;
     }
 
 
-    public CommunicatorConfigurator forClass(Class<?> proxyClass) {
+    protected CommunicatorConfigurator forClass(Class<?> proxyClass) {
         return forClass(() -> declaration(proxyClass), identity());
     }
 
-    public CommunicatorConfigurator forClass(Class<?> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    protected CommunicatorConfigurator forClass(Class<?> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         return forClass(() -> declaration(proxyClass), decorator);
     }
 
-    public CommunicatorConfigurator forClass(Supplier<MetaClass<?>> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    protected CommunicatorConfigurator forClass(Supplier<MetaClass<?>> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedRegistration(proxyClass, decorator));
         return this;
     }
 
 
-    protected LazyProperty<ImmutableArray<Object>> get() {
+    protected LazyProperty<ImmutableMap<Class<?>, Object>> get() {
         return lazy(this::createProxies);
     }
 
 
-    private ImmutableArray<Object> createProxies() {
-        ImmutableArray.Builder<Object> methods = immutableArrayBuilder();
+    private ImmutableMap<Class<?>, Object> createProxies() {
+        ImmutableMap.Builder<Class<?>, Object> proxies = immutableMapBuilder();
         for (PackageBasedRegistration registration : packageBased) {
-            registerPackages(methods, fixedArrayOf(registration.proxyPackage.get()), registration.decorator);
+            registerPackages(proxies, fixedArrayOf(registration.proxyPackage.get()), registration.decorator);
         }
 
         for (ClassBasedRegistration registration : classBased) {
-            registerMethods(methods, registration.proxyClass.get(), registration.decorator);
+            registerMethods(proxies, registration.proxyClass.get(), registration.decorator);
         }
 
-        return methods.build();
+        return proxies.build();
     }
 
-    private void registerPackages(ImmutableArray.Builder<Object> builder, Collection<MetaPackage> packages, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    private void registerPackages(ImmutableMap.Builder<Class<?>, Object> builder, Collection<MetaPackage> packages, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         for (MetaPackage metaPackage : packages) {
             registerPackages(builder, metaPackage.packages().values(), decorator);
             registerClasses(builder, metaPackage.classes().values(), decorator);
         }
     }
 
-    private void registerClasses(ImmutableArray.Builder<Object> builder, Collection<MetaClass<?>> classes, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    private void registerClasses(ImmutableMap.Builder<Class<?>, Object> builder, Collection<MetaClass<?>> classes, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         for (MetaClass<?> metaClass : classes) {
             registerClasses(builder, metaClass.classes().values(), decorator);
             registerMethods(builder, metaClass, decorator);
         }
     }
 
-    private void registerMethods(ImmutableArray.Builder<Object> builder, MetaClass<?> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        builder.add(createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator)));
+    private void registerMethods(ImmutableMap.Builder<Class<?>, Object> builder, MetaClass<?> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        builder.put(metaClass.definition().type(), createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator)));
     }
 
     private CommunicatorAction createAction(MetaClass<?> proxyClass, MetaMethod<?> metaMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {

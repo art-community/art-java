@@ -4,10 +4,12 @@ import io.art.communicator.configurator.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.rsocket.communicator.*;
+import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.RsocketHttpConnectorConfiguration.*;
 import io.art.rsocket.configuration.RsocketTcpConnectorConfiguration.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.*;
@@ -41,16 +43,20 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), RsocketCommunication::new);
     }
 
-    ImmutableMap<String, UnaryOperator<RsocketTcpConnectorConfigurationBuilder>> tcp() {
-        return immutableMapOf(tcpConnectors);
+    ImmutableMap<String, RsocketTcpConnectorConfiguration> configureTcp() {
+        return tcpConnectors.entrySet()
+                .stream()
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().apply(RsocketTcpConnectorConfiguration.builder().id(entry.getKey())).build()));
     }
 
 
-    ImmutableMap<String, UnaryOperator<RsocketHttpConnectorConfigurationBuilder>> http() {
-        return immutableMapOf(httpConnectors);
+    ImmutableMap<String, RsocketHttpConnectorConfiguration> configureHttp() {
+        return httpConnectors.entrySet()
+                .stream()
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().apply(RsocketHttpConnectorConfiguration.builder().id(entry.getKey())).build()));
     }
 
-    LazyProperty<ImmutableArray<Object>> communicatorProxies() {
+    LazyProperty<ImmutableMap<Class<?>, Object>> communicatorProxies() {
         return get();
     }
 }

@@ -18,6 +18,7 @@
 
 package io.art.rsocket.module;
 
+import io.art.communicator.configurator.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -30,9 +31,15 @@ import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
+    private final RsocketCommunicatorConfigurator communicatorConfigurator = new RsocketCommunicatorConfigurator();
 
     public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator> configurator) {
         configurator.apply(serverConfigurator);
+        return this;
+    }
+
+    public RsocketInitializer communicator(Function<RsocketCommunicatorConfigurator, ? extends CommunicatorConfigurator> configurator) {
+        configurator.apply(communicatorConfigurator);
         return this;
     }
 
@@ -45,6 +52,9 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
         initial.httpServerConfiguration = serverConfigurator.configure(initial.httpServerConfiguration);
         initial.serviceMethodProviders = serverConfigurator.serviceMethods();
+        initial.communicatorProxyProviders = communicatorConfigurator.communicatorProxies();
+        initial.tcpConnectorConfigurations = communicatorConfigurator.configureTcp();
+        initial.httpConnectorConfigurations = communicatorConfigurator.configureHttp();
         return initial;
     }
 
@@ -55,6 +65,9 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServerConfiguration();
         private RsocketHttpServerConfiguration httpServerConfiguration = super.getHttpServerConfiguration();
         private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders = super.getServiceMethodProviders();
+        private LazyProperty<ImmutableMap<Class<?>, Object>> communicatorProxyProviders = super.getCommunicatorProxyProviders();
+        private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = super.getTcpConnectorConfigurations();
+        private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = super.getHttpConnectorConfigurations();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

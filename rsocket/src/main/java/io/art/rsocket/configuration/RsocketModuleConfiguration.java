@@ -49,9 +49,6 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private ServerConfiguration serverConfiguration;
 
     @Getter
-    private CommunicatorConfiguration communicatorConfiguration;
-
-    @Getter
     private RsocketTcpServerConfiguration tcpServerConfiguration;
 
     @Getter
@@ -59,6 +56,12 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders;
+
+    @Getter
+    private LazyProperty<ImmutableMap<Class<?>, Object>> communicatorProxyProviders;
+
+    @Getter
+    private CommunicatorConfiguration communicatorConfiguration;
 
     @Getter
     private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations;
@@ -72,9 +75,6 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     @Getter
     private boolean enableHttpServer;
 
-    @Getter
-    private boolean activateCommunicator;
-
     public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
         this.refresher = refresher;
         serverRefresher = new ServerRefresher();
@@ -86,9 +86,9 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         serviceMethodProviders = lazy(ImmutableArray::emptyImmutableArray);
         enableTcpServer = false;
         enableHttpServer = false;
-        activateCommunicator = false;
         tcpConnectorConfigurations = emptyImmutableMap();
         httpConnectorConfigurations = emptyImmutableMap();
+        communicatorProxyProviders = lazy(ImmutableMap::emptyImmutableMap);
     }
 
     @RequiredArgsConstructor
@@ -135,7 +135,6 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator initialize(RsocketModuleConfiguration configuration) {
-            this.configuration.activateCommunicator = configuration.isActivateCommunicator();
             this.configuration.enableTcpServer = configuration.isEnableTcpServer();
             this.configuration.enableHttpServer = configuration.isEnableHttpServer();
             this.configuration.serverConfiguration = configuration.getServerConfiguration();
@@ -145,6 +144,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.httpConnectorConfigurations = configuration.getHttpConnectorConfigurations();
             this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
             this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
+            this.configuration.communicatorProxyProviders = configuration.getCommunicatorProxyProviders();
             return this;
         }
     }
