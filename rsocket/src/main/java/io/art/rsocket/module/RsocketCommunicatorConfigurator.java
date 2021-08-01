@@ -21,8 +21,8 @@ import java.util.function.*;
 @Accessors(fluent = true)
 public class RsocketCommunicatorConfigurator {
     private Map<Class<? extends Connector>, LazyProperty<Connector>> connectors = map();
-    private Map<Class<? extends Connector>, RsocketTcpConnectorConfiguration> tcpConnectors = map();
-    private Map<Class<? extends Connector>, RsocketHttpConnectorConfiguration> httpConnectors = map();
+    private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
+    private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
         return tcp(connectorClass, cast(Function.identity()));
@@ -35,13 +35,13 @@ public class RsocketCommunicatorConfigurator {
     private RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connector, Function<RsocketTcpConnectorConfigurator, CommunicatorConfigurator> configurator) {
         RsocketTcpConnectorConfigurator connectorConfigurator = cast(configurator.apply(new RsocketTcpConnectorConfigurator(connector)));
         connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector))));
-        tcpConnectors.put(connector, connectorConfigurator.configure());
+        tcpConnectors.put(normalizeToId(connector), connectorConfigurator.configure());
         return this;
     }
 
     private RsocketCommunicatorConfigurator http(Class<? extends Connector> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
         connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector))));
-        httpConnectors.put(connector, configurator.apply(new RsocketHttpConnectorConfigurator(normalizeToId(connector))).configure());
+        httpConnectors.put(normalizeToId(connector), configurator.apply(new RsocketHttpConnectorConfigurator(normalizeToId(connector))).configure());
         return this;
     }
 
