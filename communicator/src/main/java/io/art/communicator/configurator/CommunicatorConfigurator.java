@@ -10,6 +10,7 @@ import io.art.core.property.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -27,10 +28,7 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public abstract class CommunicatorConfigurator {
-    private final Supplier<CommunicatorConfiguration> configurationProvider;
-    private final Supplier<? extends Communication> communication;
     private final List<ClassBasedRegistration> classBased = linkedList();
-
 
     public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass) {
         return configure(() -> declaration(communicatorClass), identity());
@@ -45,15 +43,21 @@ public abstract class CommunicatorConfigurator {
         return this;
     }
 
-    protected LazyProperty<ImmutableMap<Class<?>, Communicator>> get() {
-        return lazy(this::createProxies);
+    protected LazyProperty<ImmutableMap<Class<?>, Communicator>> get(Supplier<CommunicatorConfiguration> configurationProvider, Supplier<? extends Communication> communication, LazyProperty<Set<Class<? extends Connector>>> connectors) {
+        return lazy(() -> createProxies(configurationProvider, communication, connectors));
     }
 
-    private ImmutableMap<Class<?>, Communicator> createProxies() {
+    private ImmutableMap<Class<?>, Communicator> createProxies(Supplier<CommunicatorConfiguration> configurationProvider, Supplier<? extends Communication> communication, LazyProperty<Set<Class<? extends Connector>>> connectors) {
         ImmutableMap.Builder<Class<?>, Communicator> proxies = immutableMapBuilder();
 
         for (ClassBasedRegistration registration : classBased) {
             registerMethods(proxies, registration.proxyClass.get(), registration.decorator);
+        }
+
+        for (Class<? extends Connector> connector : connectors.get()) {
+            for (MetaMethod<?> method : declaration(connector).methods()) {
+                registerMethods(proxies, cast(method.returnType().declaration()), UnaryOperator.identity());
+            }
         }
 
         return proxies.build();

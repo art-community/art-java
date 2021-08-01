@@ -28,11 +28,9 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
-
     RsocketCommunicatorConfigurator() {
-        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()));
+        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration(), connector));
     }
-
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
         return tcp(connectorClass, cast(Function.identity()));

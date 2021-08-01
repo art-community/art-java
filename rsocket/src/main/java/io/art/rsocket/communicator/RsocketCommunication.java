@@ -76,13 +76,15 @@ public class RsocketCommunication implements Communication {
     private final RsocketModuleConfiguration configuration;
     private final Property<RSocketClient> client;
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;
+    private final String connector;
     private CommunicatorAction action;
 
-    public RsocketCommunication(RsocketModuleConfiguration configuration) {
+    public RsocketCommunication(RsocketModuleConfiguration configuration, String connector) {
         this.configuration = configuration;
         client = property(this::createClient, this::disposeClient).listenConsumer(() -> configuration.getConsumer()
                 .connectorConsumers()
                 .consumerFor(connectorConfiguration().getConnector()));
+        this.connector = connector;
         communication = property(this::communication)
                 .listenProperties(client);
     }
@@ -104,8 +106,8 @@ public class RsocketCommunication implements Communication {
     }
 
     private RSocketClient createClient() {
-        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = configuration.getTcpConnectorConfigurations().get(action.getConnector());
-        RsocketHttpConnectorConfiguration httpConnectorConfiguration = configuration.getHttpConnectorConfigurations().get(action.getConnector());
+        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = configuration.getTcpConnectorConfigurations().get(connector);
+        RsocketHttpConnectorConfiguration httpConnectorConfiguration = configuration.getHttpConnectorConfigurations().get(connector);
         if (nonNull(tcpConnectorConfiguration)) {
             return createTcpClient(tcpConnectorConfiguration);
         }
@@ -251,11 +253,11 @@ public class RsocketCommunication implements Communication {
     private RsocketCommonConnectorConfiguration connectorConfiguration() {
         ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = rsocketModule().configuration().getTcpConnectorConfigurations();
         ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = rsocketModule().configuration().getHttpConnectorConfigurations();
-        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = tcpConnectorConfigurations.get(action.getConnector());
-        RsocketHttpConnectorConfiguration httpConnectorConfiguration = httpConnectorConfigurations.get(action.getConnector());
+        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = tcpConnectorConfigurations.get(connector);
+        RsocketHttpConnectorConfiguration httpConnectorConfiguration = httpConnectorConfigurations.get(connector);
         return let(tcpConnectorConfiguration,
                 (Function<RsocketTcpConnectorConfiguration, RsocketCommonConnectorConfiguration>) RsocketTcpConnectorConfiguration::getCommonConfiguration,
-                ((Supplier<RsocketCommonConnectorConfiguration>)  () -> httpConnectorConfiguration.getCommonConfiguration())
+                ((Supplier<RsocketCommonConnectorConfiguration>) () -> httpConnectorConfiguration.getCommonConfiguration())
         );
     }
 
