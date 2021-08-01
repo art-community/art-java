@@ -32,8 +32,8 @@ import static io.art.resilience.constants.ResilienceModuleConstants.Configuratio
 public class CommunicatorActionConfiguration {
     private boolean logging;
     private boolean deactivated;
-    private ResilienceConfiguration resilienceConfiguration;
     private String connector;
+    private ResilienceConfiguration resilienceConfiguration;
 
     public static CommunicatorActionConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorActionConfiguration configuration = CommunicatorActionConfiguration.builder().build();
