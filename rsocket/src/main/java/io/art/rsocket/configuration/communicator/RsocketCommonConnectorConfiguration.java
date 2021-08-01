@@ -29,6 +29,18 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketModuleConstants.PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
 
+    public static RsocketCommonConnectorConfiguration defaults(String connector) {
+        RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
+        configuration.dataFormat = JSON;
+        configuration.metaDataFormat = JSON;
+        configuration.logging = false;
+        configuration.connector = connector;
+        configuration.fragment = 0;
+        configuration.payloadDecoderMode = ZERO_COPY;
+        configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
+        return configuration;
+    }
+
     public static RsocketCommonConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommonConnectorConfiguration current, ConfigurationSource source) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
