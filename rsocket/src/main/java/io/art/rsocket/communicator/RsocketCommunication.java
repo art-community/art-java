@@ -248,40 +248,40 @@ public class RsocketCommunication implements Communication {
         RSocketClient client = this.client.get();
         switch (communicationMode()) {
             case FIRE_AND_FORGET:
-                return input -> cast(client.fireAndForget(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD)).flux());
+                return input -> cast(client.fireAndForget(input.map(value -> create(writer.write(typed(action.getInputType(), value)))).last(EMPTY_PAYLOAD)).flux());
             case REQUEST_RESPONSE:
                 return input -> client
-                        .requestResponse(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD))
+                        .requestResponse(input.map(value -> create(writer.write(typed(action.getInputType(), value)))).last(EMPTY_PAYLOAD))
                         .flux()
-                        .map(payload -> readRsocketPayload(reader, payload, action.getInputType()))
+                        .map(payload -> readRsocketPayload(reader, payload, action.getOutputType()))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case REQUEST_STREAM:
                 return input -> client
-                        .requestStream(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD))
-                        .map(payload -> readRsocketPayload(reader, payload, action.getInputType()))
+                        .requestStream(input.map(value -> create(writer.write(typed(action.getInputType(), value)))).last(EMPTY_PAYLOAD))
+                        .map(payload -> readRsocketPayload(reader, payload, action.getOutputType()))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case REQUEST_CHANNEL:
                 return input -> client
-                        .requestChannel(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
-                        .map(payload -> readRsocketPayload(reader, payload, action.getInputType()))
+                        .requestChannel(input.map(value -> create(writer.write(typed(action.getInputType(), value)))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
+                        .map(payload -> readRsocketPayload(reader, payload, action.getOutputType()))
                         .filter(data -> !data.isEmpty())
                         .map(TransportPayload::getValue);
             case METADATA_PUSH:
-                return input -> cast(client.metadataPush(input.map(value -> create(writer.write(typed(action.getOutputType(), value)))).last(EMPTY_PAYLOAD)).flux());
+                return input -> cast(client.metadataPush(input.map(value -> create(writer.write(typed(action.getInputType(), value)))).last(EMPTY_PAYLOAD)).flux());
         }
         throw new ImpossibleSituationException();
     }
 
     private CommunicationMode communicationMode() {
-        if (isNull(action.getOutputType())) {
+        if (isNull(action.getOutputType()) || action.getOutputType().internalKind() == VOID) {
             return FIRE_AND_FORGET;
         }
         if (action.getInputType().internalKind() == FLUX) {
             return REQUEST_CHANNEL;
         }
-        if (action.getInputType().internalKind() == FLUX) {
+        if (action.getOutputType().internalKind() == FLUX) {
             return REQUEST_STREAM;
         }
         return REQUEST_RESPONSE;

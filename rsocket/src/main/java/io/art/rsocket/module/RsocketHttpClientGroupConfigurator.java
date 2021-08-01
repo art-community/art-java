@@ -16,7 +16,7 @@ public class RsocketHttpClientGroupConfigurator {
     public RsocketHttpClientGroupConfigurator client(UnaryOperator<RsocketHttpClientConfigurator> configurator) {
         RsocketHttpClientConfigurator clientConfigurator = configurator.apply(new RsocketHttpClientConfigurator());
         clients.add(clientConfigurator.http()
-                .apply(RsocketHttpClientConfiguration.builder())
+                .apply(RsocketHttpClientConfiguration.defaults(connector).toBuilder())
                 .commonConfiguration(clientConfigurator.common().apply(RsocketCommonClientConfiguration.defaults(connector).toBuilder()).build())
                 .build());
         return this;
