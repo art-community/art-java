@@ -26,7 +26,7 @@ public class RsocketTest {
                                         .weighted(group -> group
                                                 .client(client -> client.port(1234).host("1.1.1.1"))
                                                 .client(client -> client.port(1234).host("1.1.1.2"))))
-                                .forClass(TestRsocketCommunicator.class, action -> action.to("server"))
+                                .forClass(TestRsocketCommunicator.class, action -> action.connector("server"))
                         )
                         .server(server -> server
                                 .tcp(tcp -> tcp.port(1234).logging(false))

@@ -19,7 +19,7 @@ public class CommunicatorActionConfigurator {
     private boolean loggable;
     private boolean deactivable = true;
 
-    public CommunicatorActionConfigurator to(String connector) {
+    public CommunicatorActionConfigurator connector(String connector) {
         this.connector = connector;
         return this;
     }

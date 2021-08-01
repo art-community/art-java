@@ -3,11 +3,13 @@ package io.art.communicator.factory;
 import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.exception.*;
+import io.art.communicator.proxy.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
 import static io.art.communicator.factory.CommunicatorActionFactory.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.FunctionExtensions.*;
@@ -21,23 +23,23 @@ import java.util.function.*;
 
 @UtilityClass
 public class CommunicatorProxyFactory {
-    public static <T> T communicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
+    public static <T> CommunicatorProxy<T> communicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
         return createCommunicatorProxy(proxyClass, method -> apply(communicatorAction(proxyClass, method, communication.get()), CommunicatorAction::initialize));
     }
 
-    public static <T> T preconfiguredCommunicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
+    public static <T> CommunicatorProxy<T> preconfiguredCommunicatorProxy(MetaClass<T> proxyClass, Supplier<Communication> communication) {
         return createCommunicatorProxy(proxyClass, method -> apply(preconfiguredCommunicatorAction(proxyClass, method, communication.get()), CommunicatorAction::initialize));
     }
 
-    public static <T> T communicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
+    public static <T> CommunicatorProxy<T> communicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
         return communicatorProxy(declaration(proxyClass), communication);
     }
 
-    public static <T> T preconfiguredCommunicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
+    public static <T> CommunicatorProxy<T> preconfiguredCommunicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
         return preconfiguredCommunicatorProxy(declaration(proxyClass), communication);
     }
 
-    public static <T> T createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<?>, CommunicatorAction> provider) {
+    public static <T> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<?>, CommunicatorAction> provider) {
         Function<CommunicatorAction, Object> noArguments = CommunicatorAction::communicate;
         BiFunction<CommunicatorAction, Object, Object> oneArgument = CommunicatorAction::communicate;
 
@@ -67,6 +69,6 @@ public class CommunicatorProxyFactory {
             throw new CommunicatorException(format(PROXY_IS_NULL, proxyClass.definition().type().getName()));
         }
 
-        return cast(proxy);
+        return new CommunicatorProxy<T>(cast(proxy), actions.values().stream().collect(immutableMapCollector(CommunicatorAction::getId, identity())));
     }
 }

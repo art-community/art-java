@@ -19,6 +19,7 @@
 package io.art.rsocket.configuration;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.proxy.*;
 import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
@@ -56,10 +57,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private RsocketHttpServerConfiguration httpServerConfiguration;
 
     @Getter
-    private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders;
+    private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<?>, Object>> communicatorProxyProviders;
+    private LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxyProvider;
 
     @Getter
     private CommunicatorConfiguration communicatorConfiguration;
@@ -84,12 +85,13 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         serverConfiguration = ServerConfiguration.defaults(serverRefresher);
         tcpServerConfiguration = RsocketTcpServerConfiguration.defaults();
         httpServerConfiguration = RsocketHttpServerConfiguration.defaults();
-        serviceMethodProviders = lazy(ImmutableArray::emptyImmutableArray);
+        serviceMethodProvider = lazy(ImmutableArray::emptyImmutableArray);
         enableTcpServer = false;
         enableHttpServer = false;
         tcpConnectorConfigurations = emptyImmutableMap();
         httpConnectorConfigurations = emptyImmutableMap();
-        communicatorProxyProviders = lazy(ImmutableMap::emptyImmutableMap);
+        communicatorProxyProvider = lazy(ImmutableMap::emptyImmutableMap);
+        communicatorConfiguration = CommunicatorConfiguration.defaults(communicatorRefresher);
     }
 
     @RequiredArgsConstructor
@@ -143,11 +145,11 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.serverConfiguration = configuration.getServerConfiguration();
             this.configuration.tcpServerConfiguration = configuration.getTcpServerConfiguration();
             this.configuration.httpServerConfiguration = configuration.getHttpServerConfiguration();
-            this.configuration.serviceMethodProviders = configuration.getServiceMethodProviders();
+            this.configuration.serviceMethodProvider = configuration.getServiceMethodProvider();
             this.configuration.httpConnectorConfigurations = configuration.getHttpConnectorConfigurations();
             this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
             this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
-            this.configuration.communicatorProxyProviders = configuration.getCommunicatorProxyProviders();
+            this.configuration.communicatorProxyProvider = configuration.getCommunicatorProxyProvider();
             return this;
         }
     }

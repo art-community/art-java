@@ -76,7 +76,7 @@ public class RsocketServer implements Server {
 
     @Override
     public void initialize() {
-        serviceMethods = configuration.getServiceMethodProviders()
+        serviceMethods = configuration.getServiceMethodProvider()
                 .get()
                 .stream()
                 .collect(immutableMapCollector(ServiceMethod::getId, identity()));

@@ -1,6 +1,7 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.configurator.*;
+import io.art.communicator.proxy.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.rsocket.communicator.*;
@@ -49,7 +50,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return immutableMapOf(httpConnectors);
     }
 
-    LazyProperty<ImmutableMap<Class<?>, Object>> communicatorProxies() {
+    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxies() {
         return get();
     }
 }

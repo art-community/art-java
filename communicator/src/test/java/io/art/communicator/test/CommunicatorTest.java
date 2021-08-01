@@ -20,7 +20,7 @@ public class CommunicatorTest {
 
     @Test
     public void testCommunicatorActionExecution() {
-        TestCommunicator communicator = preconfiguredCommunicatorProxy(TestCommunicator.class, TestCommunication::new);
+        TestCommunicator communicator = preconfiguredCommunicatorProxy(TestCommunicator.class, TestCommunication::new).getProxy();
         Map<String, Object> executions = executions();
 
         communicator.m1();

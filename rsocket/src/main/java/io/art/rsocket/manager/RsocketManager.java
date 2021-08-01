@@ -28,7 +28,6 @@ import lombok.*;
 import reactor.core.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.module.LoggingModule.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.RsocketProtocol.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketManager {
@@ -36,30 +35,29 @@ public class RsocketManager {
     private static final Logger logger = logger(RsocketManager.class);
 
     private final RsocketServer server;
+    private final RsocketModuleConfiguration configuration;
 
     public RsocketManager(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
+        this.configuration = configuration;
         this.server = new RsocketServer(refresher, configuration);
     }
 
     public void initializeCommunicators() {
-/*
-        communicatorModule()
-                .configuration()
-                .getRegistry()
-                .getByProtocol(RSOCKET)
+        configuration.getCommunicatorProxyProvider()
+                .get()
                 .values()
-                .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::initialize));
-*/
+                .stream()
+                .flatMap(proxy -> proxy.getActions().values().stream())
+                .forEach(CommunicatorAction::initialize);
     }
 
     public void disposeCommunicators() {
-/*
-        communicatorModule().configuration()
-                .getRegistry()
-                .getByProtocol(RSOCKET)
+        configuration.getCommunicatorProxyProvider()
+                .get()
                 .values()
-                .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::dispose));
-*/
+                .stream()
+                .flatMap(proxy -> proxy.getActions().values().stream())
+                .forEach(CommunicatorAction::dispose);
     }
 
     public void initializeServer() {

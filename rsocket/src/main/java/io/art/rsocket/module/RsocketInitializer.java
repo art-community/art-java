@@ -19,6 +19,7 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.configurator.*;
+import io.art.communicator.proxy.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -51,8 +52,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
         initial.tcpServerConfiguration = serverConfigurator.configure(initial.tcpServerConfiguration);
         initial.httpServerConfiguration = serverConfigurator.configure(initial.httpServerConfiguration);
-        initial.serviceMethodProviders = serverConfigurator.serviceMethods();
-        initial.communicatorProxyProviders = communicatorConfigurator.communicatorProxies();
+        initial.serviceMethodProvider = serverConfigurator.serviceMethods();
+        initial.communicatorProxyProvider = communicatorConfigurator.communicatorProxies();
         initial.tcpConnectorConfigurations = communicatorConfigurator.configureTcp();
         initial.httpConnectorConfigurations = communicatorConfigurator.configureHttp();
         return initial;
@@ -64,8 +65,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private boolean enableHttpServer = super.isEnableHttpServer();
         private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServerConfiguration();
         private RsocketHttpServerConfiguration httpServerConfiguration = super.getHttpServerConfiguration();
-        private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProviders = super.getServiceMethodProviders();
-        private LazyProperty<ImmutableMap<Class<?>, Object>> communicatorProxyProviders = super.getCommunicatorProxyProviders();
+        private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider = super.getServiceMethodProvider();
+        private LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxyProvider = super.getCommunicatorProxyProvider();
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = super.getTcpConnectorConfigurations();
         private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = super.getHttpConnectorConfigurations();
 

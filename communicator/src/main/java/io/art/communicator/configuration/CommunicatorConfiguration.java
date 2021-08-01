@@ -24,6 +24,7 @@ import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.Builder;
+import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static java.util.Objects.*;
@@ -34,7 +35,11 @@ import java.util.function.*;
 @Builder
 public class CommunicatorConfiguration {
     private final CommunicatorRefresher refresher;
+
+    @Getter
     private final CommunicatorRefresher.Consumer consumer;
+
+    @Getter
     private ImmutableMap<String, CommunicatorProxyConfiguration> proxyConfigurations;
 
     private CommunicatorConfiguration(CommunicatorRefresher refresher) {
