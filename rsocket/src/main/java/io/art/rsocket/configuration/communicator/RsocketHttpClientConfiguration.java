@@ -28,34 +28,13 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.util.function.*;
 
 @Getter
+@Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketHttpClientConfiguration {
     @EqualsAndHashCode.Include
     private RsocketCommonClientConfiguration commonConfiguration;
-    private int port;
-    private String host;
-    @EqualsAndHashCode.Include
-    private String path;
-    private String connector;
     private UnaryOperator<HttpClient> decorator;
-
-    @Builder(toBuilder = true)
-    private RsocketHttpClientConfiguration(int port,
-                                           String host,
-                                           String path,
-                                           String connector,
-                                           UnaryOperator<HttpClient> decorator) {
-        this.port = port;
-        this.host = host;
-        this.path = path;
-        this.connector = connector;
-        this.decorator = decorator;
-        commonConfiguration = RsocketCommonClientConfiguration.builder()
-                .connector(connector)
-                .port(port)
-                .host(host)
-                .build();
-    }
+    private String path;
 
     public static RsocketHttpClientConfiguration defaults(String connector) {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();

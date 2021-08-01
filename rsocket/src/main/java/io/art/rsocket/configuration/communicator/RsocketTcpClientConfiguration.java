@@ -28,33 +28,13 @@ import static io.rsocket.frame.FrameLengthCodec.*;
 import java.util.function.*;
 
 @Getter
+@Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketTcpClientConfiguration {
     @EqualsAndHashCode.Include
     private RsocketCommonClientConfiguration commonConfiguration;
-    private int port;
-    private String host;
-    private String connector;
     private int maxFrameLength;
     private UnaryOperator<TcpClient> decorator;
-
-    @Builder(toBuilder = true)
-    private RsocketTcpClientConfiguration(int port,
-                                          String host,
-                                          UnaryOperator<TcpClient> decorator,
-                                          String connector,
-                                          int maxFrameLength) {
-        this.port = port;
-        this.host = host;
-        this.connector = connector;
-        this.maxFrameLength = maxFrameLength;
-        this.decorator = decorator;
-        commonConfiguration = RsocketCommonClientConfiguration.builder()
-                .port(port)
-                .host(host)
-                .connector(connector)
-                .build();
-    }
 
     public static RsocketTcpClientConfiguration defaults(String connector) {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
