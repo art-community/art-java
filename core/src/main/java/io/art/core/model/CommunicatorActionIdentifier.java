@@ -37,12 +37,12 @@ public class CommunicatorActionIdentifier {
         return putIfAbsent(CACHE, EMPTY_STRING + communicatorId + actionId, () -> new CommunicatorActionIdentifier(communicatorId, actionId));
     }
 
-    public static String communicatorId(Class<?> serviceClass) {
-        int suffixIndex = serviceClass.getSimpleName().toLowerCase().lastIndexOf(COMMUNICATOR_CLASS_SUFFIX);
+    public static String communicatorId(Class<?> communicatorClass) {
+        int suffixIndex = communicatorClass.getSimpleName().toLowerCase().lastIndexOf(COMMUNICATOR_CLASS_SUFFIX);
         if (suffixIndex == -1) {
-            return serviceClass.getSimpleName();
+            return communicatorClass.getSimpleName();
         }
-        return serviceClass.getSimpleName().substring(0, suffixIndex);
+        return communicatorClass.getSimpleName().substring(0, suffixIndex);
     }
 
 }

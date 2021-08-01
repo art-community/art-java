@@ -21,10 +21,10 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .http(TestRsocketCommunicator.class, http -> http.configure(common -> common.logging(true)))
+                                .tcp(TestRsocketCommunicator.class, http -> http.configure(common -> common.logging(true)))
                                 .forClass(TestRsocketCommunicator.class))
                         .server(server -> server
-                                .http(http -> http.common(common -> common.logging(true)))
+                                .tcp(http -> http.common(common -> common.logging(true)))
                                 .forClass(TestRsocketService.class)))
         );
     }

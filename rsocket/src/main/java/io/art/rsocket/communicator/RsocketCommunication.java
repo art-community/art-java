@@ -253,7 +253,10 @@ public class RsocketCommunication implements Communication {
         ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = rsocketModule().configuration().getHttpConnectorConfigurations();
         RsocketTcpConnectorConfiguration tcpConnectorConfiguration = tcpConnectorConfigurations.get(action.getConnector());
         RsocketHttpConnectorConfiguration httpConnectorConfiguration = httpConnectorConfigurations.get(action.getConnector());
-        return let(tcpConnectorConfiguration, RsocketTcpConnectorConfiguration::getCommonConfiguration, httpConnectorConfiguration.getCommonConfiguration());
+        return let(tcpConnectorConfiguration,
+                (Function<RsocketTcpConnectorConfiguration, RsocketCommonConnectorConfiguration>) RsocketTcpConnectorConfiguration::getCommonConfiguration,
+                (Supplier<RsocketCommonConnectorConfiguration>) httpConnectorConfiguration::getCommonConfiguration
+        );
     }
 
     private Function<Flux<Object>, Flux<Object>> communication() {
