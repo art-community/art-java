@@ -34,13 +34,13 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 @Builder(toBuilder = true)
 public class RsocketHttpClientGroupConfiguration {
     private String connector;
-    private ImmutableSet<RsocketHttpClientConfiguration> clientsConfigurations;
+    private ImmutableSet<RsocketHttpClientConfiguration> clientConfigurations;
     private BalancerMethod balancer;
 
     public static RsocketHttpClientGroupConfiguration defaults(String connector) {
         RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
         configuration.balancer = ROUND_ROBIN;
-        configuration.clientsConfigurations = emptyImmutableSet();
+        configuration.clientConfigurations = emptyImmutableSet();
         configuration.connector = connector;
         return configuration;
     }
@@ -49,7 +49,7 @@ public class RsocketHttpClientGroupConfiguration {
         RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
         configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
-        configuration.clientsConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> RsocketHttpClientConfiguration.from(
+        configuration.clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> RsocketHttpClientConfiguration.from(
                 refresher,
                 RsocketHttpClientConfiguration.defaults(current.connector),
                 nested
