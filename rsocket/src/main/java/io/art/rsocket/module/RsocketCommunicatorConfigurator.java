@@ -36,7 +36,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return http(connectorClass, UnaryOperator.identity());
     }
 
-    private RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
+    public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
         RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(normalizeToId(connector)));
         connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
         tcpConnectors.put(normalizeToId(connector), connectorConfigurator.configure());

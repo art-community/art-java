@@ -22,9 +22,8 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp(TestRsocketConnector.class, tcp -> tcp
-                                        .configure(common -> common.logging(true))
-                                        .configureProxy(TestRsocketOtherCommunicator.class, action -> action.target(normalizeToId(TestRsocketCommunicator.class)))))
+                                .tcp(TestRsocketConnector.class, tcp -> tcp.configure(common -> common.logging(true)))
+                                .configure(TestRsocketOtherCommunicator.class, action -> action.target(normalizeToId(TestRsocketCommunicator.class))))
                         .server(server -> server
                                 .tcp(tcp -> tcp.common(common -> common.logging(true)))
                                 .forClass(TestRsocketService.class))
