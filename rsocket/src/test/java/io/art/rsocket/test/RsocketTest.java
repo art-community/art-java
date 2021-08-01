@@ -14,6 +14,7 @@ import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 
 public class RsocketTest {
     @BeforeAll
@@ -26,7 +27,7 @@ public class RsocketTest {
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketCommunicator.class, tcp -> tcp
                                         .weighted(group -> group.client(client -> client.port(1234)))
-                                        .configure(builder -> builder.logging(true)))
+                                        .configure(builder -> builder.logging(true).dataFormat(JSON)))
                                 .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable)
                         )
                         .server(server -> server

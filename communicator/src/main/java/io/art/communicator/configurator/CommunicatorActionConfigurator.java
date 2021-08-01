@@ -18,6 +18,7 @@ public class CommunicatorActionConfigurator {
     private String connector;
     private boolean loggable;
     private boolean deactivable = true;
+    private boolean resilience = false;
 
     public CommunicatorActionConfigurator connector(String connector) {
         this.connector = connector;
@@ -33,6 +34,15 @@ public class CommunicatorActionConfigurator {
         return this;
     }
 
+    public CommunicatorActionConfigurator resilience() {
+        return resilience(true);
+    }
+
+    public CommunicatorActionConfigurator resilience(boolean resilience) {
+        this.loggable = resilience;
+        return this;
+    }
+
     public CommunicatorActionConfigurator deactivable(boolean deactivable) {
         this.deactivable = deactivable;
         return this;
@@ -45,6 +55,9 @@ public class CommunicatorActionConfigurator {
         }
         if (loggable) {
             decorator = then(decorator, builder -> builder.inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT)));
+        }
+        if (resilience) {
+            decorator = then(decorator, builder -> builder.inputDecorator(new CommunicatorResilienceDecorator(id, configuration)));
         }
         if (deactivable) {
             decorator = then(decorator, builder -> builder.outputDecorator(new CommunicatorDeactivationDecorator(id, configuration)));
