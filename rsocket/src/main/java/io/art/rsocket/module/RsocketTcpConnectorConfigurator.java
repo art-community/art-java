@@ -12,7 +12,7 @@ public class RsocketTcpConnectorConfigurator {
     private final String connector;
     private RsocketTcpClientGroupConfiguration group;
     private RsocketTcpClientConfiguration single;
-    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator;
+    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
 
     public RsocketTcpConnectorConfigurator roundRobin(UnaryOperator<RsocketTcpClientGroupConfigurator> configurator) {
         group = configurator.apply(new RsocketTcpClientGroupConfigurator(connector, ROUND_ROBIN)).configure();
