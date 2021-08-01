@@ -85,12 +85,14 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         serverRefresher = new ServerRefresher();
         communicatorRefresher = new CommunicatorRefresher();
         consumer = refresher.consumer();
+
         serverConfiguration = ServerConfiguration.defaults(serverRefresher);
         tcpServerConfiguration = RsocketTcpServerConfiguration.defaults();
         httpServerConfiguration = RsocketHttpServerConfiguration.defaults();
         serviceMethodProvider = lazy(ImmutableArray::emptyImmutableArray);
         enableTcpServer = false;
         enableHttpServer = false;
+
         tcpConnectorConfigurations = emptyImmutableMap();
         httpConnectorConfigurations = emptyImmutableMap();
         communicatorProxyProvider = lazy(ImmutableMap::emptyImmutableMap);
@@ -151,10 +153,12 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         public Configurator initialize(RsocketModuleConfiguration configuration) {
             this.configuration.enableTcpServer = configuration.isEnableTcpServer();
             this.configuration.enableHttpServer = configuration.isEnableHttpServer();
+
             this.configuration.serverConfiguration = configuration.getServerConfiguration();
             this.configuration.tcpServerConfiguration = configuration.getTcpServerConfiguration();
             this.configuration.httpServerConfiguration = configuration.getHttpServerConfiguration();
             this.configuration.serviceMethodProvider = configuration.getServiceMethodProvider();
+
             this.configuration.httpConnectorConfigurations = configuration.getHttpConnectorConfigurations();
             this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
             this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
