@@ -30,25 +30,25 @@ public abstract class CommunicatorConfigurator {
     private final List<PackageBasedRegistration> packageBased = linkedList();
     private final List<ClassBasedRegistration> classBased = linkedList();
 
-    protected CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage) {
+    public CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage) {
         return forPackage(proxyPackage, identity());
     }
 
-    protected CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public CommunicatorConfigurator forPackage(Supplier<MetaPackage> proxyPackage, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         packageBased.add(new PackageBasedRegistration(proxyPackage, decorator));
         return this;
     }
 
 
-    protected CommunicatorConfigurator forClass(Class<?> proxyClass) {
+    public CommunicatorConfigurator forClass(Class<?> proxyClass) {
         return forClass(() -> declaration(proxyClass), identity());
     }
 
-    protected CommunicatorConfigurator forClass(Class<?> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public CommunicatorConfigurator forClass(Class<?> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         return forClass(() -> declaration(proxyClass), decorator);
     }
 
-    protected CommunicatorConfigurator forClass(Supplier<MetaClass<?>> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public CommunicatorConfigurator forClass(Supplier<MetaClass<?>> proxyClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedRegistration(proxyClass, decorator));
         return this;
     }

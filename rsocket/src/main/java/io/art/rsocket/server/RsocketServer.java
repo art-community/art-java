@@ -117,7 +117,7 @@ public class RsocketServer implements Server {
 
     private CloseableChannel createServer(RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
         int fragmentationMtu = serverConfiguration.getFragmentationMtu();
-        RSocketServer server = RSocketServer.create(this::createAcceptor).maxInboundPayloadSize(serverConfiguration.getMaxInboundPayloadSize());
+        RSocketServer server = RSocketServer.create((payload, requester) -> createAcceptor(payload, requester, serverConfiguration)).maxInboundPayloadSize(serverConfiguration.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
         }
@@ -148,13 +148,13 @@ public class RsocketServer implements Server {
         httpCloser.block();
     }
 
-    private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requesterSocket) {
-        Mono<RSocket> socket = Mono.create(emitter -> setupSocket(payload, requesterSocket, emitter));
+    private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requester, RsocketCommonServerConfiguration serverConfiguration) {
+        Mono<RSocket> socket = Mono.create(emitter -> setupSocket(payload, serverConfiguration, emitter));
         return socket.doOnError(throwable -> withLogging(() -> getLogger().error(throwable.getMessage(), throwable)));
     }
 
-    private void setupSocket(ConnectionSetupPayload payload, RSocket requester, MonoSink<RSocket> emitter) {
-        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, serviceMethods, configuration));
+    private void setupSocket(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration, MonoSink<RSocket> emitter) {
+        ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, serviceMethods, serverConfiguration));
         ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
     }
 
