@@ -32,8 +32,11 @@ import java.util.function.*;
 public class RsocketHttpClientConfiguration {
     @EqualsAndHashCode.Include
     private RsocketCommonClientConfiguration commonConfiguration;
+    private int port;
+    private String host;
     @EqualsAndHashCode.Include
     private String path;
+    private String connector;
     private UnaryOperator<HttpClient> decorator;
 
     @Builder(toBuilder = true)
@@ -42,7 +45,10 @@ public class RsocketHttpClientConfiguration {
                                            String path,
                                            String connector,
                                            UnaryOperator<HttpClient> decorator) {
+        this.port = port;
+        this.host = host;
         this.path = path;
+        this.connector = connector;
         this.decorator = decorator;
         commonConfiguration = RsocketCommonClientConfiguration.builder()
                 .connector(connector)

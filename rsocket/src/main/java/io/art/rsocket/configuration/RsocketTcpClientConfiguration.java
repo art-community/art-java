@@ -32,6 +32,9 @@ import java.util.function.*;
 public class RsocketTcpClientConfiguration {
     @EqualsAndHashCode.Include
     private RsocketCommonClientConfiguration commonConfiguration;
+    private int port;
+    private String host;
+    private String connector;
     private int maxFrameLength;
     private UnaryOperator<TcpClient> decorator;
 
@@ -41,6 +44,9 @@ public class RsocketTcpClientConfiguration {
                                           UnaryOperator<TcpClient> decorator,
                                           String connector,
                                           int maxFrameLength) {
+        this.port = port;
+        this.host = host;
+        this.connector = connector;
         this.maxFrameLength = maxFrameLength;
         this.decorator = decorator;
         commonConfiguration = RsocketCommonClientConfiguration.builder()
