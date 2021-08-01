@@ -1,14 +1,15 @@
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.communicator;
 
 import io.art.core.changes.*;
 import io.art.core.source.*;
+import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.configuration.RsocketKeepAliveConfiguration.*;
-import static io.art.rsocket.configuration.RsocketResumeConfiguration.*;
-import static io.art.rsocket.configuration.RsocketRetryConfiguration.*;
+import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
+import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
+import static io.art.rsocket.configuration.common.RsocketRetryConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.transport.constants.TransportModuleConstants.*;

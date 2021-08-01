@@ -21,6 +21,7 @@ package io.art.rsocket.interceptor;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.communicator.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import lombok.*;

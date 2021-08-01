@@ -16,11 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.communicator;
 
 import io.art.core.changes.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
+import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;

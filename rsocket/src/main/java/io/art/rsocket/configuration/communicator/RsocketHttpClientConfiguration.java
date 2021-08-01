@@ -16,58 +16,59 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.communicator;
 
 import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
-import reactor.netty.tcp.*;
+import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static io.rsocket.frame.FrameLengthCodec.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.util.function.*;
 
 @Getter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class RsocketTcpClientConfiguration {
+public class RsocketHttpClientConfiguration {
     @EqualsAndHashCode.Include
     private RsocketCommonClientConfiguration commonConfiguration;
     private int port;
     private String host;
+    @EqualsAndHashCode.Include
+    private String path;
     private String connector;
-    private int maxFrameLength;
-    private UnaryOperator<TcpClient> decorator;
+    private UnaryOperator<HttpClient> decorator;
 
     @Builder(toBuilder = true)
-    private RsocketTcpClientConfiguration(int port,
-                                          String host,
-                                          UnaryOperator<TcpClient> decorator,
-                                          String connector,
-                                          int maxFrameLength) {
+    private RsocketHttpClientConfiguration(int port,
+                                           String host,
+                                           String path,
+                                           String connector,
+                                           UnaryOperator<HttpClient> decorator) {
         this.port = port;
         this.host = host;
+        this.path = path;
         this.connector = connector;
-        this.maxFrameLength = maxFrameLength;
         this.decorator = decorator;
         commonConfiguration = RsocketCommonClientConfiguration.builder()
+                .connector(connector)
                 .port(port)
                 .host(host)
-                .connector(connector)
                 .build();
     }
 
-    public static RsocketTcpClientConfiguration defaults(String connector) {
-        RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
-        configuration.maxFrameLength = FRAME_LENGTH_MASK;
+    public static RsocketHttpClientConfiguration defaults(String connector) {
+        RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
+        configuration.path = DEFAULT_HTTP_PATH;
         configuration.decorator = UnaryOperator.identity();
         configuration.commonConfiguration = RsocketCommonClientConfiguration.defaults(connector);
         return configuration;
     }
 
-    public static RsocketTcpClientConfiguration from(RsocketModuleRefresher refresher, RsocketTcpClientConfiguration current, ConfigurationSource source) {
-        RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
+    public static RsocketHttpClientConfiguration from(RsocketModuleRefresher refresher, RsocketHttpClientConfiguration current, ConfigurationSource source) {
+        RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
         configuration.decorator = current.decorator;
-        configuration.maxFrameLength = orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), current.maxFrameLength);
+        configuration.path = orElse(source.getString(TRANSPORT_WS_PATH_KEY), current.path);
         configuration.commonConfiguration = RsocketCommonClientConfiguration.from(refresher, current.commonConfiguration, source);
         return configuration;
     }

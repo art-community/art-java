@@ -46,13 +46,6 @@ public class CommunicatorConfiguration {
         this.consumer = refresher.consumer();
     }
 
-    public Optional<String> findConnectorId(CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(id.getCommunicatorId());
-        Optional<String> connectorId = ofNullable(proxyConfiguration).map(CommunicatorProxyConfiguration::getConnector);
-        if (connectorId.isPresent()) return connectorId;
-        return getActionConfiguration(id).map(CommunicatorActionConfiguration::getConnector);
-    }
-
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
         CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(id.getCommunicatorId());
         return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));

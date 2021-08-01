@@ -24,6 +24,8 @@ import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.communicator.*;
+import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.configurator.*;
 import io.art.server.method.*;

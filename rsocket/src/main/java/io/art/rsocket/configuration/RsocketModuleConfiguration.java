@@ -25,6 +25,8 @@ import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
+import io.art.rsocket.configuration.communicator.*;
+import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
 import io.art.server.method.*;
@@ -115,19 +117,11 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             Optional<NestedConfiguration> communicatorSection = ofNullable(source.getNested(RSOCKET_SECTION))
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION));
             communicatorSection
-                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectorConfigurations.get(nested.getSection()),
-                            current -> RsocketTcpConnectorConfiguration.from(configuration.refresher, current, nested),
-                            RsocketTcpConnectorConfiguration.from(configuration.refresher, nested)
-                    )))
+                    .map(this::getTcpConnectors)
                     .ifPresent(communicatorConfiguration -> configuration.tcpConnectorConfigurations = merge(configuration.tcpConnectorConfigurations, communicatorConfiguration));
-
             communicatorSection
-                    .map(communicator -> communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.httpConnectorConfigurations.get(nested.getSection()),
-                            current -> RsocketHttpConnectorConfiguration.from(configuration.refresher, current, nested),
-                            RsocketHttpConnectorConfiguration.from(configuration.refresher, nested)
-                    )))
+                    .map(this::getHttpConnectors)
                     .ifPresent(communicatorConfiguration -> configuration.httpConnectorConfigurations = merge(configuration.httpConnectorConfigurations, communicatorConfiguration));
-
             communicatorSection
                     .map(communicator -> CommunicatorConfiguration.from(configuration.communicatorRefresher, communicator))
                     .ifPresent(communicatorConfiguration -> configuration.communicatorConfiguration = communicatorConfiguration);
@@ -136,6 +130,20 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             configuration.serverRefresher.produce();
             configuration.communicatorRefresher.produce();
             return this;
+        }
+
+        private ImmutableMap<String, RsocketHttpConnectorConfiguration> getHttpConnectors(NestedConfiguration communicator) {
+            return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.httpConnectorConfigurations.get(nested.getSection()),
+                    current -> RsocketHttpConnectorConfiguration.from(configuration.refresher, current, nested),
+                    RsocketHttpConnectorConfiguration.from(configuration.refresher, nested)
+            ));
+        }
+
+        private ImmutableMap<String, RsocketTcpConnectorConfiguration> getTcpConnectors(NestedConfiguration communicator) {
+            return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectorConfigurations.get(nested.getSection()),
+                    current -> RsocketTcpConnectorConfiguration.from(configuration.refresher, current, nested),
+                    RsocketTcpConnectorConfiguration.from(configuration.refresher, nested)
+            ));
         }
 
         @Override

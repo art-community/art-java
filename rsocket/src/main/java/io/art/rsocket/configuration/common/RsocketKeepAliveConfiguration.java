@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.common;
 
 import io.art.core.source.*;
 import lombok.*;
@@ -25,11 +25,11 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 
-@Value
-@RequiredArgsConstructor
+@Getter
+@Builder(toBuilder = true)
 public class RsocketKeepAliveConfiguration {
-    Duration interval;
-    Duration maxLifeTime;
+    private final Duration interval;
+    private final Duration maxLifeTime;
 
     public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source) {
         Duration interval = orElse(source.getDuration(INTERVAL_KEY), DEFAULT_KEEP_ALIVE_INTERVAL);

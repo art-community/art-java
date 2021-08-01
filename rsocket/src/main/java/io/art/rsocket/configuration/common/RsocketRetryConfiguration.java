@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.common;
 
 import io.art.core.exception.*;
 import io.art.core.source.*;
@@ -31,16 +31,15 @@ import static reactor.util.retry.Retry.*;
 import java.time.*;
 
 @Getter
-@NoArgsConstructor
-@EqualsAndHashCode
+@Builder(toBuilder = true)
 public class RsocketRetryConfiguration {
-    Duration minBackoff;
-    long backOffMaxAttempts;
-    long fixedDelayMaxAttempts;
-    RetryPolicy retryPolicy;
-    Duration fixedDelay;
-    int maxInRow;
-    int max;
+    private Duration minBackoff;
+    private long backOffMaxAttempts;
+    private long fixedDelayMaxAttempts;
+    private RetryPolicy retryPolicy;
+    private Duration fixedDelay;
+    private int maxInRow;
+    private int max;
 
     public Retry toRetry() {
         switch (retryPolicy) {
@@ -59,7 +58,7 @@ public class RsocketRetryConfiguration {
     }
 
     public static RsocketRetryConfiguration rsocketRetry(ConfigurationSource source) {
-        RsocketRetryConfiguration configuration = new RsocketRetryConfiguration();
+        RsocketRetryConfiguration configuration = RsocketRetryConfiguration.builder().build();
         configuration.retryPolicy = rsocketRetryPolicy(source.getString(POLICY_KEY), INDEFINITELY);
         configuration.backOffMaxAttempts = orElse(source.getLong(BACKOFF_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
         configuration.fixedDelayMaxAttempts = orElse(source.getLong(FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
@@ -71,7 +70,7 @@ public class RsocketRetryConfiguration {
     }
 
     public static RsocketRetryConfiguration rsocketRetry(ConfigurationSource source, RsocketRetryConfiguration defaults) {
-        RsocketRetryConfiguration configuration = new RsocketRetryConfiguration();
+        RsocketRetryConfiguration configuration = RsocketRetryConfiguration.builder().build();
         configuration.retryPolicy = rsocketRetryPolicy(source.getString(POLICY_KEY), defaults.retryPolicy);
         configuration.backOffMaxAttempts = orElse(source.getLong(BACKOFF_MAX_ATTEMPTS_KEY), defaults.backOffMaxAttempts);
         configuration.fixedDelayMaxAttempts = orElse(source.getLong(FIXED_DELAY_MAX_ATTEMPTS_KEY), defaults.fixedDelayMaxAttempts);

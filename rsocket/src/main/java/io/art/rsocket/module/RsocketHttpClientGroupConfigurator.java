@@ -1,7 +1,7 @@
 package io.art.rsocket.module;
 
-import io.art.rsocket.configuration.*;
-import io.art.rsocket.configuration.RsocketHttpClientConfiguration.*;
+import io.art.rsocket.configuration.communicator.*;
+import io.art.rsocket.configuration.communicator.RsocketHttpClientConfiguration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import lombok.*;
 import static io.art.core.factory.SetFactory.*;

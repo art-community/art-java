@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.common;
 
 import io.art.core.source.*;
 import io.rsocket.core.*;
@@ -27,13 +27,12 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 
 @Getter
-@EqualsAndHashCode
-@NoArgsConstructor
+@Builder(toBuilder = true)
 public class RsocketResumeConfiguration {
-    boolean cleanupStoreOnKeepAlive;
-    Duration sessionDuration;
-    Duration streamTimeout;
-    RsocketRetryConfiguration retryConfiguration;
+    private boolean cleanupStoreOnKeepAlive;
+    private Duration sessionDuration;
+    private Duration streamTimeout;
+    private RsocketRetryConfiguration retryConfiguration;
 
     public Resume toResume() {
         Resume resume = new Resume()
@@ -47,7 +46,7 @@ public class RsocketResumeConfiguration {
     }
 
     public static RsocketResumeConfiguration rsocketResume(ConfigurationSource source) {
-        RsocketResumeConfiguration configuration = new RsocketResumeConfiguration();
+        RsocketResumeConfiguration configuration = RsocketResumeConfiguration.builder().build();
         configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
         configuration.sessionDuration = orElse(source.getDuration(SESSION_DURATION_KEY), DEFAULT_RESUME_SESSION_DURATION);
         configuration.streamTimeout = orElse(source.getDuration(STREAM_TIMEOUT_KEY), DEFAULT_RESUME_STREAM_TIMEOUT);
@@ -56,7 +55,7 @@ public class RsocketResumeConfiguration {
     }
 
     public static RsocketResumeConfiguration rsocketResume(ConfigurationSource source, RsocketResumeConfiguration defaults) {
-        RsocketResumeConfiguration configuration = new RsocketResumeConfiguration();
+        RsocketResumeConfiguration configuration = RsocketResumeConfiguration.builder().build();
         configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), defaults.cleanupStoreOnKeepAlive);
         configuration.sessionDuration = orElse(source.getDuration(SESSION_DURATION_KEY), defaults.sessionDuration);
         configuration.streamTimeout = orElse(source.getDuration(STREAM_TIMEOUT_KEY), defaults.streamTimeout);

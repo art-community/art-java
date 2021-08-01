@@ -5,7 +5,7 @@ import io.art.communicator.proxy.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.rsocket.communicator.*;
-import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.communicator.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.factory.MapFactory.*;

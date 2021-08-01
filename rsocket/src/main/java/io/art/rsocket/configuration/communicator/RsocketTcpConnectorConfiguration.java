@@ -1,4 +1,4 @@
-package io.art.rsocket.configuration;
+package io.art.rsocket.configuration.communicator;
 
 import io.art.core.source.*;
 import io.art.rsocket.refresher.*;

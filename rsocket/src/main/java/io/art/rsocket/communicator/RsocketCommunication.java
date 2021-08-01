@@ -24,6 +24,7 @@ import io.art.core.exception.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.communicator.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.transport.payload.*;

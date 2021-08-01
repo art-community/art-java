@@ -22,7 +22,7 @@ import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.mime.*;
 import io.art.core.model.*;
-import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.communicator.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.state.*;

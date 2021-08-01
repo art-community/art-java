@@ -2,9 +2,9 @@ package io.art.rsocket.module;
 
 import io.art.core.collection.*;
 import io.art.core.property.*;
-import io.art.rsocket.configuration.*;
-import io.art.rsocket.configuration.RsocketHttpServerConfiguration.*;
-import io.art.rsocket.configuration.RsocketTcpServerConfiguration.*;
+import io.art.rsocket.configuration.server.*;
+import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
+import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.server.configurator.*;
 import io.art.server.method.*;
 import lombok.*;
@@ -18,8 +18,8 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     private boolean tcp;
     private boolean http;
 
-    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = UnaryOperator.identity();
-    private UnaryOperator<RsocketHttpServerConfigurationBuilder> httpConfigurator = UnaryOperator.identity();
+    private UnaryOperator<RsocketTcpServerConfigurator> tcpConfigurator = UnaryOperator.identity();
+    private UnaryOperator<RsocketHttpServerConfigurator> httpConfigurator = UnaryOperator.identity();
 
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
@@ -31,13 +31,13 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return this;
     }
 
-    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurationBuilder> configurator) {
+    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurator> configurator) {
         this.tcp = true;
         this.tcpConfigurator = configurator;
         return this;
     }
 
-    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurationBuilder> configurator) {
+    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurator> configurator) {
         this.http = true;
         this.httpConfigurator = configurator;
         return this;
@@ -48,11 +48,21 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     }
 
     RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
-        return tcpConfigurator.apply(current.toBuilder()).build();
+        RsocketTcpServerConfigurator configurator = tcpConfigurator.apply(new RsocketTcpServerConfigurator());
+        RsocketTcpServerConfigurationBuilder builder = current.toBuilder();
+        return configurator.tcp()
+                .apply(builder)
+                .common(configurator.common().apply(current.getCommon().toBuilder()).build())
+                .build();
     }
 
     RsocketHttpServerConfiguration configure(RsocketHttpServerConfiguration current) {
-        return httpConfigurator.apply(current.toBuilder()).build();
+        RsocketHttpServerConfigurator configurator = httpConfigurator.apply(new RsocketHttpServerConfigurator());
+        RsocketHttpServerConfigurationBuilder builder = current.toBuilder();
+        return configurator.http()
+                .apply(builder)
+                .common(configurator.common().apply(current.getCommon().toBuilder()).build())
+                .build();
     }
 
     boolean enableTcp() {

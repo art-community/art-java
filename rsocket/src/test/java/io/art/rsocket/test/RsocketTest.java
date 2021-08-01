@@ -30,7 +30,7 @@ public class RsocketTest {
                                         .configure(builder -> builder.logging(true).dataFormat(JSON)))
                                 .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable))
                         .server(server -> server
-                                .tcp(tcp -> tcp.port(1234).logging(true))
+                                .tcp(tcp -> tcp.common(builder -> builder.port(1234)))
                                 .forClass(TestRsocketService.class, ServiceMethodConfigurator::loggable)))
         );
     }
