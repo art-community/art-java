@@ -1,5 +1,6 @@
 package io.art.rsocket.test;
 
+import io.art.communicator.configurator.*;
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
@@ -11,6 +12,7 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 
 public class RsocketTest {
@@ -22,8 +24,10 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp(TestRsocketCommunicator.class, tcp -> tcp.weighted(group -> group.client(client -> client.port(1234))))
-                                .forClass(TestRsocketCommunicator.class)
+                                .tcp(TestRsocketCommunicator.class, tcp -> tcp
+                                        .weighted(group -> group.client(client -> client.port(1234)))
+                                        .configure(builder -> builder.logging(true)))
+                                .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable)
                         )
                         .server(server -> server
                                 .tcp(tcp -> tcp.port(1234).logging(true))
@@ -33,6 +37,8 @@ public class RsocketTest {
 
     @Test
     public void test() {
+        TestRsocketCommunicator communicator = rsocketCommunicator(TestRsocketCommunicator.class);
+        communicator.m("test");
         ThreadExtensions.block();
     }
 }
