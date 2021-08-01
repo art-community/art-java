@@ -16,8 +16,7 @@ public class RsocketTcpClientGroupConfigurator {
 
     public RsocketTcpClientGroupConfigurator client(UnaryOperator<RsocketTcpClientConfigurator> configurator) {
         RsocketTcpClientConfigurator clientConfigurator = configurator.apply(new RsocketTcpClientConfigurator());
-        clients.add(clientConfigurator.tcp()
-                .apply(RsocketTcpClientConfiguration.defaults(connector).toBuilder())
+        clients.add(clientConfigurator.tcp().apply(RsocketTcpClientConfiguration.defaults(connector).toBuilder())
                 .commonConfiguration(clientConfigurator.common().apply(RsocketCommonClientConfiguration.defaults(connector).toBuilder()).build())
                 .build());
         return this;

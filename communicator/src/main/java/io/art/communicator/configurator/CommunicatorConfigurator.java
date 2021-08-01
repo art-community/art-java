@@ -73,14 +73,18 @@ public abstract class CommunicatorConfigurator {
         return proxies.build();
     }
 
-    private void registerPackages(ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> builder, Collection<MetaPackage> packages, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    private void registerPackages(ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> builder,
+                                  Collection<MetaPackage> packages,
+                                  UnaryOperator<CommunicatorActionConfigurator> decorator) {
         for (MetaPackage metaPackage : packages) {
             registerPackages(builder, metaPackage.packages().values(), decorator);
             registerClasses(builder, metaPackage.classes().values(), decorator);
         }
     }
 
-    private void registerClasses(ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> builder, Collection<MetaClass<?>> classes, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    private void registerClasses(ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> builder,
+                                 Collection<MetaClass<?>> classes,
+                                 UnaryOperator<CommunicatorActionConfigurator> decorator) {
         for (MetaClass<?> metaClass : classes) {
             registerClasses(builder, metaClass.classes().values(), decorator);
             registerMethods(builder, metaClass, decorator);
@@ -88,7 +92,8 @@ public abstract class CommunicatorConfigurator {
     }
 
     private void registerMethods(ImmutableMap.Builder<Class<?>, CommunicatorProxy<?>> builder, MetaClass<?> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        builder.put(metaClass.definition().type(), createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator)));
+        CommunicatorProxy<?> proxy = createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator));
+        builder.put(metaClass.definition().type(), proxy);
     }
 
     private CommunicatorAction createAction(MetaClass<?> proxyClass, MetaMethod<?> metaMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
