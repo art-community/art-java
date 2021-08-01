@@ -18,7 +18,6 @@
 
 package io.art.rsocket.module;
 
-import io.art.communicator.configurator.*;
 import io.art.communicator.proxy.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
@@ -42,7 +41,7 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         return this;
     }
 
-    public RsocketInitializer communicator(Function<RsocketCommunicatorConfigurator, ? extends CommunicatorConfigurator> configurator) {
+    public RsocketInitializer communicator(UnaryOperator<RsocketCommunicatorConfigurator> configurator) {
         configurator.apply(communicatorConfigurator);
         return this;
     }

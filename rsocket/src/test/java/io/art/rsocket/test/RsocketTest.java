@@ -22,7 +22,7 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp(tcp -> tcp
+                                .tcp(TestRsocketConnector.class, tcp -> tcp
                                         .configure(common -> common.logging(true))
                                         .forClass(TestRsocketOtherCommunicator.class, action -> action.target(communicatorId(TestRsocketCommunicator.class)))
                                         .forClass(TestRsocketCommunicator.class)))

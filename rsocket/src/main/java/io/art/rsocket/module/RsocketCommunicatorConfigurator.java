@@ -1,49 +1,37 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.configurator.*;
-import io.art.communicator.proxy.*;
 import io.art.core.collection.*;
-import io.art.core.property.*;
-import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;
-import static io.art.rsocket.module.RsocketModule.*;
-import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
 @Setter
 @Accessors(fluent = true)
-public class RsocketCommunicatorConfigurator  {
+public class RsocketCommunicatorConfigurator {
     private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
-    public RsocketCommunicatorConfigurator tcp(Class<?> proxyClass) {
-        return tcp(communicatorId(proxyClass));
+    public RsocketCommunicatorConfigurator tcp(Class<?> connectorClass) {
+        return tcp(connectorClass, UnaryOperator.identity());
     }
 
-    public RsocketCommunicatorConfigurator http(Class<?> proxyClass) {
-        return http(communicatorId(proxyClass));
+    public RsocketCommunicatorConfigurator http(Class<?> connectorClass) {
+        return http(connectorClass, UnaryOperator.identity());
     }
 
-    public RsocketCommunicatorConfigurator tcp(String connector) {
-        return tcp(connector, identity());
+    public RsocketCommunicatorConfigurator tcp(Class<?> connectorClass, Function<RsocketTcpConnectorConfigurator, CommunicatorConfigurator> configurator) {
+        return tcp(communicatorId(connectorClass), cast(configurator));
     }
 
-    public RsocketCommunicatorConfigurator http(String connector) {
-        return http(connector, identity());
-    }
-
-    public RsocketCommunicatorConfigurator tcp(Class<?> proxyClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
-        return tcp(communicatorId(proxyClass), configurator);
-    }
-
-    public RsocketCommunicatorConfigurator http(Class<?> proxyClass, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
-        return http(communicatorId(proxyClass), configurator);
+    public RsocketCommunicatorConfigurator http(Class<?> connectorClass, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
+        return http(communicatorId(connectorClass), configurator);
     }
 
     public RsocketCommunicatorConfigurator tcp(String connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {

@@ -1,19 +1,28 @@
 package io.art.rsocket.module;
 
+import io.art.communicator.configurator.*;
+import io.art.communicator.proxy.*;
+import io.art.core.collection.*;
+import io.art.core.property.*;
+import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
-import lombok.*;
-import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
-public class RsocketTcpConnectorConfigurator {
+public class RsocketTcpConnectorConfigurator extends CommunicatorConfigurator {
     private final String connector;
     private RsocketTcpClientGroupConfiguration group;
     private RsocketTcpClientConfiguration single;
     private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
+
+    RsocketTcpConnectorConfigurator(String connector) {
+        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()));
+        this.connector = connector;
+    }
 
     public RsocketTcpConnectorConfigurator roundRobin(UnaryOperator<RsocketTcpClientGroupConfigurator> configurator) {
         group = configurator.apply(new RsocketTcpClientGroupConfigurator(connector, ROUND_ROBIN)).configure();
@@ -44,5 +53,9 @@ public class RsocketTcpConnectorConfigurator {
                 .groupConfiguration(group)
                 .singleConfiguration(orElse(single, RsocketTcpClientConfiguration.defaults(connector)))
                 .build();
+    }
+
+    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxies() {
+        return get();
     }
 }

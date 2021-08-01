@@ -53,7 +53,7 @@ public class CommunicatorProxyFactory {
                     .filter(method -> !actions.containsKey(method))
                     .map(MetaMethod::toString)
                     .collect(joining(NEW_LINE));
-            throw new CommunicatorException(format(INTERFACE_HAS_INVALID_METHOD_FOR_PROXY, proxyClass.definition().type().getName(), invalidMethods));
+            throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY, proxyClass.definition().type().getName(), invalidMethods));
         }
 
         Map<MetaMethod<?>, Function<Object, Object>> invocations = actions

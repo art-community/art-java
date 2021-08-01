@@ -34,11 +34,6 @@ public class CommunicatorActionConfigurator {
         return this;
     }
 
-    public CommunicatorActionConfigurator connector(String connector) {
-        this.connector = connector;
-        return this;
-    }
-
     public CommunicatorActionConfigurator loggable() {
         return loggable(true);
     }
@@ -78,9 +73,6 @@ public class CommunicatorActionConfigurator {
         }
         if (loggable) {
             decorator = then(decorator, builder -> builder.outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT)));
-        }
-        if (isNotEmpty(connector)) {
-            decorator = then(decorator, builder -> builder.connector(connector));
         }
         if (isNotEmpty(targetServiceId)) {
             decorator = then(decorator, builder -> builder.targetServiceMethod(serviceMethodId(targetServiceId, builder.build().getId().getActionId())));

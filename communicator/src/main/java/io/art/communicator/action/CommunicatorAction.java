@@ -45,10 +45,6 @@ public class CommunicatorAction implements Managed {
     private final CommunicatorActionIdentifier id;
 
     @Getter
-    @EqualsAndHashCode.Include
-    private final String connector;
-
-    @Getter
     private final MetaType<?> inputType;
 
     @Getter
