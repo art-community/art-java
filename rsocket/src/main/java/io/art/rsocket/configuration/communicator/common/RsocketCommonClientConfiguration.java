@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration.communicator;
+package io.art.rsocket.configuration.communicator.common;
 
 import io.art.core.changes.*;
 import io.art.core.source.*;
@@ -28,8 +28,8 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 
 @Getter
+@EqualsAndHashCode
 @Builder(toBuilder = true)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketCommonClientConfiguration {
     private String connector;
     private int port;

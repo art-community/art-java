@@ -1,10 +1,7 @@
 package io.art.rsocket.module;
 
-import io.art.rsocket.configuration.communicator.*;
-import io.art.rsocket.configuration.communicator.RsocketCommonClientConfiguration.*;
-import io.art.rsocket.configuration.communicator.RsocketCommonServerConfiguration.*;
-import io.art.rsocket.configuration.communicator.RsocketTcpClientConfiguration.*;
-import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
+import io.art.rsocket.configuration.communicator.common.RsocketCommonClientConfiguration.*;
+import io.art.rsocket.configuration.communicator.tcp.RsocketTcpClientConfiguration.*;
 import java.util.function.*;
 
 public class RsocketTcpClientConfigurator {

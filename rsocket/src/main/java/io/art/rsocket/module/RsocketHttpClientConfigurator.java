@@ -1,7 +1,7 @@
 package io.art.rsocket.module;
 
-import io.art.rsocket.configuration.communicator.RsocketCommonClientConfiguration.*;
-import io.art.rsocket.configuration.communicator.RsocketHttpClientConfiguration.*;
+import io.art.rsocket.configuration.communicator.common.RsocketCommonClientConfiguration.*;
+import io.art.rsocket.configuration.communicator.http.RsocketHttpClientConfiguration.*;
 import java.util.function.*;
 
 public class RsocketHttpClientConfigurator {

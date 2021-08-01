@@ -1,6 +1,6 @@
 package io.art.rsocket.module;
 
-import io.art.rsocket.configuration.communicator.RsocketCommonServerConfiguration.*;
+import io.art.rsocket.configuration.server.RsocketCommonServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import java.util.function.*;
 

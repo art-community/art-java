@@ -1,9 +1,9 @@
-package io.art.rsocket.configuration.communicator;
+package io.art.rsocket.configuration.communicator.common;
 
 import io.art.core.changes.*;
 import io.art.core.source.*;
 import io.art.rsocket.configuration.common.*;
-import io.art.rsocket.constants.*;
+import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -26,7 +26,7 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketKeepAliveConfiguration keepAlive;
     private RsocketResumeConfiguration resume;
     private RsocketRetryConfiguration retry;
-    private RsocketModuleConstants.PayloadDecoderMode payloadDecoderMode;
+    private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {

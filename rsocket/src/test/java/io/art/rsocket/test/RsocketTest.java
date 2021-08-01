@@ -26,7 +26,7 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketCommunicator.class, tcp -> tcp
-                                        .weighted(group -> group.client(client -> client.common(builder -> builder.port(1234))))
+                                        .single(client -> client.common(builder -> builder.port(1234)))
                                         .configure(builder -> builder.logging(true).dataFormat(JSON)))
                                 .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable))
                         .server(server -> server

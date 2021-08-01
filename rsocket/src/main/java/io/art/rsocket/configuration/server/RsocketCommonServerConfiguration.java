@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration.communicator;
+package io.art.rsocket.configuration.server;
 
 import io.art.core.changes.*;
 import io.art.core.model.*;

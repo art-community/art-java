@@ -1,6 +1,7 @@
-package io.art.rsocket.configuration.communicator;
+package io.art.rsocket.configuration.communicator.tcp;
 
 import io.art.core.source.*;
+import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;

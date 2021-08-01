@@ -1,7 +1,8 @@
 package io.art.rsocket.module;
 
-import io.art.rsocket.configuration.communicator.*;
-import io.art.rsocket.configuration.communicator.RsocketCommonConnectorConfiguration.*;
+import io.art.rsocket.configuration.communicator.common.*;
+import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
+import io.art.rsocket.configuration.communicator.http.*;
 import lombok.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;

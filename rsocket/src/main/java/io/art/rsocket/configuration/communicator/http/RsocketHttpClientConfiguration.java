@@ -16,9 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration.communicator;
+package io.art.rsocket.configuration.communicator.http;
 
 import io.art.core.source.*;
+import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import reactor.netty.http.client.*;
