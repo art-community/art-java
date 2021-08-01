@@ -1,6 +1,5 @@
 package io.art.rsocket.test;
 
-import io.art.communicator.configurator.*;
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
@@ -28,7 +27,7 @@ public class RsocketTest {
                                 .tcp(TestRsocketCommunicator.class, tcp -> tcp
                                         .single(client -> client.common(builder -> builder.port(1234)))
                                         .configure(builder -> builder.logging(true).dataFormat(JSON)))
-                                .forClass(TestRsocketCommunicator.class, CommunicatorActionConfigurator::loggable))
+                                .forClass(TestRsocketCommunicator.class, configurator -> configurator.target(TestRsocketService.class).loggable()))
                         .server(server -> server
                                 .tcp(tcp -> tcp.common(builder -> builder.port(1234)))
                                 .forClass(TestRsocketService.class, ServiceMethodConfigurator::loggable)))

@@ -21,6 +21,7 @@ package io.art.rsocket.communicator;
 import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.core.exception.*;
+import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
@@ -29,6 +30,7 @@ import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
+import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.art.transport.payload.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
@@ -115,10 +117,14 @@ public class RsocketCommunication implements Communication {
     private RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
         TransportPayloadWriter setupPayloadWriter = action.getWriter().apply(commonConfiguration.getDataFormat());
-        RsocketSetupPayload setupPayload = RsocketSetupPayload.builder()
+        RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())
-                .metadataFormat(commonConfiguration.getMetaDataFormat())
-                .build();
+                .metadataFormat(commonConfiguration.getMetaDataFormat());
+        ServiceMethodIdentifier targetServiceMethod = action.getTargetServiceMethod();
+        if (nonNull(targetServiceMethod)) {
+            payloadBuilder.serviceId(targetServiceMethod.getServiceId()).methodId(targetServiceMethod.getMethodId());
+        }
+        RsocketSetupPayload setupPayload = payloadBuilder.build();
         Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
         RSocketConnector connector = createConnector(commonConfiguration, payload);
         RsocketTcpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
@@ -164,10 +170,14 @@ public class RsocketCommunication implements Communication {
     private RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
         TransportPayloadWriter setupPayloadWriter = action.getWriter().apply(commonConfiguration.getDataFormat());
-        RsocketSetupPayload setupPayload = RsocketSetupPayload.builder()
+        RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())
-                .metadataFormat(commonConfiguration.getMetaDataFormat())
-                .build();
+                .metadataFormat(commonConfiguration.getMetaDataFormat());
+        ServiceMethodIdentifier targetServiceMethod = action.getTargetServiceMethod();
+        if (nonNull(targetServiceMethod)) {
+            payloadBuilder.serviceId(targetServiceMethod.getServiceId()).methodId(targetServiceMethod.getMethodId());
+        }
+        RsocketSetupPayload setupPayload = payloadBuilder.build();
         Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
         RSocketConnector connector = createConnector(commonConfiguration, payload);
         RsocketHttpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();

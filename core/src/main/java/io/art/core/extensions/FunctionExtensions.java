@@ -10,6 +10,13 @@ public class FunctionExtensions {
         return target;
     }
 
+    public <T> T applyIf(T target, Predicate<T> predicate, Consumer<T> action) {
+        if (predicate.test(target)) {
+            action.accept(target);
+        }
+        return target;
+    }
+
     public <T> UnaryOperator<T> then(UnaryOperator<T> current, UnaryOperator<T> next) {
         return value -> next.apply(current.apply(value));
     }

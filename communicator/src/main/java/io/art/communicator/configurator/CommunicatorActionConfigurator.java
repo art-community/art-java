@@ -8,6 +8,7 @@ import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.FunctionExtensions.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -16,9 +17,27 @@ public class CommunicatorActionConfigurator {
     private final CommunicatorConfiguration configuration;
 
     private String connector;
+    private String targetServiceId;
+    private String targetMethodId;
     private boolean loggable;
     private boolean deactivable = true;
     private boolean resilience = false;
+
+    public CommunicatorActionConfigurator target(String serviceId, String methodId) {
+        this.targetServiceId = serviceId;
+        this.targetMethodId = methodId;
+        return this;
+    }
+
+    public CommunicatorActionConfigurator target(String serviceId) {
+        this.targetServiceId = serviceId;
+        return this;
+    }
+
+    public CommunicatorActionConfigurator target(Class<?> serviceClass) {
+        this.targetServiceId = serviceClass.getSimpleName();
+        return this;
+    }
 
     public CommunicatorActionConfigurator connector(String connector) {
         this.connector = connector;
@@ -39,7 +58,7 @@ public class CommunicatorActionConfigurator {
     }
 
     public CommunicatorActionConfigurator resilience(boolean resilience) {
-        this.loggable = resilience;
+        this.resilience = resilience;
         return this;
     }
 
@@ -67,6 +86,12 @@ public class CommunicatorActionConfigurator {
         }
         if (isNotEmpty(connector)) {
             decorator = then(decorator, builder -> builder.connector(connector));
+        }
+        if (isNotEmpty(targetServiceId)) {
+            decorator = then(decorator, builder -> builder.targetServiceMethod(serviceMethodId(targetServiceId, builder.build().getId().getActionId())));
+        }
+        if (isNotEmpty(targetServiceId) && isNotEmpty(targetMethodId)) {
+            decorator = then(decorator, builder -> builder.targetServiceMethod(serviceMethodId(targetServiceId, targetMethodId)));
         }
         return decorator;
     }

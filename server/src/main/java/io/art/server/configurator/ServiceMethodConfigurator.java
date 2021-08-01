@@ -6,6 +6,7 @@ import io.art.server.decorator.*;
 import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.FunctionExtensions.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.server.method.ServiceMethod.*;
 import java.util.function.*;
 
@@ -46,7 +47,11 @@ public class ServiceMethodConfigurator {
             decorator = then(decorator, builder -> builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT)));
         }
         if (validatable) {
-            decorator = then(decorator, builder -> builder.inputDecorator(new ServiceValidationDecorator(id, configuration)));
+            decorator = then(decorator, builder -> applyIf(
+                    builder,
+                    validatable -> builder.build().getInputType().modifiers().contains(VALIDATABLE),
+                    validatable -> validatable.inputDecorator(new ServiceValidationDecorator(id, configuration))
+            ));
         }
         if (deactivable) {
             decorator = then(decorator, builder -> builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration)));
