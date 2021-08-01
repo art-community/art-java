@@ -39,7 +39,7 @@ public class RsocketCommunicatorConfigurator {
         return this;
     }
 
-    private RsocketCommunicatorConfigurator http(Class<?> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
+    private RsocketCommunicatorConfigurator http(Class<? extends Connector> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
         connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector))));
         httpConnectors.put(connector, configurator.apply(new RsocketHttpConnectorConfigurator(normalizeToId(connector))).configure());
         return this;
