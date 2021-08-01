@@ -165,7 +165,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.httpConnectorConfigurations = configuration.getHttpConnectorConfigurations();
             this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
             this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
-            this.configuration.communicatorProxyProvider = configuration.getConnectorProvider();
+            this.configuration.connectorProvider = configuration.getConnectorProvider();
+            this.configuration.communicatorProxyProvider = configuration.getCommunicatorProxyProvider();
             return this;
         }
     }
