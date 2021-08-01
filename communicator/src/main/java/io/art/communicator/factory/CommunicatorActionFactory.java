@@ -40,7 +40,7 @@ public class CommunicatorActionFactory {
 
     public CommunicatorAction preconfiguredCommunicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
-        CommunicatorConfiguration configuration = CommunicatorConfiguration.builder().refresher(new CommunicatorRefresher()).build();
+        CommunicatorConfiguration configuration = CommunicatorConfiguration.defaults(new CommunicatorRefresher());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(method.returnType())

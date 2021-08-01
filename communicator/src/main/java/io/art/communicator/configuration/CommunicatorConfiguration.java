@@ -23,7 +23,6 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
-import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -32,7 +31,6 @@ import static java.util.Optional.*;
 import java.util.*;
 import java.util.function.*;
 
-@Builder
 public class CommunicatorConfiguration {
     private final CommunicatorRefresher refresher;
 

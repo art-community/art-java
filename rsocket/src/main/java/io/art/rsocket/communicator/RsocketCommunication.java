@@ -64,19 +64,22 @@ import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
 public class RsocketCommunication implements Communication {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = logger(RsocketCommunication.class);
     private final RsocketModuleConfiguration configuration;
+    private final Property<RSocketClient> client;
+    private final Property<Function<Flux<Object>, Flux<Object>>> communication;
     private CommunicatorAction action;
 
-    private final Property<RSocketClient> client = property(this::createClient, this::disposeClient).listenConsumer(() -> configuration.getConsumer()
-            .connectorConsumers()
-            .consumerFor(connectorConfiguration().getConnector()));
-
-    private final Property<Function<Flux<Object>, Flux<Object>>> communication = property(this::communication)
-            .listenProperties(client);
+    public RsocketCommunication(RsocketModuleConfiguration configuration) {
+        this.configuration = configuration;
+        client = property(this::createClient, this::disposeClient).listenConsumer(() -> configuration.getConsumer()
+                .connectorConsumers()
+                .consumerFor(connectorConfiguration().getConnector()));
+        communication = property(this::communication)
+                .listenProperties(client);
+    }
 
     @Override
     public void initialize(CommunicatorAction action) {
