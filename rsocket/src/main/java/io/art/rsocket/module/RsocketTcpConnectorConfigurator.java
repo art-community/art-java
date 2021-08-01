@@ -2,7 +2,6 @@ package io.art.rsocket.module;
 
 import io.art.rsocket.configuration.communicator.*;
 import io.art.rsocket.configuration.communicator.RsocketCommonConnectorConfiguration.*;
-import io.art.rsocket.configuration.communicator.RsocketTcpClientConfiguration.*;
 import lombok.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;
@@ -24,8 +23,12 @@ public class RsocketTcpConnectorConfigurator {
         return this;
     }
 
-    public RsocketTcpConnectorConfigurator single(UnaryOperator<RsocketTcpClientConfigurationBuilder> configurator) {
-        single = configurator.apply(RsocketTcpClientConfiguration.builder().connector(connector)).build();
+    public RsocketTcpConnectorConfigurator single(UnaryOperator<RsocketTcpClientConfigurator> configurator) {
+        RsocketTcpClientConfigurator clientConfigurator = configurator.apply(new RsocketTcpClientConfigurator());
+        single = clientConfigurator.tcp()
+                .apply(RsocketTcpClientConfiguration.builder())
+                .commonConfiguration(clientConfigurator.common().apply(RsocketCommonClientConfiguration.defaults(connector).toBuilder()).build())
+                .build();
         return this;
     }
 

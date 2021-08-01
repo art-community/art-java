@@ -1,7 +1,6 @@
 package io.art.rsocket.module;
 
 import io.art.rsocket.configuration.communicator.*;
-import io.art.rsocket.configuration.communicator.RsocketTcpClientConfiguration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import lombok.*;
 import static io.art.core.factory.SetFactory.*;
@@ -14,8 +13,12 @@ public class RsocketTcpClientGroupConfigurator {
     private final BalancerMethod balancer;
     private final Set<RsocketTcpClientConfiguration> clients = set();
 
-    public RsocketTcpClientGroupConfigurator client(UnaryOperator<RsocketTcpClientConfigurationBuilder> configurator) {
-        clients.add(configurator.apply(RsocketTcpClientConfiguration.builder().connector(connector)).build());
+    public RsocketTcpClientGroupConfigurator client(UnaryOperator<RsocketTcpClientConfigurator> configurator) {
+        RsocketTcpClientConfigurator clientConfigurator = configurator.apply(new RsocketTcpClientConfigurator());
+        clients.add(clientConfigurator.tcp()
+                .apply(RsocketTcpClientConfiguration.builder())
+                .commonConfiguration(clientConfigurator.common().apply(RsocketCommonClientConfiguration.defaults(connector).toBuilder()).build())
+                .build());
         return this;
     }
 
