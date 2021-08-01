@@ -29,7 +29,7 @@ public class RsocketTest {
                                         .configure(builder -> builder.logging(true).dataFormat(JSON)))
                                 .forClass(TestRsocketCommunicator.class, configurator -> configurator.target(TestRsocketService.class).loggable()))
                         .server(server -> server
-                                .tcp(tcp -> tcp.common(builder -> builder.port(1234)))
+                                .tcp(tcp -> tcp.common(builder -> builder.port(1234).logging(true)))
                                 .forClass(TestRsocketService.class, ServiceMethodConfigurator::loggable)))
         );
     }
@@ -38,6 +38,5 @@ public class RsocketTest {
     public void test() {
         TestRsocketCommunicator communicator = rsocketCommunicator(TestRsocketCommunicator.class);
         communicator.m("test");
-        ThreadExtensions.block();
     }
 }
