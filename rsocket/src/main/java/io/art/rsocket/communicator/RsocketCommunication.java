@@ -255,7 +255,7 @@ public class RsocketCommunication implements Communication {
         RsocketHttpConnectorConfiguration httpConnectorConfiguration = httpConnectorConfigurations.get(action.getConnector());
         return let(tcpConnectorConfiguration,
                 (Function<RsocketTcpConnectorConfiguration, RsocketCommonConnectorConfiguration>) RsocketTcpConnectorConfiguration::getCommonConfiguration,
-                (Supplier<RsocketCommonConnectorConfiguration>) httpConnectorConfiguration::getCommonConfiguration
+                ((Supplier<RsocketCommonConnectorConfiguration>)  () -> httpConnectorConfiguration.getCommonConfiguration())
         );
     }
 
