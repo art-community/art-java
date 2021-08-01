@@ -15,8 +15,8 @@ import java.util.function.*;
 @Setter
 @Accessors(fluent = true)
 public class RsocketCommunicatorConfigurator {
-    private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
-    private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
+    private Map<Class<?>, RsocketTcpConnectorConfiguration> tcpConnectors = map();
+    private Map<Class<?>, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
     public RsocketCommunicatorConfigurator tcp(Class<?> connectorClass) {
         return tcp(connectorClass, UnaryOperator.identity());
@@ -34,12 +34,12 @@ public class RsocketCommunicatorConfigurator {
         return http(communicatorId(connectorClass), configurator);
     }
 
-    public RsocketCommunicatorConfigurator tcp(String connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
+    private RsocketCommunicatorConfigurator tcp(Class<?> connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
         tcpConnectors.put(connector, configurator.apply(new RsocketTcpConnectorConfigurator(connector)).configure());
         return this;
     }
 
-    public RsocketCommunicatorConfigurator http(String connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
+    private RsocketCommunicatorConfigurator http(Class<?> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
         httpConnectors.put(connector, configurator.apply(new RsocketHttpConnectorConfigurator(connector)).configure());
         return this;
     }

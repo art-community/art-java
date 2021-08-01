@@ -43,7 +43,7 @@ public class RsocketManager {
     }
 
     public void initializeCommunicators() {
-        configuration.getCommunicatorProxyProvider()
+        configuration.getConnectorProvider()
                 .get()
                 .values()
                 .stream()
@@ -52,7 +52,7 @@ public class RsocketManager {
     }
 
     public void disposeCommunicators() {
-        configuration.getCommunicatorProxyProvider()
+        configuration.getConnectorProvider()
                 .get()
                 .values()
                 .stream()

@@ -63,7 +63,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxyProvider;
+    private LazyProperty<ImmutableMap<Class<?>, Connector>> connectorProvider;
 
     @Getter
     private CommunicatorConfiguration communicatorConfiguration;
@@ -162,7 +162,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.httpConnectorConfigurations = configuration.getHttpConnectorConfigurations();
             this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
             this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
-            this.configuration.communicatorProxyProvider = configuration.getCommunicatorProxyProvider();
+            this.configuration.communicatorProxyProvider = configuration.getConnectorProvider();
             return this;
         }
     }
