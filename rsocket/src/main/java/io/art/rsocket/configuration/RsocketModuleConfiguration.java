@@ -66,6 +66,9 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<ImmutableMap<Class<?>, Connector>> connectorProvider;
 
     @Getter
+    private LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<? extends Communicator>>> communicatorProxyProvider;
+
+    @Getter
     private CommunicatorConfiguration communicatorConfiguration;
 
     @Getter

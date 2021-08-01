@@ -4,6 +4,7 @@ import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.property.*;
+import io.art.rsocket.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import lombok.*;
@@ -34,13 +35,13 @@ public class RsocketCommunicatorConfigurator {
 
     private RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connector, Function<RsocketTcpConnectorConfigurator, CommunicatorConfigurator> configurator) {
         RsocketTcpConnectorConfigurator connectorConfigurator = cast(configurator.apply(new RsocketTcpConnectorConfigurator(connector)));
-        connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector))));
+        connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
         tcpConnectors.put(normalizeToId(connector), connectorConfigurator.configure());
         return this;
     }
 
     private RsocketCommunicatorConfigurator http(Class<? extends Connector> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
-        connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector))));
+        connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
         httpConnectors.put(normalizeToId(connector), configurator.apply(new RsocketHttpConnectorConfigurator(normalizeToId(connector))).configure());
         return this;
     }

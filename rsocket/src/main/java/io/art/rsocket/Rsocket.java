@@ -7,7 +7,11 @@ import static io.art.rsocket.module.RsocketModule.*;
 
 @UtilityClass
 public class Rsocket {
-    public static <T extends Connector> T rsocketConnector(Class<T> proxyClass) {
-        return cast(rsocketModule().configuration().getConnectorProvider().get().get(proxyClass));
+    public static <T extends Connector> T rsocketConnector(Class<T> connectorClass) {
+        return cast(rsocketModule().configuration().getConnectorProvider().get().get(connectorClass));
+    }
+
+    public static <T extends Communicator> T rsocketCommunicator(Class<T> communicatorClass) {
+        return cast(rsocketModule().configuration().getCommunicatorProxyProvider().get().get(communicatorClass));
     }
 }

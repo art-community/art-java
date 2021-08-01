@@ -17,9 +17,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class ConnectorProxyFactory {
-    public static <T extends Connector> T createConnectorProxy(MetaClass<T> connectorClass) {
-        Function<MetaClass<?>, Connector> creator = proxy -> cast(proxy.creator().validate(CommunicatorException::new).instantiate());
-
+    public static <T extends Connector> T createConnectorProxy(MetaClass<T> connectorClass, Function<Class<? extends Communicator>, ? extends Communicator> provider) {
         Map<MetaMethod<?>, MetaClass<?>> proxies = connectorClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() == 0)
@@ -34,12 +32,12 @@ public class ConnectorProxyFactory {
             throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY, connectorClass.definition().type().getName(), invalidMethods));
         }
 
-        Map<MetaMethod<?>, Function<Object, Object>> invocations = proxies
+        Map<MetaMethod<?>, Function<Class<? extends Communicator>, ? extends Communicator>> invocations = proxies
                 .entrySet()
                 .stream()
-                .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> creator.apply(entry.getKey().returnType().declaration())));
+                .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> provider.apply(cast(entry.getKey().returnType().type()))));
 
-        MetaProxy proxy = connectorClass.proxy(invocations);
+        MetaProxy proxy = connectorClass.proxy(cast(invocations));
 
         if (isNull(proxy)) {
             throw new CommunicatorException(format(PROXY_IS_NULL, connectorClass.definition().type().getName()));

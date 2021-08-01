@@ -18,6 +18,13 @@ public class RsocketHttpConnectorConfiguration extends CommunicatorConfigurator 
     private RsocketHttpClientGroupConfiguration groupConfiguration;
     private RsocketHttpClientConfiguration singleConfiguration;
 
+    public RsocketHttpConnectorConfiguration(RsocketCommonConnectorConfiguration commonConfiguration, RsocketHttpClientGroupConfiguration groupConfiguration, RsocketHttpClientConfiguration singleConfiguration) {
+        super(configurationProvider, communication);
+        this.commonConfiguration = commonConfiguration;
+        this.groupConfiguration = groupConfiguration;
+        this.singleConfiguration = singleConfiguration;
+    }
+
     public static RsocketHttpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, ConfigurationSource source) {
         RsocketHttpConnectorConfiguration configuration = RsocketHttpConnectorConfiguration.builder().build();
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, current.commonConfiguration, source);

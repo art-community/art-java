@@ -7,7 +7,7 @@ import lombok.*;
 
 @Getter
 @RequiredArgsConstructor
-public class CommunicatorProxy<T> {
+public class CommunicatorProxy<T extends Communicator> {
     private final T proxy;
     private final ImmutableMap<CommunicatorActionIdentifier, CommunicatorAction> actions;
 }
