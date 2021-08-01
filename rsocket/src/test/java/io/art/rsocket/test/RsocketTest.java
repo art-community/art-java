@@ -22,15 +22,11 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp("server", tcp -> tcp
-                                        .weighted(group -> group
-                                                .client(client -> client.port(1234).host("1.1.1.1"))
-                                                .client(client -> client.port(1234).host("1.1.1.2"))))
-                                .forClass(TestRsocketCommunicator.class, action -> action.connector("server"))
+                                .tcp(TestRsocketCommunicator.class, tcp -> tcp.weighted(group -> group.client(client -> client.port(1234))))
+                                .forClass(TestRsocketCommunicator.class)
                         )
                         .server(server -> server
-                                .tcp(tcp -> tcp.port(1234).logging(false))
-                                .http(http -> http.port(1234).logging(false))
+                                .tcp(tcp -> tcp.port(1234).logging(true))
                                 .forClass(TestRsocketService.class, ServiceMethodConfigurator::loggable)))
         );
     }
