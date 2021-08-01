@@ -34,11 +34,6 @@ public class CommunicatorActionConfigurator {
         return this;
     }
 
-    public CommunicatorActionConfigurator target(Class<?> serviceClass) {
-        this.targetServiceId = serviceClass.getSimpleName();
-        return this;
-    }
-
     public CommunicatorActionConfigurator connector(String connector) {
         this.connector = connector;
         return this;

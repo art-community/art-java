@@ -20,6 +20,7 @@ package io.art.rsocket.communicator;
 
 import io.art.communicator.*;
 import io.art.communicator.action.*;
+import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -248,10 +249,11 @@ public class RsocketCommunication implements Communication {
     }
 
     private RsocketCommonConnectorConfiguration connectorConfiguration() {
-        return rsocketModule().configuration()
-                .getTcpConnectorConfigurations()
-                .get(action.getConnector())
-                .getCommonConfiguration();
+        ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = rsocketModule().configuration().getTcpConnectorConfigurations();
+        ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = rsocketModule().configuration().getHttpConnectorConfigurations();
+        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = tcpConnectorConfigurations.get(action.getConnector());
+        RsocketHttpConnectorConfiguration httpConnectorConfiguration = httpConnectorConfigurations.get(action.getConnector());
+        return let(tcpConnectorConfiguration, RsocketTcpConnectorConfiguration::getCommonConfiguration, httpConnectorConfiguration.getCommonConfiguration());
     }
 
     private Function<Flux<Object>, Flux<Object>> communication() {

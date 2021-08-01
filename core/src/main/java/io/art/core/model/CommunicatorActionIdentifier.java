@@ -20,6 +20,8 @@ package io.art.core.model;
 
 import lombok.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.constants.TransportConstants.COMMUNICATOR_CLASS_SUFFIX;
+import static io.art.core.constants.TransportConstants.SERVICE_CLASS_SUFFIX;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
@@ -34,4 +36,13 @@ public class CommunicatorActionIdentifier {
     public static CommunicatorActionIdentifier communicatorActionId(String communicatorId, String actionId) {
         return putIfAbsent(CACHE, EMPTY_STRING + communicatorId + actionId, () -> new CommunicatorActionIdentifier(communicatorId, actionId));
     }
+
+    public static String communicatorId(Class<?> serviceClass) {
+        int suffixIndex = serviceClass.getSimpleName().toLowerCase().lastIndexOf(COMMUNICATOR_CLASS_SUFFIX);
+        if (suffixIndex == -1) {
+            return serviceClass.getSimpleName();
+        }
+        return serviceClass.getSimpleName().substring(0, suffixIndex);
+    }
+
 }

@@ -4,6 +4,7 @@ import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;
 
@@ -12,7 +13,7 @@ public class RsocketHttpConnectorConfigurator {
     private final String connector;
     private RsocketHttpClientGroupConfiguration group;
     private RsocketHttpClientConfiguration single;
-    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator;
+    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
 
     public RsocketHttpConnectorConfigurator roundRobin(UnaryOperator<RsocketHttpClientGroupConfigurator> configurator) {
         group = configurator.apply(new RsocketHttpClientGroupConfigurator(connector, ROUND_ROBIN)).configure();
@@ -41,7 +42,7 @@ public class RsocketHttpConnectorConfigurator {
         return RsocketHttpConnectorConfiguration.builder()
                 .commonConfiguration(commonConfigurator.apply(RsocketCommonConnectorConfiguration.defaults(connector).toBuilder()).build())
                 .groupConfiguration(group)
-                .singleConfiguration(single)
+                .singleConfiguration(orElse(single, RsocketHttpClientConfiguration.defaults(connector)))
                 .build();
     }
 }

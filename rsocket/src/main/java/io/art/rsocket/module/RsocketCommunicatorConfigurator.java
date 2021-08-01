@@ -10,7 +10,9 @@ import io.art.rsocket.configuration.communicator.tcp.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static java.util.function.UnaryOperator.identity;
 import java.util.*;
 import java.util.function.*;
 
@@ -20,12 +22,28 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
+    public RsocketCommunicatorConfigurator tcp(Class<?> proxyClass) {
+        return tcp(communicatorId(proxyClass));
+    }
+
+    public RsocketCommunicatorConfigurator http(Class<?> proxyClass) {
+        return http(communicatorId(proxyClass));
+    }
+
+    public RsocketCommunicatorConfigurator tcp(String connector) {
+        return tcp(connector, identity());
+    }
+
+    public RsocketCommunicatorConfigurator http(String connector) {
+        return http(connector, identity());
+    }
+
     public RsocketCommunicatorConfigurator tcp(Class<?> proxyClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
-        return tcp(proxyClass.getSimpleName(), configurator);
+        return tcp(communicatorId(proxyClass), configurator);
     }
 
     public RsocketCommunicatorConfigurator http(Class<?> proxyClass, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
-        return http(proxyClass.getSimpleName(), configurator);
+        return http(communicatorId(proxyClass), configurator);
     }
 
     public RsocketCommunicatorConfigurator tcp(String connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {

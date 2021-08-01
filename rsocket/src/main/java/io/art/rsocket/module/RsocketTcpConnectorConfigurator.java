@@ -4,6 +4,7 @@ import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.orElse;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;
 
@@ -41,7 +42,7 @@ public class RsocketTcpConnectorConfigurator {
         return RsocketTcpConnectorConfiguration.builder()
                 .commonConfiguration(commonConfigurator.apply(RsocketCommonConnectorConfiguration.defaults(connector).toBuilder()).build())
                 .groupConfiguration(group)
-                .singleConfiguration(single)
+                .singleConfiguration(orElse(single, RsocketTcpClientConfiguration.defaults(connector)))
                 .build();
     }
 }

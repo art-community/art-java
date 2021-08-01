@@ -17,6 +17,7 @@ import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.util.Objects.*;
@@ -98,11 +99,12 @@ public abstract class CommunicatorConfigurator {
 
     private CommunicatorAction createAction(MetaClass<?> proxyClass, MetaMethod<?> metaMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(metaMethod.parameters().values()).get(0).type(), isNotEmpty(metaMethod.parameters()));
-        CommunicatorActionIdentifier id = communicatorActionId(proxyClass.definition().type().getSimpleName(), metaMethod.name());
+        CommunicatorActionIdentifier id = communicatorActionId(communicatorId(proxyClass.definition().type()), metaMethod.name());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(metaMethod.returnType())
                 .connector(id.getCommunicatorId())
+                .targetServiceMethod(serviceMethodId(id.getCommunicatorId(), id.getActionId()))
                 .communication(communication.get());
         UnaryOperator<CommunicatorActionBuilder> configurator = decorator.apply(new CommunicatorActionConfigurator(id, configurationProvider.get())).configure();
         if (nonNull(inputType)) {
