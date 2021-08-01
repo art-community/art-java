@@ -35,7 +35,7 @@ public class RsocketTest {
 
     @Test
     public void test() {
-        TestRsocketCommunicator communicator = rsocketCommunicator(TestRsocketCommunicator.class);
-        communicator.m("test");
+        TestRsocketConnector communicator = rsocketConnector(TestRsocketConnector.class);
+        communicator.testRsocket().m("test");
     }
 }
