@@ -81,16 +81,12 @@ public abstract class MetaPackage {
 
     public Optional<MetaPackage> packageOf(String name) {
         String[] parts = name.split(ESCAPED_DOT);
-        if (isEmpty(parts)) {
-            return empty();
-        }
+        if (isEmpty(parts)) return empty();
         MetaPackage root = packages.get(parts[0]);
         if (isNull(root)) return empty();
         if (parts.length == 1) return of(root);
         Optional<MetaPackage> found = root.packageOf(join(DOT, skip(1, parts)));
-        if (found.isPresent()) {
-            return found.map(Caster::cast);
-        }
+        if (found.isPresent()) return found.map(Caster::cast);
         return empty();
     }
 
