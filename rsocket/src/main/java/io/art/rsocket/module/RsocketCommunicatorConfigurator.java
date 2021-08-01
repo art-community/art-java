@@ -28,10 +28,6 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
-    RsocketCommunicatorConfigurator() {
-        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration(), connector));
-    }
-
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
         return tcp(connectorClass, cast(Function.identity()));
     }
@@ -66,6 +62,6 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     }
 
     LazyProperty<ImmutableMap<Class<?>, Communicator>> communicators() {
-        return get();
+        return get(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()), lazy(() -> cast(connectors().get().keySet())));
     }
 }
