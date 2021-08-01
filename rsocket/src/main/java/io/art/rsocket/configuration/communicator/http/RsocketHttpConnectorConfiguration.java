@@ -1,5 +1,9 @@
 package io.art.rsocket.configuration.communicator.http;
 
+import io.art.communicator.configurator.*;
+import io.art.communicator.proxy.*;
+import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
@@ -9,7 +13,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 
 @Getter
 @Builder(toBuilder = true)
-public class RsocketHttpConnectorConfiguration {
+public class RsocketHttpConnectorConfiguration extends CommunicatorConfigurator {
     private RsocketCommonConnectorConfiguration commonConfiguration;
     private RsocketHttpClientGroupConfiguration groupConfiguration;
     private RsocketHttpClientConfiguration singleConfiguration;
@@ -41,5 +45,9 @@ public class RsocketHttpConnectorConfiguration {
                 RsocketHttpClientConfiguration.defaults(connector)
         );
         return configuration;
+    }
+
+    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxies() {
+        return get();
     }
 }

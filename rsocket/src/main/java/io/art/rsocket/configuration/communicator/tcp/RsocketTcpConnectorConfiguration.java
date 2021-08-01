@@ -1,18 +1,28 @@
 package io.art.rsocket.configuration.communicator.tcp;
 
+import io.art.communicator.configurator.*;
+import io.art.communicator.proxy.*;
+import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
+import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.rsocket.module.RsocketModule.*;
 
 @Getter
 @Builder(toBuilder = true)
-public class RsocketTcpConnectorConfiguration {
+public class RsocketTcpConnectorConfiguration extends CommunicatorConfigurator {
     private RsocketCommonConnectorConfiguration commonConfiguration;
     private RsocketTcpClientGroupConfiguration groupConfiguration;
     private RsocketTcpClientConfiguration singleConfiguration;
+
+    RsocketTcpConnectorConfiguration() {
+        super(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()));
+    }
 
     public static RsocketTcpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
         RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
@@ -41,5 +51,9 @@ public class RsocketTcpConnectorConfiguration {
                 RsocketTcpClientConfiguration.defaults(connector)
         );
         return configuration;
+    }
+
+    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxies() {
+        return get();
     }
 }
