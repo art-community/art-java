@@ -18,7 +18,6 @@
 
 package io.art.rsocket.module;
 
-import io.art.communicator.proxy.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;

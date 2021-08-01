@@ -63,10 +63,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<?>, Connector>> connectorProvider;
+    private LazyProperty<ImmutableMap<Class<?>, ? extends Connector>> connectorProvider;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<? extends Communicator>>> communicatorProxyProvider;
+    private LazyProperty<ImmutableMap<Class<?>, ? extends Communicator>> communicatorProvider;
 
     @Getter
     private CommunicatorConfiguration communicatorConfiguration;
@@ -98,7 +98,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         tcpConnectorConfigurations = emptyImmutableMap();
         httpConnectorConfigurations = emptyImmutableMap();
-        communicatorProxyProvider = lazy(ImmutableMap::emptyImmutableMap);
+        communicatorProvider = lazy(ImmutableMap::emptyImmutableMap);
         communicatorConfiguration = CommunicatorConfiguration.defaults(communicatorRefresher);
     }
 
@@ -166,7 +166,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.tcpConnectorConfigurations = configuration.getTcpConnectorConfigurations();
             this.configuration.communicatorConfiguration = configuration.getCommunicatorConfiguration();
             this.configuration.connectorProvider = configuration.getConnectorProvider();
-            this.configuration.communicatorProxyProvider = configuration.getCommunicatorProxyProvider();
+            this.configuration.communicatorProvider = configuration.getCommunicatorProvider();
             return this;
         }
     }
