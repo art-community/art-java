@@ -58,7 +58,10 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     }
 
     LazyProperty<ImmutableMap<Class<?>, Connector>> connectors() {
-        return lazy(() -> connectors.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
+        return lazy(() -> connectors
+                .entrySet()
+                .stream()
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
     }
 
     LazyProperty<ImmutableMap<Class<?>, Communicator>> communicators() {
