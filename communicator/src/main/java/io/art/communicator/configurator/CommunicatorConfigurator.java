@@ -59,7 +59,7 @@ public abstract class CommunicatorConfigurator {
                 .build();
     }
 
-    private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> createCommunicators(LazyProperty<CommunicatorConfiguration> provider) {
+    private LazyProperty<ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>> createCommunicators(LazyProperty<CommunicatorConfiguration> provider) {
         return lazy(() -> createProxies(provider));
     }
 
@@ -71,8 +71,8 @@ public abstract class CommunicatorConfigurator {
     }
 
 
-    private ImmutableMap<Class<? extends Communicator>, ? extends Communicator> createProxies(LazyProperty<CommunicatorConfiguration> provider) {
-        ImmutableMap.Builder<Class<? extends Communicator>, ? extends Communicator> proxies = immutableMapBuilder();
+    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(LazyProperty<CommunicatorConfiguration> provider) {
+        ImmutableMap.Builder<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = immutableMapBuilder();
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
                 .collect(mapCollector(configuration -> configuration.communicatorClass.get(), configuration -> configuration.decorator));
@@ -87,7 +87,7 @@ public abstract class CommunicatorConfigurator {
                         new ActionConfiguration(communicatorClass, decorator, actionMethod),
                         new ConnectorConfiguration(connector.getValue().connector, connector.getValue().communication)
                 );
-                Communicator communicator = createCommunicatorProxy(communicatorClass, action);
+                CommunicatorProxy<? extends Communicator> communicator = createCommunicatorProxy(communicatorClass, action);
                 proxies.put(communicatorClass.definition().type(), cast(communicator));
             }
         }

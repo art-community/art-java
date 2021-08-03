@@ -12,6 +12,6 @@ public class Rsocket {
     }
 
     public static <T extends Communicator> T rsocketCommunicator(Class<T> communicatorClass) {
-        return cast(rsocketModule().configuration().getCommunicator().getCommunicators().get().get(communicatorClass));
+        return cast(rsocketModule().configuration().getCommunicator().getCommunicators().get().get(communicatorClass).getCommunicator());
     }
 }

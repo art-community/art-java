@@ -6,7 +6,6 @@ import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -21,9 +20,7 @@ public class RsocketTest {
                 logging(),
                 json(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator
-                                .tcp(TestRsocketConnector.class, connector -> connector.configure(common -> common.logging(true)))
-                                .configure(TestRsocketOtherCommunicator.class, action -> action.target(normalizeToId(TestRsocketCommunicator.class))))
+                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, connector -> connector.configure(common -> common.logging(true))))
                         .server(server -> server
                                 .tcp(tcp -> tcp.common(common -> common.logging(true)))
                                 .forClass(TestRsocketService.class))

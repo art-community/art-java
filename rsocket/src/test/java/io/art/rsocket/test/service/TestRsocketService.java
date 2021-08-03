@@ -10,6 +10,5 @@ public class TestRsocketService implements TestRsocket {
     @Override
     public void m2(String req) {
 
-
     }
 }

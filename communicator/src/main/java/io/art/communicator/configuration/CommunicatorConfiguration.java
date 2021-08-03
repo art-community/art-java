@@ -29,6 +29,7 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
@@ -45,16 +46,11 @@ public class CommunicatorConfiguration {
     private ImmutableMap<String, CommunicatorProxyConfiguration> proxies;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors;
+    private final LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators;
+    private final LazyProperty<ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>> communicators;
 
-    private CommunicatorConfiguration(CommunicatorRefresher refresher) {
-        this.refresher = refresher;
-        this.proxies = emptyImmutableMap();
-        this.consumer = refresher.consumer();
-    }
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
         CommunicatorProxyConfiguration proxyConfiguration = proxies.get(id.getCommunicatorId());
@@ -101,11 +97,17 @@ public class CommunicatorConfiguration {
     }
 
     public static CommunicatorConfiguration defaults(CommunicatorRefresher refresher) {
-        return new CommunicatorConfiguration(refresher);
+        return CommunicatorConfiguration.builder()
+                .refresher(refresher)
+                .consumer(refresher.consumer())
+                .connectors(lazy(ImmutableMap::emptyImmutableMap))
+                .communicators(lazy(ImmutableMap::emptyImmutableMap))
+                .proxies(emptyImmutableMap())
+                .build();
     }
 
     public static CommunicatorConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
-        CommunicatorConfiguration configuration = new CommunicatorConfiguration(refresher);
+        CommunicatorConfiguration configuration = defaults(refresher);
         configuration.proxies = ofNullable(source.getNested(COMMUNICATOR_SECTION))
                 .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(configuration.refresher, service)))
                 .orElse(emptyImmutableMap());

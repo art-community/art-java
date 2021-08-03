@@ -27,6 +27,7 @@ import io.art.server.refresher.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -42,16 +43,10 @@ public class ServerConfiguration {
     private final ServerRefresher.Consumer consumer;
 
     @Getter
-    private ImmutableMap<String, ServiceConfiguration> services;
+    private final LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods;
 
     @Getter
-    private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods;
-
-    private ServerConfiguration(ServerRefresher refresher) {
-        this.refresher = refresher;
-        this.services = emptyImmutableMap();
-        this.consumer = refresher.consumer();
-    }
+    private ImmutableMap<String, ServiceConfiguration> services;
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
         return ofNullable(services.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
@@ -96,11 +91,15 @@ public class ServerConfiguration {
     }
 
     public static ServerConfiguration defaults(ServerRefresher refresher) {
-        return new ServerConfiguration(refresher);
+        return ServerConfiguration.builder().refresher(refresher)
+                .consumer(refresher.consumer())
+                .serviceMethods(lazy(ImmutableArray::emptyImmutableArray))
+                .services(emptyImmutableMap())
+                .build();
     }
 
     public static ServerConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
-        ServerConfiguration configuration = new ServerConfiguration(refresher);
+        ServerConfiguration configuration = defaults(refresher);
         configuration.services = ofNullable(source.getNested(SERVER_SECTION))
                 .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                 .orElse(emptyImmutableMap());
