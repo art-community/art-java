@@ -25,11 +25,13 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class, connector -> connector
-                                        .configure(builder -> builder.logging(true).service(asId(TestRsocket.class))))
+                                        .configure(builder -> builder.service(asId(TestRsocket.class))))
                                 .http(TestRsocketConnector2.class, connector -> connector
-                                        .configure(builder -> builder.service(asId(TestRsocket.class)).logging(true))
+                                        .configure(builder -> builder.service(asId(TestRsocket.class)))
                                         .single(client -> client.common(common -> common.port(9001))))
-                                .configure(TestRsocket.class, MetaTestRsocketClass::m1Method, CommunicatorActionConfigurator::loggable))
+                                .configure(TestRsocket.class, CommunicatorActionConfigurator::loggable)
+                                .configure(TestRsocket.class, MetaTestRsocketClass::m3Method, action -> action.resilience().deactivable(true))
+                        )
                         .server(server -> server
                                 .tcp()
                                 .http(http -> http.common(common -> common.port(9001)))
@@ -43,9 +45,10 @@ public class RsocketTest {
         TestRsocketConnector1 tcp = rsocketConnector(TestRsocketConnector1.class);
         tcp.testRsocket().m1("test");
         tcp.testRsocket().m2("test");
+        tcp.testRsocket().m3("test");
 
         TestRsocketConnector2 http = rsocketConnector(TestRsocketConnector2.class);
         http.testRsocket().m1("test");
-        http.testRsocket().m2("test");
+        http.testRsocket().m3("test");
     }
 }
