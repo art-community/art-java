@@ -51,7 +51,7 @@ public class CommunicatorProxyFactory {
             String invalidMethods = proxyClass.methods().stream()
                     .filter(method -> !actions.containsKey(method))
                     .map(MetaMethod::toString)
-                    .collect(joining(NEW_LINE));
+                    .collect(joining(NEW_LINE + NEW_LINE));
             throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY, proxyClass.definition().type().getName(), invalidMethods));
         }
 

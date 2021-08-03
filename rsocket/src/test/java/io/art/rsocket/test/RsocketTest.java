@@ -20,7 +20,8 @@ public class RsocketTest {
                 logging(),
                 json(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, connector -> connector.configure(common -> common.logging(true))))
+                        .communicator(communicator -> communicator
+                                .tcp(TestRsocketConnector.class, connector -> connector.configure(common -> common.logging(true))))
                         .server(server -> server
                                 .tcp(tcp -> tcp.common(common -> common.logging(true)))
                                 .forClass(TestRsocketService.class))

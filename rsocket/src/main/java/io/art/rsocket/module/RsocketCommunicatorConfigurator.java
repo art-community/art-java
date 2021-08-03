@@ -8,8 +8,6 @@ import io.art.core.property.*;
 import io.art.rsocket.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
-import lombok.*;
-import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -17,11 +15,9 @@ import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import java.util.*;
 import java.util.function.*;
 
-@Setter
-@Accessors(fluent = true)
 public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
-    private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
-    private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
+    private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
+    private final Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
         return tcp(connectorClass, cast(Function.identity()));

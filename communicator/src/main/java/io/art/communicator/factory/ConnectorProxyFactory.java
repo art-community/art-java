@@ -21,14 +21,14 @@ public class ConnectorProxyFactory {
         Map<MetaMethod<?>, MetaClass<?>> proxies = connectorClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() == 0)
-                .filter(method -> nonNull(method.returnType().declaration()) && Connector.class.isAssignableFrom(method.returnType().type()))
+                .filter(method -> nonNull(method.returnType().declaration()) && Communicator.class.isAssignableFrom(method.returnType().type()))
                 .collect(mapCollector(identity(), method -> method.returnType().declaration()));
 
         if (proxies.size() != connectorClass.methods().size()) {
             String invalidMethods = connectorClass.methods().stream()
                     .filter(method -> !proxies.containsKey(method))
                     .map(MetaMethod::toString)
-                    .collect(joining(NEW_LINE));
+                    .collect(joining(NEW_LINE + NEW_LINE));
             throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY, connectorClass.definition().type().getName(), invalidMethods));
         }
 
