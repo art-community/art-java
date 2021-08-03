@@ -25,7 +25,7 @@ public class RsocketTest {
                                 .tcp(TestRsocketConnector1.class, connector -> connector
                                         .configure(builder -> builder.logging(true).service(asId(TestRsocket.class))))
                                 .http(TestRsocketConnector2.class, connector -> connector
-                                        .configure(builder -> builder.service(asId(TestRsocket.class)))
+                                        .configure(builder -> builder.service(asId(TestRsocket.class)).logging(true))
                                         .single(client -> client.common(common -> common.port(9001)))))
                         .server(server -> server
                                 .tcp()
