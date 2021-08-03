@@ -98,6 +98,7 @@ public class RsocketCommonServerConfiguration {
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
             configuration.defaultServiceMethod = serverListener.emit(serviceMethodId(serviceId, methodId));
         }
+
         configuration.defaultServiceMethod = orElse(configuration.defaultServiceMethod, current.defaultServiceMethod);
 
         configuration.port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));

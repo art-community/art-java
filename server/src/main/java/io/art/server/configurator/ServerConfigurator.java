@@ -26,16 +26,16 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public abstract class ServerConfigurator {
     private final Supplier<ServerConfiguration> configurationProvider;
-    private final List<PackageBasedRegistration> packageBased = linkedList();
-    private final List<ClassBasedRegistration> classBased = linkedList();
-    private final List<MethodBasedRegistration> methodBased = linkedList();
+    private final List<PackageBasedConfiguration> packageBased = linkedList();
+    private final List<ClassBasedConfiguration> classBased = linkedList();
+    private final List<MethodBasedConfiguration> methodBased = linkedList();
 
     public ServerConfigurator forPackage(Supplier<MetaPackage> servicePackage) {
         return forPackage(servicePackage, identity());
     }
 
     public ServerConfigurator forPackage(Supplier<MetaPackage> servicePackage, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        packageBased.add(new PackageBasedRegistration(servicePackage, decorator));
+        packageBased.add(new PackageBasedConfiguration(servicePackage, decorator));
         return this;
     }
 
@@ -49,7 +49,7 @@ public abstract class ServerConfigurator {
     }
 
     public ServerConfigurator forClass(Supplier<MetaClass<?>> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        classBased.add(new ClassBasedRegistration(serviceClass, decorator));
+        classBased.add(new ClassBasedConfiguration(serviceClass, decorator));
         return this;
     }
 
@@ -59,27 +59,27 @@ public abstract class ServerConfigurator {
     }
 
     public ServerConfigurator forMethod(Supplier<MetaClass<?>> serviceClass, Supplier<MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        methodBased.add(new MethodBasedRegistration(serviceClass, serviceMethod, decorator));
+        methodBased.add(new MethodBasedConfiguration(serviceClass, serviceMethod, decorator));
         return this;
     }
 
 
-    protected LazyProperty<ImmutableArray<ServiceMethod>> get() {
+    protected LazyProperty<ImmutableArray<ServiceMethod>> create() {
         return lazy(this::createServiceMethods);
     }
 
 
     private ImmutableArray<ServiceMethod> createServiceMethods() {
         ImmutableArray.Builder<ServiceMethod> methods = immutableArrayBuilder();
-        for (PackageBasedRegistration registration : packageBased) {
+        for (PackageBasedConfiguration registration : packageBased) {
             registerPackages(methods, fixedArrayOf(registration.servicePackage.get()), registration.decorator);
         }
 
-        for (ClassBasedRegistration registration : classBased) {
+        for (ClassBasedConfiguration registration : classBased) {
             registerMethods(methods, registration.serviceClass.get(), registration.decorator);
         }
 
-        for (MethodBasedRegistration registration : methodBased) {
+        for (MethodBasedConfiguration registration : methodBased) {
             methods.add(createServiceMethod(registration.serviceClass.get(), registration.serviceMethod.get(), registration.decorator));
         }
 
@@ -121,19 +121,19 @@ public abstract class ServerConfigurator {
     }
 
     @RequiredArgsConstructor
-    private static class ClassBasedRegistration {
+    private static class ClassBasedConfiguration {
         final Supplier<MetaClass<?>> serviceClass;
         final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 
     @RequiredArgsConstructor
-    private static class PackageBasedRegistration {
+    private static class PackageBasedConfiguration {
         final Supplier<MetaPackage> servicePackage;
         final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 
     @RequiredArgsConstructor
-    private static class MethodBasedRegistration {
+    private static class MethodBasedConfiguration {
         final Supplier<MetaClass<?>> serviceClass;
         final Supplier<MetaMethod<?>> serviceMethod;
         final UnaryOperator<ServiceMethodConfigurator> decorator;

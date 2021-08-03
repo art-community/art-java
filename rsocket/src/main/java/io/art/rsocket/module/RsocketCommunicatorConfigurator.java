@@ -24,7 +24,7 @@ import java.util.function.*;
 @Setter
 @Accessors(fluent = true)
 public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
-    private Map<Class<? extends Connector>, LazyProperty<Connector>> connectors = map();
+    private Map<Class<? extends Connector>, LazyProperty<? extends Connector>> connectors = map();
     private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
@@ -65,6 +65,6 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     }
 
     LazyProperty<ImmutableMap<Class<?>, Communicator>> communicators() {
-        return get(() -> rsocketModule().configuration().getCommunicatorConfiguration(), () -> new RsocketCommunication(rsocketModule().configuration()), lazy(() -> cast(connectors().get().keySet())));
+        return get(() -> rsocketModule().configuration().getCommunicator(), () -> new RsocketCommunication(rsocketModule().configuration()), lazy(() -> cast(connectors().get().keySet())));
     }
 }

@@ -2,11 +2,12 @@ package io.art.rsocket.module;
 
 import io.art.rsocket.configuration.server.RsocketCommonServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 public class RsocketTcpServerConfigurator {
-    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = UnaryOperator.identity();
-    private UnaryOperator<RsocketCommonServerConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
+    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = identity();
+    private UnaryOperator<RsocketCommonServerConfigurationBuilder> commonConfigurator = identity();
 
     public RsocketTcpServerConfigurator special(UnaryOperator<RsocketTcpServerConfigurationBuilder> configurator) {
         this.tcpConfigurator = configurator;

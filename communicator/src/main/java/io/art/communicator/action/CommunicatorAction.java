@@ -73,9 +73,6 @@ public class CommunicatorAction implements Managed {
     @Builder.Default
     private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
 
-    @Getter
-    private final ServiceMethodIdentifier targetServiceMethod;
-
     @Override
     public void initialize() {
         communication.initialize(this);

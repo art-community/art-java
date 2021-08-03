@@ -77,7 +77,7 @@ public class RsocketServer implements Server {
 
     @Override
     public void initialize() {
-        serviceMethods = configuration.getServiceMethodProvider()
+        serviceMethods = configuration.getServiceMethods()
                 .get()
                 .stream()
                 .collect(immutableMapCollector(ServiceMethod::getId, identity()));
@@ -103,14 +103,14 @@ public class RsocketServer implements Server {
     }
 
     private CloseableChannel createTcpServer() {
-        RsocketTcpServerConfiguration tcp = this.configuration.getTcpServerConfiguration();
+        RsocketTcpServerConfiguration tcp = this.configuration.getTcpServer();
         RsocketCommonServerConfiguration common = tcp.getCommon();
         ServerTransport<CloseableChannel> transport = TcpServerTransport.create(TcpServer.create().port(common.getPort()), tcp.getMaxFrameLength());
         return createServer(common, transport);
     }
 
     private CloseableChannel createHttpServer() {
-        RsocketHttpServerConfiguration http = this.configuration.getHttpServerConfiguration();
+        RsocketHttpServerConfiguration http = this.configuration.getHttpServer();
         RsocketCommonServerConfiguration common = http.getCommon();
         ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(HttpServer.create().port(common.getPort()));
         return createServer(common, transport);
@@ -163,14 +163,14 @@ public class RsocketServer implements Server {
 
     private void setupTcpCloser(CloseableChannel channel) {
         this.tcpCloser = channel.onClose();
-        if (withLogging() && configuration.getTcpServerConfiguration().getCommon().isLogging()) {
+        if (withLogging() && configuration.getTcpServer().getCommon().isLogging()) {
             this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
         }
     }
 
     private void setupHttpCloser(CloseableChannel channel) {
         this.httpCloser = channel.onClose();
-        if (withLogging() && configuration.getHttpServerConfiguration().getCommon().isLogging()) {
+        if (withLogging() && configuration.getHttpServer().getCommon().isLogging()) {
             this.httpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
         }
     }

@@ -49,11 +49,12 @@ public class RsocketHttpClientGroupConfiguration {
         RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
         configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
-        configuration.clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> RsocketHttpClientConfiguration.from(
-                refresher,
-                RsocketHttpClientConfiguration.defaults(current.connector),
-                nested
-        )));
+        configuration.clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
         return configuration;
+    }
+
+    private static RsocketHttpClientConfiguration clientConfiguration(RsocketModuleRefresher refresher, RsocketHttpClientGroupConfiguration current, NestedConfiguration nested) {
+        RsocketHttpClientConfiguration defaults = RsocketHttpClientConfiguration.defaults(current.connector);
+        return RsocketHttpClientConfiguration.from(refresher, defaults, nested);
     }
 }

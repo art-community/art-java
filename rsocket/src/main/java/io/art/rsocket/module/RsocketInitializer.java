@@ -68,13 +68,13 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     public static class Initial extends RsocketModuleConfiguration {
         private boolean enableTcpServer = super.isEnableTcpServer();
         private boolean enableHttpServer = super.isEnableHttpServer();
-        private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServerConfiguration();
-        private RsocketHttpServerConfiguration httpServerConfiguration = super.getHttpServerConfiguration();
-        private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider = super.getServiceMethodProvider();
-        private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = super.getTcpConnectorConfigurations();
-        private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = super.getHttpConnectorConfigurations();
-        private LazyProperty<ImmutableMap<Class<?>, ? extends Connector>> connectorProvider = super.getConnectorProvider();
-        private LazyProperty<ImmutableMap<Class<?>, ? extends Communicator>> communicatorProvider = super.getCommunicatorProvider();
+        private RsocketTcpServerConfiguration tcpServerConfiguration = super.getTcpServer();
+        private RsocketHttpServerConfiguration httpServerConfiguration = super.getHttpServer();
+        private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethodProvider = super.getServiceMethods();
+        private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = super.getTcpConnector();
+        private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = super.getHttpConnector();
+        private LazyProperty<ImmutableMap<Class<?>, ? extends Connector>> connectorProvider = super.getConnectors();
+        private LazyProperty<ImmutableMap<Class<?>, ? extends Communicator>> communicatorProvider = super.getCommunicators();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

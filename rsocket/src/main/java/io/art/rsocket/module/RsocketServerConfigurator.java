@@ -7,19 +7,15 @@ import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.server.configurator.*;
 import io.art.server.method.*;
-import lombok.*;
-import lombok.experimental.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@Setter
-@Accessors(fluent = true)
 public class RsocketServerConfigurator extends ServerConfigurator {
     private boolean tcp;
     private boolean http;
-
-    private UnaryOperator<RsocketTcpServerConfigurator> tcpConfigurator = UnaryOperator.identity();
-    private UnaryOperator<RsocketHttpServerConfigurator> httpConfigurator = UnaryOperator.identity();
+    private UnaryOperator<RsocketTcpServerConfigurator> tcpConfigurator = identity();
+    private UnaryOperator<RsocketHttpServerConfigurator> httpConfigurator = identity();
 
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
@@ -44,7 +40,7 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     }
 
     RsocketServerConfigurator() {
-        super(() -> rsocketModule().configuration().getServerConfiguration());
+        super(() -> rsocketModule().configuration().getServer());
     }
 
     RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
@@ -74,6 +70,6 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     }
 
     LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods() {
-        return get();
+        return create();
     }
 }

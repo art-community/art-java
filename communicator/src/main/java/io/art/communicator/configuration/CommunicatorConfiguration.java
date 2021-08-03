@@ -69,6 +69,7 @@ public class CommunicatorConfiguration {
         return communicator && action;
     }
 
+
     private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorProxyConfiguration, T> mapper, T defaultValue) {
         CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {

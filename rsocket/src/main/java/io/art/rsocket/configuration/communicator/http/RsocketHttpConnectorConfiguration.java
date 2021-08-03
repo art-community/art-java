@@ -1,9 +1,5 @@
 package io.art.rsocket.configuration.communicator.http;
 
-import io.art.communicator.configurator.*;
-import io.art.communicator.model.*;
-import io.art.core.collection.*;
-import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
@@ -13,29 +9,20 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 
 @Getter
 @Builder(toBuilder = true)
-public class RsocketHttpConnectorConfiguration extends CommunicatorConfigurator {
+public class RsocketHttpConnectorConfiguration {
     private RsocketCommonConnectorConfiguration commonConfiguration;
     private RsocketHttpClientGroupConfiguration groupConfiguration;
     private RsocketHttpClientConfiguration singleConfiguration;
 
-    public RsocketHttpConnectorConfiguration(RsocketCommonConnectorConfiguration commonConfiguration, RsocketHttpClientGroupConfiguration groupConfiguration, RsocketHttpClientConfiguration singleConfiguration) {
-        super(configurationProvider, communication);
-        this.commonConfiguration = commonConfiguration;
-        this.groupConfiguration = groupConfiguration;
-        this.singleConfiguration = singleConfiguration;
-    }
-
     public static RsocketHttpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, ConfigurationSource source) {
         RsocketHttpConnectorConfiguration configuration = RsocketHttpConnectorConfiguration.builder().build();
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, current.commonConfiguration, source);
-        configuration.groupConfiguration = orElse(
-                source.getNested(GROUP_KEY, nested -> RsocketHttpClientGroupConfiguration.from(refresher, current.groupConfiguration, source)),
-                current.groupConfiguration
-        );
-        configuration.singleConfiguration = orElse(
-                source.getNested(SINGLE_KEY, nested -> RsocketHttpClientConfiguration.from(refresher, current.singleConfiguration, source)),
-                current.singleConfiguration
-        );
+
+        RsocketHttpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, current, nested));
+        configuration.groupConfiguration = orElse(groupConfiguration, current.groupConfiguration);
+
+        RsocketHttpClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, current, nested));
+        configuration.singleConfiguration = orElse(clientConfiguration, current.singleConfiguration);
         return configuration;
     }
 
@@ -43,18 +30,31 @@ public class RsocketHttpConnectorConfiguration extends CommunicatorConfigurator 
         RsocketHttpConnectorConfiguration configuration = RsocketHttpConnectorConfiguration.builder().build();
         String connector = configuration.commonConfiguration.getConnector();
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, source);
-        configuration.groupConfiguration = orElse(
-                source.getNested(GROUP_KEY, nested -> RsocketHttpClientGroupConfiguration.from(refresher, RsocketHttpClientGroupConfiguration.defaults(connector), source)),
-                RsocketHttpClientGroupConfiguration.defaults(connector)
-        );
-        configuration.singleConfiguration = orElse(
-                source.getNested(SINGLE_KEY, nested -> RsocketHttpClientConfiguration.from(refresher, RsocketHttpClientConfiguration.defaults(connector), source)),
-                RsocketHttpClientConfiguration.defaults(connector)
-        );
+
+        RsocketHttpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, connector, nested));
+        configuration.groupConfiguration = orElse(groupConfiguration, RsocketHttpClientGroupConfiguration.defaults(connector));
+
+        RsocketHttpClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, source, connector));
+        configuration.singleConfiguration = orElse(clientConfiguration, RsocketHttpClientConfiguration.defaults(connector));
         return configuration;
     }
 
-    LazyProperty<ImmutableMap<Class<?>, CommunicatorProxy<?>>> communicatorProxies() {
-        return get();
+
+    private static RsocketHttpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, ConfigurationSource source, String connector) {
+        RsocketHttpClientConfiguration defaults = RsocketHttpClientConfiguration.defaults(connector);
+        return RsocketHttpClientConfiguration.from(refresher, defaults, source);
+    }
+
+    private static RsocketHttpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, String connector, NestedConfiguration nested) {
+        RsocketHttpClientGroupConfiguration defaults = RsocketHttpClientGroupConfiguration.defaults(connector);
+        return RsocketHttpClientGroupConfiguration.from(refresher, defaults, nested);
+    }
+
+    private static RsocketHttpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, NestedConfiguration nested) {
+        return RsocketHttpClientConfiguration.from(refresher, current.singleConfiguration, nested);
+    }
+
+    private static RsocketHttpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, NestedConfiguration nested) {
+        return RsocketHttpClientGroupConfiguration.from(refresher, current.groupConfiguration, nested);
     }
 }
