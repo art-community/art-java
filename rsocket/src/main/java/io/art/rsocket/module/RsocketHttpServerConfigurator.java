@@ -18,11 +18,11 @@ public class RsocketHttpServerConfigurator {
         return this;
     }
 
-    UnaryOperator<RsocketHttpServerConfigurationBuilder> http() {
-        return httpConfigurator;
+    RsocketHttpServerConfigurationBuilder http(RsocketHttpServerConfigurationBuilder builder) {
+        return httpConfigurator.apply(builder);
     }
 
-    UnaryOperator<RsocketCommonServerConfigurationBuilder> common() {
-        return commonConfigurator;
+    RsocketCommonServerConfigurationBuilder common(RsocketCommonServerConfigurationBuilder builder) {
+        return commonConfigurator.apply(builder);
     }
 }

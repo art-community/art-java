@@ -4,6 +4,7 @@ import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.rsocket.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
@@ -12,6 +13,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -31,15 +33,17 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
         RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connectorClass)));
-        registerConnector(connectorClass, Rsocket::rsocketCommunicator);
-        tcpConnectors.put(asId(connectorClass), connectorConfigurator.configure());
+        RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
+        tcpConnectors.put(asId(connectorClass), configuration);
+        registerConnector(connectorClass, Rsocket::rsocketCommunicator, () -> createTcpCommunication(configuration));
         return this;
     }
 
     public RsocketCommunicatorConfigurator http(Class<? extends Connector> connectorClass, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
         RsocketHttpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketHttpConnectorConfigurator(asId(connectorClass)));
-        registerConnector(connectorClass, Rsocket::rsocketCommunicator);
-        httpConnectors.put(asId(connectorClass), connectorConfigurator.configure());
+        RsocketHttpConnectorConfiguration configuration = connectorConfigurator.configure();
+        httpConnectors.put(asId(connectorClass), configuration);
+        registerConnector(connectorClass, Rsocket::rsocketCommunicator, () -> createHttpCommunication(configuration));
         return this;
     }
 
@@ -51,7 +55,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return immutableMapOf(httpConnectors);
     }
 
-    CommunicatorConfiguration configureCommunicator(CommunicatorConfiguration current) {
-        return configure(current.toBuilder().build());
+    CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> provider, CommunicatorConfiguration current) {
+        return configure(provider, current);
     }
 }

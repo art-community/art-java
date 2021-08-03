@@ -1,15 +1,11 @@
 package io.art.rsocket.module;
 
-import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.server.configuration.*;
 import io.art.server.configurator.*;
-import io.art.server.method.*;
-import static io.art.core.property.LazyProperty.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
@@ -41,25 +37,19 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return this;
     }
 
-    RsocketServerConfigurator() {
-        super(lazy(() -> rsocketModule().configuration().getServer()));
-    }
-
     RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
         RsocketTcpServerConfigurator configurator = tcpConfigurator.apply(new RsocketTcpServerConfigurator());
         RsocketTcpServerConfigurationBuilder builder = current.toBuilder();
-        return configurator.tcp()
-                .apply(builder)
-                .common(configurator.common().apply(current.getCommon().toBuilder()).build())
+        return configurator.tcp(builder)
+                .common(configurator.common(current.getCommon().toBuilder()).build())
                 .build();
     }
 
     RsocketHttpServerConfiguration configure(RsocketHttpServerConfiguration current) {
         RsocketHttpServerConfigurator configurator = httpConfigurator.apply(new RsocketHttpServerConfigurator());
         RsocketHttpServerConfigurationBuilder builder = current.toBuilder();
-        return configurator.http()
-                .apply(builder)
-                .common(configurator.common().apply(current.getCommon().toBuilder()).build())
+        return configurator.http(builder)
+                .common(configurator.common(current.getCommon().toBuilder()).build())
                 .build();
     }
 
@@ -71,7 +61,7 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return http;
     }
 
-    ServerConfiguration configureServer(ServerConfiguration current) {
-        return create();
+    ServerConfiguration configureServer(LazyProperty<ServerConfiguration> provider, ServerConfiguration current) {
+        return configure(provider, current);
     }
 }

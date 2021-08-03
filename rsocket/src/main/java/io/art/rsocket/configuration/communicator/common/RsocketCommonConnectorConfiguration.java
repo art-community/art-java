@@ -1,10 +1,12 @@
 package io.art.rsocket.configuration.communicator.common;
 
 import io.art.core.changes.*;
+import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
+import io.art.transport.payload.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
@@ -14,6 +16,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -28,6 +31,8 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketRetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
+    private ServiceMethodIdentifier target;
+    private Supplier<TransportPayloadWriter> setupPayloadWriter;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
@@ -38,6 +43,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.fragment = 0;
         configuration.payloadDecoderMode = ZERO_COPY;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
+        configuration.setupPayloadWriter = () -> new TransportPayloadWriter(configuration.dataFormat);
         return configuration;
     }
 

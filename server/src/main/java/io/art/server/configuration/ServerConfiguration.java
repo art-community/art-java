@@ -24,6 +24,7 @@ import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.server.method.*;
 import io.art.server.refresher.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
@@ -33,6 +34,7 @@ import java.util.*;
 import java.util.function.*;
 
 
+@Builder(toBuilder = true)
 public class ServerConfiguration {
     private final ServerRefresher refresher;
 
@@ -40,19 +42,19 @@ public class ServerConfiguration {
     private final ServerRefresher.Consumer consumer;
 
     @Getter
-    private ImmutableMap<String, ServiceConfiguration> serviceConfigurations;
+    private ImmutableMap<String, ServiceConfiguration> services;
 
     @Getter
     private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods;
 
     private ServerConfiguration(ServerRefresher refresher) {
         this.refresher = refresher;
-        this.serviceConfigurations = emptyImmutableMap();
+        this.services = emptyImmutableMap();
         this.consumer = refresher.consumer();
     }
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
-        return ofNullable(serviceConfigurations.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
+        return ofNullable(services.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
     }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
@@ -74,7 +76,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = serviceConfigurations.get(identifier.getServiceId());
+        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
@@ -82,7 +84,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkMethod(ServiceMethodIdentifier identifier, Function<ServiceMethodConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = serviceConfigurations.get(identifier.getServiceId());
+        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
@@ -99,10 +101,19 @@ public class ServerConfiguration {
 
     public static ServerConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
         ServerConfiguration configuration = new ServerConfiguration(refresher);
-        configuration.serviceConfigurations = ofNullable(source.getNested(SERVER_SECTION))
+        configuration.services = ofNullable(source.getNested(SERVER_SECTION))
                 .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
                 .orElse(emptyImmutableMap());
         configuration.refresher.produce();
         return configuration;
+    }
+
+    public static ServerConfiguration from(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
+        ServerConfigurationBuilder builder = current.toBuilder();
+        builder.services(ofNullable(source.getNested(SERVER_SECTION))
+                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(builder.refresher, service)))
+                .orElse(emptyImmutableMap()));
+        refresher.produce();
+        return builder.build();
     }
 }

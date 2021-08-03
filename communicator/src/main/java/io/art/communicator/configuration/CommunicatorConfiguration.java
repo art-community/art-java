@@ -50,9 +50,6 @@ public class CommunicatorConfiguration {
     @Getter
     private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators;
 
-    @Getter
-    private LazyProperty<ImmutableMap<CommunicatorActionIdentifier, ? extends Communication>> communications;
-
     private CommunicatorConfiguration(CommunicatorRefresher refresher) {
         this.refresher = refresher;
         this.proxies = emptyImmutableMap();

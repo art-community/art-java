@@ -8,10 +8,10 @@ import static io.art.rsocket.module.RsocketModule.*;
 @UtilityClass
 public class Rsocket {
     public static <T extends Connector> T rsocketConnector(Class<T> connectorClass) {
-        return cast(rsocketModule().configuration().getConnectors().get().get(connectorClass));
+        return cast(rsocketModule().configuration().getCommunicator().getConnectors().get().get(connectorClass));
     }
 
     public static <T extends Communicator> T rsocketCommunicator(Class<T> communicatorClass) {
-        return cast(rsocketModule().configuration().getCommunicators().get().get(communicatorClass));
+        return cast(rsocketModule().configuration().getCommunicator().getCommunicators().get().get(communicatorClass));
     }
 }

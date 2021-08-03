@@ -25,7 +25,6 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public abstract class ServerConfigurator {
-    private final LazyProperty<ServerConfiguration> configurationProvider;
     private final List<PackageBasedConfiguration> packageBased = linkedList();
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
@@ -63,59 +62,70 @@ public abstract class ServerConfigurator {
         return this;
     }
 
-
-    protected LazyProperty<ImmutableArray<ServiceMethod>> create() {
-        return lazy(this::createServiceMethods);
+    protected ServerConfiguration configure(LazyProperty<ServerConfiguration> provider, ServerConfiguration current) {
+        return current.toBuilder()
+                .serviceMethods(lazy(() -> createMethods(provider)))
+                .build();
     }
 
 
-    private ImmutableArray<ServiceMethod> createServiceMethods() {
+    private ImmutableArray<ServiceMethod> createMethods(LazyProperty<ServerConfiguration> provider) {
         ImmutableArray.Builder<ServiceMethod> methods = immutableArrayBuilder();
-        for (PackageBasedConfiguration registration : packageBased) {
-            registerPackages(methods, fixedArrayOf(registration.servicePackage.get()), registration.decorator);
+        for (PackageBasedConfiguration configuration : packageBased) {
+            MetaPackage servicePackage = configuration.servicePackage.get();
+            registerPackages(methods, provider, new PackagesConfiguration(servicePackage.packages().values(), configuration.decorator));
         }
 
-        for (ClassBasedConfiguration registration : classBased) {
-            registerMethods(methods, registration.serviceClass.get(), registration.decorator);
+        for (ClassBasedConfiguration configuration : classBased) {
+            MetaClass<?> serviceClass = configuration.serviceClass.get();
+            for (MetaMethod<?> method : serviceClass.methods()) {
+                MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, configuration.decorator);
+                methods.add(createServiceMethod(provider, methodConfiguration));
+            }
         }
 
-        for (MethodBasedConfiguration registration : methodBased) {
-            methods.add(createServiceMethod(registration.serviceClass.get(), registration.serviceMethod.get(), registration.decorator));
+        for (MethodBasedConfiguration configuration : methodBased) {
+            MetaClass<?> serviceClass = configuration.serviceClass.get();
+            MetaMethod<?> serviceMethod = configuration.serviceMethod.get();
+            MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, serviceMethod, configuration.decorator);
+            methods.add(createServiceMethod(provider, methodConfiguration));
         }
 
         return methods.build();
     }
 
-    private void registerPackages(ImmutableArray.Builder<ServiceMethod> builder, Collection<MetaPackage> packages, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        for (MetaPackage metaPackage : packages) {
-            registerPackages(builder, metaPackage.packages().values(), decorator);
-            registerClasses(builder, metaPackage.classes().values(), decorator);
+    private void registerPackages(ImmutableArray.Builder<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, PackagesConfiguration configuration) {
+        UnaryOperator<ServiceMethodConfigurator> decorator = configuration.decorator;
+        for (MetaPackage servicePackage : configuration.packages) {
+            registerPackages(builder, provider, new PackagesConfiguration(servicePackage.packages().values(), decorator));
+            registerClasses(builder, provider, new ClassesConfiguration(servicePackage.classes().values(), decorator));
         }
     }
 
-    private void registerClasses(ImmutableArray.Builder<ServiceMethod> builder, Collection<MetaClass<?>> classes, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        for (MetaClass<?> metaClass : classes) {
-            registerClasses(builder, metaClass.classes().values(), decorator);
-            registerMethods(builder, metaClass, decorator);
+    private void registerClasses(ImmutableArray.Builder<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, ClassesConfiguration configuration) {
+        UnaryOperator<ServiceMethodConfigurator> decorator = configuration.decorator;
+        for (MetaClass<?> serviceClass : configuration.classes) {
+            registerClasses(builder, provider, new ClassesConfiguration(serviceClass.classes().values(), decorator));
+            for (MetaMethod<?> method : serviceClass.methods()) {
+                builder.add(createServiceMethod(provider, new MethodConfiguration(serviceClass, method, decorator)));
+            }
         }
     }
 
-    private void registerMethods(ImmutableArray.Builder<ServiceMethod> builder, MetaClass<?> metaClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        for (MetaMethod<?> method : metaClass.methods()) {
-            builder.add(createServiceMethod(metaClass, method, decorator));
-        }
-    }
-
-    private ServiceMethod createServiceMethod(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    private ServiceMethod createServiceMethod(LazyProperty<ServerConfiguration> provider, MethodConfiguration methodConfiguration) {
+        MetaMethod<?> serviceMethod = methodConfiguration.serviceMethod;
+        MetaClass<?> serviceClass = methodConfiguration.serviceClass;
+        UnaryOperator<ServiceMethodConfigurator> decorator = methodConfiguration.decorator;
         MetaType<?> inputType = orNull(() -> immutableArrayOf(serviceMethod.parameters().values()).get(0).type(), isNotEmpty(serviceMethod.parameters()));
         ServiceMethodIdentifier id = serviceMethodId(asId(serviceClass.definition().type()), serviceMethod.name());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
-        builder = decorator.apply(new ServiceMethodConfigurator(id, configurationProvider.get())).configure(builder, inputType);
+        builder = decorator.apply(new ServiceMethodConfigurator(id, provider.get())).configure(builder, inputType);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
+
 
     @RequiredArgsConstructor
     private static class ClassBasedConfiguration {
@@ -133,6 +143,25 @@ public abstract class ServerConfigurator {
     private static class MethodBasedConfiguration {
         final Supplier<MetaClass<?>> serviceClass;
         final Supplier<MetaMethod<?>> serviceMethod;
+        final UnaryOperator<ServiceMethodConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class MethodConfiguration {
+        final MetaClass<?> serviceClass;
+        final MetaMethod<?> serviceMethod;
+        final UnaryOperator<ServiceMethodConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class ClassesConfiguration {
+        final Collection<MetaClass<?>> classes;
+        final UnaryOperator<ServiceMethodConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class PackagesConfiguration {
+        final Collection<MetaPackage> packages;
         final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 }

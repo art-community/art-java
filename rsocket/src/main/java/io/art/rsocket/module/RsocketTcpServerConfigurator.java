@@ -19,11 +19,11 @@ public class RsocketTcpServerConfigurator {
         return this;
     }
 
-    UnaryOperator<RsocketTcpServerConfigurationBuilder> tcp() {
-        return tcpConfigurator;
+    RsocketTcpServerConfigurationBuilder tcp(RsocketTcpServerConfigurationBuilder builder) {
+        return tcpConfigurator.apply(builder);
     }
 
-    UnaryOperator<RsocketCommonServerConfigurationBuilder> common() {
-        return commonConfigurator;
+    RsocketCommonServerConfigurationBuilder common(RsocketCommonServerConfigurationBuilder builder) {
+        return commonConfigurator.apply(builder);
     }
 }

@@ -1,8 +1,5 @@
 package io.art.rsocket.module;
 
-import io.art.communicator.model.*;
-import io.art.core.collection.*;
-import io.art.core.property.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
