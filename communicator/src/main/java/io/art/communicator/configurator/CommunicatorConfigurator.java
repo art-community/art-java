@@ -72,7 +72,7 @@ public abstract class CommunicatorConfigurator {
 
 
     private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(LazyProperty<CommunicatorConfiguration> provider) {
-        ImmutableMap.Builder<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = immutableMapBuilder();
+        Map<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = map();
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
                 .collect(mapCollector(configuration -> configuration.communicatorClass.get(), configuration -> configuration.decorator));
@@ -92,7 +92,7 @@ public abstract class CommunicatorConfigurator {
             }
         }
 
-        return proxies.build();
+        return immutableMapOf(proxies);
     }
 
     private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> provider, ActionConfiguration actionConfiguration, ConnectorConfiguration connectorConfiguration) {
