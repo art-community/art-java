@@ -9,6 +9,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -30,6 +31,11 @@ public class CommunicatorActionConfigurator {
 
     public CommunicatorActionConfigurator target(String serviceId) {
         this.targetServiceId = serviceId;
+        return this;
+    }
+
+    public CommunicatorActionConfigurator target(Class<?> targetClass) {
+        this.targetServiceId = asId(targetClass);
         return this;
     }
 

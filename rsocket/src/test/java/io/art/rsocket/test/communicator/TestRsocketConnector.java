@@ -3,7 +3,7 @@ package io.art.rsocket.test.communicator;
 import io.art.communicator.model.*;
 
 public interface TestRsocketConnector extends Connector {
-    TestRsocketCommunicator testRsocket();
+    TestRsocket testRsocket();
 
-    TestRsocketOtherCommunicator testOtherRsocket();
+    TestRsock testOtherRsocket();
 }

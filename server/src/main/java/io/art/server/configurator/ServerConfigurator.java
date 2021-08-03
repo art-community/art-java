@@ -108,7 +108,7 @@ public abstract class ServerConfigurator {
 
     private ServiceMethod createServiceMethod(MetaClass<?> serviceClass, MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(serviceMethod.parameters().values()).get(0).type(), isNotEmpty(serviceMethod.parameters()));
-        ServiceMethodIdentifier id = serviceMethodId(normalizeToId(serviceClass.definition().type()), serviceMethod.name());
+        ServiceMethodIdentifier id = serviceMethodId(asId(serviceClass.definition().type()), serviceMethod.name());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(serviceMethod.returnType())

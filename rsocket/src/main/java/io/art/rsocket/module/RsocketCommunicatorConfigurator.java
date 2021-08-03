@@ -37,15 +37,15 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     }
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
-        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(normalizeToId(connector)));
+        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connector)));
         connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
-        tcpConnectors.put(normalizeToId(connector), connectorConfigurator.configure());
+        tcpConnectors.put(asId(connector), connectorConfigurator.configure());
         return this;
     }
 
     private RsocketCommunicatorConfigurator http(Class<? extends Connector> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
         connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
-        httpConnectors.put(normalizeToId(connector), configurator.apply(new RsocketHttpConnectorConfigurator(normalizeToId(connector))).configure());
+        httpConnectors.put(asId(connector), configurator.apply(new RsocketHttpConnectorConfigurator(asId(connector))).configure());
         return this;
     }
 

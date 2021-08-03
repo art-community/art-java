@@ -9,7 +9,7 @@ import static java.util.Arrays.*;
 
 @UtilityClass
 public class ClassIdentifierNormalizer {
-    public String normalizeToId(Class<?> owner) {
+    public String asId(Class<?> owner) {
         String id = owner.getSimpleName();
         for (String suffix : setOf(CONNECTOR_CLASS_SUFFIX, SERVICE_CLASS_SUFFIX, COMMUNICATOR_CLASS_SUFFIX)) {
             id = removeSuffix(id, suffix);

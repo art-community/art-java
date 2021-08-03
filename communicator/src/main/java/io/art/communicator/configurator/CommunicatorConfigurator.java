@@ -70,7 +70,7 @@ public abstract class CommunicatorConfigurator {
 
     private CommunicatorAction createAction(MetaClass<?> proxyClass, MetaMethod<?> metaMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(metaMethod.parameters().values()).get(0).type(), isNotEmpty(metaMethod.parameters()));
-        CommunicatorActionIdentifier id = communicatorActionId(normalizeToId(proxyClass.definition().type()), metaMethod.name());
+        CommunicatorActionIdentifier id = communicatorActionId(asId(proxyClass.definition().type()), metaMethod.name());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(metaMethod.returnType())
