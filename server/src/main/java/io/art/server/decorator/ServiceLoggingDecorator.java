@@ -44,7 +44,7 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(ServiceLoggingDecorator.class.getName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
+    private final Logger logger = logger(SERVER_LOGGER + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
     public ServiceLoggingDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration, MethodDecoratorScope scope) {
         this.scope = scope;

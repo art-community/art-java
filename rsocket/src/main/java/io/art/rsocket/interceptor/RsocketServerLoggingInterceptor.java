@@ -29,11 +29,12 @@ import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.module.LoggingModule.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RsocketServerLoggingInterceptor.class);
+    private static final Logger logger = logger(RSOCKET_SERVER_LOGGER);
 
     private final RsocketCommonServerConfiguration serverConfiguration;
     private final Property<Boolean> enabled;

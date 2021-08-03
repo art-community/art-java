@@ -30,6 +30,7 @@ public interface ServerConstants {
 
 
     interface LoggingMessages {
+        String SERVER_LOGGER = "server";
         String SERVICE_REGISTRATION_MESSAGE = "Registered service methods: {0}";
         String SERVICE_SUBSCRIBED_MESSAGE = "Service subscribed: ''{0}.{1}''";
         String SERVICE_INPUT_DATA = "Service ''{0}.{1}'' input:\n{2}";

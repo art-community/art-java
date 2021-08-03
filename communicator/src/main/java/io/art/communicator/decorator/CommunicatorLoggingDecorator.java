@@ -44,7 +44,7 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(CommunicatorLoggingDecorator.class.getName() + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
+    private final Logger logger = logger(COMMUNICATOR_LOGGER + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
     public CommunicatorLoggingDecorator(CommunicatorActionIdentifier id, CommunicatorConfiguration configuration, MethodDecoratorScope scope) {
         this.scope = scope;

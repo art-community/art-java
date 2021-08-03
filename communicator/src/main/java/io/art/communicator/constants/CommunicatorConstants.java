@@ -27,6 +27,7 @@ public interface CommunicatorConstants {
     }
 
     interface LoggingMessages {
+        String COMMUNICATOR_LOGGER = "communicator";
         String COMMUNICATOR_REGISTRATION_MESSAGE = "Registered communicator: ''{0}'' with actions: {1}";
         String COMMUNICATOR_SUBSCRIBED_MESSAGE = "Communicator subscribed: ''{0}.{1}''";
         String COMMUNICATOR_INPUT_DATA = "Communicator ''{0}.{1}'' input:\n{2}";
