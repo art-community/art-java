@@ -32,10 +32,15 @@ public class ConnectorProxyFactory {
             throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY, connectorClass.definition().type().getName(), invalidMethods));
         }
 
-        Map<MetaMethod<?>, Function<Class<? extends Communicator>, ? extends Communicator>> invocations = proxies
+        Map<String, ? extends Communicator> cache = proxies
                 .entrySet()
                 .stream()
-                .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> provider.apply(cast(entry.getKey().returnType().type()))));
+                .collect(mapCollector(entry -> entry.getKey().name(), entry -> provider.apply(cast(entry.getKey().returnType().type()))));
+
+        Map<MetaMethod<?>, Function<Object, ? extends Communicator>> invocations = proxies
+                .entrySet()
+                .stream()
+                .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> cache.get(entry.getKey().name())));
 
         MetaProxy proxy = connectorClass.proxy(cast(invocations));
 
