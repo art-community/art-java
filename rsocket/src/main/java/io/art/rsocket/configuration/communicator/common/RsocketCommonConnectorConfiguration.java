@@ -31,7 +31,7 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketRetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
-    private ServiceMethodIdentifier target;
+    private String targetService;
     private Supplier<TransportPayloadWriter> setupPayloadWriter;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {

@@ -31,7 +31,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connectorClass)));
         RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
         tcpConnectors.put(asId(connectorClass), configuration);
-        registerConnector(connectorClass, Rsocket::rsocketCommunicator, () -> createTcpCommunication(configuration));
+        registerConnector(connectorClass, Rsocket::rsocketCommunicator, identifier -> createTcpCommunication(configuration, identifier));
         return this;
     }
 
@@ -39,7 +39,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         RsocketHttpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketHttpConnectorConfigurator(asId(connectorClass)));
         RsocketHttpConnectorConfiguration configuration = connectorConfigurator.configure();
         httpConnectors.put(asId(connectorClass), configuration);
-        registerConnector(connectorClass, Rsocket::rsocketCommunicator, () -> createHttpCommunication(configuration));
+        registerConnector(connectorClass, Rsocket::rsocketCommunicator, identifier -> createHttpCommunication(configuration, identifier));
         return this;
     }
 

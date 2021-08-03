@@ -47,7 +47,7 @@ public abstract class CommunicatorConfigurator {
     }
 
 
-    protected void registerConnector(Class<? extends Connector> connectorClass, Function<Class<? extends Communicator>, ? extends Communicator> communicator, Supplier<? extends Communication> communication) {
+    protected void registerConnector(Class<? extends Connector> connectorClass, Function<Class<? extends Communicator>, ? extends Communicator> communicator, Function<CommunicatorActionIdentifier, ? extends Communication> communication) {
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration(lazy(() -> createConnectorProxy(declaration(connectorClass), communicator)), communication);
         connectors.put(connectorClass, connectorConfiguration);
     }
@@ -105,7 +105,7 @@ public abstract class CommunicatorConfigurator {
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
-                .communication(connectorConfiguration.communication.get());
+                .communication(connectorConfiguration.communication.apply(id));
         builder = decorator.apply(new CommunicatorActionConfigurator(id, communicatorConfiguration)).configure(builder);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
@@ -126,6 +126,6 @@ public abstract class CommunicatorConfigurator {
     @RequiredArgsConstructor
     private static class ConnectorConfiguration {
         final LazyProperty<? extends Connector> connector;
-        final Supplier<? extends Communication> communication;
+        final Function<CommunicatorActionIdentifier, ? extends Communication> communication;
     }
 }

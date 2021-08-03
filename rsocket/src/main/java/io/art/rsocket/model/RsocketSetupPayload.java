@@ -21,12 +21,18 @@ package io.art.rsocket.model;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 
-@Getter
-@AllArgsConstructor
-@Builder(toBuilder = true)
+@Value
 public class RsocketSetupPayload {
     DataFormat dataFormat;
     DataFormat metadataFormat;
     String serviceId;
     String methodId;
+
+    @Builder(toBuilder = true)
+    public RsocketSetupPayload(DataFormat dataFormat, DataFormat metadataFormat, String serviceId, String methodId) {
+        this.dataFormat = dataFormat;
+        this.metadataFormat = metadataFormat;
+        this.serviceId = serviceId;
+        this.methodId = methodId;
+    }
 }

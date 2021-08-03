@@ -24,6 +24,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.meta.module.MetaModule.*;
@@ -46,20 +47,20 @@ public class RsocketCommunicationFactory {
     private final static Logger logger = logger(RsocketCommunication.class);
 
 
-    public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration) {
-        Supplier<RSocketClient> client = () -> createTcpClient(connectorConfiguration);
+    public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+        Supplier<RSocketClient> client = () -> createTcpClient(connectorConfiguration, identifier);
         return new RsocketCommunication(client, rsocketModule().configuration(), connectorConfiguration.getCommonConfiguration());
     }
 
-    public static RsocketCommunication createHttpCommunication(RsocketHttpConnectorConfiguration connectorConfiguration) {
-        Supplier<RSocketClient> client = () -> createHttpClient(connectorConfiguration);
+    public static RsocketCommunication createHttpCommunication(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+        Supplier<RSocketClient> client = () -> createHttpClient(connectorConfiguration, identifier);
         return new RsocketCommunication(client, rsocketModule().configuration(), connectorConfiguration.getCommonConfiguration());
     }
 
 
-    private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration) {
+    private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = commonConfiguration.getTarget();
+        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getTargetService(), identifier.getActionId());
         TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
         RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())
@@ -110,9 +111,9 @@ public class RsocketCommunicationFactory {
         return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
     }
 
-    private static RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration) {
+    private static RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = commonConfiguration.getTarget();
+        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getTargetService(), identifier.getActionId());
         TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
         RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())
