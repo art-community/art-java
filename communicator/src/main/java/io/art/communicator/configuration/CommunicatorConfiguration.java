@@ -18,11 +18,10 @@
 
 package io.art.communicator.configuration;
 
-import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
+import io.art.communicator.registry.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.Builder;
@@ -46,10 +45,7 @@ public class CommunicatorConfiguration {
     private ImmutableMap<String, CommunicatorProxyConfiguration> proxies;
 
     @Getter
-    private final LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors;
-
-    @Getter
-    private final LazyProperty<ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>> communicators;
+    private final ConnectorRegistry connectors;
 
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
@@ -100,8 +96,7 @@ public class CommunicatorConfiguration {
         return CommunicatorConfiguration.builder()
                 .refresher(refresher)
                 .consumer(refresher.consumer())
-                .connectors(lazy(ImmutableMap::emptyImmutableMap))
-                .communicators(lazy(ImmutableMap::emptyImmutableMap))
+                .connectors(new ConnectorRegistry(lazy(ImmutableMap::emptyImmutableMap)))
                 .proxies(emptyImmutableMap())
                 .build();
     }

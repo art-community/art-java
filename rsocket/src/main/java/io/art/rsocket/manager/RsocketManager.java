@@ -44,21 +44,15 @@ public class RsocketManager {
 
     public void initializeCommunicators() {
         configuration.getCommunicator()
-                .getCommunicators()
-                .get()
-                .values()
-                .stream()
-                .flatMap(proxy -> proxy.getActions().values().stream())
+                .getConnectors()
+                .actions()
                 .forEach(CommunicatorAction::initialize);
     }
 
     public void disposeCommunicators() {
         configuration.getCommunicator()
-                .getCommunicators()
-                .get()
-                .values()
-                .stream()
-                .flatMap(proxy -> proxy.getActions().values().stream())
+                .getConnectors()
+                .actions()
                 .forEach(CommunicatorAction::dispose);
     }
 

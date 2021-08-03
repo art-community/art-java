@@ -4,6 +4,8 @@ import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.communicator.configuration.*;
 import io.art.communicator.model.*;
+import io.art.communicator.registry.*;
+import io.art.communicator.registry.ConnectorRegistry.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -54,20 +56,15 @@ public abstract class CommunicatorConfigurator {
 
     protected CommunicatorConfiguration configure(LazyProperty<CommunicatorConfiguration> provider, CommunicatorConfiguration current) {
         return current.toBuilder()
-                .communicators(createCommunicators(provider))
-                .connectors(createConnectors())
+                .connectors(new ConnectorRegistry(createConnectors(provider)))
                 .build();
     }
 
-    private LazyProperty<ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>> createCommunicators(LazyProperty<CommunicatorConfiguration> provider) {
-        return lazy(() -> createProxies(provider));
-    }
-
-    private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> createConnectors() {
+    private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors(LazyProperty<CommunicatorConfiguration> provider) {
         return lazy(() -> connectors
                 .entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().connector.get())));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new ConnectorContainer(createProxies(provider), entry.getValue().connector.get()))));
     }
 
 
