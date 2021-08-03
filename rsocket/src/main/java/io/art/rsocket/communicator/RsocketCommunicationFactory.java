@@ -20,6 +20,7 @@ import lombok.experimental.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import reactor.netty.tcp.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
@@ -70,7 +71,7 @@ public class RsocketCommunicationFactory {
         Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
         RSocketConnector connector = createConnector(commonConfiguration, payload);
         RsocketTcpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
-        if (nonNull(groupConfiguration)) {
+        if (nonNull(groupConfiguration) && isNotEmpty(groupConfiguration.getClientConfigurations())) {
             List<LoadbalanceTarget> targets = linkedList();
             for (RsocketTcpClientConfiguration clientConfiguration : groupConfiguration.getClientConfigurations()) {
                 RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
@@ -123,7 +124,7 @@ public class RsocketCommunicationFactory {
         Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
         RSocketConnector connector = createConnector(commonConfiguration, payload);
         RsocketHttpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
-        if (nonNull(groupConfiguration)) {
+        if (nonNull(groupConfiguration) && isNotEmpty(groupConfiguration.getClientConfigurations())) {
             List<LoadbalanceTarget> targets = linkedList();
             for (RsocketHttpClientConfiguration clientConfiguration : groupConfiguration.getClientConfigurations()) {
                 RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();

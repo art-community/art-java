@@ -17,9 +17,9 @@ public class ClassIdentifierNormalizer {
         char[] normalized = new char[id.length() * 2];
         char[] current = id.toCharArray();
         normalized[0] = toLowerCase(current[0]);
-        int count = 0;
-        for (int i = 1, charArrayLength = current.length; i < charArrayLength; i++) {
-            char character = current[i];
+        int count = 1;
+        for (int index = 1; index < current.length; index++) {
+            char character = current[index];
             if (isUpperCase(character)) {
                 normalized[count] = DASH;
                 normalized[count + 1] = toLowerCase(character);
