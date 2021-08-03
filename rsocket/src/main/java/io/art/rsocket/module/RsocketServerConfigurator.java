@@ -5,6 +5,7 @@ import io.art.core.property.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
+import io.art.server.configuration.*;
 import io.art.server.configurator.*;
 import io.art.server.method.*;
 import static io.art.core.property.LazyProperty.*;
@@ -70,7 +71,7 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return http;
     }
 
-    LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods() {
+    ServerConfiguration configureServer(ServerConfiguration current) {
         return create();
     }
 }

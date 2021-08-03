@@ -20,7 +20,9 @@ package io.art.server.configuration;
 
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
+import io.art.server.method.*;
 import io.art.server.refresher.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -39,6 +41,9 @@ public class ServerConfiguration {
 
     @Getter
     private ImmutableMap<String, ServiceConfiguration> serviceConfigurations;
+
+    @Getter
+    private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods;
 
     private ServerConfiguration(ServerRefresher refresher) {
         this.refresher = refresher;

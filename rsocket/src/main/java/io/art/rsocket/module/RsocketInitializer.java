@@ -18,18 +18,17 @@
 
 package io.art.rsocket.module;
 
+import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
-import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
-import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.refresher.*;
+import io.art.server.configuration.*;
 import io.art.server.configurator.*;
-import io.art.server.method.*;
 import lombok.*;
 import java.util.function.*;
 
@@ -56,12 +55,11 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.tcpServer = serverConfigurator.configure(initial.tcpServer);
         initial.tcpServer = serverConfigurator.configure(initial.tcpServer);
         initial.httpServer = serverConfigurator.configure(initial.httpServer);
+        initial.server = serverConfigurator.configureServer(initial.server);
 
-        initial.serviceMethods = serverConfigurator.serviceMethods();
         initial.tcpConnectors = communicatorConfigurator.configureTcp();
         initial.httpConnectors = communicatorConfigurator.configureHttp();
-        initial.connectors = communicatorConfigurator.connectors();
-        initial.communicators = communicatorConfigurator.communicators();
+        initial.communicator = communicatorConfigurator.configureCommunicator(initial.communicator);
 
         return initial;
     }
@@ -72,12 +70,11 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         private boolean enableHttpServer = super.isEnableHttpServer();
         private RsocketTcpServerConfiguration tcpServer = super.getTcpServer();
         private RsocketHttpServerConfiguration httpServer = super.getHttpServer();
-        private LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods = super.getServiceMethods();
+        private ServerConfiguration server = super.getServer();
 
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors = super.getTcpConnectors();
         private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectors = super.getHttpConnectors();
-        private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors = super.getConnectors();
-        private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators = super.getCommunicators();
+        private CommunicatorConfiguration communicator = super.getCommunicator();
 
         public Initial(RsocketModuleRefresher refresher) {
             super(refresher);

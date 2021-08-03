@@ -30,8 +30,6 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public abstract class CommunicatorConfigurator {
-    private final LazyProperty<CommunicatorConfiguration> configuration;
-    private final LazyProperty<Map<CommunicatorActionIdentifier, Communication>> communications;
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final Map<Class<? extends Connector>, LazyProperty<? extends Connector>> connectors = map();
 
@@ -53,11 +51,18 @@ public abstract class CommunicatorConfigurator {
         connectors.put(connectorClass, lazy(() -> createConnectorProxy(declaration(connectorClass), communicatorFactory)));
     }
 
-    protected LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> createCommunicators() {
-        return lazy(this::createProxies);
+    protected CommunicatorConfiguration configure(CommunicatorConfiguration current) {
+        return current.toBuilder()
+                .communicators(createCommunicators(current))
+                .connectors(createConnectors())
+                .build();
     }
 
-    protected LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> createConnectors() {
+    private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> createCommunicators(CommunicatorConfiguration communicatorConfiguration) {
+        return lazy(() -> createProxies(communicatorConfiguration));
+    }
+
+    private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> createConnectors() {
         return lazy(() -> connectors
                 .entrySet()
                 .stream()
@@ -65,44 +70,50 @@ public abstract class CommunicatorConfigurator {
     }
 
 
-    private ImmutableMap<Class<? extends Communicator>, ? extends Communicator> createProxies() {
+    private ImmutableMap<Class<? extends Communicator>, ? extends Communicator> createProxies(CommunicatorConfiguration communicatorConfiguration) {
         ImmutableMap.Builder<Class<? extends Communicator>, ? extends Communicator> proxies = immutableMapBuilder();
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
                 .collect(mapCollector(configuration -> configuration.communicatorClass.get(), configuration -> configuration.decorator));
 
         for (Class<? extends Connector> connector : connectors.keySet()) {
-            for (MetaMethod<?> method : declaration(connector).methods()) {
-                MetaClass<?> communicatorClass = method.returnType().declaration();
-                registerProxies(proxies, cast(communicatorClass), orElse(classBasedConfigurations.get(communicatorClass), identity()));
+            ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connector).methods());
+            for (MetaMethod<? extends Communicator> method : methods) {
+                MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
+                UnaryOperator<CommunicatorActionConfigurator> decorator = orElse(classBasedConfigurations.get(communicatorClass), identity());
+                Function<MetaMethod<?>, CommunicatorAction> provider = actionMethod -> createAction(communicatorConfiguration, new ActionConfiguration(communicatorClass, decorator, actionMethod));
+                Communicator communicator = createCommunicatorProxy(communicatorClass, provider);
+                proxies.put(communicatorClass.definition().type(), cast(communicator));
             }
         }
 
         return proxies.build();
     }
 
-    private void registerProxies(ImmutableMap.Builder<Class<? extends Communicator>, ? extends Communicator> builder,
-                                 MetaClass<? extends Communicator> communicatorClass,
-                                 UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        Communicator communicator = createCommunicatorProxy(communicatorClass, method -> createAction(communicatorClass, method, decorator));
-        builder.put(communicatorClass.definition().type(), cast(communicator));
-    }
-
-    private CommunicatorAction createAction(MetaClass<?> communicatorClass, MetaMethod<?> method, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
-        CommunicatorActionIdentifier id = communicatorActionId(asId(communicatorClass.definition().type()), method.name());
+    private CommunicatorAction createAction(CommunicatorConfiguration communicatorConfiguration, ActionConfiguration actionConfiguration) {
+        MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
+        ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
+        MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
+        UnaryOperator<CommunicatorActionConfigurator> decorator = actionConfiguration.decorator;
+        CommunicatorActionIdentifier id = communicatorActionId(asId(communicatorClass.definition().type()), actionConfiguration.method.name());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
-                .outputType(method.returnType())
-                .communication(communications.get().get(id));
-        builder = decorator.apply(new CommunicatorActionConfigurator(id, configuration.get())).configure(builder);
+                .outputType(actionConfiguration.method.returnType())
+                .communication(communicatorConfiguration.getCommunications().get().get(id));
+        builder = decorator.apply(new CommunicatorActionConfigurator(id, communicatorConfiguration)).configure(builder);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
-
 
     @RequiredArgsConstructor
     private static class ClassBasedConfiguration {
         final Supplier<MetaClass<? extends Communicator>> communicatorClass;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class ActionConfiguration {
+        final MetaClass<? extends Communicator> communicatorClass;
+        final UnaryOperator<CommunicatorActionConfigurator> decorator;
+        final MetaMethod<?> method;
     }
 }

@@ -1,10 +1,9 @@
 package io.art.rsocket.module;
 
+import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
-import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.rsocket.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
@@ -13,8 +12,6 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static io.art.core.property.LazyProperty.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -46,14 +43,6 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return this;
     }
 
-    private static Map<CommunicatorActionIdentifier, Communication> createCommunications() {
-        return map();
-    }
-
-    RsocketCommunicatorConfigurator() {
-        super(lazy(() -> rsocketModule().configuration().getCommunicator()), lazy(RsocketCommunicatorConfigurator::createCommunications));
-    }
-
     ImmutableMap<String, RsocketTcpConnectorConfiguration> configureTcp() {
         return immutableMapOf(tcpConnectors);
     }
@@ -62,11 +51,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return immutableMapOf(httpConnectors);
     }
 
-    LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors() {
-        return createConnectors();
-    }
-
-    LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators() {
-        return createCommunicators();
+    CommunicatorConfiguration configureCommunicator(CommunicatorConfiguration current) {
+        return configure(current.toBuilder().build());
     }
 }

@@ -18,11 +18,14 @@
 
 package io.art.communicator.configuration;
 
+import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
@@ -31,6 +34,7 @@ import static java.util.Optional.*;
 import java.util.*;
 import java.util.function.*;
 
+@Builder(toBuilder = true)
 public class CommunicatorConfiguration {
     private final CommunicatorRefresher refresher;
 
@@ -38,16 +42,25 @@ public class CommunicatorConfiguration {
     private final CommunicatorRefresher.Consumer consumer;
 
     @Getter
-    private ImmutableMap<String, CommunicatorProxyConfiguration> proxyConfigurations;
+    private ImmutableMap<String, CommunicatorProxyConfiguration> proxies;
+
+    @Getter
+    private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors;
+
+    @Getter
+    private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators;
+
+    @Getter
+    private LazyProperty<ImmutableMap<CommunicatorActionIdentifier, ? extends Communication>> communications;
 
     private CommunicatorConfiguration(CommunicatorRefresher refresher) {
         this.refresher = refresher;
-        this.proxyConfigurations = emptyImmutableMap();
+        this.proxies = emptyImmutableMap();
         this.consumer = refresher.consumer();
     }
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(id.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxies.get(id.getCommunicatorId());
         return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
@@ -71,7 +84,7 @@ public class CommunicatorConfiguration {
 
 
     private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorProxyConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(identifier.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxies.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {
             return defaultValue;
         }
@@ -79,7 +92,7 @@ public class CommunicatorConfiguration {
     }
 
     private <T> T checkAction(CommunicatorActionIdentifier identifier, Function<CommunicatorActionConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxyConfigurations.get(identifier.getCommunicatorId());
+        CommunicatorProxyConfiguration proxyConfiguration = proxies.get(identifier.getCommunicatorId());
         if (isNull(proxyConfiguration)) {
             return defaultValue;
         }
@@ -90,17 +103,25 @@ public class CommunicatorConfiguration {
         return mapper.apply(actionConfiguration);
     }
 
-
     public static CommunicatorConfiguration defaults(CommunicatorRefresher refresher) {
         return new CommunicatorConfiguration(refresher);
     }
 
     public static CommunicatorConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorConfiguration configuration = new CommunicatorConfiguration(refresher);
-        configuration.proxyConfigurations = ofNullable(source.getNested(COMMUNICATOR_SECTION))
+        configuration.proxies = ofNullable(source.getNested(COMMUNICATOR_SECTION))
                 .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(configuration.refresher, service)))
                 .orElse(emptyImmutableMap());
-        configuration.refresher.produce();
+        refresher.produce();
         return configuration;
+    }
+
+    public static CommunicatorConfiguration from(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
+        CommunicatorConfigurationBuilder builder = current.toBuilder();
+        builder.proxies(ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(builder.refresher, service)))
+                .orElse(emptyImmutableMap()));
+        refresher.produce();
+        return builder.build();
     }
 }
