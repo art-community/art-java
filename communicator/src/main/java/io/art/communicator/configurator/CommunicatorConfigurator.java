@@ -10,6 +10,7 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.factory.ConnectorProxyFactory.*;
@@ -64,11 +65,19 @@ public abstract class CommunicatorConfigurator {
         return lazy(() -> connectors
                 .entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new ConnectorContainer(createProxies(entry.getKey(), entry.getValue(), provider), entry.getValue().connector.get()))));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(provider, entry.getKey(), entry.getValue()))));
+    }
+
+    private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> provider, Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration) {
+        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(connectorClass, connectorConfiguration, provider);
+        Connector connector = connectorConfiguration.connector.get();
+        return new ConnectorContainer(communicators, connector);
     }
 
 
-    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration, LazyProperty<CommunicatorConfiguration> provider) {
+    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(Class<? extends Connector> connectorClass,
+                                                                                                                 ConnectorConfiguration connectorConfiguration,
+                                                                                                                 LazyProperty<CommunicatorConfiguration> provider) {
         Map<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = map();
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
@@ -78,11 +87,12 @@ public abstract class CommunicatorConfigurator {
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
             UnaryOperator<CommunicatorActionConfigurator> decorator = orElse(classBasedConfigurations.get(communicatorClass), identity());
-            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(
-                    provider,
-                    new ActionConfiguration(communicatorClass, decorator, actionMethod),
-                    new ConnectorConfiguration(connectorConfiguration.connector, connectorConfiguration.communication)
-            );
+            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(provider, ActionConfiguration.builder()
+                    .communicatorClass(communicatorClass)
+                    .decorator(decorator)
+                    .method(actionMethod)
+                    .connectorConfiguration(connectorConfiguration)
+                    .build());
             CommunicatorProxy<? extends Communicator> communicator = createCommunicatorProxy(communicatorClass, actions);
             proxies.put(communicatorClass.definition().type(), cast(communicator));
         }
@@ -90,7 +100,7 @@ public abstract class CommunicatorConfigurator {
         return immutableMapOf(proxies);
     }
 
-    private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> provider, ActionConfiguration actionConfiguration, ConnectorConfiguration connectorConfiguration) {
+    private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> provider, ActionConfiguration actionConfiguration) {
         MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
         ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
         MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
@@ -100,7 +110,7 @@ public abstract class CommunicatorConfigurator {
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
-                .communication(connectorConfiguration.communication.apply(id));
+                .communication(actionConfiguration.connectorConfiguration.communication.apply(id));
         builder = decorator.apply(new CommunicatorActionConfigurator(id, communicatorConfiguration)).configure(builder);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
@@ -111,11 +121,12 @@ public abstract class CommunicatorConfigurator {
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 
-    @RequiredArgsConstructor
+    @Builder
     private static class ActionConfiguration {
         final MetaClass<? extends Communicator> communicatorClass;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
         final MetaMethod<?> method;
+        final ConnectorConfiguration connectorConfiguration;
     }
 
     @RequiredArgsConstructor

@@ -6,7 +6,6 @@ import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import static io.art.core.caster.Caster.*;
@@ -33,8 +32,12 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connectorClass)));
         RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
         tcpConnectors.put(asId(connectorClass), configuration);
-        RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
-        Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> moduleConfiguration.getCommunicator().getConnectors().getCommunicator(connectorClass, communicator).getCommunicator();
+        Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
+                .configuration()
+                .getCommunicator()
+                .getConnectors()
+                .getCommunicator(connectorClass, communicator)
+                .getCommunicator();
         Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createTcpCommunication(configuration, identifier);
         registerConnector(connectorClass, communicatorFunction, communicationFunction);
         return this;
@@ -44,8 +47,12 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         RsocketHttpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketHttpConnectorConfigurator(asId(connectorClass)));
         RsocketHttpConnectorConfiguration configuration = connectorConfigurator.configure();
         httpConnectors.put(asId(connectorClass), configuration);
-        RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
-        Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> moduleConfiguration.getCommunicator().getConnectors().getCommunicator(connectorClass, communicator).getCommunicator();
+        Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
+                .configuration()
+                .getCommunicator()
+                .getConnectors()
+                .getCommunicator(connectorClass, communicator)
+                .getCommunicator();
         Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createHttpCommunication(configuration, identifier);
         registerConnector(connectorClass, communicatorFunction, communicationFunction);
         return this;

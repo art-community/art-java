@@ -2,12 +2,14 @@ package io.art.communicator.factory;
 
 import io.art.communicator.exception.*;
 import io.art.communicator.model.*;
+import io.art.core.property.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -32,15 +34,15 @@ public class ConnectorProxyFactory {
             throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY, connectorClass.definition().type().getName(), invalidMethods));
         }
 
-        Map<String, ? extends Communicator> cache = proxies
+        LazyProperty<Map<String, ? extends Communicator>> cache = lazy(() -> proxies
                 .entrySet()
                 .stream()
-                .collect(mapCollector(entry -> entry.getKey().name(), entry -> provider.apply(cast(entry.getKey().returnType().type()))));
+                .collect(mapCollector(entry -> entry.getKey().name(), entry -> provider.apply(cast(entry.getKey().returnType().type())))));
 
         Map<MetaMethod<?>, Function<Object, ? extends Communicator>> invocations = proxies
                 .entrySet()
                 .stream()
-                .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> cache.get(entry.getKey().name())));
+                .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> cache.get().get(entry.getKey().name())));
 
         MetaProxy proxy = connectorClass.proxy(cast(invocations));
 
