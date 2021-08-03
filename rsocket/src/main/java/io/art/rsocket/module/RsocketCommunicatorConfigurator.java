@@ -13,6 +13,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -21,11 +22,11 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     private final Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
-        return tcp(connectorClass, cast(Function.identity()));
+        return tcp(connectorClass, cast(identity()));
     }
 
     public RsocketCommunicatorConfigurator http(Class<? extends Connector> connectorClass) {
-        return http(connectorClass, UnaryOperator.identity());
+        return http(connectorClass, identity());
     }
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {

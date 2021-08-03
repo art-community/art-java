@@ -2,6 +2,7 @@ package io.art.rsocket.communicator;
 
 import io.art.core.exception.*;
 import io.art.core.model.*;
+import io.art.core.strategy.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.common.*;
@@ -25,7 +26,6 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.meta.module.MetaModule.*;
@@ -65,7 +65,7 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getService(), identifier.getActionId());
+        ServiceMethodIdentifier targetServiceMethod = commonConfiguration.getService().apply(new ServiceMethodStrategy()).id(identifier);
         TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
         RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())
@@ -118,7 +118,7 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getService(), identifier.getActionId());
+        ServiceMethodIdentifier targetServiceMethod = commonConfiguration.getService().apply(new ServiceMethodStrategy()).id(identifier);
         TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
         RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())

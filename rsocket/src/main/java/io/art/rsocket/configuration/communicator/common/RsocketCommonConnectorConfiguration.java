@@ -2,6 +2,7 @@ package io.art.rsocket.configuration.communicator.common;
 
 import io.art.core.changes.*;
 import io.art.core.source.*;
+import io.art.core.strategy.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
@@ -30,7 +31,7 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketRetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
-    private String service;
+    private UnaryOperator<ServiceMethodStrategy> service;
     private Supplier<TransportPayloadWriter> setupPayloadWriter;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
@@ -43,6 +44,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.payloadDecoderMode = ZERO_COPY;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
         configuration.setupPayloadWriter = () -> new TransportPayloadWriter(configuration.dataFormat);
+        configuration.service = ServiceMethodStrategy::byCommunicator;
         return configuration;
     }
 
@@ -60,7 +62,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.retry = listener.emit(source.getNested(KEEP_ALIVE_SECTION, RsocketRetryConfiguration::rsocketRetry));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), ZERO_COPY));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), Integer.MAX_VALUE));
-        configuration.service = listener.emit(source.getString(SERVICE_ID_KEY));
+        configuration.service = strategy -> strategy.manual(listener.emit(source.getString(SERVICE_ID_KEY)));
         return configuration;
     }
 
@@ -78,7 +80,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, current.retry), current.retry));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), current.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
-        configuration.service = listener.emit(orElse(source.getString(SERVICE_ID_KEY), current.service));
+        configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), id -> strategy -> strategy.manual(id), current.service));
         return configuration;
     }
 }
