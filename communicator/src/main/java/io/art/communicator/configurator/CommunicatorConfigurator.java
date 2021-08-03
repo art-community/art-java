@@ -42,12 +42,12 @@ public abstract class CommunicatorConfigurator {
         return this;
     }
 
-    protected LazyProperty<ImmutableMap<Class<?>, Communicator>> get(Supplier<CommunicatorConfiguration> configurationProvider, Supplier<? extends Communication> communication, LazyProperty<Set<Class<? extends Connector>>> connectors) {
+    protected LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> get(Supplier<CommunicatorConfiguration> configurationProvider, Supplier<? extends Communication> communication, LazyProperty<Set<Class<? extends Connector>>> connectors) {
         return lazy(() -> createProxies(configurationProvider, communication, connectors));
     }
 
-    private ImmutableMap<Class<?>, Communicator> createProxies(Supplier<CommunicatorConfiguration> configurationProvider, Supplier<? extends Communication> communication, LazyProperty<Set<Class<? extends Connector>>> connectors) {
-        ImmutableMap.Builder<Class<?>, Communicator> proxies = immutableMapBuilder();
+    private ImmutableMap<Class<? extends Communicator>, ? extends Communicator> createProxies(Supplier<CommunicatorConfiguration> configurationProvider, Supplier<? extends Communication> communication, LazyProperty<Set<Class<? extends Connector>>> connectors) {
+        ImmutableMap.Builder<Class<? extends Communicator>, ? extends Communicator> proxies = immutableMapBuilder();
 
         for (ClassBasedConfiguration registration : classBased) {
             registerMethods(proxies, registration.proxyClass.get(), registration.decorator);
@@ -62,17 +62,17 @@ public abstract class CommunicatorConfigurator {
         return proxies.build();
     }
 
-    private void registerMethods(ImmutableMap.Builder<Class<?>, Communicator> builder, MetaClass<? extends Communicator> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    private void registerMethods(ImmutableMap.Builder<Class<? extends Communicator>, ? extends Communicator> builder, MetaClass<? extends Communicator> metaClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         Communicator proxy = createCommunicatorProxy(metaClass, method -> createAction(metaClass, method, decorator)).getProxy();
         builder.put(metaClass.definition().type(), proxy);
     }
 
-    private CommunicatorAction createAction(MetaClass<?> proxyClass, MetaMethod<?> metaMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        MetaType<?> inputType = orNull(() -> immutableArrayOf(metaMethod.parameters().values()).get(0).type(), isNotEmpty(metaMethod.parameters()));
-        CommunicatorActionIdentifier id = communicatorActionId(asId(proxyClass.definition().type()), metaMethod.name());
+    private CommunicatorAction createAction(MetaClass<?> communicatorClass, MetaMethod<?> method, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
+        CommunicatorActionIdentifier id = communicatorActionId(asId(communicatorClass.definition().type()), method.name());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
-                .outputType(metaMethod.returnType())
+                .outputType(method.returnType())
                 .communication(communication.get());
         UnaryOperator<CommunicatorActionBuilder> configurator = decorator.apply(new CommunicatorActionConfigurator(id, configurationProvider.get())).configure();
         if (nonNull(inputType)) {

@@ -57,7 +57,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
             manager.initializeServer();
         }
-        if (!configuration.getHttpConnector().isEmpty() || !configuration.getTcpConnector().isEmpty()) {
+        if (!configuration.getHttpConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
             manager.initializeCommunicators();
         }
     }
@@ -67,7 +67,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
             manager.disposeServer();
         }
-        if (!configuration.getHttpConnector().isEmpty() || !configuration.getTcpConnector().isEmpty()) {
+        if (!configuration.getHttpConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
             manager.disposeCommunicators();
         }
     }

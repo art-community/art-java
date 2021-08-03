@@ -79,10 +79,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private CommunicatorConfiguration communicator;
 
     @Getter
-    private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnector;
+    private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors;
 
     @Getter
-    private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnector;
+    private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectors;
 
 
     public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
@@ -99,8 +99,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         enableHttpServer = false;
 
         communicator = CommunicatorConfiguration.defaults(communicatorRefresher);
-        tcpConnector = emptyImmutableMap();
-        httpConnector = emptyImmutableMap();
+        tcpConnectors = emptyImmutableMap();
+        httpConnectors = emptyImmutableMap();
         connectors = lazy(ImmutableMap::emptyImmutableMap);
         communicators = lazy(ImmutableMap::emptyImmutableMap);
     }
@@ -127,10 +127,10 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(rsocket -> rsocket.getNested(COMMUNICATOR_SECTION));
             communicatorSection
                     .map(this::tcpConnectors)
-                    .ifPresent(communicatorConfiguration -> configuration.tcpConnector = merge(configuration.tcpConnector, communicatorConfiguration));
+                    .ifPresent(communicatorConfiguration -> configuration.tcpConnectors = merge(configuration.tcpConnectors, communicatorConfiguration));
             communicatorSection
                     .map(this::httpConnectors)
-                    .ifPresent(communicatorConfiguration -> configuration.httpConnector = merge(configuration.httpConnector, communicatorConfiguration));
+                    .ifPresent(communicatorConfiguration -> configuration.httpConnectors = merge(configuration.httpConnectors, communicatorConfiguration));
             communicatorSection
                     .map(this::communicator)
                     .ifPresent(communicatorConfiguration -> configuration.communicator = communicatorConfiguration);
@@ -160,7 +160,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectors(NestedConfiguration communicator) {
             return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(
-                    configuration.httpConnector.get(nested.getSection()),
+                    configuration.httpConnectors.get(nested.getSection()),
                     current -> httpConnector(nested, current),
                     httpConnector(nested))
             );
@@ -175,7 +175,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors(NestedConfiguration communicator) {
-            return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnector.get(nested.getSection()),
+            return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectors.get(nested.getSection()),
                     current -> tcpConnector(nested, current),
                     tcpConnector(nested)
             ));
@@ -200,8 +200,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             this.configuration.httpServer = configuration.getHttpServer();
             this.configuration.serviceMethods = configuration.getServiceMethods();
 
-            this.configuration.httpConnector = configuration.getHttpConnector();
-            this.configuration.tcpConnector = configuration.getTcpConnector();
+            this.configuration.httpConnectors = configuration.getHttpConnectors();
+            this.configuration.tcpConnectors = configuration.getTcpConnectors();
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.connectors = configuration.getConnectors();
             this.configuration.communicators = configuration.getCommunicators();

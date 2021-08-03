@@ -106,8 +106,8 @@ public class RsocketCommunication implements Communication {
     }
 
     private RSocketClient createClient() {
-        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = configuration.getTcpConnector().get(connector);
-        RsocketHttpConnectorConfiguration httpConnectorConfiguration = configuration.getHttpConnector().get(connector);
+        RsocketTcpConnectorConfiguration tcpConnectorConfiguration = configuration.getTcpConnectors().get(connector);
+        RsocketHttpConnectorConfiguration httpConnectorConfiguration = configuration.getHttpConnectors().get(connector);
         if (nonNull(tcpConnectorConfiguration)) {
             return createTcpClient(tcpConnectorConfiguration);
         }
@@ -251,8 +251,8 @@ public class RsocketCommunication implements Communication {
     }
 
     private RsocketCommonConnectorConfiguration connectorConfiguration() {
-        ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = rsocketModule().configuration().getTcpConnector();
-        ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = rsocketModule().configuration().getHttpConnector();
+        ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = rsocketModule().configuration().getTcpConnectors();
+        ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectorConfigurations = rsocketModule().configuration().getHttpConnectors();
         RsocketTcpConnectorConfiguration tcpConnectorConfiguration = tcpConnectorConfigurations.get(connector);
         RsocketHttpConnectorConfiguration httpConnectorConfiguration = httpConnectorConfigurations.get(connector);
         return let(tcpConnectorConfiguration,

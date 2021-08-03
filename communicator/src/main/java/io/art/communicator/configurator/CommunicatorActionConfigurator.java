@@ -6,8 +6,6 @@ import io.art.communicator.decorator.*;
 import io.art.core.model.*;
 import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.core.extensions.FunctionExtensions.*;
-import java.util.function.*;
 
 @RequiredArgsConstructor
 public class CommunicatorActionConfigurator {
@@ -41,23 +39,22 @@ public class CommunicatorActionConfigurator {
         return this;
     }
 
-    UnaryOperator<CommunicatorActionBuilder> configure() {
-        UnaryOperator<CommunicatorActionBuilder> decorator = UnaryOperator.identity();
+    CommunicatorActionBuilder configure(CommunicatorActionBuilder builder) {
         if (deactivable) {
-            decorator = then(decorator, builder -> builder.inputDecorator(new CommunicatorDeactivationDecorator(id, configuration)));
+            builder.inputDecorator(new CommunicatorDeactivationDecorator(id, configuration));
         }
         if (loggable) {
-            decorator = then(decorator, builder -> builder.inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT)));
+            builder.inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT));
         }
         if (resilience) {
-            decorator = then(decorator, builder -> builder.inputDecorator(new CommunicatorResilienceDecorator(id, configuration)));
+            builder.inputDecorator(new CommunicatorResilienceDecorator(id, configuration));
         }
         if (deactivable) {
-            decorator = then(decorator, builder -> builder.outputDecorator(new CommunicatorDeactivationDecorator(id, configuration)));
+            builder.outputDecorator(new CommunicatorDeactivationDecorator(id, configuration));
         }
         if (loggable) {
-            decorator = then(decorator, builder -> builder.outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT)));
+            builder.outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
         }
-        return decorator;
+        return builder;
     }
 }

@@ -113,11 +113,11 @@ public abstract class ServerConfigurator {
                 .id(id)
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
-        UnaryOperator<ServiceMethodBuilder> configurator = decorator.apply(new ServiceMethodConfigurator(id, configurationProvider.get())).configure();
+        builder = decorator.apply(new ServiceMethodConfigurator(id, configurationProvider.get())).configure(builder, inputType);
         if (nonNull(inputType)) {
-            return configurator.apply(builder.inputType(inputType)).build();
+            return builder.inputType(inputType).build();
         }
-        return configurator.apply(builder).build();
+        return builder.build();
     }
 
     @RequiredArgsConstructor

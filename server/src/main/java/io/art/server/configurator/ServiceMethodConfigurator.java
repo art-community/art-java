@@ -1,14 +1,14 @@
 package io.art.server.configurator;
 
 import io.art.core.model.*;
+import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.server.decorator.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.server.method.ServiceMethod.*;
-import java.util.function.*;
+import static java.util.Objects.*;
 
 public class ServiceMethodConfigurator {
     private ServiceMethodIdentifier id;
@@ -57,28 +57,24 @@ public class ServiceMethodConfigurator {
         return this;
     }
 
-    UnaryOperator<ServiceMethodBuilder> configure() {
-        UnaryOperator<ServiceMethodBuilder> decorator = UnaryOperator.identity();
+    ServiceMethodBuilder configure(ServiceMethodBuilder builder, MetaType<?> inputType) {
         if (deactivable) {
-            decorator = then(decorator, builder -> builder.inputDecorator(new ServiceDeactivationDecorator(id, configuration)));
+            builder.inputDecorator(new ServiceDeactivationDecorator(id, configuration));
         }
         if (loggable) {
-            decorator = then(decorator, builder -> builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT)));
+            builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT));
         }
         if (validatable) {
-            decorator = then(decorator, builder -> applyIf(
-                    builder,
-                    validatable -> builder.build().getInputType().modifiers().contains(VALIDATABLE),
-                    validatable -> validatable.inputDecorator(new ServiceValidationDecorator(id, configuration))
-            ));
+            if (nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
+                builder.inputDecorator(new ServiceValidationDecorator(id, configuration));
+            }
         }
         if (deactivable) {
-            decorator = then(decorator, builder -> builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration)));
+            builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration));
         }
         if (loggable) {
-            decorator = then(decorator, builder -> builder.outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT)));
+            builder.outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT));
         }
-        decorator = then(decorator, builder -> builder.id(id));
-        return decorator;
+        return builder.id(id);
     }
 }
