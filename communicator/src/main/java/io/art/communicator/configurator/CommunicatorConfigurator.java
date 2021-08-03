@@ -83,12 +83,12 @@ public abstract class CommunicatorConfigurator {
                 MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
                 UnaryOperator<CommunicatorActionConfigurator> decorator = orElse(classBasedConfigurations.get(communicatorClass), identity());
                 ConnectorConfiguration connectorConfiguration = connector.getValue();
-                Function<MetaMethod<?>, CommunicatorAction> action = actionMethod -> createAction(
+                Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(
                         provider,
                         new ActionConfiguration(communicatorClass, decorator, actionMethod),
                         new ConnectorConfiguration(connectorConfiguration.connector, connectorConfiguration.communication)
                 );
-                CommunicatorProxy<? extends Communicator> communicator = createCommunicatorProxy(communicatorClass, action);
+                CommunicatorProxy<? extends Communicator> communicator = createCommunicatorProxy(communicatorClass, actions);
                 proxies.put(communicatorClass.definition().type(), cast(communicator));
             }
         }

@@ -3,6 +3,7 @@ package io.art.rsocket.communicator;
 import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.logging.logger.*;
+import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
@@ -48,13 +49,17 @@ public class RsocketCommunicationFactory {
 
 
     public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
-        Supplier<RSocketClient> client = () -> createTcpClient(connectorConfiguration, identifier);
-        return new RsocketCommunication(client, rsocketModule().configuration(), connectorConfiguration.getCommonConfiguration());
+        String connector = connectorConfiguration.getCommonConfiguration().getConnector();
+        RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
+        Supplier<RSocketClient> client = () -> createTcpClient(moduleConfiguration.getTcpConnectors().get(connector), identifier);
+        return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
     public static RsocketCommunication createHttpCommunication(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
-        Supplier<RSocketClient> client = () -> createHttpClient(connectorConfiguration, identifier);
-        return new RsocketCommunication(client, rsocketModule().configuration(), connectorConfiguration.getCommonConfiguration());
+        String connector = connectorConfiguration.getCommonConfiguration().getConnector();
+        RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
+        Supplier<RSocketClient> client = () -> createHttpClient(moduleConfiguration.getHttpConnectors().get(connector), identifier);
+        return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
 

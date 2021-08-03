@@ -10,7 +10,7 @@ import static java.util.Arrays.*;
 @UtilityClass
 public class ClassIdentifierNormalizer {
     public String asId(Class<?> owner) {
-        String id = removeSuffixNumbers(owner.getSimpleName());
+        String id = owner.getSimpleName();
         for (String suffix : setOf(CONNECTOR_CLASS_SUFFIX, SERVICE_CLASS_SUFFIX, COMMUNICATOR_CLASS_SUFFIX)) {
             id = removeSuffix(id, suffix);
         }
@@ -20,7 +20,7 @@ public class ClassIdentifierNormalizer {
         int count = 1;
         for (int index = 1; index < current.length; index++) {
             char character = current[index];
-            if (isUpperCase(character)) {
+            if (isUpperCase(character) || isDigit(character)) {
                 normalized[count] = DASH;
                 normalized[count + 1] = toLowerCase(character);
                 count += 2;
@@ -44,15 +44,9 @@ public class ClassIdentifierNormalizer {
         if (suffixIndex == -1) {
             return string;
         }
-        return string.substring(0, suffixIndex);
-    }
-
-    private String removeSuffixNumbers(String string) {
-        char[] newString = string.toCharArray();
-        int lastIndex = newString.length - 1;
-        while (isDigit(string.charAt(lastIndex))) {
-            lastIndex--;
+        if (suffixIndex + suffix.length() >= string.length()) {
+            return string.substring(0, suffixIndex);
         }
-        return new String(copyOf(newString, lastIndex + 1));
+        return string.substring(0, suffixIndex) + string.substring(suffixIndex + suffix.length());
     }
 }
