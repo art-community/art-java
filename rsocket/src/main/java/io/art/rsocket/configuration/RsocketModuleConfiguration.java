@@ -73,7 +73,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors;
 
     @Getter
-    private LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Communicator>> communicators;
+    private LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators;
 
     @Getter
     private CommunicatorConfiguration communicator;

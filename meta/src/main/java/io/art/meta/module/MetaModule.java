@@ -29,7 +29,6 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -67,10 +66,6 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
             throw new MetaException(format(META_CLASS_FOR_CLASS_NOT_EXISTS, type));
         }
         return cast(metaClass);
-    }
-
-    public static <T> LazyProperty<MetaClass<T>> lazyDeclaration(Class<T> type) {
-        return lazy(() -> declaration(type));
     }
 
     public static <T extends MetaLibrary> T library() {

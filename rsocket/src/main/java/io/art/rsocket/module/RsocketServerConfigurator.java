@@ -7,6 +7,7 @@ import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.server.configurator.*;
 import io.art.server.method.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
@@ -40,7 +41,7 @@ public class RsocketServerConfigurator extends ServerConfigurator {
     }
 
     RsocketServerConfigurator() {
-        super(() -> rsocketModule().configuration().getServer());
+        super(lazy(() -> rsocketModule().configuration().getServer()));
     }
 
     RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {

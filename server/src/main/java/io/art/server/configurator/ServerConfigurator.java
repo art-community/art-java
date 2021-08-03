@@ -25,7 +25,7 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public abstract class ServerConfigurator {
-    private final Supplier<ServerConfiguration> configurationProvider;
+    private final LazyProperty<ServerConfiguration> configurationProvider;
     private final List<PackageBasedConfiguration> packageBased = linkedList();
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
@@ -114,10 +114,7 @@ public abstract class ServerConfigurator {
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
         builder = decorator.apply(new ServiceMethodConfigurator(id, configurationProvider.get())).configure(builder, inputType);
-        if (nonNull(inputType)) {
-            return builder.inputType(inputType).build();
-        }
-        return builder.build();
+        return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
 
     @RequiredArgsConstructor

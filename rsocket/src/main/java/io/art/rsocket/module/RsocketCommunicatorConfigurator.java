@@ -3,20 +3,17 @@ package io.art.rsocket.module;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.rsocket.*;
-import io.art.rsocket.communicator.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.communicator.factory.ConnectorProxyFactory.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.meta.module.MetaModule.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.*;
 import java.util.function.*;
@@ -24,7 +21,6 @@ import java.util.function.*;
 @Setter
 @Accessors(fluent = true)
 public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
-    private Map<Class<? extends Connector>, LazyProperty<? extends Connector>> connectors = map();
     private Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
 
@@ -36,17 +32,26 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return http(connectorClass, UnaryOperator.identity());
     }
 
-    public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connector, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
-        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connector)));
-        connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
-        tcpConnectors.put(asId(connector), connectorConfigurator.configure());
+    public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
+        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connectorClass)));
+        registerConnector(connectorClass, Rsocket::rsocketCommunicator);
+        tcpConnectors.put(asId(connectorClass), connectorConfigurator.configure());
         return this;
     }
 
-    private RsocketCommunicatorConfigurator http(Class<? extends Connector> connector, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
-        connectors.put(connector, lazy(() -> createConnectorProxy(declaration(connector), Rsocket::rsocketCommunicator)));
-        httpConnectors.put(asId(connector), configurator.apply(new RsocketHttpConnectorConfigurator(asId(connector))).configure());
+    public RsocketCommunicatorConfigurator http(Class<? extends Connector> connectorClass, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
+        RsocketHttpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketHttpConnectorConfigurator(asId(connectorClass)));
+        registerConnector(connectorClass, Rsocket::rsocketCommunicator);
+        httpConnectors.put(asId(connectorClass), connectorConfigurator.configure());
         return this;
+    }
+
+    private static Map<CommunicatorActionIdentifier, Communication> createCommunications() {
+        return map();
+    }
+
+    RsocketCommunicatorConfigurator() {
+        super(lazy(() -> rsocketModule().configuration().getCommunicator()), lazy(RsocketCommunicatorConfigurator::createCommunications));
     }
 
     ImmutableMap<String, RsocketTcpConnectorConfiguration> configureTcp() {
@@ -57,14 +62,11 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return immutableMapOf(httpConnectors);
     }
 
-    LazyProperty<ImmutableMap<Class<?>, Connector>> connectors() {
-        return lazy(() -> connectors
-                .entrySet()
-                .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
+    LazyProperty<ImmutableMap<Class<? extends Connector>, ? extends Connector>> connectors() {
+        return createConnectors();
     }
 
-    LazyProperty<ImmutableMap<Class<?>, Communicator>> communicators() {
-        return get(() -> rsocketModule().configuration().getCommunicator(), () -> new RsocketCommunication(rsocketModule().configuration()), lazy(() -> cast(connectors().get().keySet())));
+    LazyProperty<ImmutableMap<Class<? extends Communicator>, ? extends Communicator>> communicators() {
+        return createCommunicators();
     }
 }
