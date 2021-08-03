@@ -60,7 +60,7 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getTargetService(), identifier.getActionId());
+        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getService(), identifier.getActionId());
         TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
         RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())
@@ -113,7 +113,7 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getTargetService(), identifier.getActionId());
+        ServiceMethodIdentifier targetServiceMethod = serviceMethodId(commonConfiguration.getService(), identifier.getActionId());
         TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
         RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(commonConfiguration.getDataFormat())

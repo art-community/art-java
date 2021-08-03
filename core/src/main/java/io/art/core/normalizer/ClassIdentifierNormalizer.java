@@ -10,7 +10,7 @@ import static java.util.Arrays.*;
 @UtilityClass
 public class ClassIdentifierNormalizer {
     public String asId(Class<?> owner) {
-        String id = owner.getSimpleName();
+        String id = removeSuffixNumbers(owner.getSimpleName());
         for (String suffix : setOf(CONNECTOR_CLASS_SUFFIX, SERVICE_CLASS_SUFFIX, COMMUNICATOR_CLASS_SUFFIX)) {
             id = removeSuffix(id, suffix);
         }
@@ -45,5 +45,14 @@ public class ClassIdentifierNormalizer {
             return string;
         }
         return string.substring(0, suffixIndex);
+    }
+
+    private String removeSuffixNumbers(String string) {
+        char[] newString = string.toCharArray();
+        int lastIndex = newString.length - 1;
+        while (isDigit(string.charAt(lastIndex))) {
+            lastIndex--;
+        }
+        return new String(copyOf(newString, lastIndex + 1));
     }
 }

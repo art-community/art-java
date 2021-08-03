@@ -233,7 +233,7 @@ public class MetaRsocketTest extends MetaLibrary {
               }
 
               public static final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
-                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM2Method() {
                   super("m2",metaType(Void.class));
@@ -242,19 +242,18 @@ public class MetaRsocketTest extends MetaLibrary {
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object[] arguments) throws Throwable {
-                  instance.m2((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                  instance.m2((java.lang.String)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object argument) throws Throwable {
-                  instance.m2((reactor.core.publisher.Mono)(argument));
+                  instance.m2((java.lang.String)(argument));
                   return null;
                 }
 
-                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
-                    ) {
+                public MetaParameter<java.lang.String> inputParameter() {
                   return inputParameter;
                 }
               }
@@ -277,7 +276,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
 
                 @Override
-                public void m2(reactor.core.publisher.Mono<java.lang.String> input) {
+                public void m2(java.lang.String input) {
                   m2Invocation.apply(input);
                 }
               }
@@ -466,7 +465,7 @@ public class MetaRsocketTest extends MetaLibrary {
               }
 
               public static final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
-                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM2Method() {
                   super("m2",metaType(Void.class));
@@ -475,19 +474,18 @@ public class MetaRsocketTest extends MetaLibrary {
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object[] arguments) throws Throwable {
-                  instance.m2((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                  instance.m2((java.lang.String)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object argument) throws Throwable {
-                  instance.m2((reactor.core.publisher.Mono)(argument));
+                  instance.m2((java.lang.String)(argument));
                   return null;
                 }
 
-                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
-                    ) {
+                public MetaParameter<java.lang.String> inputParameter() {
                   return inputParameter;
                 }
               }

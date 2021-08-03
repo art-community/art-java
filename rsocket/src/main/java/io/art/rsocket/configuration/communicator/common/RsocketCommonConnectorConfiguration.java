@@ -1,7 +1,6 @@
 package io.art.rsocket.configuration.communicator.common;
 
 import io.art.core.changes.*;
-import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -31,7 +30,7 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketRetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
-    private String targetService;
+    private String service;
     private Supplier<TransportPayloadWriter> setupPayloadWriter;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
@@ -61,6 +60,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.retry = listener.emit(source.getNested(KEEP_ALIVE_SECTION, RsocketRetryConfiguration::rsocketRetry));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), ZERO_COPY));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), Integer.MAX_VALUE));
+        configuration.service = listener.emit(source.getString(SERVICE_ID_KEY));
         return configuration;
     }
 
@@ -78,6 +78,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, current.retry), current.retry));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), current.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
+        configuration.service = listener.emit(orElse(source.getString(SERVICE_ID_KEY), current.service));
         return configuration;
     }
 }
