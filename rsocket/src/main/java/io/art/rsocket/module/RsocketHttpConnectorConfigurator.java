@@ -4,7 +4,7 @@ import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.orElse;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;
 
@@ -27,7 +27,7 @@ public class RsocketHttpConnectorConfigurator {
 
     public RsocketHttpConnectorConfigurator single(UnaryOperator<RsocketHttpClientConfigurator> configurator) {
         RsocketHttpClientConfigurator clientConfigurator = configurator.apply(new RsocketHttpClientConfigurator());
-        single = clientConfigurator.http().apply(RsocketHttpClientConfiguration.builder())
+        single = clientConfigurator.http().apply(RsocketHttpClientConfiguration.defaults(connector).toBuilder())
                 .commonConfiguration(clientConfigurator.common().apply(RsocketCommonClientConfiguration.defaults(connector).toBuilder()).build())
                 .build();
         return this;
