@@ -19,6 +19,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.MapCollector.*;
+import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -34,11 +35,8 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public abstract class CommunicatorConfigurator {
     private final List<ClassBasedConfiguration> classBased = linkedList();
+    private final List<MethodBasedConfiguration> methodBased = linkedList();
     private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
-
-    public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass) {
-        return configure(() -> declaration(communicatorClass), identity());
-    }
 
     public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         return configure(() -> declaration(communicatorClass), decorator);
@@ -46,6 +44,15 @@ public abstract class CommunicatorConfigurator {
 
     public CommunicatorConfigurator configure(Supplier<MetaClass<? extends Communicator>> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(communicatorClass, decorator));
+        return this;
+    }
+
+    public <T extends MetaClass<? extends Communicator>> CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, Function<T, MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        return configure(() -> cast(declaration(communicatorClass)), actionMethod, decorator);
+    }
+
+    public <T extends MetaClass<? extends Communicator>> CommunicatorConfigurator configure(Supplier<T> communicatorClass, Function<T, MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        methodBased.add(new MethodBasedConfiguration(communicatorClass, actionMethod, decorator));
         return this;
     }
 
@@ -86,10 +93,13 @@ public abstract class CommunicatorConfigurator {
         ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
-            UnaryOperator<CommunicatorActionConfigurator> decorator = orElse(classBasedConfigurations.get(communicatorClass), identity());
             Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(provider, ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
-                    .decorator(decorator)
+                    .decorator(then(orElse(classBasedConfigurations.get(communicatorClass), identity()), orElse(methodBased.stream()
+                            .filter(configuration -> communicatorClass.equals(configuration.communicatorClass.get()) && actionMethod.equals(configuration.actionMethod.apply(cast(communicatorClass))))
+                            .map(configuration -> configuration.decorator)
+                            .findFirst()
+                            .orElse(identity()), identity())))
                     .method(actionMethod)
                     .connectorConfiguration(connectorConfiguration)
                     .build());
@@ -118,6 +128,13 @@ public abstract class CommunicatorConfigurator {
     @RequiredArgsConstructor
     private static class ClassBasedConfiguration {
         final Supplier<MetaClass<? extends Communicator>> communicatorClass;
+        final UnaryOperator<CommunicatorActionConfigurator> decorator;
+    }
+
+    @RequiredArgsConstructor
+    private static class MethodBasedConfiguration {
+        final Supplier<? extends MetaClass<? extends Communicator>> communicatorClass;
+        final Function<? extends MetaClass<? extends Communicator>, MetaMethod<?>> actionMethod;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 

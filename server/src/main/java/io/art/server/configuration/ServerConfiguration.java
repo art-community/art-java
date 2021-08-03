@@ -43,7 +43,7 @@ public class ServerConfiguration {
     private final ServerRefresher.Consumer consumer;
 
     @Getter
-    private final LazyProperty<ImmutableArray<ServiceMethod>> serviceMethods;
+    private final LazyProperty<ImmutableSet<ServiceMethod>> serviceMethods;
 
     @Getter
     private ImmutableMap<String, ServiceConfiguration> services;
@@ -93,7 +93,7 @@ public class ServerConfiguration {
     public static ServerConfiguration defaults(ServerRefresher refresher) {
         return ServerConfiguration.builder().refresher(refresher)
                 .consumer(refresher.consumer())
-                .serviceMethods(lazy(ImmutableArray::emptyImmutableArray))
+                .serviceMethods(lazy(ImmutableSet::emptyImmutableSet))
                 .services(emptyImmutableMap())
                 .build();
     }

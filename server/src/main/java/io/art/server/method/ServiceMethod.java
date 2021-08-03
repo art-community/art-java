@@ -37,8 +37,10 @@ import java.util.*;
 import java.util.function.*;
 
 @Builder(toBuilder = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceMethod {
     @Getter
+    @EqualsAndHashCode.Include
     private final ServiceMethodIdentifier id;
 
     @Getter

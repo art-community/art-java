@@ -1,8 +1,10 @@
 package io.art.rsocket.test;
 
+import io.art.communicator.configurator.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
+import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaCommunicatorPackage.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.initializer.Initializer.*;
@@ -26,7 +28,8 @@ public class RsocketTest {
                                         .configure(builder -> builder.logging(true).service(asId(TestRsocket.class))))
                                 .http(TestRsocketConnector2.class, connector -> connector
                                         .configure(builder -> builder.service(asId(TestRsocket.class)).logging(true))
-                                        .single(client -> client.common(common -> common.port(9001)))))
+                                        .single(client -> client.common(common -> common.port(9001))))
+                                .configure(TestRsocket.class, MetaTestRsocketClass::m1Method, CommunicatorActionConfigurator::loggable))
                         .server(server -> server
                                 .tcp()
                                 .http(http -> http.common(common -> common.port(9001)))

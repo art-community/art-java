@@ -1,6 +1,7 @@
 package io.art.server.configurator;
 
 import io.art.core.collection.*;
+import io.art.core.factory.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.invoker.*;
@@ -11,9 +12,10 @@ import io.art.server.method.ServiceMethod.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
@@ -69,8 +71,8 @@ public abstract class ServerConfigurator {
     }
 
 
-    private ImmutableArray<ServiceMethod> createMethods(LazyProperty<ServerConfiguration> provider) {
-        ImmutableArray.Builder<ServiceMethod> methods = immutableArrayBuilder();
+    private ImmutableSet<ServiceMethod> createMethods(LazyProperty<ServerConfiguration> provider) {
+        List<ServiceMethod> methods = linkedList();
         for (PackageBasedConfiguration configuration : packageBased) {
             MetaPackage servicePackage = configuration.servicePackage.get();
             registerPackages(methods, provider, new PackagesConfiguration(servicePackage.packages().values(), configuration.decorator));
@@ -91,10 +93,10 @@ public abstract class ServerConfigurator {
             methods.add(createServiceMethod(provider, methodConfiguration));
         }
 
-        return methods.build();
+        return immutableSetOf(setOf(methods));
     }
 
-    private void registerPackages(ImmutableArray.Builder<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, PackagesConfiguration configuration) {
+    private void registerPackages(List<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, PackagesConfiguration configuration) {
         UnaryOperator<ServiceMethodConfigurator> decorator = configuration.decorator;
         for (MetaPackage servicePackage : configuration.packages) {
             registerPackages(builder, provider, new PackagesConfiguration(servicePackage.packages().values(), decorator));
@@ -102,7 +104,7 @@ public abstract class ServerConfigurator {
         }
     }
 
-    private void registerClasses(ImmutableArray.Builder<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, ClassesConfiguration configuration) {
+    private void registerClasses(List<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, ClassesConfiguration configuration) {
         UnaryOperator<ServiceMethodConfigurator> decorator = configuration.decorator;
         for (MetaClass<?> serviceClass : configuration.classes) {
             registerClasses(builder, provider, new ClassesConfiguration(serviceClass.classes().values(), decorator));
