@@ -28,7 +28,7 @@ public class RsocketTest {
                         )
                         .server(server -> server
                                 .tcp()
-                                .http(http -> http.common(common -> common.port(9001)))
+                                .http(http -> http.port(9001))
                                 .configureClass(TestRsocketService.class)
                                 .configureClass(TestRsocketService1.class)
                         )

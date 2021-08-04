@@ -12,8 +12,8 @@ import java.util.function.*;
 public class RsocketServerConfigurator extends ServerConfigurator {
     private boolean tcp;
     private boolean http;
-    private UnaryOperator<RsocketTcpServerConfigurator> tcpConfigurator = identity();
-    private UnaryOperator<RsocketHttpServerConfigurator> httpConfigurator = identity();
+    private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = identity();
+    private UnaryOperator<RsocketHttpServerConfigurationBuilder> httpConfigurator = identity();
 
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
@@ -25,32 +25,24 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return this;
     }
 
-    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurator> configurator) {
+    public RsocketServerConfigurator tcp(UnaryOperator<RsocketTcpServerConfigurationBuilder> configurator) {
         this.tcp = true;
         this.tcpConfigurator = configurator;
         return this;
     }
 
-    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurator> configurator) {
+    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurationBuilder> configurator) {
         this.http = true;
         this.httpConfigurator = configurator;
         return this;
     }
 
     RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
-        RsocketTcpServerConfigurator configurator = tcpConfigurator.apply(new RsocketTcpServerConfigurator());
-        RsocketTcpServerConfigurationBuilder builder = current.toBuilder();
-        return configurator.tcp(builder)
-                .common(configurator.common(current.getCommon().toBuilder()).build())
-                .build();
+        return tcpConfigurator.apply(current.toBuilder()).build();
     }
 
     RsocketHttpServerConfiguration configure(RsocketHttpServerConfiguration current) {
-        RsocketHttpServerConfigurator configurator = httpConfigurator.apply(new RsocketHttpServerConfigurator());
-        RsocketHttpServerConfigurationBuilder builder = current.toBuilder();
-        return configurator.http(builder)
-                .common(configurator.common(current.getCommon().toBuilder()).build())
-                .build();
+        return httpConfigurator.apply(current.toBuilder()).build();
     }
 
     boolean enableTcp() {
