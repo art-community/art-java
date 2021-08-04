@@ -41,7 +41,7 @@ public class RsocketHttpConnectorConfigurator {
     RsocketHttpConnectorConfiguration configure() {
         return RsocketHttpConnectorConfiguration.builder()
                 .commonConfiguration(commonConfigurator.apply(RsocketCommonConnectorConfiguration.defaults(connector).toBuilder()).build())
-                .groupConfiguration(group)
+                .groupConfiguration(orElse(group, RsocketHttpClientGroupConfiguration.defaults(connector)))
                 .singleConfiguration(orElse(single, RsocketHttpClientConfiguration.defaults(connector)))
                 .build();
     }

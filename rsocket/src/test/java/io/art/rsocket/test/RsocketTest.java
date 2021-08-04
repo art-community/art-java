@@ -26,7 +26,7 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class)
-                                .http(TestRsocketConnector2.class, connector -> connector.single(client -> client.common(common -> common.port(9001))))
+                                .http(TestRsocketConnector2.class, http -> http.single(client -> client.common(builder -> builder.port(9001))))
                         )
                         .server(server -> server
                                 .tcp()
