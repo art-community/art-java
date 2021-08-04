@@ -95,10 +95,9 @@ public abstract class CommunicatorConfigurator {
         ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
-            UnaryOperator<CommunicatorActionConfigurator> classDecorator = orElse(classBasedConfigurations.get(communicatorClass), identity());
             Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(provider, ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
-                    .decorator(computeDecorator(communicatorClass, classDecorator, actionMethod))
+                    .decorator(computeDecorator(communicatorClass, orElse(classBasedConfigurations.get(communicatorClass), identity()), actionMethod))
                     .method(actionMethod)
                     .connectorConfiguration(connectorConfiguration)
                     .build());
