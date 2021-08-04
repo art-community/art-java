@@ -26,11 +26,10 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class)
-                                .http(TestRsocketConnector2.class, connector -> connector.single(client -> client.common(common -> common.port(9001))))
+                                .http(TestRsocketConnector2.class)
                         )
                         .server(server -> server
                                 .tcp()
-                                .http(http -> http.common(common -> common.port(9001)))
                                 .configurePackage(RsocketTest::services)
                         )
                 )

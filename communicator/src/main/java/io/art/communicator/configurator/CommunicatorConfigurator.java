@@ -95,13 +95,10 @@ public abstract class CommunicatorConfigurator {
         ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
+            UnaryOperator<CommunicatorActionConfigurator> classDecorator = orElse(classBasedConfigurations.get(communicatorClass), identity());
             Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(provider, ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
-                    .decorator(then(orElse(classBasedConfigurations.get(communicatorClass), identity()), orElse(methodBased.stream()
-                            .filter(configuration -> communicatorClass.equals(configuration.communicatorClass.get()) && actionMethod.equals(configuration.actionMethod.apply(cast(communicatorClass))))
-                            .map(configuration -> configuration.decorator)
-                            .findFirst()
-                            .orElse(identity()), identity())))
+                    .decorator(computeDecorator(communicatorClass, classDecorator, actionMethod))
                     .method(actionMethod)
                     .connectorConfiguration(connectorConfiguration)
                     .build());
@@ -110,6 +107,18 @@ public abstract class CommunicatorConfigurator {
         }
 
         return immutableMapOf(proxies);
+    }
+
+    private UnaryOperator<CommunicatorActionConfigurator> computeDecorator(MetaClass<? extends Communicator> communicatorClass,
+                                                                           UnaryOperator<CommunicatorActionConfigurator> classDecorator,
+                                                                           MetaMethod<?> actionMethod) {
+        UnaryOperator<CommunicatorActionConfigurator> methodDecorator = methodBased.stream()
+                .filter(configuration -> communicatorClass.equals(configuration.communicatorClass.get()))
+                .filter(configuration -> actionMethod.equals(configuration.actionMethod.apply(cast(communicatorClass))))
+                .map(configuration -> configuration.decorator)
+                .findFirst()
+                .orElse(identity());
+        return then(classDecorator, orElse(methodDecorator, identity()));
     }
 
     private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> provider, ActionConfiguration actionConfiguration) {
