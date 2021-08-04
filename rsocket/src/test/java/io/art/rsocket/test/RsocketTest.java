@@ -22,12 +22,15 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class)
-                                .http(TestRsocketConnector2.class)
+                                .http(TestRsocketConnector2.class, configurator -> configurator
+                                        .weighted(builder -> builder
+                                                .client(client -> client.common(common -> common.port(9001)))))
                         )
                         .server(server -> server
                                 .tcp()
-                                .http()
+                                .http(http -> http.common(common -> common.port(9001)))
                                 .configureClass(TestRsocketService.class)
+                                .configureClass(TestRsocketService1.class)
                         )
                 )
         );

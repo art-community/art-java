@@ -1,6 +1,5 @@
 package io.art.rsocket.communicator;
 
-import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.strategy.*;
 import io.art.logging.logger.*;
@@ -168,7 +167,7 @@ public class RsocketCommunicationFactory {
                     .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
-        return from(configured.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        return from(configured);
     }
 
     private static RSocketConnector createConnector(RsocketCommonConnectorConfiguration commonConfiguration, Payload payload) {
