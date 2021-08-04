@@ -4,20 +4,17 @@ import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.server.decorator.*;
+import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.server.method.ServiceMethod.*;
 import static java.util.Objects.*;
 
+@RequiredArgsConstructor
 public class ServiceMethodConfigurator {
     private ServiceMethodIdentifier id;
     private final ServerConfiguration configuration;
-
-    ServiceMethodConfigurator(ServiceMethodIdentifier id, ServerConfiguration configuration) {
-        this.id = id;
-        this.configuration = configuration;
-    }
 
     private boolean loggable;
     private boolean validatable = true;

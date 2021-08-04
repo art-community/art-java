@@ -6,7 +6,6 @@ import io.art.communicator.decorator.*;
 import io.art.core.model.*;
 import lombok.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
-import java.util.function.*;
 
 @RequiredArgsConstructor
 public class CommunicatorActionConfigurator {
@@ -57,9 +56,5 @@ public class CommunicatorActionConfigurator {
             builder.outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
         }
         return builder;
-    }
-
-    public interface CommunicatorActionOperator extends UnaryOperator<CommunicatorActionConfigurator> {
-
     }
 }
