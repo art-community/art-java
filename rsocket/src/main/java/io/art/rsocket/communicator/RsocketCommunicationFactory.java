@@ -10,7 +10,6 @@ import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
-import io.art.transport.payload.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -45,7 +44,7 @@ import java.util.function.*;
 @UtilityClass
 public class RsocketCommunicationFactory {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RsocketCommunication.class);
+    private final static Logger logger = logger(RSOCKET_COMMUNICATOR_LOGGER);
 
 
     public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
@@ -64,107 +63,110 @@ public class RsocketCommunicationFactory {
 
 
     private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
-        RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = commonConfiguration.getService().apply(new ServiceMethodStrategy()).id(identifier);
-        TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
-        RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
-                .dataFormat(commonConfiguration.getDataFormat())
-                .metadataFormat(commonConfiguration.getMetaDataFormat());
-        if (nonNull(targetServiceMethod)) {
-            payloadBuilder.serviceId(targetServiceMethod.getServiceId()).methodId(targetServiceMethod.getMethodId());
+        RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
+        RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
+        Payload payload = create(common
+                .getSetupPayloadWriter()
+                .get()
+                .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
+                .nioBuffer());
+        RSocketConnector connector = createConnector(common, payload);
+        RsocketTcpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
+        if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
+            return configureSocket(common, createTcpBalancer(connector, group), setupPayload);
         }
-        RsocketSetupPayload setupPayload = payloadBuilder.build();
-        Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
-        RSocketConnector connector = createConnector(commonConfiguration, payload);
-        RsocketTcpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
-        if (nonNull(groupConfiguration) && isNotEmpty(groupConfiguration.getClientConfigurations())) {
-            List<LoadbalanceTarget> targets = linkedList();
-            for (RsocketTcpClientConfiguration clientConfiguration : groupConfiguration.getClientConfigurations()) {
-                RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
-                TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
-                        .host(commonClientConfiguration.getHost())
-                        .port(commonClientConfiguration.getPort()));
-                TcpClientTransport transport = TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength());
-                String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
-                targets.add(LoadbalanceTarget.from(key, transport));
-            }
-            Mono<RSocket> socket = LoadbalanceRSocketClient.builder(Flux.just(targets))
-                    .loadbalanceStrategy(groupConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
-                    .connector(connector)
-                    .build()
-                    .source();
-            socket = socket
-                    .doOnTerminate(payload::release)
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-            if (commonConfiguration.isLogging()) {
-                socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
-            }
-            return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        return configureSocket(common, createTcpClient(connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+    }
+
+    private static Mono<RSocket> createTcpBalancer(RSocketConnector connector, RsocketTcpClientGroupConfiguration group) {
+        List<LoadbalanceTarget> targets = linkedList();
+        for (RsocketTcpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
+            RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
+            TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
+                    .host(commonClientConfiguration.getHost())
+                    .port(commonClientConfiguration.getPort()));
+            TcpClientTransport transport = TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength());
+            String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
+            targets.add(LoadbalanceTarget.from(key, transport));
         }
-        RsocketTcpClientConfiguration clientConfiguration = connectorConfiguration.getSingleConfiguration();
+        return LoadbalanceRSocketClient.builder(Flux.just(targets))
+                .loadbalanceStrategy(group.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
+                .connector(connector)
+                .build()
+                .source();
+    }
+
+    private static Mono<RSocket> createTcpClient(RsocketTcpClientConfiguration clientConfiguration, RSocketConnector connector) {
         RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
         TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
                 .host(commonClientConfiguration.getHost())
                 .port(commonClientConfiguration.getPort()));
-        Mono<RSocket> socket = connector
-                .connect(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength()))
-                .doOnTerminate(payload::release)
-                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-        if (commonConfiguration.isLogging()) {
-            socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
-        }
-        return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        return connector.connect(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength()));
     }
 
+
     private static RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
-        RsocketCommonConnectorConfiguration commonConfiguration = connectorConfiguration.getCommonConfiguration();
-        ServiceMethodIdentifier targetServiceMethod = commonConfiguration.getService().apply(new ServiceMethodStrategy()).id(identifier);
-        TransportPayloadWriter setupPayloadWriter = commonConfiguration.getSetupPayloadWriter().get();
-        RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
-                .dataFormat(commonConfiguration.getDataFormat())
-                .metadataFormat(commonConfiguration.getMetaDataFormat());
-        if (nonNull(targetServiceMethod)) {
-            payloadBuilder.serviceId(targetServiceMethod.getServiceId()).methodId(targetServiceMethod.getMethodId());
+        RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
+        RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
+        Payload payload = create(common
+                .getSetupPayloadWriter()
+                .get()
+                .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
+                .nioBuffer());
+        RSocketConnector connector = createConnector(common, payload);
+        RsocketHttpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
+        if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
+            return configureSocket(common, createHttpBalancer(connector, group), setupPayload);
         }
-        RsocketSetupPayload setupPayload = payloadBuilder.build();
-        Payload payload = create(setupPayloadWriter.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)).nioBuffer());
-        RSocketConnector connector = createConnector(commonConfiguration, payload);
-        RsocketHttpClientGroupConfiguration groupConfiguration = connectorConfiguration.getGroupConfiguration();
-        if (nonNull(groupConfiguration) && isNotEmpty(groupConfiguration.getClientConfigurations())) {
-            List<LoadbalanceTarget> targets = linkedList();
-            for (RsocketHttpClientConfiguration clientConfiguration : groupConfiguration.getClientConfigurations()) {
-                RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
-                HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
-                        .host(commonClientConfiguration.getHost())
-                        .port(commonClientConfiguration.getPort()));
-                WebsocketClientTransport transport = WebsocketClientTransport.create(client, clientConfiguration.getPath());
-                String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
-                targets.add(LoadbalanceTarget.from(key, transport));
-            }
-            Mono<RSocket> socket = LoadbalanceRSocketClient.builder(Flux.just(targets))
-                    .loadbalanceStrategy(groupConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
-                    .connector(connector)
-                    .build()
-                    .source();
-            socket = socket
-                    .doOnTerminate(payload::release)
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-            if (commonConfiguration.isLogging()) {
-                socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
-            }
-            return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        return configureSocket(common, createHttpClient(connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+    }
+
+    private static Mono<RSocket> createHttpBalancer(RSocketConnector connector, RsocketHttpClientGroupConfiguration group) {
+        List<LoadbalanceTarget> targets = linkedList();
+        for (RsocketHttpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
+            RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
+            HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
+                    .host(commonClientConfiguration.getHost())
+                    .port(commonClientConfiguration.getPort()));
+            WebsocketClientTransport transport = WebsocketClientTransport.create(client, clientConfiguration.getPath());
+            String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
+            targets.add(LoadbalanceTarget.from(key, transport));
         }
-        RsocketHttpClientConfiguration clientConfiguration = connectorConfiguration.getSingleConfiguration();
+        return LoadbalanceRSocketClient.builder(Flux.just(targets))
+                .loadbalanceStrategy(group.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
+                .connector(connector)
+                .build()
+                .source();
+    }
+
+    private static Mono<RSocket> createHttpClient(RsocketHttpClientConfiguration clientConfiguration, RSocketConnector connector) {
         RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
         HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
                 .host(commonClientConfiguration.getHost())
                 .port(commonClientConfiguration.getPort()));
-        Mono<RSocket> socket = connector
-                .connect(WebsocketClientTransport.create(client, clientConfiguration.getPath()))
-                .doOnTerminate(payload::release)
-                .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
-        if (commonConfiguration.isLogging()) {
-            socket = socket.doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, commonConfiguration.getConnector(), setupPayload)));
+        return connector.connect(WebsocketClientTransport.create(client, clientConfiguration.getPath()));
+    }
+
+
+    private static RsocketSetupPayload createSetupPayload(RsocketCommonConnectorConfiguration common, CommunicatorActionIdentifier identifier) {
+        ServiceMethodIdentifier targetServiceMethod = common.getService().apply(new ServiceMethodStrategy()).id(identifier);
+        RsocketSetupPayload.RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
+                .dataFormat(common.getDataFormat())
+                .metadataFormat(common.getMetaDataFormat());
+        if (nonNull(targetServiceMethod)) {
+            payloadBuilder
+                    .serviceId(targetServiceMethod.getServiceId())
+                    .methodId(targetServiceMethod.getMethodId());
+        }
+        return payloadBuilder.build();
+    }
+
+    private static RSocketClient configureSocket(RsocketCommonConnectorConfiguration common, Mono<RSocket> socket, RsocketSetupPayload setupPayload) {
+        socket = socket.timeout(common.getTimeout());
+        if (common.isLogging()) {
+            socket = socket
+                    .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
+                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
     }
@@ -179,9 +181,9 @@ public class RsocketCommunicationFactory {
         apply(commonConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(commonConfiguration.getResume(), resume -> connector.resume(resume.toResume()));
         apply(commonConfiguration.getRetry(), retry -> connector.reconnect(retry.toRetry()));
-
         return connector.setupPayload(payload);
     }
+
 
     private static void configureInterceptors(RsocketCommonConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
         registry.forResponder(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration))

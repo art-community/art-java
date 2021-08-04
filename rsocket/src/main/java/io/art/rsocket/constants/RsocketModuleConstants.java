@@ -25,6 +25,7 @@ import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
+import static java.time.Duration.*;
 import java.time.*;
 
 public interface RsocketModuleConstants {
@@ -88,6 +89,7 @@ public interface RsocketModuleConstants {
         String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.port";
         String TRANSPORT_HOST_KEY = "transport.host";
+        String TRANSPORT_TIMEOUT_CONNECTION_KEY = "transport.timeout.connection";
         String TRANSPORT_TCP_HOST_KEY = "transport.tcp.host";
         String TRANSPORT_TCP_PORT_KEY = "transport.tcp.port";
         String TRANSPORT_WS_BASE_URL_KEY = "transport.ws.baseUrl";
@@ -125,15 +127,16 @@ public interface RsocketModuleConstants {
 
     interface Defaults {
         long DEFAULT_RETRY_MAX_ATTEMPTS = 3;
-        Duration DEFAULT_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);
-        Duration DEFAULT_RETRY_FIXED_DELAY = Duration.ofSeconds(1);
+        Duration DEFAULT_RETRY_MIN_BACKOFF = ofSeconds(1);
+        Duration DEFAULT_RETRY_FIXED_DELAY = ofSeconds(1);
         int DEFAULT_RETRY_MAX = 1;
         int DEFAULT_RETRY_MAX_IN_ROW = 1;
         int DEFAULT_PORT = 9000;
-        Duration DEFAULT_RESUME_SESSION_DURATION = Duration.ofHours(1);
-        Duration DEFAULT_RESUME_STREAM_TIMEOUT = Duration.ofHours(1);
-        Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
-        Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
+        Duration DEFAULT_TIMEOUT = ofSeconds(10);
+        Duration DEFAULT_RESUME_SESSION_DURATION = ofHours(1);
+        Duration DEFAULT_RESUME_STREAM_TIMEOUT = ofHours(1);
+        Duration DEFAULT_KEEP_ALIVE_INTERVAL = ofSeconds(20);
+        Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = ofSeconds(90);
         String DEFAULT_HTTP_PATH = SLASH;
     }
 

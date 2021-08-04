@@ -5,19 +5,19 @@ import java.util.function.*;
 
 @UtilityClass
 public class FunctionExtensions {
-    public <T> T apply(T target, Consumer<T> action) {
+    public static <T> T apply(T target, Consumer<T> action) {
         action.accept(target);
         return target;
     }
 
-    public <T> T applyIf(T target, Predicate<T> predicate, Consumer<T> action) {
+    public static <T> T applyIf(T target, Predicate<T> predicate, Consumer<T> action) {
         if (predicate.test(target)) {
             action.accept(target);
         }
         return target;
     }
 
-    public <T> UnaryOperator<T> then(UnaryOperator<T> current, UnaryOperator<T> next) {
+    public static <T> UnaryOperator<T> then(UnaryOperator<T> current, UnaryOperator<T> next) {
         return value -> next.apply(current.apply(value));
     }
 

@@ -12,6 +12,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -26,18 +27,8 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public abstract class ServerConfigurator {
-    private final List<PackageBasedConfiguration> packageBased = linkedList();
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
-
-    public <T extends MetaLibrary> ServerConfigurator configurePackage(Function<T, MetaPackage> servicePackage) {
-        return configurePackage(servicePackage, identity());
-    }
-
-    public <T extends MetaLibrary> ServerConfigurator configurePackage(Function<T, MetaPackage> servicePackage, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        packageBased.add(new PackageBasedConfiguration(() -> servicePackage.apply(library()), decorator));
-        return this;
-    }
 
 
     public ServerConfigurator configureClass(Class<?> serviceClass) {
@@ -58,19 +49,23 @@ public abstract class ServerConfigurator {
     }
 
 
-    public <T extends MetaClass<?>> ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
+    public <T extends MetaClass<?>>
+    ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
         return configureMethod(serviceClass, serviceMethod, identity());
     }
 
-    public <T extends MetaClass<?>> ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    public <T extends MetaClass<?>>
+    ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
         return configureMethod(() -> cast(declaration(serviceClass)), serviceMethod, decorator);
     }
 
-    public <T extends MetaClass<?>> ServerConfigurator configureMethod(Supplier<T> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
+    public <T extends MetaClass<?>>
+    ServerConfigurator configureMethod(Supplier<T> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
         return configureMethod(serviceClass, serviceMethod, identity());
     }
 
-    public <T extends MetaClass<?>> ServerConfigurator configureMethod(Supplier<T> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    public <T extends MetaClass<?>>
+    ServerConfigurator configureMethod(Supplier<T> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(serviceClass, serviceMethod, decorator));
         return this;
     }
@@ -85,16 +80,19 @@ public abstract class ServerConfigurator {
 
     private ImmutableSet<ServiceMethod> createMethods(LazyProperty<ServerConfiguration> provider) {
         List<ServiceMethod> methods = linkedList();
-        for (PackageBasedConfiguration configuration : packageBased) {
-            MetaPackage servicePackage = configuration.servicePackage.get();
-            registerClasses(methods, provider, new ClassesConfiguration(servicePackage.classes().values(), configuration.decorator));
-            registerPackages(methods, provider, new PackagesConfiguration(servicePackage.packages().values(), configuration.decorator));
-        }
 
         for (ClassBasedConfiguration configuration : classBased) {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
             for (MetaMethod<?> method : serviceClass.methods()) {
-                MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, configuration.decorator);
+                UnaryOperator<ServiceMethodConfigurator> decorator = methodBased
+                        .stream()
+                        .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
+                        .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
+                        .findFirst()
+                        .map(methodConfiguration -> methodConfiguration.decorator)
+                        .orElse(identity());
+                decorator = then(configuration.decorator, decorator);
+                MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
                 methods.add(createServiceMethod(provider, methodConfiguration));
             }
         }
@@ -102,29 +100,18 @@ public abstract class ServerConfigurator {
         for (MethodBasedConfiguration configuration : methodBased) {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
             MetaMethod<?> serviceMethod = configuration.serviceMethod.apply(cast(serviceClass));
-            MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, serviceMethod, configuration.decorator);
+            UnaryOperator<ServiceMethodConfigurator> decorator = classBased
+                    .stream()
+                    .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
+                    .findFirst()
+                    .map(methodConfiguration -> methodConfiguration.decorator)
+                    .orElse(identity());
+            decorator = then(configuration.decorator, decorator);
+            MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, serviceMethod, decorator);
             methods.add(createServiceMethod(provider, methodConfiguration));
         }
 
         return immutableSetOf(setOf(methods));
-    }
-
-    private void registerPackages(List<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, PackagesConfiguration configuration) {
-        UnaryOperator<ServiceMethodConfigurator> decorator = configuration.decorator;
-        for (MetaPackage servicePackage : configuration.packages) {
-            registerPackages(builder, provider, new PackagesConfiguration(servicePackage.packages().values(), decorator));
-            registerClasses(builder, provider, new ClassesConfiguration(servicePackage.classes().values(), decorator));
-        }
-    }
-
-    private void registerClasses(List<ServiceMethod> builder, LazyProperty<ServerConfiguration> provider, ClassesConfiguration configuration) {
-        UnaryOperator<ServiceMethodConfigurator> decorator = configuration.decorator;
-        for (MetaClass<?> serviceClass : configuration.classes) {
-            registerClasses(builder, provider, new ClassesConfiguration(serviceClass.classes().values(), decorator));
-            for (MetaMethod<?> method : serviceClass.methods()) {
-                builder.add(createServiceMethod(provider, new MethodConfiguration(serviceClass, method, decorator)));
-            }
-        }
     }
 
     private ServiceMethod createServiceMethod(LazyProperty<ServerConfiguration> provider, MethodConfiguration methodConfiguration) {
@@ -152,12 +139,6 @@ public abstract class ServerConfigurator {
     }
 
     @RequiredArgsConstructor
-    private static class PackageBasedConfiguration {
-        final Supplier<MetaPackage> servicePackage;
-        final UnaryOperator<ServiceMethodConfigurator> decorator;
-    }
-
-    @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<?>> serviceClass;
         final Function<? extends MetaClass<?>, MetaMethod<?>> serviceMethod;
@@ -168,18 +149,6 @@ public abstract class ServerConfigurator {
     private static class MethodConfiguration {
         final MetaClass<?> serviceClass;
         final MetaMethod<?> serviceMethod;
-        final UnaryOperator<ServiceMethodConfigurator> decorator;
-    }
-
-    @RequiredArgsConstructor
-    private static class ClassesConfiguration {
-        final Collection<MetaClass<?>> classes;
-        final UnaryOperator<ServiceMethodConfigurator> decorator;
-    }
-
-    @RequiredArgsConstructor
-    private static class PackagesConfiguration {
-        final Collection<MetaPackage> packages;
         final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 }

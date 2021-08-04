@@ -13,9 +13,11 @@ import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketRetryConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import java.time.*;
 import java.util.function.*;
 
 @Getter
@@ -33,6 +35,7 @@ public class RsocketCommonConnectorConfiguration {
     private int maxInboundPayloadSize;
     private UnaryOperator<ServiceMethodStrategy> service;
     private Supplier<TransportPayloadWriter> setupPayloadWriter;
+    private Duration timeout;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
@@ -45,6 +48,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
         configuration.setupPayloadWriter = () -> new TransportPayloadWriter(configuration.dataFormat);
         configuration.service = ServiceMethodStrategy::byCommunicator;
+        configuration.timeout = DEFAULT_TIMEOUT;
         return configuration;
     }
 
@@ -63,6 +67,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), ZERO_COPY));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), Integer.MAX_VALUE));
         configuration.service = strategy -> strategy.manual(listener.emit(source.getString(SERVICE_ID_KEY)));
+        configuration.timeout = listener.emit(orElse(source.getDuration(TRANSPORT_TIMEOUT_CONNECTION_KEY), DEFAULT_TIMEOUT));
         return configuration;
     }
 
@@ -81,6 +86,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), current.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
         configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), id -> strategy -> strategy.manual(id), current.service));
+        configuration.timeout = listener.emit(orElse(source.getDuration(TRANSPORT_TIMEOUT_CONNECTION_KEY), current.timeout));
         return configuration;
     }
 }
