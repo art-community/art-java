@@ -162,13 +162,13 @@ public class RsocketCommunicationFactory {
     }
 
     private static RSocketClient configureSocket(RsocketCommonConnectorConfiguration common, Mono<RSocket> socket, RsocketSetupPayload setupPayload) {
-        socket = socket.timeout(common.getTimeout());
+        Mono<RSocket> configured = socket.timeout(common.getTimeout());
         if (common.isLogging()) {
-            socket = socket
+            configured = configured
                     .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
-        return from(socket.blockOptional().orElseThrow(ImpossibleSituationException::new));
+        return from(configured.blockOptional().orElseThrow(ImpossibleSituationException::new));
     }
 
     private static RSocketConnector createConnector(RsocketCommonConnectorConfiguration commonConfiguration, Payload payload) {

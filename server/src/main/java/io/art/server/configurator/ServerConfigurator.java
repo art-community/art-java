@@ -124,9 +124,7 @@ public abstract class ServerConfigurator {
                 .id(id)
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
-        ServiceMethodConfigurator configurator = new ServiceMethodConfigurator(provider.get())
-                .serviceId(id.getServiceId())
-                .methodId(id.getMethodId());
+        ServiceMethodConfigurator configurator = new ServiceMethodConfigurator(id, provider.get());
         builder = decorator.apply(configurator).configure(builder, inputType);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
