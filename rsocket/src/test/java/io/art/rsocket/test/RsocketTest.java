@@ -1,11 +1,9 @@
 package io.art.rsocket.test;
 
-import io.art.communicator.configurator.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
-import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaCommunicatorPackage.*;
-import io.art.rsocket.test.service.*;
+import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
@@ -15,6 +13,10 @@ import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 
 public class RsocketTest {
+    public static MetaServicePackage services(MetaRsocketTest meta) {
+        return meta.ioPackage().artPackage().rsocketPackage().testPackage().servicePackage();
+    }
+
     @BeforeAll
     public static void setup() {
         initialize(
@@ -25,13 +27,12 @@ public class RsocketTest {
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class)
                                 .http(TestRsocketConnector2.class, connector -> connector.single(client -> client.common(common -> common.port(9001))))
-                                .configure(TestRsocket.class, CommunicatorActionConfigurator::loggable)
-                                .configure(TestRsocket.class, MetaTestRsocketClass::m3Method, action -> action.resilience().deactivable(true))
                         )
                         .server(server -> server
                                 .tcp()
                                 .http(http -> http.common(common -> common.port(9001)))
-                                .forClass(TestRsocketService.class))
+                                .configurePackage(RsocketTest::services)
+                        )
                 )
         );
     }

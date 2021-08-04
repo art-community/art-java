@@ -67,5 +67,6 @@ generator {
         sourcesPattern {
             include("src/test/**")
         }
+        excludeClasses("**RsocketTest**")
     }
 }

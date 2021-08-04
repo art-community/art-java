@@ -12,7 +12,6 @@ import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
-import io.art.meta.model.StaticMetaMethod;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -62,8 +61,6 @@ public class MetaRsocketTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaRsocketTestClass rsocketTestClass = register(new MetaRsocketTestClass());
-
           private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
 
           private final MetaServicePackage servicePackage = register(new MetaServicePackage());
@@ -72,93 +69,12 @@ public class MetaRsocketTest extends MetaLibrary {
             super("test");
           }
 
-          public MetaRsocketTestClass rsocketTestClass() {
-            return rsocketTestClass;
-          }
-
           public MetaCommunicatorPackage communicatorPackage() {
             return communicatorPackage;
           }
 
           public MetaServicePackage servicePackage() {
             return servicePackage;
-          }
-
-          public static final class MetaRsocketTestClass extends MetaClass<io.art.rsocket.test.RsocketTest> {
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
-
-            private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
-
-            private final MetaTestMethod testMethod = register(new MetaTestMethod());
-
-            private MetaRsocketTestClass() {
-              super(metaType(io.art.rsocket.test.RsocketTest.class));
-            }
-
-            public MetaConstructorConstructor constructor() {
-              return constructor;
-            }
-
-            public MetaSetupMethod setupMethod() {
-              return setupMethod;
-            }
-
-            public MetaTestMethod testMethod() {
-              return testMethod;
-            }
-
-            public static final class MetaConstructorConstructor extends MetaConstructor<io.art.rsocket.test.RsocketTest> {
-              private MetaConstructorConstructor() {
-                super(metaType(io.art.rsocket.test.RsocketTest.class));
-              }
-
-              @Override
-              public io.art.rsocket.test.RsocketTest invoke(Object[] arguments) throws Throwable {
-                return new io.art.rsocket.test.RsocketTest();
-              }
-
-              @Override
-              public io.art.rsocket.test.RsocketTest invoke() throws Throwable {
-                return new io.art.rsocket.test.RsocketTest();
-              }
-            }
-
-            public static final class MetaSetupMethod extends StaticMetaMethod<Void> {
-              private MetaSetupMethod() {
-                super("setup",metaType(Void.class));
-              }
-
-              @Override
-              public Object invoke(Object[] arguments) throws Throwable {
-                io.art.rsocket.test.RsocketTest.setup();
-                return null;
-              }
-
-              @Override
-              public Object invoke() throws Throwable {
-                io.art.rsocket.test.RsocketTest.setup();
-                return null;
-              }
-            }
-
-            public static final class MetaTestMethod extends InstanceMetaMethod<io.art.rsocket.test.RsocketTest, Void> {
-              private MetaTestMethod() {
-                super("test",metaType(Void.class));
-              }
-
-              @Override
-              public Object invoke(io.art.rsocket.test.RsocketTest instance, Object[] arguments)
-                  throws Throwable {
-                instance.test();
-                return null;
-              }
-
-              @Override
-              public Object invoke(io.art.rsocket.test.RsocketTest instance) throws Throwable {
-                instance.test();
-                return null;
-              }
-            }
           }
 
           public static final class MetaCommunicatorPackage extends MetaPackage {

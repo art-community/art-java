@@ -38,6 +38,7 @@ public abstract class CommunicatorConfigurator {
     private final List<MethodBasedConfiguration> methodBased = linkedList();
     private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
 
+
     public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         return configure(() -> declaration(communicatorClass), decorator);
     }
@@ -46,6 +47,7 @@ public abstract class CommunicatorConfigurator {
         classBased.add(new ClassBasedConfiguration(communicatorClass, decorator));
         return this;
     }
+
 
     public <T extends MetaClass<? extends Communicator>> CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, Function<T, MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         return configure(() -> cast(declaration(communicatorClass)), actionMethod, decorator);
