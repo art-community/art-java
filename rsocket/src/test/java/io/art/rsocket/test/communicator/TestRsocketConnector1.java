@@ -4,4 +4,6 @@ import io.art.communicator.model.*;
 
 public interface TestRsocketConnector1 extends Connector {
     TestRsocket testRsocket();
+
+    TestRsocket1 testRsocket1();
 }

@@ -40,12 +40,6 @@ public class RsocketTest {
     @Test
     public void test() {
         TestRsocketConnector1 tcp = rsocketConnector(TestRsocketConnector1.class);
-        tcp.testRsocket().m1("test");
-        tcp.testRsocket().m2("test");
-        tcp.testRsocket().m3("test");
-
-        TestRsocketConnector2 http = rsocketConnector(TestRsocketConnector2.class);
-        http.testRsocket().m1("test");
-        http.testRsocket().m3("test");
+        tcp.testRsocket1().m1("test");
     }
 }
