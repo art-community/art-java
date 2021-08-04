@@ -6,14 +6,13 @@ import io.art.core.property.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
+import static io.art.communicator.extensions.MetaClassExtensions.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.MapCollector.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
-import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -27,10 +26,7 @@ public class ConnectorProxyFactory {
                 .collect(mapCollector(identity(), method -> method.returnType().declaration()));
 
         if (proxies.size() != connectorClass.methods().size()) {
-            String invalidMethods = connectorClass.methods().stream()
-                    .filter(method -> !proxies.containsKey(method))
-                    .map(MetaMethod::toString)
-                    .collect(joining(NEW_LINE + NEW_LINE));
+            String invalidMethods = joinMethods(connectorClass, proxies::containsKey);
             throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY, connectorClass.definition().type().getName(), invalidMethods));
         }
 

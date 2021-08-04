@@ -49,17 +49,25 @@ public abstract class CommunicatorConfigurator {
     }
 
 
-    public <T extends MetaClass<? extends Communicator>> CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, Function<T, MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public <T extends MetaClass<? extends Communicator>>
+    CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass,
+                                       Function<T, MetaMethod<?>> actionMethod,
+                                       UnaryOperator<CommunicatorActionConfigurator> decorator) {
         return configure(() -> cast(declaration(communicatorClass)), actionMethod, decorator);
     }
 
-    public <T extends MetaClass<? extends Communicator>> CommunicatorConfigurator configure(Supplier<T> communicatorClass, Function<T, MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public <T extends MetaClass<? extends Communicator>>
+    CommunicatorConfigurator configure(Supplier<T> communicatorClass,
+                                       Function<T, MetaMethod<?>> actionMethod,
+                                       UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(communicatorClass, actionMethod, decorator));
         return this;
     }
 
 
-    protected void registerConnector(Class<? extends Connector> connectorClass, Function<Class<? extends Communicator>, ? extends Communicator> communicator, Function<CommunicatorActionIdentifier, ? extends Communication> communication) {
+    protected void registerConnector(Class<? extends Connector> connectorClass,
+                                     Function<Class<? extends Communicator>, ? extends Communicator> communicator,
+                                     Function<CommunicatorActionIdentifier, ? extends Communication> communication) {
         ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration(lazy(() -> createConnectorProxy(declaration(connectorClass), communicator)), communication);
         connectors.put(connectorClass, connectorConfiguration);
     }
@@ -77,10 +85,11 @@ public abstract class CommunicatorConfigurator {
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(provider, entry.getKey(), entry.getValue()))));
     }
 
-    private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> provider, Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration) {
+    private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> provider,
+                                               Class<? extends Connector> connectorClass,
+                                               ConnectorConfiguration connectorConfiguration) {
         ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(connectorClass, connectorConfiguration, provider);
-        Connector connector = connectorConfiguration.connector.get();
-        return new ConnectorContainer(communicators, connector);
+        return new ConnectorContainer(communicators, connectorConfiguration.connector.get());
     }
 
 
@@ -91,7 +100,6 @@ public abstract class CommunicatorConfigurator {
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
                 .collect(mapCollector(configuration -> configuration.communicatorClass.get(), configuration -> configuration.decorator));
-
         ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
@@ -104,7 +112,6 @@ public abstract class CommunicatorConfigurator {
             CommunicatorProxy<? extends Communicator> communicator = createCommunicatorProxy(communicatorClass, actions);
             proxies.put(communicatorClass.definition().type(), cast(communicator));
         }
-
         return immutableMapOf(proxies);
     }
 

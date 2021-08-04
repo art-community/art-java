@@ -6,17 +6,16 @@ import io.art.communicator.model.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
+import static io.art.communicator.extensions.MetaClassExtensions.*;
 import static io.art.communicator.factory.CommunicatorActionFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.MapCollector.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
-import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -48,10 +47,7 @@ public class CommunicatorProxyFactory {
                 .collect(mapCollector(identity(), provider));
 
         if (actions.size() != proxyClass.methods().size()) {
-            String invalidMethods = proxyClass.methods().stream()
-                    .filter(method -> !actions.containsKey(method))
-                    .map(MetaMethod::toString)
-                    .collect(joining(NEW_LINE + NEW_LINE));
+            String invalidMethods = joinMethods(proxyClass, actions::containsKey);
             throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY, proxyClass.definition().type().getName(), invalidMethods));
         }
 
@@ -68,6 +64,6 @@ public class CommunicatorProxyFactory {
             throw new CommunicatorException(format(PROXY_IS_NULL, proxyClass.definition().type().getName()));
         }
 
-        return new CommunicatorProxy<T>(cast(proxy), actions.values().stream().collect(immutableMapCollector(CommunicatorAction::getId, identity())));
+        return new CommunicatorProxy<>(cast(proxy), actions.values().stream().collect(immutableMapCollector(CommunicatorAction::getId, identity())));
     }
 }
