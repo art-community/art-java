@@ -72,12 +72,12 @@ public class RsocketCommunicationFactory {
         RSocketConnector connector = createConnector(common, payload);
         RsocketTcpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
         if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
-            return configureSocket(common, createTcpBalancer(connector, group), setupPayload);
+            return createTcpBalancer(connector, group);
         }
         return configureSocket(common, createTcpClient(connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
     }
 
-    private static Mono<RSocket> createTcpBalancer(RSocketConnector connector, RsocketTcpClientGroupConfiguration group) {
+    private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpClientGroupConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
         for (RsocketTcpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
             TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
@@ -90,8 +90,7 @@ public class RsocketCommunicationFactory {
         return LoadbalanceRSocketClient.builder(Flux.just(targets))
                 .loadbalanceStrategy(group.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
                 .connector(connector)
-                .build()
-                .source();
+                .build();
     }
 
     private static Mono<RSocket> createTcpClient(RsocketTcpClientConfiguration clientConfiguration, RSocketConnector connector) {
@@ -113,12 +112,12 @@ public class RsocketCommunicationFactory {
         RSocketConnector connector = createConnector(common, payload);
         RsocketHttpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
         if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
-            return configureSocket(common, createHttpBalancer(connector, group), setupPayload);
+            return createHttpBalancer(connector, group);
         }
         return configureSocket(common, createHttpClient(connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
     }
 
-    private static Mono<RSocket> createHttpBalancer(RSocketConnector connector, RsocketHttpClientGroupConfiguration group) {
+    private static LoadbalanceRSocketClient createHttpBalancer(RSocketConnector connector, RsocketHttpClientGroupConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
         for (RsocketHttpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
             HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
@@ -131,8 +130,7 @@ public class RsocketCommunicationFactory {
         return LoadbalanceRSocketClient.builder(Flux.just(targets))
                 .loadbalanceStrategy(group.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
                 .connector(connector)
-                .build()
-                .source();
+                .build();
     }
 
     private static Mono<RSocket> createHttpClient(RsocketHttpClientConfiguration clientConfiguration, RSocketConnector connector) {

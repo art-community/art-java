@@ -1,5 +1,6 @@
 package io.art.rsocket.test;
 
+import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.test.communicator.*;
@@ -44,14 +45,14 @@ public class RsocketTest {
         RSocketServer
                 .create(forFireAndForget(payload -> {
                     System.out.println("1234");
-                    return Mono.never();
+                    return Mono.empty();
                 }))
                 .bindNow(TcpServerTransport.create(1234));
 
         RSocketServer
                 .create(forFireAndForget(payload -> {
                     System.out.println("5678");
-                    return Mono.never();
+                    return Mono.empty();
                 }))
                 .bindNow(TcpServerTransport.create(5678));
     }
@@ -64,10 +65,6 @@ public class RsocketTest {
         tcp.testRsocket1().m1("test");
         tcp.testRsocket1().m1("test");
         tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
+        ThreadExtensions.block();
     }
 }
