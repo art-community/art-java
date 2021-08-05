@@ -155,7 +155,10 @@ public class RsocketServer implements Server {
 
     private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requester, RsocketCommonServerConfiguration serverConfiguration) {
         Mono<RSocket> socket = Mono.create(emitter -> setupSocket(payload, serverConfiguration, emitter));
-        return socket.doOnError(throwable -> withLogging(() -> getLogger().error(throwable.getMessage(), throwable)));
+        if (withLogging()) {
+            return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+        }
+        return socket;
     }
 
     private void setupSocket(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration, MonoSink<RSocket> emitter) {
