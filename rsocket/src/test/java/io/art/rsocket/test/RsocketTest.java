@@ -2,7 +2,6 @@ package io.art.rsocket.test;
 
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
-import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
@@ -60,9 +59,6 @@ public class RsocketTest {
     @Test
     public void test() {
         TestRsocketConnector1 tcp = rsocketConnector(TestRsocketConnector1.class);
-        tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
-        tcp.testRsocket1().m1("test");
         tcp.testRsocket1().m1("test");
         tcp.testRsocket1().m1("test");
         ThreadExtensions.block();
