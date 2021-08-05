@@ -42,11 +42,17 @@ public class RsocketTest {
         );
 
         RSocketServer
-                .create(forFireAndForget(payload -> Mono.just("").doOnNext(ignore -> System.out.println("1234")).then()))
+                .create(forFireAndForget(payload -> {
+                    System.out.println("1234");
+                    return Mono.never();
+                }))
                 .bindNow(TcpServerTransport.create(1234));
 
         RSocketServer
-                .create(forFireAndForget(payload -> Mono.just("").doOnNext(ignore -> System.out.println("5678")).then()))
+                .create(forFireAndForget(payload -> {
+                    System.out.println("5678");
+                    return Mono.never();
+                }))
                 .bindNow(TcpServerTransport.create(5678));
     }
 
