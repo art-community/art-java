@@ -23,8 +23,8 @@ public class RsocketTest {
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class)
                                 .http(TestRsocketConnector2.class, configurator -> configurator
-                                        .weighted(builder -> builder
-                                                .client(client -> client.port(9001))))
+                                        .configure(builder -> builder.logging(true))
+                                        .roundRobin(builder -> builder.client(client -> client.port(9001))))
                         )
                         .server(server -> server
                                 .tcp()
