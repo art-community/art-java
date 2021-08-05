@@ -18,13 +18,15 @@
 
 package io.art.rsocket.configuration.communicator.tcp;
 
+import io.art.core.changes.*;
 import io.art.core.source.*;
-import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import java.util.function.*;
 
@@ -33,7 +35,11 @@ import java.util.function.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketTcpClientConfiguration {
     @EqualsAndHashCode.Include
-    private RsocketCommonClientConfiguration commonConfiguration;
+    private String connector;
+    @EqualsAndHashCode.Include
+    private int port;
+    @EqualsAndHashCode.Include
+    private String host;
     private int maxFrameLength;
     private UnaryOperator<TcpClient> decorator;
 
@@ -41,15 +47,20 @@ public class RsocketTcpClientConfiguration {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
         configuration.maxFrameLength = FRAME_LENGTH_MASK;
         configuration.decorator = UnaryOperator.identity();
-        configuration.commonConfiguration = RsocketCommonClientConfiguration.defaults(connector);
+        configuration.connector = connector;
+        configuration.port = DEFAULT_PORT;
+        configuration.host = LOCALHOST;
         return configuration;
     }
 
     public static RsocketTcpClientConfiguration from(RsocketModuleRefresher refresher, RsocketTcpClientConfiguration current, ConfigurationSource source) {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
+        ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.decorator = current.decorator;
         configuration.maxFrameLength = orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), current.maxFrameLength);
-        configuration.commonConfiguration = RsocketCommonClientConfiguration.from(refresher, current.commonConfiguration, source);
+        configuration.connector = current.connector;
+        configuration.port = listener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
+        configuration.host = listener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
         return configuration;
     }
 }

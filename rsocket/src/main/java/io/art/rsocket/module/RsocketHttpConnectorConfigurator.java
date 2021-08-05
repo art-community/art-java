@@ -3,6 +3,7 @@ package io.art.rsocket.module;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.http.*;
+import io.art.rsocket.configuration.communicator.http.RsocketHttpClientConfiguration.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
@@ -25,11 +26,8 @@ public class RsocketHttpConnectorConfigurator {
         return this;
     }
 
-    public RsocketHttpConnectorConfigurator single(UnaryOperator<RsocketHttpClientConfigurator> configurator) {
-        RsocketHttpClientConfigurator clientConfigurator = configurator.apply(new RsocketHttpClientConfigurator());
-        single = clientConfigurator.http().apply(RsocketHttpClientConfiguration.defaults(connector).toBuilder())
-                .commonConfiguration(clientConfigurator.common().apply(RsocketCommonClientConfiguration.defaults(connector).toBuilder()).build())
-                .build();
+    public RsocketHttpConnectorConfigurator single(UnaryOperator<RsocketHttpClientConfigurationBuilder> configurator) {
+        single = configurator.apply(RsocketHttpClientConfiguration.defaults(connector).toBuilder()).build();
         return this;
     }
 

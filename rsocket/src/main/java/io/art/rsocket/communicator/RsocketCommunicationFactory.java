@@ -80,12 +80,11 @@ public class RsocketCommunicationFactory {
     private static Mono<RSocket> createTcpBalancer(RSocketConnector connector, RsocketTcpClientGroupConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
         for (RsocketTcpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
-            RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
             TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
-                    .host(commonClientConfiguration.getHost())
-                    .port(commonClientConfiguration.getPort()));
+                    .host(clientConfiguration.getHost())
+                    .port(clientConfiguration.getPort()));
             TcpClientTransport transport = TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength());
-            String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
+            String key = clientConfiguration.getConnector() + COLON + clientConfiguration.getHost() + COLON + clientConfiguration.getPort();
             targets.add(LoadbalanceTarget.from(key, transport));
         }
         return LoadbalanceRSocketClient.builder(Flux.just(targets))
@@ -96,10 +95,9 @@ public class RsocketCommunicationFactory {
     }
 
     private static Mono<RSocket> createTcpClient(RsocketTcpClientConfiguration clientConfiguration, RSocketConnector connector) {
-        RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
         TcpClient client = clientConfiguration.getDecorator().apply(TcpClient.create()
-                .host(commonClientConfiguration.getHost())
-                .port(commonClientConfiguration.getPort()));
+                .host(clientConfiguration.getHost())
+                .port(clientConfiguration.getPort()));
         return connector.connect(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength()));
     }
 
@@ -123,12 +121,11 @@ public class RsocketCommunicationFactory {
     private static Mono<RSocket> createHttpBalancer(RSocketConnector connector, RsocketHttpClientGroupConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
         for (RsocketHttpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
-            RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
             HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
-                    .host(commonClientConfiguration.getHost())
-                    .port(commonClientConfiguration.getPort()));
+                    .host(clientConfiguration.getHost())
+                    .port(clientConfiguration.getPort()));
             WebsocketClientTransport transport = WebsocketClientTransport.create(client, clientConfiguration.getPath());
-            String key = commonClientConfiguration.getConnector() + COLON + commonClientConfiguration.getHost() + COLON + commonClientConfiguration.getPort();
+            String key = clientConfiguration.getConnector() + COLON + clientConfiguration.getHost() + COLON + clientConfiguration.getPort();
             targets.add(LoadbalanceTarget.from(key, transport));
         }
         return LoadbalanceRSocketClient.builder(Flux.just(targets))
@@ -139,10 +136,9 @@ public class RsocketCommunicationFactory {
     }
 
     private static Mono<RSocket> createHttpClient(RsocketHttpClientConfiguration clientConfiguration, RSocketConnector connector) {
-        RsocketCommonClientConfiguration commonClientConfiguration = clientConfiguration.getCommonConfiguration();
         HttpClient client = clientConfiguration.getDecorator().apply(HttpClient.create()
-                .host(commonClientConfiguration.getHost())
-                .port(commonClientConfiguration.getPort()));
+                .host(clientConfiguration.getHost())
+                .port(clientConfiguration.getPort()));
         return connector.connect(WebsocketClientTransport.create(client, clientConfiguration.getPath()));
     }
 

@@ -18,12 +18,13 @@
 
 package io.art.rsocket.configuration.communicator.http;
 
+import io.art.core.changes.*;
 import io.art.core.source.*;
-import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.util.function.*;
@@ -33,7 +34,11 @@ import java.util.function.*;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class RsocketHttpClientConfiguration {
     @EqualsAndHashCode.Include
-    private RsocketCommonClientConfiguration commonConfiguration;
+    private String connector;
+    @EqualsAndHashCode.Include
+    private int port;
+    @EqualsAndHashCode.Include
+    private String host;
     private UnaryOperator<HttpClient> decorator;
     private String path;
 
@@ -41,15 +46,19 @@ public class RsocketHttpClientConfiguration {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
         configuration.path = DEFAULT_HTTP_PATH;
         configuration.decorator = UnaryOperator.identity();
-        configuration.commonConfiguration = RsocketCommonClientConfiguration.defaults(connector);
+        configuration.connector = connector;
+        configuration.port = DEFAULT_PORT;
+        configuration.host = LOCALHOST;
         return configuration;
     }
 
     public static RsocketHttpClientConfiguration from(RsocketModuleRefresher refresher, RsocketHttpClientConfiguration current, ConfigurationSource source) {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
+        ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.decorator = current.decorator;
         configuration.path = orElse(source.getString(TRANSPORT_WS_PATH_KEY), current.path);
-        configuration.commonConfiguration = RsocketCommonClientConfiguration.from(refresher, current.commonConfiguration, source);
+        configuration.port = listener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
+        configuration.host = listener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
         return configuration;
     }
 }
