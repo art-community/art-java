@@ -24,7 +24,7 @@ public class RsocketTest {
                                 .tcp(TestRsocketConnector1.class)
                                 .http(TestRsocketConnector2.class, configurator -> configurator
                                         .weighted(builder -> builder
-                                                .client(client -> client.common(common -> common.port(9001)))))
+                                                .client(client -> client.port(9001))))
                         )
                         .server(server -> server
                                 .tcp()
