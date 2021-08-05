@@ -31,6 +31,10 @@ public class RsocketKeepAliveConfiguration {
     private final Duration interval;
     private final Duration maxLifeTime;
 
+    public static RsocketKeepAliveConfiguration rsocketKeepAlive() {
+        return new RsocketKeepAliveConfiguration(DEFAULT_KEEP_ALIVE_INTERVAL, DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME);
+    }
+
     public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source) {
         Duration interval = orElse(source.getDuration(INTERVAL_KEY), DEFAULT_KEEP_ALIVE_INTERVAL);
         Duration maxLifeTime = orElse(source.getDuration(MAX_LIFE_TIME_KEY), DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME);

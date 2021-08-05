@@ -31,6 +31,7 @@ public class RsocketTest {
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678))))
+                                .configure(TestRsocket.class, builder -> builder.resilience(true))
                         )
                         .server(server -> server
                                 .tcp()
