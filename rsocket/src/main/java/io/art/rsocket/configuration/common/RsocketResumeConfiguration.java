@@ -24,6 +24,7 @@ import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static java.util.Objects.*;
 import java.time.*;
 
 @Getter
@@ -35,12 +36,19 @@ public class RsocketResumeConfiguration {
     private RsocketRetryConfiguration retryConfiguration;
 
     public Resume toResume() {
-        Resume resume = new Resume()
-                .streamTimeout(streamTimeout)
-                .sessionDuration(sessionDuration);
+        Resume resume = new Resume();
+        if (nonNull(streamTimeout)) {
+            resume.streamTimeout(streamTimeout);
+        }
+
+        if (nonNull(sessionDuration)) {
+            resume.sessionDuration(sessionDuration);
+        }
+
         if (cleanupStoreOnKeepAlive) {
             resume.cleanupStoreOnKeepAlive();
         }
+
         apply(retryConfiguration, configuration -> resume.retry(configuration.toRetry()));
         return resume;
     }

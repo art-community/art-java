@@ -1,16 +1,21 @@
 package io.art.rsocket.test;
 
 import io.art.meta.test.meta.*;
+import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
+import io.rsocket.core.*;
+import io.rsocket.transport.netty.server.*;
 import org.junit.jupiter.api.*;
+import reactor.core.publisher.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
+import static io.rsocket.SocketAcceptor.*;
 
 public class RsocketTest {
     @BeforeAll
@@ -21,10 +26,12 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
-                                .tcp(TestRsocketConnector1.class)
-                                .http(TestRsocketConnector2.class, configurator -> configurator
-                                        .configure(builder -> builder.logging(true))
-                                        .roundRobin(builder -> builder.client(client -> client.port(9001))))
+                                .tcp(TestRsocketConnector1.class, configurator -> configurator
+                                        .configure(builder -> builder
+                                                .logging(true))
+                                        .roundRobin(builder -> builder
+                                                .client(client -> client.port(1234))
+                                                .client(client -> client.port(5678))))
                         )
                         .server(server -> server
                                 .tcp()
@@ -34,11 +41,27 @@ public class RsocketTest {
                         )
                 )
         );
+        RSocketServer
+                .create(forFireAndForget(payload -> Mono.just("").doOnNext(ignore -> System.out.println("1234")).then()))
+                .bindNow(TcpServerTransport.create(1234));
+
+        RSocketServer
+                .create(forFireAndForget(payload -> Mono.just("").doOnNext(ignore -> System.out.println("5678")).then()))
+                .bindNow(TcpServerTransport.create(5678));
     }
 
     @Test
     public void test() {
         TestRsocketConnector1 tcp = rsocketConnector(TestRsocketConnector1.class);
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
         tcp.testRsocket1().m1("test");
     }
 }
