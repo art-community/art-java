@@ -78,20 +78,16 @@ public class MetaRsocketTest extends MetaLibrary {
           }
 
           public static final class MetaCommunicatorPackage extends MetaPackage {
-            private final MetaTestRsocketConnector1Class testRsocketConnector1Class = register(new MetaTestRsocketConnector1Class());
-
             private final MetaTestRsocketClass testRsocketClass = register(new MetaTestRsocketClass());
 
             private final MetaTestRsocket1Class testRsocket1Class = register(new MetaTestRsocket1Class());
+
+            private final MetaTestRsocketConnector1Class testRsocketConnector1Class = register(new MetaTestRsocketConnector1Class());
 
             private final MetaTestRsocketConnector2Class testRsocketConnector2Class = register(new MetaTestRsocketConnector2Class());
 
             private MetaCommunicatorPackage() {
               super("communicator");
-            }
-
-            public MetaTestRsocketConnector1Class testRsocketConnector1Class() {
-              return testRsocketConnector1Class;
             }
 
             public MetaTestRsocketClass testRsocketClass() {
@@ -102,94 +98,12 @@ public class MetaRsocketTest extends MetaLibrary {
               return testRsocket1Class;
             }
 
-            public MetaTestRsocketConnector2Class testRsocketConnector2Class() {
-              return testRsocketConnector2Class;
+            public MetaTestRsocketConnector1Class testRsocketConnector1Class() {
+              return testRsocketConnector1Class;
             }
 
-            public static final class MetaTestRsocketConnector1Class extends MetaClass<io.art.rsocket.test.communicator.TestRsocketConnector1> {
-              private final MetaTestRsocketMethod testRsocketMethod = register(new MetaTestRsocketMethod());
-
-              private final MetaTestRsocket1Method testRsocket1Method = register(new MetaTestRsocket1Method());
-
-              private MetaTestRsocketConnector1Class() {
-                super(metaType(io.art.rsocket.test.communicator.TestRsocketConnector1.class));
-              }
-
-              public MetaTestRsocketMethod testRsocketMethod() {
-                return testRsocketMethod;
-              }
-
-              public MetaTestRsocket1Method testRsocket1Method() {
-                return testRsocket1Method;
-              }
-
-              @Override
-              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
-                return new MetaTestRsocketConnector1Proxy(invocations);
-              }
-
-              public static final class MetaTestRsocketMethod extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocketConnector1, io.art.rsocket.test.communicator.TestRsocket> {
-                private MetaTestRsocketMethod() {
-                  super("testRsocket",metaType(io.art.rsocket.test.communicator.TestRsocket.class));
-                }
-
-                @Override
-                public Object invoke(
-                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance,
-                    Object[] arguments) throws Throwable {
-                  return instance.testRsocket();
-                }
-
-                @Override
-                public Object invoke(
-                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance) throws
-                    Throwable {
-                  return instance.testRsocket();
-                }
-              }
-
-              public static final class MetaTestRsocket1Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocketConnector1, io.art.rsocket.test.communicator.TestRsocket1> {
-                private MetaTestRsocket1Method() {
-                  super("testRsocket1",metaType(io.art.rsocket.test.communicator.TestRsocket1.class));
-                }
-
-                @Override
-                public Object invoke(
-                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance,
-                    Object[] arguments) throws Throwable {
-                  return instance.testRsocket1();
-                }
-
-                @Override
-                public Object invoke(
-                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance) throws
-                    Throwable {
-                  return instance.testRsocket1();
-                }
-              }
-
-              public class MetaTestRsocketConnector1Proxy extends MetaProxy implements io.art.rsocket.test.communicator.TestRsocketConnector1 {
-                private final Function<Object, Object> testRsocketInvocation;
-
-                private final Function<Object, Object> testRsocket1Invocation;
-
-                public MetaTestRsocketConnector1Proxy(
-                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
-                  super(invocations);
-                  testRsocketInvocation = invocations.get(testRsocketMethod);
-                  testRsocket1Invocation = invocations.get(testRsocket1Method);
-                }
-
-                @Override
-                public io.art.rsocket.test.communicator.TestRsocket testRsocket() {
-                  return (io.art.rsocket.test.communicator.TestRsocket)(testRsocketInvocation.apply(null));
-                }
-
-                @Override
-                public io.art.rsocket.test.communicator.TestRsocket1 testRsocket1() {
-                  return (io.art.rsocket.test.communicator.TestRsocket1)(testRsocket1Invocation.apply(null));
-                }
-              }
+            public MetaTestRsocketConnector2Class testRsocketConnector2Class() {
+              return testRsocketConnector2Class;
             }
 
             public static final class MetaTestRsocketClass extends MetaClass<io.art.rsocket.test.communicator.TestRsocket> {
@@ -464,6 +378,92 @@ public class MetaRsocketTest extends MetaLibrary {
                 @Override
                 public void m3(java.lang.String input) {
                   m3Invocation.apply(input);
+                }
+              }
+            }
+
+            public static final class MetaTestRsocketConnector1Class extends MetaClass<io.art.rsocket.test.communicator.TestRsocketConnector1> {
+              private final MetaTestRsocketMethod testRsocketMethod = register(new MetaTestRsocketMethod());
+
+              private final MetaTestRsocket1Method testRsocket1Method = register(new MetaTestRsocket1Method());
+
+              private MetaTestRsocketConnector1Class() {
+                super(metaType(io.art.rsocket.test.communicator.TestRsocketConnector1.class));
+              }
+
+              public MetaTestRsocketMethod testRsocketMethod() {
+                return testRsocketMethod;
+              }
+
+              public MetaTestRsocket1Method testRsocket1Method() {
+                return testRsocket1Method;
+              }
+
+              @Override
+              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                return new MetaTestRsocketConnector1Proxy(invocations);
+              }
+
+              public static final class MetaTestRsocketMethod extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocketConnector1, io.art.rsocket.test.communicator.TestRsocket> {
+                private MetaTestRsocketMethod() {
+                  super("testRsocket",metaType(io.art.rsocket.test.communicator.TestRsocket.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.testRsocket();
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance) throws
+                    Throwable {
+                  return instance.testRsocket();
+                }
+              }
+
+              public static final class MetaTestRsocket1Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocketConnector1, io.art.rsocket.test.communicator.TestRsocket1> {
+                private MetaTestRsocket1Method() {
+                  super("testRsocket1",metaType(io.art.rsocket.test.communicator.TestRsocket1.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.testRsocket1();
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.rsocket.test.communicator.TestRsocketConnector1 instance) throws
+                    Throwable {
+                  return instance.testRsocket1();
+                }
+              }
+
+              public class MetaTestRsocketConnector1Proxy extends MetaProxy implements io.art.rsocket.test.communicator.TestRsocketConnector1 {
+                private final Function<Object, Object> testRsocketInvocation;
+
+                private final Function<Object, Object> testRsocket1Invocation;
+
+                public MetaTestRsocketConnector1Proxy(
+                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                  super(invocations);
+                  testRsocketInvocation = invocations.get(testRsocketMethod);
+                  testRsocket1Invocation = invocations.get(testRsocket1Method);
+                }
+
+                @Override
+                public io.art.rsocket.test.communicator.TestRsocket testRsocket() {
+                  return (io.art.rsocket.test.communicator.TestRsocket)(testRsocketInvocation.apply(null));
+                }
+
+                @Override
+                public io.art.rsocket.test.communicator.TestRsocket1 testRsocket1() {
+                  return (io.art.rsocket.test.communicator.TestRsocket1)(testRsocket1Invocation.apply(null));
                 }
               }
             }

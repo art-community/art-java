@@ -22,9 +22,9 @@ import lombok.*;
 import static io.art.core.extensions.DateTimeExtensions.*;
 import static java.time.LocalDateTime.*;
 import static java.util.Comparator.*;
-import static java.util.Objects.*;
 import static java.util.concurrent.TimeUnit.*;
 import static lombok.AccessLevel.*;
+import javax.annotation.*;
 import java.time.*;
 import java.util.concurrent.*;
 import java.util.function.*;
@@ -51,8 +51,7 @@ class DeferredEvent<EventResultType> implements Delayed {
     }
 
     @Override
-    public int compareTo(Delayed other) {
-        if (isNull(other)) return 1;
+    public int compareTo(@Nonnull Delayed other) {
         return comparingLong((ToLongFunction<DeferredEvent<?>>) DeferredEvent::getTrigger)
                 .thenComparingInt(DeferredEvent::getOrder)
                 .compare(this, (DeferredEvent<?>) other);

@@ -18,7 +18,7 @@ public class DelayWaitingQueue<T extends Delayed> {
     private final PriorityQueue<T> queue = priorityQueue(Delayed::compareTo);
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition available = lock.newCondition();
-    private AtomicBoolean terminated = new AtomicBoolean(false);
+    private final AtomicBoolean terminated = new AtomicBoolean(false);
     private Thread leader = null;
 
     private final int maximumCapacity;
