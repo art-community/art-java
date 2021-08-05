@@ -23,7 +23,6 @@ import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.logging.module.LoggingModule.*;
 import static io.art.meta.model.TypedObject.*;
@@ -164,7 +163,7 @@ public class RsocketCommunicationFactory {
                     .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
-        return from(block(configured));
+        return from(configured);
     }
 
     private static RSocketConnector createConnector(RsocketCommonConnectorConfiguration commonConfiguration, Payload payload) {

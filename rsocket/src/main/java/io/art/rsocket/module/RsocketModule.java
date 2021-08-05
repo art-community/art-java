@@ -27,10 +27,12 @@ import io.art.rsocket.refresher.*;
 import io.art.rsocket.state.*;
 import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
 import static io.art.meta.registry.MetaLibraryMutableRegistry.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Hooks.*;
 
 @Getter
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
@@ -54,6 +56,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
 
     @Override
     public void launch(Context.Service contextService) {
+        onErrorDropped(emptyConsumer());
         if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
             manager.initializeServer();
         }

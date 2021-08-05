@@ -27,8 +27,7 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class, configurator -> configurator
-                                        .configure(builder -> builder
-                                                .logging(true))
+                                        .configure(builder -> builder.logging(true))
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678))))
@@ -41,6 +40,7 @@ public class RsocketTest {
                         )
                 )
         );
+
         RSocketServer
                 .create(forFireAndForget(payload -> Mono.just("").doOnNext(ignore -> System.out.println("1234")).then()))
                 .bindNow(TcpServerTransport.create(1234));
