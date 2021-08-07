@@ -31,11 +31,11 @@ public abstract class ServerConfigurator {
     private final List<MethodBasedConfiguration> methodBased = linkedList();
 
 
-    public ServerConfigurator configureClass(Class<?> serviceClass) {
-        return configureClass(serviceClass, identity());
+    public ServerConfigurator configureService(Class<?> serviceClass) {
+        return configureService(serviceClass, identity());
     }
 
-    public ServerConfigurator configureClass(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    public ServerConfigurator configureService(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
         return this;
     }

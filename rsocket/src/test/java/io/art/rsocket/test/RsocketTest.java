@@ -31,13 +31,13 @@ public class RsocketTest {
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678))))
-                                .configure(TestRsocket.class, builder -> builder.resilience(true))
+                                .configureCommunicator(TestRsocket.class, builder -> builder.resilience(true))
                         )
                         .server(server -> server
                                 .tcp()
                                 .http(http -> http.port(9001))
-                                .configureClass(TestRsocketService.class)
-                                .configureClass(TestRsocketService1.class)
+                                .configureService(TestRsocketService.class)
+                                .configureService(TestRsocketService1.class)
                         )
                 )
         );
