@@ -65,14 +65,6 @@ public class CommunicatorAction implements Managed {
     @Getter(lazy = true, value = PRIVATE)
     private final Function<Object, Object> handler = selectHandler();
 
-    @Getter
-    @Builder.Default
-    private final Function<DataFormat, TransportPayloadReader> reader = TransportPayloadReader::new;
-
-    @Getter
-    @Builder.Default
-    private final Function<DataFormat, TransportPayloadWriter> writer = TransportPayloadWriter::new;
-
     @Override
     public void initialize() {
         communication.initialize(this);

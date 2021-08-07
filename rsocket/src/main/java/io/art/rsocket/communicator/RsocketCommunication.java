@@ -88,8 +88,8 @@ public class RsocketCommunication implements Communication {
     }
 
     private Function<Flux<Object>, Flux<Object>> communication() {
-        TransportPayloadReader reader = action.getReader().apply(connectorConfiguration.getDataFormat());
-        TransportPayloadWriter writer = action.getWriter().apply(connectorConfiguration.getDataFormat());
+        TransportPayloadReader reader = new TransportPayloadReader(connectorConfiguration.getDataFormat());
+        TransportPayloadWriter writer = new TransportPayloadWriter(connectorConfiguration.getDataFormat());
         RSocketClient client = this.client.get();
         MetaType<?> inputType = action.getInputType();
         MetaType<?> outputType = action.getOutputType();

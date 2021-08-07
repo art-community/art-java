@@ -91,10 +91,10 @@ public class HttpRouter {
     private Publisher<Void> handleWebsocket(ServiceMethod specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
         DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.valueOf(inbound.headers().get(CONTENT_TYPE))),
+                () -> fromMimeType(MimeType.parseMimeType(inbound.headers().get(CONTENT_TYPE))),
                 ignored -> defaultDataFormat);
         DataFormat outputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.valueOf(inbound.headers().get(ACCEPT))),
+                () -> fromMimeType(MimeType.parseMimeType(inbound.headers().get(ACCEPT))),
                 ignored -> defaultDataFormat);
         TransportPayloadReader reader = specification
                 .getConfiguration()
@@ -115,10 +115,10 @@ public class HttpRouter {
     private Publisher<Void> handleHttp(ServiceMethod specification, HttpServerRequest request, HttpServerResponse response) {
         DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
         DataFormat inputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.valueOf(request.requestHeaders().get(CONTENT_TYPE))),
+                () -> fromMimeType(MimeType.parseMimeType(request.requestHeaders().get(CONTENT_TYPE))),
                 ignored -> defaultDataFormat);
         DataFormat outputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.valueOf(request.requestHeaders().get(ACCEPT))),
+                () -> fromMimeType(MimeType.parseMimeType(request.requestHeaders().get(ACCEPT))),
                 ignored -> defaultDataFormat);
 
         Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();

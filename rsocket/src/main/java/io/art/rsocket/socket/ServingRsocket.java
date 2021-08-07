@@ -20,8 +20,8 @@ package io.art.rsocket.socket;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.core.mime.*;
 import io.art.core.model.*;
+import io.art.meta.model.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
@@ -34,6 +34,7 @@ import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.mime.MimeType.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -45,7 +46,6 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
-import java.util.function.*;
 
 public class ServingRsocket implements RSocket {
     private final TransportPayloadReader dataReader;
@@ -53,19 +53,19 @@ public class ServingRsocket implements RSocket {
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final ServiceMethod serviceMethod;
     private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
+    private final static MetaType<RsocketSetupPayload> payloadType = declaration(RsocketSetupPayload.class).definition();
 
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketCommonServerConfiguration serverConfiguration) {
         this.serviceMethods = serviceMethods;
-        DataFormat dataFormat = fromMimeType(MimeType.valueOf(payload.dataMimeType()), serverConfiguration.getDefaultDataFormat());
-        Function<DataFormat, TransportPayloadReader> setupReader = serverConfiguration.getSetupReader();
-        TransportPayload setupPayloadData = setupReader.apply(dataFormat).read(payload.sliceData(), declaration(RsocketSetupPayload.class).definition());
+        DataFormat dataFormat = fromMimeType(parseMimeType(payload.dataMimeType()), serverConfiguration.getDefaultDataFormat());
+        TransportPayload setupPayloadData = new TransportPayloadReader(dataFormat).read(payload.sliceData(), payloadType);
         if (!setupPayloadData.isEmpty()) {
             RsocketSetupPayload setupPayloadDataValue = (RsocketSetupPayload) setupPayloadData.getValue();
             if (nonNull(setupPayloadDataValue)) {
                 ServiceMethodIdentifier serviceMethodId = new ServiceMethodIdentifier(setupPayloadDataValue.getServiceId(), setupPayloadDataValue.getMethodId());
                 serviceMethod = findServiceMethod(serviceMethodId);
-                dataReader = serviceMethod.getReader().apply(dataFormat);
-                dataWriter = serviceMethod.getWriter().apply(dataFormat);
+                dataReader = new TransportPayloadReader(dataFormat);
+                dataWriter = new TransportPayloadWriter(dataFormat);
                 return;
             }
         }
@@ -73,10 +73,11 @@ public class ServingRsocket implements RSocket {
         ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
         if (nonNull(defaultServiceMethod)) {
             serviceMethod = findServiceMethod(defaultServiceMethod);
-            dataReader = serviceMethod.getReader().apply(dataFormat);
-            dataWriter = serviceMethod.getWriter().apply(dataFormat);
+            dataReader = new TransportPayloadReader(dataFormat);
+            dataWriter = new TransportPayloadWriter(dataFormat);
             return;
         }
+
         throw new ImpossibleSituationException();
     }
 

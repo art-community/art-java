@@ -106,7 +106,7 @@ public class HttpCommunicatorAction implements Communication {
         HttpMethod httpMethod = communicationMethod();
         if (GET.equals(httpMethod)) {
             return input -> client.get().response((response, data) -> data
-                    .map(payload -> communicatorModule().configuration().getReader(communicatorActionId, fromMimeType(MimeType.valueOf(response.responseHeaders().get(CONTENT_TYPE)))).read(payload))
+                    .map(payload -> communicatorModule().configuration().getReader(communicatorActionId, fromMimeType(MimeType.parseMimeType(response.responseHeaders().get(CONTENT_TYPE)))).read(payload))
                     .map(TransportPayload::getValue));
         }
         throw new ImpossibleSituationException();

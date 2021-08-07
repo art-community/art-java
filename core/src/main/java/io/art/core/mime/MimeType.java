@@ -86,7 +86,7 @@ public class MimeType implements Comparable<MimeType> {
         return new MimeType(type, subtype, map());
     }
 
-    public static MimeType valueOf(String value) {
+    public static MimeType parseMimeType(String value) {
         if (isEmpty(value)) {
             throw new InvalidMimeTypeException(value, MIME_TYPE_MUST_NOT_BE_EMPTY);
         }
@@ -146,8 +146,8 @@ public class MimeType implements Comparable<MimeType> {
         return mimeType(type, subtype, parameters);
     }
 
-    public static MimeType valueOf(String value, MimeType fallback) {
-        return handleException(exception -> fallback).call(() -> MimeType.valueOf(value));
+    public static MimeType parseMimeType(String value, MimeType fallback) {
+        return handleException(exception -> fallback).call(() -> MimeType.parseMimeType(value));
     }
 
     private static void checkToken(String token) {
