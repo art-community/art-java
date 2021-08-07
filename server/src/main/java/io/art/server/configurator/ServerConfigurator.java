@@ -32,22 +32,13 @@ public abstract class ServerConfigurator {
 
 
     public ServerConfigurator configureClass(Class<?> serviceClass) {
-        return configureClass(() -> declaration(serviceClass), identity());
-    }
-
-    public ServerConfigurator configureClass(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        return configureClass(() -> declaration(serviceClass), decorator);
-    }
-
-    public ServerConfigurator configureClass(Supplier<MetaClass<?>> serviceClass) {
         return configureClass(serviceClass, identity());
     }
 
-    public ServerConfigurator configureClass(Supplier<MetaClass<?>> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        classBased.add(new ClassBasedConfiguration(serviceClass, decorator));
+    public ServerConfigurator configureClass(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
         return this;
     }
-
 
     public <T extends MetaClass<?>>
     ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
@@ -56,17 +47,7 @@ public abstract class ServerConfigurator {
 
     public <T extends MetaClass<?>>
     ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        return configureMethod(() -> cast(declaration(serviceClass)), serviceMethod, decorator);
-    }
-
-    public <T extends MetaClass<?>>
-    ServerConfigurator configureMethod(Supplier<T> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
-        return configureMethod(serviceClass, serviceMethod, identity());
-    }
-
-    public <T extends MetaClass<?>>
-    ServerConfigurator configureMethod(Supplier<T> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        methodBased.add(new MethodBasedConfiguration(serviceClass, serviceMethod, decorator));
+        methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
         return this;
     }
 

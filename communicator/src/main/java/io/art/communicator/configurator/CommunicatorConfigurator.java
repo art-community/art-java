@@ -39,28 +39,17 @@ public abstract class CommunicatorConfigurator {
     private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
 
 
-    public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        return configure(() -> declaration(communicatorClass), decorator);
-    }
-
-    public CommunicatorConfigurator configure(Supplier<MetaClass<? extends Communicator>> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        classBased.add(new ClassBasedConfiguration(communicatorClass, decorator));
+    public CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass,
+                                              UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
         return this;
     }
-
 
     public <T extends MetaClass<? extends Communicator>>
     CommunicatorConfigurator configure(Class<? extends Communicator> communicatorClass,
                                        Function<T, MetaMethod<?>> actionMethod,
                                        UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        return configure(() -> cast(declaration(communicatorClass)), actionMethod, decorator);
-    }
-
-    public <T extends MetaClass<? extends Communicator>>
-    CommunicatorConfigurator configure(Supplier<T> communicatorClass,
-                                       Function<T, MetaMethod<?>> actionMethod,
-                                       UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        methodBased.add(new MethodBasedConfiguration(communicatorClass, actionMethod, decorator));
+        methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
         return this;
     }
 
@@ -77,6 +66,7 @@ public abstract class CommunicatorConfigurator {
                 .connectors(new ConnectorRegistry(createConnectors(provider)))
                 .build();
     }
+
 
     private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors(LazyProperty<CommunicatorConfiguration> provider) {
         return lazy(() -> connectors
