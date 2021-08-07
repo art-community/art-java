@@ -130,13 +130,13 @@ public class Launcher {
         Map<String, ModuleActivator> preLoadingModules = map();
         Map<String, ModuleActivator> postLoadingModules = map();
 
-        for (String module : MODULE_PRE_LOADING_ORDER) {
+        for (String module : PRELOADED_MODULES) {
             if (activators.containsKey(module)) {
                 preLoadingModules.put(module, activators.remove(module));
             }
         }
 
-        List<String> postLoadingOrder = dynamicArrayOf(MODULE_POST_LOADING_ORDER.toMutable());
+        List<String> postLoadingOrder = dynamicArrayOf(POST_LOADED_MODULES.toMutable());
         reverse(postLoadingOrder);
         for (String module : postLoadingOrder) {
             if (activators.containsKey(module)) {
