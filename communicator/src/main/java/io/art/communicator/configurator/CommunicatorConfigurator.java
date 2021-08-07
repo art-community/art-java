@@ -57,7 +57,8 @@ public abstract class CommunicatorConfigurator {
     protected void registerConnector(Class<? extends Connector> connectorClass,
                                      Function<Class<? extends Communicator>, ? extends Communicator> communicator,
                                      Function<CommunicatorActionIdentifier, ? extends Communication> communication) {
-        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration(lazy(() -> createConnectorProxy(declaration(connectorClass), communicator)), communication);
+        LazyProperty<? extends Connector> connector = lazy(() -> createConnectorProxy(declaration(connectorClass), communicator));
+        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration(connector, communication);
         connectors.put(connectorClass, connectorConfiguration);
     }
 
