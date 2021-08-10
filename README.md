@@ -13,7 +13,7 @@ Releases are available via [ART Platform nexus](https://nexus.art-platform.io/re
 - Gradle 7+
 
 ## Bugs and Feedback
-For bugs, questions and discussions please use the [Github Issues](https://github.com/art-community/art/issues).
+For bugs, questions and discussions please use the [Github Issues](https://github.com/art-community/art-java/issues).
 
 Join us on Telegram: https://t.me/art_github
 
