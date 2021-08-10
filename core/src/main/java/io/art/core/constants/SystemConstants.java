@@ -16,6 +16,9 @@
 
 package io.art.core.constants;
 
+import io.art.core.collection.*;
+import static io.art.core.factory.SetFactory.*;
+
 public interface SystemConstants {
     String WSL = "wsl";
     String BASH = "bash";
@@ -23,4 +26,7 @@ public interface SystemConstants {
     int PROCESS_ERROR_CODE_FAIL = -1;
     String BASH_FIRST_ARGUMENT = "$1";
     String BASH_ALL_ARGUMENTS = "$@";
+    ImmutableSet<String> WINDOWS_TERMINAL_ENVIRONMENT = immutableSetOf("WT_PROFILE", "WT_SESSION");
+    String TERM_VARIABLE = "TERM";
+    String XTERM_PATTERN = "xterm";
 }

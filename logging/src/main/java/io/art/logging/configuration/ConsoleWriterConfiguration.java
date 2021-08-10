@@ -20,12 +20,17 @@ package io.art.logging.configuration;
 
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class ConsoleWriterConfiguration {
+    private boolean colored;
+
     public static ConsoleWriterConfiguration from(ConfigurationSource source, ConsoleWriterConfiguration fallback) {
         ConsoleWriterConfigurationBuilder builder = ConsoleWriterConfiguration.builder();
+        builder.colored = orElse(source.getBoolean(COLORED_KEY), fallback.colored);
         return builder.build();
     }
 
