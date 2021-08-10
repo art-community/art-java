@@ -18,25 +18,33 @@
 
 package io.art.logging.writer;
 
+import io.art.core.property.*;
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
 import io.art.logging.manager.*;
 import io.art.logging.model.*;
-import lombok.*;
 import static io.art.core.checker.TerminalChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.SystemExtensions.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.logging.colorizer.AnsiColorizer.AnsiColor.*;
 import static io.art.logging.colorizer.AnsiColorizer.*;
 import static io.art.logging.colorizer.LogColorizer.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
+import static java.lang.System.*;
+import static java.util.Objects.*;
 import java.text.*;
 
-@AllArgsConstructor
 public class ConsoleWriter implements LoggerWriter {
-    private final LoggingManager manager;
     private final LoggerWriterConfiguration writerConfiguration;
+    private final LazyProperty<Boolean> colored;
+
+    public ConsoleWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
+        this.writerConfiguration = writerConfiguration;
+        colored = lazy(() -> writerConfiguration.getConsole().isColored() && (isNull(console()) || terminalSupportColors()));
+    }
+
 
     @Override
     public void write(LoggingMessage message) {
@@ -51,11 +59,11 @@ public class ConsoleWriter implements LoggerWriter {
     private String format(LoggingMessage message) {
         String dateTime = writerConfiguration.getDateTimeFormatter().format(message.getDateTime());
         LoggingLevel level = message.getLevel();
-        if (terminalSupportColors() && writerConfiguration.getConsole().isColored()) {
+        if (colored.get()) {
             return MessageFormat.format(LOGGING_FORMAT,
-                    message(dateTime, BLUE),
+                    message(dateTime, BLUE_BOLD),
                     byLevel(level, level.name()),
-                    OPENING_SQUARE_BRACES + message(message.getThread().getName(), PURPLE) + CLOSING_SQUARE_BRACES,
+                    additional(OPENING_SQUARE_BRACES + message.getThread().getName() + CLOSING_SQUARE_BRACES),
                     special(message.getLogger()),
                     message.getMessage()
             );

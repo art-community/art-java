@@ -35,15 +35,15 @@ public class AnsiColorizer {
     }
 
     public static String success(String message) {
-        return message(message, GREEN);
+        return message(message, GREEN_BOLD);
     }
 
     public static String error(String message) {
-        return message(message, RED);
+        return message(message, RED_BOLD);
     }
 
     public static String warning(String message) {
-        return message(message, YELLOW);
+        return message(message, YELLOW_BOLD);
     }
 
     public static String additional(String message) {
