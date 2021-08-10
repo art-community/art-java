@@ -32,8 +32,6 @@ import static io.art.logging.colorizer.AnsiColorizer.*;
 import static io.art.logging.colorizer.LogColorizer.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static io.art.logging.constants.LoggingModuleConstants.*;
-import static java.lang.System.*;
-import static java.util.Objects.*;
 import java.text.*;
 
 public class ConsoleWriter implements LoggerWriter {
@@ -42,7 +40,7 @@ public class ConsoleWriter implements LoggerWriter {
 
     public ConsoleWriter(LoggingManager manager, LoggerWriterConfiguration writerConfiguration) {
         this.writerConfiguration = writerConfiguration;
-        colored = lazy(() -> writerConfiguration.getConsole().isColored() && (isNull(console()) || terminalSupportColors()));
+        colored = lazy(() -> writerConfiguration.getConsole().isColored() && terminalSupportColors());
     }
 
 
