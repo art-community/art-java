@@ -11,12 +11,11 @@ import static io.art.core.determiner.SystemDeterminer.*;
 public class TerminalChecker {
     public static boolean terminalSupportColors() {
         ImmutableMap<String, String> environment = context().configuration().getEnvironment();
-        if (isWindows()) {
-            return WINDOWS_TERMINAL_ENVIRONMENT
-                    .stream()
-                    .anyMatch(environment::containsKey);
+        if (let(environment.get(TERM_VARIABLE), value -> value.contains(XTERM_PATTERN), false)) {
+            return true;
         }
-
-        return let(environment.get(TERM_VARIABLE), value -> value.contains(XTERM_PATTERN), false);
+        return isWindows() && WINDOWS_TERMINAL_ENVIRONMENT
+                .stream()
+                .anyMatch(environment::containsKey);
     }
 }
