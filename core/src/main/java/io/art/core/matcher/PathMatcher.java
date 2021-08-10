@@ -15,6 +15,19 @@ public class PathMatcher {
     private final boolean matchStart;
     private final boolean trimTokens;
 
+    public static boolean matches(String pattern, String path) {
+        return PathMatcher.builder().build().isMatch(pattern, path);
+    }
+
+    public static boolean matches(String pattern, File path) {
+        return PathMatcher.builder().build().isMatch(pattern, path.getAbsolutePath());
+    }
+
+    public static boolean matches(String pattern, Path path) {
+        return PathMatcher.builder().build().isMatch(pattern, path.toAbsolutePath().toString());
+    }
+
+
     public boolean isMatch(String pattern, String path) {
         if (pattern.isEmpty()) {
             return path.isEmpty();
@@ -63,18 +76,6 @@ public class PathMatcher {
         }
 
         return isMatch(pattern.substring(1), path.substring(pointer + 1));
-    }
-
-    public static boolean matches(String pattern, String path) {
-        return PathMatcher.builder().build().isMatch(pattern, path);
-    }
-
-    public static boolean matches(String pattern, File path) {
-        return PathMatcher.builder().build().isMatch(pattern, path.getAbsolutePath());
-    }
-
-    public static boolean matches(String pattern, Path path) {
-        return PathMatcher.builder().build().isMatch(pattern, path.toAbsolutePath().toString());
     }
 
     private boolean doubleWildcardMatch(String pattern, String path) {
