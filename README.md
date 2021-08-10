@@ -1,40 +1,27 @@
-# ART
-ART is a kit of modules for developing multifunctional applications.
+# ART Java
+ART Java is a kit of modules for developing multifunctional applications for JVM platform with Java Language.
 
 
 ## Badges
 ![ART CI](https://github.com/art-community/art-java/workflows/ART%20CI/badge.svg)
-[![Gitter](https://badges.gitter.im/art-community/community.svg)](https://gitter.im/art-community/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-![Bintray](https://img.shields.io/bintray/v/art-community/art/io.github.art)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3a5d459c173a4109b2d039c8f7cd3cce)](https://app.codacy.com/app/antonbashir/ART?utm_source=github.com&utm_medium=referral&utm_content=art-community/ART&utm_campaign=Badge_Grade_Dashboard)
 ![GitHub repo size](https://img.shields.io/github/repo-size/art-community/art)
 
 ## Build and Binaries
-Releases are available via Maven Central.
+Releases are available via ![ART Platform nexus](https://nexus.art-platform.io/repository/art-maven-stable).
 
-Example:
-```kotlin
-//TODO
-```
 ## Requirements
 - Java 8+
-- Gradle 6+
+- Gradle 7+
 
 ## Bugs and Feedback
 For bugs, questions and discussions please use the [Github Issues](https://github.com/art-community/art/issues).
 
 Join us on Telegram: https://t.me/art_github
 
-Join us on Discord: https://discord.gg/jaqxB38
-
-## Documentation
-
-TODO
-
 ## LICENSE
 ART
 
-Copyright 2020 ART
+Copyright 2020-2021 ART
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
