@@ -127,12 +127,12 @@ public class Launcher {
 
     private static ImmutableMap<String, ModuleActivator> sort(Activator activator) {
         Map<String, ModuleActivator> activators = activator.activators().toMutable();
-        Map<String, ModuleActivator> preLoadingModules = map();
+        Map<String, ModuleActivator> sorted = map();
         Map<String, ModuleActivator> postLoadingModules = map();
 
         for (String module : PRELOADED_MODULES) {
             if (activators.containsKey(module)) {
-                preLoadingModules.put(module, activators.remove(module));
+                sorted.put(module, activators.remove(module));
             }
         }
 
@@ -144,9 +144,9 @@ public class Launcher {
             }
         }
 
-        activators.forEach(preLoadingModules::put);
-        postLoadingModules.forEach(preLoadingModules::put);
+        activators.forEach(sorted::put);
+        postLoadingModules.forEach(sorted::put);
 
-        return immutableMapOf(activators);
+        return immutableMapOf(sorted);
     }
 }
