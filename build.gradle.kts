@@ -72,7 +72,6 @@ subprojects {
     tasks.test {
         useJUnitPlatform()
         addTestOutputListener { _, outputEvent -> info(outputEvent.message) }
-        environment("TERM", "xterm")
     }
 
     java {
