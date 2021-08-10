@@ -31,11 +31,11 @@ dependencies {
 
 generator {
     source("ServerTest") {
-        modulePackage( "io.art.server.test")
+        modulePackage("io.art.server.test")
         jvm()
         sourcesPattern {
             include("src/test/**")
         }
-        includeClasses("*Service.java")
+        includeClasses("*Service")
     }
 }

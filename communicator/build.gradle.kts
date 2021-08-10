@@ -31,11 +31,11 @@ dependencies {
 
 generator {
     source("CommunicatorTest") {
-        modulePackage( "io.art.communicator.test")
+        modulePackage("io.art.communicator.test")
         jvm()
         sourcesPattern {
             include("src/test/**")
         }
-        includeClasses("*Communicator.java")
+        includeClasses("*Communicator")
     }
 }
