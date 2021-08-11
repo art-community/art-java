@@ -74,7 +74,7 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     }
 
     @Override
-    public void unload(Context.Service contextService) {
+    public void shutdown(Context.Service contextService) {
         configuration.getDeferredExecutor().shutdown();
         configuration.getPeriodicExecutor().shutdown();
     }

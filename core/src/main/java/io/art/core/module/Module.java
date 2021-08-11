@@ -42,6 +42,10 @@ public interface Module<Configuration extends ModuleConfiguration, Configurator 
 
     }
 
+    default void shutdown(Context.Service contextService) {
+
+    }
+
     default String print() {
         return EMPTY_STRING;
     }

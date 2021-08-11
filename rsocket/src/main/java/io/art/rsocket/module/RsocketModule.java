@@ -66,7 +66,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void unload(Context.Service contextService) {
+    public void shutdown(Context.Service contextService) {
         if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
             manager.disposeServer();
         }

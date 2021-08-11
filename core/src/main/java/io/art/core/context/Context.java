@@ -142,6 +142,9 @@ public class Context {
         List<Module<?, ?>> modules = linkedListOf(this.modules.values());
         reverse(modules);
         for (Module<?, ?> module : modules) {
+            module.shutdown(service);
+        }
+        for (Module<?, ?> module : modules) {
             apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId())));
             module.unload(service);
             this.modules.remove(module.getId());

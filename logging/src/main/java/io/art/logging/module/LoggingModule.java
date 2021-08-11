@@ -56,7 +56,7 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     }
 
     @Override
-    public void unload(Context.Service contextService) {
+    public void shutdown(Context.Service contextService) {
         manager.deactivate();
     }
 
