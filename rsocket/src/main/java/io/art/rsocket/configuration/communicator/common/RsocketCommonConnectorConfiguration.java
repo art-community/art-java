@@ -60,7 +60,7 @@ public class RsocketCommonConnectorConfiguration {
     public static RsocketCommonConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommonConnectorConfiguration current, ConfigurationSource source) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
-        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connector);
+        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(current.connector);
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), current.dataFormat));
         configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), current.metaDataFormat));
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
