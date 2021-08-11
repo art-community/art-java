@@ -1,5 +1,6 @@
 package io.art.rsocket.test;
 
+import io.art.communicator.configurator.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
@@ -29,7 +30,7 @@ public class RsocketTest {
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678))))
-                                .configureCommunicator(TestRsocket.class, builder -> builder.resilience(true))
+                                .configureCommunicator(TestRsocket.class, CommunicatorActionConfigurator::resilience)
                         )
                         .server(server -> server
                                 .tcp()

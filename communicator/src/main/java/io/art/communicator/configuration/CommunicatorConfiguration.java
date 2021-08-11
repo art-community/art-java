@@ -22,6 +22,7 @@ import io.art.communicator.refresher.*;
 import io.art.communicator.registry.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.Builder;
@@ -42,50 +43,50 @@ public class CommunicatorConfiguration {
     private final CommunicatorRefresher.Consumer consumer;
 
     @Getter
-    private ImmutableMap<String, CommunicatorProxyConfiguration> proxies;
+    private LazyProperty<ImmutableMap<String, CommunicatorActionsConfiguration>> configurations;
 
     @Getter
     private final ConnectorRegistry connectors;
 
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxies.get(id.getCommunicatorId());
-        return ofNullable(proxyConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
+        CommunicatorActionsConfiguration actionsConfiguration = configurations.get().get(id.getCommunicatorId());
+        return ofNullable(actionsConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
     public ResilienceConfiguration getResilienceConfiguration(CommunicatorActionIdentifier id) {
         return getActionConfiguration(id)
-                .map(CommunicatorActionConfiguration::getResilienceConfiguration)
+                .map(CommunicatorActionConfiguration::getResilience)
                 .orElse(ResilienceConfiguration.builder().build());
     }
 
     public boolean isLogging(CommunicatorActionIdentifier identifier) {
-        boolean communicator = checkCommunicator(identifier, CommunicatorProxyConfiguration::isLogging, true);
+        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isLogging, true);
         boolean action = checkAction(identifier, CommunicatorActionConfiguration::isLogging, true);
         return communicator && action;
     }
 
     public boolean isDeactivated(CommunicatorActionIdentifier identifier) {
-        boolean communicator = checkCommunicator(identifier, CommunicatorProxyConfiguration::isDeactivated, false);
+        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isDeactivated, false);
         boolean action = checkAction(identifier, CommunicatorActionConfiguration::isDeactivated, false);
         return communicator && action;
     }
 
 
-    private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorProxyConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxies.get(identifier.getCommunicatorId());
-        if (isNull(proxyConfiguration)) {
+    private <T> T checkCommunicator(CommunicatorActionIdentifier identifier, Function<CommunicatorActionsConfiguration, T> mapper, T defaultValue) {
+        CommunicatorActionsConfiguration actionsConfiguration = configurations.get().get(identifier.getCommunicatorId());
+        if (isNull(actionsConfiguration)) {
             return defaultValue;
         }
-        return mapper.apply(proxyConfiguration);
+        return mapper.apply(actionsConfiguration);
     }
 
     private <T> T checkAction(CommunicatorActionIdentifier identifier, Function<CommunicatorActionConfiguration, T> mapper, T defaultValue) {
-        CommunicatorProxyConfiguration proxyConfiguration = proxies.get(identifier.getCommunicatorId());
-        if (isNull(proxyConfiguration)) {
+        CommunicatorActionsConfiguration actionsConfiguration = configurations.get().get(identifier.getCommunicatorId());
+        if (isNull(actionsConfiguration)) {
             return defaultValue;
         }
-        CommunicatorActionConfiguration actionConfiguration = proxyConfiguration.getActions().get(identifier.getActionId());
+        CommunicatorActionConfiguration actionConfiguration = actionsConfiguration.getActions().get(identifier.getActionId());
         if (isNull(actionConfiguration)) {
             return defaultValue;
         }
@@ -97,24 +98,24 @@ public class CommunicatorConfiguration {
                 .refresher(refresher)
                 .consumer(refresher.consumer())
                 .connectors(new ConnectorRegistry(lazy(ImmutableMap::emptyImmutableMap)))
-                .proxies(emptyImmutableMap())
+                .configurations(lazy(ImmutableMap::emptyImmutableMap))
                 .build();
     }
 
     public static CommunicatorConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorConfiguration configuration = defaults(refresher);
-        configuration.proxies = ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(configuration.refresher, service)))
-                .orElse(emptyImmutableMap());
+        configuration.configurations = lazy(() -> ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorActionsConfiguration.from(configuration.refresher, service)))
+                .orElse(emptyImmutableMap()));
         refresher.produce();
         return configuration;
     }
 
     public static CommunicatorConfiguration from(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
         CommunicatorConfigurationBuilder builder = current.toBuilder();
-        builder.proxies(ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorProxyConfiguration.from(builder.refresher, service)))
-                .orElse(emptyImmutableMap()));
+        builder.configurations(lazy(() -> ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorActionsConfiguration.from(builder.refresher, service)))
+                .orElse(emptyImmutableMap())));
         refresher.produce();
         return builder.build();
     }

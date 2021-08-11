@@ -2,7 +2,6 @@ package io.art.server.configurator;
 
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
@@ -15,7 +14,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.SetFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
@@ -52,15 +51,49 @@ public abstract class ServerConfigurator {
     }
 
 
-    protected ServerConfiguration configure(LazyProperty<ServerConfiguration> provider, ServerConfiguration current) {
+    protected ServerConfiguration configure(ServerConfiguration current) {
         return current.toBuilder()
-                .serviceMethods(lazy(() -> createMethods(provider)))
+                .configurations(lazy(this::createConfigurations))
+                .methods(lazy(this::createMethods))
                 .build();
     }
 
+    private ImmutableMap<String, ServiceMethodsConfiguration> createConfigurations() {
+        Map<String, ServiceMethodsConfiguration> configurations = map();
+        for (ClassBasedConfiguration configuration : classBased) {
+            MetaClass<?> metaClass = configuration.serviceClass.get();
+            Map<String, ServiceMethodConfiguration> methods = map();
+            for (MetaMethod<?> method : metaClass.methods()) {
+                ServiceMethodConfigurator configurator = configuration.decorator.apply(new ServiceMethodConfigurator());
+                methods.put(method.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
+            }
+            configurations.put(asId(metaClass.definition().type()), ServiceMethodsConfiguration.defaults()
+                    .toBuilder()
+                    .methods(immutableMapOf(methods))
+                    .build());
+        }
 
-    private ImmutableSet<ServiceMethod> createMethods(LazyProperty<ServerConfiguration> provider) {
-        List<ServiceMethod> methods = linkedList();
+        for (MethodBasedConfiguration configuration : methodBased) {
+            MetaClass<?> metaClass = configuration.serviceClass.get();
+            Map<String, ServiceMethodConfiguration> methods = map();
+            String communicatorId = asId(metaClass.definition().type());
+            ServiceMethodsConfiguration existed = configurations.get(communicatorId);
+            if (nonNull(existed)) {
+                methods = existed.getMethods().toMutable();
+            }
+            ServiceMethodConfigurator configurator = configuration.decorator.apply(new ServiceMethodConfigurator());
+            String actionId = configuration.serviceMethod.apply(cast(metaClass)).name();
+            methods.put(actionId, configurator.configure(ServiceMethodConfiguration.defaults()));
+            configurations.put(communicatorId, orElse(existed, ServiceMethodsConfiguration.defaults()).toBuilder()
+                    .methods(immutableMapOf(methods))
+                    .build());
+        }
+
+        return immutableMapOf(configurations);
+    }
+
+    private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> createMethods() {
+        Map<ServiceMethodIdentifier, ServiceMethod> methods = map();
 
         for (ClassBasedConfiguration configuration : classBased) {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
@@ -74,13 +107,14 @@ public abstract class ServerConfigurator {
                         .orElse(identity());
                 decorator = then(configuration.decorator, decorator);
                 MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
-                methods.add(createServiceMethod(provider, methodConfiguration));
+                ServiceMethod serviceMethod = createServiceMethod(methodConfiguration);
+                methods.put(serviceMethod.getId(), serviceMethod);
             }
         }
 
         for (MethodBasedConfiguration configuration : methodBased) {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
-            MetaMethod<?> serviceMethod = configuration.serviceMethod.apply(cast(serviceClass));
+            MetaMethod<?> method = configuration.serviceMethod.apply(cast(serviceClass));
             UnaryOperator<ServiceMethodConfigurator> decorator = classBased
                     .stream()
                     .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
@@ -88,25 +122,23 @@ public abstract class ServerConfigurator {
                     .map(methodConfiguration -> methodConfiguration.decorator)
                     .orElse(identity());
             decorator = then(configuration.decorator, decorator);
-            MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, serviceMethod, decorator);
-            methods.add(createServiceMethod(provider, methodConfiguration));
+            MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
+            ServiceMethod serviceMethod = createServiceMethod(methodConfiguration);
+            methods.put(serviceMethod.getId(), serviceMethod);
         }
 
-        return immutableSetOf(setOf(methods));
+        return immutableMapOf(methods);
     }
 
-    private ServiceMethod createServiceMethod(LazyProperty<ServerConfiguration> provider, MethodConfiguration methodConfiguration) {
+    private ServiceMethod createServiceMethod(MethodConfiguration methodConfiguration) {
         MetaMethod<?> serviceMethod = methodConfiguration.serviceMethod;
         MetaClass<?> serviceClass = methodConfiguration.serviceClass;
-        UnaryOperator<ServiceMethodConfigurator> decorator = methodConfiguration.decorator;
         MetaType<?> inputType = orNull(() -> immutableArrayOf(serviceMethod.parameters().values()).get(0).type(), isNotEmpty(serviceMethod.parameters()));
         ServiceMethodIdentifier id = serviceMethodId(asId(serviceClass.definition().type()), serviceMethod.name());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
-        ServiceMethodConfigurator configurator = new ServiceMethodConfigurator(id, provider.get());
-        builder = decorator.apply(configurator).configure(builder, inputType);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
 

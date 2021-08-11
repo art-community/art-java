@@ -43,35 +43,35 @@ public class ServerConfiguration {
     private final ServerRefresher.Consumer consumer;
 
     @Getter
-    private final LazyProperty<ImmutableSet<ServiceMethod>> serviceMethods;
+    private final LazyProperty<ImmutableMap<ServiceMethodIdentifier, ServiceMethod>> methods;
 
     @Getter
-    private ImmutableMap<String, ServiceConfiguration> services;
+    private LazyProperty<ImmutableMap<String, ServiceMethodsConfiguration>> configurations;
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
-        return ofNullable(services.get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
+        return ofNullable(configurations.get().get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
     }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
-        boolean service = checkService(identifier, ServiceConfiguration::isLogging, true);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::isLogging, true);
         boolean method = checkMethod(identifier, ServiceMethodConfiguration::isLogging, true);
         return service && method;
     }
 
     public boolean isValidating(ServiceMethodIdentifier identifier) {
-        boolean service = checkService(identifier, ServiceConfiguration::isValidating, true);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::isValidating, true);
         boolean method = checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
         return service && method;
     }
 
     public boolean isDeactivated(ServiceMethodIdentifier identifier) {
-        boolean service = checkService(identifier, ServiceConfiguration::isDeactivated, false);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::isDeactivated, false);
         boolean method = checkMethod(identifier, ServiceMethodConfiguration::isDeactivated, false);
         return service || method;
     }
 
-    private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
+    private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceMethodsConfiguration, T> mapper, T defaultValue) {
+        ServiceMethodsConfiguration serviceConfiguration = configurations.get().get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
@@ -79,7 +79,7 @@ public class ServerConfiguration {
     }
 
     private <T> T checkMethod(ServiceMethodIdentifier identifier, Function<ServiceMethodConfiguration, T> mapper, T defaultValue) {
-        ServiceConfiguration serviceConfiguration = services.get(identifier.getServiceId());
+        ServiceMethodsConfiguration serviceConfiguration = configurations.get().get(identifier.getServiceId());
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
@@ -93,24 +93,24 @@ public class ServerConfiguration {
     public static ServerConfiguration defaults(ServerRefresher refresher) {
         return ServerConfiguration.builder().refresher(refresher)
                 .consumer(refresher.consumer())
-                .serviceMethods(lazy(ImmutableSet::emptyImmutableSet))
-                .services(emptyImmutableMap())
+                .methods(lazy(ImmutableMap::emptyImmutableMap))
+                .configurations(lazy(ImmutableMap::emptyImmutableMap))
                 .build();
     }
 
     public static ServerConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
         ServerConfiguration configuration = defaults(refresher);
-        configuration.services = ofNullable(source.getNested(SERVER_SECTION))
-                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(configuration.refresher, service)))
-                .orElse(emptyImmutableMap());
+        configuration.configurations = lazy(() -> ofNullable(source.getNested(SERVER_SECTION))
+                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceMethodsConfiguration.from(configuration.refresher, service)))
+                .orElse(emptyImmutableMap()));
         configuration.refresher.produce();
         return configuration;
     }
 
     public static ServerConfiguration from(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
         ServerConfigurationBuilder builder = current.toBuilder();
-        builder.services(ofNullable(source.getNested(SERVER_SECTION))
-                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceConfiguration.from(builder.refresher, service)))
+        builder.configurations = lazy(() -> ofNullable(source.getNested(SERVER_SECTION))
+                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceMethodsConfiguration.from(builder.refresher, service)))
                 .orElse(emptyImmutableMap()));
         refresher.produce();
         return builder.build();

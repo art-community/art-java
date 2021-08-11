@@ -42,4 +42,8 @@ public class ServiceMethodConfiguration {
         configuration.validating = validationListener.emit(orElse(source.getBoolean(VALIDATING_KEY), true));
         return configuration;
     }
+
+    public static ServiceMethodConfiguration defaults() {
+        return ServiceMethodConfiguration.builder().build();
+    }
 }

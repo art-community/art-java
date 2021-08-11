@@ -1,80 +1,44 @@
 package io.art.server.configurator;
 
-import io.art.core.model.*;
-import io.art.meta.model.*;
 import io.art.server.configuration.*;
-import io.art.server.decorator.*;
-import static io.art.core.constants.MethodDecoratorScope.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
-import static io.art.server.method.ServiceMethod.*;
-import static java.util.Objects.*;
 
 public class ServiceMethodConfigurator {
-    private final ServerConfiguration configuration;
+    private boolean logging = false;
+    private boolean validating = true;
+    private boolean deactivated = false;
 
-    private ServiceMethodIdentifier id;
-    private boolean loggable;
-    private boolean validatable = true;
-    private boolean deactivable = true;
-
-    public ServiceMethodConfigurator(ServiceMethodIdentifier id, ServerConfiguration configuration) {
-        this.configuration = configuration;
-        this.id = id;
+    public ServiceMethodConfigurator logging() {
+        return logging(true);
     }
 
-    public ServiceMethodConfigurator serviceId(String id) {
-        this.id = serviceMethodId(id, this.id.getMethodId());
+    public ServiceMethodConfigurator logging(boolean logging) {
+        this.logging = logging;
         return this;
     }
 
-    public ServiceMethodConfigurator methodId(String id) {
-        this.id = serviceMethodId(this.id.getServiceId(), id);
+    public ServiceMethodConfigurator validating() {
+        return validating(true);
+    }
+
+    public ServiceMethodConfigurator validating(boolean validating) {
+        this.validating = validating;
         return this;
     }
 
-    public ServiceMethodConfigurator id(String serviceId, String methodId) {
-        this.id = serviceMethodId(serviceId, methodId);
+    public ServiceMethodConfigurator deactivated() {
+        return deactivated(true);
+    }
+
+    public ServiceMethodConfigurator deactivated(boolean deactivated) {
+        this.deactivated = deactivated;
         return this;
     }
 
-    public ServiceMethodConfigurator loggable() {
-        return loggable(true);
-    }
-
-    public ServiceMethodConfigurator loggable(boolean loggable) {
-        this.loggable = loggable;
-        return this;
-    }
-
-    public ServiceMethodConfigurator validatable(boolean validatable) {
-        this.validatable = validatable;
-        return this;
-    }
-
-    public ServiceMethodConfigurator deactivable(boolean deactivable) {
-        this.deactivable = deactivable;
-        return this;
-    }
-
-    ServiceMethodBuilder configure(ServiceMethodBuilder builder, MetaType<?> inputType) {
-        if (deactivable) {
-            builder.inputDecorator(new ServiceDeactivationDecorator(id, configuration));
-        }
-        if (loggable) {
-            builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT));
-        }
-        if (validatable) {
-            if (nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
-                builder.inputDecorator(new ServiceValidationDecorator(id, configuration));
-            }
-        }
-        if (deactivable) {
-            builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration));
-        }
-        if (loggable) {
-            builder.outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT));
-        }
-        return builder.id(id);
+    ServiceMethodConfiguration configure(ServiceMethodConfiguration configuration) {
+        return configuration.toBuilder()
+                .deactivated(deactivated)
+                .logging(logging)
+                .validating(validating)
+                .build();
     }
 }

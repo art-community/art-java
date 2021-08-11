@@ -1,60 +1,48 @@
 package io.art.communicator.configurator;
 
-import io.art.communicator.action.CommunicatorAction.*;
 import io.art.communicator.configuration.*;
-import io.art.communicator.decorator.*;
-import io.art.core.model.*;
-import lombok.*;
-import static io.art.core.constants.MethodDecoratorScope.*;
+import io.art.communicator.configuration.CommunicatorActionConfiguration.*;
+import io.art.resilience.configuration.*;
+import io.art.resilience.configuration.ResilienceConfiguration.*;
+import static java.util.Objects.*;
+import static java.util.function.UnaryOperator.*;
+import java.util.function.*;
 
-@RequiredArgsConstructor
 public class CommunicatorActionConfigurator {
-    private final CommunicatorActionIdentifier id;
-    private final CommunicatorConfiguration configuration;
+    private boolean logging = false;
+    private boolean deactivated = false;
+    private UnaryOperator<ResilienceConfigurationBuilder> resilience;
 
-    private boolean loggable;
-    private boolean deactivable = true;
-    private boolean resilience = false;
-
-    public CommunicatorActionConfigurator loggable() {
-        return loggable(true);
+    public CommunicatorActionConfigurator logging() {
+        return logging(true);
     }
 
-    public CommunicatorActionConfigurator loggable(boolean loggable) {
-        this.loggable = loggable;
+    public CommunicatorActionConfigurator logging(boolean loggable) {
+        this.logging = loggable;
         return this;
     }
 
     public CommunicatorActionConfigurator resilience() {
-        return resilience(true);
+        return resilience(identity());
     }
 
-    public CommunicatorActionConfigurator resilience(boolean resilience) {
+    public CommunicatorActionConfigurator resilience(UnaryOperator<ResilienceConfigurationBuilder> resilience) {
         this.resilience = resilience;
         return this;
     }
 
-    public CommunicatorActionConfigurator deactivable(boolean deactivable) {
-        this.deactivable = deactivable;
+    public CommunicatorActionConfigurator deactivated(boolean deactivated) {
+        this.deactivated = deactivated;
         return this;
     }
 
-    CommunicatorActionBuilder configure(CommunicatorActionBuilder builder) {
-        if (deactivable) {
-            builder.inputDecorator(new CommunicatorDeactivationDecorator(id, configuration));
+    CommunicatorActionConfiguration configure(CommunicatorActionConfiguration configuration) {
+        CommunicatorActionConfigurationBuilder builder = configuration.toBuilder()
+                .deactivated(deactivated)
+                .logging(logging);
+        if (nonNull(resilience)) {
+            builder.resilience(resilience.apply(ResilienceConfiguration.builder()).build());
         }
-        if (loggable) {
-            builder.inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT));
-        }
-        if (resilience) {
-            builder.inputDecorator(new CommunicatorResilienceDecorator(id, configuration));
-        }
-        if (deactivable) {
-            builder.outputDecorator(new CommunicatorDeactivationDecorator(id, configuration));
-        }
-        if (loggable) {
-            builder.outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
-        }
-        return builder;
+        return builder.build();
     }
 }

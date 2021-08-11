@@ -28,14 +28,14 @@ import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 
 @Getter
 @Builder(toBuilder = true)
-public class ServiceConfiguration {
+public class ServiceMethodsConfiguration {
     private boolean deactivated;
     private boolean logging;
     private boolean validating;
     private ImmutableMap<String, ServiceMethodConfiguration> methods;
 
-    public static ServiceConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
-        ServiceConfiguration configuration = ServiceConfiguration.builder().build();
+    public static ServiceMethodsConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
+        ServiceMethodsConfiguration configuration = ServiceMethodsConfiguration.builder().build();
         ChangesListener deactivationListener = refresher.deactivationListener();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener validationListener = refresher.validationListener();
@@ -44,5 +44,9 @@ public class ServiceConfiguration {
         configuration.validating = validationListener.emit(orElse(source.getBoolean(VALIDATING_KEY), true));
         configuration.methods = source.getNestedMap(METHODS_KEY, method -> ServiceMethodConfiguration.from(refresher, source));
         return configuration;
+    }
+
+    public static ServiceMethodsConfiguration defaults() {
+        return ServiceMethodsConfiguration.builder().build();
     }
 }

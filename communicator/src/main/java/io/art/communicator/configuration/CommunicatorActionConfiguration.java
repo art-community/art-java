@@ -32,8 +32,7 @@ import static io.art.resilience.constants.ResilienceModuleConstants.Configuratio
 public class CommunicatorActionConfiguration {
     private boolean logging;
     private boolean deactivated;
-    private String connector;
-    private ResilienceConfiguration resilienceConfiguration;
+    private ResilienceConfiguration resilience;
 
     public static CommunicatorActionConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorActionConfiguration configuration = CommunicatorActionConfiguration.builder().build();
@@ -41,8 +40,11 @@ public class CommunicatorActionConfiguration {
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.connector = source.getString(CONNECTOR_KEY);
-        configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        configuration.resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
         return configuration;
+    }
+
+    public static CommunicatorActionConfiguration defaults() {
+        return CommunicatorActionConfiguration.builder().build();
     }
 }

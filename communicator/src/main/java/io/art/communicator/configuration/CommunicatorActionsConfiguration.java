@@ -30,22 +30,24 @@ import static io.art.resilience.constants.ResilienceModuleConstants.Configuratio
 
 @Getter
 @Builder(toBuilder = true)
-public class CommunicatorProxyConfiguration {
+public class CommunicatorActionsConfiguration {
     private boolean logging;
     private boolean deactivated;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
-    private String connector;
-    private ResilienceConfiguration resilienceConfiguration;
+    private ResilienceConfiguration resilience;
 
-    public static CommunicatorProxyConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
-        CommunicatorProxyConfiguration configuration = CommunicatorProxyConfiguration.builder().build();
+    public static CommunicatorActionsConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
+        CommunicatorActionsConfiguration configuration = CommunicatorActionsConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.connector = source.getString(CONNECTOR_KEY);
         configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
-        configuration.resilienceConfiguration = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        configuration.resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
         return configuration;
+    }
+
+    public static CommunicatorActionsConfiguration defaults() {
+        return CommunicatorActionsConfiguration.builder().build();
     }
 }

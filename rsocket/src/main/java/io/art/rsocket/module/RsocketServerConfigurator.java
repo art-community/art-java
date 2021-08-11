@@ -53,7 +53,7 @@ public class RsocketServerConfigurator extends ServerConfigurator {
         return http;
     }
 
-    ServerConfiguration configureServer(LazyProperty<ServerConfiguration> provider, ServerConfiguration current) {
-        return configure(provider, current);
+    ServerConfiguration configureServer(ServerConfiguration current) {
+        return configure(current);
     }
 }

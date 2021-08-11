@@ -62,31 +62,63 @@ public abstract class CommunicatorConfigurator {
         connectors.put(connectorClass, connectorConfiguration);
     }
 
-    protected CommunicatorConfiguration configure(LazyProperty<CommunicatorConfiguration> provider, CommunicatorConfiguration current) {
+    protected CommunicatorConfiguration configure(CommunicatorConfiguration current) {
         return current.toBuilder()
-                .connectors(new ConnectorRegistry(createConnectors(provider)))
+                .configurations(lazy(this::createConfigurations))
+                .connectors(new ConnectorRegistry(createConnectors()))
                 .build();
     }
 
 
-    private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors(LazyProperty<CommunicatorConfiguration> provider) {
+    private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors() {
         return lazy(() -> connectors
                 .entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(provider, entry.getKey(), entry.getValue()))));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(entry.getKey(), entry.getValue()))));
     }
 
-    private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> provider,
-                                               Class<? extends Connector> connectorClass,
-                                               ConnectorConfiguration connectorConfiguration) {
-        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(connectorClass, connectorConfiguration, provider);
+    private ImmutableMap<String, CommunicatorActionsConfiguration> createConfigurations() {
+        Map<String, CommunicatorActionsConfiguration> configurations = map();
+        for (ClassBasedConfiguration configuration : classBased) {
+            MetaClass<? extends Communicator> metaClass = configuration.communicatorClass.get();
+            Map<String, CommunicatorActionConfiguration> actions = map();
+            for (MetaMethod<?> method : metaClass.methods()) {
+                CommunicatorActionConfigurator configurator = configuration.decorator.apply(new CommunicatorActionConfigurator());
+                actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
+            }
+            configurations.put(asId(metaClass.definition().type()), CommunicatorActionsConfiguration.defaults()
+                    .toBuilder()
+                    .actions(immutableMapOf(actions))
+                    .build());
+        }
+
+        for (MethodBasedConfiguration configuration : methodBased) {
+            MetaClass<? extends Communicator> metaClass = configuration.communicatorClass.get();
+            Map<String, CommunicatorActionConfiguration> actions = map();
+            String communicatorId = asId(metaClass.definition().type());
+            CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
+            if (nonNull(existed)) {
+                actions = existed.getActions().toMutable();
+            }
+            CommunicatorActionConfigurator configurator = configuration.decorator.apply(new CommunicatorActionConfigurator());
+            String actionId = configuration.actionMethod.apply(cast(metaClass)).name();
+            actions.put(actionId, configurator.configure(CommunicatorActionConfiguration.defaults()));
+            configurations.put(communicatorId, orElse(existed, CommunicatorActionsConfiguration.defaults()).toBuilder()
+                    .actions(immutableMapOf(actions))
+                    .build());
+        }
+
+        return immutableMapOf(configurations);
+    }
+
+    private ConnectorContainer createConnector(Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration) {
+        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(connectorClass, connectorConfiguration);
         return new ConnectorContainer(communicators, connectorConfiguration.connector.get());
     }
 
 
-    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(Class<? extends Connector> connectorClass,
-                                                                                                                 ConnectorConfiguration connectorConfiguration,
-                                                                                                                 LazyProperty<CommunicatorConfiguration> provider) {
+    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>
+    createProxies(Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration) {
         Map<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = map();
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
@@ -94,7 +126,7 @@ public abstract class CommunicatorConfigurator {
         ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
-            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(provider, ActionConfiguration.builder()
+            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
                     .decorator(computeDecorator(communicatorClass, orElse(classBasedConfigurations.get(communicatorClass), identity()), actionMethod))
                     .method(actionMethod)
@@ -106,9 +138,8 @@ public abstract class CommunicatorConfigurator {
         return immutableMapOf(proxies);
     }
 
-    private UnaryOperator<CommunicatorActionConfigurator> computeDecorator(MetaClass<? extends Communicator> communicatorClass,
-                                                                           UnaryOperator<CommunicatorActionConfigurator> classDecorator,
-                                                                           MetaMethod<?> actionMethod) {
+    private UnaryOperator<CommunicatorActionConfigurator>
+    computeDecorator(MetaClass<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> classDecorator, MetaMethod<?> actionMethod) {
         UnaryOperator<CommunicatorActionConfigurator> methodDecorator = methodBased.stream()
                 .filter(configuration -> communicatorClass.equals(configuration.communicatorClass.get()))
                 .filter(configuration -> actionMethod.equals(configuration.actionMethod.apply(cast(communicatorClass))))
@@ -118,18 +149,15 @@ public abstract class CommunicatorConfigurator {
         return then(classDecorator, orElse(methodDecorator, identity()));
     }
 
-    private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> provider, ActionConfiguration actionConfiguration) {
+    private CommunicatorAction createAction(ActionConfiguration actionConfiguration) {
         MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
         ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
         MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
-        UnaryOperator<CommunicatorActionConfigurator> decorator = actionConfiguration.decorator;
         CommunicatorActionIdentifier id = communicatorActionId(asId(communicatorClass.definition().type()), actionConfiguration.method.name());
-        CommunicatorConfiguration communicatorConfiguration = provider.get();
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
                 .communication(actionConfiguration.connectorConfiguration.communication.apply(id));
-        builder = decorator.apply(new CommunicatorActionConfigurator(id, communicatorConfiguration)).configure(builder);
         return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
     }
 

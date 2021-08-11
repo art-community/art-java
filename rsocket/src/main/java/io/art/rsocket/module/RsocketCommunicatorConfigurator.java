@@ -67,7 +67,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
         return immutableMapOf(httpConnectors);
     }
 
-    CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> provider, CommunicatorConfiguration current) {
-        return configure(provider, current);
+    CommunicatorConfiguration configureCommunicator(CommunicatorConfiguration current) {
+        return configure(current);
     }
 }
