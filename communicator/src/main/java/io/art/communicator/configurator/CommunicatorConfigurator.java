@@ -122,7 +122,6 @@ public abstract class CommunicatorConfigurator {
         return new ConnectorContainer(communicators, connectorConfiguration.connector.get());
     }
 
-
     private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(LazyProperty<CommunicatorConfiguration> configurationProvider,
                                                                                                                  Class<? extends Connector> connectorClass,
                                                                                                                  ConnectorConfiguration connectorConfiguration) {
