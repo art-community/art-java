@@ -60,4 +60,5 @@ public interface LoggingModuleConstants {
 
     String LOGGING_FORMAT = "{0} {1} {2}: {3} - {4}";
     String CONSUMER_THREAD = "logging-consumer";
+    String COMMON_LOGGER = "common";
 }

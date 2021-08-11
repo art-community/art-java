@@ -18,10 +18,12 @@
 
 package io.art.logging.logger;
 
+import io.art.core.annotation.*;
 import io.art.logging.constants.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.StringExtensions.*;
 
+@ForUsing
 public interface Logger {
     String getName();
 

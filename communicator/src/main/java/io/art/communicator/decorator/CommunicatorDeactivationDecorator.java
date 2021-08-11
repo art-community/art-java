@@ -25,7 +25,7 @@ import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.Property.*;
-import static io.art.logging.module.LoggingModule.*;
+import static io.art.logging.Logging.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 

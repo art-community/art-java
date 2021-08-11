@@ -19,6 +19,7 @@
 package io.art.scheduler.executor.periodic;
 
 
+import io.art.core.annotation.*;
 import io.art.scheduler.exception.*;
 import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.model.*;
@@ -34,6 +35,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+@ForUsing
 @RequiredArgsConstructor
 public class PeriodicExecutor {
     private final Map<String, Future<?>> executingTasks = concurrentMap();

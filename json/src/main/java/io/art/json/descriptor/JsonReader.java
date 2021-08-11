@@ -19,6 +19,7 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.json.exception.*;
@@ -41,6 +42,7 @@ import java.io.*;
 import java.util.*;
 
 
+@ForUsing
 @AllArgsConstructor
 public class JsonReader implements Reader {
     private final JsonFactory jsonFactory;

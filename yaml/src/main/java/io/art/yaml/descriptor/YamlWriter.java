@@ -19,6 +19,7 @@
 package io.art.yaml.descriptor;
 
 import com.fasterxml.jackson.dataformat.yaml.*;
+import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.meta.descriptor.Writer;
 import io.art.meta.model.*;
@@ -36,6 +37,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
+@ForUsing
 @AllArgsConstructor
 public class YamlWriter implements Writer {
     private final YAMLFactory jsonFactory;

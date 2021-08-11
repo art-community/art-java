@@ -19,6 +19,7 @@
 package io.art.rsocket.interceptor;
 
 import io.art.core.property.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.common.*;
@@ -27,13 +28,12 @@ import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.property.Property.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RSOCKET_COMMUNICATOR_LOGGER);
+    private static final Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
 
     private final RsocketCommonConnectorConfiguration configuration;
     private final Property<Boolean> enabled;

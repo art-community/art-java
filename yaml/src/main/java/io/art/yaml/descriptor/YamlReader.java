@@ -20,6 +20,7 @@ package io.art.yaml.descriptor;
 
 import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.meta.descriptor.Reader;
@@ -42,6 +43,7 @@ import java.io.*;
 import java.util.*;
 
 
+@ForUsing
 @AllArgsConstructor
 public class YamlReader implements Reader {
     private final YAMLFactory jsonFactory;

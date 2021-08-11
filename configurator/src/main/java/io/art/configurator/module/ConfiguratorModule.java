@@ -20,8 +20,6 @@ package io.art.configurator.module;
 
 import io.art.configurator.configuration.*;
 import io.art.configurator.configuration.ConfiguratorModuleConfiguration.*;
-import io.art.configurator.exception.*;
-import io.art.configurator.model.*;
 import io.art.configurator.source.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
@@ -52,6 +50,11 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     @Getter(lazy = true, value = PRIVATE)
     private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(CONFIGURATOR_MODULE_ID);
 
+    @Override
+    public void beforeReload(Context.Service contextService) {
+        orderedSources().forEach(ConfigurationSource::refresh);
+    }
+
     public ImmutableArray<ConfigurationSource> orderedSources() {
         return configuration.orderedSources();
     }
@@ -74,11 +77,6 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
         return this;
     }
 
-    @Override
-    public void beforeReload(Context.Service contextService) {
-        orderedSources().forEach(ConfigurationSource::refresh);
-    }
-
     private void configureByFile(List<String> paths) {
         paths
                 .stream()
@@ -91,22 +89,6 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     private FileProxy loadResource(ClassLoader loader, String extension) {
         String path = DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension;
         return let(loader.getResourceAsStream(path), stream -> new FileProxy(path, () -> loader.getResourceAsStream(path)));
-    }
-
-    public static ConfigurationSource configuration() {
-        return configuratorModule().configuration().getConfiguration();
-    }
-
-    public static ConfigurationSource configuration(String section) {
-        return orThrow(configuration().getNested(section), () -> new ConfigurationNotFoundException(section));
-    }
-
-    public static <T> T configuration(Class<T> type) {
-        return configuration(EMPTY_STRING, type);
-    }
-
-    public static <T> T configuration(String section, Class<T> type) {
-        return orThrow(configuratorModule().configuration().getCustomConfiguration(new CustomConfigurationModel(section, type)), () -> new ConfigurationNotFoundException(section));
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {

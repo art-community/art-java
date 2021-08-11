@@ -22,6 +22,7 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.runnable.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.server.*;
@@ -45,7 +46,6 @@ import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.rsocket.configuration.server.RsocketCommonServerConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.manager.RsocketManager.*;
@@ -57,7 +57,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RSOCKET_SERVER_LOGGER);
+    private static final Logger logger = Logging.logger(RSOCKET_SERVER_LOGGER);
 
     private final RsocketModuleConfiguration configuration;
     private final Property<CloseableChannel> tcpChannel;

@@ -2,6 +2,7 @@ package io.art.rsocket.communicator;
 
 import io.art.core.model.*;
 import io.art.core.strategy.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.common.*;
@@ -26,7 +27,6 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
@@ -46,7 +46,7 @@ import java.util.function.*;
 @UtilityClass
 public class RsocketCommunicationFactory {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RSOCKET_COMMUNICATOR_LOGGER);
+    private final static Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
 
 
     public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {

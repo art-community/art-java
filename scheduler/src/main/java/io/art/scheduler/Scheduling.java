@@ -18,6 +18,9 @@
 
 package io.art.scheduler;
 
+import io.art.core.annotation.*;
+import io.art.scheduler.executor.deferred.*;
+import io.art.scheduler.executor.periodic.*;
 import io.art.scheduler.model.*;
 import lombok.experimental.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.PeriodicTaskMode.*;
@@ -27,8 +30,17 @@ import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.concurrent.*;
 
+@ForUsing
 @UtilityClass
 public class Scheduling {
+    public static DeferredExecutor deferredExecutor() {
+        return schedulerModule().configuration().getDeferredExecutor();
+    }
+
+    public static PeriodicExecutor periodicExecutor() {
+        return schedulerModule().configuration().getPeriodicExecutor();
+    }
+
     public static <T> Future<? extends T> schedule(Callable<? extends T> task) {
         return deferredExecutor().submit(task, now());
     }

@@ -18,6 +18,7 @@
 
 package io.art.configurator.source;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -38,6 +39,7 @@ import java.util.*;
 import java.util.function.*;
 
 @Getter
+@ForUsing
 @AllArgsConstructor
 public class EnvironmentConfigurationSource implements NestedConfiguration {
     private final String section;

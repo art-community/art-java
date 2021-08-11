@@ -22,6 +22,7 @@ import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.exception.*;
 import io.art.core.property.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.meta.model.*;
 import io.art.rsocket.configuration.*;
@@ -33,7 +34,6 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.property.Property.*;
-import static io.art.logging.module.LoggingModule.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -50,7 +50,7 @@ import java.util.function.*;
 
 public class RsocketCommunication implements Communication {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = logger(RsocketCommunication.class);
+    private final static Logger logger = Logging.logger(RsocketCommunication.class);
     private final RsocketCommonConnectorConfiguration connectorConfiguration;
     private final Property<RSocketClient> client;
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;

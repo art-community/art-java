@@ -20,8 +20,6 @@ package io.art.scheduler.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
-import io.art.scheduler.executor.deferred.*;
-import io.art.scheduler.executor.periodic.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
 import static io.art.scheduler.Scheduling.*;
@@ -43,15 +41,6 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
 
     public static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule() {
         return getSchedulerModule();
-    }
-
-    public static DeferredExecutor deferredExecutor() {
-        return schedulerModule().configuration().getDeferredExecutor();
-    }
-
-
-    public static PeriodicExecutor periodicExecutor() {
-        return schedulerModule().configuration().getPeriodicExecutor();
     }
 
     @Override

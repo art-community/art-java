@@ -18,6 +18,7 @@
 
 package io.art.meta.descriptor;
 
+import io.art.core.annotation.*;
 import io.art.core.stream.*;
 import io.art.meta.model.*;
 import io.netty.buffer.*;
@@ -30,6 +31,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.function.*;
 
+@ForUsing
 public interface Writer {
     default void write(TypedObject model, ByteBuffer buffer, Function<IOException, ? extends RuntimeException> catcher) {
         try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(buffer)) {

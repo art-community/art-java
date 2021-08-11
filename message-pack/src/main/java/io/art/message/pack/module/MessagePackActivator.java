@@ -18,10 +18,12 @@
 
 package io.art.message.pack.module;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.experimental.*;
 import static io.art.core.module.ModuleActivator.*;
 
+@ForUsing
 @UtilityClass
 public class MessagePackActivator {
     public ModuleActivator messagePack() {

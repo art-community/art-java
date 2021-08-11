@@ -18,6 +18,7 @@
 
 package io.art.meta.descriptor;
 
+import io.art.core.annotation.*;
 import io.art.core.stream.*;
 import io.art.meta.model.*;
 import io.netty.buffer.*;
@@ -26,6 +27,7 @@ import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
 
+@ForUsing
 public interface Reader {
     default <T> T read(MetaType<T> type, byte[] bytes) {
         return read(type, new ByteArrayInputStream(bytes));

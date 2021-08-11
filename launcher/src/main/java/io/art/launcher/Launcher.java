@@ -38,7 +38,7 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
-import static io.art.logging.module.LoggingModule.*;
+import static io.art.logging.Logging.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;

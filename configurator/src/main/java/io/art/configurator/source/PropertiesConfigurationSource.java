@@ -18,12 +18,14 @@
 
 package io.art.configurator.source;
 
+import io.art.core.annotation.*;
 import io.art.core.source.*;
 import lombok.experimental.*;
 import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.constants.StringConstants.*;
 
+@ForUsing
 public class PropertiesConfigurationSource implements NestedConfiguration {
     @Delegate
     private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(ConfigurationSourceParameters.builder()

@@ -5,7 +5,7 @@ import lombok.*;
 @Getter
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public class CustomConfigurationModel {
+public class CustomConfiguration {
     private final String section;
-    private final Class<?> configurationClass;
+    private final Class<?> type;
 }

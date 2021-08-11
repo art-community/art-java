@@ -18,9 +18,12 @@
 
 package io.art.scheduler.executor.deferred;
 
+import io.art.core.annotation.*;
+import io.art.scheduler.executor.deferred.DeferredExecutorImplementation.*;
 import java.time.*;
 import java.util.concurrent.*;
 
+@ForUsing
 public interface DeferredExecutor {
     <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime);
 
@@ -32,7 +35,7 @@ public interface DeferredExecutor {
 
     void shutdown();
 
-    static DeferredExecutorImplementation.DeferredExecutorImplementationBuilder deferredExecutor() {
+    static DeferredExecutorImplementationBuilder deferredExecutorBuilder() {
         return DeferredExecutorImplementation.builder();
     }
 }

@@ -19,30 +19,36 @@
 package io.art.configurator.module;
 
 import io.art.configurator.configuration.*;
-import io.art.configurator.custom.*;
 import io.art.configurator.model.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import lombok.*;
+import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
 
+@ForUsing
 public class ConfiguratorInitializer implements ModuleInitializer<ConfiguratorModuleConfiguration, ConfiguratorModuleConfiguration.Configurator, ConfiguratorModule> {
-    private CustomConfigurationRegistry registry = new CustomConfigurationRegistry();
+    private CustomConfigurationsConfigurator registry = new CustomConfigurationsConfigurator();
 
-    public ConfiguratorInitializer registry(CustomConfigurationRegistry registry) {
-        this.registry = registry;
+    public ConfiguratorInitializer configuration(Class<?> type) {
+        return configuration(EMPTY_STRING, type);
+    }
+
+    public ConfiguratorInitializer configuration(String section, Class<?> type) {
+        registry.register(new CustomConfiguration(section, type));
         return this;
     }
 
     public ConfiguratorModuleConfiguration initialize(ConfiguratorModule module) {
-        if (isNull(registry)) registry = new CustomConfigurationRegistry();
+        if (isNull(registry)) registry = new CustomConfigurationsConfigurator();
         return new Initial(registry.configure(module.orderedSources()));
     }
 
     @Getter
     @RequiredArgsConstructor
     private static class Initial extends ConfiguratorModuleConfiguration {
-        private final ImmutableMap<CustomConfigurationModel, Property<?>> customConfigurations;
+        private final ImmutableMap<CustomConfiguration, Property<?>> customConfigurations;
     }
 }

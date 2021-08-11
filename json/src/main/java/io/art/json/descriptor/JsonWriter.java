@@ -19,6 +19,7 @@
 package io.art.json.descriptor;
 
 import com.fasterxml.jackson.core.*;
+import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.json.exception.*;
 import io.art.meta.descriptor.Writer;
@@ -36,6 +37,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
+@ForUsing
 @AllArgsConstructor
 public class JsonWriter implements Writer {
     private final JsonFactory jsonFactory;

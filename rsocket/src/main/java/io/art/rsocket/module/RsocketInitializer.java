@@ -20,6 +20,7 @@ package io.art.rsocket.module;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
@@ -34,6 +35,7 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
+@ForUsing
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
     private final RsocketCommunicatorConfigurator communicatorConfigurator = new RsocketCommunicatorConfigurator();

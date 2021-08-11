@@ -20,18 +20,18 @@ package io.art.server.decorator;
 
 import io.art.core.model.*;
 import io.art.core.property.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.Property.*;
-import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(ServiceDeactivationDecorator.class);
+    private static final Logger logger = Logging.logger(ServiceDeactivationDecorator.class);
     private final Property<Boolean> enabled;
     private final ServerConfiguration configuration;
 

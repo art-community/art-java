@@ -18,10 +18,12 @@
 
 package io.art.scheduler.module;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.experimental.*;
 import static io.art.core.module.ModuleActivator.*;
 
+@ForUsing
 @UtilityClass
 public class SchedulerActivator {
     public static ModuleActivator scheduler() {

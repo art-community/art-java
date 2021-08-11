@@ -20,8 +20,8 @@ package io.art.logging.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.logging.*;
 import io.art.logging.configuration.*;
-import io.art.logging.logger.*;
 import io.art.logging.manager.*;
 import io.art.logging.reactor.*;
 import io.art.logging.state.*;
@@ -31,7 +31,6 @@ import static io.art.core.context.Context.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
-import java.util.*;
 
 @Getter
 public class LoggingModule implements StatefulModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModuleState> {
@@ -46,7 +45,7 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     @Override
     public void launch(Context.Service contextService) {
         getLogManager().reset();
-        useCustomLoggers(name -> new ReactorLogger(logger(name)));
+        useCustomLoggers(name -> new ReactorLogger(Logging.logger(name)));
         manager.activate();
     }
 
@@ -62,27 +61,5 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
 
     public static StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule() {
         return getLoggingModule();
-    }
-
-    public static Logger logger() {
-        return logger(LoggingModule.class);
-    }
-
-    public static Logger logger(Class<?> nameByClass) {
-        return logger(nameByClass.getName());
-    }
-
-    public static Logger logger(String name) {
-        LoggingModuleConfiguration configuration = loggingModule().configuration();
-        LoggingModuleState state = loggingModule().state();
-        LoggerConfiguration loggerConfiguration = configuration
-                .getLoggers()
-                .entrySet()
-                .stream()
-                .filter(entry -> name.startsWith(entry.getKey()))
-                .findFirst()
-                .map(Map.Entry::getValue)
-                .orElse(configuration.getDefaultLogger());
-        return state.register(name, loggerConfiguration);
     }
 }

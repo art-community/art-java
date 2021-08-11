@@ -27,7 +27,6 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.scheduler.Scheduling.*;
-import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
 import static io.art.scheduler.module.SchedulerActivator.*;
 import static io.art.scheduler.test.comparator.DateTimeApproximateComparator.*;
 import static java.time.Duration.*;
@@ -55,7 +54,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testOneThreadSingleTask() {
-        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         executor.execute(task, now());
@@ -65,7 +64,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testTenThreadsSingleTask() {
-        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         executor.execute(task, now());
@@ -94,7 +93,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testOneThreadMultipleTasks() {
-        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),
@@ -113,7 +112,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testTenThreadsMultipleTasks() {
-        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),
@@ -144,7 +143,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testOneThreadSingleDelayedTask() {
-        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         LocalDateTime time = now().plusSeconds(1);
@@ -156,7 +155,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testTenThreadsSingleDelayedTask() {
-        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(1);
         ScheduledTask task = new ScheduledTask(water);
         LocalDateTime time = now().plusSeconds(1);
@@ -195,7 +194,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testOneThreadMultipleDelayedTask() {
-        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(8);
         OrderCounter counter = new OrderCounter();
         List<OrderedScheduledTask> tasks = linkedListOf(
@@ -222,7 +221,7 @@ public class SchedulerTest {
 
     @RepeatedTest(10)
     public void testTenThreadsMultipleDelayedTask() {
-        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(12);
         OrderCounter counter = new OrderCounter();
         List<OrderedScheduledTask> tasks = linkedListOf(
@@ -254,7 +253,7 @@ public class SchedulerTest {
 
     @RepeatedTest(100)
     public void testOneThreadShutdown() {
-        DeferredExecutor executor = deferredExecutor().poolSize(1).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water)
@@ -266,7 +265,7 @@ public class SchedulerTest {
 
     @RepeatedTest(100)
     public void testTenThreadsShutdown() {
-        DeferredExecutor executor = deferredExecutor().poolSize(10).build();
+        DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
         List<ScheduledTask> tasks = linkedListOf(
                 new ScheduledTask(water),
@@ -283,7 +282,7 @@ public class SchedulerTest {
         executor.shutdown();
         tasks.forEach(task -> assertTrue(task.completed()));
 
-        executor = deferredExecutor().poolSize(10).build();
+        executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         water = new CountDownLatch(12);
         tasks = linkedListOf(
                 new ScheduledTask(water),

@@ -18,6 +18,7 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.message.pack.exception.MessagePackException;
@@ -40,6 +41,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
+@ForUsing
 public class MessagePackWriter implements Writer {
     @Override
     public void write(TypedObject model, ByteBuffer buffer) {

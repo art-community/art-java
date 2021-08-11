@@ -22,6 +22,7 @@ import io.art.communicator.configuration.*;
 import io.art.core.constants.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -30,7 +31,6 @@ import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
-import static io.art.logging.module.LoggingModule.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -44,7 +44,7 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
     private final UnaryOperator<Flux<Object>> decorator = createDecorator();
 
     @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = logger(COMMUNICATOR_LOGGER + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
+    private final Logger logger = Logging.logger(COMMUNICATOR_LOGGER + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
 
     public CommunicatorLoggingDecorator(CommunicatorActionIdentifier id, CommunicatorConfiguration configuration, MethodDecoratorScope scope) {
         this.scope = scope;

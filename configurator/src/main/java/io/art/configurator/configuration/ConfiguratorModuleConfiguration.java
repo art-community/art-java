@@ -36,7 +36,7 @@ import static java.util.Comparator.*;
 @Getter
 public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
-    private ImmutableMap<CustomConfigurationModel, Property<?>> customConfigurations = emptyImmutableMap();
+    private ImmutableMap<CustomConfiguration, Property<?>> customConfigurations = emptyImmutableMap();
 
     @Getter(lazy = true)
     private final ConfigurationSource delegate = new DelegateConfigurationSource(orderedSources());
@@ -57,7 +57,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
         return getDelegate();
     }
 
-    public <T> T getCustomConfiguration(CustomConfigurationModel modelClass) {
+    public <T> T getCustomConfiguration(CustomConfiguration modelClass) {
         return cast(customConfigurations.get(modelClass).get());
     }
 

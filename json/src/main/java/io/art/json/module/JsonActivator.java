@@ -18,10 +18,12 @@
 
 package io.art.json.module;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.experimental.*;
 import static io.art.core.module.ModuleActivator.*;
 
+@ForUsing
 @UtilityClass
 public class JsonActivator {
     public ModuleActivator json() {

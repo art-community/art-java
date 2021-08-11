@@ -18,6 +18,7 @@
 
 package io.art.message.pack.descriptor;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.message.pack.exception.MessagePackException;
 import io.art.meta.descriptor.Reader;
@@ -42,6 +43,7 @@ import java.nio.*;
 import java.util.*;
 
 
+@ForUsing
 public class MessagePackReader implements Reader {
     @Override
     public <T> T read(MetaType<T> type, InputStream inputStream) {
