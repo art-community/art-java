@@ -21,10 +21,12 @@ public class RsocketHttpConnectorConfiguration {
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);
 
         RsocketHttpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, currentConfiguration, nested));
-        configuration.groupConfiguration = orElse(groupConfiguration, currentConfiguration.groupConfiguration);
+        RsocketHttpClientGroupConfiguration defaultGroup = RsocketHttpClientGroupConfiguration.defaults(currentConfiguration.commonConfiguration.getConnector());
+        configuration.groupConfiguration = orElse(groupConfiguration, orElse(currentConfiguration.groupConfiguration, defaultGroup));
 
         RsocketHttpClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, currentConfiguration, nested));
-        configuration.singleConfiguration = orElse(clientConfiguration, currentConfiguration.singleConfiguration);
+        RsocketHttpClientConfiguration defaultSingle = RsocketHttpClientConfiguration.defaults(currentConfiguration.commonConfiguration.getConnector());
+        configuration.singleConfiguration = orElse(clientConfiguration, orElse(currentConfiguration.singleConfiguration, defaultSingle));
 
         return configuration;
     }
