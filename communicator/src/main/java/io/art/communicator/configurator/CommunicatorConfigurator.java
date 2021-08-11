@@ -14,7 +14,6 @@ import io.art.meta.model.*;
 import io.art.resilience.configuration.*;
 import lombok.Builder;
 import lombok.*;
-import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.factory.ConnectorProxyFactory.*;
 import static io.art.core.caster.Caster.*;
@@ -175,43 +174,36 @@ public abstract class CommunicatorConfigurator {
         if (deactivated) {
             builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
         }
+
         if (logging) {
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
         }
+
         if (nonNull(resilience)) {
             builder.inputDecorator(new CommunicatorResilienceDecorator(id, communicatorConfiguration));
         }
+
         CommunicatorActionsConfiguration actionsConfiguration = communicatorConfiguration.getConfigurations().get().get(id.getCommunicatorId());
         if (nonNull(actionsConfiguration)) {
-            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = actionsConfiguration.getInputDecorators();
-            if (nonNull(inputDecorators)) {
-                inputDecorators.forEach(builder::inputDecorator);
-            }
+            actionsConfiguration.getInputDecorators().forEach(builder::inputDecorator);
             CommunicatorActionConfiguration communicatorActionConfiguration = actionsConfiguration.getActions().get(id.getActionId());
             if (nonNull(communicatorActionConfiguration)) {
-                inputDecorators = communicatorActionConfiguration.getInputDecorators();
-                if (nonNull(inputDecorators)) {
-                    inputDecorators.forEach(builder::inputDecorator);
-                }
+                communicatorActionConfiguration.getInputDecorators().forEach(builder::inputDecorator);
             }
         }
+
         if (deactivated) {
             builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
         }
         if (logging) {
             builder.outputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, OUTPUT));
         }
+
         if (nonNull(actionsConfiguration)) {
-            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = actionsConfiguration.getOutputDecorators();
-            if (nonNull(inputDecorators)) {
-                inputDecorators.forEach(builder::outputDecorator);
-            }
+            actionsConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             CommunicatorActionConfiguration communicatorActionConfiguration = actionsConfiguration.getActions().get(id.getActionId());
             if (nonNull(communicatorActionConfiguration)) {
-                inputDecorators = communicatorActionConfiguration.getOutputDecorators();
-                if (nonNull(inputDecorators)) {
-                    inputDecorators.forEach(builder::outputDecorator);
-                }
+                communicatorActionConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             }
         }
         return builder.build();

@@ -81,6 +81,7 @@ public class RsocketServer implements Server {
         serviceMethods = configuration.getServer()
                 .getMethods()
                 .get()
+                .values()
                 .stream()
                 .collect(immutableMapCollector(ServiceMethod::getId, identity()));
 

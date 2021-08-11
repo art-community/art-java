@@ -1,6 +1,7 @@
 package io.art.rsocket.test;
 
 import io.art.communicator.configurator.*;
+import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
@@ -13,6 +14,7 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.rsocket.SocketAcceptor.*;
 
@@ -58,5 +60,9 @@ public class RsocketTest {
 
     @Test
     public void test() {
+        TestRsocketConnector1 tcp = rsocketConnector(TestRsocketConnector1.class);
+        tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m1("test");
+        ThreadExtensions.block();
     }
 }

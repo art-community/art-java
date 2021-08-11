@@ -23,10 +23,12 @@ import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
+import lombok.Builder;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
@@ -50,6 +52,9 @@ public class CommunicatorActionConfiguration {
     }
 
     public static CommunicatorActionConfiguration defaults() {
-        return CommunicatorActionConfiguration.builder().build();
+        return CommunicatorActionConfiguration.builder()
+                .inputDecorators(emptyImmutableArray())
+                .outputDecorators(emptyImmutableArray())
+                .build();
     }
 }

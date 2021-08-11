@@ -10,7 +10,6 @@ import io.art.server.decorator.*;
 import io.art.server.method.*;
 import io.art.server.method.ServiceMethod.*;
 import lombok.*;
-import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -152,48 +151,44 @@ public abstract class ServerConfigurator {
         boolean deactivated = serverConfiguration.isDeactivated(id);
         boolean validating = serverConfiguration.isValidating(id);
         boolean logging = serverConfiguration.isLogging(id);
+
         if (deactivated) {
             builder.inputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
         }
+
         if (logging) {
             builder.inputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, INPUT));
         }
+
         if (validating && nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
             builder.inputDecorator(new ServiceValidationDecorator(id, serverConfiguration));
         }
+
         ServiceMethodsConfiguration serviceConfiguration = serverConfiguration.getConfigurations().get().get(id.getServiceId());
         if (nonNull(serviceConfiguration)) {
-            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = serviceConfiguration.getInputDecorators();
-            if (nonNull(inputDecorators)) {
-                inputDecorators.forEach(builder::inputDecorator);
-            }
+            serviceConfiguration.getInputDecorators().forEach(builder::inputDecorator);
             ServiceMethodConfiguration serviceMethodConfiguration = serviceConfiguration.getMethods().get(id.getMethodId());
             if (nonNull(serviceMethodConfiguration)) {
-                inputDecorators = serviceMethodConfiguration.getInputDecorators();
-                if (nonNull(inputDecorators)) {
-                    inputDecorators.forEach(builder::inputDecorator);
-                }
+                serviceMethodConfiguration.getInputDecorators().forEach(builder::inputDecorator);
             }
         }
+
         if (deactivated) {
             builder.outputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
         }
+
         if (logging) {
             builder.outputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, OUTPUT));
         }
+
         if (nonNull(serviceConfiguration)) {
-            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = serviceConfiguration.getOutputDecorators();
-            if (nonNull(inputDecorators)) {
-                inputDecorators.forEach(builder::outputDecorator);
-            }
+            serviceConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             ServiceMethodConfiguration serviceMethodConfiguration = serviceConfiguration.getMethods().get(id.getMethodId());
             if (nonNull(serviceMethodConfiguration)) {
-                inputDecorators = serviceMethodConfiguration.getOutputDecorators();
-                if (nonNull(inputDecorators)) {
-                    inputDecorators.forEach(builder::outputDecorator);
-                }
+                serviceMethodConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             }
         }
+
         return builder.build();
     }
 

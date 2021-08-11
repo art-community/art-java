@@ -22,9 +22,12 @@ import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.server.refresher.*;
+import lombok.Builder;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
@@ -51,6 +54,10 @@ public class ServiceMethodsConfiguration {
     }
 
     public static ServiceMethodsConfiguration defaults() {
-        return ServiceMethodsConfiguration.builder().build();
+        return ServiceMethodsConfiguration.builder()
+                .methods(emptyImmutableMap())
+                .inputDecorators(emptyImmutableArray())
+                .outputDecorators(emptyImmutableArray())
+                .build();
     }
 }
