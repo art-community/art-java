@@ -31,7 +31,7 @@ public class RsocketTest {
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678))))
-                                .configureCommunicator(TestRsocket.class, CommunicatorActionConfigurator::resilience)
+                                .configureCommunicator(TestRsocket.class, CommunicatorActionConfigurator::logging)
                         )
                         .server(server -> server
                                 .tcp()

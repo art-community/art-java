@@ -169,7 +169,7 @@ public abstract class CommunicatorConfigurator {
         }
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
         boolean deactivated = communicatorConfiguration.isDeactivated(id);
-        ResilienceConfiguration resilience = communicatorConfiguration.getResilienceConfiguration(id);
+        Optional<ResilienceConfiguration> resilience = communicatorConfiguration.getResilienceConfiguration(id);
         boolean logging = communicatorConfiguration.isLogging(id);
         if (deactivated) {
             builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
@@ -179,7 +179,7 @@ public abstract class CommunicatorConfigurator {
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
         }
 
-        if (nonNull(resilience)) {
+        if (resilience.isPresent()) {
             builder.inputDecorator(new CommunicatorResilienceDecorator(id, communicatorConfiguration));
         }
 

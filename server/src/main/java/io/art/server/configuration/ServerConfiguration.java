@@ -53,21 +53,24 @@ public class ServerConfiguration {
     }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
+        boolean hasMethod = getMethodConfiguration(identifier).isPresent();
         boolean service = checkService(identifier, ServiceMethodsConfiguration::isLogging, false);
-        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isLogging, false);
-        return service && method;
+        if (!hasMethod) return service;
+        return checkMethod(identifier, ServiceMethodConfiguration::isLogging, false);
     }
 
     public boolean isValidating(ServiceMethodIdentifier identifier) {
+        boolean hasMethod = getMethodConfiguration(identifier).isPresent();
         boolean service = checkService(identifier, ServiceMethodsConfiguration::isValidating, true);
-        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
-        return service && method;
+        if (!hasMethod) return service;
+        return checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
     }
 
     public boolean isDeactivated(ServiceMethodIdentifier identifier) {
+        boolean hasMethod = getMethodConfiguration(identifier).isPresent();
         boolean service = checkService(identifier, ServiceMethodsConfiguration::isDeactivated, false);
-        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isDeactivated, false);
-        return service || method;
+        if (!hasMethod) return service;
+        return checkMethod(identifier, ServiceMethodConfiguration::isDeactivated, false);
     }
 
     private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceMethodsConfiguration, T> mapper, T defaultValue) {

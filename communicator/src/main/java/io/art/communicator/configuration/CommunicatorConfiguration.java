@@ -54,22 +54,23 @@ public class CommunicatorConfiguration {
         return ofNullable(actionsConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
     }
 
-    public ResilienceConfiguration getResilienceConfiguration(CommunicatorActionIdentifier id) {
+    public Optional<ResilienceConfiguration> getResilienceConfiguration(CommunicatorActionIdentifier id) {
         return getActionConfiguration(id)
-                .map(CommunicatorActionConfiguration::getResilience)
-                .orElse(ResilienceConfiguration.builder().build());
+                .map(CommunicatorActionConfiguration::getResilience);
     }
 
     public boolean isLogging(CommunicatorActionIdentifier identifier) {
+        boolean hasAction = getActionConfiguration(identifier).isPresent();
         boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isLogging, false);
-        boolean action = checkAction(identifier, CommunicatorActionConfiguration::isLogging, false);
-        return communicator && action;
+        if (!hasAction) return communicator;
+        return checkAction(identifier, CommunicatorActionConfiguration::isLogging, false);
     }
 
     public boolean isDeactivated(CommunicatorActionIdentifier identifier) {
+        boolean hasAction = getActionConfiguration(identifier).isPresent();
         boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isDeactivated, false);
-        boolean action = checkAction(identifier, CommunicatorActionConfiguration::isDeactivated, false);
-        return communicator && action;
+        if (!hasAction) return communicator;
+        return checkAction(identifier, CommunicatorActionConfiguration::isDeactivated, false);
     }
 
 

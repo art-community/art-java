@@ -89,6 +89,6 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
     }
 
     private Supplier<ResilienceConfiguration> resilienceConfiguration(CommunicatorActionIdentifier communicatorAction) {
-        return () -> configuration.getResilienceConfiguration(communicatorAction);
+        return () -> configuration.getResilienceConfiguration(communicatorAction).orElse(ResilienceConfiguration.builder().build());
     }
 }
