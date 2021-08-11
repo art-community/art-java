@@ -195,13 +195,10 @@ public class Context {
     }
 
     private void load(Collection<Module<?, ?>> modules) {
-        Set<String> messages = setOf(ART_BANNER);
         for (Module<?, ?> module : modules) {
             String moduleId = module.getId();
-            messages.add(format(MODULE_LOADED_MESSAGE, moduleId));
             this.modules.put(moduleId, module);
         }
-        apply(configuration.getPrinter(), messages::forEach);
 
         for (Module<?, ?> module : this.modules.values()) {
             module.load(service);
@@ -212,6 +209,9 @@ public class Context {
         for (Module<?, ?> module : this.modules.values()) {
             module.launch(service);
         }
+
+        apply(configuration.getPrinter(), LAUNCHED_MESSAGES::forEach);
+
         apply(configuration.getOnLaunch(), Runnable::run);
     }
 
@@ -224,13 +224,13 @@ public class Context {
         apply(configuration.getOnShutdown(), Runnable::run);
 
         for (Module<?, ?> module : modules) {
-            apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_UNLOADED_MESSAGE, module.getId())));
             module.unload(service);
             this.modules.remove(module.getId());
         }
 
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
+        apply(configuration.getPrinter(), printer -> printer.accept(SHUTDOWN_MESSAGE));
     }
 
 

@@ -18,9 +18,15 @@
 
 package io.art.core.constants;
 
+import io.art.core.collection.*;
+import static io.art.core.factory.SetFactory.*;
+
 public interface LoggingMessages {
-    String MODULE_LOADED_MESSAGE = "Module: ''{0}'' was loaded";
-    String MODULE_UNLOADED_MESSAGE = "Module: ''{0}'' was unloaded";
+    ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
+            "Welcome to ART!",
+            "Initialization completed. All modules ready"
+    );
+    String SHUTDOWN_MESSAGE = "By, by! ART hopes see you soon";
     String MODULE_RELOADING_START_MESSAGE = "Module: ''{0}'' reloading...";
     String MODULE_RELOADING_END_MESSAGE = "Module: ''{0}'' reloaded";
 }

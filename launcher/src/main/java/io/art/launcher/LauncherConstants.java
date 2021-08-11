@@ -27,10 +27,6 @@ public interface LauncherConstants {
         String MODULES_ALREADY_LAUNCHED = "Modules already launched";
     }
 
-    ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
-            "Initialization completed",
-            "Have a nice work with ART!"
-    );
 
     String CONFIGURED_BY_MESSAGE = "Configured by {0}";
     String DEFAULT_CONFIGURATION = "Configurator not activated. Using default configurations";

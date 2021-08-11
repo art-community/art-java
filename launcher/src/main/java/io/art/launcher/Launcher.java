@@ -128,12 +128,10 @@ public class Launcher {
 
     private static void writeLaunchMessage(Consumer<String> printer) {
         printer.accept(DEFAULT_CONFIGURATION);
-        LAUNCHED_MESSAGES.forEach(printer);
     }
 
 
     private static void writeLaunchMessage(ConfiguratorModule configuratorModule, Consumer<String> printer) {
         printer.accept(format(CONFIGURED_BY_MESSAGE, configuratorModule.getConfiguration().getConfiguration().getPath()));
-        LAUNCHED_MESSAGES.forEach(printer);
     }
 }
