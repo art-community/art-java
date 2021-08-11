@@ -90,8 +90,8 @@ public abstract class ServerConfigurator {
                 methods = existed.getMethods().toMutable();
             }
             MetaMethod<?> serviceMethod = configuration.serviceMethod.apply(cast(serviceClass));
-            UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, serviceMethod);
-            decorator = then(configuration.decorator, decorator);
+            UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
+            decorator = then(decorator, configuration.decorator);
             ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
             methods.put(serviceMethod.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             configurations.put(communicatorId, orElse(existed, ServiceMethodsConfiguration.defaults()).toBuilder()
@@ -120,7 +120,7 @@ public abstract class ServerConfigurator {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
             MetaMethod<?> method = configuration.serviceMethod.apply(cast(serviceClass));
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
-            decorator = then(configuration.decorator, decorator);
+            decorator = then(decorator, configuration.decorator);
             MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
             ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
             methods.put(serviceMethod.getId(), serviceMethod);
@@ -132,9 +132,9 @@ public abstract class ServerConfigurator {
     private UnaryOperator<ServiceMethodConfigurator> getServiceDecorator(MetaClass<?> serviceClass) {
         return classBased
                 .stream()
-                .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
+                .filter(classConfiguration -> serviceClass.equals(classConfiguration.serviceClass.get()))
                 .findFirst()
-                .map(methodConfiguration -> methodConfiguration.decorator)
+                .map(classConfiguration -> classConfiguration.decorator)
                 .orElse(identity());
     }
 
