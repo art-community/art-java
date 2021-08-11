@@ -24,7 +24,7 @@ import static io.art.core.factory.SetFactory.*;
 public interface LoggingMessages {
     ImmutableSet<String> LAUNCHED_MESSAGES = immutableSetOf(
             "Welcome to ART!",
-            "Initialization completed. All modules ready"
+            "Initialization completed"
     );
     String SHUTDOWN_MESSAGE = "By, by! ART hopes see you soon";
     String MODULE_RELOADING_START_MESSAGE = "Module: ''{0}'' reloading...";
