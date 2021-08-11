@@ -57,7 +57,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RsocketServer.class);
+    private static final Logger logger = logger(RSOCKET_SERVER_LOGGER);
 
     private final RsocketModuleConfiguration configuration;
     private final Property<CloseableChannel> tcpChannel;
