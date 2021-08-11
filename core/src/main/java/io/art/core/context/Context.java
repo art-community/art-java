@@ -31,12 +31,10 @@ import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.factory.SetFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
@@ -222,6 +220,7 @@ public class Context {
             module.shutdown(service);
         }
         apply(configuration.getOnShutdown(), Runnable::run);
+        apply(configuration.getPrinter(), printer -> printer.accept(SHUTDOWN_MESSAGE));
 
         for (Module<?, ?> module : modules) {
             module.unload(service);
@@ -230,7 +229,6 @@ public class Context {
 
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
-        apply(configuration.getPrinter(), printer -> printer.accept(SHUTDOWN_MESSAGE));
     }
 
 
