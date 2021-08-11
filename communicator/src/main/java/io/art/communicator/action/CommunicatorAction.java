@@ -23,7 +23,6 @@ import io.art.communicator.model.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
-import io.art.transport.payload.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -31,7 +30,6 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
-import static io.art.transport.constants.TransportModuleConstants.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -205,7 +203,7 @@ public class CommunicatorAction implements Managed {
 
             return input -> {
                 try {
-                    return blockFirst(process(asFlux(input)));
+                    return block(process(asFlux(input)).last());
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
                 }
@@ -245,7 +243,7 @@ public class CommunicatorAction implements Managed {
 
         return input -> {
             try {
-                return blockFirst(process(Flux.just(input)));
+                return block(process(Flux.just(input)).last());
             } catch (Throwable throwable) {
                 throw new CommunicatorException(throwable);
             }
