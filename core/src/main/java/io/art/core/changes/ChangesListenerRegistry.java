@@ -1,13 +1,11 @@
 package io.art.core.changes;
 
 import lombok.*;
-
-import java.util.*;
-import java.util.function.*;
-
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import java.util.*;
+import java.util.function.*;
 
 public class ChangesListenerRegistry {
     private final Map<String, ChangesListener> listeners = concurrentMap();
@@ -31,7 +29,7 @@ public class ChangesListenerRegistry {
         return this;
     }
 
-    public ChangesListenerRegistry update(Set<String> ids){
+    public ChangesListenerRegistry update(Set<String> ids) {
         ids.stream()
                 .filter(id -> !listeners.containsKey(id))
                 .forEach(id -> added.forEach(consumer -> consumer.accept(id)));
@@ -42,7 +40,7 @@ public class ChangesListenerRegistry {
     }
 
     public ChangesListener listenerFor(String id) {
-                return putIfAbsent(listeners, id, ChangesListener::changesListener);
+        return putIfAbsent(listeners, id, ChangesListener::changesListener);
     }
 
     public ChangesListenerRegistry produce() {
