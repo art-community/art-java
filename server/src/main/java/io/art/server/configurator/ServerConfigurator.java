@@ -86,9 +86,7 @@ public abstract class ServerConfigurator {
             Map<String, ServiceMethodConfiguration> methods = map();
             String communicatorId = asId(serviceClass.definition().type());
             ServiceMethodsConfiguration existed = configurations.get(communicatorId);
-            if (nonNull(existed)) {
-                methods = existed.getMethods().toMutable();
-            }
+            if (nonNull(existed)) methods = existed.getMethods().toMutable();
             MetaMethod<?> serviceMethod = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
             decorator = then(decorator, methodBasedConfiguration.decorator);
