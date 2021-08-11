@@ -1,5 +1,6 @@
 package io.art.server.configurator;
 
+import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -66,29 +67,33 @@ public abstract class ServerConfigurator {
     private ImmutableMap<String, ServiceMethodsConfiguration> createConfigurations() {
         Map<String, ServiceMethodsConfiguration> configurations = map();
         for (ClassBasedConfiguration configuration : classBased) {
-            MetaClass<?> metaClass = configuration.serviceClass.get();
+            MetaClass<?> serviceClass = configuration.serviceClass.get();
             Map<String, ServiceMethodConfiguration> methods = map();
-            for (MetaMethod<?> method : metaClass.methods()) {
-                ServiceMethodConfigurator configurator = configuration.decorator.apply(new ServiceMethodConfigurator());
+            for (MetaMethod<?> method : serviceClass.methods()) {
+                UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, method);
+                decorator = then(configuration.decorator, decorator);
+                ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
                 methods.put(method.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             }
-            configurations.put(asId(metaClass.definition().type()), ServiceMethodsConfiguration.defaults()
+            configurations.put(asId(serviceClass.definition().type()), ServiceMethodsConfiguration.defaults()
                     .toBuilder()
                     .methods(immutableMapOf(methods))
                     .build());
         }
 
         for (MethodBasedConfiguration configuration : methodBased) {
-            MetaClass<?> metaClass = configuration.serviceClass.get();
+            MetaClass<?> serviceClass = configuration.serviceClass.get();
             Map<String, ServiceMethodConfiguration> methods = map();
-            String communicatorId = asId(metaClass.definition().type());
+            String communicatorId = asId(serviceClass.definition().type());
             ServiceMethodsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) {
                 methods = existed.getMethods().toMutable();
             }
-            ServiceMethodConfigurator configurator = configuration.decorator.apply(new ServiceMethodConfigurator());
-            String actionId = configuration.serviceMethod.apply(cast(metaClass)).name();
-            methods.put(actionId, configurator.configure(ServiceMethodConfiguration.defaults()));
+            MetaMethod<?> serviceMethod = configuration.serviceMethod.apply(cast(serviceClass));
+            UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, serviceMethod);
+            decorator = then(configuration.decorator, decorator);
+            ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
+            methods.put(serviceMethod.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             configurations.put(communicatorId, orElse(existed, ServiceMethodsConfiguration.defaults()).toBuilder()
                     .methods(immutableMapOf(methods))
                     .build());
@@ -103,13 +108,7 @@ public abstract class ServerConfigurator {
         for (ClassBasedConfiguration configuration : classBased) {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
             for (MetaMethod<?> method : serviceClass.methods()) {
-                UnaryOperator<ServiceMethodConfigurator> decorator = methodBased
-                        .stream()
-                        .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
-                        .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
-                        .findFirst()
-                        .map(methodConfiguration -> methodConfiguration.decorator)
-                        .orElse(identity());
+                UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, method);
                 decorator = then(configuration.decorator, decorator);
                 MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
                 ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
@@ -120,12 +119,7 @@ public abstract class ServerConfigurator {
         for (MethodBasedConfiguration configuration : methodBased) {
             MetaClass<?> serviceClass = configuration.serviceClass.get();
             MetaMethod<?> method = configuration.serviceMethod.apply(cast(serviceClass));
-            UnaryOperator<ServiceMethodConfigurator> decorator = classBased
-                    .stream()
-                    .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
-                    .findFirst()
-                    .map(methodConfiguration -> methodConfiguration.decorator)
-                    .orElse(identity());
+            UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
             decorator = then(configuration.decorator, decorator);
             MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
             ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
@@ -133,6 +127,25 @@ public abstract class ServerConfigurator {
         }
 
         return immutableMapOf(methods);
+    }
+
+    private UnaryOperator<ServiceMethodConfigurator> getServiceDecorator(MetaClass<?> serviceClass) {
+        return classBased
+                .stream()
+                .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
+                .findFirst()
+                .map(methodConfiguration -> methodConfiguration.decorator)
+                .orElse(identity());
+    }
+
+    private UnaryOperator<ServiceMethodConfigurator> getMethodDecorator(MetaClass<?> serviceClass, MetaMethod<?> method) {
+        return methodBased
+                .stream()
+                .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
+                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
+                .findFirst()
+                .map(methodConfiguration -> methodConfiguration.decorator)
+                .orElse(identity());
     }
 
     private ServiceMethod createMethod(LazyProperty<ServerConfiguration> configurationProvider, MethodConfiguration methodConfiguration) {
@@ -144,9 +157,8 @@ public abstract class ServerConfigurator {
                 .id(id)
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
-        if (nonNull(inputType)) {
-            builder.inputType(inputType);
-        }
+        NullityChecker.apply(inputType, builder::inputType);
+
         ServerConfiguration serverConfiguration = configurationProvider.get();
         boolean deactivated = serverConfiguration.isDeactivated(id);
         boolean validating = serverConfiguration.isValidating(id);

@@ -7,6 +7,7 @@ import io.art.communicator.decorator.*;
 import io.art.communicator.model.*;
 import io.art.communicator.registry.*;
 import io.art.communicator.registry.ConnectorRegistry.*;
+import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -83,29 +84,31 @@ public abstract class CommunicatorConfigurator {
     private ImmutableMap<String, CommunicatorActionsConfiguration> createConfigurations() {
         Map<String, CommunicatorActionsConfiguration> configurations = map();
         for (ClassBasedConfiguration configuration : classBased) {
-            MetaClass<? extends Communicator> metaClass = configuration.communicatorClass.get();
+            MetaClass<? extends Communicator> communicatorClass = configuration.communicatorClass.get();
             Map<String, CommunicatorActionConfiguration> actions = map();
-            for (MetaMethod<?> method : metaClass.methods()) {
-                CommunicatorActionConfigurator configurator = configuration.decorator.apply(new CommunicatorActionConfigurator());
+            for (MetaMethod<?> method : communicatorClass.methods()) {
+                UnaryOperator<CommunicatorActionConfigurator> decorator = computeDecorator(communicatorClass, orElse(configuration.decorator, identity()), method);
+                CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
                 actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
             }
-            configurations.put(asId(metaClass.definition().type()), CommunicatorActionsConfiguration.defaults()
+            configurations.put(asId(communicatorClass.definition().type()), CommunicatorActionsConfiguration.defaults()
                     .toBuilder()
                     .actions(immutableMapOf(actions))
                     .build());
         }
 
         for (MethodBasedConfiguration configuration : methodBased) {
-            MetaClass<? extends Communicator> metaClass = configuration.communicatorClass.get();
+            MetaClass<? extends Communicator> communicatorClass = configuration.communicatorClass.get();
             Map<String, CommunicatorActionConfiguration> actions = map();
-            String communicatorId = asId(metaClass.definition().type());
+            String communicatorId = asId(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) {
                 actions = existed.getActions().toMutable();
             }
-            CommunicatorActionConfigurator configurator = configuration.decorator.apply(new CommunicatorActionConfigurator());
-            String actionId = configuration.actionMethod.apply(cast(metaClass)).name();
-            actions.put(actionId, configurator.configure(CommunicatorActionConfiguration.defaults()));
+            MetaMethod<?> method = configuration.actionMethod.apply(cast(communicatorClass));
+            UnaryOperator<CommunicatorActionConfigurator> decorator = computeDecorator(communicatorClass, orElse(configuration.decorator, identity()), method);
+            CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
+            actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
             configurations.put(communicatorId, orElse(existed, CommunicatorActionsConfiguration.defaults()).toBuilder()
                     .actions(immutableMapOf(actions))
                     .build());
@@ -152,7 +155,7 @@ public abstract class CommunicatorConfigurator {
                 .map(configuration -> configuration.decorator)
                 .findFirst()
                 .orElse(identity());
-        return then(classDecorator, orElse(methodDecorator, identity()));
+        return then(classDecorator, methodDecorator);
     }
 
     private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> configurationProvider, ActionConfiguration actionConfiguration) {
@@ -164,9 +167,8 @@ public abstract class CommunicatorConfigurator {
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
                 .communication(actionConfiguration.connectorConfiguration.communication.apply(id));
-        if (nonNull(inputType)) {
-            builder.inputType(inputType);
-        }
+        NullityChecker.apply(inputType, builder::inputType);
+
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
         boolean deactivated = communicatorConfiguration.isDeactivated(id);
         boolean logging = communicatorConfiguration.isLogging(id);
