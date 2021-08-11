@@ -22,10 +22,11 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
+import static java.util.stream.Collectors.*;
 import java.util.*;
 
-@ToString
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaMethod<T> {
@@ -60,6 +61,14 @@ public abstract class MetaMethod<T> {
         return immutableMapOf(parameters);
     }
 
-
     public abstract boolean isStatic();
+
+    @Override
+    public String toString() {
+        return returnType.type().getName() + SPACE
+                + name
+                + OPENING_BRACKET
+                + parameters.values().stream().map(parameter -> parameter.type().type().getName() + SPACE + parameter.name()).collect(joining(COMMA))
+                + CLOSING_BRACKET;
+    }
 }
