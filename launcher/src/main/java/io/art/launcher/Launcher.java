@@ -43,6 +43,7 @@ import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.logging.Logging.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -91,8 +92,10 @@ public class Launcher {
         ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
 
         builder.add(configuratorModule);
+        Map<String, ModuleActivator> mutableActivators = activators.toMutable();
+        mutableActivators.remove(CONFIGURATOR_MODULE_ID);
 
-        for (ModuleActivator moduleActivator : activators.values()) {
+        for (ModuleActivator moduleActivator : mutableActivators.values()) {
             Module<?, ?> module = moduleActivator.getFactory().get();
             ModuleInitializationOperator<?> initializer = moduleActivator.getInitializer();
             if (nonNull(initializer)) {

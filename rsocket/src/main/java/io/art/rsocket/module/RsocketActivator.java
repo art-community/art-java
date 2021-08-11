@@ -28,11 +28,11 @@ import java.util.function.*;
 @ForUsing
 @UtilityClass
 public class RsocketActivator {
-    public ModuleActivator rsocket() {
+    public static ModuleActivator rsocket() {
         return rsocket(identity());
     }
 
-    public ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
+    public static ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
         return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()));
     }
 }

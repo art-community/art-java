@@ -31,6 +31,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.meta.Meta.declaration;
 import static java.util.Objects.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -46,7 +47,7 @@ public abstract class CommunicatorConfigurator {
 
     public CommunicatorConfigurator configureCommunicator(Class<? extends Communicator> communicatorClass,
                                                           UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        classBased.add(new ClassBasedConfiguration(() -> Meta.declaration(communicatorClass), decorator));
+        classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
         return this;
     }
 
