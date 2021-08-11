@@ -20,12 +20,15 @@ package io.art.communicator.configuration;
 
 import io.art.communicator.refresher.*;
 import io.art.core.changes.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -33,6 +36,8 @@ public class CommunicatorActionConfiguration {
     private boolean logging;
     private boolean deactivated;
     private ResilienceConfiguration resilience;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
     public static CommunicatorActionConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorActionConfiguration configuration = CommunicatorActionConfiguration.builder().build();

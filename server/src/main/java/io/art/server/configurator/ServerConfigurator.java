@@ -2,15 +2,19 @@ package io.art.server.configurator;
 
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
+import io.art.server.decorator.*;
 import io.art.server.method.*;
 import io.art.server.method.ServiceMethod.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
@@ -18,6 +22,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.util.Objects.*;
 import static java.util.function.UnaryOperator.*;
@@ -51,12 +56,13 @@ public abstract class ServerConfigurator {
     }
 
 
-    protected ServerConfiguration configure(ServerConfiguration current) {
+    protected ServerConfiguration configure(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
         return current.toBuilder()
                 .configurations(lazy(this::createConfigurations))
-                .methods(lazy(this::createMethods))
+                .methods(lazy(() -> createMethods(configurationProvider)))
                 .build();
     }
+
 
     private ImmutableMap<String, ServiceMethodsConfiguration> createConfigurations() {
         Map<String, ServiceMethodsConfiguration> configurations = map();
@@ -92,7 +98,7 @@ public abstract class ServerConfigurator {
         return immutableMapOf(configurations);
     }
 
-    private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> createMethods() {
+    private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> createMethods(LazyProperty<ServerConfiguration> configurationProvider) {
         Map<ServiceMethodIdentifier, ServiceMethod> methods = map();
 
         for (ClassBasedConfiguration configuration : classBased) {
@@ -107,7 +113,7 @@ public abstract class ServerConfigurator {
                         .orElse(identity());
                 decorator = then(configuration.decorator, decorator);
                 MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
-                ServiceMethod serviceMethod = createServiceMethod(methodConfiguration);
+                ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
                 methods.put(serviceMethod.getId(), serviceMethod);
             }
         }
@@ -123,14 +129,14 @@ public abstract class ServerConfigurator {
                     .orElse(identity());
             decorator = then(configuration.decorator, decorator);
             MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
-            ServiceMethod serviceMethod = createServiceMethod(methodConfiguration);
+            ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
             methods.put(serviceMethod.getId(), serviceMethod);
         }
 
         return immutableMapOf(methods);
     }
 
-    private ServiceMethod createServiceMethod(MethodConfiguration methodConfiguration) {
+    private ServiceMethod createMethod(LazyProperty<ServerConfiguration> configurationProvider, MethodConfiguration methodConfiguration) {
         MetaMethod<?> serviceMethod = methodConfiguration.serviceMethod;
         MetaClass<?> serviceClass = methodConfiguration.serviceClass;
         MetaType<?> inputType = orNull(() -> immutableArrayOf(serviceMethod.parameters().values()).get(0).type(), isNotEmpty(serviceMethod.parameters()));
@@ -139,7 +145,56 @@ public abstract class ServerConfigurator {
                 .id(id)
                 .outputType(serviceMethod.returnType())
                 .invoker(new MetaMethodInvoker(serviceClass, serviceMethod));
-        return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
+        if (nonNull(inputType)) {
+            builder.inputType(inputType);
+        }
+        ServerConfiguration serverConfiguration = configurationProvider.get();
+        boolean deactivated = serverConfiguration.isDeactivated(id);
+        boolean validating = serverConfiguration.isValidating(id);
+        boolean logging = serverConfiguration.isLogging(id);
+        if (deactivated) {
+            builder.inputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
+        }
+        if (logging) {
+            builder.inputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, INPUT));
+        }
+        if (validating && nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
+            builder.inputDecorator(new ServiceValidationDecorator(id, serverConfiguration));
+        }
+        ServiceMethodsConfiguration serviceConfiguration = serverConfiguration.getConfigurations().get().get(id.getServiceId());
+        if (nonNull(serviceConfiguration)) {
+            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = serviceConfiguration.getInputDecorators();
+            if (nonNull(inputDecorators)) {
+                inputDecorators.forEach(builder::inputDecorator);
+            }
+            ServiceMethodConfiguration serviceMethodConfiguration = serviceConfiguration.getMethods().get(id.getMethodId());
+            if (nonNull(serviceMethodConfiguration)) {
+                inputDecorators = serviceMethodConfiguration.getInputDecorators();
+                if (nonNull(inputDecorators)) {
+                    inputDecorators.forEach(builder::inputDecorator);
+                }
+            }
+        }
+        if (deactivated) {
+            builder.outputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
+        }
+        if (logging) {
+            builder.outputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, OUTPUT));
+        }
+        if (nonNull(serviceConfiguration)) {
+            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = serviceConfiguration.getOutputDecorators();
+            if (nonNull(inputDecorators)) {
+                inputDecorators.forEach(builder::outputDecorator);
+            }
+            ServiceMethodConfiguration serviceMethodConfiguration = serviceConfiguration.getMethods().get(id.getMethodId());
+            if (nonNull(serviceMethodConfiguration)) {
+                inputDecorators = serviceMethodConfiguration.getOutputDecorators();
+                if (nonNull(inputDecorators)) {
+                    inputDecorators.forEach(builder::outputDecorator);
+                }
+            }
+        }
+        return builder.build();
     }
 
 

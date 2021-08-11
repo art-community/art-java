@@ -3,6 +3,7 @@ package io.art.communicator.configurator;
 import io.art.communicator.action.*;
 import io.art.communicator.action.CommunicatorAction.*;
 import io.art.communicator.configuration.*;
+import io.art.communicator.decorator.*;
 import io.art.communicator.model.*;
 import io.art.communicator.registry.*;
 import io.art.communicator.registry.ConnectorRegistry.*;
@@ -10,8 +11,10 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
+import io.art.resilience.configuration.*;
 import lombok.Builder;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.factory.ConnectorProxyFactory.*;
 import static io.art.core.caster.Caster.*;
@@ -19,6 +22,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.MapCollector.*;
+import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
@@ -62,19 +66,19 @@ public abstract class CommunicatorConfigurator {
         connectors.put(connectorClass, connectorConfiguration);
     }
 
-    protected CommunicatorConfiguration configure(CommunicatorConfiguration current) {
+    protected CommunicatorConfiguration configure(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
         return current.toBuilder()
                 .configurations(lazy(this::createConfigurations))
-                .connectors(new ConnectorRegistry(createConnectors()))
+                .connectors(new ConnectorRegistry(createConnectors(configurationProvider)))
                 .build();
     }
 
 
-    private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors() {
+    private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors(LazyProperty<CommunicatorConfiguration> configurationProvider) {
         return lazy(() -> connectors
                 .entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(entry.getKey(), entry.getValue()))));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(configurationProvider, entry.getKey(), entry.getValue()))));
     }
 
     private ImmutableMap<String, CommunicatorActionsConfiguration> createConfigurations() {
@@ -111,14 +115,17 @@ public abstract class CommunicatorConfigurator {
         return immutableMapOf(configurations);
     }
 
-    private ConnectorContainer createConnector(Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration) {
-        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(connectorClass, connectorConfiguration);
+    private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> configurationProvider,
+                                               Class<? extends Connector> connectorClass,
+                                               ConnectorConfiguration connectorConfiguration) {
+        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(configurationProvider, connectorClass, connectorConfiguration);
         return new ConnectorContainer(communicators, connectorConfiguration.connector.get());
     }
 
 
-    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>
-    createProxies(Class<? extends Connector> connectorClass, ConnectorConfiguration connectorConfiguration) {
+    private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(LazyProperty<CommunicatorConfiguration> configurationProvider,
+                                                                                                                 Class<? extends Connector> connectorClass,
+                                                                                                                 ConnectorConfiguration connectorConfiguration) {
         Map<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = map();
         Map<MetaClass<? extends Communicator>, UnaryOperator<CommunicatorActionConfigurator>> classBasedConfigurations = classBased
                 .stream()
@@ -126,7 +133,7 @@ public abstract class CommunicatorConfigurator {
         ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
-            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(ActionConfiguration.builder()
+            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(configurationProvider, ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
                     .decorator(computeDecorator(communicatorClass, orElse(classBasedConfigurations.get(communicatorClass), identity()), actionMethod))
                     .method(actionMethod)
@@ -138,8 +145,9 @@ public abstract class CommunicatorConfigurator {
         return immutableMapOf(proxies);
     }
 
-    private UnaryOperator<CommunicatorActionConfigurator>
-    computeDecorator(MetaClass<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> classDecorator, MetaMethod<?> actionMethod) {
+    private UnaryOperator<CommunicatorActionConfigurator> computeDecorator(MetaClass<? extends Communicator> communicatorClass,
+                                                                           UnaryOperator<CommunicatorActionConfigurator> classDecorator,
+                                                                           MetaMethod<?> actionMethod) {
         UnaryOperator<CommunicatorActionConfigurator> methodDecorator = methodBased.stream()
                 .filter(configuration -> communicatorClass.equals(configuration.communicatorClass.get()))
                 .filter(configuration -> actionMethod.equals(configuration.actionMethod.apply(cast(communicatorClass))))
@@ -149,7 +157,7 @@ public abstract class CommunicatorConfigurator {
         return then(classDecorator, orElse(methodDecorator, identity()));
     }
 
-    private CommunicatorAction createAction(ActionConfiguration actionConfiguration) {
+    private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> configurationProvider, ActionConfiguration actionConfiguration) {
         MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
         ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
         MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
@@ -158,7 +166,56 @@ public abstract class CommunicatorConfigurator {
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
                 .communication(actionConfiguration.connectorConfiguration.communication.apply(id));
-        return nonNull(inputType) ? builder.inputType(inputType).build() : builder.build();
+        if (nonNull(inputType)) {
+            builder.inputType(inputType);
+        }
+        CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
+        boolean deactivated = communicatorConfiguration.isDeactivated(id);
+        ResilienceConfiguration resilience = communicatorConfiguration.getResilienceConfiguration(id);
+        boolean logging = communicatorConfiguration.isLogging(id);
+        if (deactivated) {
+            builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
+        }
+        if (logging) {
+            builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
+        }
+        if (nonNull(resilience)) {
+            builder.inputDecorator(new CommunicatorResilienceDecorator(id, communicatorConfiguration));
+        }
+        CommunicatorActionsConfiguration actionsConfiguration = communicatorConfiguration.getConfigurations().get().get(id.getCommunicatorId());
+        if (nonNull(actionsConfiguration)) {
+            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = actionsConfiguration.getInputDecorators();
+            if (nonNull(inputDecorators)) {
+                inputDecorators.forEach(builder::inputDecorator);
+            }
+            CommunicatorActionConfiguration communicatorActionConfiguration = actionsConfiguration.getActions().get(id.getActionId());
+            if (nonNull(communicatorActionConfiguration)) {
+                inputDecorators = communicatorActionConfiguration.getInputDecorators();
+                if (nonNull(inputDecorators)) {
+                    inputDecorators.forEach(builder::inputDecorator);
+                }
+            }
+        }
+        if (deactivated) {
+            builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
+        }
+        if (logging) {
+            builder.outputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, OUTPUT));
+        }
+        if (nonNull(actionsConfiguration)) {
+            ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators = actionsConfiguration.getOutputDecorators();
+            if (nonNull(inputDecorators)) {
+                inputDecorators.forEach(builder::outputDecorator);
+            }
+            CommunicatorActionConfiguration communicatorActionConfiguration = actionsConfiguration.getActions().get(id.getActionId());
+            if (nonNull(communicatorActionConfiguration)) {
+                inputDecorators = communicatorActionConfiguration.getOutputDecorators();
+                if (nonNull(inputDecorators)) {
+                    inputDecorators.forEach(builder::outputDecorator);
+                }
+            }
+        }
+        return builder.build();
     }
 
     @RequiredArgsConstructor

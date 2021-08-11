@@ -19,11 +19,14 @@
 package io.art.server.configuration;
 
 import io.art.core.changes.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.server.refresher.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -31,6 +34,8 @@ public class ServiceMethodConfiguration {
     private boolean deactivated;
     private boolean logging;
     private boolean validating;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
     public static ServiceMethodConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
         ServiceMethodConfiguration configuration = ServiceMethodConfiguration.builder().build();

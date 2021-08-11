@@ -23,8 +23,10 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.server.refresher.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -33,6 +35,8 @@ public class ServiceMethodsConfiguration {
     private boolean logging;
     private boolean validating;
     private ImmutableMap<String, ServiceMethodConfiguration> methods;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
     public static ServiceMethodsConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
         ServiceMethodsConfiguration configuration = ServiceMethodsConfiguration.builder().build();

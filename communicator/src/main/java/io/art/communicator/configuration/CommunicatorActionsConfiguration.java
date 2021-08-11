@@ -24,9 +24,11 @@ import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
@@ -35,6 +37,8 @@ public class CommunicatorActionsConfiguration {
     private boolean deactivated;
     private ImmutableMap<String, CommunicatorActionConfiguration> actions;
     private ResilienceConfiguration resilience;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
+    private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
     public static CommunicatorActionsConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
         CommunicatorActionsConfiguration configuration = CommunicatorActionsConfiguration.builder().build();

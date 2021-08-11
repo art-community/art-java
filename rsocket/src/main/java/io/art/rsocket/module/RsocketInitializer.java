@@ -30,6 +30,8 @@ import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
 import io.art.server.configurator.*;
 import lombok.*;
+import static io.art.core.property.LazyProperty.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
@@ -55,11 +57,11 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.tcpServer = serverConfigurator.configure(initial.tcpServer);
         initial.tcpServer = serverConfigurator.configure(initial.tcpServer);
         initial.httpServer = serverConfigurator.configure(initial.httpServer);
-        initial.server = serverConfigurator.configureServer(initial.server);
+        initial.server = serverConfigurator.configureServer(lazy(() -> rsocketModule().configuration().getServer()), initial.server);
 
         initial.tcpConnectors = communicatorConfigurator.configureTcp();
         initial.httpConnectors = communicatorConfigurator.configureHttp();
-        initial.communicator = communicatorConfigurator.configureCommunicator(initial.communicator);
+        initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> rsocketModule().configuration().getCommunicator()), initial.communicator);
 
         return initial;
     }
