@@ -99,7 +99,7 @@ public class Context {
         input.forEach(sorted::put);
         postLoadingModules.forEach(sorted::put);
 
-        INSTANCE.load(immutableSetOf(sorted.values()));
+        INSTANCE.load(sorted.values());
         INSTANCE.terminatorThread.start();
         getRuntime().addShutdownHook(INSTANCE.terminatorHookThread);
     }
@@ -143,7 +143,7 @@ public class Context {
         throw new InternalRuntimeException(format(MODULE_WAS_NOT_FOUND, moduleId));
     }
 
-    private void load(ImmutableSet<Module<?, ?>> modules) {
+    private void load(Collection<Module<?, ?>> modules) {
         Set<String> messages = setOf(ART_BANNER);
         for (Module<?, ?> module : modules) {
             String moduleId = module.getId();
