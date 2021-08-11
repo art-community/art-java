@@ -110,7 +110,9 @@ public class RsocketCommunication implements Communication {
                 return input -> cast(client.fireAndForget(input.map(value -> create(writer.write(typed(inputType, value)))).last(EMPTY_PAYLOAD)).flux());
             case REQUEST_RESPONSE:
                 if (isNull(inputType)) {
-                    return input -> cast(Flux.from(client.requestResponse(Mono.just(EMPTY_PAYLOAD))));
+                    return input -> cast(Flux.from(client.requestResponse(Mono.just(EMPTY_PAYLOAD)))
+                            .map(payload -> readRsocketPayload(reader, payload, outputType))
+                            .filter(data -> !data.isEmpty()));
                 }
                 if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
                     return input -> {
