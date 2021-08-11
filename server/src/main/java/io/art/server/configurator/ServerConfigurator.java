@@ -66,12 +66,12 @@ public abstract class ServerConfigurator {
 
     private ImmutableMap<String, ServiceMethodsConfiguration> createConfigurations() {
         Map<String, ServiceMethodsConfiguration> configurations = map();
-        for (ClassBasedConfiguration configuration : classBased) {
-            MetaClass<?> serviceClass = configuration.serviceClass.get();
+        for (ClassBasedConfiguration classBasedConfiguration : classBased) {
+            MetaClass<?> serviceClass = classBasedConfiguration.serviceClass.get();
             Map<String, ServiceMethodConfiguration> methods = map();
             for (MetaMethod<?> method : serviceClass.methods()) {
                 UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, method);
-                decorator = then(configuration.decorator, decorator);
+                decorator = then(classBasedConfiguration.decorator, decorator);
                 ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
                 methods.put(method.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             }
@@ -81,17 +81,17 @@ public abstract class ServerConfigurator {
                     .build());
         }
 
-        for (MethodBasedConfiguration configuration : methodBased) {
-            MetaClass<?> serviceClass = configuration.serviceClass.get();
+        for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
+            MetaClass<?> serviceClass = methodBasedConfiguration.serviceClass.get();
             Map<String, ServiceMethodConfiguration> methods = map();
             String communicatorId = asId(serviceClass.definition().type());
             ServiceMethodsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) {
                 methods = existed.getMethods().toMutable();
             }
-            MetaMethod<?> serviceMethod = configuration.serviceMethod.apply(cast(serviceClass));
+            MetaMethod<?> serviceMethod = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
-            decorator = then(decorator, configuration.decorator);
+            decorator = then(decorator, methodBasedConfiguration.decorator);
             ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
             methods.put(serviceMethod.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             configurations.put(communicatorId, orElse(existed, ServiceMethodsConfiguration.defaults()).toBuilder()
@@ -105,22 +105,22 @@ public abstract class ServerConfigurator {
     private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> createMethods(LazyProperty<ServerConfiguration> configurationProvider) {
         Map<ServiceMethodIdentifier, ServiceMethod> methods = map();
 
-        for (ClassBasedConfiguration configuration : classBased) {
-            MetaClass<?> serviceClass = configuration.serviceClass.get();
+        for (ClassBasedConfiguration classBasedConfiguration : classBased) {
+            MetaClass<?> serviceClass = classBasedConfiguration.serviceClass.get();
             for (MetaMethod<?> method : serviceClass.methods()) {
                 UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, method);
-                decorator = then(configuration.decorator, decorator);
+                decorator = then(classBasedConfiguration.decorator, decorator);
                 MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
                 ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
                 methods.put(serviceMethod.getId(), serviceMethod);
             }
         }
 
-        for (MethodBasedConfiguration configuration : methodBased) {
-            MetaClass<?> serviceClass = configuration.serviceClass.get();
-            MetaMethod<?> method = configuration.serviceMethod.apply(cast(serviceClass));
+        for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
+            MetaClass<?> serviceClass = methodBasedConfiguration.serviceClass.get();
+            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
-            decorator = then(decorator, configuration.decorator);
+            decorator = then(decorator, methodBasedConfiguration.decorator);
             MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
             ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
             methods.put(serviceMethod.getId(), serviceMethod);
