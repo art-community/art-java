@@ -35,6 +35,7 @@ import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
@@ -70,19 +71,18 @@ public class Launcher {
         LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
         ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
+        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
                 .onLoad(activator.onLoad())
-                .onLaunch(activator.onLaunch())
+                .onLaunch(before(() -> writeLaunchMessage(configuratorModule, printer), activator.onLaunch()))
                 .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID))
                 .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())));
-
-        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         prepareInitialization(contextConfiguration.printer(printer).build());
         ModuleInitializationOperator<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
@@ -105,31 +105,35 @@ public class Launcher {
             builder.add(module);
         }
         processInitialization(builder.build());
-
-        printer.accept(format(CONFIGURED_BY_MESSAGE, configuratorModule.getConfiguration().getConfiguration().getPath()));
-        LAUNCHED_MESSAGES.forEach(printer);
     }
 
     private static void defaultLaunch(Activator activator) {
         ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
         LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
+        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
                 .onLoad(activator.onLoad())
-                .onLaunch(activator.onLaunch())
+                .onLaunch(before(() -> writeLaunchMessage(printer), activator.onLaunch()))
                 .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID));
 
-        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
-
         initialize(contextConfiguration.printer(printer).build(), activators.values().toArray(new ModuleActivator[0]));
+    }
 
+    private static void writeLaunchMessage(Consumer<String> printer) {
         printer.accept(DEFAULT_CONFIGURATION);
+        LAUNCHED_MESSAGES.forEach(printer);
+    }
+
+
+    private static void writeLaunchMessage(ConfiguratorModule configuratorModule, Consumer<String> printer) {
+        printer.accept(format(CONFIGURED_BY_MESSAGE, configuratorModule.getConfiguration().getConfiguration().getPath()));
         LAUNCHED_MESSAGES.forEach(printer);
     }
 }

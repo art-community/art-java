@@ -40,12 +40,12 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
     private final RsocketCommunicatorConfigurator communicatorConfigurator = new RsocketCommunicatorConfigurator();
 
-    public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator> configurator) {
+    public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator<RsocketServerConfigurator>> configurator) {
         configurator.apply(serverConfigurator);
         return this;
     }
 
-    public RsocketInitializer communicator(Function<RsocketCommunicatorConfigurator, ? extends CommunicatorConfigurator> configurator) {
+    public RsocketInitializer communicator(Function<RsocketCommunicatorConfigurator, ? extends CommunicatorConfigurator<RsocketCommunicatorConfigurator>> configurator) {
         configurator.apply(communicatorConfigurator);
         return this;
     }

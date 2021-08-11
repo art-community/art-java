@@ -21,4 +21,10 @@ public class FunctionExtensions {
         return value -> next.apply(current.apply(value));
     }
 
+    public static Runnable before(Runnable before, Runnable current) {
+        return () -> {
+            before.run();
+            current.run();
+        };
+    }
 }

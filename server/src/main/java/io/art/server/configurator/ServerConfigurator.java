@@ -32,29 +32,29 @@ import java.util.function.*;
 
 @ForUsing
 @RequiredArgsConstructor
-public abstract class ServerConfigurator {
+public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
 
 
-    public ServerConfigurator configureService(Class<?> serviceClass) {
+    public S configureService(Class<?> serviceClass) {
         return configureService(serviceClass, identity());
     }
 
-    public ServerConfigurator configureService(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    public S configureService(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
-        return this;
+        return cast(this);
     }
 
     public <T extends MetaClass<?>>
-    ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
+    S configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
         return configureMethod(serviceClass, serviceMethod, identity());
     }
 
     public <T extends MetaClass<?>>
-    ServerConfigurator configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    S configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
-        return this;
+        return cast(this);
     }
 
 

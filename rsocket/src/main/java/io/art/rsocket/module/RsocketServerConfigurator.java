@@ -11,7 +11,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @ForUsing
-public class RsocketServerConfigurator extends ServerConfigurator {
+public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerConfigurator> {
     private boolean tcp;
     private boolean http;
     private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = identity();

@@ -12,7 +12,6 @@ import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.meta.*;
 import io.art.meta.model.*;
 import io.art.resilience.configuration.*;
 import lombok.Builder;
@@ -31,7 +30,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.model.CommunicatorActionIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.meta.Meta.declaration;
+import static io.art.meta.Meta.*;
 import static java.util.Objects.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -39,24 +38,24 @@ import java.util.function.*;
 
 @ForUsing
 @RequiredArgsConstructor
-public abstract class CommunicatorConfigurator {
+public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurator<C>> {
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
     private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
 
 
-    public CommunicatorConfigurator configureCommunicator(Class<? extends Communicator> communicatorClass,
-                                                          UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public C configureCommunicator(Class<? extends Communicator> communicatorClass,
+                                   UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
-        return this;
+        return cast(this);
     }
 
     public <T extends MetaClass<? extends Communicator>>
-    CommunicatorConfigurator configureCommunicator(Class<? extends Communicator> communicatorClass,
-                                                   Function<T, MetaMethod<?>> actionMethod,
-                                                   UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    C configureCommunicator(Class<? extends Communicator> communicatorClass,
+                            Function<T, MetaMethod<?>> actionMethod,
+                            UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
-        return this;
+        return cast(this);
     }
 
 
