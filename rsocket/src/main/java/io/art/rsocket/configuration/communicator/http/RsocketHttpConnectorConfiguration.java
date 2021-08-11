@@ -15,46 +15,33 @@ public class RsocketHttpConnectorConfiguration {
     private RsocketHttpClientConfiguration singleConfiguration;
 
     public static RsocketHttpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, ConfigurationSource source) {
+        RsocketHttpConnectorConfiguration currentConfiguration = orElse(current, () -> defaults(source.getSection()));
+
         RsocketHttpConnectorConfiguration configuration = RsocketHttpConnectorConfiguration.builder().build();
-        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, current.commonConfiguration, source);
+        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);
 
-        RsocketHttpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, current, nested));
-        configuration.groupConfiguration = orElse(groupConfiguration, current.groupConfiguration);
+        RsocketHttpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, currentConfiguration, nested));
+        configuration.groupConfiguration = orElse(groupConfiguration, currentConfiguration.groupConfiguration);
 
-        RsocketHttpClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, current, nested));
-        configuration.singleConfiguration = orElse(clientConfiguration, current.singleConfiguration);
+        RsocketHttpClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, currentConfiguration, nested));
+        configuration.singleConfiguration = orElse(clientConfiguration, currentConfiguration.singleConfiguration);
+
         return configuration;
     }
 
-    public static RsocketHttpConnectorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
-        RsocketHttpConnectorConfiguration configuration = RsocketHttpConnectorConfiguration.builder().build();
-        String connector = configuration.commonConfiguration.getConnector();
-        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, source);
-
-        RsocketHttpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, connector, nested));
-        configuration.groupConfiguration = orElse(groupConfiguration, RsocketHttpClientGroupConfiguration.defaults(connector));
-
-        RsocketHttpClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, source, connector));
-        configuration.singleConfiguration = orElse(clientConfiguration, RsocketHttpClientConfiguration.defaults(connector));
-        return configuration;
-    }
-
-
-    private static RsocketHttpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, ConfigurationSource source, String connector) {
-        RsocketHttpClientConfiguration defaults = RsocketHttpClientConfiguration.defaults(connector);
-        return RsocketHttpClientConfiguration.from(refresher, defaults, source);
-    }
-
-    private static RsocketHttpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, String connector, NestedConfiguration nested) {
-        RsocketHttpClientGroupConfiguration defaults = RsocketHttpClientGroupConfiguration.defaults(connector);
-        return RsocketHttpClientGroupConfiguration.from(refresher, defaults, nested);
+    public static RsocketHttpConnectorConfiguration defaults(String connector) {
+        return RsocketHttpConnectorConfiguration.builder()
+                .commonConfiguration(RsocketCommonConnectorConfiguration.defaults(connector))
+                .build();
     }
 
     private static RsocketHttpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, NestedConfiguration nested) {
-        return RsocketHttpClientConfiguration.from(refresher, current.singleConfiguration, nested);
+        RsocketHttpClientConfiguration clientConfiguration = orElse(current.singleConfiguration, RsocketHttpClientConfiguration.defaults(current.commonConfiguration.getConnector()));
+        return RsocketHttpClientConfiguration.from(refresher, clientConfiguration, nested);
     }
 
     private static RsocketHttpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, RsocketHttpConnectorConfiguration current, NestedConfiguration nested) {
-        return RsocketHttpClientGroupConfiguration.from(refresher, current.groupConfiguration, nested);
+        RsocketHttpClientGroupConfiguration groupConfiguration = orElse(current.groupConfiguration, RsocketHttpClientGroupConfiguration.defaults(current.commonConfiguration.getConnector()));
+        return RsocketHttpClientGroupConfiguration.from(refresher, groupConfiguration, nested);
     }
 }

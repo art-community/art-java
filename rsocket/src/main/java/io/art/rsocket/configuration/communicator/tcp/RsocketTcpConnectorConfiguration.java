@@ -15,48 +15,33 @@ public class RsocketTcpConnectorConfiguration {
     private RsocketTcpClientConfiguration singleConfiguration;
 
     public static RsocketTcpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
+        RsocketTcpConnectorConfiguration currentConfiguration = orElse(current, RsocketTcpConnectorConfiguration.defaults(source.getSection()));
+
         RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
-        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, current.commonConfiguration, source);
+        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);
 
-        RsocketTcpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, current, nested));
-        configuration.groupConfiguration = orElse(groupConfiguration, current.groupConfiguration);
+        RsocketTcpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, currentConfiguration, nested));
+        configuration.groupConfiguration = orElse(groupConfiguration, currentConfiguration.groupConfiguration);
 
-        RsocketTcpClientConfiguration singleConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, current, nested));
-        configuration.singleConfiguration = orElse(singleConfiguration, current.singleConfiguration);
+        RsocketTcpClientConfiguration singleConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, currentConfiguration, nested));
+        configuration.singleConfiguration = orElse(singleConfiguration, currentConfiguration.singleConfiguration);
 
         return configuration;
     }
 
-    public static RsocketTcpConnectorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
-        RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
-        String connector = configuration.commonConfiguration.getConnector();
-        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, source);
-
-        RsocketTcpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, source, connector));
-        configuration.groupConfiguration = orElse(groupConfiguration, RsocketTcpClientGroupConfiguration.defaults(connector));
-
-        RsocketTcpClientConfiguration singleConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, source, connector));
-        configuration.singleConfiguration = orElse(singleConfiguration, RsocketTcpClientConfiguration.defaults(connector));
-
-        return configuration;
+    public static RsocketTcpConnectorConfiguration defaults(String connector) {
+        return RsocketTcpConnectorConfiguration.builder()
+                .commonConfiguration(RsocketCommonConnectorConfiguration.defaults(connector))
+                .build();
     }
-
 
     private static RsocketTcpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
-        return RsocketTcpClientConfiguration.from(refresher, current.singleConfiguration, source);
+        RsocketTcpClientConfiguration clientConfiguration = orElse(current.singleConfiguration, RsocketTcpClientConfiguration.defaults(current.commonConfiguration.getConnector()));
+        return RsocketTcpClientConfiguration.from(refresher, clientConfiguration, source);
     }
 
     private static RsocketTcpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
-        return RsocketTcpClientGroupConfiguration.from(refresher, current.groupConfiguration, source);
-    }
-
-    private static RsocketTcpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, ConfigurationSource source, String connector) {
-        RsocketTcpClientConfiguration defaults = RsocketTcpClientConfiguration.defaults(connector);
-        return RsocketTcpClientConfiguration.from(refresher, defaults, source);
-    }
-
-    private static RsocketTcpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, ConfigurationSource source, String connector) {
-        RsocketTcpClientGroupConfiguration defaults = RsocketTcpClientGroupConfiguration.defaults(connector);
-        return RsocketTcpClientGroupConfiguration.from(refresher, defaults, source);
+        RsocketTcpClientGroupConfiguration groupConfiguration = orElse(current.groupConfiguration, RsocketTcpClientGroupConfiguration.defaults(current.commonConfiguration.getConnector()));
+        return RsocketTcpClientGroupConfiguration.from(refresher, groupConfiguration, source);
     }
 }

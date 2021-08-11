@@ -41,13 +41,15 @@ public class CommunicatorActionConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static CommunicatorActionConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
+    public static CommunicatorActionConfiguration from(CommunicatorRefresher refresher, CommunicatorActionConfiguration current, ConfigurationSource source) {
+        CommunicatorActionConfiguration currentConfiguration = orElse(current, CommunicatorActionConfiguration::defaults);
         CommunicatorActionConfiguration configuration = CommunicatorActionConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();
-        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
-        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), current.deactivated));
+        ResilienceConfiguration resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        configuration.resilience = orElse(resilience, currentConfiguration.resilience);
         return configuration;
     }
 

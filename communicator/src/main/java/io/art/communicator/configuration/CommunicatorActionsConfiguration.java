@@ -43,15 +43,21 @@ public class CommunicatorActionsConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static CommunicatorActionsConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
+    public static CommunicatorActionsConfiguration from(CommunicatorRefresher refresher, CommunicatorActionsConfiguration current, ConfigurationSource source) {
+        CommunicatorActionsConfiguration currentConfiguration = orElse(current, CommunicatorActionsConfiguration::defaults);
         CommunicatorActionsConfiguration configuration = CommunicatorActionsConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();
-        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
-        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> CommunicatorActionConfiguration.from(refresher, action));
-        configuration.resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), currentConfiguration.logging));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), currentConfiguration.deactivated));
+        configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> getAction(refresher, currentConfiguration, action));
+        ResilienceConfiguration resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        configuration.resilience = orElse(resilience, currentConfiguration.resilience);
         return configuration;
+    }
+
+    private static CommunicatorActionConfiguration getAction(CommunicatorRefresher refresher, CommunicatorActionsConfiguration currentConfiguration, NestedConfiguration action) {
+        return CommunicatorActionConfiguration.from(refresher, currentConfiguration.actions.get(action.getSection()), action);
     }
 
     public static CommunicatorActionsConfiguration defaults() {

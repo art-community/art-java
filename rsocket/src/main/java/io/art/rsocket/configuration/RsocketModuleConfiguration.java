@@ -30,7 +30,6 @@ import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
 import io.art.server.refresher.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
@@ -125,7 +124,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private ServerConfiguration server(NestedConfiguration server) {
-            return ServerConfiguration.from(configuration.serverRefresher, server);
+            return ServerConfiguration.from(configuration.serverRefresher, configuration.server, server);
         }
 
         private RsocketHttpServerConfiguration httpServer(NestedConfiguration server) {
@@ -138,19 +137,11 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
 
         private CommunicatorConfiguration communicator(NestedConfiguration communicator) {
-            return CommunicatorConfiguration.from(configuration.communicatorRefresher, communicator);
+            return CommunicatorConfiguration.from(configuration.communicatorRefresher, configuration.communicator, communicator);
         }
 
         private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectors(NestedConfiguration communicator) {
-            return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(
-                    configuration.httpConnectors.get(nested.getSection()),
-                    current -> httpConnector(nested, current),
-                    httpConnector(nested))
-            );
-        }
-
-        private RsocketHttpConnectorConfiguration httpConnector(NestedConfiguration nested) {
-            return RsocketHttpConnectorConfiguration.from(configuration.refresher, nested);
+            return communicator.getNestedMap(CONNECTORS_KEY, nested -> httpConnector(nested, configuration.httpConnectors.get(nested.getSection())));
         }
 
         private RsocketHttpConnectorConfiguration httpConnector(NestedConfiguration nested, RsocketHttpConnectorConfiguration current) {
@@ -158,14 +149,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors(NestedConfiguration communicator) {
-            return communicator.getNestedMap(CONNECTORS_KEY, nested -> let(configuration.tcpConnectors.get(nested.getSection()),
-                    current -> tcpConnector(nested, current),
-                    tcpConnector(nested)
-            ));
-        }
-
-        private RsocketTcpConnectorConfiguration tcpConnector(NestedConfiguration nested) {
-            return RsocketTcpConnectorConfiguration.from(configuration.refresher, nested);
+            return communicator.getNestedMap(CONNECTORS_KEY, nested -> tcpConnector(nested, configuration.tcpConnectors.get(nested.getSection())));
         }
 
         private RsocketTcpConnectorConfiguration tcpConnector(NestedConfiguration nested, RsocketTcpConnectorConfiguration current) {

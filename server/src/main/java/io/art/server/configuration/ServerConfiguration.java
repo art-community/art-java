@@ -27,6 +27,7 @@ import io.art.server.refresher.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
@@ -46,7 +47,7 @@ public class ServerConfiguration {
     private final LazyProperty<ImmutableMap<ServiceMethodIdentifier, ServiceMethod>> methods;
 
     @Getter
-    private LazyProperty<ImmutableMap<String, ServiceMethodsConfiguration>> configurations;
+    private final LazyProperty<ImmutableMap<String, ServiceMethodsConfiguration>> configurations;
 
     public Optional<ServiceMethodConfiguration> getMethodConfiguration(ServiceMethodIdentifier id) {
         return ofNullable(configurations.get().get(id.getServiceId())).map(configuration -> configuration.getMethods().get(id.getMethodId()));
@@ -93,29 +94,25 @@ public class ServerConfiguration {
         return mapper.apply(methodConfiguration);
     }
 
+    public static ServerConfiguration from(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
+        ServerConfigurationBuilder builder = current.toBuilder();
+        builder.configurations = lazy(() -> merge(current.configurations.get(), ofNullable(source.getNested(SERVER_SECTION))
+                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> getService(current, builder, service)))
+                .orElse(emptyImmutableMap())));
+        refresher.produce();
+        return builder.build();
+    }
+
+    private static ServiceMethodsConfiguration getService(ServerConfiguration currentConfiguration, ServerConfigurationBuilder builder, NestedConfiguration service) {
+        ServiceMethodsConfiguration current = currentConfiguration.configurations.get().get(service.getSection());
+        return ServiceMethodsConfiguration.from(builder.refresher, current, service);
+    }
+
     public static ServerConfiguration defaults(ServerRefresher refresher) {
         return ServerConfiguration.builder().refresher(refresher)
                 .consumer(refresher.consumer())
                 .methods(lazy(ImmutableMap::emptyImmutableMap))
                 .configurations(lazy(ImmutableMap::emptyImmutableMap))
                 .build();
-    }
-
-    public static ServerConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
-        ServerConfiguration configuration = defaults(refresher);
-        configuration.configurations = lazy(() -> ofNullable(source.getNested(SERVER_SECTION))
-                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceMethodsConfiguration.from(configuration.refresher, service)))
-                .orElse(emptyImmutableMap()));
-        configuration.refresher.produce();
-        return configuration;
-    }
-
-    public static ServerConfiguration from(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
-        ServerConfigurationBuilder builder = current.toBuilder();
-        builder.configurations = lazy(() -> ofNullable(source.getNested(SERVER_SECTION))
-                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> ServiceMethodsConfiguration.from(builder.refresher, service)))
-                .orElse(emptyImmutableMap()));
-        refresher.produce();
-        return builder.build();
     }
 }

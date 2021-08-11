@@ -39,14 +39,15 @@ public class ServiceMethodConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static ServiceMethodConfiguration from(ServerRefresher refresher, ConfigurationSource source) {
+    public static ServiceMethodConfiguration from(ServerRefresher refresher, ServiceMethodConfiguration current, ConfigurationSource source) {
+        current = orElse(current, ServiceMethodConfiguration::defaults);
         ServiceMethodConfiguration configuration = ServiceMethodConfiguration.builder().build();
         ChangesListener deactivationListener = refresher.deactivationListener();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener validationListener = refresher.validationListener();
-        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), false));
-        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), true));
-        configuration.validating = validationListener.emit(orElse(source.getBoolean(VALIDATING_KEY), true));
+        configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), current.deactivated));
+        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
+        configuration.validating = validationListener.emit(orElse(source.getBoolean(VALIDATING_KEY), current.validating));
         return configuration;
     }
 

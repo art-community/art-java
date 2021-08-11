@@ -52,25 +52,6 @@ public class RsocketCommonConnectorConfiguration {
         return configuration;
     }
 
-    public static RsocketCommonConnectorConfiguration from(RsocketModuleRefresher refresher, ConfigurationSource source) {
-        RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
-        ChangesListener listener = refresher.connectorListeners().listenerFor(source.getSection());
-        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connector);
-        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
-        configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
-        configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), JSON));
-        configuration.connector = source.getSection();
-        configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), 0));
-        configuration.keepAlive = listener.emit(source.getNested(KEEP_ALIVE_SECTION, RsocketKeepAliveConfiguration::rsocketKeepAlive));
-        configuration.resume = listener.emit(source.getNested(KEEP_ALIVE_SECTION, RsocketResumeConfiguration::rsocketResume));
-        configuration.retry = listener.emit(source.getNested(KEEP_ALIVE_SECTION, RsocketRetryConfiguration::rsocketRetry));
-        configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), ZERO_COPY));
-        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), Integer.MAX_VALUE));
-        configuration.service = strategy -> strategy.manual(listener.emit(source.getString(SERVICE_ID_KEY)));
-        configuration.timeout = listener.emit(orElse(source.getDuration(TRANSPORT_TIMEOUT_CONNECTION_KEY), DEFAULT_TIMEOUT));
-        return configuration;
-    }
-
     public static RsocketCommonConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommonConnectorConfiguration current, ConfigurationSource source) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);

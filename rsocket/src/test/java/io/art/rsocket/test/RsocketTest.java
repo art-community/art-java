@@ -1,6 +1,5 @@
 package io.art.rsocket.test;
 
-import io.art.communicator.configurator.*;
 import io.art.core.extensions.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
@@ -30,9 +29,7 @@ public class RsocketTest {
                                 .tcp(TestRsocketConnector1.class, configurator -> configurator
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
-                                                .client(client -> client.port(5678))))
-                                .configureCommunicator(TestRsocket.class, CommunicatorActionConfigurator::logging)
-                        )
+                                                .client(client -> client.port(5678)))))
                         .server(server -> server
                                 .tcp()
                                 .http(http -> http.port(9001))
@@ -62,6 +59,8 @@ public class RsocketTest {
         TestRsocketConnector1 tcp = rsocketConnector(TestRsocketConnector1.class);
         tcp.testRsocket1().m1("test");
         tcp.testRsocket1().m1("test");
+        tcp.testRsocket1().m2("test");
+        tcp.testRsocket1().m2("test");
         ThreadExtensions.block();
     }
 }

@@ -26,6 +26,7 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
@@ -49,7 +50,9 @@ public class RsocketHttpClientGroupConfiguration {
         RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
         configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
-        configuration.clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
+
+        ImmutableSet<RsocketHttpClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
+        configuration.clientConfigurations = merge(current.clientConfigurations, clientConfigurations);
         return configuration;
     }
 

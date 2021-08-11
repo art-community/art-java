@@ -29,6 +29,7 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -43,7 +44,7 @@ public class CommunicatorConfiguration {
     private final CommunicatorRefresher.Consumer consumer;
 
     @Getter
-    private LazyProperty<ImmutableMap<String, CommunicatorActionsConfiguration>> configurations;
+    private final LazyProperty<ImmutableMap<String, CommunicatorActionsConfiguration>> configurations;
 
     @Getter
     private final ConnectorRegistry connectors;
@@ -94,6 +95,20 @@ public class CommunicatorConfiguration {
         return mapper.apply(actionConfiguration);
     }
 
+    public static CommunicatorConfiguration from(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
+        CommunicatorConfigurationBuilder builder = current.toBuilder();
+        builder.configurations(lazy(() -> merge(current.configurations.get(), ofNullable(source.getNested(COMMUNICATOR_SECTION))
+                .map(communicator -> communicator.getNestedMap(TARGETS_SECTION, actions -> getActions(current, builder, actions)))
+                .orElse(emptyImmutableMap()))));
+        refresher.produce();
+        return builder.build();
+    }
+
+    private static CommunicatorActionsConfiguration getActions(CommunicatorConfiguration current, CommunicatorConfigurationBuilder builder, NestedConfiguration actions) {
+        return CommunicatorActionsConfiguration.from(builder.refresher, current.configurations.get().get(actions.getSection()), actions);
+    }
+
+
     public static CommunicatorConfiguration defaults(CommunicatorRefresher refresher) {
         return CommunicatorConfiguration.builder()
                 .refresher(refresher)
@@ -101,23 +116,5 @@ public class CommunicatorConfiguration {
                 .connectors(new ConnectorRegistry(lazy(ImmutableMap::emptyImmutableMap)))
                 .configurations(lazy(ImmutableMap::emptyImmutableMap))
                 .build();
-    }
-
-    public static CommunicatorConfiguration from(CommunicatorRefresher refresher, ConfigurationSource source) {
-        CommunicatorConfiguration configuration = defaults(refresher);
-        configuration.configurations = lazy(() -> ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorActionsConfiguration.from(configuration.refresher, service)))
-                .orElse(emptyImmutableMap()));
-        refresher.produce();
-        return configuration;
-    }
-
-    public static CommunicatorConfiguration from(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
-        CommunicatorConfigurationBuilder builder = current.toBuilder();
-        builder.configurations(lazy(() -> ofNullable(source.getNested(COMMUNICATOR_SECTION))
-                .map(server -> server.getNestedMap(TARGETS_SECTION, service -> CommunicatorActionsConfiguration.from(builder.refresher, service)))
-                .orElse(emptyImmutableMap())));
-        refresher.produce();
-        return builder.build();
     }
 }

@@ -173,6 +173,22 @@ public final class CollectionExtensions {
         return immutableMapOf(firstMutable);
     }
 
+    public static <T> ImmutableArray<T> merge(ImmutableArray<T> first, ImmutableArray<T> second) {
+        if (isNull(first)) return second;
+        if (isNull(second)) return first;
+        List<T> firstMutable = first.toMutable();
+        second.forEach(firstMutable::add);
+        return immutableArrayOf(firstMutable);
+    }
+
+    public static <T> ImmutableSet<T> merge(ImmutableSet<T> first, ImmutableSet<T> second) {
+        if (isNull(first)) return second;
+        if (isNull(second)) return first;
+        Set<T> firstMutable = first.toMutable();
+        second.forEach(firstMutable::add);
+        return immutableSetOf(firstMutable);
+    }
+
     public <T> T[] skip(int count, T[] array) {
         arraycopy(array, count, array, 0, array.length - 1);
         array = Arrays.copyOf(array, array.length - 1);
