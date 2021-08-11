@@ -34,16 +34,13 @@ import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
 import static io.art.logging.module.LoggingModule.*;
 import static java.text.MessageFormat.*;
-import static java.util.Collections.*;
 import static java.util.Objects.*;
-import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
@@ -63,7 +60,7 @@ public class Launcher {
     }
 
     private static void configuredLaunch(Activator activator, ModuleActivator configuratorActivator) {
-        ImmutableMap<String, ModuleActivator> activators = sort(activator);
+        ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
         LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
@@ -105,7 +102,7 @@ public class Launcher {
     }
 
     private static void defaultLaunch(Activator activator) {
-        ImmutableMap<String, ModuleActivator> activators = sort(activator);
+        ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
         LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
 
@@ -125,28 +122,4 @@ public class Launcher {
         LAUNCHED_MESSAGES.forEach(printer);
     }
 
-    private static ImmutableMap<String, ModuleActivator> sort(Activator activator) {
-        Map<String, ModuleActivator> activators = activator.activators().toMutable();
-        Map<String, ModuleActivator> sorted = map();
-        Map<String, ModuleActivator> postLoadingModules = map();
-
-        for (String module : PRELOADED_MODULES) {
-            if (activators.containsKey(module)) {
-                sorted.put(module, activators.remove(module));
-            }
-        }
-
-        List<String> postLoadingOrder = dynamicArrayOf(POST_LOADED_MODULES.toMutable());
-        reverse(postLoadingOrder);
-        for (String module : postLoadingOrder) {
-            if (activators.containsKey(module)) {
-                postLoadingModules.put(module, activators.remove(module));
-            }
-        }
-
-        activators.forEach(sorted::put);
-        postLoadingModules.forEach(sorted::put);
-
-        return immutableMapOf(sorted);
-    }
 }

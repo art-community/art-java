@@ -26,11 +26,14 @@ import io.art.core.module.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collector.MapCollector.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.LoggingMessages.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ThreadExtensions.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -39,6 +42,7 @@ import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
+import static java.util.function.Function.*;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
@@ -73,7 +77,29 @@ public class Context {
         if (isNotEmpty(INSTANCE.modules)) {
             throw new InternalRuntimeException(CONTEXT_ALREADY_INITIALIZED);
         }
-        INSTANCE.load(modules);
+
+        Map<String, Module<?, ?>> input = modules.stream().collect(mapCollector(Module::getId, identity()));
+        Map<String, Module<?, ?>> sorted = map();
+        Map<String, Module<?, ?>> postLoadingModules = map();
+
+        for (String module : PRELOADED_MODULES) {
+            if (input.containsKey(module)) {
+                sorted.put(module, input.remove(module));
+            }
+        }
+
+        List<String> postLoadingOrder = dynamicArrayOf(POST_LOADED_MODULES.toMutable());
+        reverse(postLoadingOrder);
+        for (String module : postLoadingOrder) {
+            if (input.containsKey(module)) {
+                postLoadingModules.put(module, input.remove(module));
+            }
+        }
+
+        input.forEach(sorted::put);
+        postLoadingModules.forEach(sorted::put);
+
+        INSTANCE.load(immutableSetOf(sorted.values()));
         INSTANCE.terminatorThread.start();
         getRuntime().addShutdownHook(INSTANCE.terminatorHookThread);
     }

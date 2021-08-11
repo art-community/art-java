@@ -37,12 +37,5 @@ public interface LauncherConstants {
 
     String LAUNCHER_LOGGER = "launcher";
 
-    ImmutableSet<String> PRELOADED_MODULES = ImmutableSet.<String>immutableSetBuilder()
-            .add(CONFIGURATOR_MODULE_ID)
-            .add(LOGGING_MODULE_ID)
-            .build();
 
-    ImmutableSet<String> POST_LOADED_MODULES = ImmutableSet.<String>immutableSetBuilder()
-            .add(META_MODULE_ID)
-            .build();
 }
