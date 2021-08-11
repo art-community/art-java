@@ -1,5 +1,6 @@
 package io.art.server.configurator;
 
+import io.art.core.annotation.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
@@ -29,6 +30,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
+@ForUsing
 @RequiredArgsConstructor
 public abstract class ServerConfigurator {
     private final List<ClassBasedConfiguration> classBased = linkedList();

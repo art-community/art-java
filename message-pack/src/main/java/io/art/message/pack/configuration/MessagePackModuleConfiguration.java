@@ -18,12 +18,14 @@
 
 package io.art.message.pack.configuration;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.message.pack.descriptor.*;
 import lombok.*;
 
 @Getter
+@ForUsing
 public class MessagePackModuleConfiguration implements ModuleConfiguration {
     private final MessagePackReader reader = new MessagePackReader();
     private final MessagePackWriter writer = new MessagePackWriter();

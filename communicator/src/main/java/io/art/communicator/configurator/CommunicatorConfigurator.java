@@ -7,6 +7,7 @@ import io.art.communicator.decorator.*;
 import io.art.communicator.model.*;
 import io.art.communicator.registry.*;
 import io.art.communicator.registry.ConnectorRegistry.*;
+import io.art.core.annotation.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
@@ -35,6 +36,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
+@ForUsing
 @RequiredArgsConstructor
 public abstract class CommunicatorConfigurator {
     private final List<ClassBasedConfiguration> classBased = linkedList();

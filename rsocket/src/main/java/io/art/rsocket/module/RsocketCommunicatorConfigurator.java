@@ -3,6 +3,7 @@ package io.art.rsocket.module;
 import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
@@ -17,6 +18,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
+@ForUsing
 public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator {
     private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private final Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();

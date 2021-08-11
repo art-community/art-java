@@ -18,18 +18,19 @@
 
 package io.art.meta.configuration;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.meta.model.*;
 import lombok.*;
 
-@Getter
+@ForUsing
 @RequiredArgsConstructor
 public class MetaModuleConfiguration implements ModuleConfiguration {
     private final LazyProperty<? extends MetaLibrary> library;
 
-    public MetaLibrary getLibrary() {
+    public MetaLibrary library() {
         return library.get();
     }
 

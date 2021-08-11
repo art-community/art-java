@@ -2,6 +2,7 @@ package io.art.communicator.configurator;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.configuration.CommunicatorActionConfiguration.*;
+import io.art.core.annotation.*;
 import io.art.resilience.configuration.*;
 import io.art.resilience.configuration.ResilienceConfiguration.*;
 import reactor.core.publisher.*;
@@ -13,6 +14,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
+@ForUsing
 public class CommunicatorActionConfigurator {
     private boolean logging = false;
     private boolean deactivated = false;

@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration.server;
 
+import io.art.core.annotation.*;
 import io.art.core.changes.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
@@ -45,6 +46,7 @@ import static java.util.function.UnaryOperator.identity;
 import java.util.function.*;
 
 @Getter
+@ForUsing
 @Builder(toBuilder = true)
 public class RsocketTcpServerConfiguration {
     private int maxFrameLength;

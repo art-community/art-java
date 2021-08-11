@@ -1,5 +1,6 @@
 package io.art.rsocket.module;
 
+import io.art.core.annotation.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
@@ -9,6 +10,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;
 
+@ForUsing
 @RequiredArgsConstructor
 public class RsocketTcpConnectorConfigurator {
     private final String connector;

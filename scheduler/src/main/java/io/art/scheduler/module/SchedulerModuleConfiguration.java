@@ -18,6 +18,7 @@
 
 package io.art.scheduler.module;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.scheduler.executor.deferred.*;
@@ -28,6 +29,7 @@ import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
 import java.time.*;
 
 @Getter
+@ForUsing
 public class SchedulerModuleConfiguration implements ModuleConfiguration {
     private final DeferredExecutor deferredExecutor = deferredExecutorBuilder()
             .exceptionHandler(new DefaultExceptionHandler())

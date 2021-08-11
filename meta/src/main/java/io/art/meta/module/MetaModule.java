@@ -49,7 +49,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
 
     @Override
     public void load(Context.Service contextService) {
-        configuration.getLibrary().compute();
+        configuration.library().compute();
     }
 
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {
@@ -57,7 +57,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     }
 
     public static ImmutableMap<Class<?>, MetaClass<?>> classes() {
-        return metaModule().configuration().getLibrary().classes();
+        return metaModule().configuration().library().classes();
     }
 
     public static <T> MetaClass<T> declaration(Class<T> type) {
@@ -69,6 +69,6 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     }
 
     public static <T extends MetaLibrary> T library() {
-        return cast(metaModule().configuration().getLibrary());
+        return cast(metaModule().configuration().library());
     }
 }

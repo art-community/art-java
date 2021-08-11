@@ -20,6 +20,7 @@ package io.art.rsocket.configuration;
 
 import io.art.communicator.configuration.*;
 import io.art.communicator.refresher.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -36,6 +37,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.
 import static java.util.Optional.*;
 import java.util.*;
 
+@ForUsing
 @RequiredArgsConstructor
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private final RsocketModuleRefresher refresher;

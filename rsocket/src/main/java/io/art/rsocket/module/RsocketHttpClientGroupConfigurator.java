@@ -1,5 +1,6 @@
 package io.art.rsocket.module;
 
+import io.art.core.annotation.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.http.RsocketHttpClientConfiguration.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -8,6 +9,7 @@ import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 import java.util.function.*;
 
+@ForUsing
 @RequiredArgsConstructor
 public class RsocketHttpClientGroupConfigurator {
     private final String connector;

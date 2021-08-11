@@ -18,12 +18,14 @@
 
 package io.art.rsocket.module;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.experimental.*;
 import static io.art.core.module.ModuleActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
+@ForUsing
 @UtilityClass
 public class RsocketActivator {
     public ModuleActivator rsocket() {

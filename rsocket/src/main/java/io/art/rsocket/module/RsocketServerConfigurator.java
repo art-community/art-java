@@ -1,5 +1,6 @@
 package io.art.rsocket.module;
 
+import io.art.core.annotation.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
@@ -9,6 +10,7 @@ import io.art.server.configurator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
+@ForUsing
 public class RsocketServerConfigurator extends ServerConfigurator {
     private boolean tcp;
     private boolean http;

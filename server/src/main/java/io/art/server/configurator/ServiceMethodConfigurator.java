@@ -1,5 +1,6 @@
 package io.art.server.configurator;
 
+import io.art.core.annotation.*;
 import io.art.server.configuration.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -8,6 +9,7 @@ import static io.art.core.factory.ListFactory.*;
 import java.util.*;
 import java.util.function.*;
 
+@ForUsing
 public class ServiceMethodConfigurator {
     private boolean logging = false;
     private boolean validating = true;

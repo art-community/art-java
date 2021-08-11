@@ -19,12 +19,14 @@
 package io.art.json.configuration;
 
 import com.fasterxml.jackson.databind.*;
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.json.descriptor.*;
 import lombok.*;
 
 @Getter
+@ForUsing
 public class JsonModuleConfiguration implements ModuleConfiguration {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final JsonReader reader = new JsonReader(objectMapper.getFactory());

@@ -18,6 +18,7 @@
 
 package io.art.logging.configuration;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
@@ -29,6 +30,7 @@ import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.
 import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
 
 @Getter
+@ForUsing
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
 

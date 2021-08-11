@@ -19,12 +19,14 @@
 package io.art.yaml.configuration;
 
 import com.fasterxml.jackson.dataformat.yaml.*;
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.yaml.descriptor.*;
 import lombok.*;
 
 @Getter
+@ForUsing
 public class YamlModuleConfiguration implements ModuleConfiguration {
     private final YAMLMapper objectMapper = new YAMLMapper();
     private final YamlReader reader = new YamlReader(objectMapper.getFactory());

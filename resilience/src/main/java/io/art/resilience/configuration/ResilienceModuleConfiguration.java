@@ -18,10 +18,12 @@
 
 package io.art.resilience.configuration;
 
+import io.art.core.annotation.*;
 import io.art.core.module.*;
 import lombok.*;
 
 @Getter
+@ForUsing
 public class ResilienceModuleConfiguration implements ModuleConfiguration {
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ResilienceModuleConfiguration, Configurator> {
