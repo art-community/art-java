@@ -61,8 +61,8 @@ public class CommunicatorConfiguration {
     }
 
     public boolean isLogging(CommunicatorActionIdentifier identifier) {
-        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isLogging, true);
-        boolean action = checkAction(identifier, CommunicatorActionConfiguration::isLogging, true);
+        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isLogging, false);
+        boolean action = checkAction(identifier, CommunicatorActionConfiguration::isLogging, false);
         return communicator && action;
     }
 

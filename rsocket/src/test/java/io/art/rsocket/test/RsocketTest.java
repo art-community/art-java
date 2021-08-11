@@ -28,7 +28,6 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class, configurator -> configurator
-                                        .configure(builder -> builder.logging(true))
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678))))

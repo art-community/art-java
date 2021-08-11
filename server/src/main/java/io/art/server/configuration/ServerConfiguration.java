@@ -53,8 +53,8 @@ public class ServerConfiguration {
     }
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
-        boolean service = checkService(identifier, ServiceMethodsConfiguration::isLogging, true);
-        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isLogging, true);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::isLogging, false);
+        boolean method = checkMethod(identifier, ServiceMethodConfiguration::isLogging, false);
         return service && method;
     }
 
