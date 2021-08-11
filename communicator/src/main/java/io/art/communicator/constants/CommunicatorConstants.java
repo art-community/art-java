@@ -23,7 +23,6 @@ public interface CommunicatorConstants {
         String COMMUNICATOR_WAS_NOT_REGISTERED = "Communicator with {0} was not registered";
         String COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY = "Communicator interface {0} has methods:\n{1} with >1 parameters. Proxy could be created only for <2 parameter methods interfaces";
         String CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY = "Connector interface {0} has methods:\n{1} with return type that is not proxy type";
-        String PROXY_IS_NULL = "Class {0} has not proxy. Proxy could be created only for interfaces";
     }
 
     interface LoggingMessages {

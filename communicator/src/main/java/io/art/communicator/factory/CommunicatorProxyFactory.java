@@ -3,6 +3,7 @@ package io.art.communicator.factory;
 import io.art.communicator.action.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.model.*;
+import io.art.meta.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
@@ -12,9 +13,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.FunctionExtensions.*;
-import static io.art.meta.module.MetaModule.*;
 import static java.text.MessageFormat.*;
-import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import java.util.*;
 import java.util.function.*;
@@ -30,11 +29,11 @@ public class CommunicatorProxyFactory {
     }
 
     public static <T extends Communicator> CommunicatorProxy<T> communicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
-        return communicatorProxy(declaration(proxyClass), communication);
+        return communicatorProxy(Meta.declaration(proxyClass), communication);
     }
 
     public static <T extends Communicator> CommunicatorProxy<T> preconfiguredCommunicatorProxy(Class<T> proxyClass, Supplier<Communication> communication) {
-        return preconfiguredCommunicatorProxy(declaration(proxyClass), communication);
+        return preconfiguredCommunicatorProxy(Meta.declaration(proxyClass), communication);
     }
 
     public static <T extends Communicator> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<?>, CommunicatorAction> provider) {
@@ -59,10 +58,6 @@ public class CommunicatorProxyFactory {
                         : input -> oneArgument.apply(entry.getValue(), input)));
 
         MetaProxy proxy = proxyClass.proxy(invocations);
-
-        if (isNull(proxy)) {
-            throw new CommunicatorException(format(PROXY_IS_NULL, proxyClass.definition().type().getName()));
-        }
 
         return new CommunicatorProxy<>(cast(proxy), actions.values().stream().collect(immutableMapCollector(CommunicatorAction::getId, identity())));
     }

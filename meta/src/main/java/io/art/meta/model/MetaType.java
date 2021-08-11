@@ -86,7 +86,7 @@ public class MetaType<T> {
     @ToString.Exclude
     @Getter(lazy = true)
     @EqualsAndHashCode.Exclude
-    private final MetaClass<T> declaration = cast(classes().get(type));
+    private final MetaClass<T> declaration = cast(metaModule().configuration().library().classes().get(type));
 
     private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
 

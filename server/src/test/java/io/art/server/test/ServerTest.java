@@ -1,5 +1,6 @@
 package io.art.server.test;
 
+import io.art.meta.*;
 import io.art.server.test.meta.*;
 import io.art.server.test.meta.MetaServerTest.MetaIoPackage.MetaArtPackage.MetaServerPackage.MetaTestPackage.MetaServicePackage.*;
 import io.art.server.test.service.*;
@@ -9,7 +10,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
-import static io.art.meta.module.MetaModule.*;
 import static io.art.server.factory.ServiceMethodFactory.*;
 import static io.art.server.test.registry.ServiceTestExecutionsRegistry.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ public class ServerTest {
 
     @Test
     public void testServiceMethodExecution() {
-        MetaTestServiceClass serviceClass = cast(declaration(TestService.class));
+        MetaTestServiceClass serviceClass = cast(Meta.declaration(TestService.class));
 
         preconfiguredServiceMethod(serviceClass, serviceClass.m1Method()).serve(Flux.empty());
         assertNotNull(executions().get("m1"), "m1");

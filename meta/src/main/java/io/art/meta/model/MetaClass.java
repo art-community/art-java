@@ -21,6 +21,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.exception.*;
 import io.art.meta.model.MetaProperty.*;
 import io.art.meta.registry.*;
 import io.art.meta.schema.*;
@@ -33,8 +34,10 @@ import static io.art.core.extensions.StringExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
 import java.util.*;
@@ -267,6 +270,6 @@ public abstract class MetaClass<T> {
     }
 
     public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
-        return null;
+        throw new MetaException(format(PROXY_IS_NULL, definition().type().getName()));
     }
 }

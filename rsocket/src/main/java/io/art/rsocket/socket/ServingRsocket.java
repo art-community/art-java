@@ -21,6 +21,7 @@ package io.art.rsocket.socket;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
+import io.art.meta.*;
 import io.art.meta.model.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.exception.*;
@@ -36,7 +37,6 @@ import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.meta.model.TypedObject.*;
-import static io.art.meta.module.MetaModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -53,7 +53,7 @@ public class ServingRsocket implements RSocket {
     private final RsocketModuleState moduleState = rsocketModule().state();
     private final ServiceMethod serviceMethod;
     private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
-    private final static MetaType<RsocketSetupPayload> payloadType = declaration(RsocketSetupPayload.class).definition();
+    private final static MetaType<RsocketSetupPayload> payloadType = Meta.declaration(RsocketSetupPayload.class).definition();
 
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketCommonServerConfiguration serverConfiguration) {
         this.serviceMethods = serviceMethods;

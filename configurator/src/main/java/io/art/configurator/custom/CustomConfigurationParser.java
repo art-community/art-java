@@ -2,6 +2,7 @@ package io.art.configurator.custom;
 
 import io.art.core.exception.*;
 import io.art.core.source.*;
+import io.art.meta.*;
 import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
@@ -12,13 +13,12 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.ArrayExtensions.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
-import static io.art.meta.module.MetaModule.*;
 import static java.text.MessageFormat.*;
 
 @UtilityClass
 public class CustomConfigurationParser {
     public <T> T parse(Class<T> javaClass, ConfigurationSource source) {
-        return parse(declaration(javaClass), source);
+        return parse(Meta.declaration(javaClass), source);
     }
 
     public <T> T parse(MetaClass<T> metaClass, ConfigurationSource source) {

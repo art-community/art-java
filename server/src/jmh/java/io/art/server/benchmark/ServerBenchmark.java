@@ -18,6 +18,7 @@
 
 package io.art.server.benchmark;
 
+import io.art.meta.*;
 import io.art.server.method.*;
 import io.art.server.test.meta.*;
 import io.art.server.test.meta.MetaServerTest.MetaIoPackage.MetaArtPackage.MetaServerPackage.MetaTestPackage.MetaServicePackage.*;
@@ -26,7 +27,6 @@ import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
-import static io.art.meta.module.MetaModule.*;
 import static io.art.server.factory.ServiceMethodFactory.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
@@ -61,7 +61,7 @@ public class ServerBenchmark {
         @Setup
         public void setup() {
             initialize(meta(MetaServerTest::new));
-            meta = library();
+            meta = Meta.library();
             serviceClass = meta.ioPackage().artPackage().serverPackage().testPackage().servicePackage().benchmarkServiceClass();
             m1 = preconfiguredServiceMethod(serviceClass, serviceClass.m1Method());
             m2 = preconfiguredServiceMethod(serviceClass, serviceClass.m2Method());

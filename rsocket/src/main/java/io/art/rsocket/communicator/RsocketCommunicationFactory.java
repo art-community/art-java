@@ -28,7 +28,6 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.model.TypedObject.*;
-import static io.art.meta.module.MetaModule.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;

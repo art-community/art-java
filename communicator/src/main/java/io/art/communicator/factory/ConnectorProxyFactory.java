@@ -40,12 +40,6 @@ public class ConnectorProxyFactory {
                 .stream()
                 .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> cache.get().get(entry.getKey().name())));
 
-        MetaProxy proxy = connectorClass.proxy(cast(invocations));
-
-        if (isNull(proxy)) {
-            throw new CommunicatorException(format(PROXY_IS_NULL, connectorClass.definition().type().getName()));
-        }
-
-        return cast(proxy);
+        return cast(connectorClass.proxy(cast(invocations)));
     }
 }

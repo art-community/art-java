@@ -5,6 +5,7 @@ import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
+import io.art.meta.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
@@ -24,7 +25,6 @@ import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
-import static io.art.meta.module.MetaModule.*;
 import static java.util.Objects.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -42,7 +42,7 @@ public abstract class ServerConfigurator {
     }
 
     public ServerConfigurator configureService(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
+        classBased.add(new ClassBasedConfiguration(() -> Meta.declaration(serviceClass), decorator));
         return this;
     }
 
