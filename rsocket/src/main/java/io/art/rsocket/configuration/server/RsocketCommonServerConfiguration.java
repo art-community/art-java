@@ -21,6 +21,7 @@ package io.art.rsocket.configuration.server;
 import io.art.core.model.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.transport.constants.TransportModuleConstants.*;
+import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import io.rsocket.plugins.*;
 import lombok.*;
@@ -40,6 +41,7 @@ public class RsocketCommonServerConfiguration {
     private int maxInboundPayloadSize;
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
+    private UnaryOperator<RSocketServer> decorator;
     private UnaryOperator<InterceptorRegistry> interceptors;
 
     public static RsocketCommonServerConfiguration fromTcp(RsocketTcpServerConfiguration configuration) {
@@ -55,6 +57,7 @@ public class RsocketCommonServerConfiguration {
         common.port = configuration.getPort();
         common.host = configuration.getHost();
         common.interceptors = configuration.getInterceptors();
+        common.decorator = configuration.getDecorator();
         return common;
     }
 
@@ -71,6 +74,7 @@ public class RsocketCommonServerConfiguration {
         common.port = configuration.getPort();
         common.host = configuration.getHost();
         common.interceptors = configuration.getInterceptors();
+        common.decorator = configuration.getDecorator();
         return common;
     }
 }

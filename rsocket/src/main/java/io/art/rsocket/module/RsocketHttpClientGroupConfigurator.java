@@ -20,8 +20,8 @@ public class RsocketHttpClientGroupConfigurator {
     }
 
     RsocketHttpClientGroupConfiguration configure() {
-        return RsocketHttpClientGroupConfiguration.builder()
-                .connector(connector)
+        return RsocketHttpClientGroupConfiguration.defaults(connector)
+                .toBuilder()
                 .balancer(balancer)
                 .clientConfigurations(immutableSetOf(clients))
                 .build();

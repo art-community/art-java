@@ -52,6 +52,7 @@ import static io.art.rsocket.manager.RsocketManager.*;
 import static java.text.MessageFormat.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
@@ -108,14 +109,16 @@ public class RsocketServer implements Server {
     private CloseableChannel createTcpServer() {
         RsocketTcpServerConfiguration tcp = this.configuration.getTcpServer();
         RsocketCommonServerConfiguration common = fromTcp(tcp);
-        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(TcpServer.create().port(common.getPort()), tcp.getMaxFrameLength());
+        UnaryOperator<TcpServer> tcpDecorator = tcp.getTcpDecorator();
+        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(TcpServer.create().port(common.getPort())), tcp.getMaxFrameLength());
         return createServer(common, transport);
     }
 
     private CloseableChannel createHttpServer() {
         RsocketHttpServerConfiguration http = this.configuration.getHttpServer();
         RsocketCommonServerConfiguration common = fromHttp(http);
-        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(HttpServer.create().port(common.getPort()));
+        UnaryOperator<HttpServer> httpDecorator = http.getHttpDecorator();
+        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(httpDecorator.apply(HttpServer.create().port(common.getPort())));
         return createServer(common, transport);
     }
 
@@ -128,7 +131,7 @@ public class RsocketServer implements Server {
             server.fragment(fragmentationMtu);
         }
         apply(serverConfiguration.getResume(), resume -> server.resume(resume.toResume()));
-        Mono<CloseableChannel> bind = server
+        Mono<CloseableChannel> bind = serverConfiguration.getDecorator().apply(server)
                 .interceptors(registry -> serverConfiguration.getInterceptors().apply(registry
                         .forResponder(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))
                         .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))))

@@ -16,6 +16,9 @@ import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.rsocket.SocketAcceptor.*;
+import static io.rsocket.lease.Lease.create;
+import static java.time.Duration.*;
+import static reactor.core.publisher.Flux.*;
 
 public class RsocketTest {
     @BeforeAll
@@ -27,6 +30,7 @@ public class RsocketTest {
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator
                                 .tcp(TestRsocketConnector1.class, configurator -> configurator
+                                        .configure(connector -> connector.decorator(RSocketConnector::lease))
                                         .roundRobin(builder -> builder
                                                 .client(client -> client.port(1234))
                                                 .client(client -> client.port(5678)))))
@@ -44,6 +48,7 @@ public class RsocketTest {
                     System.out.println("1234");
                     return Mono.empty();
                 }))
+                .lease(spec -> spec.sender(() -> interval(ofSeconds(1)).map(ignore -> create(ofSeconds(1), 1))))
                 .bindNow(TcpServerTransport.create(1234));
 
         RSocketServer
@@ -51,6 +56,7 @@ public class RsocketTest {
                     System.out.println("5678");
                     return Mono.empty();
                 }))
+                .lease(spec -> spec.sender(() -> interval(ofSeconds(1)).map(ignore -> create(ofSeconds(1), 1))))
                 .bindNow(TcpServerTransport.create(5678));
     }
 

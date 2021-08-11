@@ -24,8 +24,8 @@ import io.art.core.source.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.*;
 import io.art.rsocket.refresher.*;
-import io.art.transport.constants.*;
-import io.art.transport.payload.*;
+import io.art.transport.constants.TransportModuleConstants.*;
+import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import io.rsocket.plugins.*;
 import lombok.*;
@@ -41,6 +41,7 @@ import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
 import static java.util.Optional.*;
+import static java.util.function.UnaryOperator.identity;
 import java.util.function.*;
 
 @Getter
@@ -55,15 +56,16 @@ public class RsocketTcpServerConfiguration {
     private RsocketResumeConfiguration resume;
     private PayloadDecoder payloadDecoder;
     private int maxInboundPayloadSize;
-    private TransportModuleConstants.DataFormat defaultDataFormat;
-    private TransportModuleConstants.DataFormat defaultMetaDataFormat;
-    private Function<TransportModuleConstants.DataFormat, TransportPayloadReader> setupReader;
+    private DataFormat defaultDataFormat;
+    private DataFormat defaultMetaDataFormat;
     private UnaryOperator<InterceptorRegistry> interceptors;
-    private UnaryOperator<TcpServer> decorator;
+    private UnaryOperator<TcpServer> tcpDecorator;
+    private UnaryOperator<RSocketServer> decorator;
 
     public static RsocketTcpServerConfiguration defaults() {
         RsocketTcpServerConfiguration configuration = RsocketTcpServerConfiguration.builder().build();
-        configuration.decorator = UnaryOperator.identity();
+        configuration.tcpDecorator = identity();
+        configuration.decorator = identity();
         configuration.maxFrameLength = FRAME_LENGTH_MASK;
         configuration.defaultDataFormat = JSON;
         configuration.defaultMetaDataFormat = JSON;
@@ -73,15 +75,15 @@ public class RsocketTcpServerConfiguration {
         configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
         configuration.port = DEFAULT_PORT;
         configuration.host = BROADCAST_IP_ADDRESS;
-        configuration.setupReader = TransportPayloadReader::new;
-        configuration.interceptors = UnaryOperator.identity();
+        configuration.interceptors = identity();
         return configuration;
     }
 
     public static RsocketTcpServerConfiguration from(RsocketModuleRefresher refresher, RsocketTcpServerConfiguration current, ConfigurationSource source) {
         RsocketTcpServerConfiguration configuration = RsocketTcpServerConfiguration.builder().build();
+        configuration.tcpDecorator = current.tcpDecorator;
         configuration.decorator = current.decorator;
-        configuration.setupReader = TransportPayloadReader::new;
+        configuration.interceptors = current.interceptors;
 
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();

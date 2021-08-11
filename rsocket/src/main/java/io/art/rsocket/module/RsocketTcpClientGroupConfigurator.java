@@ -20,8 +20,8 @@ public class RsocketTcpClientGroupConfigurator {
     }
 
     RsocketTcpClientGroupConfiguration configure() {
-        return RsocketTcpClientGroupConfiguration.builder()
-                .connector(connector)
+        return RsocketTcpClientGroupConfiguration.defaults(connector)
+                .toBuilder()
                 .balancer(balancer)
                 .clientConfigurations(immutableSetOf(clients))
                 .build();

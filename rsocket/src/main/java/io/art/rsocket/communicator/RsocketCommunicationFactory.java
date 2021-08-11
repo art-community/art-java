@@ -188,8 +188,8 @@ public class RsocketCommunicationFactory {
 
 
     private static void configureInterceptors(RsocketCommonConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
-        Consumer<InterceptorRegistry> interceptors = connectorConfiguration.getInterceptors();
-        interceptors.accept(registry
+        UnaryOperator<InterceptorRegistry> interceptors = connectorConfiguration.getInterceptors();
+        interceptors.apply(registry
                 .forResponder(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration))
                 .forRequester(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration)));
     }

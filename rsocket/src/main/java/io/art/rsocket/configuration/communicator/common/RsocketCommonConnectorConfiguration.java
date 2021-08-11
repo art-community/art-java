@@ -38,7 +38,7 @@ public class RsocketCommonConnectorConfiguration {
     private int maxInboundPayloadSize;
     private UnaryOperator<ServiceMethodStrategy> service;
     private Duration timeout;
-    private Consumer<InterceptorRegistry> interceptors;
+    private UnaryOperator<InterceptorRegistry> interceptors;
     private UnaryOperator<RSocketConnector> decorator;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
@@ -52,7 +52,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
         configuration.service = ServiceMethodStrategy::byCommunicator;
         configuration.timeout = DEFAULT_TIMEOUT;
-        configuration.interceptors = emptyConsumer();
+        configuration.interceptors = identity();
         configuration.decorator = identity();
         return configuration;
     }
