@@ -112,7 +112,8 @@ public class RsocketCommunication implements Communication {
                 if (isNull(inputType)) {
                     return input -> cast(Flux.from(client.requestResponse(Mono.just(EMPTY_PAYLOAD)))
                             .map(payload -> readRsocketPayload(reader, payload, outputType))
-                            .filter(data -> !data.isEmpty()));
+                            .filter(data -> !data.isEmpty())
+                            .map(TransportPayload::getValue));
                 }
                 if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
                     return input -> {
@@ -137,7 +138,8 @@ public class RsocketCommunication implements Communication {
                 if (isNull(inputType)) {
                     return input -> cast(client.requestStream(Mono.just(EMPTY_PAYLOAD))
                             .map(payload -> readRsocketPayload(reader, payload, outputType))
-                            .filter(data -> !data.isEmpty()));
+                            .filter(data -> !data.isEmpty())
+                            .map(TransportPayload::getValue));
                 }
                 if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
                     return input -> {
