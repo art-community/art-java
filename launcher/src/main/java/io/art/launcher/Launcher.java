@@ -19,6 +19,7 @@
 package io.art.launcher;
 
 import io.art.configurator.module.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.exception.*;
@@ -26,6 +27,7 @@ import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
+import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
@@ -44,6 +46,8 @@ import static java.util.Objects.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
+@ForUsing
+@UtilityClass
 public class Launcher {
     private static final AtomicBoolean launched = new AtomicBoolean(false);
 
@@ -70,6 +74,8 @@ public class Launcher {
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
                 .onLoad(activator.onLoad())
+                .onLaunch(activator.onLaunch())
+                .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID))
@@ -110,6 +116,8 @@ public class Launcher {
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
                 .onLoad(activator.onLoad())
+                .onLaunch(activator.onLaunch())
+                .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID));
@@ -121,5 +129,4 @@ public class Launcher {
         printer.accept(DEFAULT_CONFIGURATION);
         LAUNCHED_MESSAGES.forEach(printer);
     }
-
 }

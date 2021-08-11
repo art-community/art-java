@@ -19,6 +19,7 @@
 package io.art.launcher;
 
 import io.art.configurator.module.*;
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.module.*;
@@ -34,6 +35,7 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
+@ForUsing
 @Accessors(fluent = true)
 public class Activator {
     private final static Activator activator = new Activator();
@@ -46,6 +48,14 @@ public class Activator {
     @Setter
     @Getter
     private Runnable onLoad;
+
+    @Setter
+    @Getter
+    private Runnable onLaunch;
+
+    @Setter
+    @Getter
+    private Runnable onShutdown;
 
     @Setter
     @Getter
@@ -90,7 +100,6 @@ public class Activator {
 //        module(TarantoolActivator.tarantool());
         return this;
     }
-
 
     public BlockingAction launch() {
         Launcher.launch(this);

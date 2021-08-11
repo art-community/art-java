@@ -8,14 +8,14 @@ import static io.art.core.caster.Caster.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.module.MetaModule.*;
 import static java.text.MessageFormat.*;
-import java.util.*;
+import static java.util.Objects.*;
 
 @ForUsing
 @UtilityClass
 public class Meta {
     public static <T> MetaClass<T> declaration(Class<T> type) {
         MetaClass<?> metaClass = metaModule().configuration().library().classes().get(type);
-        if (Objects.isNull(metaClass)) {
+        if (isNull(metaClass)) {
             throw new MetaException(format(META_CLASS_FOR_CLASS_NOT_EXISTS, type));
         }
         return cast(metaClass);

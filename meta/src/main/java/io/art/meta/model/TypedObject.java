@@ -1,8 +1,10 @@
 package io.art.meta.model;
 
+import io.art.core.annotation.*;
 import lombok.*;
 
 @Getter
+@ForUsing
 @AllArgsConstructor
 public class TypedObject {
     private final MetaType<?> type;

@@ -16,8 +16,8 @@ public class Logging {
         return logger(COMMON_LOGGER);
     }
 
-    public static Logger logger(Class<?> nameByClass) {
-        return logger(nameByClass.getName());
+    public static Logger logger(Class<?> type) {
+        return logger(type.getName());
     }
 
     public static Logger logger(String name) {

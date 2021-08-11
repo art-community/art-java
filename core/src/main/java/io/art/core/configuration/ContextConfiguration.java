@@ -81,6 +81,8 @@ public class ContextConfiguration {
     private final Consumer<Module<?, ?>> reload;
     private final Runnable onLoad;
     private final Runnable onUnload;
+    private final Runnable onLaunch;
+    private final Runnable onShutdown;
     private final Runnable beforeReload;
     private final Runnable afterReload;
 
