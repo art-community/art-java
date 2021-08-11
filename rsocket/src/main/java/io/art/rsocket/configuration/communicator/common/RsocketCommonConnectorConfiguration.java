@@ -6,9 +6,11 @@ import io.art.core.strategy.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
-import io.art.transport.payload.*;
+import io.rsocket.core.*;
+import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketRetryConfiguration.*;
@@ -17,6 +19,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import static java.util.function.UnaryOperator.*;
 import java.time.*;
 import java.util.function.*;
 
@@ -34,8 +37,9 @@ public class RsocketCommonConnectorConfiguration {
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
     private UnaryOperator<ServiceMethodStrategy> service;
-    private Supplier<TransportPayloadWriter> setupPayloadWriter;
     private Duration timeout;
+    private Consumer<InterceptorRegistry> interceptors;
+    private UnaryOperator<RSocketConnector> decorator;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
@@ -46,9 +50,10 @@ public class RsocketCommonConnectorConfiguration {
         configuration.fragment = 0;
         configuration.payloadDecoderMode = ZERO_COPY;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
-        configuration.setupPayloadWriter = () -> new TransportPayloadWriter(configuration.dataFormat);
         configuration.service = ServiceMethodStrategy::byCommunicator;
         configuration.timeout = DEFAULT_TIMEOUT;
+        configuration.interceptors = emptyConsumer();
+        configuration.decorator = identity();
         return configuration;
     }
 
@@ -60,6 +65,8 @@ public class RsocketCommonConnectorConfiguration {
         configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), current.metaDataFormat));
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
         configuration.connector = current.connector;
+        configuration.interceptors = current.interceptors;
+        configuration.decorator = current.decorator;
         configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), current.fragment));
         configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> rsocketKeepAlive(section, current.keepAlive), current.keepAlive));
         configuration.resume = listener.emit(let(source.getNested(RESUME_SECTION), section -> rsocketResume(section, current.resume), current.resume));

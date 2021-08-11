@@ -21,6 +21,7 @@ package io.art.rsocket.configuration.communicator.tcp;
 import io.art.core.changes.*;
 import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
+import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -28,6 +29,7 @@ import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @Getter
@@ -41,12 +43,14 @@ public class RsocketTcpClientConfiguration {
     @EqualsAndHashCode.Include
     private String host;
     private int maxFrameLength;
-    private UnaryOperator<TcpClient> decorator;
+    private UnaryOperator<TcpClient> clientDecorator;
+    private UnaryOperator<TcpClientTransport> transportDecorator;
 
     public static RsocketTcpClientConfiguration defaults(String connector) {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
         configuration.maxFrameLength = FRAME_LENGTH_MASK;
-        configuration.decorator = UnaryOperator.identity();
+        configuration.clientDecorator = identity();
+        configuration.transportDecorator = identity();
         configuration.connector = connector;
         configuration.port = DEFAULT_PORT;
         configuration.host = LOCALHOST;
@@ -56,7 +60,8 @@ public class RsocketTcpClientConfiguration {
     public static RsocketTcpClientConfiguration from(RsocketModuleRefresher refresher, RsocketTcpClientConfiguration current, ConfigurationSource source) {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
-        configuration.decorator = current.decorator;
+        configuration.clientDecorator = current.clientDecorator;
+        configuration.transportDecorator = current.transportDecorator;
         configuration.maxFrameLength = orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), current.maxFrameLength);
         configuration.connector = current.connector;
         configuration.port = listener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));

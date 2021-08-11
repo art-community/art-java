@@ -21,12 +21,14 @@ package io.art.rsocket.configuration.communicator.http;
 import io.art.core.changes.*;
 import io.art.core.source.*;
 import io.art.rsocket.refresher.*;
+import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @Getter
@@ -39,13 +41,15 @@ public class RsocketHttpClientConfiguration {
     private int port;
     @EqualsAndHashCode.Include
     private String host;
-    private UnaryOperator<HttpClient> decorator;
     private String path;
+    private UnaryOperator<HttpClient> clientDecorator;
+    private UnaryOperator<WebsocketClientTransport> transportDecorator;
 
     public static RsocketHttpClientConfiguration defaults(String connector) {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
         configuration.path = DEFAULT_HTTP_PATH;
-        configuration.decorator = UnaryOperator.identity();
+        configuration.clientDecorator = identity();
+        configuration.transportDecorator = identity();
         configuration.connector = connector;
         configuration.port = DEFAULT_PORT;
         configuration.host = LOCALHOST;
@@ -55,7 +59,8 @@ public class RsocketHttpClientConfiguration {
     public static RsocketHttpClientConfiguration from(RsocketModuleRefresher refresher, RsocketHttpClientConfiguration current, ConfigurationSource source) {
         RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
-        configuration.decorator = current.decorator;
+        configuration.clientDecorator = current.clientDecorator;
+        configuration.transportDecorator = current.transportDecorator;
         configuration.path = orElse(source.getString(TRANSPORT_WS_PATH_KEY), current.path);
         configuration.port = listener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
         configuration.host = listener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
