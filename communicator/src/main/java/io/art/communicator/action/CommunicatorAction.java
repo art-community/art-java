@@ -115,7 +115,7 @@ public class CommunicatorAction implements Managed {
 
         return () -> {
             try {
-                return blockFirst(process(Flux.empty()));
+                return block(process(Flux.empty()).last());
             } catch (Throwable throwable) {
                 throw new CommunicatorException(throwable);
             }
@@ -162,7 +162,7 @@ public class CommunicatorAction implements Managed {
 
             return input -> {
                 try {
-                    return blockFirst(process(Flux.from(asMono(input))));
+                    return block(process(Flux.from(asMono(input))).last());
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
                 }
