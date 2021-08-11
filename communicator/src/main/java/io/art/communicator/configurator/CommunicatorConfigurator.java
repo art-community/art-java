@@ -102,9 +102,7 @@ public abstract class CommunicatorConfigurator {
             Map<String, CommunicatorActionConfiguration> actions = map();
             String communicatorId = asId(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
-            if (nonNull(existed)) {
-                actions = existed.getActions().toMutable();
-            }
+            if (nonNull(existed)) actions = existed.getActions().toMutable();
             MetaMethod<?> method = methodBasedConfiguration.actionMethod.apply(cast(communicatorClass));
             UnaryOperator<CommunicatorActionConfigurator> decorator = getCommunicatorDecorator(communicatorClass);
             decorator = then(decorator, methodBasedConfiguration.decorator);
@@ -121,7 +119,11 @@ public abstract class CommunicatorConfigurator {
     private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> configurationProvider,
                                                Class<? extends Connector> connectorClass,
                                                ConnectorConfiguration connectorConfiguration) {
-        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(configurationProvider, connectorClass, connectorConfiguration);
+        ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(
+                configurationProvider,
+                connectorClass,
+                connectorConfiguration
+        );
         return new ConnectorContainer(communicators, connectorConfiguration.connector.get());
     }
 
