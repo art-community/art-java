@@ -23,8 +23,8 @@ public class ServiceMethodStrategy {
         return this;
     }
 
-    public ServiceMethodStrategy transform(Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer) {
-        this.strategy = TRANSFORMED;
+    public ServiceMethodStrategy fromCommunicator(Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer) {
+        this.strategy = FROM_COMMUNICATOR;
         this.transformer = transformer;
         return this;
     }
@@ -35,7 +35,7 @@ public class ServiceMethodStrategy {
                 return serviceMethodId(id.getCommunicatorId(), id.getActionId());
             case MANUAL:
                 return serviceMethodId(manualId, id.getActionId());
-            case TRANSFORMED:
+            case FROM_COMMUNICATOR:
                 return transformer.apply(id);
         }
         throw new ImpossibleSituationException();
@@ -44,6 +44,6 @@ public class ServiceMethodStrategy {
     enum Strategy {
         BY_COMMUNICATOR,
         MANUAL,
-        TRANSFORMED
+        FROM_COMMUNICATOR
     }
 }
