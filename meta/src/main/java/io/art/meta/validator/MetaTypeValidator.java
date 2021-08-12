@@ -20,6 +20,7 @@ package io.art.meta.validator;
 
 import io.art.meta.model.*;
 import lombok.experimental.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.text.MessageFormat.*;
@@ -122,7 +123,9 @@ public class MetaTypeValidator {
                     return new ValidationResult(false, format(SUPPLIER_WITH_UNKNOWN_PARAMETER, type));
                 }
                 break;
+            case UNKNOWN:
+                return new ValidationResult(false, format(UNKNOWN_TYPE, type));
         }
-        return new ValidationResult(true, format(UNKNOWN_TYPE, type));
+        return new ValidationResult(true, EMPTY_STRING);
     }
 }
