@@ -42,7 +42,6 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
-@ToString
 @ForGenerator
 @EqualsAndHashCode
 @Accessors(fluent = true)
@@ -187,5 +186,10 @@ public class MetaType<T> {
             cacheKey.arrayComponentType = arrayComponentType;
             return cacheKey;
         }
+    }
+
+    @Override
+    public String toString() {
+        return type.toString();
     }
 }

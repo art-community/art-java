@@ -43,7 +43,6 @@ import static java.util.function.Function.*;
 import java.util.*;
 import java.util.function.*;
 
-@ToString
 @ForGenerator
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
@@ -271,5 +270,9 @@ public abstract class MetaClass<T> {
 
     public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
         throw new MetaException(format(PROXY_IS_NULL, definition().type().getName()));
+    }
+
+    public String toString() {
+        return definition.toString();
     }
 }
