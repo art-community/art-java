@@ -33,6 +33,8 @@ public class RsocketTest {
 
     @RepeatedTest(32)
     public void testRsocket() {
+        clear();
+
         TestRsocketConnector connector = rsocketConnector(TestRsocketConnector.class);
         TestRsocket communicator = connector.testRsocket();
 
