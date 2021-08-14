@@ -288,7 +288,10 @@ public class ServiceMethod {
     private void emitFluxOutput(Object element, Sinks.Many<Object> sink) {
         try {
             Object output = invoker.invoke(element);
-            if (isNull(output)) return;
+            if (isNull(output)) {
+                sink.emitComplete(FAIL_FAST);
+                return;
+            }
             asFlux(output)
                     .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                     .doOnNext(resultElement -> sink.emitNext(resultElement, FAIL_FAST))
@@ -303,7 +306,10 @@ public class ServiceMethod {
     private void emitMonoOutput(Object element, Sinks.One<Object> sink) {
         try {
             Object output = invoker.invoke(element);
-            if (isNull(output)) return;
+            if (isNull(output)) {
+                sink.emitEmpty(FAIL_FAST);
+                return;
+            }
             asMono(output)
                     .doOnNext(resultElement -> sink.emitValue(resultElement, FAIL_FAST))
                     .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
