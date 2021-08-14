@@ -33,13 +33,11 @@ public interface RsocketModuleConstants {
 
     interface Errors {
         String SERVICE_METHOD_NOT_FOUND = "Service method was not found for service method identifiers: {0}";
-        String CONFIGURATION_PARAMETER_NOT_EXISTS = "RSocket configuration parameter does not exists: ''{0}''";
     }
 
     interface LoggingMessages {
         String RSOCKET_COMMUNICATOR_LOGGER = "rsocket-communicator";
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
-        String RSOCKET_DISPOSING = "Disposing RSocket";
         String SERVER_STARTED = "RSocket server started: {0}";
         String SERVER_STOPPED = "RSocket server stopped";
         String COMMUNICATOR_STARTED = "RSocket communicator started\nConnector: {0}\nSetup payload: {1}\n";
@@ -75,7 +73,6 @@ public interface RsocketModuleConstants {
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
-        String DEFAULT_SECTION = "default";
         String DATA_FORMAT_KEY = "dataFormat";
         String META_DATA_FORMAT_KEY = "metaDataFormat";
         String SERVICE_ID_KEY = "serviceId";
@@ -84,14 +81,9 @@ public interface RsocketModuleConstants {
         String BALANCER_KEY = "balancer";
         String GROUP_KEY = "group";
         String SINGLE_KEY = "single";
-        String TRANSPORT_SECTION = "transport";
-        String TRANSPORT_MODE_KEY = "transport.mode";
         String TRANSPORT_PORT_KEY = "transport.port";
         String TRANSPORT_HOST_KEY = "transport.host";
-        String TRANSPORT_TIMEOUT_CONNECTION_KEY = "transport.timeout.connection";
-        String TRANSPORT_TCP_HOST_KEY = "transport.tcp.host";
-        String TRANSPORT_TCP_PORT_KEY = "transport.tcp.port";
-        String TRANSPORT_WS_BASE_URL_KEY = "transport.ws.baseUrl";
+        String TRANSPORT_TIMEOUT_CONNECTION_KEY = "transport.timeout";
         String TRANSPORT_WS_PATH_KEY = "transport.ws.path";
         String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
 
@@ -110,8 +102,6 @@ public interface RsocketModuleConstants {
         String MAX_KEY = "max";
         String MAX_IN_ROW_KEY = "maxInRow";
         String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
-
-        String SERVICES_KEY = "services";
 
         String INTERVAL_KEY = "interval";
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
@@ -137,11 +127,6 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = ofSeconds(90);
         String DEFAULT_HTTP_PATH = SLASH;
-    }
-
-    interface Fields {
-        String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
-        String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
     }
 
     @Getter
@@ -191,10 +176,6 @@ public interface RsocketModuleConstants {
         WEIGHTED("weighted");
 
         private final String method;
-
-        public static BalancerMethod rsocketBalancer(String method) {
-            return rsocketBalancer(method, WEIGHTED);
-        }
 
         public static BalancerMethod rsocketBalancer(String method, BalancerMethod fallback) {
             if (ROUND_ROBIN.method.equalsIgnoreCase(method)) return ROUND_ROBIN;
