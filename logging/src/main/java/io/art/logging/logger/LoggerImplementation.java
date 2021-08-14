@@ -18,6 +18,7 @@
 
 package io.art.logging.logger;
 
+import com.google.common.base.*;
 import io.art.core.collection.*;
 import io.art.logging.configuration.*;
 import io.art.logging.constants.*;
@@ -26,6 +27,7 @@ import io.art.logging.model.*;
 import io.art.logging.writer.*;
 import lombok.*;
 import static com.google.common.base.Throwables.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.logging.constants.LoggingLevel.*;
 import static java.lang.Thread.*;
@@ -168,7 +170,7 @@ public class LoggerImplementation implements Logger {
                 .dateTime(now())
                 .logger(name)
                 .level(level)
-                .message(message + NEW_LINE + getStackTraceAsString(error))
+                .message(message + NEW_LINE + let(error, Throwables::getStackTraceAsString))
                 .thread(currentThread())
                 .build();
     }

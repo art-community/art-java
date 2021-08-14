@@ -1,11 +1,12 @@
 package io.art.rsocket.test.registry;
 
+import io.art.logging.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.util.concurrent.TimeUnit.*;
+import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.*;
 
 public class RsocketTestExecutionsRegistry {
     private final static Map<String, Object> executions = map();
@@ -17,7 +18,11 @@ public class RsocketTestExecutionsRegistry {
     }
 
     public static Map<String, Object> executions() {
-        ignoreException(() -> waiter.await(1, MINUTES), (Consumer<Throwable>) System.err::println);
+        try {
+            assertTrue(waiter.await(1, MINUTES));
+        } catch (InterruptedException interruptedException) {
+            Logging.logger().error(interruptedException);
+        }
         return executions;
     }
 }

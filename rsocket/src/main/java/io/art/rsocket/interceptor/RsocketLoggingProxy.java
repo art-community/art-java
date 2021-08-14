@@ -1,5 +1,6 @@
 package io.art.rsocket.interceptor;
 
+import com.google.common.base.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.rsocket.*;
@@ -8,6 +9,7 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.annotation.*;
 import static com.google.common.base.Throwables.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static java.text.MessageFormat.*;
 import static reactor.core.publisher.Flux.*;
@@ -27,7 +29,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
         log(payload, FIRE_AND_FORGET_REQUEST_LOG);
         Mono<Void> output = super
                 .fireAndForget(payload)
-                .doOnError(error -> logger.error(format(FIRE_AND_FORGET_EXCEPTION_LOG, getStackTraceAsString(error))));
+                .doOnError(error -> logger.error(format(FIRE_AND_FORGET_EXCEPTION_LOG, let(error, Throwables::getStackTraceAsString))));
         return output.doOnNext(nothing -> log(FIRE_AND_FORGET_RESPONSE_LOG));
     }
 
@@ -36,7 +38,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
         log(payload, REQUEST_RESPONSE_REQUEST_LOG);
         Mono<Payload> output = super
                 .requestResponse(payload)
-                .doOnError(error -> logger.error(format(REQUEST_RESPONSE_EXCEPTION_LOG, getStackTraceAsString(error))));
+                .doOnError(error -> logger.error(format(REQUEST_RESPONSE_EXCEPTION_LOG, let(error, Throwables::getStackTraceAsString))));
         return output.doOnNext(response -> log(response, RESPONSE_RESPONSE_LOG));
     }
 
@@ -45,7 +47,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
         log(payload, REQUEST_STREAM_REQUEST_LOG);
         Flux<Payload> output = super
                 .requestStream(payload)
-                .doOnError(error -> logger.error(format(REQUEST_STREAM_EXCEPTION_LOG, getStackTraceAsString(error))));
+                .doOnError(error -> logger.error(format(REQUEST_STREAM_EXCEPTION_LOG, let(error, Throwables::getStackTraceAsString))));
         return output.doOnNext(response -> log(response, REQUEST_STREAM_RESPONSE_LOG));
     }
 
@@ -53,7 +55,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
     public Flux<Payload> requestChannel(@NonNull Publisher<Payload> payloads) {
         Flux<Payload> input = from(payloads)
                 .doOnNext(payload -> log(payload, REQUEST_CHANNEL_REQUEST_LOG))
-                .doOnError(error -> logger.error(format(REQUEST_CHANNEL_EXCEPTION_LOG, getStackTraceAsString(error))));
+                .doOnError(error -> logger.error(format(REQUEST_CHANNEL_EXCEPTION_LOG, let(error, Throwables::getStackTraceAsString))));
         Flux<Payload> output = super.requestChannel(input);
         return output.doOnNext(payload -> log(payload, REQUEST_CHANNEL_RESPONSE_LOG));
     }
@@ -63,7 +65,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
         log(payload, METADATA_PUSH_REQUEST_LOG);
         Mono<Void> output = super
                 .metadataPush(payload)
-                .doOnError(error -> logger.error(format(METADATA_PUSH_EXCEPTION_LOG, getStackTraceAsString(error))));
+                .doOnError(error -> logger.error(format(METADATA_PUSH_EXCEPTION_LOG, let(error, Throwables::getStackTraceAsString))));
         return output.doOnNext(nothing -> log(METADATA_PUSH_RESPONSE_LOG));
     }
 
