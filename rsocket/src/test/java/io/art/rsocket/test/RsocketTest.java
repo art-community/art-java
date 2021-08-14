@@ -1,6 +1,5 @@
 package io.art.rsocket.test;
 
-import io.art.communicator.configurator.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
@@ -17,8 +16,6 @@ import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
-import static io.art.server.factory.ServiceMethodFactory.preconfiguredServiceMethod;
-import static java.time.Duration.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
