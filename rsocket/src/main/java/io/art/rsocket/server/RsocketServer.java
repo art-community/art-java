@@ -110,7 +110,8 @@ public class RsocketServer implements Server {
         RsocketTcpServerConfiguration tcp = this.configuration.getTcpServer();
         RsocketCommonServerConfiguration common = fromTcp(tcp);
         UnaryOperator<TcpServer> tcpDecorator = tcp.getTcpDecorator();
-        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(TcpServer.create().port(common.getPort())), tcp.getMaxFrameLength());
+        TcpServer server = tcpDecorator.apply(TcpServer.create().port(common.getPort()));
+        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(server, tcp.getMaxFrameLength());
         return createServer(common, transport);
     }
 
@@ -118,7 +119,8 @@ public class RsocketServer implements Server {
         RsocketHttpServerConfiguration http = this.configuration.getHttpServer();
         RsocketCommonServerConfiguration common = fromHttp(http);
         UnaryOperator<HttpServer> httpDecorator = http.getHttpDecorator();
-        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(httpDecorator.apply(HttpServer.create().port(common.getPort())));
+        HttpServer server = httpDecorator.apply(HttpServer.create().port(common.getPort()));
+        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(server);
         return createServer(common, transport);
     }
 
