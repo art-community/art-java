@@ -46,6 +46,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
+import static reactor.core.publisher.Sinks.*;
 import java.util.function.*;
 
 public class RsocketCommunication implements Communication {
@@ -55,6 +56,8 @@ public class RsocketCommunication implements Communication {
     private final Property<RSocketClient> client;
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;
     private CommunicatorAction action;
+    private MetaType<?> inputMappingType;
+    private MetaType<?> outputMappingType;
 
     public RsocketCommunication(Supplier<RSocketClient> client, RsocketModuleConfiguration module, RsocketCommonConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
@@ -67,6 +70,15 @@ public class RsocketCommunication implements Communication {
     @Override
     public void initialize(CommunicatorAction action) {
         this.action = action;
+        inputMappingType = action.getInputType();
+        if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
+            inputMappingType = inputMappingType.parameters().get(0);
+        }
+
+        outputMappingType = action.getOutputType();
+        if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
+            outputMappingType = outputMappingType.parameters().get(0);
+        }
         client.initialize();
     }
 
@@ -90,93 +102,132 @@ public class RsocketCommunication implements Communication {
     private Function<Flux<Object>, Flux<Object>> communication() {
         TransportPayloadReader reader = new TransportPayloadReader(connectorConfiguration.getDataFormat());
         TransportPayloadWriter writer = new TransportPayloadWriter(connectorConfiguration.getDataFormat());
-        RSocketClient client = this.client.get();
-        MetaType<?> inputType = action.getInputType();
-        MetaType<?> outputType = action.getOutputType();
         switch (communicationMode()) {
             case FIRE_AND_FORGET:
-                if (isNull(inputType)) {
-                    return input -> cast(Flux.from(client.fireAndForget(Mono.just(EMPTY_PAYLOAD))));
-                }
-                if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
-                    return input -> {
-                        Sinks.One<Object> sink = Sinks.one();
-                        input.doOnNext(element -> sink.emitValue(element, FAIL_FAST))
-                                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                                .subscribe();
-                        return cast(client.fireAndForget(sink.asMono().map(element -> create(writer.write(typed(inputType.parameters().get(0), action))))));
-                    };
-                }
-                return input -> cast(client.fireAndForget(input.map(value -> create(writer.write(typed(inputType, value)))).last(EMPTY_PAYLOAD)).flux());
+                return cast(fireAndForget(writer));
             case REQUEST_RESPONSE:
-                if (isNull(inputType)) {
-                    return input -> cast(Flux.from(client.requestResponse(Mono.just(EMPTY_PAYLOAD)))
-                            .map(payload -> readRsocketPayload(reader, payload, outputType))
-                            .filter(data -> !data.isEmpty())
-                            .map(TransportPayload::getValue));
-                }
-                if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
-                    return input -> {
-                        Sinks.One<Object> sink = Sinks.one();
-                        input.doOnNext(element -> sink.emitValue(element, FAIL_FAST))
-                                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                                .subscribe();
-                        return client.requestResponse(sink.asMono().map(element -> create(writer.write(typed(inputType.parameters().get(0), action)))))
-                                .flux()
-                                .map(payload -> readRsocketPayload(reader, payload, outputType))
-                                .filter(data -> !data.isEmpty())
-                                .map(TransportPayload::getValue);
-                    };
-                }
-                return input -> client
-                        .requestResponse(input.map(value -> create(writer.write(typed(inputType, value)))).last(EMPTY_PAYLOAD))
-                        .flux()
-                        .map(payload -> readRsocketPayload(reader, payload, outputType))
-                        .filter(data -> !data.isEmpty())
-                        .map(TransportPayload::getValue);
+                return cast(requestResponse(reader, writer));
             case REQUEST_STREAM:
-                if (isNull(inputType)) {
-                    return input -> cast(client.requestStream(Mono.just(EMPTY_PAYLOAD))
-                            .map(payload -> readRsocketPayload(reader, payload, outputType))
-                            .filter(data -> !data.isEmpty())
-                            .map(TransportPayload::getValue));
-                }
-                if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
-                    return input -> {
-                        Sinks.One<Object> sink = Sinks.one();
-                        input.doOnNext(element -> sink.emitValue(element, FAIL_FAST))
-                                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                                .subscribe();
-                        return client.requestStream(sink.asMono().map(element -> create(writer.write(typed(inputType.parameters().get(0), action)))))
-                                .map(payload -> readRsocketPayload(reader, payload, outputType))
-                                .filter(data -> !data.isEmpty())
-                                .map(TransportPayload::getValue);
-                    };
-                }
-                return input -> client
-                        .requestStream(input.map(value -> create(writer.write(typed(inputType, value)))).last(EMPTY_PAYLOAD))
-                        .map(payload -> readRsocketPayload(reader, payload, outputType))
-                        .filter(data -> !data.isEmpty())
-                        .map(TransportPayload::getValue);
+                return requestStream(reader, writer);
             case REQUEST_CHANNEL:
-                return input -> client
-                        .requestChannel(input.map(value -> create(writer.write(typed(inputType.parameters().get(0), value)))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
-                        .map(payload -> readRsocketPayload(reader, payload, outputType))
-                        .filter(data -> !data.isEmpty())
-                        .map(TransportPayload::getValue);
+                return requestChannel(reader, writer);
             case METADATA_PUSH:
-                if (inputType.internalKind() == FLUX || inputType.internalKind() == MONO) {
-                    return input -> {
-                        Sinks.One<Object> sink = Sinks.one();
-                        input.doOnNext(element -> sink.emitValue(element, FAIL_FAST))
-                                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                                .subscribe();
-                        return cast(client.metadataPush(sink.asMono().map(element -> create(writer.write(typed(inputType.parameters().get(0), action))))));
-                    };
-                }
-                return input -> cast(client.metadataPush(input.map(value -> create(writer.write(typed(inputType, value)))).last(EMPTY_PAYLOAD)).flux());
+                return cast(metaDataPush(writer));
         }
         throw new ImpossibleSituationException();
+    }
+
+
+    private Function<Flux<Object>, Flux<?>> fireAndForget(TransportPayloadWriter writer) {
+        RSocketClient client = this.client.get();
+        if (isNull(inputMappingType)) {
+            return input -> Flux.from(client.fireAndForget(Mono.just(EMPTY_PAYLOAD)));
+        }
+        if (inputMappingType.internalKind() == FLUX || inputMappingType.internalKind() == MONO) {
+            return input -> {
+                Sinks.One<Object> sink = one();
+                subscribeMono(input, sink);
+                return client
+                        .fireAndForget(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .flux();
+            };
+        }
+        return input -> client
+                .fireAndForget(input.map(value -> create(writer.write(typed(inputMappingType, value)))).last(EMPTY_PAYLOAD))
+                .flux();
+    }
+
+    private Function<Flux<Object>, Flux<?>> requestResponse(TransportPayloadReader reader, TransportPayloadWriter writer) {
+        RSocketClient client = this.client.get();
+        if (isNull(inputMappingType)) {
+            return input -> Flux.from(client.requestResponse(Mono.just(EMPTY_PAYLOAD)))
+                    .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                    .filter(data -> !data.isEmpty())
+                    .map(TransportPayload::getValue);
+        }
+        if (inputMappingType.internalKind() == FLUX || inputMappingType.internalKind() == MONO) {
+            return input -> {
+                Sinks.One<Object> sink = one();
+                subscribeMono(input, sink);
+                return client.requestResponse(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .flux()
+                        .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                        .filter(data -> !data.isEmpty())
+                        .map(TransportPayload::getValue);
+            };
+        }
+        return input -> client
+                .requestResponse(input.map(value -> create(writer.write(typed(inputMappingType, value)))).last(EMPTY_PAYLOAD))
+                .flux()
+                .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                .filter(data -> !data.isEmpty())
+                .map(TransportPayload::getValue);
+    }
+
+    private Function<Flux<Object>, Flux<Object>> requestStream(TransportPayloadReader reader, TransportPayloadWriter writer) {
+        RSocketClient client = this.client.get();
+        if (isNull(inputMappingType)) {
+            return input -> cast(client.requestStream(Mono.just(EMPTY_PAYLOAD))
+                    .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                    .filter(data -> !data.isEmpty())
+                    .map(TransportPayload::getValue));
+        }
+        if (inputMappingType.internalKind() == FLUX || inputMappingType.internalKind() == MONO) {
+            return input -> {
+                Sinks.One<Object> sink = one();
+                subscribeMono(input, sink);
+                return client.requestStream(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                        .filter(data -> !data.isEmpty())
+                        .map(TransportPayload::getValue);
+            };
+        }
+        return input -> client
+                .requestStream(input.map(value -> create(writer.write(typed(inputMappingType, value)))).last(EMPTY_PAYLOAD))
+                .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                .filter(data -> !data.isEmpty())
+                .map(TransportPayload::getValue);
+    }
+
+    private Function<Flux<Object>, Flux<Object>> requestChannel(TransportPayloadReader reader, TransportPayloadWriter writer) {
+        RSocketClient client = this.client.get();
+        if (isNull(inputMappingType)) {
+            return input -> client
+                    .requestChannel(Flux.empty())
+                    .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                    .filter(data -> !data.isEmpty())
+                    .map(TransportPayload::getValue);
+        }
+        return input -> client
+                .requestChannel(input.map(value -> create(writer.write(typed(inputMappingType, value)))).switchIfEmpty(EMPTY_PAYLOAD_MONO.get()))
+                .map(payload -> readRsocketPayload(reader, payload, outputMappingType))
+                .filter(data -> !data.isEmpty())
+                .map(TransportPayload::getValue);
+    }
+
+    private Function<Flux<Object>, Flux<?>> metaDataPush(TransportPayloadWriter writer) {
+        RSocketClient client = this.client.get();
+        if (isNull(inputMappingType)) {
+            return input -> Flux.from(client.metadataPush(Mono.just(EMPTY_PAYLOAD)));
+        }
+        if (inputMappingType.internalKind() == FLUX || inputMappingType.internalKind() == MONO) {
+            return input -> {
+                Sinks.One<Object> sink = one();
+                subscribeMono(input, sink);
+                return client
+                        .metadataPush(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .flux();
+            };
+        }
+        return input -> client
+                .metadataPush(input.map(value -> create(writer.write(typed(inputMappingType, value)))).last(EMPTY_PAYLOAD))
+                .flux();
+    }
+
+    private void subscribeMono(Flux<Object> input, Sinks.One<Object> emitter) {
+        input.doOnNext(element -> emitter.emitValue(element, FAIL_FAST))
+                .doOnError(error -> emitter.emitError(error, FAIL_FAST))
+                .subscribe();
     }
 
     private CommunicationMode communicationMode() {
