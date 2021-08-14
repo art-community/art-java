@@ -135,8 +135,8 @@ public class ServingRsocket implements RSocket {
     public Mono<Payload> requestResponse(Payload payload) {
         TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : let(payloadValue.getValue(), Flux::just, empty());
-        if (isNull(outputMappingType)) {
-            return cast(serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD).last(EMPTY_PAYLOAD));
+        if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
+            return serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD).last(EMPTY_PAYLOAD);
         }
         return serviceMethod
                 .serve(input)
@@ -150,7 +150,7 @@ public class ServingRsocket implements RSocket {
     public Flux<Payload> requestStream(Payload payload) {
         TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
-        if (isNull(outputMappingType)) {
+        if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
             return serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD);
         }
         return serviceMethod
@@ -164,7 +164,7 @@ public class ServingRsocket implements RSocket {
                 .map(data -> readRsocketPayload(dataReader, data, inputMappingType))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue);
-        if (isNull(outputMappingType)) {
+        if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
             return serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD);
         }
         return serviceMethod
@@ -176,9 +176,6 @@ public class ServingRsocket implements RSocket {
     public Mono<Void> metadataPush(Payload payload) {
         TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
-        if (isNull(outputMappingType)) {
-            return cast(serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD).last(EMPTY_PAYLOAD));
-        }
         return serviceMethod.serve(input).then();
     }
 

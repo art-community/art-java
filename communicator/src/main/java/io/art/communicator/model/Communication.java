@@ -19,6 +19,7 @@
 package io.art.communicator.model;
 
 import io.art.communicator.action.*;
+import io.art.transport.payload.*;
 import reactor.core.publisher.*;
 
 public interface Communication {

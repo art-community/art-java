@@ -21,6 +21,7 @@ package io.art.transport.payload;
 import io.art.core.property.*;
 import io.netty.buffer.*;
 import lombok.*;
+import reactor.core.publisher.*;
 
 @AllArgsConstructor
 public class TransportPayload {
@@ -30,6 +31,8 @@ public class TransportPayload {
     private final LazyProperty<?> value;
 
     private static final TransportPayload EMPTY = new TransportPayload(null, null);
+    private static final Flux<TransportPayload> EMPTY_TRANSPORT_FLUX = Flux.just(EMPTY);
+    private static final Mono<TransportPayload> EMPTY_TRANSPORT_MONO = Mono.just(EMPTY);
 
     public boolean isEmpty() {
         return this == EMPTY;
@@ -37,6 +40,14 @@ public class TransportPayload {
 
     public static TransportPayload emptyTransportPayload() {
         return EMPTY;
+    }
+
+    public static Flux<TransportPayload> emptyTransportPayloadFlux() {
+        return EMPTY_TRANSPORT_FLUX;
+    }
+
+    public static Mono<TransportPayload> emptyTransportPayloadMono() {
+        return EMPTY_TRANSPORT_MONO;
     }
 
     public Object getValue() {

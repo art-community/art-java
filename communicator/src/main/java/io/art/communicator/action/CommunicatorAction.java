@@ -28,6 +28,7 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.ReactiveConstants.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
@@ -96,7 +97,7 @@ public class CommunicatorAction implements Managed {
         if (outputType.internalKind() == MONO) {
             return () -> {
                 try {
-                    return process(Flux.empty()).last();
+                    return Mono.from(process(Flux.empty()));
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
                 }
@@ -115,7 +116,7 @@ public class CommunicatorAction implements Managed {
 
         return () -> {
             try {
-                return block(process(Flux.empty()).last());
+                return blockNullable(process(Flux.empty()).last(NULL_OBJECT));
             } catch (Throwable throwable) {
                 throw new CommunicatorException(throwable);
             }
@@ -143,7 +144,7 @@ public class CommunicatorAction implements Managed {
             if (outputType.internalKind() == MONO) {
                 return input -> {
                     try {
-                        return process(Flux.from(asMono(input))).last();
+                        return Mono.from(process(Flux.from(asMono(input))));
                     } catch (Throwable throwable) {
                         throw new CommunicatorException(throwable);
                     }
@@ -162,7 +163,7 @@ public class CommunicatorAction implements Managed {
 
             return input -> {
                 try {
-                    return block(process(Flux.from(asMono(input))).last());
+                    return blockNullable(process(Flux.from(asMono(input))).last(NULL_OBJECT));
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
                 }
@@ -184,7 +185,7 @@ public class CommunicatorAction implements Managed {
             if (outputType.internalKind() == MONO) {
                 return input -> {
                     try {
-                        return process(asFlux(input)).last();
+                        return Mono.from(process(asFlux(input)));
                     } catch (Throwable throwable) {
                         throw new CommunicatorException(throwable);
                     }
@@ -203,7 +204,7 @@ public class CommunicatorAction implements Managed {
 
             return input -> {
                 try {
-                    return block(process(asFlux(input)).last());
+                    return blockNullable(process(asFlux(input)).last(NULL_OBJECT));
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
                 }
@@ -224,7 +225,7 @@ public class CommunicatorAction implements Managed {
         if (outputType.internalKind() == MONO) {
             return input -> {
                 try {
-                    return process(Flux.just(input)).last();
+                    return Mono.from(process(Flux.just(input)));
                 } catch (Throwable throwable) {
                     throw new CommunicatorException(throwable);
                 }
@@ -243,7 +244,7 @@ public class CommunicatorAction implements Managed {
 
         return input -> {
             try {
-                return block(process(Flux.just(input)).last());
+                return blockNullable(process(Flux.just(input)).last(NULL_OBJECT));
             } catch (Throwable throwable) {
                 throw new CommunicatorException(throwable);
             }

@@ -7,6 +7,7 @@ import lombok.experimental.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.ReactiveConstants.*;
 
 @UtilityClass
 public class ReactiveExtensions {
@@ -52,5 +53,12 @@ public class ReactiveExtensions {
         BlockingMonoSubscriber<T> subscriber = new BlockingMonoSubscriber<>();
         mono.subscribe(subscriber);
         return subscriber.blockingGet();
+    }
+
+    public <T> T blockNullable(Mono<T> mono) {
+        BlockingMonoSubscriber<T> subscriber = new BlockingMonoSubscriber<>();
+        mono.subscribe(subscriber);
+        T result = subscriber.blockingGet();
+        return result == NULL_OBJECT ? null : result;
     }
 }

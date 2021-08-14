@@ -63,6 +63,7 @@ public class ServiceMethod {
         return decorateOutput(getHandler().apply(decorateInput(input)));
     }
 
+
     private Function<Flux<Object>, Flux<Object>> selectHandler() {
         if (isNull(inputType)) {
             return emptyInputHandler();
