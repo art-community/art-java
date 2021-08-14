@@ -32,7 +32,6 @@ import io.rsocket.*;
 import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.mime.MimeType.*;
@@ -76,6 +75,7 @@ public class ServingRsocket implements RSocket {
                     outputMappingType = cached.outputMappingType;
                     return;
                 }
+                cache.put(serviceMethodId, this);
                 serviceMethod = findServiceMethod(serviceMethodId);
                 dataReader = new TransportPayloadReader(dataFormat);
                 dataWriter = new TransportPayloadWriter(dataFormat);
@@ -104,7 +104,7 @@ public class ServingRsocket implements RSocket {
                 return;
 
             }
-
+            cache.put(defaultServiceMethod, this);
             serviceMethod = findServiceMethod(defaultServiceMethod);
             dataReader = new TransportPayloadReader(dataFormat);
             dataWriter = new TransportPayloadWriter(dataFormat);

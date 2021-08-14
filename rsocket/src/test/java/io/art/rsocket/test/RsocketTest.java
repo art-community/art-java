@@ -4,7 +4,6 @@ import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
-import io.art.server.configurator.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
@@ -28,9 +27,7 @@ public class RsocketTest {
                 json(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
-                        .server(server -> server
-                                .tcp(tcp -> tcp.logging(true))
-                                .configureService(TestRsocketService.class, ServiceMethodConfigurator::logging)))
+                        .server(server -> server.tcp().configureService(TestRsocketService.class)))
         );
     }
 

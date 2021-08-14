@@ -3,6 +3,7 @@ package io.art.rsocket.test.service;
 import io.art.rsocket.test.communicator.*;
 import reactor.core.publisher.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
 public class TestRsocketService implements TestRsocket {
     public void m1() {
@@ -69,17 +70,32 @@ public class TestRsocketService implements TestRsocket {
     }
 
     public String m14(Flux<String> input) {
-        register("m14", input);
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
+                .doOnError(element -> many.emitError(element, FAIL_FAST))
+                .doOnComplete(() -> many.emitComplete(FAIL_FAST))
+                .subscribe();
+        register("m14", many.asFlux());
         return "test";
     }
 
     public Mono<String> m15(Flux<String> input) {
-        register("m15", input);
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
+                .doOnError(element -> many.emitError(element, FAIL_FAST))
+                .doOnComplete(() -> many.emitComplete(FAIL_FAST))
+                .subscribe();
+        register("m15", many.asFlux());
         return Mono.just("test");
     }
 
     public Flux<String> m16(Flux<String> input) {
-        register("m16", input);
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
+                .doOnError(element -> many.emitError(element, FAIL_FAST))
+                .doOnComplete(() -> many.emitComplete(FAIL_FAST))
+                .subscribe();
+        register("m16", many.asFlux());
         return Flux.just("test");
     }
 }
