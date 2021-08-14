@@ -24,17 +24,21 @@ import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
 public class MetaClassMutableRegistry {
-    private final static Map<Class<?>, MetaClass<?>> META_CLASS_REGISTRY = map();
+    private final static Map<Class<?>, MetaClass<?>> REGISTRY = map();
 
     public static ImmutableMap<Class<?>, MetaClass<?>> get() {
-        return immutableMapOf(META_CLASS_REGISTRY);
+        return immutableMapOf(REGISTRY);
+    }
+
+    public static boolean contains(Class<?> type) {
+        return REGISTRY.containsKey(type);
     }
 
     public static void clear() {
-        META_CLASS_REGISTRY.clear();
+        REGISTRY.clear();
     }
 
     public static void register(MetaClass<?> metaClass) {
-        META_CLASS_REGISTRY.put(metaClass.definition().type(), metaClass);
+        REGISTRY.put(metaClass.definition().type(), metaClass);
     }
 }

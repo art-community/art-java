@@ -1,5 +1,6 @@
 package io.art.core.extensions;
 
+import io.art.core.checker.*;
 import lombok.experimental.*;
 import java.util.function.*;
 
@@ -23,8 +24,8 @@ public class FunctionExtensions {
 
     public static Runnable before(Runnable before, Runnable current) {
         return () -> {
-            before.run();
-            current.run();
+            NullityChecker.apply(before, Runnable::run);
+            NullityChecker.apply(current, Runnable::run);
         };
     }
 }

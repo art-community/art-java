@@ -24,11 +24,12 @@ import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.meta.model.*;
 import lombok.*;
+import static io.art.core.property.LazyProperty.*;
 
 @ForUsing
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class MetaModuleConfiguration implements ModuleConfiguration {
-    private final LazyProperty<? extends MetaLibrary> library;
+    private LazyProperty<? extends MetaLibrary> library;
 
     public MetaLibrary library() {
         return library.get();
@@ -45,6 +46,7 @@ public class MetaModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator initialize(MetaModuleConfiguration configuration) {
+            this.configuration.library = lazy(configuration::library);
             return this;
         }
     }

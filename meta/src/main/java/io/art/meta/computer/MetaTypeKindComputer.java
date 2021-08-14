@@ -26,6 +26,7 @@ import io.art.meta.registry.*;
 import io.netty.buffer.*;
 import reactor.core.publisher.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static java.util.Objects.*;
 import java.io.*;
 import java.nio.*;
 import java.time.*;
@@ -35,8 +36,9 @@ import java.util.stream.*;
 
 public class MetaTypeKindComputer {
     public static MetaTypeInternalKind computeInternalKind(MetaType<?> metaType) {
+        if (nonNull(metaType.internalKind())) return metaType.internalKind();
         Class<?> type = metaType.type();
-        if (MetaClassMutableRegistry.get().containsKey(type)) return ENTITY;
+        if (MetaClassMutableRegistry.contains(type)) return ENTITY;
         if (type.isEnum()) return ENUM;
         if (long[].class.equals(type)) return LONG_ARRAY;
         if (int[].class.equals(type)) return INTEGER_ARRAY;
@@ -84,8 +86,9 @@ public class MetaTypeKindComputer {
         return UNKNOWN;
     }
 
-    public static MetaTypeExternalKind computeExternalKind(MetaType<?> type) {
-        switch (type.internalKind()) {
+    public static MetaTypeExternalKind computeExternalKind(MetaType<?> metaType) {
+        if (nonNull(metaType.externalKind())) return metaType.externalKind();
+        switch (metaType.internalKind()) {
             case STRING:
             case ENUM:
             case LOCAL_DATE_TIME:

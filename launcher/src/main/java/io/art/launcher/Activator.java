@@ -78,7 +78,7 @@ public class Activator {
     }
 
     public Activator module(ModuleActivator activator) {
-        activator.getDependencies().forEach(this::module);
+        activator.dependencies().forEach(this::module);
         activators.putIfAbsent(activator.getId(), activator);
         return this;
     }

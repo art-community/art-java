@@ -49,5 +49,4 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {
         return getMetaModule();
     }
-
 }

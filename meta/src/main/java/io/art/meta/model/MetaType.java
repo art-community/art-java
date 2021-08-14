@@ -22,11 +22,13 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.validation.*;
 import io.art.meta.constants.MetaConstants.*;
+import io.art.meta.registry.*;
 import io.art.meta.transformer.*;
 import lombok.Builder;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -134,14 +136,18 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
-        return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> MetaType.<T>builder()
+        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
+        MetaTypeBuilder<T> builder = let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
+        return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> builder
                 .type(cast(type))
                 .parameters(immutableArrayOf(parameters))
                 .build()));
     }
 
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
-        return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>builder()
+        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
+        MetaTypeBuilder<T> builder = let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
+        return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> builder
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .enumFactory(enumFactory)
@@ -149,7 +155,9 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
-        return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>builder()
+        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
+        MetaTypeBuilder<T> builder = let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
+        return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> builder
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .arrayFactory(cast(arrayFactory))

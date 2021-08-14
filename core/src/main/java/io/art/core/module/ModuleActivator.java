@@ -18,12 +18,14 @@
 
 package io.art.core.module;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
 import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
 @Builder
+@ForUsing
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ModuleActivator {
     @Getter
@@ -58,7 +60,7 @@ public class ModuleActivator {
                 .build();
     }
 
-    public ImmutableSet<ModuleActivator> getDependencies() {
+    public ImmutableSet<ModuleActivator> dependencies() {
         return immutableSetOf(dependencies);
     }
 

@@ -21,6 +21,7 @@ package io.art.meta.computer;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.meta.model.*;
+import io.art.meta.registry.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
@@ -74,6 +75,8 @@ import static java.util.Objects.*;
 public class TransformersComputer {
     public static MetaTransformer<?> computeInputTransformer(MetaType<?> type) {
         if (nonNull(type.inputTransformer())) return type.inputTransformer();
+        CustomTransformers custom = CustomTransformerMutableRegistry.get(type.type());
+        if (nonNull(custom)) return custom.getInput().apply(type);
         ImmutableArray<MetaType<?>> parameters = type.parameters();
         switch (type.internalKind()) {
             case MONO:
@@ -95,8 +98,10 @@ public class TransformersComputer {
 
     public static MetaTransformer<?> computeOutputTransformer(MetaType<?> type) {
         if (nonNull(type.outputTransformer())) return type.outputTransformer();
+        CustomTransformers custom = CustomTransformerMutableRegistry.get(type.type());
+        if (nonNull(custom)) return custom.getOutput().apply(type);
         ImmutableArray<MetaType<?>> parameters = type.parameters();
-        switch(type.internalKind()) {
+        switch (type.internalKind()) {
             case MONO:
                 MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
                 return monoTransformer(parameterTransformer);
