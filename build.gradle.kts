@@ -49,7 +49,9 @@ subprojects {
     apply(plugin = "java-test-fixtures")
 
     afterEvaluate {
-        configurations.findByName("jmh")?.exclude("org.slf4j")
+        tasks.findByName("jmhJar")?.let { task ->
+            (task as? Jar)?.exclude("org/slf4j/impl/StaticLoggerBinder.class")
+        }
     }
 
     dependencies {
