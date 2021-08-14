@@ -127,7 +127,7 @@ public class RsocketServer implements Server {
     private CloseableChannel createServer(RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
         int fragmentationMtu = serverConfiguration.getFragmentationMtu();
         RSocketServer server = RSocketServer
-                .create((payload, requester) -> createAcceptor(payload, requester, serverConfiguration))
+                .create((payload, requester) -> createAcceptor(payload, serverConfiguration))
                 .maxInboundPayloadSize(serverConfiguration.getMaxInboundPayloadSize());
         if (fragmentationMtu > 0) {
             server.fragment(fragmentationMtu);
@@ -159,7 +159,7 @@ public class RsocketServer implements Server {
         httpCloser.block();
     }
 
-    private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RSocket requester, RsocketCommonServerConfiguration serverConfiguration) {
+    private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration) {
         Mono<RSocket> socket = Mono.create(emitter -> setupSocket(payload, serverConfiguration, emitter));
         if (withLogging()) {
             return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));

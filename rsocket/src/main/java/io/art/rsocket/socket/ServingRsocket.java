@@ -18,6 +18,7 @@
 
 package io.art.rsocket.socket;
 
+import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
@@ -26,7 +27,6 @@ import io.art.meta.model.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
-import io.art.rsocket.state.*;
 import io.art.server.method.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
@@ -34,12 +34,13 @@ import io.rsocket.*;
 import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.mime.MimeType.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static java.text.MessageFormat.*;
@@ -50,9 +51,10 @@ import java.util.*;
 public class ServingRsocket implements RSocket {
     private final TransportPayloadReader dataReader;
     private final TransportPayloadWriter dataWriter;
-    private final RsocketModuleState moduleState = rsocketModule().state();
     private final ServiceMethod serviceMethod;
     private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
+    private MetaType<?> inputMappingType;
+    private MetaType<?> outputMappingType;
     private final static MetaType<RsocketSetupPayload> payloadType = Meta.declaration(RsocketSetupPayload.class).definition();
 
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketCommonServerConfiguration serverConfiguration) {
@@ -66,6 +68,15 @@ public class ServingRsocket implements RSocket {
                 serviceMethod = findServiceMethod(serviceMethodId);
                 dataReader = new TransportPayloadReader(dataFormat);
                 dataWriter = new TransportPayloadWriter(dataFormat);
+                inputMappingType = serviceMethod.getInputType();
+                if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
+                    inputMappingType = inputMappingType.parameters().get(0);
+                }
+
+                outputMappingType = serviceMethod.getOutputType();
+                if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
+                    outputMappingType = outputMappingType.parameters().get(0);
+                }
                 return;
             }
         }
@@ -75,6 +86,15 @@ public class ServingRsocket implements RSocket {
             serviceMethod = findServiceMethod(defaultServiceMethod);
             dataReader = new TransportPayloadReader(dataFormat);
             dataWriter = new TransportPayloadWriter(dataFormat);
+            inputMappingType = serviceMethod.getInputType();
+            if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
+                inputMappingType = inputMappingType.parameters().get(0);
+            }
+
+            outputMappingType = serviceMethod.getOutputType();
+            if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
+                outputMappingType = outputMappingType.parameters().get(0);
+            }
             return;
         }
 
@@ -83,18 +103,21 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Mono<Void> fireAndForget(Payload payload) {
-        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, serviceMethod.getInputType());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
         return serviceMethod.serve(input).then();
     }
 
     @Override
     public Mono<Payload> requestResponse(Payload payload) {
-        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, serviceMethod.getInputType());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : let(payloadValue.getValue(), Flux::just, empty());
+        if (isNull(outputMappingType)) {
+            return cast(serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD).last(EMPTY_PAYLOAD));
+        }
         return serviceMethod
                 .serve(input)
-                .map(value -> dataWriter.write(typed(serviceMethod.getOutputType(), value)))
+                .map(value -> dataWriter.write(typed(outputMappingType, value)))
                 .filter(Objects::nonNull)
                 .map(ByteBufPayload::create)
                 .last(EMPTY_PAYLOAD);
@@ -102,34 +125,38 @@ public class ServingRsocket implements RSocket {
 
     @Override
     public Flux<Payload> requestStream(Payload payload) {
-        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, serviceMethod.getInputType());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
+        if (isNull(outputMappingType)) {
+            return serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD);
+        }
         return serviceMethod
                 .serve(input)
-                .map(value -> ByteBufPayload.create(dataWriter.write(typed(serviceMethod.getOutputType(), value))));
+                .map(value -> ByteBufPayload.create(dataWriter.write(typed(outputMappingType, value))));
     }
 
     @Override
     public Flux<Payload> requestChannel(Publisher<Payload> payloads) {
         Flux<Object> input = from(payloads)
-                .map(data -> readRsocketPayload(dataReader, data, serviceMethod.getInputType()))
+                .map(data -> readRsocketPayload(dataReader, data, inputMappingType))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue);
+        if (isNull(outputMappingType)) {
+            return serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD);
+        }
         return serviceMethod
                 .serve(input)
-                .map(value -> ByteBufPayload.create(dataWriter.write(typed(serviceMethod.getOutputType(), value))));
+                .map(value -> ByteBufPayload.create(dataWriter.write(typed(outputMappingType, value))));
     }
 
     @Override
     public Mono<Void> metadataPush(Payload payload) {
-        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, serviceMethod.getInputType());
+        TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
+        if (isNull(outputMappingType)) {
+            return cast(serviceMethod.serve(input).map(ignore -> EMPTY_PAYLOAD).last(EMPTY_PAYLOAD));
+        }
         return serviceMethod.serve(input).then();
-    }
-
-    @Override
-    public void dispose() {
-        moduleState.removeRequester(this);
     }
 
     private ServiceMethod findServiceMethod(ServiceMethodIdentifier serviceMethodId) {

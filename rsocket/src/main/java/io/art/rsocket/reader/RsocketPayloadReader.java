@@ -22,10 +22,16 @@ import io.art.meta.model.*;
 import io.art.transport.payload.*;
 import io.rsocket.*;
 import lombok.experimental.*;
+import static io.art.transport.payload.TransportPayload.*;
+import static java.util.Objects.*;
 
 @UtilityClass
 public class RsocketPayloadReader {
     public static TransportPayload readRsocketPayload(TransportPayloadReader reader, Payload payload, MetaType<?> type) {
+        if (isNull(type)) {
+            payload.release(payload.refCnt());
+            return emptyTransportPayload();
+        }
         TransportPayload transportPayload = reader.read(payload.sliceData(), type);
         payload.release(payload.refCnt());
         return transportPayload;
