@@ -1,4 +1,4 @@
-package io.art.communicator.model;
+package io.art.core.communication;
 
 import io.art.core.annotation.*;
 

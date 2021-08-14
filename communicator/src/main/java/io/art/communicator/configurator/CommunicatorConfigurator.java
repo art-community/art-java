@@ -10,6 +10,7 @@ import io.art.communicator.registry.ConnectorRegistry.*;
 import io.art.core.annotation.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
+import io.art.core.communication.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;

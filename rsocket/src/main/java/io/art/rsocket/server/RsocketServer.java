@@ -87,11 +87,11 @@ public class RsocketServer implements Server {
                 .collect(immutableMapCollector(ServiceMethod::getId, identity()));
 
         if (configuration.isEnableTcpServer()) {
-            tcpChannel.initialize();
+            //tcpChannel.initialize();
         }
 
         if (configuration.isEnableHttpServer()) {
-            httpChannel.initialize();
+            //httpChannel.initialize();
         }
     }
 

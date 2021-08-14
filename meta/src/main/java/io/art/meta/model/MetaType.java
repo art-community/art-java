@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.communication.*;
 import io.art.core.validation.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.registry.*;
@@ -102,6 +103,14 @@ public class MetaType<T> {
 
         if (Validatable.class.isAssignableFrom(type)) {
             modifiers.add(VALIDATABLE);
+        }
+
+        if (Communicator.class.isAssignableFrom(type)) {
+            modifiers.add(COMMUNICATOR);
+        }
+
+        if (Connector.class.isAssignableFrom(type)) {
+            modifiers.add(CONNECTOR);
         }
 
         if (nonNull(arrayComponentType)) {

@@ -1,7 +1,7 @@
 package io.art.communicator.factory;
 
 import io.art.communicator.exception.*;
-import io.art.communicator.model.*;
+import io.art.core.communication.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
@@ -10,6 +10,7 @@ import static io.art.communicator.extensions.MetaClassExtensions.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -22,7 +23,7 @@ public class ConnectorProxyFactory {
         Map<MetaMethod<?>, MetaClass<?>> proxies = connectorClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() == 0)
-                .filter(method -> nonNull(method.returnType().declaration()) && Communicator.class.isAssignableFrom(method.returnType().type()))
+                .filter(method -> nonNull(method.returnType().declaration()) && method.returnType().modifiers().contains(COMMUNICATOR))
                 .collect(mapCollector(identity(), method -> method.returnType().declaration()));
 
         if (proxies.size() != connectorClass.methods().size()) {

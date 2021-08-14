@@ -1,7 +1,7 @@
 package io.art.rsocket;
 
-import io.art.communicator.model.*;
 import io.art.core.annotation.*;
+import io.art.core.communication.*;
 import lombok.experimental.*;
 import static io.art.rsocket.module.RsocketModule.*;
 

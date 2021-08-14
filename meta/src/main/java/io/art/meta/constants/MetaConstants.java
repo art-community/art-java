@@ -80,7 +80,9 @@ public interface MetaConstants {
     }
 
     enum MetaTypeModifiers {
-        VALIDATABLE
+        VALIDATABLE,
+        COMMUNICATOR,
+        CONNECTOR
     }
 
     interface Errors {
