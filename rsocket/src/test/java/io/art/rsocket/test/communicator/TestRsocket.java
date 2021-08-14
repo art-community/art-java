@@ -8,4 +8,10 @@ public interface TestRsocket extends Communicator {
     void m2(String input);
 
     void m3(String input);
+
+    void m4(String input);
+
+    interface TestRsocketConnector extends Connector {
+        TestRsocket testRsocket();
+    }
 }

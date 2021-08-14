@@ -16,4 +16,9 @@ public class TestRsocketService implements TestRsocket {
     public void m3(String input) {
         System.out.println("m3");
     }
+
+    @Override
+    public void m4(String input) {
+
+    }
 }
