@@ -136,18 +136,15 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
-        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
-        MetaTypeBuilder<T> builder = let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
-        return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> builder
+        return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(immutableArrayOf(parameters))
                 .build()));
     }
 
+
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
-        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
-        MetaTypeBuilder<T> builder = let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
-        return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> builder
+        return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .enumFactory(enumFactory)
@@ -155,14 +152,17 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
-        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
-        MetaTypeBuilder<T> builder = let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
-        return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> builder
+        return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .arrayFactory(cast(arrayFactory))
                 .arrayComponentType(arrayComponentType)
                 .build()));
+    }
+
+    private static <T> MetaTypeBuilder<T> createTypeBuilder(Class<?> type) {
+        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
+        return let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
     }
 
     @EqualsAndHashCode

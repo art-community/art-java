@@ -200,7 +200,6 @@ public class Context {
 
         for (Module<?, ?> module : this.modules.values()) {
             module.load(service);
-            apply(configuration.getPrinter(), printer -> ifNotEmpty(module.print(), printer));
         }
         apply(configuration.getOnLoad(), Runnable::run);
 
@@ -209,7 +208,6 @@ public class Context {
         }
 
         apply(configuration.getPrinter(), LAUNCHED_MESSAGES::forEach);
-
         apply(configuration.getOnLaunch(), Runnable::run);
     }
 

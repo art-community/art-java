@@ -2,26 +2,23 @@ package io.art.meta.registry;
 
 import io.art.meta.transformer.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.searcher.ClassMapSearcher.*;
 import static java.util.Objects.*;
 import java.util.*;
 
-public class CustomTransformerMutableRegistry {
+public class CustomMetaTransformerMutableRegistry {
     private final static Map<Class<?>, CustomTransformers> REGISTRY = map();
+    private final static Map<Class<?>, CustomTransformers> CACHE = map();
 
     public static void clear() {
         REGISTRY.clear();
     }
 
     public static CustomTransformers get(Class<?> type) {
-        CustomTransformers transformers = REGISTRY.get(type);
-        if (nonNull(transformers)) return transformers;
-
-        for (Class<?> typeInterface : type.getInterfaces()) {
-            transformers = REGISTRY.get(typeInterface);
-            if (nonNull(transformers)) return transformers;
-        }
-
-        return null;
+        CustomTransformers cached = CACHE.get(type);
+        if (nonNull(cached)) return cached;
+        CACHE.put(type, cached = searchByClass(REGISTRY, type));
+        return cached;
     }
 
     public static void register(Class<?> type, CustomTransformers transformers) {
