@@ -18,11 +18,9 @@
 
 package io.art.rsocket.socket;
 
-import io.art.core.caster.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
-import io.art.meta.*;
 import io.art.meta.model.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.exception.*;
@@ -34,9 +32,12 @@ import io.rsocket.*;
 import io.rsocket.util.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
-import static io.art.core.caster.Caster.cast;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.mime.MimeType.*;
+import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.meta.Meta.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -55,7 +56,8 @@ public class ServingRsocket implements RSocket {
     private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
-    private final static MetaType<RsocketSetupPayload> payloadType = Meta.declaration(RsocketSetupPayload.class).definition();
+    private final static MetaType<RsocketSetupPayload> payloadType = declaration(RsocketSetupPayload.class).definition();
+    private final static Map<ServiceMethodIdentifier, ServingRsocket> cache = concurrentMap();
 
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketCommonServerConfiguration serverConfiguration) {
         this.serviceMethods = serviceMethods;
@@ -64,7 +66,16 @@ public class ServingRsocket implements RSocket {
         if (!setupPayloadData.isEmpty()) {
             RsocketSetupPayload setupPayloadDataValue = (RsocketSetupPayload) setupPayloadData.getValue();
             if (nonNull(setupPayloadDataValue)) {
-                ServiceMethodIdentifier serviceMethodId = new ServiceMethodIdentifier(setupPayloadDataValue.getServiceId(), setupPayloadDataValue.getMethodId());
+                ServiceMethodIdentifier serviceMethodId = serviceMethodId(setupPayloadDataValue.getServiceId(), setupPayloadDataValue.getMethodId());
+                ServingRsocket cached = cache.get(serviceMethodId);
+                if (nonNull(cached)) {
+                    serviceMethod = cached.serviceMethod;
+                    dataReader = cached.dataReader;
+                    dataWriter = cached.dataWriter;
+                    inputMappingType = cached.inputMappingType;
+                    outputMappingType = cached.outputMappingType;
+                    return;
+                }
                 serviceMethod = findServiceMethod(serviceMethodId);
                 dataReader = new TransportPayloadReader(dataFormat);
                 dataWriter = new TransportPayloadWriter(dataFormat);
@@ -83,6 +94,17 @@ public class ServingRsocket implements RSocket {
 
         ServiceMethodIdentifier defaultServiceMethod = serverConfiguration.getDefaultServiceMethod();
         if (nonNull(defaultServiceMethod)) {
+            ServingRsocket cached = cache.get(defaultServiceMethod);
+            if (nonNull(cached)) {
+                serviceMethod = cached.serviceMethod;
+                dataReader = cached.dataReader;
+                dataWriter = cached.dataWriter;
+                inputMappingType = cached.inputMappingType;
+                outputMappingType = cached.outputMappingType;
+                return;
+
+            }
+
             serviceMethod = findServiceMethod(defaultServiceMethod);
             dataReader = new TransportPayloadReader(dataFormat);
             dataWriter = new TransportPayloadWriter(dataFormat);
@@ -95,6 +117,7 @@ public class ServingRsocket implements RSocket {
             if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
                 outputMappingType = outputMappingType.parameters().get(0);
             }
+
             return;
         }
 
