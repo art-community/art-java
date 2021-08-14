@@ -97,6 +97,30 @@ public class MetaRsocketTest extends MetaLibrary {
 
               private final MetaM4Method m4Method = register(new MetaM4Method());
 
+              private final MetaM5Method m5Method = register(new MetaM5Method());
+
+              private final MetaM6Method m6Method = register(new MetaM6Method());
+
+              private final MetaM7Method m7Method = register(new MetaM7Method());
+
+              private final MetaM8Method m8Method = register(new MetaM8Method());
+
+              private final MetaM9Method m9Method = register(new MetaM9Method());
+
+              private final MetaM10Method m10Method = register(new MetaM10Method());
+
+              private final MetaM11Method m11Method = register(new MetaM11Method());
+
+              private final MetaM12Method m12Method = register(new MetaM12Method());
+
+              private final MetaM13Method m13Method = register(new MetaM13Method());
+
+              private final MetaM14Method m14Method = register(new MetaM14Method());
+
+              private final MetaM15Method m15Method = register(new MetaM15Method());
+
+              private final MetaM16Method m16Method = register(new MetaM16Method());
+
               private final MetaTestRsocketConnectorClass testRsocketConnectorClass = register(new MetaTestRsocketConnectorClass());
 
               private MetaTestRsocketClass() {
@@ -119,6 +143,54 @@ public class MetaRsocketTest extends MetaLibrary {
                 return m4Method;
               }
 
+              public MetaM5Method m5Method() {
+                return m5Method;
+              }
+
+              public MetaM6Method m6Method() {
+                return m6Method;
+              }
+
+              public MetaM7Method m7Method() {
+                return m7Method;
+              }
+
+              public MetaM8Method m8Method() {
+                return m8Method;
+              }
+
+              public MetaM9Method m9Method() {
+                return m9Method;
+              }
+
+              public MetaM10Method m10Method() {
+                return m10Method;
+              }
+
+              public MetaM11Method m11Method() {
+                return m11Method;
+              }
+
+              public MetaM12Method m12Method() {
+                return m12Method;
+              }
+
+              public MetaM13Method m13Method() {
+                return m13Method;
+              }
+
+              public MetaM14Method m14Method() {
+                return m14Method;
+              }
+
+              public MetaM15Method m15Method() {
+                return m15Method;
+              }
+
+              public MetaM16Method m16Method() {
+                return m16Method;
+              }
+
               @Override
               public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                 return new MetaTestRsocketProxy(invocations);
@@ -129,8 +201,6 @@ public class MetaRsocketTest extends MetaLibrary {
               }
 
               public static final class MetaM1Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
                 private MetaM1Method() {
                   super("m1",metaType(Void.class));
                 }
@@ -138,66 +208,90 @@ public class MetaRsocketTest extends MetaLibrary {
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object[] arguments) throws Throwable {
-                  instance.m1((java.lang.String)(arguments[0]));
+                  instance.m1();
                   return null;
                 }
 
                 @Override
-                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
-                    Object argument) throws Throwable {
-                  instance.m1((java.lang.String)(argument));
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance) throws
+                    Throwable {
+                  instance.m1();
                   return null;
-                }
-
-                public MetaParameter<java.lang.String> inputParameter() {
-                  return inputParameter;
                 }
               }
 
-              public static final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
+              public static final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
                 private MetaM2Method() {
-                  super("m2",metaType(Void.class));
+                  super("m2",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object[] arguments) throws Throwable {
-                  instance.m2((java.lang.String)(arguments[0]));
-                  return null;
+                  return instance.m2();
                 }
 
                 @Override
-                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
-                    Object argument) throws Throwable {
-                  instance.m2((java.lang.String)(argument));
-                  return null;
-                }
-
-                public MetaParameter<java.lang.String> inputParameter() {
-                  return inputParameter;
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance) throws
+                    Throwable {
+                  return instance.m2();
                 }
               }
 
-              public static final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
+              public static final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaM3Method() {
-                  super("m3",metaType(Void.class));
+                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object[] arguments) throws Throwable {
-                  instance.m3((java.lang.String)(arguments[0]));
+                  return instance.m3();
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance) throws
+                    Throwable {
+                  return instance.m3();
+                }
+              }
+
+              public static final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+                private MetaM4Method() {
+                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m4();
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance) throws
+                    Throwable {
+                  return instance.m4();
+                }
+              }
+
+              public static final class MetaM5Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM5Method() {
+                  super("m5",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m5((java.lang.String)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object argument) throws Throwable {
-                  instance.m3((java.lang.String)(argument));
+                  instance.m5((java.lang.String)(argument));
                   return null;
                 }
 
@@ -206,28 +300,278 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+              public static final class MetaM6Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
-                private MetaM4Method() {
-                  super("m4",metaType(Void.class));
+                private MetaM6Method() {
+                  super("m6",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object[] arguments) throws Throwable {
-                  instance.m4((java.lang.String)(arguments[0]));
+                  return instance.m6((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m6((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM7Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM7Method() {
+                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m7((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m7((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM8Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM8Method() {
+                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m8((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m8((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM9Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM9Method() {
+                  super("m9",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m9((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
                     Object argument) throws Throwable {
-                  instance.m4((java.lang.String)(argument));
+                  instance.m9((reactor.core.publisher.Mono)(argument));
                   return null;
                 }
 
-                public MetaParameter<java.lang.String> inputParameter() {
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM10Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM10Method() {
+                  super("m10",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m10((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m10((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM11Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM11Method() {
+                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m11((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m11((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM12Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM12Method() {
+                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m12((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m12((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM13Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM13Method() {
+                  super("m13",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m13((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  return null;
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  instance.m13((reactor.core.publisher.Flux)(argument));
+                  return null;
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM14Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM14Method() {
+                  super("m14",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m14((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m14((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM15Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM15Method() {
+                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m15((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m15((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM16Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM16Method() {
+                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m16((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.communicator.TestRsocket instance,
+                    Object argument) throws Throwable {
+                  return instance.m16((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
                   return inputParameter;
                 }
               }
@@ -241,6 +585,30 @@ public class MetaRsocketTest extends MetaLibrary {
 
                 private final Function<Object, Object> m4Invocation;
 
+                private final Function<Object, Object> m5Invocation;
+
+                private final Function<Object, Object> m6Invocation;
+
+                private final Function<Object, Object> m7Invocation;
+
+                private final Function<Object, Object> m8Invocation;
+
+                private final Function<Object, Object> m9Invocation;
+
+                private final Function<Object, Object> m10Invocation;
+
+                private final Function<Object, Object> m11Invocation;
+
+                private final Function<Object, Object> m12Invocation;
+
+                private final Function<Object, Object> m13Invocation;
+
+                private final Function<Object, Object> m14Invocation;
+
+                private final Function<Object, Object> m15Invocation;
+
+                private final Function<Object, Object> m16Invocation;
+
                 public MetaTestRsocketProxy(
                     Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
@@ -248,26 +616,102 @@ public class MetaRsocketTest extends MetaLibrary {
                   m2Invocation = invocations.get(m2Method);
                   m3Invocation = invocations.get(m3Method);
                   m4Invocation = invocations.get(m4Method);
+                  m5Invocation = invocations.get(m5Method);
+                  m6Invocation = invocations.get(m6Method);
+                  m7Invocation = invocations.get(m7Method);
+                  m8Invocation = invocations.get(m8Method);
+                  m9Invocation = invocations.get(m9Method);
+                  m10Invocation = invocations.get(m10Method);
+                  m11Invocation = invocations.get(m11Method);
+                  m12Invocation = invocations.get(m12Method);
+                  m13Invocation = invocations.get(m13Method);
+                  m14Invocation = invocations.get(m14Method);
+                  m15Invocation = invocations.get(m15Method);
+                  m16Invocation = invocations.get(m16Method);
                 }
 
                 @Override
-                public void m1(java.lang.String input) {
-                  m1Invocation.apply(input);
+                public void m1() {
+                  m1Invocation.apply(null);
                 }
 
                 @Override
-                public void m2(java.lang.String input) {
-                  m2Invocation.apply(input);
+                public java.lang.String m2() {
+                  return (java.lang.String)(m2Invocation.apply(null));
                 }
 
                 @Override
-                public void m3(java.lang.String input) {
-                  m3Invocation.apply(input);
+                public reactor.core.publisher.Mono<java.lang.String> m3() {
+                  return (reactor.core.publisher.Mono<java.lang.String>)(m3Invocation.apply(null));
                 }
 
                 @Override
-                public void m4(java.lang.String input) {
-                  m4Invocation.apply(input);
+                public reactor.core.publisher.Flux<java.lang.String> m4() {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(m4Invocation.apply(null));
+                }
+
+                @Override
+                public void m5(java.lang.String input) {
+                  m5Invocation.apply(input);
+                }
+
+                @Override
+                public java.lang.String m6(java.lang.String input) {
+                  return (java.lang.String)(m6Invocation.apply(input));
+                }
+
+                @Override
+                public reactor.core.publisher.Mono<java.lang.String> m7(java.lang.String input) {
+                  return (reactor.core.publisher.Mono<java.lang.String>)(m7Invocation.apply(input));
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<java.lang.String> m8(java.lang.String input) {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(m8Invocation.apply(input));
+                }
+
+                @Override
+                public void m9(reactor.core.publisher.Mono<java.lang.String> input) {
+                  m9Invocation.apply(input);
+                }
+
+                @Override
+                public java.lang.String m10(reactor.core.publisher.Mono<java.lang.String> input) {
+                  return (java.lang.String)(m10Invocation.apply(input));
+                }
+
+                @Override
+                public reactor.core.publisher.Mono<java.lang.String> m11(
+                    reactor.core.publisher.Mono<java.lang.String> input) {
+                  return (reactor.core.publisher.Mono<java.lang.String>)(m11Invocation.apply(input));
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<java.lang.String> m12(
+                    reactor.core.publisher.Mono<java.lang.String> input) {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(m12Invocation.apply(input));
+                }
+
+                @Override
+                public void m13(reactor.core.publisher.Flux<java.lang.String> input) {
+                  m13Invocation.apply(input);
+                }
+
+                @Override
+                public java.lang.String m14(reactor.core.publisher.Flux<java.lang.String> input) {
+                  return (java.lang.String)(m14Invocation.apply(input));
+                }
+
+                @Override
+                public reactor.core.publisher.Mono<java.lang.String> m15(
+                    reactor.core.publisher.Flux<java.lang.String> input) {
+                  return (reactor.core.publisher.Mono<java.lang.String>)(m15Invocation.apply(input));
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<java.lang.String> m16(
+                    reactor.core.publisher.Flux<java.lang.String> input) {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(m16Invocation.apply(input));
                 }
               }
 
@@ -347,6 +791,30 @@ public class MetaRsocketTest extends MetaLibrary {
 
               private final MetaM4Method m4Method = register(new MetaM4Method());
 
+              private final MetaM5Method m5Method = register(new MetaM5Method());
+
+              private final MetaM6Method m6Method = register(new MetaM6Method());
+
+              private final MetaM7Method m7Method = register(new MetaM7Method());
+
+              private final MetaM8Method m8Method = register(new MetaM8Method());
+
+              private final MetaM9Method m9Method = register(new MetaM9Method());
+
+              private final MetaM10Method m10Method = register(new MetaM10Method());
+
+              private final MetaM11Method m11Method = register(new MetaM11Method());
+
+              private final MetaM12Method m12Method = register(new MetaM12Method());
+
+              private final MetaM13Method m13Method = register(new MetaM13Method());
+
+              private final MetaM14Method m14Method = register(new MetaM14Method());
+
+              private final MetaM15Method m15Method = register(new MetaM15Method());
+
+              private final MetaM16Method m16Method = register(new MetaM16Method());
+
               private MetaTestRsocketServiceClass() {
                 super(metaType(io.art.rsocket.test.service.TestRsocketService.class));
               }
@@ -371,6 +839,54 @@ public class MetaRsocketTest extends MetaLibrary {
                 return m4Method;
               }
 
+              public MetaM5Method m5Method() {
+                return m5Method;
+              }
+
+              public MetaM6Method m6Method() {
+                return m6Method;
+              }
+
+              public MetaM7Method m7Method() {
+                return m7Method;
+              }
+
+              public MetaM8Method m8Method() {
+                return m8Method;
+              }
+
+              public MetaM9Method m9Method() {
+                return m9Method;
+              }
+
+              public MetaM10Method m10Method() {
+                return m10Method;
+              }
+
+              public MetaM11Method m11Method() {
+                return m11Method;
+              }
+
+              public MetaM12Method m12Method() {
+                return m12Method;
+              }
+
+              public MetaM13Method m13Method() {
+                return m13Method;
+              }
+
+              public MetaM14Method m14Method() {
+                return m14Method;
+              }
+
+              public MetaM15Method m15Method() {
+                return m15Method;
+              }
+
+              public MetaM16Method m16Method() {
+                return m16Method;
+              }
+
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.rsocket.test.service.TestRsocketService> {
                 private MetaConstructorConstructor() {
                   super(metaType(io.art.rsocket.test.service.TestRsocketService.class));
@@ -389,8 +905,6 @@ public class MetaRsocketTest extends MetaLibrary {
               }
 
               public static final class MetaM1Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
                 private MetaM1Method() {
                   super("m1",metaType(Void.class));
                 }
@@ -398,66 +912,90 @@ public class MetaRsocketTest extends MetaLibrary {
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object[] arguments) throws Throwable {
-                  instance.m1((java.lang.String)(arguments[0]));
+                  instance.m1();
                   return null;
                 }
 
                 @Override
-                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
-                    Object argument) throws Throwable {
-                  instance.m1((java.lang.String)(argument));
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance) throws
+                    Throwable {
+                  instance.m1();
                   return null;
-                }
-
-                public MetaParameter<java.lang.String> inputParameter() {
-                  return inputParameter;
                 }
               }
 
-              public static final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
+              public static final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
                 private MetaM2Method() {
-                  super("m2",metaType(Void.class));
+                  super("m2",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object[] arguments) throws Throwable {
-                  instance.m2((java.lang.String)(arguments[0]));
-                  return null;
+                  return instance.m2();
                 }
 
                 @Override
-                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
-                    Object argument) throws Throwable {
-                  instance.m2((java.lang.String)(argument));
-                  return null;
-                }
-
-                public MetaParameter<java.lang.String> inputParameter() {
-                  return inputParameter;
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance) throws
+                    Throwable {
+                  return instance.m2();
                 }
               }
 
-              public static final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
-                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
-
+              public static final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaM3Method() {
-                  super("m3",metaType(Void.class));
+                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object[] arguments) throws Throwable {
-                  instance.m3((java.lang.String)(arguments[0]));
+                  return instance.m3();
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance) throws
+                    Throwable {
+                  return instance.m3();
+                }
+              }
+
+              public static final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+                private MetaM4Method() {
+                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m4();
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance) throws
+                    Throwable {
+                  return instance.m4();
+                }
+              }
+
+              public static final class MetaM5Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM5Method() {
+                  super("m5",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m5((java.lang.String)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object argument) throws Throwable {
-                  instance.m3((java.lang.String)(argument));
+                  instance.m5((java.lang.String)(argument));
                   return null;
                 }
 
@@ -466,28 +1004,278 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+              public static final class MetaM6Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
-                private MetaM4Method() {
-                  super("m4",metaType(Void.class));
+                private MetaM6Method() {
+                  super("m6",metaType(java.lang.String.class));
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object[] arguments) throws Throwable {
-                  instance.m4((java.lang.String)(arguments[0]));
+                  return instance.m6((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m6((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM7Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM7Method() {
+                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m7((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m7((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM8Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
+
+                private MetaM8Method() {
+                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m8((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m8((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM9Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM9Method() {
+                  super("m9",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m9((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
                     Object argument) throws Throwable {
-                  instance.m4((java.lang.String)(argument));
+                  instance.m9((reactor.core.publisher.Mono)(argument));
                   return null;
                 }
 
-                public MetaParameter<java.lang.String> inputParameter() {
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM10Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM10Method() {
+                  super("m10",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m10((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m10((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM11Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM11Method() {
+                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m11((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m11((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM12Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
+
+                private MetaM12Method() {
+                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m12((reactor.core.publisher.Mono<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m12((reactor.core.publisher.Mono)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM13Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM13Method() {
+                  super("m13",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  instance.m13((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  return null;
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  instance.m13((reactor.core.publisher.Flux)(argument));
+                  return null;
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM14Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM14Method() {
+                  super("m14",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m14((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m14((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM15Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM15Method() {
+                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m15((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m15((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaM16Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaM16Method() {
+                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.m16((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.rsocket.test.service.TestRsocketService instance,
+                    Object argument) throws Throwable {
+                  return instance.m16((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
                   return inputParameter;
                 }
               }

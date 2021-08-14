@@ -196,15 +196,8 @@ public class RsocketCommunication implements Communication {
 
     private Function<Flux<Object>, Flux<TransportPayload>> requestChannel(TransportPayloadReader reader, TransportPayloadWriter writer) {
         RSocketClient client = this.client.get();
-        if (isNull(inputMappingType)) {
-            return input -> client
-                    .requestChannel(Flux.empty())
-                    .map(payload -> readRsocketPayload(reader, payload, outputMappingType));
-        }
         return input -> client
-                .requestChannel(input
-                        .map(value -> create(writer.write(typed(inputMappingType, value))))
-                        .switchIfEmpty(EMPTY_PAYLOAD_MONO))
+                .requestChannel(input.map(value -> create(writer.write(typed(inputMappingType, value)))))
                 .map(payload -> readRsocketPayload(reader, payload, outputMappingType));
     }
 

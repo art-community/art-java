@@ -1,24 +1,85 @@
 package io.art.rsocket.test.service;
 
 import io.art.rsocket.test.communicator.*;
+import reactor.core.publisher.*;
+import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
 
 public class TestRsocketService implements TestRsocket {
-    public void m1(String input) {
-        System.out.println("m1");
+    public void m1() {
+        register("m1", new Object());
     }
 
-    @Override
-    public void m2(String input) {
-        System.out.println("m2");
+    public String m2() {
+        register("m2", new Object());
+        return "test";
     }
 
-    @Override
-    public void m3(String input) {
-        System.out.println("m3");
+    public Mono<String> m3() {
+        register("m3", new Object());
+        return Mono.just("test");
     }
 
-    @Override
-    public void m4(String input) {
+    public Flux<String> m4() {
+        register("m4", new Object());
+        return Flux.just("test");
+    }
 
+
+    public void m5(String input) {
+        register("m5", input);
+    }
+
+    public String m6(String input) {
+        register("m6", input);
+        return "test";
+    }
+
+    public Mono<String> m7(String input) {
+        register("m7", input);
+        return Mono.just("test");
+    }
+
+    public Flux<String> m8(String input) {
+        register("m8", input);
+        return Flux.just("test");
+    }
+
+    public void m9(Mono<String> input) {
+        register("m9", input);
+    }
+
+    public String m10(Mono<String> input) {
+        register("m10", input);
+        return "test";
+    }
+
+    public Mono<String> m11(Mono<String> input) {
+        register("m11", input);
+        return Mono.just("test");
+    }
+
+    public Flux<String> m12(Mono<String> input) {
+        register("m12", input);
+        return Flux.just("test");
+    }
+
+
+    public void m13(Flux<String> input) {
+        register("m13", input);
+    }
+
+    public String m14(Flux<String> input) {
+        register("m14", input);
+        return "test";
+    }
+
+    public Mono<String> m15(Flux<String> input) {
+        register("m15", input);
+        return Mono.just("test");
+    }
+
+    public Flux<String> m16(Flux<String> input) {
+        register("m16", input);
+        return Flux.just("test");
     }
 }

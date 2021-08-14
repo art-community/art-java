@@ -1,15 +1,41 @@
 package io.art.rsocket.test.communicator;
 
 import io.art.core.communication.*;
+import reactor.core.publisher.*;
 
 public interface TestRsocket extends Communicator {
-    void m1(String input);
+    void m1();
 
-    void m2(String input);
+    String m2();
 
-    void m3(String input);
+    Mono<String> m3();
 
-    void m4(String input);
+    Flux<String> m4();
+
+    void m5(String input);
+
+    String m6(String input);
+
+    Mono<String> m7(String input);
+
+    Flux<String> m8(String input);
+
+    void m9(Mono<String> input);
+
+    String m10(Mono<String> input);
+
+    Mono<String> m11(Mono<String> input);
+
+    Flux<String> m12(Mono<String> input);
+
+
+    void m13(Flux<String> input);
+
+    String m14(Flux<String> input);
+
+    Mono<String> m15(Flux<String> input);
+
+    Flux<String> m16(Flux<String> input);
 
     interface TestRsocketConnector extends Connector {
         TestRsocket testRsocket();
