@@ -44,8 +44,8 @@ public class RsocketCommonConnectorConfiguration {
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
-        configuration.dataFormat = JSON;
-        configuration.metaDataFormat = JSON;
+        configuration.dataFormat = MESSAGE_PACK;
+        configuration.metaDataFormat = MESSAGE_PACK;
         configuration.logging = false;
         configuration.connector = connector;
         configuration.fragment = 0;

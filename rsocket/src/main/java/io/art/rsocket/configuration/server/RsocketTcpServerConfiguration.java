@@ -70,8 +70,8 @@ public class RsocketTcpServerConfiguration {
         configuration.tcpDecorator = identity();
         configuration.decorator = identity();
         configuration.maxFrameLength = FRAME_LENGTH_MASK;
-        configuration.defaultDataFormat = JSON;
-        configuration.defaultMetaDataFormat = JSON;
+        configuration.defaultDataFormat = MESSAGE_PACK;
+        configuration.defaultMetaDataFormat = MESSAGE_PACK;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
         configuration.payloadDecoder = ZERO_COPY;

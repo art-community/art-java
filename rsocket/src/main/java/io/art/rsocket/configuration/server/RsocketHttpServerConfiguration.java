@@ -68,8 +68,8 @@ public class RsocketHttpServerConfiguration {
         RsocketHttpServerConfiguration configuration = RsocketHttpServerConfiguration.builder().build();
         configuration.httpDecorator = identity();
         configuration.decorator = identity();
-        configuration.defaultDataFormat = JSON;
-        configuration.defaultMetaDataFormat = JSON;
+        configuration.defaultDataFormat = MESSAGE_PACK;
+        configuration.defaultMetaDataFormat = MESSAGE_PACK;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
         configuration.payloadDecoder = ZERO_COPY;

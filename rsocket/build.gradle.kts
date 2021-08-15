@@ -38,7 +38,7 @@ dependencies {
             .exclude("io.projectreactor", "reactor-core")
             .exclude("org.slf4j")
 
-    testImplementation(project(":json"))
+    testImplementation(project(":message-pack"))
     testImplementation(testFixtures(project(":meta")))
 }
 
