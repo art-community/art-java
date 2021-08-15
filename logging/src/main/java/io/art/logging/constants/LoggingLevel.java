@@ -25,8 +25,8 @@ import static java.util.Arrays.*;
 @AllArgsConstructor
 public enum LoggingLevel {
     ERROR((byte) 0),
-    WARN((byte) 1),
-    INFO((byte) 2),
+    INFO((byte) 1),
+    WARN((byte) 2),
     TRACE((byte) 3),
     DEBUG((byte) 4);
 

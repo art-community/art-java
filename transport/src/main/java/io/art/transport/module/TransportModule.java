@@ -25,7 +25,9 @@ import io.art.transport.configuration.TransportModuleConfiguration.*;
 import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
+import static io.art.transport.constants.TransportModuleConstants.Messages.*;
 import static io.art.transport.pool.TransportPool.*;
+import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -41,12 +43,17 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
     }
 
     @Override
-    public void load(Context.Service contextService) {
+    public void launch(Context.Service contextService) {
         configureCommonTransportPool(configuration.getCommonPoolConfiguration());
     }
 
     @Override
     public void shutdown(Context.Service contextService) {
         shutdownCommonTransportPool();
+    }
+
+    @Override
+    public String print() {
+        return format(CONFIGURING_MESSAGE, configuration);
     }
 }

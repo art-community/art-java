@@ -8,6 +8,7 @@ import java.util.function.*;
 
 @Getter
 @Builder
+@ToString
 public class TransportPoolConfiguration {
     private final Duration pendingAcquireTimeout;
     private final int maxConnections;

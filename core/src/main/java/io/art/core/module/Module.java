@@ -20,6 +20,7 @@ package io.art.core.module;
 
 import io.art.core.context.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.StringConstants.*;
 import java.util.function.*;
 
 public interface Module<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configuration, Configurator>> {
@@ -43,6 +44,10 @@ public interface Module<Configuration extends ModuleConfiguration, Configurator 
 
     default void shutdown(Context.Service contextService) {
 
+    }
+
+    default String print() {
+        return EMPTY_STRING;
     }
 
     Configurator getConfigurator();

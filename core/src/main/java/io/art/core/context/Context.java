@@ -208,6 +208,11 @@ public class Context {
         }
 
         apply(configuration.getPrinter(), LAUNCHED_MESSAGES::forEach);
+
+        for (Module<?, ?> module : this.modules.values()) {
+            apply(configuration.getPrinter(), printer -> ifNotEmpty(module.print(), printer));
+        }
+
         apply(configuration.getOnLaunch(), Runnable::run);
     }
 
