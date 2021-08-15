@@ -118,7 +118,7 @@ public class RsocketServer implements Server {
         RsocketTcpServerConfiguration tcp = this.configuration.getTcpServer();
         RsocketCommonServerConfiguration common = fromTcp(tcp);
         UnaryOperator<TcpServer> tcpDecorator = tcp.getTcpDecorator();
-        TcpServer server = tcpDecorator.apply(TcpServer.create().port(common.getPort()));
+        TcpServer server = TcpServer.create().port(common.getPort());
         RsocketSslConfiguration ssl = common.getSsl();
         if (nonNull(ssl)) {
             File certificate = ssl.getCertificate();
@@ -132,7 +132,7 @@ public class RsocketServer implements Server {
                 server.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
             }
         }
-        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(server, tcp.getMaxFrameLength());
+        ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(server), tcp.getMaxFrameLength());
         return createServer(common, transport);
     }
 
@@ -140,8 +140,7 @@ public class RsocketServer implements Server {
         RsocketHttpServerConfiguration http = this.configuration.getHttpServer();
         RsocketCommonServerConfiguration common = fromHttp(http);
         UnaryOperator<HttpServer> httpDecorator = http.getHttpDecorator();
-        HttpServer server = httpDecorator.apply(HttpServer.create().port(common.getPort()));
-        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(server);
+        HttpServer server = HttpServer.create().port(common.getPort());
         RsocketSslConfiguration ssl = common.getSsl();
         if (nonNull(ssl)) {
             File certificate = ssl.getCertificate();
@@ -155,6 +154,7 @@ public class RsocketServer implements Server {
                 server.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
             }
         }
+        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(httpDecorator.apply(server));
         return createServer(common, transport);
     }
 
