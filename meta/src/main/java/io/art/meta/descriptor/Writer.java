@@ -33,59 +33,59 @@ import java.util.function.*;
 
 @ForUsing
 public interface Writer {
-    default void write(TypedObject model, ByteBuffer buffer, Function<IOException, ? extends RuntimeException> catcher) {
+    default void write(TypedObject object, ByteBuffer buffer, Function<IOException, ? extends RuntimeException> catcher) {
         try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(buffer)) {
-            write(model, outputStream);
+            write(object, outputStream);
         } catch (IOException ioException) {
             throw catcher.apply(ioException);
         }
     }
 
-    default void write(TypedObject model, ByteBuf buffer, Function<IOException, ? extends RuntimeException> catcher) {
+    default void write(TypedObject object, ByteBuf buffer, Function<IOException, ? extends RuntimeException> catcher) {
         try (ByteBufOutputStream outputStream = new ByteBufOutputStream(buffer)) {
-            write(model, outputStream);
+            write(object, outputStream);
         } catch (IOException ioException) {
             throw catcher.apply(ioException);
         }
     }
 
-    default byte[] writeToBytes(TypedObject model) {
+    default byte[] writeToBytes(TypedObject object) {
         ByteBuffer buffer = allocate(DEFAULT_BUFFER_SIZE);
         try {
-            return writeToBytes(model, buffer);
+            return writeToBytes(object, buffer);
         } finally {
             buffer.clear();
         }
     }
 
-    default byte[] writeToBytes(TypedObject model, ByteBuffer buffer) {
-        write(model, buffer);
+    default byte[] writeToBytes(TypedObject object, ByteBuffer buffer) {
+        write(object, buffer);
         return toByteArray(buffer);
     }
 
-    default String writeToString(TypedObject model) {
-        return writeToString(model, context().configuration().getCharset());
+    default String writeToString(TypedObject object) {
+        return writeToString(object, context().configuration().getCharset());
     }
 
-    default String writeToString(TypedObject model, ByteBuffer buffer) {
-        return writeToString(model, buffer, context().configuration().getCharset());
+    default String writeToString(TypedObject object, ByteBuffer buffer) {
+        return writeToString(object, buffer, context().configuration().getCharset());
     }
 
-    default String writeToString(TypedObject model, Charset charset) {
-        return new String(writeToBytes(model), charset);
+    default String writeToString(TypedObject object, Charset charset) {
+        return new String(writeToBytes(object), charset);
     }
 
-    default String writeToString(TypedObject model, ByteBuffer buffer, Charset charset) {
-        return new String(writeToBytes(model, buffer), charset);
+    default String writeToString(TypedObject object, ByteBuffer buffer, Charset charset) {
+        return new String(writeToBytes(object, buffer), charset);
     }
 
-    default void write(TypedObject model, OutputStream outputStream) {
-        write(model, outputStream, context().configuration().getCharset());
+    default void write(TypedObject object, OutputStream outputStream) {
+        write(object, outputStream, context().configuration().getCharset());
     }
 
-    void write(TypedObject model, OutputStream outputStream, Charset charset);
+    void write(TypedObject object, OutputStream outputStream, Charset charset);
 
-    void write(TypedObject model, ByteBuffer buffer);
+    void write(TypedObject object, ByteBuffer buffer);
 
-    void write(TypedObject model, ByteBuf buffer);
+    void write(TypedObject object, ByteBuf buffer);
 }
