@@ -129,7 +129,9 @@ public class RsocketServer implements Server {
                 if (isNotEmpty(password)) {
                     sslBuilder = SslContextBuilder.forServer(certificate, key, password);
                 }
-                server.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
+                server.secure(SslProvider.builder()
+                        .sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build))
+                        .build());
             }
         }
         ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(server), tcp.getMaxFrameLength());
@@ -151,7 +153,9 @@ public class RsocketServer implements Server {
                 if (isNotEmpty(password)) {
                     sslBuilder = SslContextBuilder.forServer(certificate, key, password);
                 }
-                server.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
+                server.secure(SslProvider.builder()
+                        .sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build))
+                        .build());
             }
         }
         ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(httpDecorator.apply(server));
