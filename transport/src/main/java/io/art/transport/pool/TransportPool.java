@@ -16,7 +16,7 @@ public class TransportPool {
         String loopResourcesPrefix = configuration.getLoopResourcesPrefix();
         int workersCount = configuration.getWorkersCount();
         int selectorsCount = configuration.getSelectorsCount();
-        this.loopResources = LoopResources.create(loopResourcesPrefix, workersCount, selectorsCount, true);
+        this.loopResources = LoopResources.create(loopResourcesPrefix, selectorsCount, workersCount, true);
 
         ConnectionProvider.Builder builder = ConnectionProvider.builder(configuration.getConnectionProviderName());
         if (configuration.isDisposeInactive()) {
