@@ -30,6 +30,10 @@ public class ModuleChecker {
         return context().hasModule(YAML_MODULE_ID);
     }
 
+    public static boolean withMessagePack() {
+        return context().hasModule(MESSAGE_PACK_MODULE_ID);
+    }
+
     public static void withLogging(Runnable action) {
         if (withLogging()) action.run();
     }
@@ -44,5 +48,17 @@ public class ModuleChecker {
 
     public static void withTransport(Runnable action) {
         if (withTransport()) action.run();
+    }
+
+    public static void withJson(Runnable action) {
+        if (withJson()) action.run();
+    }
+
+    public static void withYaml(Runnable action) {
+        if (withYaml()) action.run();
+    }
+
+    public static void withMessagePack(Runnable action) {
+        if (withMessagePack()) action.run();
     }
 }
