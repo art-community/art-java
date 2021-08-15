@@ -18,20 +18,12 @@
 
 package io.art.launcher;
 
-import io.art.core.collection.*;
-import static io.art.core.constants.ModuleIdentifiers.*;
-import static io.art.core.factory.SetFactory.*;
-
 public interface LauncherConstants {
     interface Errors {
         String MODULES_ALREADY_LAUNCHED = "Modules already launched";
     }
 
-
     String CONFIGURED_BY_MESSAGE = "Configured by {0}";
     String DEFAULT_CONFIGURATION = "Configurator not activated. Using default configurations";
-
     String LAUNCHER_LOGGER = "launcher";
-
-
 }
