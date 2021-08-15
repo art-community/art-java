@@ -58,10 +58,4 @@ public class TransportPool {
         HttpResources.set(transportPool.provider);
         HttpResources.set(transportPool.loopResources);
     }
-
-    public static void shutdownCommonTransportPool() {
-        TcpResources.get().dispose();
-        HttpResources.get().dispose();
-        UdpResources.get().dispose();
-    }
 }

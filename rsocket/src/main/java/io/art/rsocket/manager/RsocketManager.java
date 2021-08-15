@@ -20,13 +20,13 @@ package io.art.rsocket.manager;
 
 
 import io.art.communicator.action.*;
-import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.server.*;
 import lombok.*;
 import reactor.core.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.logging.Logging.*;
 import static lombok.AccessLevel.*;
@@ -69,6 +69,6 @@ public class RsocketManager {
         if (rsocket.isDisposed()) {
             return;
         }
-        ignoreException(rsocket::dispose, getLogger()::error);
+        ignoreException(rsocket::dispose, throwable -> withLogging(() -> getLogger().error(throwable)));
     }
 }

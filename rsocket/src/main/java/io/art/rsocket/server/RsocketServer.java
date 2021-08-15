@@ -203,7 +203,7 @@ public class RsocketServer implements Server {
 
     private void setupSocket(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration, MonoSink<RSocket> emitter) {
         ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, serviceMethods, serverConfiguration));
-        ignoreException(createRsocket, throwable -> getLogger().error(throwable.getMessage(), throwable));
+        ignoreException(createRsocket, throwable -> withLogging(() -> getLogger().error(throwable)));
     }
 
     private void setupTcpCloser(CloseableChannel channel) {

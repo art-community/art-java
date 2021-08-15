@@ -47,11 +47,6 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
     }
 
     @Override
-    public void shutdown(Context.Service contextService) {
-        shutdownCommonTransportPool();
-    }
-
-    @Override
     public String print() {
         return TRANSPORT_CONFIGURING_MESSAGE;
     }
