@@ -72,14 +72,12 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
 
     private void logInput(Object data) {
         if (!enabled.get()) return;
-        String dataString = asPrettyString(data);
-        getLogger().info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), dataString));
+        getLogger().info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), asPrettyString(data)));
     }
 
     private void logOutput(Object data) {
         if (!enabled.get()) return;
-        String dataString = asPrettyString(data);
-        getLogger().info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), dataString));
+        getLogger().info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), asPrettyString(data)));
     }
 
     private void logException(Throwable exception) {
