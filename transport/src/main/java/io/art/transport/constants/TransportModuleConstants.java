@@ -23,8 +23,27 @@ public interface TransportModuleConstants {
     }
 
     interface Messages {
-        String TRANSPORT_LOGGER = "transport";
         String CONFIGURING_MESSAGE = "Transport configured by configuration: {0}";
+    }
+
+    interface ConfigurationKeys {
+        String TRANSPORT_COMMON_SECTION = "transport.common";
+        String PENDING_ACQUIRE_TIMEOUT_KEY = "pendingAcquireTimeout";
+        String MAX_CONNECTIONS_KEY = "maxConnections";
+        String PENDING_ACQUIRE_MAX_COUNT_KEY = "pendingAcquireMaxCount";
+        String MAX_IDLE_TIME_KEY = "maxIdleTime";
+        String MAX_LIFE_TIME_KEY = "maxLifeTime";
+        String metrics_KEY = "metrics";
+        String LEASING_STRATEGY_KEY = "leasingStrategy";
+        String EVICTION_KEY = "eviction";
+        String EVICTION_INTERVAL_KEY = "evictionInterval";
+        String WORKERS_COUNT_KEY = "workersCount";
+        String SELECTORS_COUNT_KEY = "selectorsCount";
+        String CONNECTION_PROVIDER_NAME_KEY = "connectionProviderName";
+        String LOOP_RESOURCES_PREFIX_KEY = "loopResourcesPrefix";
+        String DISPOSE_INACTIVE_KEY = "disposeInactive";
+        String DISPOSE_INTERVAL_KEY = "disposeInterval";
+        String POOL_INACTIVITY_KEY = "poolInactivity";
     }
 
     @Getter
