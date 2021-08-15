@@ -86,6 +86,7 @@ public interface RsocketModuleConstants {
         String TRANSPORT_TIMEOUT_CONNECTION_KEY = "transport.timeout";
         String TRANSPORT_WS_PATH_KEY = "transport.ws.path";
         String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
+        String TRANSPORT_SSL_SECTION = "transport.ssl";
 
         String PAYLOAD_DECODER_KEY = "payloadDecoder";
         String LOGGING_KEY = "logging";
@@ -107,6 +108,10 @@ public interface RsocketModuleConstants {
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
         String CONNECTORS_KEY = "connectors";
+
+        String CERTIFICATE_KEY = "certificate";
+        String KEY_KEY = "key";
+        String PASSWORD_KEY = "key";
     }
 
     interface ContextKeys {

@@ -63,6 +63,7 @@ public class RsocketTcpServerConfiguration {
     private UnaryOperator<InterceptorRegistry> interceptors;
     private UnaryOperator<TcpServer> tcpDecorator;
     private UnaryOperator<RSocketServer> decorator;
+    private RsocketSslConfiguration ssl;
 
     public static RsocketTcpServerConfiguration defaults() {
         RsocketTcpServerConfiguration configuration = RsocketTcpServerConfiguration.builder().build();
@@ -113,6 +114,7 @@ public class RsocketTcpServerConfiguration {
         configuration.port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
         configuration.host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
         configuration.maxFrameLength = refresher.serverListener().emit(orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), current.maxFrameLength));
+        configuration.ssl = serverListener.emit(orElse(source.getNested(TRANSPORT_SSL_SECTION, RsocketSslConfiguration::rsocketSsl), current.ssl));
         return configuration;
     }
 }

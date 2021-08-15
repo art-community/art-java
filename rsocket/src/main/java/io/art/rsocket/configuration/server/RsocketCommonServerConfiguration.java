@@ -25,6 +25,7 @@ import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
 import io.rsocket.plugins.*;
 import lombok.*;
+import reactor.netty.tcp.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
@@ -43,9 +44,11 @@ public class RsocketCommonServerConfiguration {
     private DataFormat defaultMetaDataFormat;
     private UnaryOperator<RSocketServer> decorator;
     private UnaryOperator<InterceptorRegistry> interceptors;
+    private RsocketSslConfiguration ssl;
 
     public static RsocketCommonServerConfiguration fromTcp(RsocketTcpServerConfiguration configuration) {
         RsocketCommonServerConfiguration common = new RsocketCommonServerConfiguration();
+        TcpServer.create().secure(SslProvider.builder().sslContext(DefaultSslContextSpec.forClient()).build());
         common.resume = configuration.getResume();
         common.defaultServiceMethod = configuration.getDefaultServiceMethod();
         common.defaultDataFormat = configuration.getDefaultDataFormat();
@@ -58,6 +61,7 @@ public class RsocketCommonServerConfiguration {
         common.host = configuration.getHost();
         common.interceptors = configuration.getInterceptors();
         common.decorator = configuration.getDecorator();
+        common.ssl = configuration.getSsl();
         return common;
     }
 
@@ -75,6 +79,7 @@ public class RsocketCommonServerConfiguration {
         common.host = configuration.getHost();
         common.interceptors = configuration.getInterceptors();
         common.decorator = configuration.getDecorator();
+        common.ssl = configuration.getSsl();
         return common;
     }
 }

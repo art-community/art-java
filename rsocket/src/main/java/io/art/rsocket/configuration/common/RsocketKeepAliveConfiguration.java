@@ -22,7 +22,6 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 
 @Getter
@@ -31,19 +30,9 @@ public class RsocketKeepAliveConfiguration {
     private final Duration interval;
     private final Duration maxLifeTime;
 
-    public static RsocketKeepAliveConfiguration rsocketKeepAlive() {
-        return new RsocketKeepAliveConfiguration(DEFAULT_KEEP_ALIVE_INTERVAL, DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME);
-    }
-
-    public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source) {
-        Duration interval = orElse(source.getDuration(INTERVAL_KEY), DEFAULT_KEEP_ALIVE_INTERVAL);
-        Duration maxLifeTime = orElse(source.getDuration(MAX_LIFE_TIME_KEY), DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME);
-        return new RsocketKeepAliveConfiguration(interval, maxLifeTime);
-    }
-
-    public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source, RsocketKeepAliveConfiguration defaultKeepAlive) {
-        Duration interval = orElse(source.getDuration(INTERVAL_KEY), defaultKeepAlive.interval);
-        Duration maxLifeTime = orElse(source.getDuration(MAX_LIFE_TIME_KEY), defaultKeepAlive.maxLifeTime);
+    public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source, RsocketKeepAliveConfiguration current) {
+        Duration interval = orElse(source.getDuration(INTERVAL_KEY), current.interval);
+        Duration maxLifeTime = orElse(source.getDuration(MAX_LIFE_TIME_KEY), current.maxLifeTime);
         return new RsocketKeepAliveConfiguration(interval, maxLifeTime);
     }
 }

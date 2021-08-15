@@ -27,6 +27,8 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
 import static java.util.Objects.*;
+import java.io.*;
+import java.nio.file.*;
 import java.time.*;
 import java.util.*;
 import java.util.function.*;
@@ -59,6 +61,14 @@ public interface ConfigurationSource {
 
     default String getString(String path) {
         return let(getNested(path), NestedConfiguration::asString);
+    }
+
+    default File getFile(String path) {
+        return let(getString(path), File::new);
+    }
+
+    default Path getPath(String path) {
+        return let(getString(path), Paths::get);
     }
 
     default Integer getInteger(String path) {

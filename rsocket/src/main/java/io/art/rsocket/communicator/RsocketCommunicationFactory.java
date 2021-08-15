@@ -5,13 +5,16 @@ import io.art.core.strategy.*;
 import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
+import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
 import io.art.transport.payload.*;
+import io.netty.handler.ssl.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
 import io.rsocket.frame.decoder.*;
@@ -22,11 +25,13 @@ import lombok.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
+import reactor.netty.tcp.SslProvider;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
@@ -39,6 +44,7 @@ import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import java.io.*;
 import java.nio.*;
 import java.util.*;
 import java.util.function.*;
@@ -76,7 +82,7 @@ public class RsocketCommunicationFactory {
         if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
             return createTcpBalancer(connector, group);
         }
-        return configureSocket(common, createTcpClient(connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+        return configureSocket(common, createTcpClient(common, connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
     }
 
     private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpClientGroupConfiguration group) {
@@ -97,12 +103,27 @@ public class RsocketCommunicationFactory {
                 .build();
     }
 
-    private static Mono<RSocket> createTcpClient(RsocketTcpClientConfiguration clientConfiguration, RSocketConnector connector) {
+    private static Mono<RSocket> createTcpClient(RsocketCommonConnectorConfiguration connectorConfiguration, RsocketTcpClientConfiguration clientConfiguration, RSocketConnector connector) {
         UnaryOperator<TcpClient> clientDecorator = clientConfiguration.getClientDecorator();
         UnaryOperator<TcpClientTransport> transportDecorator = clientConfiguration.getTransportDecorator();
         TcpClient client = clientDecorator.apply(TcpClient.create()
                 .host(clientConfiguration.getHost())
                 .port(clientConfiguration.getPort()));
+        RsocketSslConfiguration ssl = connectorConfiguration.getSsl();
+        if (nonNull(ssl)) {
+            File certificate = ssl.getCertificate();
+            File key = ssl.getKey();
+            SslContextBuilder sslBuilder = SslContextBuilder.forClient();
+            if (nonNull(certificate) && certificate.exists() && nonNull(key) && key.exists()) {
+                sslBuilder.keyManager(certificate, key);
+            }
+            String password = ssl.getPassword();
+            if (isNotEmpty(password)) {
+                sslBuilder.keyManager(certificate, key, password);
+            }
+            client.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
+        }
+
         return connector.connect(transportDecorator.apply(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength())));
     }
 
@@ -119,7 +140,7 @@ public class RsocketCommunicationFactory {
         if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
             return createHttpBalancer(connector, group);
         }
-        return configureSocket(common, createHttpClient(connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+        return configureSocket(common, createHttpClient(common, connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
     }
 
     private static LoadbalanceRSocketClient createHttpBalancer(RSocketConnector connector, RsocketHttpClientGroupConfiguration group) {
@@ -140,12 +161,26 @@ public class RsocketCommunicationFactory {
                 .build();
     }
 
-    private static Mono<RSocket> createHttpClient(RsocketHttpClientConfiguration clientConfiguration, RSocketConnector connector) {
+    private static Mono<RSocket> createHttpClient(RsocketCommonConnectorConfiguration connectorConfiguration, RsocketHttpClientConfiguration clientConfiguration, RSocketConnector connector) {
         UnaryOperator<HttpClient> clientDecorator = clientConfiguration.getClientDecorator();
         UnaryOperator<WebsocketClientTransport> transportDecorator = clientConfiguration.getTransportDecorator();
         HttpClient client = clientDecorator.apply(HttpClient.create()
                 .host(clientConfiguration.getHost())
                 .port(clientConfiguration.getPort()));
+        RsocketSslConfiguration ssl = connectorConfiguration.getSsl();
+        if (nonNull(ssl)) {
+            File certificate = ssl.getCertificate();
+            File key = ssl.getKey();
+            SslContextBuilder sslBuilder = SslContextBuilder.forClient();
+            if (nonNull(certificate) && certificate.exists() && nonNull(key) && key.exists()) {
+                sslBuilder.keyManager(certificate, key);
+            }
+            String password = ssl.getPassword();
+            if (isNotEmpty(password)) {
+                sslBuilder.keyManager(certificate, key, password);
+            }
+            client.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
+        }
         return connector.connect(transportDecorator.apply(WebsocketClientTransport.create(client, clientConfiguration.getPath())));
     }
 

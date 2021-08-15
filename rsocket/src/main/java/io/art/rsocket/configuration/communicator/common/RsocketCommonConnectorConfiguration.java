@@ -10,10 +10,10 @@ import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketRetryConfiguration.*;
+import static io.art.rsocket.configuration.common.RsocketSslConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
@@ -40,6 +40,7 @@ public class RsocketCommonConnectorConfiguration {
     private Duration timeout;
     private UnaryOperator<InterceptorRegistry> interceptors;
     private UnaryOperator<RSocketConnector> decorator;
+    private RsocketSslConfiguration ssl;
 
     public static RsocketCommonConnectorConfiguration defaults(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
@@ -75,6 +76,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
         configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), id -> strategy -> strategy.manual(id), current.service));
         configuration.timeout = listener.emit(orElse(source.getDuration(TRANSPORT_TIMEOUT_CONNECTION_KEY), current.timeout));
+        configuration.ssl = listener.emit(orElse(source.getNested(TRANSPORT_SSL_SECTION, section -> rsocketSsl(section, current.ssl)), current.ssl));
         return configuration;
     }
 }

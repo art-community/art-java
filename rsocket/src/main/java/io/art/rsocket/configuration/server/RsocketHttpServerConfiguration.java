@@ -62,6 +62,7 @@ public class RsocketHttpServerConfiguration {
     private UnaryOperator<InterceptorRegistry> interceptors;
     private UnaryOperator<HttpServer> httpDecorator;
     private UnaryOperator<RSocketServer> decorator;
+    private RsocketSslConfiguration ssl;
 
     public static RsocketHttpServerConfiguration defaults() {
         RsocketHttpServerConfiguration configuration = RsocketHttpServerConfiguration.builder().build();
@@ -110,6 +111,7 @@ public class RsocketHttpServerConfiguration {
         configuration.defaultServiceMethod = orElse(configuration.defaultServiceMethod, current.defaultServiceMethod);
         configuration.port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
         configuration.host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
+        configuration.ssl = serverListener.emit(orElse(source.getNested(TRANSPORT_SSL_SECTION, RsocketSslConfiguration::rsocketSsl), current.ssl));
         return configuration;
     }
 }
