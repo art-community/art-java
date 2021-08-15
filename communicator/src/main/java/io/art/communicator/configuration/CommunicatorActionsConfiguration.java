@@ -23,6 +23,7 @@ import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.resilience.configuration.*;
+import io.art.resilience.constants.*;
 import lombok.Builder;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -30,7 +31,6 @@ import static io.art.communicator.constants.CommunicatorConstants.ConfigurationK
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.resilience.constants.ResilienceModuleConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
 @Getter
@@ -51,7 +51,8 @@ public class CommunicatorActionsConfiguration {
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), currentConfiguration.logging));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), currentConfiguration.deactivated));
         configuration.actions = source.getNestedMap(ACTIONS_SECTION, action -> getAction(refresher, currentConfiguration, action));
-        ResilienceConfiguration resilience = source.getNested(RESILIENCE_SECTION, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        String resilienceSection = ResilienceModuleConstants.ConfigurationKeys.RESILIENCE_SECTION;
+        ResilienceConfiguration resilience = source.getNested(resilienceSection, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
         configuration.resilience = orElse(resilience, currentConfiguration.resilience);
         return configuration;
     }

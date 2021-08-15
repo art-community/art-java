@@ -34,6 +34,10 @@ public class ModuleChecker {
         return context().hasModule(MESSAGE_PACK_MODULE_ID);
     }
 
+    public static boolean withResilience() {
+        return context().hasModule(RESILIENCE_MODULE_ID);
+    }
+
     public static void withLogging(Runnable action) {
         if (withLogging()) action.run();
     }
@@ -60,5 +64,9 @@ public class ModuleChecker {
 
     public static void withMessagePack(Runnable action) {
         if (withMessagePack()) action.run();
+    }
+
+    public static void withResilience(Runnable action) {
+        if (withResilience()) action.run();
     }
 }

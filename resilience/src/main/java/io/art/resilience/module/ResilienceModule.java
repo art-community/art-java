@@ -28,18 +28,19 @@ import io.github.resilience4j.ratelimiter.*;
 import io.github.resilience4j.retry.*;
 import io.github.resilience4j.timelimiter.*;
 import lombok.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static lombok.AccessLevel.*;
 
 @Getter
 public class ResilienceModule implements StatefulModule<ResilienceModuleConfiguration, ResilienceModuleConfiguration.Configurator, ResilienceModuleState> {
-    private final String id = ResilienceModule.class.getSimpleName();
+    private final String id = RESILIENCE_MODULE_ID;
     private final ResilienceModuleConfiguration configuration = new ResilienceModuleConfiguration();
     private final ResilienceModuleConfiguration.Configurator configurator = new ResilienceModuleConfiguration.Configurator(configuration);
     private final ResilienceModuleState state = new ResilienceModuleState();
     @Getter(lazy = true, value = PRIVATE)
     private static final
-    StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(ResilienceModule.class.getSimpleName());
+    StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule = context().getStatefulModule(RESILIENCE_MODULE_ID);
 
     public static StatefulModuleProxy<ResilienceModuleConfiguration, ResilienceModuleState> resilienceModule() {
         return getResilienceModule();

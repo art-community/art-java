@@ -21,6 +21,7 @@ import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.factory.ConnectorProxyFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
@@ -192,7 +193,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
         }
 
-        if (resilience.isPresent()) {
+        if (resilience.isPresent() && withResilience()) {
             builder.inputDecorator(new CommunicatorResilienceDecorator(id, communicatorConfiguration));
         }
 

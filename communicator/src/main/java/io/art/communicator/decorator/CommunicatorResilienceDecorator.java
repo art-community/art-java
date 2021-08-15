@@ -22,6 +22,7 @@ import io.art.communicator.configuration.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.resilience.configuration.*;
+import io.art.resilience.module.*;
 import io.github.resilience4j.bulkhead.*;
 import io.github.resilience4j.circuitbreaker.*;
 import io.github.resilience4j.ratelimiter.*;
@@ -35,7 +36,6 @@ import io.github.resilience4j.timelimiter.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.Property.*;
-import static io.art.resilience.module.ResilienceModule.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
@@ -66,23 +66,23 @@ public class CommunicatorResilienceDecorator implements UnaryOperator<Flux<Objec
         Publisher<Object> decorated = input;
 
         if (nonNull(rateLimiter)) {
-            decorated = RateLimiterOperator.of(rateLimiter(id.toString(), rateLimiter)).apply(input);
+            decorated = RateLimiterOperator.of(ResilienceModule.rateLimiter(id.toString(), rateLimiter)).apply(input);
         }
 
         if (nonNull(timeLimiter)) {
-            decorated = TimeLimiterOperator.of(timeLimiter(id.toString(), timeLimiter)).apply(input);
+            decorated = TimeLimiterOperator.of(ResilienceModule.timeLimiter(id.toString(), timeLimiter)).apply(input);
         }
 
         if (nonNull(bulkhead)) {
-            decorated = BulkheadOperator.of(bulkhead(id.toString(), bulkhead)).apply(input);
+            decorated = BulkheadOperator.of(ResilienceModule.bulkhead(id.toString(), bulkhead)).apply(input);
         }
 
         if (nonNull(circuitBreaker)) {
-            decorated = CircuitBreakerOperator.of(circuitBreaker(id.toString(), circuitBreaker)).apply(input);
+            decorated = CircuitBreakerOperator.of(ResilienceModule.circuitBreaker(id.toString(), circuitBreaker)).apply(input);
         }
 
         if (nonNull(retry)) {
-            decorated = RetryOperator.of(retry(id.toString(), retry)).apply(input);
+            decorated = RetryOperator.of(ResilienceModule.retry(id.toString(), retry)).apply(input);
         }
 
         return from(decorated);
