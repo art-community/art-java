@@ -114,12 +114,16 @@ public class RsocketCommunicationFactory {
             File certificate = ssl.getCertificate();
             File key = ssl.getKey();
             SslContextBuilder sslBuilder = SslContextBuilder.forClient();
-            if (nonNull(certificate) && certificate.exists() && nonNull(key) && key.exists()) {
-                sslBuilder.keyManager(certificate, key);
+            if (nonNull(key) && key.exists()) {
+                sslBuilder.keyManager(nonNull(certificate) && certificate.exists() ? certificate : null, key);
             }
             String password = ssl.getPassword();
             if (isNotEmpty(password)) {
-                sslBuilder.keyManager(certificate, key, password);
+                sslBuilder.keyManager(
+                        nonNull(certificate) && certificate.exists() ? certificate : null,
+                        nonNull(key) && key.exists() ? key : null,
+                        password
+                );
             }
             client.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
         }
