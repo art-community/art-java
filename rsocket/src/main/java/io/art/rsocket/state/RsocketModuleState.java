@@ -18,58 +18,36 @@
 
 package io.art.rsocket.state;
 
-import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.meta.model.*;
 import io.art.rsocket.model.*;
 import io.rsocket.*;
 import lombok.*;
-import reactor.util.context.*;
-import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.ListFactory.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ContextKeys.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import java.util.*;
 import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
-    private final List<RSocket> requesters = linkedListOf();
-    private final ThreadLocal<RsocketThreadLocalState> threadLocalState = new ThreadLocal<>();
+    private final MetaLocalState<RsocketLocalState> localState = new MetaLocalState<>();
 
-    public void registerRequester(RSocket socket) {
-        requesters.add(socket);
+    public void rsocketState(MetaClass<?> owner, MetaMethod<?> method, RsocketLocalState state) {
+        localState.set(owner, method, state);
     }
 
-    public void removeRequester(RSocket socket) {
-        requesters.remove(socket);
+    public <C, M extends MetaClass<C>> RsocketLocalState rsocketState(Class<C> owner, Function<M, MetaMethod<?>> method) {
+        return localState.get(owner, method);
     }
 
-    public ImmutableArray<RSocket> getRequesters() {
-        return immutableArrayOf(requesters);
+    public <C, M extends MetaClass<C>> void clearRsocketState(MetaClass<?> owner, MetaMethod<?> method) {
+        localState.remove(owner, method);
     }
-
-
-    public void localState(Function<RsocketThreadLocalState, RsocketThreadLocalState> functor) {
-        threadLocalState.set(functor.apply(threadLocalState.get()));
-    }
-
-    public void localState(RsocketThreadLocalState state) {
-        threadLocalState.set(state);
-    }
-
-    public RsocketThreadLocalState localState() {
-        return threadLocalState.get();
-    }
-
 
     @Getter
-    @Builder(toBuilder = true)
-    public static class RsocketThreadLocalState {
-        private final RSocket requesterRsocket;
-        private final RsocketSetupPayload setupPayload;
-
-        public static RsocketThreadLocalState fromContext(ContextView context) {
-            RSocket requesterRsocket = context.get(REQUESTER_RSOCKET_KEY);
-            RsocketSetupPayload setupPayload = context.get(SETUP_PAYLOAD_KEY);
-            return new RsocketThreadLocalState(requesterRsocket, setupPayload);
-        }
+    @Builder
+    @SuppressWarnings(OPTIONAL_USED_AS_FIELD)
+    public static class RsocketLocalState {
+        @Builder.Default
+        private final Optional<RsocketSetupPayload> setupPayloadModel = Optional.empty();
+        private final ConnectionSetupPayload setupPayloadRaw;
     }
 }

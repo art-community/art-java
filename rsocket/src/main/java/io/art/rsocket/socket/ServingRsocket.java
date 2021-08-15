@@ -21,10 +21,13 @@ package io.art.rsocket.socket;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
+import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.model.*;
+import io.art.rsocket.state.*;
+import io.art.rsocket.state.RsocketModuleState.*;
 import io.art.server.method.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
@@ -41,6 +44,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static java.text.MessageFormat.*;
@@ -55,6 +59,7 @@ public class ServingRsocket implements RSocket {
     private final ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
+    private final RsocketModuleState state = rsocketModule().state();
     private final static MetaType<RsocketSetupPayload> payloadType = declaration(RsocketSetupPayload.class).definition();
     private final static Map<ServiceMethodIdentifier, ServingRsocket> cache = concurrentMap();
 
@@ -73,6 +78,7 @@ public class ServingRsocket implements RSocket {
                     dataWriter = cached.dataWriter;
                     inputMappingType = cached.inputMappingType;
                     outputMappingType = cached.outputMappingType;
+                    updateState(payload, setupPayloadDataValue);
                     return;
                 }
                 serviceMethod = findServiceMethod(serviceMethodId);
@@ -87,6 +93,7 @@ public class ServingRsocket implements RSocket {
                     outputMappingType = outputMappingType.parameters().get(0);
                 }
                 cache.put(serviceMethodId, this);
+                updateState(payload, setupPayloadDataValue);
                 return;
             }
         }
@@ -100,6 +107,7 @@ public class ServingRsocket implements RSocket {
                 dataWriter = cached.dataWriter;
                 inputMappingType = cached.inputMappingType;
                 outputMappingType = cached.outputMappingType;
+                updateState(payload);
                 return;
 
             }
@@ -115,6 +123,7 @@ public class ServingRsocket implements RSocket {
                 outputMappingType = outputMappingType.parameters().get(0);
             }
             cache.put(defaultServiceMethod, this);
+            updateState(payload);
             return;
         }
 
@@ -174,6 +183,27 @@ public class ServingRsocket implements RSocket {
         TransportPayload payloadValue = readRsocketPayload(dataReader, payload, inputMappingType);
         Flux<Object> input = payloadValue.isEmpty() ? empty() : just(payloadValue.getValue());
         return serviceMethod.serve(input).then();
+    }
+
+    @Override
+    public void dispose() {
+        MetaMethodInvoker invoker = serviceMethod.getInvoker();
+        state.clearRsocketState(invoker.getOwner(), invoker.getDelegate());
+    }
+
+    private void updateState(ConnectionSetupPayload payload) {
+        MetaMethodInvoker invoker = serviceMethod.getInvoker();
+        state.rsocketState(invoker.getOwner(), invoker.getDelegate(), RsocketLocalState.builder()
+                .setupPayloadRaw(payload)
+                .build());
+    }
+
+    private void updateState(ConnectionSetupPayload payload, RsocketSetupPayload setupPayloadDataValue) {
+        MetaMethodInvoker invoker = serviceMethod.getInvoker();
+        state.rsocketState(invoker.getOwner(), invoker.getDelegate(), RsocketLocalState.builder()
+                .setupPayloadModel(Optional.of(setupPayloadDataValue))
+                .setupPayloadRaw(payload)
+                .build());
     }
 
     private ServiceMethod findServiceMethod(ServiceMethodIdentifier serviceMethodId) {

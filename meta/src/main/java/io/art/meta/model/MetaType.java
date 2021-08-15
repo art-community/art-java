@@ -60,9 +60,11 @@ public class MetaType<T> {
     private final MetaType<?> arrayComponentType;
 
     @Getter
+    @EqualsAndHashCode.Exclude
     private MetaTypeInternalKind internalKind;
 
     @Getter
+    @EqualsAndHashCode.Exclude
     private MetaTypeExternalKind externalKind;
 
     @Getter
