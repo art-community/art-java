@@ -23,8 +23,6 @@ plugins {
 
 dependencies {
     val rsocketVersion: String by project
-    val nettyVersion: String by project
-    val reactorNettyVersion: String by project
 
     api(project(":core"))
     api(project(":meta"))
@@ -38,15 +36,6 @@ dependencies {
             .exclude("io.zipkin.brave")
             .exclude("io.netty")
             .exclude("io.projectreactor", "reactor-core")
-            .exclude("org.slf4j")
-
-    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
-            .exclude("io.zipkin.brave")
-            .exclude("io.netty")
-            .exclude("io.projectreactor", "reactor-core")
-            .exclude("org.slf4j")
-
-    api("io.netty", "netty-all", nettyVersion)
             .exclude("org.slf4j")
 
     testImplementation(project(":json"))

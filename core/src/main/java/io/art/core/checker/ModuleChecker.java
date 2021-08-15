@@ -18,6 +18,10 @@ public class ModuleChecker {
         return context().hasModule(META_MODULE_ID);
     }
 
+    public static boolean withTransport() {
+        return context().hasModule(TRANSPORT_MODULE_ID);
+    }
+
     public static void withLogging(Runnable action) {
         if (withLogging()) action.run();
     }
@@ -28,5 +32,9 @@ public class ModuleChecker {
 
     public static void withMeta(Runnable action) {
         if (withMeta()) action.run();
+    }
+
+    public static void withTransport(Runnable action) {
+        if (withTransport()) action.run();
     }
 }

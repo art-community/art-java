@@ -17,8 +17,21 @@
  */
 
 dependencies {
+    val nettyVersion: String by project
+    val reactorNettyVersion: String by project
+
+    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
+            .exclude("io.zipkin.brave")
+            .exclude("io.netty")
+            .exclude("io.projectreactor", "reactor-core")
+            .exclude("org.slf4j")
+
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("org.slf4j")
+
     api(project(":core"))
     api(project(":meta"))
+
     implementation(project(":logging"))
     implementation(project(":json"))
     implementation(project(":yaml"))
