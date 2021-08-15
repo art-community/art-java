@@ -37,12 +37,16 @@ public class TransportPool {
                 builder.metrics(configuration.isMetrics(), configuration.getMeterRegistrar());
             }
         }
+        if (configuration.getMaxIdleTime().getNano() > 0) {
+            builder.maxIdleTime(configuration.getMaxIdleTime());
+        }
+        if (configuration.getMaxLifeTime().getNano() > 0) {
+            builder.maxLifeTime(configuration.getMaxLifeTime());
+        }
         builder
                 .pendingAcquireMaxCount(configuration.getPendingAcquireMaxCount())
                 .pendingAcquireTimeout(configuration.getPendingAcquireTimeout())
-                .maxConnections(configuration.getMaxConnections())
-                .maxIdleTime(configuration.getMaxIdleTime())
-                .maxLifeTime(configuration.getMaxLifeTime());
+                .maxConnections(configuration.getMaxConnections());
         this.provider = builder.build();
     }
 
