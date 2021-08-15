@@ -23,7 +23,7 @@ public interface TransportModuleConstants {
         Duration DEFAULT_MAX_IDLE_TIME = ofMillis(-1);
         String DEFAULT_LEASING_STRATEGY = LEASING_STRATEGY_FIFO;
         BufferType DEFAULT_BUFFER_TYPE = BufferType.IO;
-        int DEFAULT_BUFFER_INITIAL_CAPACITY = 512;
+        int DEFAULT_BUFFER_INITIAL_CAPACITY = 256;
         int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
 
     }
