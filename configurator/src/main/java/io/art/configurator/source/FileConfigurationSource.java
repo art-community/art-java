@@ -18,7 +18,6 @@
 
 package io.art.configurator.source;
 
-import io.art.configuration.yaml.source.*;
 import io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import io.art.configurator.exception.*;
 import io.art.core.file.*;

@@ -1,6 +1,6 @@
 package io.art.configurator.test;
 
-import io.art.configuration.yaml.source.*;
+import io.art.configurator.source.*;
 import io.art.core.source.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;

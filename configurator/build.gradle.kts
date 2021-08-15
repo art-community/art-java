@@ -19,10 +19,13 @@
 dependencies {
     implementation(project(":core"))
     implementation(project(":meta"))
-    implementation(project(":yaml-configuration"))
 
     val typesafeConfigVersion: String by project
+    val jacksonVersion: String by project
     api("com.typesafe", "config", typesafeConfigVersion)
+    api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
+    api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
+    api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)
 
     testImplementation(testFixtures(project(":meta")))
 }

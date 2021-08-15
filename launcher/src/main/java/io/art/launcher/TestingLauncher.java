@@ -26,6 +26,10 @@ import java.util.function.*;
 public class TestingLauncher {
     private final static SingletonAction initializer = singletonAction();
 
+    public static void testing(String[] arguments, UnaryOperator<Activator> activator) {
+        initializer.run(() -> activator.apply(activator(arguments)).launch());
+    }
+
     public static void testing(UnaryOperator<Activator> activator) {
         initializer.run(() -> activator.apply(activator()).launch());
     }

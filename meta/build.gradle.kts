@@ -24,14 +24,12 @@ plugins {
 dependencies {
     implementation(project(":core"))
 
-    testImplementation(project(":yaml-configuration"))
-
     testFixturesImplementation(project(":core"))
 }
 
 generator {
     source("MetaTest") {
-        modulePackage( "io.art.meta.test")
+        modulePackage("io.art.meta.test")
         jvm()
         sourcesPattern {
             include("src/testFixtures/**")

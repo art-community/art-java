@@ -16,12 +16,12 @@
  * limitations under the License.
  */
 
-package io.art.configuration.yaml.source;
+package io.art.configurator.source;
 
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.*;
 import com.fasterxml.jackson.dataformat.yaml.*;
-import io.art.configuration.yaml.exception.*;
+import io.art.configurator.exception.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -58,7 +58,7 @@ public class YamlConfigurationSource implements NestedConfiguration {
         try {
             configuration = YAML_MAPPER.readTree(inputStream.get());
         } catch (IOException exception) {
-            throw new YamlConfigurationLoadingException(exception);
+            throw new ConfigurationLoadingException(exception);
         }
     }
 
@@ -76,7 +76,7 @@ public class YamlConfigurationSource implements NestedConfiguration {
         try {
             configuration = YAML_MAPPER.readTree(inputStream.get());
         } catch (IOException exception) {
-            throw new YamlConfigurationLoadingException(exception);
+            throw new ConfigurationLoadingException(exception);
         }
     }
 
