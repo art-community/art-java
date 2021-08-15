@@ -48,8 +48,8 @@ public class CommunicatorActionConfiguration {
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), current.deactivated));
-        String recilienceSection = ResilienceModuleConstants.ConfigurationKeys.RESILIENCE_SECTION;
-        ResilienceConfiguration resilience = source.getNested(recilienceSection, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
+        String resilienceSection = ResilienceModuleConstants.ConfigurationKeys.RESILIENCE_SECTION;
+        ResilienceConfiguration resilience = source.getNested(resilienceSection, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
         configuration.resilience = orElse(resilience, currentConfiguration.resilience);
         return configuration;
     }
