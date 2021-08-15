@@ -54,6 +54,6 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
 
     @Override
     public String print() {
-        return format(CONFIGURING_MESSAGE, configuration);
+        return format(CONFIGURING_MESSAGE, configuration.getCommonPoolConfiguration());
     }
 }
