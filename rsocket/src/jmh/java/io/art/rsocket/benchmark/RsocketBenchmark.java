@@ -26,8 +26,8 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.json.module.JsonActivator.*;
 import static io.art.logging.module.LoggingActivator.*;
+import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
@@ -50,7 +50,7 @@ public class RsocketBenchmark {
             initialize(
                     meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                     logging(),
-                    json(),
+                    messagePack(),
                     rsocket(rsocket -> rsocket
                             .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
                             .server(server -> server.tcp().configureService(TestRsocketService.class)))
