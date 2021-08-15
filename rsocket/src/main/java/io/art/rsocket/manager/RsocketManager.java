@@ -20,6 +20,7 @@ package io.art.rsocket.manager;
 
 
 import io.art.communicator.action.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.refresher.*;
@@ -28,12 +29,11 @@ import lombok.*;
 import reactor.core.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.logging.Logging.*;
 import static lombok.AccessLevel.*;
 
 public class RsocketManager {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(RsocketManager.class);
+    private static final Logger logger = Logging.logger(RsocketManager.class);
 
     private final RsocketServer server;
     private final RsocketModuleConfiguration configuration;

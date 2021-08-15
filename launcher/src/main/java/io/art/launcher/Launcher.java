@@ -26,6 +26,7 @@ import io.art.core.exception.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.property.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
@@ -41,7 +42,6 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
-import static io.art.logging.Logging.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
@@ -68,7 +68,7 @@ public class Launcher {
     private static void configuredLaunch(Activator activator, ModuleActivator configuratorActivator) {
         ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
-        LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
+        LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
 
         ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
         Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
@@ -110,7 +110,7 @@ public class Launcher {
     private static void defaultLaunch(Activator activator) {
         ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
-        LazyProperty<Logger> logger = lazy(() -> logger(LAUNCHER_LOGGER));
+        LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
         Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
