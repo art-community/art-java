@@ -22,6 +22,14 @@ public class ModuleChecker {
         return context().hasModule(TRANSPORT_MODULE_ID);
     }
 
+    public static boolean withJson() {
+        return context().hasModule(JSON_MODULE_ID);
+    }
+
+    public static boolean withYaml() {
+        return context().hasModule(YAML_MODULE_ID);
+    }
+
     public static void withLogging(Runnable action) {
         if (withLogging()) action.run();
     }

@@ -26,6 +26,8 @@ dependencies {
     api(project(":meta"))
     api(project(":transport"))
     implementation(project(":logging"))
+    implementation(project(":json"))
+    implementation(project(":yaml"))
 }
 
 generator {

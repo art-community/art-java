@@ -21,14 +21,15 @@ package io.art.yaml.module;
 import io.art.core.module.*;
 import io.art.yaml.configuration.*;
 import lombok.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static lombok.AccessLevel.*;
 
 @Getter
 public class YamlModule implements StatelessModule<YamlModuleConfiguration, YamlModuleConfiguration.Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<YamlModuleConfiguration> yamlModule = context().getStatelessModule(YamlModule.class.getSimpleName());
-    private final String id = YamlModule.class.getSimpleName();
+    private static final StatelessModuleProxy<YamlModuleConfiguration> yamlModule = context().getStatelessModule(YAML_MODULE_ID);
+    private final String id = YAML_MODULE_ID;
     private final YamlModuleConfiguration configuration = new YamlModuleConfiguration();
     private final YamlModuleConfiguration.Configurator configurator = new YamlModuleConfiguration.Configurator(configuration);
 

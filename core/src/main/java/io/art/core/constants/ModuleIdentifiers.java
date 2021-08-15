@@ -5,6 +5,8 @@ import io.art.core.collection.*;
 public interface ModuleIdentifiers {
     String LOGGING_MODULE_ID = "LoggingModule";
     String TRANSPORT_MODULE_ID = "TransportModule";
+    String JSON_MODULE_ID = "JsonModule";
+    String YAML_MODULE_ID = "YamlModule";
     String CONFIGURATOR_MODULE_ID = "ConfiguratorModule";
     String META_MODULE_ID = "MetaModule";
 

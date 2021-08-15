@@ -31,6 +31,7 @@ import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
 import static io.art.server.constants.ServerConstants.LoggingMessages.*;
+import static io.art.transport.extensions.TransportExtensions.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
@@ -71,12 +72,14 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
 
     private void logInput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), data));
+        String dataString = asPrettyString(data);
+        getLogger().info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), dataString));
     }
 
     private void logOutput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), data));
+        String dataString = asPrettyString(data);
+        getLogger().info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), dataString));
     }
 
     private void logException(Throwable exception) {
