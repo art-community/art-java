@@ -39,6 +39,7 @@ include("meta")
 //include("metrics")
 
 pluginManagement {
+    val internalPluginVersion: String by settings
     repositories {
         gradlePluginPortal()
         maven { url = uri("https://nexus.art-platform.io/repository/art-gradle-plugins/") }
@@ -46,13 +47,12 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id.contains("art")) {
-                useModule("io.art.gradle:art-gradle:${requested.module?.version}")
+                useModule("io.art.gradle:art-gradle:$internalPluginVersion")
             }
         }
     }
     plugins {
         val jmhVersion: String by settings
-        val internalPluginVersion: String by settings
         id("me.champeau.jmh") version jmhVersion
         id("art-internal-jvm") version internalPluginVersion
     }
