@@ -10,7 +10,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static java.util.Objects.*;
-import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -31,8 +30,9 @@ public class CommunicatorActionConfigurator {
         return this;
     }
 
-    public CommunicatorActionConfigurator resilience() {
-        return resilience(identity());
+    public CommunicatorActionConfigurator resilience(ResilienceConfigurationBuilder resilience) {
+        this.resilience = ignore -> resilience;
+        return this;
     }
 
     public CommunicatorActionConfigurator resilience(UnaryOperator<ResilienceConfigurationBuilder> resilience) {

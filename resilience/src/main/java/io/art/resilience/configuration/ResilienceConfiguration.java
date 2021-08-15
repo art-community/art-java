@@ -115,4 +115,8 @@ public class ResilienceConfiguration {
         }
         return builder.build();
     }
+
+    public static ResilienceConfiguration defaults() {
+        return ResilienceConfiguration.builder().build();
+    }
 }
