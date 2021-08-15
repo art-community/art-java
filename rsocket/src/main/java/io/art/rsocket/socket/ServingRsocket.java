@@ -110,7 +110,6 @@ public class ServingRsocket implements RSocket {
                 updateState(payload);
                 return;
             }
-
             serviceMethod = findServiceMethod(defaultServiceMethod);
             dataReader = new TransportPayloadReader(dataFormat);
             dataWriter = new TransportPayloadWriter(dataFormat);
