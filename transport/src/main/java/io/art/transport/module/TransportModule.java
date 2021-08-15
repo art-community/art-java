@@ -33,12 +33,12 @@ import static lombok.AccessLevel.*;
 @Getter
 public class TransportModule implements StatelessModule<TransportModuleConfiguration, Configurator> {
     @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<ModuleConfiguration> transportModule = context().getStatelessModule(TRANSPORT_MODULE_ID);
+    private static final StatelessModuleProxy<TransportModuleConfiguration> transportModule = context().getStatelessModule(TRANSPORT_MODULE_ID);
     private final String id = TRANSPORT_MODULE_ID;
     private final TransportModuleConfiguration configuration = new TransportModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
 
-    public static StatelessModuleProxy<ModuleConfiguration> transportModule() {
+    public static StatelessModuleProxy<TransportModuleConfiguration> transportModule() {
         return getTransportModule();
     }
 

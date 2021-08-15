@@ -2,6 +2,8 @@ package io.art.transport.constants;
 
 import lombok.*;
 import static io.art.core.constants.ThreadConstants.*;
+import static java.lang.Integer.*;
+import static java.lang.Math.max;
 import static java.lang.Math.*;
 import static java.time.Duration.*;
 import static reactor.netty.resources.ConnectionProvider.*;
@@ -20,6 +22,10 @@ public interface TransportModuleConstants {
         Duration DEFAULT_MAX_LIFE_TIME = Duration.ofMillis(-1);
         Duration DEFAULT_MAX_IDLE_TIME = Duration.ofMillis(-1);
         String DEFAULT_LEASING_STRATEGY = LEASING_STRATEGY_FIFO;
+        BufferType DEFAULT_BUFFER_TYPE = BufferType.IO;
+        int DEFAULT_BUFFER_INITIAL_CAPACITY = 256;
+        int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
+
     }
 
     interface Messages {
@@ -44,6 +50,10 @@ public interface TransportModuleConstants {
         String DISPOSE_INACTIVE_KEY = "disposeInactive";
         String DISPOSE_INTERVAL_KEY = "disposeInterval";
         String POOL_INACTIVITY_KEY = "poolInactivity";
+        String BUFFER_WRITE_SECTION = "buffer.write";
+        String BUFFER_TYPE_KEY = "type";
+        String BUFFER_INITIAL_CAPACITY_KEY = "initialCapacity";
+        String BUFFER_MAX_CAPACITY_KEY = "maxCapacity";
     }
 
     @Getter
@@ -59,6 +69,25 @@ public interface TransportModuleConstants {
             if (JSON.format.equalsIgnoreCase(format)) return JSON;
             if (YAML.format.equalsIgnoreCase(format)) return YAML;
             if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;
+            return fallback;
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum BufferType {
+        DEFAULT("default"),
+        HEAP("heap"),
+        IO("io"),
+        DIRECT("direct");
+
+        private final String type;
+
+        public static BufferType bufferType(String type, BufferType fallback) {
+            if (DEFAULT.type.equalsIgnoreCase(type)) return DEFAULT;
+            if (HEAP.type.equalsIgnoreCase(type)) return HEAP;
+            if (IO.type.equalsIgnoreCase(type)) return IO;
+            if (DIRECT.type.equalsIgnoreCase(type)) return DIRECT;
             return fallback;
         }
     }
