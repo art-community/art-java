@@ -196,15 +196,4 @@ public interface RsocketModuleConstants {
         REQUEST_CHANNEL,
         METADATA_PUSH;
     }
-
-    @Getter
-    @AllArgsConstructor
-    enum RsocketProtocol implements CommunicatorProtocol {
-        RSOCKET("rsocket");
-
-        String protocol;
-
-    }
-
-
 }
