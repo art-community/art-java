@@ -22,16 +22,15 @@ plugins {
 }
 
 dependencies {
-    val rsocketVersion: String by project
-
     api(project(":core"))
     api(project(":meta"))
     api(project(":transport"))
+    api(project(":server"))
+    api(project(":communicator"))
 
-    implementation(project(":server"))
-    implementation(project(":communicator"))
     implementation(project(":logging"))
 
+    val rsocketVersion: String by project
     api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
             .exclude("io.zipkin.brave")
             .exclude("io.netty")
