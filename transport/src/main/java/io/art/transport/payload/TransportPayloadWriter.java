@@ -84,9 +84,7 @@ public class TransportPayloadWriter {
     }
 
     private static ByteBuf createBuffer() {
-        if (!withTransport()) {
-            return DEFAULT.ioBuffer();
-        }
+        if (!withTransport()) return DEFAULT.ioBuffer();
         TransportModuleConfiguration configuration = getConfiguration();
         int writeBufferInitialCapacity = configuration.getWriteBufferInitialCapacity();
         int writeBufferMaxCapacity = configuration.getWriteBufferMaxCapacity();
