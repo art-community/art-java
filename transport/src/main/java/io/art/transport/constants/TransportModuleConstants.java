@@ -14,7 +14,7 @@ public interface TransportModuleConstants {
         String DEFAULT_LOOP_RESOURCES_PREFIX = "common-transport";
         String DEFAULT_CONNECTION_PROVIDER_NAME = "common-connection";
         int DEFAULT_SELECTORS_COUNT = 2;
-        int DEFAULT_WORKERS_COUNT = (int) max(ceil(DEFAULT_THREAD_POOL_SIZE / 2), 2);
+        int DEFAULT_WORKERS_COUNT = (int) max(ceil(DEFAULT_THREAD_POOL_SIZE >> 1), 2);
         Duration DEFAULT_EVICTION_INTERVAL = ZERO;
         int DEFAULT_MAX_CONNECTIONS = DEFAULT_THREAD_POOL_SIZE * 2;
         int DEFAULT_PENDING_ACQUIRE_MAX_COUNT = 2 * DEFAULT_MAX_CONNECTIONS;
