@@ -17,8 +17,8 @@
  */
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":meta"))
+    api(project(":core"))
+    api(project(":meta"))
 
     val typesafeConfigVersion: String by project
     val jacksonVersion: String by project

@@ -17,8 +17,8 @@
  */
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":meta"))
+    api(project(":core"))
+    api(project(":meta"))
     implementation(project(":logging"))
     implementation(project(":json"))
     implementation(project(":yaml"))

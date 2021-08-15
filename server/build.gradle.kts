@@ -22,11 +22,10 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":meta"))
-    implementation(project(":resilience"))
+    api(project(":core"))
+    api(project(":meta"))
+    api(project(":transport"))
     implementation(project(":logging"))
-    implementation(project(":transport"))
 }
 
 generator {

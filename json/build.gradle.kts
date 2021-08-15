@@ -19,8 +19,8 @@
 dependencies {
     val jacksonVersion: String by project
 
-    implementation(project(":core"))
-    implementation(project(":meta"))
+    api(project(":core"))
+    api(project(":meta"))
 
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)

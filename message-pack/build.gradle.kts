@@ -23,8 +23,8 @@ plugins {
 dependencies {
     val messagePackVersion: String by project
 
-    implementation(project(":core"))
-    implementation(project(":meta"))
+    api(project(":core"))
+    api(project(":meta"))
 
     api("org.msgpack", "msgpack-core", messagePackVersion)
 

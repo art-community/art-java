@@ -29,8 +29,8 @@ dependencies {
     implementation(project(":server"))
     implementation(project(":communicator"))
     implementation(project(":rsocket"))
+    implementation(project(":resilience"))
 //    implementation(project(":http"))
 //    implementation(project(":tarantool"))
 //    implementation(project(":storage"))
-    implementation(project(":resilience"))
 }

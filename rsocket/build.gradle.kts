@@ -26,13 +26,13 @@ dependencies {
     val nettyVersion: String by project
     val reactorNettyVersion: String by project
 
-    implementation(project(":core"))
-    implementation(project(":meta"))
-    implementation(project(":logging"))
-    implementation(project(":transport"))
+    api(project(":core"))
+    api(project(":meta"))
+    api(project(":transport"))
+
     implementation(project(":server"))
     implementation(project(":communicator"))
-
+    implementation(project(":logging"))
 
     api("io.rsocket", "rsocket-transport-netty", rsocketVersion)
             .exclude("io.zipkin.brave")

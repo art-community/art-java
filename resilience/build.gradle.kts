@@ -19,7 +19,7 @@
 dependencies {
     val resilience4jVersion: String by project
 
-    implementation(project(":core"))
+    api(project(":core"))
     api("io.github.resilience4j", "resilience4j-circuitbreaker", resilience4jVersion)
             .exclude("com.google.guava")
             .exclude("io.vavr")
