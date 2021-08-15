@@ -25,6 +25,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
 
     @Override
     public Mono<Void> fireAndForget(@NonNull Payload payload) {
+        if (!enabled.get()) return super.fireAndForget(payload);
         log(payload, FIRE_AND_FORGET_REQUEST_LOG);
         Mono<Void> output = super
                 .fireAndForget(payload)
@@ -34,6 +35,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
 
     @Override
     public Mono<Payload> requestResponse(@NonNull Payload payload) {
+        if (!enabled.get()) return super.requestResponse(payload);
         log(payload, REQUEST_RESPONSE_REQUEST_LOG);
         Mono<Payload> output = super
                 .requestResponse(payload)
@@ -43,6 +45,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
 
     @Override
     public Flux<Payload> requestStream(@NonNull Payload payload) {
+        if (!enabled.get()) return super.requestStream(payload);
         log(payload, REQUEST_STREAM_REQUEST_LOG);
         Flux<Payload> output = super
                 .requestStream(payload)
@@ -52,6 +55,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
 
     @Override
     public Flux<Payload> requestChannel(@NonNull Publisher<Payload> payloads) {
+        if (!enabled.get()) return super.requestChannel(payloads);
         Flux<Payload> input = from(payloads)
                 .doOnNext(payload -> log(payload, REQUEST_CHANNEL_REQUEST_LOG))
                 .doOnError(error -> logger.error(format(REQUEST_CHANNEL_EXCEPTION_LOG, let(error, Throwables::getStackTraceAsString))));
@@ -61,6 +65,7 @@ public class RsocketLoggingProxy extends RSocketProxy {
 
     @Override
     public Mono<Void> metadataPush(@NonNull Payload payload) {
+        if (!enabled.get()) return super.metadataPush(payload);
         log(payload, METADATA_PUSH_REQUEST_LOG);
         Mono<Void> output = super
                 .metadataPush(payload)
