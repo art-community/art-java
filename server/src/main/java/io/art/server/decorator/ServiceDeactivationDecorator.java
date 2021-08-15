@@ -44,6 +44,7 @@ public class ServiceDeactivationDecorator implements UnaryOperator<Flux<Object>>
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
+        if (!enabled.get()) return Flux.empty();
         return input.filter(ignored -> enabled.get());
     }
 
