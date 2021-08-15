@@ -75,7 +75,6 @@ public class ServingRsocket implements RSocket {
                     outputMappingType = cached.outputMappingType;
                     return;
                 }
-                cache.put(serviceMethodId, this);
                 serviceMethod = findServiceMethod(serviceMethodId);
                 dataReader = new TransportPayloadReader(dataFormat);
                 dataWriter = new TransportPayloadWriter(dataFormat);
@@ -83,11 +82,11 @@ public class ServingRsocket implements RSocket {
                 if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
                     inputMappingType = inputMappingType.parameters().get(0);
                 }
-
                 outputMappingType = serviceMethod.getOutputType();
                 if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
                     outputMappingType = outputMappingType.parameters().get(0);
                 }
+                cache.put(serviceMethodId, this);
                 return;
             }
         }
@@ -104,7 +103,6 @@ public class ServingRsocket implements RSocket {
                 return;
 
             }
-            cache.put(defaultServiceMethod, this);
             serviceMethod = findServiceMethod(defaultServiceMethod);
             dataReader = new TransportPayloadReader(dataFormat);
             dataWriter = new TransportPayloadWriter(dataFormat);
@@ -112,12 +110,11 @@ public class ServingRsocket implements RSocket {
             if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
                 inputMappingType = inputMappingType.parameters().get(0);
             }
-
             outputMappingType = serviceMethod.getOutputType();
             if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
                 outputMappingType = outputMappingType.parameters().get(0);
             }
-
+            cache.put(defaultServiceMethod, this);
             return;
         }
 
