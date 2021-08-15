@@ -29,7 +29,7 @@ public interface TransportModuleConstants {
     }
 
     interface Messages {
-        String CONFIGURING_MESSAGE = "Transport configured by configuration: {0}";
+        String TRANSPORT_CONFIGURING_MESSAGE = "Common transport resources configured by transport module";
     }
 
     interface ConfigurationKeys {

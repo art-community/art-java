@@ -27,7 +27,6 @@ import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.transport.constants.TransportModuleConstants.Messages.*;
 import static io.art.transport.pool.TransportPool.*;
-import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 
 @Getter
@@ -54,6 +53,6 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
 
     @Override
     public String print() {
-        return format(CONFIGURING_MESSAGE, configuration.getCommonPoolConfiguration());
+        return TRANSPORT_CONFIGURING_MESSAGE;
     }
 }
