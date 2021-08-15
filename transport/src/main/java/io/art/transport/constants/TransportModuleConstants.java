@@ -17,13 +17,13 @@ public interface TransportModuleConstants {
         int DEFAULT_WORKERS_COUNT = (int) max(ceil(DEFAULT_THREAD_POOL_SIZE >> 1), 2);
         Duration DEFAULT_EVICTION_INTERVAL = ZERO;
         int DEFAULT_MAX_CONNECTIONS = DEFAULT_THREAD_POOL_SIZE * 2;
-        int DEFAULT_PENDING_ACQUIRE_MAX_COUNT = 2 * DEFAULT_MAX_CONNECTIONS;
-        Duration DEFAULT_PENDING_ACQUIRE_TIMEOUT = Duration.ofSeconds(30);
-        Duration DEFAULT_MAX_LIFE_TIME = Duration.ofMillis(-1);
-        Duration DEFAULT_MAX_IDLE_TIME = Duration.ofMillis(-1);
+        int DEFAULT_PENDING_ACQUIRE_MAX_COUNT = DEFAULT_MAX_CONNECTIONS * 2;
+        Duration DEFAULT_PENDING_ACQUIRE_TIMEOUT = ofSeconds(30);
+        Duration DEFAULT_MAX_LIFE_TIME = ofMillis(-1);
+        Duration DEFAULT_MAX_IDLE_TIME = ofMillis(-1);
         String DEFAULT_LEASING_STRATEGY = LEASING_STRATEGY_FIFO;
         BufferType DEFAULT_BUFFER_TYPE = BufferType.IO;
-        int DEFAULT_BUFFER_INITIAL_CAPACITY = 64;
+        int DEFAULT_BUFFER_INITIAL_CAPACITY = 512;
         int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
 
     }
