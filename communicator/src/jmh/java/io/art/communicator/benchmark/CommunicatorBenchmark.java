@@ -25,6 +25,7 @@ import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
+import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
 import static java.util.concurrent.TimeUnit.*;
@@ -60,12 +61,12 @@ public class CommunicatorBenchmark {
 
     @Benchmark
     public void c(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m3());
+        blackhole.consume(block(state.communicator.m3()));
     }
 
     @Benchmark
     public void d(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m4());
+        blackhole.consume(blockFirst(state.communicator.m4()));
     }
 
     @Benchmark
@@ -80,12 +81,12 @@ public class CommunicatorBenchmark {
 
     @Benchmark
     public void g(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m7("test"));
+        blackhole.consume(block(state.communicator.m7("test")));
     }
 
     @Benchmark
     public void h(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m8("test"));
+        blackhole.consume(blockFirst(state.communicator.m8("test")));
     }
 
     @Benchmark
@@ -100,12 +101,12 @@ public class CommunicatorBenchmark {
 
     @Benchmark
     public void k(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m11(Mono.just("test")));
+        blackhole.consume(block(state.communicator.m11(Mono.just("test"))));
     }
 
     @Benchmark
     public void l(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m12(Mono.just("test")));
+        blackhole.consume(blockFirst(state.communicator.m12(Mono.just("test"))));
     }
 
     @Benchmark
@@ -120,11 +121,11 @@ public class CommunicatorBenchmark {
 
     @Benchmark
     public void o(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m15(Flux.just("test")));
+        blackhole.consume(block(state.communicator.m15(Flux.just("test"))));
     }
 
     @Benchmark
     public void p(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m16(Flux.just("test")));
+        blackhole.consume(blockFirst(state.communicator.m16(Flux.just("test"))));
     }
 }
