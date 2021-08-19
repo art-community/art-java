@@ -19,13 +19,13 @@
 package io.art.rsocket.interceptor;
 
 import io.art.core.property.*;
-import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
 import static io.art.core.property.Property.*;
+import static io.art.logging.Logging.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 
 public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
@@ -35,7 +35,7 @@ public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
 
     public RsocketConnectorLoggingInterceptor(RsocketModuleConfiguration moduleConfiguration, RsocketCommonConnectorConfiguration connectorConfiguration) {
         this.configuration = connectorConfiguration;
-        logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
+        logger = logger(RSOCKET_COMMUNICATOR_LOGGER);
         enabled = property(this::enabled).listenConsumer(() -> moduleConfiguration
                 .getConsumer()
                 .connectorLoggingConsumers()
