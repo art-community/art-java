@@ -147,8 +147,7 @@ public class ServingRsocket implements RSocket {
         }
         return serviceMethod
                 .serve(input)
-                .map(value -> dataWriter.write(typed(outputMappingType, value)))
-                .map(ByteBufPayload::create)
+                .map(value -> ByteBufPayload.create(dataWriter.write(typed(outputMappingType, value))))
                 .last(EMPTY_PAYLOAD);
     }
 
