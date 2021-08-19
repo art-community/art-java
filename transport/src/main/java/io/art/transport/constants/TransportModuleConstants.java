@@ -26,7 +26,6 @@ public interface TransportModuleConstants {
         BufferType DEFAULT_BUFFER_TYPE = IO;
         int DEFAULT_BUFFER_INITIAL_CAPACITY = 256;
         int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
-
     }
 
     interface Messages {
