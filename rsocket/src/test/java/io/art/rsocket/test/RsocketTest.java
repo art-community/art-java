@@ -15,6 +15,7 @@ import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
+import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
@@ -24,6 +25,7 @@ public class RsocketTest {
         initialize(
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 logging(),
+                transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, tcp -> tcp.configure(configuration -> configuration.logging(true))))

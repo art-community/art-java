@@ -2,6 +2,7 @@ package io.art.transport.constants;
 
 import lombok.*;
 import static io.art.core.constants.ThreadConstants.*;
+import static io.art.transport.constants.TransportModuleConstants.BufferType.*;
 import static java.lang.Integer.*;
 import static java.lang.Math.max;
 import static java.lang.Math.*;
@@ -16,13 +17,13 @@ public interface TransportModuleConstants {
         int DEFAULT_SELECTORS_COUNT = 2;
         int DEFAULT_WORKERS_COUNT = (int) max(ceil(DEFAULT_THREAD_POOL_SIZE >> 1), 2);
         Duration DEFAULT_EVICTION_INTERVAL = ZERO;
-        int DEFAULT_MAX_CONNECTIONS = DEFAULT_THREAD_POOL_SIZE * 2;
-        int DEFAULT_PENDING_ACQUIRE_MAX_COUNT = DEFAULT_MAX_CONNECTIONS * 2;
+        int DEFAULT_MAX_CONNECTIONS = 1024;
+        int DEFAULT_PENDING_ACQUIRE_MAX_COUNT = -2;
         Duration DEFAULT_PENDING_ACQUIRE_TIMEOUT = ofSeconds(30);
         Duration DEFAULT_MAX_LIFE_TIME = ofMillis(-1);
         Duration DEFAULT_MAX_IDLE_TIME = ofMillis(-1);
         String DEFAULT_LEASING_STRATEGY = LEASING_STRATEGY_FIFO;
-        BufferType DEFAULT_BUFFER_TYPE = BufferType.IO;
+        BufferType DEFAULT_BUFFER_TYPE = IO;
         int DEFAULT_BUFFER_INITIAL_CAPACITY = 256;
         int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
 

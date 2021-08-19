@@ -43,8 +43,10 @@ public class TransportPool {
         if (configuration.getMaxLifeTime().getNano() > 0) {
             builder.maxLifeTime(configuration.getMaxLifeTime());
         }
+        if (configuration.getPendingAcquireMaxCount() > 0) {
+            builder.pendingAcquireMaxCount(configuration.getPendingAcquireMaxCount());
+        }
         builder
-                .pendingAcquireMaxCount(configuration.getPendingAcquireMaxCount())
                 .pendingAcquireTimeout(configuration.getPendingAcquireTimeout())
                 .maxConnections(configuration.getMaxConnections());
         this.provider = builder.build();
