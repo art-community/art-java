@@ -199,7 +199,7 @@ public class RsocketCommunicationFactory {
                     .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED_VERBOSE, common.getConnector(), asPrettyString(setupPayload))))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                     : configured
-                    .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), asPrettyString(setupPayload))))
+                    .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector())))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return from(configured);
