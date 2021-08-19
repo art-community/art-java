@@ -163,8 +163,9 @@ public class RsocketServer implements Server {
     }
 
     private void configureInterceptors(RsocketCommonServerConfiguration serverConfiguration, InterceptorRegistry registry) {
+        UnaryOperator<InterceptorRegistry> interceptors = serverConfiguration.getInterceptors();
         if (withLogging()) {
-            serverConfiguration.getInterceptors().apply(registry
+            interceptors.apply(registry
                     .forResponder(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))
                     .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration)));
         }
