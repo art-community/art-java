@@ -20,7 +20,7 @@ package io.art.core.constants;
 
 public interface LoggingMessages {
     String WELCOME_MESSAGE = "Welcome to ART!";
-    String LAUNCHED_MESSAGE = "All modules launched!";
+    String LAUNCHED_MESSAGE = "All modules are launched!";
     String SHUTDOWN_MESSAGE = "By, by!";
     String MODULE_RELOADING_START_MESSAGE = "Module: ''{0}'' reloading...";
     String MODULE_RELOADING_END_MESSAGE = "Module: ''{0}'' reloaded";
