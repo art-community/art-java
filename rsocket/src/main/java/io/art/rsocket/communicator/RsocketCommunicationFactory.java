@@ -36,6 +36,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static io.art.transport.extensions.TransportExtensions.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.rsocket.core.RSocketClient.*;
@@ -194,7 +195,7 @@ public class RsocketCommunicationFactory {
         Mono<RSocket> configured = socket.timeout(common.getTimeout());
         if (withLogging()) {
             configured = configured
-                    .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
+                    .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), asPrettyString(setupPayload))))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return from(configured);

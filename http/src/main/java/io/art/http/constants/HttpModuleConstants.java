@@ -32,8 +32,8 @@ public interface HttpModuleConstants {
         String HTTP_DISPOSING = "Disposing HTTP";
         String SERVER_STARTED = "HTTP server started";
         String SERVER_STOPPED = "HTTP server stopped";
-        String COMMUNICATOR_STARTED = "HTTP communicator started\nConnector: {0}\nSetup payload: {1}";
-        String COMMUNICATOR_STOPPED = "HTTP communicator stopped\nConnector: {0}\nSetup payload: {1}";
+        String COMMUNICATOR_STARTED = "HTTP communicator started\nConnector: {0}\nSetup payload\n{1}";
+        String COMMUNICATOR_STOPPED = "HTTP communicator stopped\nConnector: {0}\nSetup payload\n{1}";
 
         String FIRE_AND_FORGET_REQUEST_LOG = "HTTP executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "HTTP fireAndForget() completed";

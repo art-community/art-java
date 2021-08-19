@@ -201,18 +201,19 @@ public class Context {
         for (Module<?, ?> module : this.modules.values()) {
             module.load(service);
         }
+
+        apply(configuration.getPrinter(), printer -> printer.accept(WELCOME_MESSAGE));
         apply(configuration.getOnLoad(), Runnable::run);
 
         for (Module<?, ?> module : this.modules.values()) {
             module.launch(service);
         }
 
-        apply(configuration.getPrinter(), LAUNCHED_MESSAGES::forEach);
-
         for (Module<?, ?> module : this.modules.values()) {
             apply(configuration.getPrinter(), printer -> ifNotEmpty(module.print(), printer));
         }
 
+        apply(configuration.getPrinter(), printer -> printer.accept(LAUNCHED_MESSAGE));
         apply(configuration.getOnLaunch(), Runnable::run);
     }
 
