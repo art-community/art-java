@@ -31,7 +31,6 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
@@ -110,27 +109,9 @@ public class RsocketCommunicationFactory {
                 .host(clientConfiguration.getHost())
                 .port(clientConfiguration.getPort()));
         RsocketSslConfiguration ssl = connectorConfiguration.getSsl();
-        if (nonNull(ssl)) {
-            File certificate = ssl.getCertificate();
-            File key = ssl.getKey();
-            SslContextBuilder sslBuilder = SslContextBuilder.forClient();
-            if (nonNull(key) && key.exists()) {
-                sslBuilder.keyManager(nonNull(certificate) && certificate.exists() ? certificate : null, key);
-            }
-            String password = ssl.getPassword();
-            if (isNotEmpty(password)) {
-                sslBuilder.keyManager(
-                        nonNull(certificate) && certificate.exists() ? certificate : null,
-                        nonNull(key) && key.exists() ? key : null,
-                        password
-                );
-            }
-            client.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
-        }
-
+        if (nonNull(ssl)) client.secure(createSslContext(ssl));
         return connector.connect(transportDecorator.apply(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength())));
     }
-
 
     private static RSocketClient createWsClient(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
@@ -172,20 +153,30 @@ public class RsocketCommunicationFactory {
                 .host(clientConfiguration.getHost())
                 .port(clientConfiguration.getPort()));
         RsocketSslConfiguration ssl = connectorConfiguration.getSsl();
-        if (nonNull(ssl)) {
+        if (nonNull(ssl)) client.secure(createSslContext(ssl));
+        return connector.connect(transportDecorator.apply(WebsocketClientTransport.create(client, clientConfiguration.getPath())));
+    }
+
+
+    private static SslProvider createSslContext(RsocketSslConfiguration ssl) {
+        try {
             File certificate = ssl.getCertificate();
             File key = ssl.getKey();
             SslContextBuilder sslBuilder = SslContextBuilder.forClient();
-            if (nonNull(certificate) && certificate.exists() && nonNull(key) && key.exists()) {
-                sslBuilder.keyManager(certificate, key);
+            if (nonNull(key) && key.exists()) {
+                sslBuilder.keyManager(nonNull(certificate) && certificate.exists() ? certificate : null, key);
             }
             String password = ssl.getPassword();
             if (isNotEmpty(password)) {
-                sslBuilder.keyManager(certificate, key, password);
+                sslBuilder.keyManager(
+                        nonNull(certificate) && certificate.exists() ? certificate : null,
+                        nonNull(key) && key.exists() ? key : null,
+                        password);
             }
-            client.secure(SslProvider.builder().sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build)).build());
+            return SslProvider.builder().sslContext(sslBuilder.build()).build();
+        } catch (Throwable throwable) {
+            throw new RsocketException(throwable);
         }
-        return connector.connect(transportDecorator.apply(WebsocketClientTransport.create(client, clientConfiguration.getPath())));
     }
 
 

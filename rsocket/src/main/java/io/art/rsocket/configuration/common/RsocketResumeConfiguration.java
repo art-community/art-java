@@ -53,6 +53,14 @@ public class RsocketResumeConfiguration {
         return resume;
     }
 
+    public static RsocketResumeConfiguration rsocketResume() {
+        return RsocketResumeConfiguration.builder()
+                .retryConfiguration(RsocketRetryConfiguration.rsocketRetry())
+                .sessionDuration(DEFAULT_RESUME_SESSION_DURATION)
+                .streamTimeout(DEFAULT_RESUME_STREAM_TIMEOUT)
+                .build();
+    }
+
     public static RsocketResumeConfiguration rsocketResume(ConfigurationSource source) {
         RsocketResumeConfiguration configuration = RsocketResumeConfiguration.builder().build();
         configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);

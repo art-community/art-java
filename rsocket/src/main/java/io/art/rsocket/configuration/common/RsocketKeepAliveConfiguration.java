@@ -22,6 +22,7 @@ import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 
 @Getter
@@ -29,6 +30,10 @@ import java.time.*;
 public class RsocketKeepAliveConfiguration {
     private final Duration interval;
     private final Duration maxLifeTime;
+
+    public static RsocketKeepAliveConfiguration rsocketKeepAlive() {
+        return new RsocketKeepAliveConfiguration(DEFAULT_KEEP_ALIVE_INTERVAL, DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME);
+    }
 
     public static RsocketKeepAliveConfiguration rsocketKeepAlive(ConfigurationSource source, RsocketKeepAliveConfiguration current) {
         Duration interval = orElse(source.getDuration(INTERVAL_KEY), current.interval);

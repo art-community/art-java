@@ -27,6 +27,7 @@ import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.configuration.server.*;
+import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.socket.*;
@@ -59,7 +60,6 @@ import static java.util.Objects.*;
 import static java.util.Optional.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
-import javax.net.ssl.*;
 import java.io.*;
 import java.util.*;
 import java.util.function.*;
@@ -122,11 +122,7 @@ public class RsocketServer implements Server {
         UnaryOperator<TcpServer> tcpDecorator = tcp.getTcpDecorator();
         TcpServer server = TcpServer.create().port(common.getPort());
         RsocketSslConfiguration ssl = common.getSsl();
-        try {
-            if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
-        } catch (Throwable throwable) {
-            withLogging(() -> getLogger().error(throwable));
-        }
+        if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
         ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(server), tcp.getMaxFrameLength());
         return createServer(TCP_SERVER_TYPE, common, transport);
     }
@@ -137,11 +133,7 @@ public class RsocketServer implements Server {
         UnaryOperator<HttpServer> wsDecorator = ws.getWsDecorator();
         HttpServer server = HttpServer.create().port(common.getPort());
         RsocketSslConfiguration ssl = common.getSsl();
-        try {
-            if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
-        } catch (Throwable throwable) {
-            withLogging(() -> getLogger().error(throwable));
-        }
+        if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
         ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(wsDecorator.apply(server));
         return createServer(WS_SERVER_TYPE, common, transport);
     }
@@ -213,19 +205,23 @@ public class RsocketServer implements Server {
         }
     }
 
-    private Optional<SslProvider> createSslContext(RsocketSslConfiguration ssl) throws SSLException {
-        File certificate = ssl.getCertificate();
-        File key = ssl.getKey();
-        if (isNull(certificate) || !certificate.exists() || isNull(key) || !key.exists()) {
-            return empty();
+    private Optional<SslProvider> createSslContext(RsocketSslConfiguration ssl) {
+        try {
+            File certificate = ssl.getCertificate();
+            File key = ssl.getKey();
+            if (isNull(certificate) || !certificate.exists() || isNull(key) || !key.exists()) {
+                return empty();
+            }
+            SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
+            String password = ssl.getPassword();
+            if (isNotEmpty(password)) {
+                sslBuilder = SslContextBuilder.forServer(certificate, key, password);
+            }
+            return of(SslProvider.builder()
+                    .sslContext(sslBuilder.build())
+                    .build());
+        } catch (Throwable throwable) {
+            throw new RsocketException(throwable);
         }
-        SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
-        String password = ssl.getPassword();
-        if (isNotEmpty(password)) {
-            sslBuilder = SslContextBuilder.forServer(certificate, key, password);
-        }
-        return of(SslProvider.builder()
-                .sslContext(sslBuilder.build())
-                .build());
     }
 }

@@ -57,6 +57,14 @@ public class RsocketRetryConfiguration {
         throw new ImpossibleSituationException();
     }
 
+    public static RsocketRetryConfiguration rsocketRetry() {
+        return RsocketRetryConfiguration.builder()
+                .retryPolicy(BACKOFF)
+                .minBackoff(DEFAULT_RETRY_MIN_BACKOFF)
+                .backOffMaxAttempts(DEFAULT_RETRY_MAX_ATTEMPTS)
+                .build();
+    }
+
     public static RsocketRetryConfiguration rsocketRetry(ConfigurationSource source) {
         RsocketRetryConfiguration configuration = RsocketRetryConfiguration.builder().build();
         configuration.retryPolicy = rsocketRetryPolicy(source.getString(POLICY_KEY), INDEFINITELY);
