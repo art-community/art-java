@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,7 +24,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
-import io.art.rsocket.configuration.communicator.http.*;
+import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.refresher.*;
@@ -54,13 +54,13 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private boolean enableTcpServer;
 
     @Getter
-    private boolean enableHttpServer;
+    private boolean enableWsServer;
 
     @Getter
     private RsocketTcpServerConfiguration tcpServer;
 
     @Getter
-    private RsocketHttpServerConfiguration httpServer;
+    private RsocketWsServerConfiguration wsServer;
 
     @Getter
     private CommunicatorConfiguration communicator;
@@ -69,7 +69,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors;
 
     @Getter
-    private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectors;
+    private ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors;
 
 
     public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
@@ -80,13 +80,13 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
 
         server = ServerConfiguration.defaults(serverRefresher);
         tcpServer = RsocketTcpServerConfiguration.defaults();
-        httpServer = RsocketHttpServerConfiguration.defaults();
+        wsServer = RsocketWsServerConfiguration.defaults();
         enableTcpServer = false;
-        enableHttpServer = false;
+        enableWsServer = false;
 
         communicator = CommunicatorConfiguration.defaults(communicatorRefresher);
         tcpConnectors = emptyImmutableMap();
-        httpConnectors = emptyImmutableMap();
+        wsConnectors = emptyImmutableMap();
     }
 
     @RequiredArgsConstructor
@@ -101,8 +101,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(this::tcpServer)
                     .ifPresent(server -> configuration.tcpServer = server);
             serverSection
-                    .map(this::httpServer)
-                    .ifPresent(server -> configuration.httpServer = server);
+                    .map(this::wsServer)
+                    .ifPresent(server -> configuration.wsServer = server);
             serverSection
                     .map(this::server)
                     .ifPresent(server -> configuration.server = server);
@@ -113,8 +113,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
                     .map(this::tcpConnectors)
                     .ifPresent(connectors -> configuration.tcpConnectors = merge(configuration.tcpConnectors, connectors));
             communicatorSection
-                    .map(this::httpConnectors)
-                    .ifPresent(connectors -> configuration.httpConnectors = merge(configuration.httpConnectors, connectors));
+                    .map(this::wsConnectors)
+                    .ifPresent(connectors -> configuration.wsConnectors = merge(configuration.wsConnectors, connectors));
             communicatorSection
                     .map(this::communicator)
                     .ifPresent(communicator -> configuration.communicator = communicator);
@@ -129,8 +129,8 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             return ServerConfiguration.from(configuration.serverRefresher, configuration.server, server);
         }
 
-        private RsocketHttpServerConfiguration httpServer(NestedConfiguration server) {
-            return RsocketHttpServerConfiguration.from(configuration.refresher, configuration.httpServer, server);
+        private RsocketWsServerConfiguration wsServer(NestedConfiguration server) {
+            return RsocketWsServerConfiguration.from(configuration.refresher, configuration.wsServer, server);
         }
 
         private RsocketTcpServerConfiguration tcpServer(NestedConfiguration server) {
@@ -142,12 +142,12 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
             return CommunicatorConfiguration.from(configuration.communicatorRefresher, configuration.communicator, communicator);
         }
 
-        private ImmutableMap<String, RsocketHttpConnectorConfiguration> httpConnectors(NestedConfiguration communicator) {
-            return communicator.getNestedMap(CONNECTORS_KEY, nested -> httpConnector(nested, configuration.httpConnectors.get(nested.getSection())));
+        private ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors(NestedConfiguration communicator) {
+            return communicator.getNestedMap(CONNECTORS_KEY, nested -> wsConnector(nested, configuration.wsConnectors.get(nested.getSection())));
         }
 
-        private RsocketHttpConnectorConfiguration httpConnector(NestedConfiguration nested, RsocketHttpConnectorConfiguration current) {
-            return RsocketHttpConnectorConfiguration.from(configuration.refresher, current, nested);
+        private RsocketWsConnectorConfiguration wsConnector(NestedConfiguration nested, RsocketWsConnectorConfiguration current) {
+            return RsocketWsConnectorConfiguration.from(configuration.refresher, current, nested);
         }
 
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors(NestedConfiguration communicator) {
@@ -162,15 +162,15 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator initialize(RsocketModuleConfiguration configuration) {
             this.configuration.enableTcpServer = configuration.isEnableTcpServer();
-            this.configuration.enableHttpServer = configuration.isEnableHttpServer();
+            this.configuration.enableWsServer = configuration.isEnableWsServer();
 
             this.configuration.server = configuration.getServer();
             this.configuration.tcpServer = configuration.getTcpServer();
-            this.configuration.httpServer = configuration.getHttpServer();
+            this.configuration.wsServer = configuration.getWsServer();
 
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.tcpConnectors = configuration.getTcpConnectors();
-            this.configuration.httpConnectors = configuration.getHttpConnectors();
+            this.configuration.wsConnectors = configuration.getWsConnectors();
             return this;
         }
     }

@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,6 @@ import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.configuration.server.*;
-import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.socket.*;
@@ -49,17 +48,20 @@ import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.handler.ExceptionHandler.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.rsocket.configuration.server.RsocketCommonServerConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static java.util.Optional.*;
 import static java.util.function.Function.*;
 import static lombok.AccessLevel.*;
+import javax.net.ssl.*;
 import java.io.*;
+import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -69,20 +71,20 @@ public class RsocketServer implements Server {
 
     private final RsocketModuleConfiguration configuration;
     private final Property<CloseableChannel> tcpChannel;
-    private final Property<CloseableChannel> httpChannel;
+    private final Property<CloseableChannel> wsChannel;
 
     private ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods;
     private volatile Mono<Void> tcpCloser;
-    private volatile Mono<Void> httpCloser;
+    private volatile Mono<Void> wsCloser;
 
     public RsocketServer(RsocketModuleRefresher refresher, RsocketModuleConfiguration configuration) {
         this.configuration = configuration;
         tcpChannel = property(this::createTcpServer, this::disposeTcpServer)
                 .listenConsumer(refresher.consumer()::serverConsumer)
                 .initialized(this::setupTcpCloser);
-        httpChannel = property(this::createHttpServer, this::disposeHttpServer)
+        wsChannel = property(this::createWsServer, this::disposeWsServer)
                 .listenConsumer(refresher.consumer()::serverConsumer)
-                .initialized(this::setupHttpCloser);
+                .initialized(this::setupWsCloser);
     }
 
     @Override
@@ -98,20 +100,20 @@ public class RsocketServer implements Server {
             tcpChannel.initialize();
         }
 
-        if (configuration.isEnableHttpServer()) {
-            httpChannel.initialize();
+        if (configuration.isEnableWsServer()) {
+            wsChannel.initialize();
         }
     }
 
     @Override
     public void dispose() {
         tcpChannel.dispose();
-        httpChannel.dispose();
+        wsChannel.dispose();
     }
 
     @Override
     public boolean available() {
-        return tcpChannel.initialized() || httpChannel.initialized();
+        return tcpChannel.initialized() || wsChannel.initialized();
     }
 
     private CloseableChannel createTcpServer() {
@@ -120,49 +122,31 @@ public class RsocketServer implements Server {
         UnaryOperator<TcpServer> tcpDecorator = tcp.getTcpDecorator();
         TcpServer server = TcpServer.create().port(common.getPort());
         RsocketSslConfiguration ssl = common.getSsl();
-        if (nonNull(ssl)) {
-            File certificate = ssl.getCertificate();
-            File key = ssl.getKey();
-            if (nonNull(certificate) && certificate.exists() && nonNull(key) && key.exists()) {
-                SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
-                String password = ssl.getPassword();
-                if (isNotEmpty(password)) {
-                    sslBuilder = SslContextBuilder.forServer(certificate, key, password);
-                }
-                server.secure(SslProvider.builder()
-                        .sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build))
-                        .build());
-            }
+        try {
+            if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
+        } catch (Throwable throwable) {
+            withLogging(() -> getLogger().error(throwable));
         }
         ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(server), tcp.getMaxFrameLength());
-        return createServer(common, transport);
+        return createServer(TCP_SERVER_TYPE, common, transport);
     }
 
-    private CloseableChannel createHttpServer() {
-        RsocketHttpServerConfiguration http = this.configuration.getHttpServer();
-        RsocketCommonServerConfiguration common = fromHttp(http);
-        UnaryOperator<HttpServer> httpDecorator = http.getHttpDecorator();
+    private CloseableChannel createWsServer() {
+        RsocketWsServerConfiguration ws = this.configuration.getWsServer();
+        RsocketCommonServerConfiguration common = fromWs(ws);
+        UnaryOperator<HttpServer> wsDecorator = ws.getWsDecorator();
         HttpServer server = HttpServer.create().port(common.getPort());
         RsocketSslConfiguration ssl = common.getSsl();
-        if (nonNull(ssl)) {
-            File certificate = ssl.getCertificate();
-            File key = ssl.getKey();
-            if (nonNull(certificate) && certificate.exists() && nonNull(key) && key.exists()) {
-                SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
-                String password = ssl.getPassword();
-                if (isNotEmpty(password)) {
-                    sslBuilder = SslContextBuilder.forServer(certificate, key, password);
-                }
-                server.secure(SslProvider.builder()
-                        .sslContext((SslContext) wrapException(RsocketException::new).call(sslBuilder::build))
-                        .build());
-            }
+        try {
+            if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
+        } catch (Throwable throwable) {
+            withLogging(() -> getLogger().error(throwable));
         }
-        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(httpDecorator.apply(server));
-        return createServer(common, transport);
+        ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(wsDecorator.apply(server));
+        return createServer(WS_SERVER_TYPE, common, transport);
     }
 
-    private CloseableChannel createServer(RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
+    private CloseableChannel createServer(String type, RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
         int fragmentationMtu = serverConfiguration.getFragmentationMtu();
         RSocketServer server = RSocketServer
                 .create((payload, requester) -> createAcceptor(payload, serverConfiguration))
@@ -178,8 +162,9 @@ public class RsocketServer implements Server {
                 .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
         if (withLogging() && serverConfiguration.isLogging()) {
+            String message = format(SERVER_STARTED, type, serverConfiguration.getHost(), serverConfiguration.getPort());
             bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(format(SERVER_STARTED, serverConfiguration.getHost())))
+                    .doOnSubscribe(subscription -> getLogger().info(message))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return block(bind);
@@ -191,10 +176,10 @@ public class RsocketServer implements Server {
         tcpCloser.block();
     }
 
-    private void disposeHttpServer(Disposable server) {
-        if (!configuration.isEnableHttpServer()) return;
+    private void disposeWsServer(Disposable server) {
+        if (!configuration.isEnableWsServer()) return;
         disposeRsocket(server);
-        httpCloser.block();
+        wsCloser.block();
     }
 
     private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration) {
@@ -212,15 +197,35 @@ public class RsocketServer implements Server {
 
     private void setupTcpCloser(CloseableChannel channel) {
         this.tcpCloser = channel.onClose();
-        if (withLogging() && fromTcp(configuration.getTcpServer()).isLogging()) {
-            this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        RsocketTcpServerConfiguration serverConfiguration = configuration.getTcpServer();
+        if (withLogging() && fromTcp(serverConfiguration).isLogging()) {
+            String message = format(SERVER_STOPPED, TCP_SERVER_TYPE, serverConfiguration.getHost(), serverConfiguration.getPort());
+            this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
         }
     }
 
-    private void setupHttpCloser(CloseableChannel channel) {
-        this.httpCloser = channel.onClose();
-        if (withLogging() && fromHttp(configuration.getHttpServer()).isLogging()) {
-            this.httpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+    private void setupWsCloser(CloseableChannel channel) {
+        this.wsCloser = channel.onClose();
+        RsocketWsServerConfiguration serverConfiguration = configuration.getWsServer();
+        if (withLogging() && fromWs(serverConfiguration).isLogging()) {
+            String message = format(SERVER_STOPPED, TCP_SERVER_TYPE, serverConfiguration.getHost(), serverConfiguration.getPort());
+            this.wsCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
         }
+    }
+
+    private Optional<SslProvider> createSslContext(RsocketSslConfiguration ssl) throws SSLException {
+        File certificate = ssl.getCertificate();
+        File key = ssl.getKey();
+        if (isNull(certificate) || !certificate.exists() || isNull(key) || !key.exists()) {
+            return empty();
+        }
+        SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
+        String password = ssl.getPassword();
+        if (isNotEmpty(password)) {
+            sslBuilder = SslContextBuilder.forServer(certificate, key, password);
+        }
+        return of(SslProvider.builder()
+                .sslContext(sslBuilder.build())
+                .build());
     }
 }

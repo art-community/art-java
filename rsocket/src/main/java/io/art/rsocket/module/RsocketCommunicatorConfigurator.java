@@ -8,7 +8,7 @@ import io.art.core.collection.*;
 import io.art.core.communication.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.rsocket.configuration.communicator.http.*;
+import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
@@ -22,14 +22,14 @@ import java.util.function.*;
 @ForUsing
 public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<RsocketCommunicatorConfigurator> {
     private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
-    private final Map<String, RsocketHttpConnectorConfiguration> httpConnectors = map();
+    private final Map<String, RsocketWsConnectorConfiguration> wsConnectors = map();
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
         return tcp(connectorClass, cast(identity()));
     }
 
-    public RsocketCommunicatorConfigurator http(Class<? extends Connector> connectorClass) {
-        return http(connectorClass, identity());
+    public RsocketCommunicatorConfigurator ws(Class<? extends Connector> connectorClass) {
+        return ws(connectorClass, identity());
     }
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
@@ -47,17 +47,17 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
         return this;
     }
 
-    public RsocketCommunicatorConfigurator http(Class<? extends Connector> connectorClass, UnaryOperator<RsocketHttpConnectorConfigurator> configurator) {
-        RsocketHttpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketHttpConnectorConfigurator(asId(connectorClass)));
-        RsocketHttpConnectorConfiguration configuration = connectorConfigurator.configure();
-        httpConnectors.put(asId(connectorClass), configuration);
+    public RsocketCommunicatorConfigurator ws(Class<? extends Connector> connectorClass, UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
+        RsocketWsConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(asId(connectorClass)));
+        RsocketWsConnectorConfiguration configuration = connectorConfigurator.configure();
+        wsConnectors.put(asId(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
                 .configuration()
                 .getCommunicator()
                 .getConnectors()
                 .getCommunicator(connectorClass, communicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createHttpCommunication(configuration, identifier);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createWsCommunication(configuration, identifier);
         registerConnector(connectorClass, communicatorFunction, communicationFunction);
         return this;
     }
@@ -66,8 +66,8 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
         return immutableMapOf(tcpConnectors);
     }
 
-    ImmutableMap<String, RsocketHttpConnectorConfiguration> configureHttp() {
-        return immutableMapOf(httpConnectors);
+    ImmutableMap<String, RsocketWsConnectorConfiguration> configureWs() {
+        return immutableMapOf(wsConnectors);
     }
 
     CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {

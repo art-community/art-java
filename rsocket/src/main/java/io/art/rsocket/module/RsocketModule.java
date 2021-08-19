@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -57,20 +57,20 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public void launch(Context.Service contextService) {
         onErrorDropped(emptyConsumer());
-        if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
+        if (configuration.isEnableTcpServer() || configuration.isEnableWsServer()) {
             manager.initializeServer();
         }
-        if (!configuration.getHttpConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
+        if (!configuration.getWsConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
             manager.initializeCommunicators();
         }
     }
 
     @Override
     public void shutdown(Context.Service contextService) {
-        if (configuration.isEnableTcpServer() || configuration.isEnableHttpServer()) {
+        if (configuration.isEnableTcpServer() || configuration.isEnableWsServer()) {
             manager.disposeServer();
         }
-        if (!configuration.getHttpConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
+        if (!configuration.getWsConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
             manager.disposeCommunicators();
         }
     }

@@ -19,37 +19,33 @@
 package io.art.server.decorator;
 
 import io.art.core.constants.*;
+import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.server.configuration.*;
-import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.ModuleChecker.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
+import static io.art.logging.Logging.*;
 import static io.art.server.constants.ServerConstants.LoggingMessages.*;
 import static io.art.transport.extensions.TransportExtensions.*;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
     private final MethodDecoratorScope scope;
     private final Property<Boolean> enabled;
     private final ServiceMethodIdentifier id;
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final UnaryOperator<Flux<Object>> decorator = createDecorator();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final Logger logger = Logging.logger(SERVER_LOGGER + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
+    private final Logger logger;
+    private final UnaryOperator<Flux<Object>> decorator;
 
     public ServiceLoggingDecorator(ServiceMethodIdentifier id, ServerConfiguration configuration, MethodDecoratorScope scope) {
         this.scope = scope;
         this.id = id;
+        decorator = createDecorator();
+        logger = logger(SERVER_LOGGER + SPACE + OPENING_SQUARE_BRACES + scope + CLOSING_SQUARE_BRACES);
         enabled = property(() -> withLogging() && configuration.isLogging(id)).listenConsumer(() -> configuration
                 .getConsumer()
                 .loggingConsumer());
@@ -57,35 +53,33 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
 
     @Override
     public Flux<Object> apply(Flux<Object> input) {
-        return getDecorator().apply(input);
+        return decorator.apply(input);
     }
 
     private void logSubscribe() {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_SUBSCRIBED_MESSAGE, id.getServiceId(), id.getMethodId()));
+        logger.info(format(SERVICE_SUBSCRIBED_MESSAGE, id.getServiceId(), id.getMethodId()));
     }
 
     private void logComplete() {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_COMPLETED_MESSAGE, id.getServiceId(), id.getMethodId()));
+        logger.info(format(SERVICE_COMPLETED_MESSAGE, id.getServiceId(), id.getMethodId()));
     }
 
     private void logInput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), asPrettyString(data)));
+        logger.info(format(SERVICE_INPUT_DATA, id.getServiceId(), id.getMethodId(), asPrettyString(data)));
     }
 
     private void logOutput(Object data) {
         if (!enabled.get()) return;
-        getLogger().info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), asPrettyString(data)));
+        logger.info(format(SERVICE_OUTPUT_DATA, id.getServiceId(), id.getMethodId(), asPrettyString(data)));
     }
 
     private void logException(Throwable exception) {
-        if (!enabled.get()) return;
-        getLogger().error(format(SERVICE_FAILED_MESSAGE, id.getServiceId(), id.getMethodId()), exception);
+        logger.error(format(SERVICE_FAILED_MESSAGE, id.getServiceId(), id.getMethodId()), exception);
     }
 
-    @SuppressWarnings(CONSTANT_CONDITIONS)
     private UnaryOperator<Flux<Object>> createDecorator() {
         switch (scope) {
             case INPUT:
@@ -99,6 +93,6 @@ public class ServiceLoggingDecorator implements UnaryOperator<Flux<Object>> {
                         .doOnError(this::logException)
                         .doOnComplete(this::logComplete);
         }
-        return UnaryOperator.identity();
+        throw new ImpossibleSituationException();
     }
 }

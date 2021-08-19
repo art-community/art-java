@@ -3,7 +3,7 @@ package io.art.rsocket.module;
 import io.art.core.annotation.*;
 import io.art.core.property.*;
 import io.art.rsocket.configuration.server.*;
-import io.art.rsocket.configuration.server.RsocketHttpServerConfiguration.*;
+import io.art.rsocket.configuration.server.RsocketWsServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.server.configuration.*;
 import io.art.server.configurator.*;
@@ -13,17 +13,17 @@ import java.util.function.*;
 @ForUsing
 public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerConfigurator> {
     private boolean tcp;
-    private boolean http;
+    private boolean ws;
     private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = identity();
-    private UnaryOperator<RsocketHttpServerConfigurationBuilder> httpConfigurator = identity();
+    private UnaryOperator<RsocketWsServerConfigurationBuilder> wsConfigurator = identity();
 
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
         return this;
     }
 
-    public RsocketServerConfigurator http() {
-        this.http = true;
+    public RsocketServerConfigurator ws() {
+        this.ws = true;
         return this;
     }
 
@@ -33,9 +33,9 @@ public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerC
         return this;
     }
 
-    public RsocketServerConfigurator http(UnaryOperator<RsocketHttpServerConfigurationBuilder> configurator) {
-        this.http = true;
-        this.httpConfigurator = configurator;
+    public RsocketServerConfigurator ws(UnaryOperator<RsocketWsServerConfigurationBuilder> configurator) {
+        this.ws = true;
+        this.wsConfigurator = configurator;
         return this;
     }
 
@@ -43,16 +43,16 @@ public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerC
         return tcpConfigurator.apply(current.toBuilder()).build();
     }
 
-    RsocketHttpServerConfiguration configure(RsocketHttpServerConfiguration current) {
-        return httpConfigurator.apply(current.toBuilder()).build();
+    RsocketWsServerConfiguration configure(RsocketWsServerConfiguration current) {
+        return wsConfigurator.apply(current.toBuilder()).build();
     }
 
     boolean enableTcp() {
         return tcp;
     }
 
-    boolean enableHttp() {
-        return http;
+    boolean enableWs() {
+        return ws;
     }
 
     ServerConfiguration configureServer(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {

@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration.communicator.http;
+package io.art.rsocket.configuration.communicator.ws;
 
 import io.art.core.changes.*;
 import io.art.core.source.*;
@@ -34,7 +34,7 @@ import java.util.function.*;
 @Getter
 @Builder(toBuilder = true)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class RsocketHttpClientConfiguration {
+public class RsocketWsClientConfiguration {
     @EqualsAndHashCode.Include
     private String connector;
     @EqualsAndHashCode.Include
@@ -45,9 +45,9 @@ public class RsocketHttpClientConfiguration {
     private UnaryOperator<HttpClient> clientDecorator;
     private UnaryOperator<WebsocketClientTransport> transportDecorator;
 
-    public static RsocketHttpClientConfiguration defaults(String connector) {
-        RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
-        configuration.path = DEFAULT_HTTP_PATH;
+    public static RsocketWsClientConfiguration defaults(String connector) {
+        RsocketWsClientConfiguration configuration = RsocketWsClientConfiguration.builder().build();
+        configuration.path = DEFAULT_WS_PATH;
         configuration.clientDecorator = identity();
         configuration.transportDecorator = identity();
         configuration.connector = connector;
@@ -56,8 +56,8 @@ public class RsocketHttpClientConfiguration {
         return configuration;
     }
 
-    public static RsocketHttpClientConfiguration from(RsocketModuleRefresher refresher, RsocketHttpClientConfiguration current, ConfigurationSource source) {
-        RsocketHttpClientConfiguration configuration = RsocketHttpClientConfiguration.builder().build();
+    public static RsocketWsClientConfiguration from(RsocketModuleRefresher refresher, RsocketWsClientConfiguration current, ConfigurationSource source) {
+        RsocketWsClientConfiguration configuration = RsocketWsClientConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.clientDecorator = current.clientDecorator;
         configuration.transportDecorator = current.transportDecorator;

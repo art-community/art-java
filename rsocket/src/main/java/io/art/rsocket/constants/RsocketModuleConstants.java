@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +18,6 @@
 
 package io.art.rsocket.constants;
 
-import io.art.communicator.constants.CommunicatorConstants.*;
 import io.rsocket.*;
 import io.rsocket.util.*;
 import lombok.*;
@@ -38,8 +37,8 @@ public interface RsocketModuleConstants {
     interface LoggingMessages {
         String RSOCKET_COMMUNICATOR_LOGGER = "rsocket-communicator";
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
-        String SERVER_STARTED = "RSocket server started: {0}";
-        String SERVER_STOPPED = "RSocket server stopped";
+        String SERVER_STARTED = "RSocket {0} server started - {1}:{2}";
+        String SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
         String COMMUNICATOR_STARTED = "RSocket communicator started\nConnector: {0}\nSetup payload: {1}\n";
         String COMMUNICATOR_STOPPED = "RSocket communicator stopped\nConnector: {0}";
 
@@ -131,7 +130,7 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_RESUME_STREAM_TIMEOUT = ofHours(1);
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = ofSeconds(90);
-        String DEFAULT_HTTP_PATH = SLASH;
+        String DEFAULT_WS_PATH = SLASH;
     }
 
     @Getter
@@ -196,4 +195,7 @@ public interface RsocketModuleConstants {
         REQUEST_CHANNEL,
         METADATA_PUSH;
     }
+
+    String TCP_SERVER_TYPE = "TCP";
+    String WS_SERVER_TYPE = "WS";
 }

@@ -7,8 +7,8 @@ import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.configuration.communicator.common.*;
-import io.art.rsocket.configuration.communicator.http.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
+import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
@@ -62,10 +62,10 @@ public class RsocketCommunicationFactory {
         return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
-    public static RsocketCommunication createHttpCommunication(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    public static RsocketCommunication createWsCommunication(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
         RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
-        Supplier<RSocketClient> client = () -> createHttpClient(moduleConfiguration.getHttpConnectors().get(connector), identifier);
+        Supplier<RSocketClient> client = () -> createWsClient(moduleConfiguration.getWsConnectors().get(connector), identifier);
         return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
@@ -132,7 +132,7 @@ public class RsocketCommunicationFactory {
     }
 
 
-    private static RSocketClient createHttpClient(RsocketHttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    private static RSocketClient createWsClient(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
         RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
         ByteBuffer payloadData = new TransportPayloadWriter(common.getDataFormat())
@@ -140,16 +140,16 @@ public class RsocketCommunicationFactory {
                 .nioBuffer();
         Payload payload = create(payloadData);
         RSocketConnector connector = createConnector(common, payload);
-        RsocketHttpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
+        RsocketWsClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
         if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
-            return createHttpBalancer(connector, group);
+            return createWsBalancer(connector, group);
         }
-        return configureSocket(common, createHttpClient(common, connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+        return configureSocket(common, createWsClient(common, connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
     }
 
-    private static LoadbalanceRSocketClient createHttpBalancer(RSocketConnector connector, RsocketHttpClientGroupConfiguration group) {
+    private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsClientGroupConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
-        for (RsocketHttpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
+        for (RsocketWsClientConfiguration clientConfiguration : group.getClientConfigurations()) {
             HttpClient client = clientConfiguration.getClientDecorator().apply(HttpClient.create()
                     .host(clientConfiguration.getHost())
                     .port(clientConfiguration.getPort()));
@@ -165,7 +165,7 @@ public class RsocketCommunicationFactory {
                 .build();
     }
 
-    private static Mono<RSocket> createHttpClient(RsocketCommonConnectorConfiguration connectorConfiguration, RsocketHttpClientConfiguration clientConfiguration, RSocketConnector connector) {
+    private static Mono<RSocket> createWsClient(RsocketCommonConnectorConfiguration connectorConfiguration, RsocketWsClientConfiguration clientConfiguration, RSocketConnector connector) {
         UnaryOperator<HttpClient> clientDecorator = clientConfiguration.getClientDecorator();
         UnaryOperator<WebsocketClientTransport> transportDecorator = clientConfiguration.getTransportDecorator();
         HttpClient client = clientDecorator.apply(HttpClient.create()

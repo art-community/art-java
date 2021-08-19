@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,7 +48,7 @@ import java.util.function.*;
 @Getter
 @ForUsing
 @Builder(toBuilder = true)
-public class RsocketHttpServerConfiguration {
+public class RsocketWsServerConfiguration {
     private int port;
     private String host;
     private ServiceMethodIdentifier defaultServiceMethod;
@@ -60,13 +60,13 @@ public class RsocketHttpServerConfiguration {
     private DataFormat defaultDataFormat;
     private DataFormat defaultMetaDataFormat;
     private UnaryOperator<InterceptorRegistry> interceptors;
-    private UnaryOperator<HttpServer> httpDecorator;
+    private UnaryOperator<HttpServer> wsDecorator;
     private UnaryOperator<RSocketServer> decorator;
     private RsocketSslConfiguration ssl;
 
-    public static RsocketHttpServerConfiguration defaults() {
-        RsocketHttpServerConfiguration configuration = RsocketHttpServerConfiguration.builder().build();
-        configuration.httpDecorator = identity();
+    public static RsocketWsServerConfiguration defaults() {
+        RsocketWsServerConfiguration configuration = RsocketWsServerConfiguration.builder().build();
+        configuration.wsDecorator = identity();
         configuration.decorator = identity();
         configuration.defaultDataFormat = MESSAGE_PACK;
         configuration.defaultMetaDataFormat = MESSAGE_PACK;
@@ -80,11 +80,11 @@ public class RsocketHttpServerConfiguration {
         return configuration;
     }
 
-    public static RsocketHttpServerConfiguration from(RsocketModuleRefresher refresher, RsocketHttpServerConfiguration current, ConfigurationSource source) {
-        RsocketHttpServerConfiguration configuration = RsocketHttpServerConfiguration.builder().build();
+    public static RsocketWsServerConfiguration from(RsocketModuleRefresher refresher, RsocketWsServerConfiguration current, ConfigurationSource source) {
+        RsocketWsServerConfiguration configuration = RsocketWsServerConfiguration.builder().build();
         configuration.interceptors = current.interceptors;
         configuration.decorator = current.decorator;
-        configuration.httpDecorator = current.httpDecorator;
+        configuration.wsDecorator = current.wsDecorator;
 
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();

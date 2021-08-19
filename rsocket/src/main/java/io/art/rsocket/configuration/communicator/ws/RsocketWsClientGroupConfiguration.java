@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     ws://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.rsocket.configuration.communicator.http;
+package io.art.rsocket.configuration.communicator.ws;
 
 import io.art.core.collection.*;
 import io.art.core.source.*;
@@ -37,15 +37,15 @@ import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
-public class RsocketHttpClientGroupConfiguration {
+public class RsocketWsClientGroupConfiguration {
     private String connector;
-    private ImmutableSet<RsocketHttpClientConfiguration> clientConfigurations;
+    private ImmutableSet<RsocketWsClientConfiguration> clientConfigurations;
     private BalancerMethod balancer;
     private UnaryOperator<HttpClient> clientDecorator;
     private UnaryOperator<WebsocketClientTransport> transportDecorator;
 
-    public static RsocketHttpClientGroupConfiguration defaults(String connector) {
-        RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
+    public static RsocketWsClientGroupConfiguration defaults(String connector) {
+        RsocketWsClientGroupConfiguration configuration = RsocketWsClientGroupConfiguration.builder().build();
         configuration.balancer = ROUND_ROBIN;
         configuration.clientConfigurations = emptyImmutableSet();
         configuration.connector = connector;
@@ -54,20 +54,20 @@ public class RsocketHttpClientGroupConfiguration {
         return configuration;
     }
 
-    public static RsocketHttpClientGroupConfiguration from(RsocketModuleRefresher refresher, RsocketHttpClientGroupConfiguration current, ConfigurationSource source) {
-        RsocketHttpClientGroupConfiguration configuration = RsocketHttpClientGroupConfiguration.builder().build();
+    public static RsocketWsClientGroupConfiguration from(RsocketModuleRefresher refresher, RsocketWsClientGroupConfiguration current, ConfigurationSource source) {
+        RsocketWsClientGroupConfiguration configuration = RsocketWsClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
         configuration.clientDecorator = current.clientDecorator;
         configuration.transportDecorator = current.transportDecorator;
         configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
 
-        ImmutableSet<RsocketHttpClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
+        ImmutableSet<RsocketWsClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
         configuration.clientConfigurations = merge(current.clientConfigurations, clientConfigurations);
         return configuration;
     }
 
-    private static RsocketHttpClientConfiguration clientConfiguration(RsocketModuleRefresher refresher, RsocketHttpClientGroupConfiguration current, NestedConfiguration nested) {
-        RsocketHttpClientConfiguration defaults = RsocketHttpClientConfiguration.defaults(current.connector);
-        return RsocketHttpClientConfiguration.from(refresher, defaults, nested);
+    private static RsocketWsClientConfiguration clientConfiguration(RsocketModuleRefresher refresher, RsocketWsClientGroupConfiguration current, NestedConfiguration nested) {
+        RsocketWsClientConfiguration defaults = RsocketWsClientConfiguration.defaults(current.connector);
+        return RsocketWsClientConfiguration.from(refresher, defaults, nested);
     }
 }
