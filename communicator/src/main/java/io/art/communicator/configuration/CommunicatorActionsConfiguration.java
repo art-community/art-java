@@ -58,7 +58,7 @@ public class CommunicatorActionsConfiguration {
     }
 
     private static CommunicatorActionConfiguration getAction(CommunicatorRefresher refresher, CommunicatorActionsConfiguration currentConfiguration, NestedConfiguration action) {
-        return CommunicatorActionConfiguration.from(refresher, currentConfiguration.actions.get(action.getSection()), action);
+        return CommunicatorActionConfiguration.from(refresher, currentConfiguration.actions.get(action.getParent()), action);
     }
 
     public static CommunicatorActionsConfiguration defaults() {

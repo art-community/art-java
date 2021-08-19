@@ -15,7 +15,7 @@ public class RsocketTcpConnectorConfiguration {
     private RsocketTcpClientConfiguration singleConfiguration;
 
     public static RsocketTcpConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
-        RsocketTcpConnectorConfiguration currentConfiguration = orElse(current, RsocketTcpConnectorConfiguration.defaults(source.getSection()));
+        RsocketTcpConnectorConfiguration currentConfiguration = orElse(current, RsocketTcpConnectorConfiguration.defaults(source.getParent()));
 
         RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);

@@ -105,7 +105,7 @@ public class CommunicatorConfiguration {
     }
 
     private static CommunicatorActionsConfiguration getActions(CommunicatorConfiguration current, CommunicatorConfigurationBuilder builder, NestedConfiguration actions) {
-        return CommunicatorActionsConfiguration.from(builder.refresher, current.configurations.get().get(actions.getSection()), actions);
+        return CommunicatorActionsConfiguration.from(builder.refresher, current.configurations.get().get(actions.getParent()), actions);
     }
 
 

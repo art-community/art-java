@@ -143,7 +143,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors(NestedConfiguration communicator) {
-            return communicator.getNestedMap(CONNECTORS_SECTION, nested -> wsConnector(nested, configuration.wsConnectors.get(nested.getSection())));
+            return communicator.getNestedMap(CONNECTORS_SECTION, nested -> wsConnector(nested, configuration.wsConnectors.get(nested.getParent())));
         }
 
         private RsocketWsConnectorConfiguration wsConnector(NestedConfiguration nested, RsocketWsConnectorConfiguration current) {
@@ -151,7 +151,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors(NestedConfiguration communicator) {
-            return communicator.getNestedMap(CONNECTORS_SECTION, nested -> tcpConnector(nested, configuration.tcpConnectors.get(nested.getSection())));
+            return communicator.getNestedMap(CONNECTORS_SECTION, nested -> tcpConnector(nested, configuration.tcpConnectors.get(nested.getParent())));
         }
 
         private RsocketTcpConnectorConfiguration tcpConnector(NestedConfiguration nested, RsocketTcpConnectorConfiguration current) {

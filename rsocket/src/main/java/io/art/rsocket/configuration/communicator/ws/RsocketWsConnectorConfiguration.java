@@ -15,7 +15,7 @@ public class RsocketWsConnectorConfiguration {
     private RsocketWsClientConfiguration singleConfiguration;
 
     public static RsocketWsConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketWsConnectorConfiguration current, ConfigurationSource source) {
-        RsocketWsConnectorConfiguration currentConfiguration = orElse(current, () -> defaults(source.getSection()));
+        RsocketWsConnectorConfiguration currentConfiguration = orElse(current, () -> defaults(source.getParent()));
 
         RsocketWsConnectorConfiguration configuration = RsocketWsConnectorConfiguration.builder().build();
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);

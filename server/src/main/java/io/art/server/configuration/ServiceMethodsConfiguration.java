@@ -56,7 +56,7 @@ public class ServiceMethodsConfiguration {
     }
 
     private static ServiceMethodConfiguration getMethod(ServerRefresher refresher, ServiceMethodsConfiguration currentConfiguration, NestedConfiguration method) {
-        return ServiceMethodConfiguration.from(refresher, currentConfiguration.methods.get(method.getSection()), method);
+        return ServiceMethodConfiguration.from(refresher, currentConfiguration.methods.get(method.getParent()), method);
     }
 
     public static ServiceMethodsConfiguration defaults() {

@@ -104,7 +104,7 @@ public class ServerConfiguration {
     }
 
     private static ServiceMethodsConfiguration getService(ServerConfiguration currentConfiguration, ServerConfigurationBuilder builder, NestedConfiguration service) {
-        ServiceMethodsConfiguration current = currentConfiguration.configurations.get().get(service.getSection());
+        ServiceMethodsConfiguration current = currentConfiguration.configurations.get().get(service.getParent());
         return ServiceMethodsConfiguration.from(builder.refresher, current, service);
     }
 
