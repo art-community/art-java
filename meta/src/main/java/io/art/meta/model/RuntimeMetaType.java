@@ -23,7 +23,7 @@ public class RuntimeMetaType {
     private final static Map<Type, MetaType<?>> CACHE = map();
 
     public static <T> MetaType<T> defineMetaType() {
-        TypeReference<T> typeReference = new TypeReference<>() {
+        TypeReference<T> typeReference = new TypeReference<T>() {
         };
         return defineMetaType(typeReference.type);
     }
