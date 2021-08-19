@@ -68,6 +68,10 @@ public class RuntimeMetaType {
         }
         if (type instanceof Class<?>) {
             Class<?> asClass = (Class<?>) type;
+            Optional<? extends MetaClass<?>> declaration = findDeclaration(asClass);
+            if (declaration.isPresent()) {
+                return cast(declaration.get().definition());
+            }
             if (asClass.isArray()) {
                 Function<Integer, ?> factory = size -> cast(wrapExceptionCall(() -> asClass.getConstructors()[0].newInstance(size)));
                 return cast(createArrayMetaType(asClass, factory, defineMetaType(asClass.getComponentType())));
@@ -84,9 +88,7 @@ public class RuntimeMetaType {
                 };
                 return computeMetaType(metaEnum(asClass, cast(enumFactory)));
             }
-            return cast(findDeclaration(asClass)
-                    .map(MetaClass::definition)
-                    .orElseGet(() -> computeMetaType(metaType(cast(type)))));
+            return computeMetaType(metaType(cast(type)));
         }
         if (type instanceof WildcardType) {
             return defineMetaType(((WildcardType) type).getUpperBounds()[0]);
