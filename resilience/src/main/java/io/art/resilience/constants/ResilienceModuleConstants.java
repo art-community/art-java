@@ -30,7 +30,6 @@ public interface ResilienceModuleConstants {
         String CIRCUIT_BREAKER_SLOW_CALL_RATE_THRESHOLD_KEY = "circuitBreaker.slowCallRateThreshold";
         String CIRCUIT_BREAKER_SLOW_CALL_DURATION_THRESHOLD_KEY = "circuitBreaker.slowCallDurationThreshold";
         String CIRCUIT_BREAKER_SLIDING_WINDOW_MINIMUM_NUMBER_OF_CALLS_KEY = "circuitBreaker.slidingWindow.minimumNumberOfCalls";
-        String CIRCUIT_BREAKER_WAIT_DURATION_IN_OPEN_STATE_KEY = "circuitBreaker.waitDurationInOpenState";
         String CIRCUIT_BREAKER_AUTOMATIC_TRANSITION_FROM_OPEN_TO_HALF_OPEN_ENABLED_KEY = "circuitBreaker.automaticTransitionFromOpenToHalfOpenEnabled";
 
         String RATE_LIMITER_KEY = "rateLimiter";
