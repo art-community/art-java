@@ -10,6 +10,7 @@ import io.art.server.method.ServiceMethod.*;
 import io.art.server.refresher.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -56,9 +57,15 @@ public class ServiceMethodFactory {
             builder.inputDecorator(new ServiceValidationDecorator(id, configuration));
         }
 
-        builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT))
-                .outputDecorator(new ServiceDeactivationDecorator(id, configuration))
-                .outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT));
+        if (withLogging()) {
+            builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT));
+        }
+        builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration));
+
+        if (withLogging()) {
+            builder.outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT));
+        }
+
         if (nonNull(inputType)) {
             return builder.inputType(inputType).build();
         }

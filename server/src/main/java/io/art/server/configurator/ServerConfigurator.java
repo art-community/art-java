@@ -14,6 +14,7 @@ import io.art.server.method.ServiceMethod.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.extensions.FunctionExtensions.*;
@@ -162,7 +163,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         ServerConfiguration serverConfiguration = configurationProvider.get();
         boolean deactivated = serverConfiguration.isDeactivated(id);
         boolean validating = serverConfiguration.isValidating(id);
-        boolean logging = serverConfiguration.isLogging(id);
+        boolean logging = withLogging() && serverConfiguration.isLogging(id);
 
         if (deactivated) {
             builder.inputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));

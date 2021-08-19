@@ -182,7 +182,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
 
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
         boolean deactivated = communicatorConfiguration.isDeactivated(id);
-        boolean logging = communicatorConfiguration.isLogging(id);
+        boolean logging = withLogging() && communicatorConfiguration.isLogging(id);
         Optional<ResilienceConfiguration> resilience = communicatorConfiguration.getResilienceConfiguration(id);
 
         if (deactivated) {

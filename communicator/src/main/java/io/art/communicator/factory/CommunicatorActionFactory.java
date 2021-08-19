@@ -10,6 +10,7 @@ import io.art.core.model.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -45,9 +46,12 @@ public class CommunicatorActionFactory {
                 .id(id)
                 .outputType(method.returnType())
                 .communication(communication)
-                .inputDecorator(new CommunicatorDeactivationDecorator(id, configuration))
-                .inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT))
-                .outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
+                .inputDecorator(new CommunicatorDeactivationDecorator(id, configuration));
+        if (withLogging()) {
+            builder
+                    .inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT))
+                    .outputDecorator(new CommunicatorLoggingDecorator(id, configuration, OUTPUT));
+        }
         if (nonNull(inputType)) {
             return builder.inputType(inputType).build();
         }
