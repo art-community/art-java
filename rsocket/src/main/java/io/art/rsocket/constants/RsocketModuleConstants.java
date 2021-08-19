@@ -67,10 +67,14 @@ public interface RsocketModuleConstants {
         String RSOCKET_SECTION = "rsocket";
         String SERVER_SECTION = "server";
         String COMMUNICATOR_SECTION = "communicator";
-        String RESUME_SECTION = "produce";
+        String CONNECTORS_SECTION = "connectors";
+        String RESUME_SECTION = "resume";
         String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
+        String SSL_SECTION = "ssl";
+        String GROUP_SECTION = "group";
+        String SINGLE_SECTION = "single";
 
         String DATA_FORMAT_KEY = "dataFormat";
         String META_DATA_FORMAT_KEY = "metaDataFormat";
@@ -78,14 +82,12 @@ public interface RsocketModuleConstants {
         String METHOD_ID_KEY = "methodId";
 
         String BALANCER_KEY = "balancer";
-        String GROUP_KEY = "group";
-        String SINGLE_KEY = "single";
-        String TRANSPORT_PORT_KEY = "transport.port";
-        String TRANSPORT_HOST_KEY = "transport.host";
-        String TRANSPORT_TIMEOUT_CONNECTION_KEY = "transport.timeout";
-        String TRANSPORT_WS_PATH_KEY = "transport.ws.path";
-        String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
-        String TRANSPORT_SSL_SECTION = "transport.ssl";
+
+        String PORT_KEY = "port";
+        String HOST_KEY = "host";
+        String TIMEOUT_KEY = "timeout";
+        String WS_PATH_KEY = "ws.path";
+        String TCP_MAX_FRAME_LENGTH_KEY = "tcp.maxFrameLength";
 
         String PAYLOAD_DECODER_KEY = "payloadDecoder";
         String LOGGING_KEY = "logging";
@@ -106,16 +108,9 @@ public interface RsocketModuleConstants {
         String INTERVAL_KEY = "interval";
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
-        String CONNECTORS_KEY = "connectors";
-
         String CERTIFICATE_KEY = "certificate";
         String KEY_KEY = "key";
         String PASSWORD_KEY = "key";
-    }
-
-    interface ContextKeys {
-        String REQUESTER_RSOCKET_KEY = "requesterRsocket";
-        String SETUP_PAYLOAD_KEY = "setupPayload";
     }
 
     interface Defaults {

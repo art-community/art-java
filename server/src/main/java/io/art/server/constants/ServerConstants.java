@@ -31,15 +31,10 @@ public interface ServerConstants {
 
     interface LoggingMessages {
         String SERVER_LOGGER = "server";
-        String SERVICE_REGISTRATION_MESSAGE = "Registered service methods: {0}";
         String SERVICE_SUBSCRIBED_MESSAGE = "Service subscribed: ''{0}.{1}''";
         String SERVICE_INPUT_DATA = "Service ''{0}.{1}'' input:\n{2}";
         String SERVICE_OUTPUT_DATA = "Service ''{0}.{1}'' output:\n{2}";
         String SERVICE_COMPLETED_MESSAGE = "Service completed: ''{0}.{1}''";
         String SERVICE_FAILED_MESSAGE = "Service failed: ''{0}.{1}''";
-    }
-
-    interface StateKeys {
-        String SERVICE_METHOD_ID = "serviceMethodId";
     }
 }

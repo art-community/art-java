@@ -61,9 +61,9 @@ public class RsocketWsClientConfiguration {
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.clientDecorator = current.clientDecorator;
         configuration.transportDecorator = current.transportDecorator;
-        configuration.path = orElse(source.getString(TRANSPORT_WS_PATH_KEY), current.path);
-        configuration.port = listener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
-        configuration.host = listener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
+        configuration.path = orElse(source.getString(WS_PATH_KEY), current.path);
+        configuration.port = listener.emit(orElse(source.getInteger(PORT_KEY), current.port));
+        configuration.host = listener.emit(orElse(source.getString(HOST_KEY), current.host));
         return configuration;
     }
 }

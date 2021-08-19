@@ -62,10 +62,10 @@ public class RsocketTcpClientConfiguration {
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.clientDecorator = current.clientDecorator;
         configuration.transportDecorator = current.transportDecorator;
-        configuration.maxFrameLength = orElse(source.getInteger(TRANSPORT_TCP_MAX_FRAME_LENGTH), current.maxFrameLength);
+        configuration.maxFrameLength = orElse(source.getInteger(TCP_MAX_FRAME_LENGTH_KEY), current.maxFrameLength);
         configuration.connector = current.connector;
-        configuration.port = listener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
-        configuration.host = listener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
+        configuration.port = listener.emit(orElse(source.getInteger(PORT_KEY), current.port));
+        configuration.host = listener.emit(orElse(source.getString(HOST_KEY), current.host));
         return configuration;
     }
 }

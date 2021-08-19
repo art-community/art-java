@@ -269,7 +269,7 @@ public abstract class MetaClass<T> {
     }
 
     public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
-        throw new MetaException(format(PROXY_IS_NULL, definition().type().getName()));
+        throw new MetaException(format(CLASS_WITHOUT_PROXY, definition().type().getName()));
     }
 
     public String toString() {

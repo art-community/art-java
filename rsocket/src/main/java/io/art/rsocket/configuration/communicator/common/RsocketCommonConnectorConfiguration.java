@@ -75,8 +75,8 @@ public class RsocketCommonConnectorConfiguration {
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), current.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
         configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), id -> strategy -> strategy.manual(id), current.service));
-        configuration.timeout = listener.emit(orElse(source.getDuration(TRANSPORT_TIMEOUT_CONNECTION_KEY), current.timeout));
-        configuration.ssl = listener.emit(orElse(source.getNested(TRANSPORT_SSL_SECTION, section -> rsocketSsl(section, current.ssl)), current.ssl));
+        configuration.timeout = listener.emit(orElse(source.getDuration(TIMEOUT_KEY), current.timeout));
+        configuration.ssl = listener.emit(orElse(source.getNested(SSL_SECTION, section -> rsocketSsl(section, current.ssl)), current.ssl));
         return configuration;
     }
 }

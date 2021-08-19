@@ -109,9 +109,9 @@ public class RsocketWsServerConfiguration {
         }
 
         configuration.defaultServiceMethod = orElse(configuration.defaultServiceMethod, current.defaultServiceMethod);
-        configuration.port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), current.port));
-        configuration.host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), current.host));
-        configuration.ssl = serverListener.emit(orElse(source.getNested(TRANSPORT_SSL_SECTION, RsocketSslConfiguration::rsocketSsl), current.ssl));
+        configuration.port = serverListener.emit(orElse(source.getInteger(PORT_KEY), current.port));
+        configuration.host = serverListener.emit(orElse(source.getString(HOST_KEY), current.host));
+        configuration.ssl = serverListener.emit(orElse(source.getNested(SSL_SECTION, RsocketSslConfiguration::rsocketSsl), current.ssl));
         return configuration;
     }
 }

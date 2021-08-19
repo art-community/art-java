@@ -20,11 +20,11 @@ public class RsocketWsConnectorConfiguration {
         RsocketWsConnectorConfiguration configuration = RsocketWsConnectorConfiguration.builder().build();
         configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);
 
-        RsocketWsClientGroupConfiguration groupConfiguration = source.getNested(GROUP_KEY, nested -> groupConfiguration(refresher, currentConfiguration, nested));
+        RsocketWsClientGroupConfiguration groupConfiguration = source.getNested(GROUP_SECTION, nested -> groupConfiguration(refresher, currentConfiguration, nested));
         RsocketWsClientGroupConfiguration defaultGroup = RsocketWsClientGroupConfiguration.defaults(currentConfiguration.commonConfiguration.getConnector());
         configuration.groupConfiguration = orElse(groupConfiguration, orElse(currentConfiguration.groupConfiguration, defaultGroup));
 
-        RsocketWsClientConfiguration clientConfiguration = source.getNested(SINGLE_KEY, nested -> singleConfiguration(refresher, currentConfiguration, nested));
+        RsocketWsClientConfiguration clientConfiguration = source.getNested(SINGLE_SECTION, nested -> singleConfiguration(refresher, currentConfiguration, nested));
         RsocketWsClientConfiguration defaultSingle = RsocketWsClientConfiguration.defaults(currentConfiguration.commonConfiguration.getConnector());
         configuration.singleConfiguration = orElse(clientConfiguration, orElse(currentConfiguration.singleConfiguration, defaultSingle));
 

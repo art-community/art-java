@@ -27,6 +27,8 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.server.*;
+import io.art.rsocket.configurator.communicator.*;
+import io.art.rsocket.configurator.server.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
 import io.art.server.configurator.*;
