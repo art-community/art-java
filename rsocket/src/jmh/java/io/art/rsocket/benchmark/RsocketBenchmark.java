@@ -27,7 +27,7 @@ import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.core.strategy.ServiceMethodStrategy.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -57,7 +57,7 @@ public class RsocketBenchmark {
                     messagePack(),
                     rsocket(rsocket -> rsocket
                             .communicator(communicator -> communicator
-                                    .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(service -> service.manual(asId(BenchmarkRsocketService.class)))))
+                                    .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(manual(BenchmarkRsocketService.class))))
                             )
                             .server(server -> server.tcp().configureService(BenchmarkRsocketService.class)))
             );

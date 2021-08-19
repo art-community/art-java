@@ -1,7 +1,6 @@
 package io.art.rsocket.communicator;
 
 import io.art.core.model.*;
-import io.art.core.strategy.*;
 import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
@@ -180,7 +179,7 @@ public class RsocketCommunicationFactory {
     }
 
     private static RsocketSetupPayload createSetupPayload(RsocketCommonConnectorConfiguration common, CommunicatorActionIdentifier identifier) {
-        ServiceMethodIdentifier targetServiceMethod = common.getService().apply(new ServiceMethodStrategy()).id(identifier);
+        ServiceMethodIdentifier targetServiceMethod = common.getService().id(identifier);
         RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
                 .dataFormat(common.getDataFormat())
                 .metadataFormat(common.getMetaDataFormat());

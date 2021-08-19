@@ -10,6 +10,7 @@ import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.strategy.ServiceMethodStrategy.*;
 import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketRetryConfiguration.*;
@@ -36,7 +37,7 @@ public class RsocketCommonConnectorConfiguration {
     private RsocketRetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
-    private UnaryOperator<ServiceMethodStrategy> service;
+    private ServiceMethodStrategy service;
     private Duration timeout;
     private UnaryOperator<InterceptorRegistry> interceptors;
     private UnaryOperator<RSocketConnector> decorator;
@@ -51,7 +52,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.fragment = 0;
         configuration.payloadDecoderMode = ZERO_COPY;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
-        configuration.service = ServiceMethodStrategy::byCommunicator;
+        configuration.service = byCommunicator();
         configuration.timeout = DEFAULT_TIMEOUT;
         configuration.interceptors = identity();
         configuration.decorator = identity();
@@ -77,7 +78,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, current.retry), current.retry));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), current.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
-        configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), id -> strategy -> strategy.manual(id), current.service));
+        configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), ServiceMethodStrategy::manual, current.service));
         configuration.timeout = listener.emit(orElse(source.getDuration(TIMEOUT_KEY), current.timeout));
         configuration.ssl = listener.emit(orElse(source.getNested(SSL_SECTION, section -> rsocketSsl(section, current.ssl)), current.ssl));
         return configuration;

@@ -4,6 +4,7 @@ package io.art.core.strategy;
 import io.art.core.exception.*;
 import io.art.core.model.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.strategy.ServiceMethodStrategy.Strategy.*;
 import java.util.function.*;
 
@@ -12,21 +13,28 @@ public class ServiceMethodStrategy {
     private String manualId;
     private Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer;
 
-    public ServiceMethodStrategy manual(String id) {
-        strategy = MANUAL;
-        this.manualId = id;
-        return this;
+    public static ServiceMethodStrategy manual(String id) {
+        ServiceMethodStrategy strategy = new ServiceMethodStrategy();
+        strategy.strategy = MANUAL;
+        strategy.manualId = id;
+        return strategy;
     }
 
-    public ServiceMethodStrategy byCommunicator() {
-        this.strategy = BY_COMMUNICATOR;
-        return this;
+    public static ServiceMethodStrategy manual(Class<?> byClass) {
+        return manual(asId(byClass));
     }
 
-    public ServiceMethodStrategy fromCommunicator(Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer) {
-        this.strategy = FROM_COMMUNICATOR;
-        this.transformer = transformer;
-        return this;
+    public static ServiceMethodStrategy byCommunicator() {
+        ServiceMethodStrategy strategy = new ServiceMethodStrategy();
+        strategy.strategy = BY_COMMUNICATOR;
+        return strategy;
+    }
+
+    public static ServiceMethodStrategy fromCommunicator(Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer) {
+        ServiceMethodStrategy strategy = new ServiceMethodStrategy();
+        strategy.strategy = FROM_COMMUNICATOR;
+        strategy.transformer = transformer;
+        return strategy;
     }
 
     public ServiceMethodIdentifier id(CommunicatorActionIdentifier id) {
