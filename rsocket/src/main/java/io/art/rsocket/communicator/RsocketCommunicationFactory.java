@@ -27,6 +27,7 @@ import reactor.netty.http.client.*;
 import reactor.netty.tcp.SslProvider;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
@@ -195,7 +196,7 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient configureSocket(RsocketCommonConnectorConfiguration common, Mono<RSocket> socket, RsocketSetupPayload setupPayload) {
         Mono<RSocket> configured = socket.timeout(common.getTimeout());
-        if (common.isLogging()) {
+        if (withLogging() && common.isLogging()) {
             configured = configured
                     .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
