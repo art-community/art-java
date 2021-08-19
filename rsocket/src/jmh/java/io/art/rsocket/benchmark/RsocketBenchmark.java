@@ -25,13 +25,16 @@ import io.art.rsocket.test.service.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
 import reactor.core.publisher.*;
+import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
+import static io.art.transport.module.TransportActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
 
@@ -49,11 +52,14 @@ public class RsocketBenchmark {
         public void setup() {
             initialize(
                     meta(() -> new MetaRsocketTest(new MetaMetaTest())),
+                    transport(),
                     logging(),
                     messagePack(),
                     rsocket(rsocket -> rsocket
-                            .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
-                            .server(server -> server.tcp().configureService(TestRsocketService.class)))
+                            .communicator(communicator -> communicator
+                                    .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(service -> service.manual(asId(BenchmarkRsocketService.class)))))
+                            )
+                            .server(server -> server.tcp().configureService(BenchmarkRsocketService.class)))
             );
             TestRsocketConnector connector = rsocketConnector(TestRsocketConnector.class);
             communicator = connector.testRsocket();
@@ -72,12 +78,12 @@ public class RsocketBenchmark {
 
     @Benchmark
     public void c(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m3());
+        blackhole.consume(block(state.communicator.m3()));
     }
 
     @Benchmark
     public void d(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m4());
+        blackhole.consume(blockFirst(state.communicator.m4()));
     }
 
     @Benchmark
@@ -92,12 +98,12 @@ public class RsocketBenchmark {
 
     @Benchmark
     public void g(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m7("test"));
+        blackhole.consume(block(state.communicator.m7("test")));
     }
 
     @Benchmark
     public void h(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m8("test"));
+        blackhole.consume(blockFirst(state.communicator.m8("test")));
     }
 
     @Benchmark
@@ -112,12 +118,12 @@ public class RsocketBenchmark {
 
     @Benchmark
     public void k(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m11(Mono.just("test")));
+        blackhole.consume(block(state.communicator.m11(Mono.just("test"))));
     }
 
     @Benchmark
     public void l(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m12(Mono.just("test")));
+        blackhole.consume(blockFirst(state.communicator.m12(Mono.just("test"))));
     }
 
     @Benchmark
@@ -132,11 +138,11 @@ public class RsocketBenchmark {
 
     @Benchmark
     public void o(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m15(Flux.just("test")));
+        blackhole.consume(block(state.communicator.m15(Flux.just("test"))));
     }
 
     @Benchmark
     public void p(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m16(Flux.just("test")));
+        blackhole.consume(blockFirst(state.communicator.m16(Flux.just("test"))));
     }
 }

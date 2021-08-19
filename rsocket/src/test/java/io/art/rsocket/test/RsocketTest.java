@@ -28,8 +28,8 @@ public class RsocketTest {
                 transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, tcp -> tcp.configure(configuration -> configuration.logging(true))))
-                        .server(server -> server.tcp(tcp -> tcp.logging(true)).configureService(TestRsocketService.class)))
+                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
+                        .server(server -> server.tcp().configureService(TestRsocketService.class)))
         );
     }
 
