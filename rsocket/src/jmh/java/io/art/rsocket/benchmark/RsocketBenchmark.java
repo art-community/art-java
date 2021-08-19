@@ -42,7 +42,7 @@ import static org.openjdk.jmh.annotations.Mode.*;
 @Warmup(iterations = 1)
 @Measurement(iterations = 1)
 @BenchmarkMode(Throughput)
-@OutputTimeUnit(MILLISECONDS)
+@OutputTimeUnit(SECONDS)
 public class RsocketBenchmark {
     @State(value = Scope.Benchmark)
     public static class BenchmarkState {
