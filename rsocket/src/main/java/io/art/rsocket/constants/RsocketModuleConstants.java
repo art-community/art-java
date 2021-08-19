@@ -40,7 +40,8 @@ public interface RsocketModuleConstants {
         String SERVER_STARTED = "RSocket {0} server started - {1}:{2}";
         String SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
 
-        String COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}\nSetup payload:\n{1}";
+        String COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}";
+        String COMMUNICATOR_STARTED_VERBOSE = "RSocket communicator connector started: {0}\nSetup payload:\n{1}";
         String COMMUNICATOR_STOPPED = "RSocket communicator connector stopped: {0}";
 
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
