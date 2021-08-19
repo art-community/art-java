@@ -21,7 +21,7 @@ public class Meta {
     }
 
     public static <T> MetaType<T> definition() {
-        TypeReference<T> typeReference = new TypeReference<>() {
+        TypeReference<T> typeReference = new TypeReference<T>() {
         };
         return definition(typeReference.getType());
     }

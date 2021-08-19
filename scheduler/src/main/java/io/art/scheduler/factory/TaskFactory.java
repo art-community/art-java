@@ -18,20 +18,13 @@
 
 package io.art.scheduler.factory;
 
-import io.art.logging.*;
-import io.art.logging.logger.*;
 import io.art.scheduler.model.*;
-import io.art.scheduler.module.*;
-import lombok.*;
 import lombok.experimental.*;
 import static java.util.UUID.*;
 import java.util.function.*;
 
 @UtilityClass
 public class TaskFactory {
-    @Getter(lazy = true)
-    private final static Logger logger = Logging.logger(SchedulerModule.class);
-
     private final static ThreadLocal<String> current = new ThreadLocal<>();
 
     public static RunnableTask task(Runnable runnable) {
