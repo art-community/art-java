@@ -41,6 +41,8 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.payload.TransportPayload.*;
+import static io.art.transport.payload.TransportPayloadReader.*;
+import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -100,8 +102,8 @@ public class RsocketCommunication implements Communication {
     }
 
     private Function<Flux<Object>, Flux<Object>> communication() {
-        TransportPayloadReader reader = new TransportPayloadReader(connectorConfiguration.getDataFormat());
-        TransportPayloadWriter writer = new TransportPayloadWriter(connectorConfiguration.getDataFormat());
+        TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getDataFormat());
+        TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getDataFormat());
         switch (communicationMode()) {
             case FIRE_AND_FORGET:
                 return fireAndForget(writer).andThen(output -> output

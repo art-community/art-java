@@ -36,7 +36,7 @@ import static io.netty.buffer.ByteBufAllocator.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PRIVATE)
 public class TransportPayloadWriter {
     private final DataFormat dataFormat;
 
@@ -99,5 +99,9 @@ public class TransportPayloadWriter {
                 return DEFAULT.directBuffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
         }
         return DEFAULT.ioBuffer();
+    }
+
+    public static TransportPayloadWriter transportPayloadWriter(DataFormat dataFormat) {
+        return new TransportPayloadWriter(dataFormat);
     }
 }

@@ -13,7 +13,6 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
-import io.art.transport.payload.*;
 import io.netty.handler.ssl.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
@@ -38,6 +37,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
+import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.rsocket.core.RSocketClient.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
@@ -72,7 +72,7 @@ public class RsocketCommunicationFactory {
     private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
         RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
-        ByteBuffer payloadData = new TransportPayloadWriter(common.getDataFormat())
+        ByteBuffer payloadData = transportPayloadWriter(common.getDataFormat())
                 .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
                 .nioBuffer();
         Payload payload = create(payloadData);
@@ -116,7 +116,7 @@ public class RsocketCommunicationFactory {
     private static RSocketClient createWsClient(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
         RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
-        ByteBuffer payloadData = new TransportPayloadWriter(common.getDataFormat())
+        ByteBuffer payloadData = transportPayloadWriter(common.getDataFormat())
                 .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
                 .nioBuffer();
         Payload payload = create(payloadData);

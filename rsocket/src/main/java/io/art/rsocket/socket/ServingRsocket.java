@@ -47,6 +47,8 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
+import static io.art.transport.payload.TransportPayloadReader.*;
+import static io.art.transport.payload.TransportPayloadWriter.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static reactor.core.publisher.Flux.*;
@@ -66,7 +68,7 @@ public class ServingRsocket implements RSocket {
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketCommonServerConfiguration serverConfiguration) {
         this.serviceMethods = serviceMethods;
         DataFormat dataFormat = fromMimeType(parseMimeType(payload.dataMimeType()), serverConfiguration.getDefaultDataFormat());
-        TransportPayload setupPayloadData = new TransportPayloadReader(dataFormat).read(payload.sliceData(), payloadType);
+        TransportPayload setupPayloadData = transportPayloadReader(dataFormat).read(payload.sliceData(), payloadType);
         if (!setupPayloadData.isEmpty()) {
             RsocketSetupPayload setupPayloadDataValue = (RsocketSetupPayload) setupPayloadData.getValue();
             if (nonNull(setupPayloadDataValue)) {
@@ -82,8 +84,8 @@ public class ServingRsocket implements RSocket {
                     return;
                 }
                 serviceMethod = findServiceMethod(serviceMethodId);
-                dataReader = new TransportPayloadReader(dataFormat);
-                dataWriter = new TransportPayloadWriter(dataFormat);
+                dataReader = transportPayloadReader(dataFormat);
+                dataWriter = transportPayloadWriter(dataFormat);
                 inputMappingType = serviceMethod.getInputType();
                 if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
                     inputMappingType = inputMappingType.parameters().get(0);
@@ -111,8 +113,8 @@ public class ServingRsocket implements RSocket {
                 return;
             }
             serviceMethod = findServiceMethod(defaultServiceMethod);
-            dataReader = new TransportPayloadReader(dataFormat);
-            dataWriter = new TransportPayloadWriter(dataFormat);
+            dataReader = transportPayloadReader(dataFormat);
+            dataWriter = transportPayloadWriter(dataFormat);
             inputMappingType = serviceMethod.getInputType();
             if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
                 inputMappingType = inputMappingType.parameters().get(0);

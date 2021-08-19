@@ -34,7 +34,7 @@ import static io.art.yaml.module.YamlModule.*;
 import static lombok.AccessLevel.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = PRIVATE)
 public class TransportPayloadReader {
     private final DataFormat dataFormat;
 
@@ -70,5 +70,9 @@ public class TransportPayloadReader {
                         : new TransportPayload(buffer, lazy(() -> getYamlReader().read(type, buffer)));
         }
         throw new ImpossibleSituationException();
+    }
+
+    public static TransportPayloadReader transportPayloadReader(DataFormat dataFormat) {
+        return new TransportPayloadReader(dataFormat);
     }
 }
