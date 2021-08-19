@@ -14,11 +14,11 @@ import java.util.*;
 @ForUsing
 @UtilityClass
 public class Meta {
-    public static <T> MetaClass<T> declaration(Class<T> type) {
-        return findDeclaration(type).orElseThrow(() -> new MetaException(format(META_CLASS_FOR_CLASS_NOT_EXISTS, type)));
+    public static <T, M extends MetaClass<T>> M declaration(Class<T> type) {
+        return cast(findDeclaration(type).orElseThrow(() -> new MetaException(format(META_CLASS_FOR_CLASS_NOT_EXISTS, type))));
     }
 
-    public static <T> Optional<MetaClass<T>> findDeclaration(Class<T> type) {
+    public static <T, M extends MetaClass<T>> Optional<M> findDeclaration(Class<T> type) {
         return cast(ofNullable(metaModule().configuration().library().classes().get(type)));
     }
 
