@@ -52,7 +52,7 @@ public class RsocketBenchmark {
             initialize(
                     meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                     transport(),
-                    MESSAGEPACK(),
+                    messagePack(),
                     rsocket(rsocket -> rsocket
                             .communicator(communicator -> communicator
                                     .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(manual(BenchmarkRsocketService.class))))
