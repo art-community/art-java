@@ -57,11 +57,11 @@ public class RsocketManager {
                 .forEach(CommunicatorAction::dispose);
     }
 
-    public void initializeServer() {
+    public void initializeServers() {
         server.initialize();
     }
 
-    public void disposeServer() {
+    public void disposeServers() {
         server.dispose();
     }
 

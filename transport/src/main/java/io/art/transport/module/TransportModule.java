@@ -20,12 +20,15 @@ package io.art.transport.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.logging.*;
 import io.art.transport.configuration.*;
 import io.art.transport.configuration.TransportModuleConfiguration.*;
 import lombok.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.transport.constants.TransportModuleConstants.Messages.*;
+import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.pool.TransportPool.*;
 import static lombok.AccessLevel.*;
 
@@ -44,10 +47,6 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
     @Override
     public void launch(Context.Service contextService) {
         configureCommonTransportPool(configuration.getCommonPoolConfiguration());
-    }
-
-    @Override
-    public String print() {
-        return TRANSPORT_CONFIGURING_MESSAGE;
+        withLogging(() -> Logging.logger(TRANSPORT_LOGGER).info(TRANSPORT_CONFIGURING_MESSAGE));
     }
 }

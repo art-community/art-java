@@ -11,6 +11,7 @@ import static reactor.netty.resources.ConnectionProvider.*;
 import java.time.*;
 
 public interface TransportModuleConstants {
+    String TRANSPORT_LOGGER = "transport";
     interface Defaults {
         String DEFAULT_LOOP_RESOURCES_PREFIX = "common-transport";
         String DEFAULT_CONNECTION_PROVIDER_NAME = "common-connection";

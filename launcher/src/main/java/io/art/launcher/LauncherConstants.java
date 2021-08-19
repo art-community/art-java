@@ -23,7 +23,6 @@ public interface LauncherConstants {
         String MODULES_ALREADY_LAUNCHED = "Modules already launched";
     }
 
-    String CONFIGURED_BY_MESSAGE = "Configured by {0}";
     String DEFAULT_CONFIGURATION = "Configurator not activated. Using default configurations";
     String LAUNCHER_LOGGER = "launcher";
 }

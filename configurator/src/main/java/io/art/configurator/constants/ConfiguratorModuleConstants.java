@@ -65,4 +65,6 @@ public interface ConfiguratorModuleConstants {
         String UNKNOWN_CONFIGURATION_SOURCE_FILE_EXTENSION = "Unknown configuration source file extension: ''{0}''";
         String CONFIGURATION_WAS_NOT_FOUND = "Configuration was not found in section {0}";
     }
+
+    String CONFIGURED_BY_MESSAGE = "Configured by {0}";
 }

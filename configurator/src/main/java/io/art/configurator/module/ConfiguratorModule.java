@@ -28,9 +28,9 @@ import io.art.core.file.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
 import lombok.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfiguratorKeys.*;
-import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
@@ -38,6 +38,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ListFactory.*;
 import static java.nio.file.Paths.*;
+import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 import java.io.*;
 import java.util.*;
@@ -53,6 +54,11 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     @Override
     public void beforeReload(Context.Service contextService) {
         orderedSources().forEach(ConfigurationSource::refresh);
+    }
+
+    @Override
+    public void launch(Context.Service contextService) {
+        contextService.print(format(CONFIGURED_BY_MESSAGE, configuration.getConfiguration().getPath()));
     }
 
     public ImmutableArray<ConfigurationSource> orderedSources() {

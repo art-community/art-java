@@ -209,10 +209,6 @@ public class Context {
             module.launch(service);
         }
 
-        for (Module<?, ?> module : this.modules.values()) {
-            apply(configuration.getPrinter(), printer -> ifNotEmpty(module.print(), printer));
-        }
-
         apply(configuration.getPrinter(), printer -> printer.accept(LAUNCHED_MESSAGE));
         apply(configuration.getOnLaunch(), Runnable::run);
     }
@@ -237,6 +233,10 @@ public class Context {
 
 
     public class Service {
+        public void print(String message) {
+            configuration.getPrinter().accept(message);
+        }
+
         public void reload() {
             for (Map.Entry<String, Module<?, ?>> entry : modules.entrySet()) {
                 Module<?, ?> module = entry.getValue();

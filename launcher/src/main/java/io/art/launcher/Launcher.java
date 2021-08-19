@@ -36,13 +36,11 @@ import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
 import static io.art.launcher.LauncherConstants.Errors.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -77,7 +75,7 @@ public class Launcher {
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
                 .onLoad(activator.onLoad())
-                .onLaunch(before(() -> writeLaunchMessage(configuratorModule, printer), activator.onLaunch()))
+                .onLaunch(activator.onLaunch())
                 .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
                 .afterReload(activator.afterReload())
@@ -112,26 +110,17 @@ public class Launcher {
 
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
         Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
-
+        printer.accept(DEFAULT_CONFIGURATION);
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
                 .onLoad(activator.onLoad())
-                .onLaunch(before(() -> writeLaunchMessage(printer), activator.onLaunch()))
+                .onLaunch(activator.onLaunch())
                 .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
                 .afterReload(activator.afterReload())
                 .main(orElse(activator.main(), DEFAULT_MAIN_MODULE_ID));
 
         initialize(contextConfiguration.printer(printer).build(), activators.values().toArray(new ModuleActivator[0]));
-    }
-
-    private static void writeLaunchMessage(Consumer<String> printer) {
-        printer.accept(DEFAULT_CONFIGURATION);
-    }
-
-
-    private static void writeLaunchMessage(ConfiguratorModule configuratorModule, Consumer<String> printer) {
-        printer.accept(format(CONFIGURED_BY_MESSAGE, configuratorModule.getConfiguration().getConfiguration().getPath()));
     }
 }

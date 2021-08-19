@@ -58,7 +58,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     public void launch(Context.Service contextService) {
         onErrorDropped(emptyConsumer());
         if (configuration.isEnableTcpServer() || configuration.isEnableWsServer()) {
-            manager.initializeServer();
+            manager.initializeServers();
         }
         if (!configuration.getWsConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
             manager.initializeCommunicators();
@@ -68,7 +68,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public void shutdown(Context.Service contextService) {
         if (configuration.isEnableTcpServer() || configuration.isEnableWsServer()) {
-            manager.disposeServer();
+            manager.disposeServers();
         }
         if (!configuration.getWsConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
             manager.disposeCommunicators();
