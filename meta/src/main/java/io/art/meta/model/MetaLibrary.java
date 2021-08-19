@@ -100,8 +100,6 @@ public abstract class MetaLibrary {
             dependency.computeLibrary();
         }
         computeLibrary();
-        CustomMetaTransformerMutableRegistry.clear();
-        CustomMetaTypeMutableRegistry.clear();
         MetaClassMutableRegistry.clear();
         MetaLibraryMutableRegistry.clear();
     }
