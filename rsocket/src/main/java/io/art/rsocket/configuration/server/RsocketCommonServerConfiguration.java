@@ -35,7 +35,7 @@ public class RsocketCommonServerConfiguration {
     private int port;
     private String host;
     private ServiceMethodIdentifier defaultServiceMethod;
-    private boolean logging;
+    private boolean verbose;
     private int fragmentationMtu;
     private RsocketResumeConfiguration resume;
     private PayloadDecoder payloadDecoder;
@@ -53,7 +53,7 @@ public class RsocketCommonServerConfiguration {
         common.defaultServiceMethod = configuration.getDefaultServiceMethod();
         common.defaultDataFormat = configuration.getDefaultDataFormat();
         common.defaultMetaDataFormat = configuration.getDefaultMetaDataFormat();
-        common.logging = configuration.isLogging();
+        common.verbose = configuration.isVerbose();
         common.fragmentationMtu = configuration.getFragmentationMtu();
         common.payloadDecoder = configuration.getPayloadDecoder();
         common.maxInboundPayloadSize = configuration.getMaxInboundPayloadSize();
@@ -71,7 +71,7 @@ public class RsocketCommonServerConfiguration {
         common.defaultServiceMethod = configuration.getDefaultServiceMethod();
         common.defaultDataFormat = configuration.getDefaultDataFormat();
         common.defaultMetaDataFormat = configuration.getDefaultMetaDataFormat();
-        common.logging = configuration.isLogging();
+        common.verbose = configuration.isVerbose();
         common.fragmentationMtu = configuration.getFragmentationMtu();
         common.payloadDecoder = configuration.getPayloadDecoder();
         common.maxInboundPayloadSize = configuration.getMaxInboundPayloadSize();

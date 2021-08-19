@@ -91,7 +91,7 @@ public interface RsocketModuleConstants {
         String TCP_MAX_FRAME_LENGTH_KEY = "tcp.maxFrameLength";
 
         String PAYLOAD_DECODER_KEY = "payloadDecoder";
-        String LOGGING_KEY = "logging";
+        String VERBOSE_KEY = "verbose";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
 
         String CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "cleanupStoreOnKeepAlive";

@@ -53,7 +53,7 @@ public class RsocketWsServerConfiguration {
     private int port;
     private String host;
     private ServiceMethodIdentifier defaultServiceMethod;
-    private boolean logging;
+    private boolean verbose;
     private int fragmentationMtu;
     private RsocketResumeConfiguration resume;
     private PayloadDecoder payloadDecoder;
@@ -71,7 +71,7 @@ public class RsocketWsServerConfiguration {
         configuration.decorator = identity();
         configuration.defaultDataFormat = MESSAGE_PACK;
         configuration.defaultMetaDataFormat = MESSAGE_PACK;
-        configuration.logging = false;
+        configuration.verbose = false;
         configuration.fragmentationMtu = 0;
         configuration.payloadDecoder = ZERO_COPY;
         configuration.maxInboundPayloadSize = FRAME_LENGTH_MASK;
@@ -91,7 +91,7 @@ public class RsocketWsServerConfiguration {
         ChangesListener serverListener = refresher.serverListener();
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
-        configuration.logging = serverLoggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
+        configuration.verbose = serverLoggingListener.emit(orElse(source.getBoolean(VERBOSE_KEY), current.verbose));
 
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), current.defaultDataFormat));
         configuration.defaultMetaDataFormat = serverListener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), current.defaultMetaDataFormat));

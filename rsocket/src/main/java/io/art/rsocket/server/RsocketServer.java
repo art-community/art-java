@@ -36,6 +36,7 @@ import io.art.server.method.*;
 import io.netty.handler.ssl.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
+import io.rsocket.plugins.*;
 import io.rsocket.transport.*;
 import io.rsocket.transport.netty.server.*;
 import lombok.*;
@@ -149,18 +150,24 @@ public class RsocketServer implements Server {
         }
         apply(serverConfiguration.getResume(), resume -> server.resume(resume.toResume()));
         Mono<CloseableChannel> bind = serverConfiguration.getDecorator().apply(server)
-                .interceptors(registry -> serverConfiguration.getInterceptors().apply(registry
-                        .forResponder(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))
-                        .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))))
+                .interceptors(registry -> configureInterceptors(serverConfiguration, registry))
                 .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
-        if (withLogging() && serverConfiguration.isLogging()) {
+        if (withLogging()) {
             String message = format(SERVER_STARTED, type, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
             bind = bind
                     .doOnSubscribe(subscription -> getLogger().info(message))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return block(bind);
+    }
+
+    private void configureInterceptors(RsocketCommonServerConfiguration serverConfiguration, InterceptorRegistry registry) {
+        if (withLogging()) {
+            serverConfiguration.getInterceptors().apply(registry
+                    .forResponder(new RsocketServerLoggingInterceptor(configuration, serverConfiguration))
+                    .forRequester(new RsocketServerLoggingInterceptor(configuration, serverConfiguration)));
+        }
     }
 
     private Optional<SslProvider> createSslContext(RsocketSslConfiguration ssl) {
@@ -211,7 +218,7 @@ public class RsocketServer implements Server {
     private void setupTcpCloser(CloseableChannel channel) {
         this.tcpCloser = channel.onClose();
         RsocketTcpServerConfiguration serverConfiguration = configuration.getTcpServer();
-        if (withLogging() && fromTcp(serverConfiguration).isLogging()) {
+        if (withLogging()) {
             String message = format(SERVER_STOPPED, TCP_SERVER_TYPE, serverConfiguration.getHost(), serverConfiguration.getPort());
             this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
         }
@@ -220,7 +227,7 @@ public class RsocketServer implements Server {
     private void setupWsCloser(CloseableChannel channel) {
         this.wsCloser = channel.onClose();
         RsocketWsServerConfiguration serverConfiguration = configuration.getWsServer();
-        if (withLogging() && fromWs(serverConfiguration).isLogging()) {
+        if (withLogging()) {
             String message = format(SERVER_STOPPED, WS_SERVER_TYPE, serverConfiguration.getHost(), serverConfiguration.getPort());
             this.wsCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
         }

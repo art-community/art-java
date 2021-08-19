@@ -25,21 +25,17 @@ import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.common.*;
 import io.rsocket.*;
 import io.rsocket.plugins.*;
-import lombok.*;
-import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.property.Property.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
-import static lombok.AccessLevel.*;
 
 public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
-
+    private final Logger logger;
     private final RsocketCommonConnectorConfiguration configuration;
     private final Property<Boolean> enabled;
 
     public RsocketConnectorLoggingInterceptor(RsocketModuleConfiguration moduleConfiguration, RsocketCommonConnectorConfiguration connectorConfiguration) {
         this.configuration = connectorConfiguration;
+        logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
         enabled = property(this::enabled).listenConsumer(() -> moduleConfiguration
                 .getConsumer()
                 .connectorLoggingConsumers()
@@ -48,10 +44,10 @@ public class RsocketConnectorLoggingInterceptor implements RSocketInterceptor {
 
     @Override
     public RSocket apply(RSocket rsocket) {
-        return withLogging() ? new RsocketLoggingProxy(getLogger(), rsocket, enabled) : rsocket;
+        return new RsocketLoggingProxy(logger, rsocket, enabled);
     }
 
     private boolean enabled() {
-        return withLogging() && configuration.isLogging();
+        return configuration.isVerbose();
     }
 }

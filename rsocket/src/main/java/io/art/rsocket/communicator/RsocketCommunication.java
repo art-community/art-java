@@ -53,7 +53,7 @@ import java.util.function.*;
 
 public class RsocketCommunication implements Communication {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = Logging.logger(RsocketCommunication.class);
+    private final static Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
     private final RsocketCommonConnectorConfiguration connectorConfiguration;
     private final Property<RSocketClient> client;
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;
@@ -96,7 +96,7 @@ public class RsocketCommunication implements Communication {
 
     private void disposeClient(RSocketClient rsocket) {
         disposeRsocket(rsocket);
-        if (withLogging() && connectorConfiguration.isLogging()) {
+        if (withLogging()) {
             getLogger().info(format(COMMUNICATOR_STOPPED, connectorConfiguration.getConnector()));
         }
     }

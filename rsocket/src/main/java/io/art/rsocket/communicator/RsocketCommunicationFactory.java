@@ -53,7 +53,6 @@ public class RsocketCommunicationFactory {
     @Getter(lazy = true, value = PRIVATE)
     private final static Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
 
-
     public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
         RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
@@ -193,7 +192,7 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient configureSocket(RsocketCommonConnectorConfiguration common, Mono<RSocket> socket, RsocketSetupPayload setupPayload) {
         Mono<RSocket> configured = socket.timeout(common.getTimeout());
-        if (withLogging() && common.isLogging()) {
+        if (withLogging()) {
             configured = configured
                     .doOnSubscribe(subscription -> getLogger().info(format(COMMUNICATOR_STARTED, common.getConnector(), setupPayload)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
@@ -216,8 +215,10 @@ public class RsocketCommunicationFactory {
 
     private static void configureInterceptors(RsocketCommonConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
         UnaryOperator<InterceptorRegistry> interceptors = connectorConfiguration.getInterceptors();
-        interceptors.apply(registry
-                .forResponder(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration))
-                .forRequester(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration)));
+        if (withLogging()) {
+            interceptors.apply(registry
+                    .forResponder(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration))
+                    .forRequester(new RsocketConnectorLoggingInterceptor(rsocketModule().configuration(), connectorConfiguration)));
+        }
     }
 }

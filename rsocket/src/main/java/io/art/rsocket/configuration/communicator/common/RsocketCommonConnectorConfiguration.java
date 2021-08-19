@@ -30,7 +30,7 @@ public class RsocketCommonConnectorConfiguration {
     private String connector;
     private DataFormat dataFormat;
     private DataFormat metaDataFormat;
-    private boolean logging;
+    private boolean verbose;
     private int fragment;
     private RsocketKeepAliveConfiguration keepAlive;
     private RsocketResumeConfiguration resume;
@@ -47,7 +47,7 @@ public class RsocketCommonConnectorConfiguration {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
         configuration.dataFormat = MESSAGE_PACK;
         configuration.metaDataFormat = MESSAGE_PACK;
-        configuration.logging = false;
+        configuration.verbose = false;
         configuration.connector = connector;
         configuration.fragment = 0;
         configuration.payloadDecoderMode = ZERO_COPY;
@@ -68,7 +68,7 @@ public class RsocketCommonConnectorConfiguration {
         ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(current.connector);
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), current.dataFormat));
         configuration.metaDataFormat = listener.emit(dataFormat(source.getString(META_DATA_FORMAT_KEY), current.metaDataFormat));
-        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
+        configuration.verbose = loggingListener.emit(orElse(source.getBoolean(VERBOSE_KEY), current.verbose));
         configuration.connector = current.connector;
         configuration.interceptors = current.interceptors;
         configuration.decorator = current.decorator;
