@@ -28,7 +28,6 @@ public interface TestRsocket extends Communicator {
 
     Flux<String> m12(Mono<String> input);
 
-
     void m13(Flux<String> input);
 
     String m14(Flux<String> input);
