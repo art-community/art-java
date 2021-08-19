@@ -55,6 +55,9 @@ public class RsocketCommonConnectorConfiguration {
         configuration.timeout = DEFAULT_TIMEOUT;
         configuration.interceptors = identity();
         configuration.decorator = identity();
+        configuration.keepAlive = rsocketKeepAlive();
+        configuration.resume = rsocketResume();
+        configuration.retry = rsocketRetry();
         return configuration;
     }
 
