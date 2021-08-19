@@ -28,7 +28,6 @@ import reactor.core.publisher.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.strategy.ServiceMethodStrategy.*;
-import static io.art.logging.module.LoggingActivator.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
@@ -53,8 +52,7 @@ public class RsocketBenchmark {
             initialize(
                     meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                     transport(),
-                    logging(),
-                    messagePack(),
+                    MESSAGEPACK(),
                     rsocket(rsocket -> rsocket
                             .communicator(communicator -> communicator
                                     .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(manual(BenchmarkRsocketService.class))))
