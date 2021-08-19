@@ -28,7 +28,6 @@ public interface ServerConstants {
         String METHODS_KEY = "methods";
     }
 
-
     interface LoggingMessages {
         String SERVER_LOGGER = "server";
         String SERVICE_SUBSCRIBED_MESSAGE = "Service subscribed: ''{0}.{1}''";

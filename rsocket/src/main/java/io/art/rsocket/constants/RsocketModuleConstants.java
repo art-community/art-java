@@ -39,8 +39,9 @@ public interface RsocketModuleConstants {
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
         String SERVER_STARTED = "RSocket {0} server started - {1}:{2}";
         String SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
-        String COMMUNICATOR_STARTED = "RSocket communicator started\nConnector: {0}\nSetup payload: {1}\n";
-        String COMMUNICATOR_STOPPED = "RSocket communicator stopped\nConnector: {0}";
+
+        String COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}\nSetup payload: {1}\n";
+        String COMMUNICATOR_STOPPED = "RSocket communicator connector stopped: {0}";
 
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
@@ -114,15 +115,15 @@ public interface RsocketModuleConstants {
     }
 
     interface Defaults {
-        long DEFAULT_RETRY_MAX_ATTEMPTS = 3;
+        long DEFAULT_RETRY_MAX_ATTEMPTS = 10;
         Duration DEFAULT_RETRY_MIN_BACKOFF = ofSeconds(1);
         Duration DEFAULT_RETRY_FIXED_DELAY = ofSeconds(1);
-        int DEFAULT_RETRY_MAX = 1;
-        int DEFAULT_RETRY_MAX_IN_ROW = 1;
+        int DEFAULT_RETRY_MAX = 100;
+        int DEFAULT_RETRY_MAX_IN_ROW = 10;
         int DEFAULT_PORT = 9000;
         Duration DEFAULT_TIMEOUT = ofSeconds(10);
         Duration DEFAULT_RESUME_SESSION_DURATION = ofHours(1);
-        Duration DEFAULT_RESUME_STREAM_TIMEOUT = ofHours(1);
+        Duration DEFAULT_RESUME_STREAM_TIMEOUT = ofSeconds(10);
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = ofSeconds(90);
         String DEFAULT_WS_PATH = SLASH;

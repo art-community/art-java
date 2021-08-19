@@ -158,7 +158,6 @@ public class RsocketCommunicationFactory {
         return connector.connect(transportDecorator.apply(WebsocketClientTransport.create(client, clientConfiguration.getPath())));
     }
 
-
     private static SslProvider createSslContext(RsocketSslConfiguration ssl) {
         try {
             File certificate = ssl.getCertificate();
@@ -179,7 +178,6 @@ public class RsocketCommunicationFactory {
             throw new RsocketException(throwable);
         }
     }
-
 
     private static RsocketSetupPayload createSetupPayload(RsocketCommonConnectorConfiguration common, CommunicatorActionIdentifier identifier) {
         ServiceMethodIdentifier targetServiceMethod = common.getService().apply(new ServiceMethodStrategy()).id(identifier);
@@ -216,7 +214,6 @@ public class RsocketCommunicationFactory {
         apply(commonConfiguration.getRetry(), retry -> connector.reconnect(retry.toRetry()));
         return commonConfiguration.getDecorator().apply(connector.setupPayload(payload));
     }
-
 
     private static void configureInterceptors(RsocketCommonConnectorConfiguration connectorConfiguration, InterceptorRegistry registry) {
         UnaryOperator<InterceptorRegistry> interceptors = connectorConfiguration.getInterceptors();

@@ -48,6 +48,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -154,12 +155,32 @@ public class RsocketServer implements Server {
                 .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
         if (withLogging() && serverConfiguration.isLogging()) {
-            String message = format(SERVER_STARTED, type, serverConfiguration.getHost(), serverConfiguration.getPort());
+            String message = format(SERVER_STARTED, type, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
             bind = bind
                     .doOnSubscribe(subscription -> getLogger().info(message))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return block(bind);
+    }
+
+    private Optional<SslProvider> createSslContext(RsocketSslConfiguration ssl) {
+        try {
+            File certificate = ssl.getCertificate();
+            File key = ssl.getKey();
+            if (isNull(certificate) || !certificate.exists() || isNull(key) || !key.exists()) {
+                return empty();
+            }
+            SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
+            String password = ssl.getPassword();
+            if (isNotEmpty(password)) {
+                sslBuilder = SslContextBuilder.forServer(certificate, key, password);
+            }
+            return of(SslProvider.builder()
+                    .sslContext(sslBuilder.build())
+                    .build());
+        } catch (Throwable throwable) {
+            throw new RsocketException(throwable);
+        }
     }
 
     private void disposeTcpServer(Disposable server) {
@@ -205,23 +226,4 @@ public class RsocketServer implements Server {
         }
     }
 
-    private Optional<SslProvider> createSslContext(RsocketSslConfiguration ssl) {
-        try {
-            File certificate = ssl.getCertificate();
-            File key = ssl.getKey();
-            if (isNull(certificate) || !certificate.exists() || isNull(key) || !key.exists()) {
-                return empty();
-            }
-            SslContextBuilder sslBuilder = SslContextBuilder.forServer(certificate, key);
-            String password = ssl.getPassword();
-            if (isNotEmpty(password)) {
-                sslBuilder = SslContextBuilder.forServer(certificate, key, password);
-            }
-            return of(SslProvider.builder()
-                    .sslContext(sslBuilder.build())
-                    .build());
-        } catch (Throwable throwable) {
-            throw new RsocketException(throwable);
-        }
-    }
 }

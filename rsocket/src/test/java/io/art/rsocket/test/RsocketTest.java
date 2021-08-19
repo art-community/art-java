@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
+import static io.art.logging.module.LoggingActivator.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.Rsocket.*;
@@ -22,10 +23,11 @@ public class RsocketTest {
     public static void setup() {
         initialize(
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
+                logging(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
-                        .server(server -> server.tcp().configureService(TestRsocketService.class)))
+                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, tcp -> tcp.configure(configuration -> configuration.logging(true))))
+                        .server(server -> server.tcp(tcp -> tcp.logging(true)).configureService(TestRsocketService.class)))
         );
     }
 

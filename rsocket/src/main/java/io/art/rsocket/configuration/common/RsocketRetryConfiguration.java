@@ -59,9 +59,7 @@ public class RsocketRetryConfiguration {
 
     public static RsocketRetryConfiguration rsocketRetry() {
         return RsocketRetryConfiguration.builder()
-                .retryPolicy(BACKOFF)
-                .minBackoff(DEFAULT_RETRY_MIN_BACKOFF)
-                .backOffMaxAttempts(DEFAULT_RETRY_MAX_ATTEMPTS)
+                .retryPolicy(INDEFINITELY)
                 .build();
     }
 
