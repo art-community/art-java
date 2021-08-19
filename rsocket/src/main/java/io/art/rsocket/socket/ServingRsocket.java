@@ -148,7 +148,6 @@ public class ServingRsocket implements RSocket {
         return serviceMethod
                 .serve(input)
                 .map(value -> dataWriter.write(typed(outputMappingType, value)))
-                .filter(Objects::nonNull)
                 .map(ByteBufPayload::create)
                 .last(EMPTY_PAYLOAD);
     }
