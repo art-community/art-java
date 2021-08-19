@@ -9,6 +9,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
+import static io.art.meta.Meta.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.model.MetaType.*;
 import static io.art.meta.state.MetaComputationState.*;
@@ -83,7 +84,9 @@ public class RuntimeMetaType {
                 };
                 return computeMetaType(metaEnum(asClass, cast(enumFactory)));
             }
-            return computeMetaType(metaType(cast(type)));
+            return cast(findDeclaration(asClass)
+                    .map(MetaClass::definition)
+                    .orElseGet(() -> computeMetaType(metaType(cast(type)))));
         }
         if (type instanceof WildcardType) {
             return defineMetaType(((WildcardType) type).getUpperBounds()[0]);
