@@ -66,9 +66,7 @@ public class RsocketManager {
     }
 
     public static void disposeRsocket(Disposable rsocket) {
-        if (rsocket.isDisposed()) {
-            return;
-        }
-        ignoreException(rsocket::dispose, throwable -> withLogging(() -> getLogger().error(throwable)));
+        if (rsocket.isDisposed()) return;
+        ignoreException(rsocket::dispose);
     }
 }
