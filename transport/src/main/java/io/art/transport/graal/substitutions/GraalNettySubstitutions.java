@@ -16,6 +16,7 @@ import io.netty.util.concurrent.*;
 import io.netty.util.internal.*;
 import io.netty.util.internal.logging.*;
 import static com.oracle.svm.core.annotate.RecomputeFieldValue.Kind.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
 import static io.netty.handler.codec.http.HttpHeaderValues.GZIP;
 import static io.netty.handler.codec.http.HttpHeaderValues.*;
@@ -62,6 +63,7 @@ final class Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator {
     }
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.handler.ssl.OpenSsl")
 final class Target_io_netty_handler_ssl_OpenSsl {
 
@@ -159,6 +161,7 @@ final class Target_io_netty_handler_ssl_SslHandler$SslEngineType {
     }
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.handler.ssl.JdkAlpnApplicationProtocolNegotiator$AlpnWrapper", onlyWith = JDK11OrLater.class)
 final class Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator_AlpnWrapper {
     @Substitute
@@ -170,6 +173,7 @@ final class Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator_Alp
 
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.handler.ssl.JdkAlpnApplicationProtocolNegotiator$AlpnWrapper", onlyWith = JDK8OrEarlier.class)
 final class Target_io_netty_handler_ssl_JdkAlpnApplicationProtocolNegotiator_AlpnWrapperJava8 {
     @Substitute
@@ -216,6 +220,7 @@ final class Target_io_netty_handler_ssl_JdkAlpnSslEngine {
     }
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.handler.ssl.SslContext")
 final class Target_io_netty_handler_ssl_SslContext {
 
@@ -262,6 +267,7 @@ final class Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator 
     public static Target_io_netty_handler_ssl_JdkDefaultApplicationProtocolNegotiator INSTANCE;
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.handler.ssl.JdkSslContext")
 final class Target_io_netty_handler_ssl_JdkSslContext {
 
@@ -309,6 +315,7 @@ final class Target_io_netty_handler_ssl_JdkSslContext {
 
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.bootstrap.AbstractBootstrap")
 final class Target_io_netty_bootstrap_AbstractBootstrap {
 
@@ -410,6 +417,7 @@ final class Target_io_netty_util_concurrent_ScheduledFutureTask {
     }
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.channel.ChannelHandlerMask")
 final class Target_io_netty_channel_ChannelHandlerMask {
     @Substitute
@@ -526,6 +534,7 @@ final class Target_io_netty_handler_codec_http_HttpContentDecompressor {
     }
 }
 
+@SuppressWarnings(ALL)
 @TargetClass(className = "io.netty.handler.codec.http2.DelegatingDecompressorFrameListener")
 final class Target_io_netty_handler_codec_http2_DelegatingDecompressorFrameListener {
 
