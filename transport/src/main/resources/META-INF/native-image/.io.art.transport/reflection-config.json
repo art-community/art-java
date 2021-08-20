@@ -55,6 +55,337 @@
       ]
     },
     {
+      "name": "com.fasterxml.jackson.databind.ext.Java7SupportImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "com.sun.crypto.provider.TlsMasterSecretGenerator",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "io.art.meta.model.MetaParameter[]"
+    },
+    {
+      "name": "io.netty.buffer.AbstractByteBufAllocator",
+      "allDeclaredMethods": true
+    },
+    {
+      "name": "io.netty.buffer.AbstractReferenceCountedByteBuf",
+      "fields": [
+        {
+          "name": "refCnt",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
+      "name": "io.netty.channel.ChannelInboundHandlerAdapter",
+      "methods": [
+        {
+          "name": "channelActive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelInactive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRead",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "channelReadComplete",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRegistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelUnregistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelWritabilityChanged",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "userEventTriggered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "io.netty.channel.ChannelInitializer",
+      "methods": [
+        {
+          "name": "channelRegistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "exceptionCaught",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Throwable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "io.netty.channel.DefaultChannelPipeline$HeadContext",
+      "methods": [
+        {
+          "name": "bind",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.net.SocketAddress",
+            "io.netty.channel.ChannelPromise"
+          ]
+        },
+        {
+          "name": "channelActive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelInactive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRead",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "channelReadComplete",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRegistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelUnregistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelWritabilityChanged",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "close",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "io.netty.channel.ChannelPromise"
+          ]
+        },
+        {
+          "name": "connect",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.net.SocketAddress",
+            "java.net.SocketAddress",
+            "io.netty.channel.ChannelPromise"
+          ]
+        },
+        {
+          "name": "deregister",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "io.netty.channel.ChannelPromise"
+          ]
+        },
+        {
+          "name": "disconnect",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "io.netty.channel.ChannelPromise"
+          ]
+        },
+        {
+          "name": "exceptionCaught",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Throwable"
+          ]
+        },
+        {
+          "name": "flush",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "read",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "userEventTriggered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "write",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object",
+            "io.netty.channel.ChannelPromise"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "io.netty.channel.DefaultChannelPipeline$TailContext",
+      "methods": [
+        {
+          "name": "channelActive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelInactive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRead",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "channelReadComplete",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRegistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelUnregistered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelWritabilityChanged",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "exceptionCaught",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Throwable"
+          ]
+        },
+        {
+          "name": "userEventTriggered",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "io.netty.channel.epoll.Epoll"
+    },
+    {
+      "name": "io.netty.channel.kqueue.KQueue"
+    },
+    {
+      "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueColdProducerFields",
+      "fields": [
+        {
+          "name": "producerLimit",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
+      "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
+      "fields": [
+        {
+          "name": "consumerIndex",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
+      "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueProducerFields",
+      "fields": [
+        {
+          "name": "producerIndex",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
+      "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueConsumerIndexField",
+      "fields": [
+        {
+          "name": "consumerIndex",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
       "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueProducerIndexField",
       "fields": [
         {
@@ -73,8 +404,112 @@
       ]
     },
     {
-      "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueConsumerIndexField",
+      "name": "java.lang.Object[]"
+    },
+    {
+      "name": "java.lang.management.ManagementFactory",
+      "methods": [
+        {
+          "name": "getRuntimeMXBean",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "java.lang.management.RuntimeMXBean",
+      "methods": [
+        {
+          "name": "getInputArguments",
+          "parameterTypes": []
+        },
+        {
+          "name": "getName",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "java.nio.Bits",
       "fields": [
+        {
+          "name": "UNALIGNED"
+        }
+      ]
+    },
+    {
+      "name": "java.nio.Buffer",
+      "fields": [
+        {
+          "name": "address",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
+      "name": "java.nio.DirectByteBuffer",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "long",
+            "int"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "java.security.AlgorithmParametersSpi"
+    },
+    {
+      "name": "java.security.KeyStoreSpi"
+    },
+    {
+      "name": "java.security.MessageDigestSpi"
+    },
+    {
+      "name": "java.security.SecureRandomParameters"
+    },
+    {
+      "name": "java.sql.Date"
+    },
+    {
+      "name": "java.sql.Timestamp"
+    },
+    {
+      "name": "java.util.Map$Entry[]"
+    },
+    {
+      "name": "javax.security.auth.x500.X500Principal",
+      "fields": [
+        {
+          "name": "thisX500Name"
+        }
+      ],
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "sun.security.x509.X500Name"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "jdk.internal.misc.Unsafe",
+      "methods": [
+        {
+          "name": "getUnsafe",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueConsumerFields",
+      "fields": [
+        {
+          "name": "blocked",
+          "allowUnsafeAccess": true
+        },
         {
           "name": "consumerIndex",
           "allowUnsafeAccess": true
@@ -82,7 +517,7 @@
       ]
     },
     {
-      "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueProducerFields",
+      "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueProducerFields",
       "fields": [
         {
           "name": "producerIndex",
@@ -91,20 +526,361 @@
       ]
     },
     {
-      "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueColdProducerFields",
+      "name": "reactor.netty.DisposableChannel",
+      "methods": [
+        {
+          "name": "address",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "reactor.netty.channel.ChannelOperationsHandler",
+      "methods": [
+        {
+          "name": "channelActive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelInactive",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext"
+          ]
+        },
+        {
+          "name": "channelRead",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "exceptionCaught",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Throwable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reactor.netty.resources.DefaultPooledConnectionProvider$PooledConnectionAllocator$PooledConnectionInitializer"
+    },
+    {
+      "name": "reactor.netty.transport.ServerTransport$Acceptor",
+      "methods": [
+        {
+          "name": "channelRead",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "exceptionCaught",
+          "parameterTypes": [
+            "io.netty.channel.ChannelHandlerContext",
+            "java.lang.Throwable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "reactor.netty.transport.ServerTransport$AcceptorInitializer"
+    },
+    {
+      "name": "reactor.netty.transport.TransportConfig$TransportChannelInitializer"
+    },
+    {
+      "name": "sun.misc.Unsafe",
       "fields": [
         {
-          "name": "producerIndex",
+          "name": "theUnsafe"
+        }
+      ],
+      "methods": [
+        {
+          "name": "copyMemory",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "java.lang.Object",
+            "long",
+            "long"
+          ]
+        },
+        {
+          "name": "getAndAddLong",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "long"
+          ]
+        },
+        {
+          "name": "getAndSetObject",
+          "parameterTypes": [
+            "java.lang.Object",
+            "long",
+            "java.lang.Object"
+          ]
+        },
+        {
+          "name": "invokeCleaner",
+          "parameterTypes": [
+            "java.nio.ByteBuffer"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.nio.ch.SelectorImpl",
+      "fields": [
+        {
+          "name": "publicSelectedKeys",
+          "allowUnsafeAccess": true
+        },
+        {
+          "name": "selectedKeys",
           "allowUnsafeAccess": true
         }
       ]
     },
     {
-      "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
-      "fields": [
+      "name": "sun.security.pkcs12.PKCS12KeyStore",
+      "methods": [
         {
-          "name": "consumerIndex",
-          "allowUnsafeAccess": true
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.pkcs12.PKCS12KeyStore$DualFormatPKCS12",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.provider.DRBG",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.security.SecureRandomParameters"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.provider.JavaKeyStore$JKS",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.provider.SHA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.provider.SHA2$SHA256",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.provider.X509Factory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.rsa.RSAKeyFactory$Legacy",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.ssl.SSLContextImpl$TLSContext",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.ssl.TrustManagerFactoryImpl$PKIXFactory",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.AuthorityInfoAccessExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.AuthorityKeyIdentifierExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.BasicConstraintsExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.CRLDistributionPointsExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.CertificatePoliciesExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.ExtendedKeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.IssuerAlternativeNameExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.KeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.NetscapeCertTypeExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.PrivateKeyUsageExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.SubjectAlternativeNameExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sun.security.x509.SubjectKeyIdentifierExtension",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.lang.Boolean",
+            "java.lang.Object"
+          ]
         }
       ]
     }
