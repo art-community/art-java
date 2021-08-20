@@ -19,6 +19,7 @@
 dependencies {
     val nettyVersion: String by project
     val reactorNettyVersion: String by project
+    val graalVersion: String by project
 
     api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
             .exclude("io.zipkin.brave")
@@ -36,4 +37,6 @@ dependencies {
     implementation(project(":json"))
     implementation(project(":yaml"))
     implementation(project(":message-pack"))
+
+    compileOnly("com.oracle.substratevm:svm:$graalVersion")
 }

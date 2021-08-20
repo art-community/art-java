@@ -21,5 +21,6 @@ val graalVersion: String by project
 dependencies {
     compileOnly(project(":core"))
     compileOnly(project(":logging"))
+    compileOnly(project(":transport"))
     compileOnly("com.oracle.substratevm:svm:$graalVersion")
 }

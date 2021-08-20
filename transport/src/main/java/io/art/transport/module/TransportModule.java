@@ -30,7 +30,10 @@ import static io.art.core.context.Context.*;
 import static io.art.transport.constants.TransportModuleConstants.Messages.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.pool.TransportPool.*;
+import static io.netty.util.internal.MacAddressUtil.*;
+import static java.lang.System.*;
 import static lombok.AccessLevel.*;
+import java.util.*;
 
 @Getter
 public class TransportModule implements StatelessModule<TransportModuleConfiguration, Configurator> {
@@ -46,6 +49,12 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
 
     @Override
     public void launch(Context.Service contextService) {
+        final int EUI64_MAC_ADDRESS_LENGTH = 8;
+        final byte[] machineIdBytes = new byte[EUI64_MAC_ADDRESS_LENGTH];
+        new Random().nextBytes(machineIdBytes);
+        final String nettyMachineId = formatAddress(machineIdBytes);
+        setProperty("io.netty.machineId", nettyMachineId);
+
         configureCommonTransportPool(configuration.getCommonPoolConfiguration());
         withLogging(() -> Logging.logger(TRANSPORT_LOGGER).info(TRANSPORT_CONFIGURING_MESSAGE));
     }
