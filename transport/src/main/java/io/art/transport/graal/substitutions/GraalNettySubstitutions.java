@@ -22,6 +22,7 @@ import static io.netty.handler.codec.http.HttpHeaderValues.*;
 import static io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior.*;
 import static java.util.Collections.*;
 import javax.net.ssl.*;
+import java.net.*;
 import java.nio.*;
 import java.security.*;
 import java.security.cert.*;
@@ -551,6 +552,20 @@ final class Target_io_netty_handler_codec_http2_DelegatingDecompressorFrameListe
     }
 }
 
-class GraalNettySubstitutions {
+final class NetUtilLocalhostAccessor {
+    private static volatile InetAddress ADDR;
 
+    static InetAddress get() {
+        return ADDR;
+    }
+
+    static void set(InetAddress addr) {
+        ADDR = addr;
+    }
+}
+
+class GraalNettySubstitutions {
+    @Alias
+    @InjectAccessors(NetUtilLocalhostAccessor.class)
+    public static InetAddress LOCALHOST;
 }
