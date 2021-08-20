@@ -24,6 +24,7 @@ import io.art.core.module.Module;
 import io.art.core.network.provider.*;
 import lombok.Builder;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.SystemProperties.*;
@@ -70,7 +71,7 @@ public class ContextConfiguration {
     @Builder.Default
     private final Path workingDirectory = Paths.get(getProperty(USER_DIR_PROPERTY));
     @Builder.Default
-    private final Path javaHomeDirectory = Paths.get(getProperty(JAVA_HOME_PROPERTY));
+    private final Path javaHomeDirectory = let(getProperty(JAVA_HOME_PROPERTY), Paths::get);
     @Builder.Default
     private final ImmutableArray<String> arguments = emptyImmutableArray();
     @Builder.Default
