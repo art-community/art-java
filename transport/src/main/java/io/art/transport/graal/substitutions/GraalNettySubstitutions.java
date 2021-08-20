@@ -562,14 +562,14 @@ final class Target_io_netty_handler_codec_http2_DelegatingDecompressorFrameListe
 }
 
 final class NetUtilLocalhostAccessor {
-    private static volatile InetAddress ADDR;
+    private static volatile InetAddress ADDRES;
 
     static InetAddress get() {
-        return ADDR;
+        return ADDRES;
     }
 
     static void set(InetAddress addr) {
-        ADDR = addr;
+        ADDRES = addr;
     }
 }
 
