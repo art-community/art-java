@@ -1,6 +1,15 @@
 [
   [
     {
+      "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscBlockingConsumerArrayQueueColdProducerFields",
+      "fields": [
+        {
+          "name": "producerLimit",
+          "allowUnsafeAccess": true
+        }
+      ]
+    },
+    {
       "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueProducerIndexField",
       "fields": [
         {
