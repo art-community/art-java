@@ -425,15 +425,6 @@ final class Target_io_netty_channel_ChannelHandlerMask {
     }
 }
 
-@TargetClass(className = "io.netty.util.internal.NativeLibraryLoader")
-final class Target_io_netty_util_internal_NativeLibraryLoader {
-    @Substitute
-    static Class<?> tryToLoadClass(final ClassLoader loader, final Class<?> helper) throws ClassNotFoundException {
-        return Class.forName(helper.getName(), false, loader);
-    }
-
-}
-
 @TargetClass(className = "io.netty.buffer.EmptyByteBuf")
 final class Target_io_netty_buffer_EmptyByteBuf {
     public static final class EmptyByteBufStub {
