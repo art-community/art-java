@@ -22,6 +22,8 @@ import static io.netty.handler.codec.http.HttpHeaderValues.GZIP;
 import static io.netty.handler.codec.http.HttpHeaderValues.*;
 import static io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior.*;
 import static java.util.Collections.*;
+import javax.naming.*;
+import javax.naming.directory.*;
 import javax.net.ssl.*;
 import java.net.*;
 import java.nio.*;
@@ -557,6 +559,42 @@ final class Target_io_netty_handler_codec_http2_DelegatingDecompressorFrameListe
         } else {
             return new EmbeddedChannel(ctx.channel().id(), ctx.channel().metadata().hasDisconnect(), ctx.channel().config(),
                     new ChannelHandler[]{ZlibCodecFactory.newZlibDecoder(ZlibWrapper.GZIP)});
+        }
+    }
+}
+
+@SuppressWarnings(ALL)
+@TargetClass(className = "io.netty.resolver.dns.DirContextUtils")
+final class Target_io_netty_resolver_dns_DirContextUtils {
+    @Substitute
+    static void addNameServers(List<InetSocketAddress> defaultNameServers, int defaultPort) {
+        Hashtable<String, String> env = new Hashtable<String, String>();
+        env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
+        env.put("java.naming.provider.url", "dns://");
+
+        try {
+            Class.forName("com.sun.jndi.dns.DnsContextFactory");
+            DirContext ctx = new InitialDirContext(env);
+            String dnsUrls = (String) ctx.getEnvironment().get("java.naming.provider.url");
+            if (dnsUrls != null && !dnsUrls.isEmpty()) {
+                String[] servers = dnsUrls.split(" ");
+                for (String server : servers) {
+                    try {
+                        URI uri = new URI(server);
+                        String host = new URI(server).getHost();
+
+                        if (host == null || host.isEmpty()) {
+                            continue;
+                        }
+                        int port = uri.getPort();
+                        defaultNameServers.add(SocketUtils.socketAddress(uri.getHost(), port == -1 ?
+                                defaultPort : port));
+                    } catch (URISyntaxException e) {
+                    }
+                }
+            }
+        } catch (Throwable ignore) {
+            // Will try reflection if this fails.
         }
     }
 }
