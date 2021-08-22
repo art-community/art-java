@@ -11,8 +11,8 @@ import java.security.*;
 import java.util.*;
 
 public class UniqueIdTrackingListener implements TestExecutionListener {
-    public static final String OUTPUT_DIRECTORY_PROPERTY_NAME = "graal.test.directory";
-    public static final String OUTPUT_FILE_PREFIX_PROPERTY_NAME = "graal.test.prefix";
+    public static final String OUTPUT_DIRECTORY_PROPERTY_NAME = "native.test.directory";
+    public static final String OUTPUT_FILE_PREFIX_PROPERTY_NAME = "native.test.prefix";
     public static final String DEFAULT_OUTPUT_FILE_PREFIX = "junit-platform-unique-ids";
 
     private final List<String> uniqueIds = dynamicArray();
