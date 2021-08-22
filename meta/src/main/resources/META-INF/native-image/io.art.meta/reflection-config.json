@@ -2,6 +2,102 @@
   [
     {
       "name": "io.art.meta.model.MetaParameter[]"
+    },
+    {
+      "name": "io.art.meta.model.InstanceMetaMethod"
+    },
+    {
+      "name": "io.art.meta.model.MetaClass"
+    },
+    {
+      "name": "io.art.meta.model.MetaConstructor"
+    },
+    {
+      "name": "io.art.meta.model.MetaField"
+    },
+    {
+      "name": "io.art.meta.model.MetaLibrary"
+    },
+    {
+      "name": "io.art.meta.model.MetaLocalState"
+    },
+    {
+      "name": "io.art.meta.model.MetaMethod"
+    },
+    {
+      "name": "io.art.meta.model.MetaPackage"
+    },
+    {
+      "name": "io.art.meta.model.MetaParameter"
+    },
+    {
+      "name": "io.art.meta.model.MetaProperty"
+    },
+    {
+      "name": "io.art.meta.model.MetaProxy"
+    },
+    {
+      "name": "io.art.meta.model.MetaType"
+    },
+    {
+      "name": "io.art.meta.model.RuntimeMetaType"
+    },
+    {
+      "name": "io.art.meta.model.StaticMetaMethod"
+    },
+    {
+      "name": "io.art.meta.model.TypedObject"
+    },
+    {
+      "name": "io.art.meta.model.TypeReference"
+    },
+    {
+      "name": "io.art.meta.model.InstanceMetaMethod[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaClass[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaConstructor[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaField[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaLibrary[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaLocalState[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaMethod[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaPackage[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaParameter[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaProperty[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaProxy[]"
+    },
+    {
+      "name": "io.art.meta.model.MetaType[]"
+    },
+    {
+      "name": "io.art.meta.model.RuntimeMetaType[]"
+    },
+    {
+      "name": "io.art.meta.model.StaticMetaMethod[]"
+    },
+    {
+      "name": "io.art.meta.model.TypedObject[]"
+    },
+    {
+      "name": "io.art.meta.model.TypeReference[]"
     }
   ]
 ]
