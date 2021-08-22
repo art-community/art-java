@@ -33,7 +33,7 @@ public final class GraalTestFeature implements Feature {
 
         Launcher launcher = LauncherFactory.create();
         TestPlan testplan = registerTestClasses(launcher, selectors);
-        ImageSingletons.add(GraalJUnitLauncher.class, new GraalJUnitLauncher(launcher, testplan));
+        ImageSingletons.add(GraalTestLauncher.class, new GraalTestLauncher(launcher, testplan));
     }
 
     private List<? extends DiscoverySelector> getSelectors(List<Path> classpathRoots) {

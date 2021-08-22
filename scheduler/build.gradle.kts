@@ -16,7 +16,19 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     api(project(":core"))
     implementation(project(":logging"))
+}
+
+executable {
+    main("MainKt")
+    native {
+        test()
+        windowsVisualStudioVars("G:/Development/VisualStudio/VC/Auxiliary/Build/vcvars64.bat")
+    }
 }

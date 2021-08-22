@@ -5,11 +5,11 @@ import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.listeners.*;
 import java.io.*;
 
-public class GraalJUnitLauncher {
+public class GraalTestLauncher {
     final Launcher launcher;
     final TestPlan testPlan;
 
-    public GraalJUnitLauncher(Launcher launcher, TestPlan testPlan) {
+    public GraalTestLauncher(Launcher launcher, TestPlan testPlan) {
         this.launcher = launcher;
         this.testPlan = testPlan;
     }
@@ -21,7 +21,7 @@ public class GraalJUnitLauncher {
         }
 
         PrintWriter out = new PrintWriter(System.out);
-        GraalJUnitLauncher launcher = ImageSingletons.lookup(GraalJUnitLauncher.class);
+        GraalTestLauncher launcher = ImageSingletons.lookup(GraalTestLauncher.class);
 
         out.println("JUnit Platform on Native Image - report");
         out.println("----------------------------------------\n");
