@@ -11,7 +11,9 @@ import org.junit.platform.launcher.*;
 import org.junit.platform.launcher.core.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.graal.features.UniqueIdTrackingListener.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
+import static java.lang.System.*;
 import static java.nio.file.Files.*;
 import static java.util.Objects.*;
 import static java.util.stream.Stream.*;
@@ -37,8 +39,9 @@ public final class GraalTestFeature implements Feature {
     }
 
     private List<? extends DiscoverySelector> getSelectors(List<Path> classpathRoots) {
-        Path output = Paths.get(System.getProperty("graal.test.directory"));
-        String prefix = System.getProperty("graal.test.prefix");
+        UniqueIdTrackingListener uniqueIdTrackingListener = new UniqueIdTrackingListener();
+        Path output = uniqueIdTrackingListener.getOutputDirectory();
+        String prefix = getProperty(OUTPUT_FILE_PREFIX_PROPERTY_NAME, DEFAULT_OUTPUT_FILE_PREFIX);
         List<UniqueIdSelector> selectors = readAllFiles(output, prefix)
                 .map(DiscoverySelectors::selectUniqueId)
                 .collect(Collectors.toList());
