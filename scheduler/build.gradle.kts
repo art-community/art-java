@@ -21,11 +21,16 @@ plugins {
 }
 
 dependencies {
+    val junitPlatformVersion: String by project
+
     api(project(":core"))
     implementation(project(":logging"))
 
     testEmbedded(project(":core"))
     testEmbedded(project(":logging"))
+    testEmbedded("org.junit.platform", "junit-platform-launcher", junitPlatformVersion)
+    testEmbedded("org.junit.platform", "junit-platform-engine", junitPlatformVersion)
+    testEmbedded("org.junit.platform", "junit-platform-console", junitPlatformVersion)
 }
 
 executable {

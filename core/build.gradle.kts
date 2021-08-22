@@ -46,6 +46,7 @@ dependencies {
 
     compileOnly("org.jetbrains", "annotations", jetbrainsAnnotationsVersion)
     compileOnly("org.graalvm.nativeimage", "svm", graalVersion)
+
     compileOnly("org.junit.platform", "junit-platform-launcher", junitPlatformVersion)
     compileOnly("org.junit.platform", "junit-platform-engine", junitPlatformVersion)
     compileOnly("org.junit.platform", "junit-platform-console", junitPlatformVersion)
