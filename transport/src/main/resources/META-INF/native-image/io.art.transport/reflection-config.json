@@ -36,6 +36,15 @@
     ]
   },
   {
+    "name": "org.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
+    "fields": [
+      {
+        "name": "consumerIndex",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
     "name": "org.jctools.queues.BaseMpscLinkedArrayQueueProducerFields",
     "fields": [
       {

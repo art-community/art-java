@@ -315,50 +315,6 @@ final class Target_io_netty_handler_ssl_JdkSslContext {
 
 }
 
-@SuppressWarnings(ALL)
-@TargetClass(className = "io.netty.bootstrap.AbstractBootstrap")
-final class Target_io_netty_bootstrap_AbstractBootstrap {
-
-    @Alias
-    private ChannelFactory channelFactory;
-
-    @Alias
-    void init(Channel channel) throws Exception {
-    }
-
-    @Alias
-    public AbstractBootstrap config() {
-        return null;
-    }
-
-    @Substitute
-    final ChannelFuture initAndRegister() {
-        Channel channel = null;
-        try {
-            channel = channelFactory.newChannel();
-            init(channel);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-            if (channel != null) {
-                channel.unsafe().closeForcibly();
-            }
-            return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(throwable);
-        }
-
-        ChannelFuture regFuture = config().group().register(channel);
-        if (regFuture.cause() != null) {
-            if (channel.isRegistered()) {
-                channel.close();
-            } else {
-                channel.unsafe().closeForcibly();
-            }
-        }
-
-        return regFuture;
-
-    }
-}
-
 @TargetClass(className = "io.netty.channel.nio.NioEventLoop")
 final class Target_io_netty_channel_nio_NioEventLoop {
 
