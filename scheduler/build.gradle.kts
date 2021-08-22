@@ -23,6 +23,9 @@ plugins {
 dependencies {
     api(project(":core"))
     implementation(project(":logging"))
+
+    testEmbedded(project(":core"))
+    testEmbedded(project(":logging"))
 }
 
 executable {
