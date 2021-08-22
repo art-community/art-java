@@ -23,6 +23,7 @@ import static io.netty.handler.codec.http.HttpHeaderValues.*;
 import static io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior.*;
 import static java.util.Collections.*;
 import javax.net.ssl.*;
+import java.net.*;
 import java.nio.*;
 import java.security.*;
 import java.security.cert.*;
@@ -548,6 +549,15 @@ final class Target_io_netty_handler_codec_http2_DelegatingDecompressorFrameListe
             return new EmbeddedChannel(ctx.channel().id(), ctx.channel().metadata().hasDisconnect(), ctx.channel().config(),
                     new ChannelHandler[]{ZlibCodecFactory.newZlibDecoder(ZlibWrapper.GZIP)});
         }
+    }
+}
+
+@TargetClass(className = "io.netty.resolver.dns.DirContextUtils")
+final class DirContextUtils {
+    @Substitute
+    static void addNameServers(List<InetSocketAddress> defaultNameServers, int defaultPort) {
+        defaultNameServers.add(new InetSocketAddress("8.8.8.8", defaultPort));
+        defaultNameServers.add(new InetSocketAddress("4.4.4.4", defaultPort));
     }
 }
 
