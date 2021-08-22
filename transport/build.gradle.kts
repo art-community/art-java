@@ -38,5 +38,5 @@ dependencies {
     implementation(project(":yaml"))
     implementation(project(":message-pack"))
 
-    compileOnly("com.oracle.substratevm:svm:$graalVersion")
+    compileOnly("org.graalvm.nativeimage", "svm", graalVersion)
 }
