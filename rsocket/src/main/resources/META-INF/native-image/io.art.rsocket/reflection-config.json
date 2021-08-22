@@ -1,6 +1,33 @@
 [
   {
-    "name": "IO.rsocket.internal.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
+    "name": "io.rsocket.internal.jctools.queues.BaseLinkedQueueConsumerNodeRef",
+    "fields": [
+      {
+        "name": "consumerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "io.rsocket.internal.jctools.queues.BaseLinkedQueueProducerNodeRef",
+    "fields": [
+      {
+        "name": "producerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "io.rsocket.internal.jctools.queues.LinkedQueueNode",
+    "fields": [
+      {
+        "name": "next",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "io.rsocket.internal.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
     "fields": [
       {
         "name": "consumerIndex",

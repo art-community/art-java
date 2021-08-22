@@ -1,5 +1,32 @@
 [
   {
+    "name": "org.jctools.queues.BaseLinkedQueueConsumerNodeRef",
+    "fields": [
+      {
+        "name": "consumerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "org.jctools.queues.BaseLinkedQueueProducerNodeRef",
+    "fields": [
+      {
+        "name": "producerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "org.jctools.queues.LinkedQueueNode",
+    "fields": [
+      {
+        "name": "next",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
     "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueColdProducerFields",
     "fields": [
       {
@@ -58,6 +85,28 @@
     "fields": [
       {
         "name": "producerLimit",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueConsumerFields",
+    "fields": [
+      {
+        "name": "blocked",
+        "allowUnsafeAccess": true
+      },
+      {
+        "name": "consumerIndex",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueProducerFields",
+    "fields": [
+      {
+        "name": "producerIndex",
         "allowUnsafeAccess": true
       }
     ]
@@ -391,23 +440,28 @@
     ]
   },
   {
-    "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueConsumerFields",
+    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseLinkedQueueConsumerNodeRef",
     "fields": [
       {
-        "name": "blocked",
-        "allowUnsafeAccess": true
-      },
-      {
-        "name": "consumerIndex",
+        "name": "consumerNode",
         "allowUnsafeAccess": true
       }
     ]
   },
   {
-    "name": "org.jctools.queues.MpscBlockingConsumerArrayQueueProducerFields",
+    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseLinkedQueueProducerNodeRef",
     "fields": [
       {
-        "name": "producerIndex",
+        "name": "producerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "io.netty.util.internal.shaded.org.jctools.queues.LinkedQueueNode",
+    "fields": [
+      {
+        "name": "next",
         "allowUnsafeAccess": true
       }
     ]
