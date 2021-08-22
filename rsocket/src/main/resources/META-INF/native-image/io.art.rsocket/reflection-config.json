@@ -1,6 +1,6 @@
 [
   {
-    "NAME": "IO.rsocket.internal.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
+    "name": "IO.rsocket.internal.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
     "fields": [
       {
         "name": "consumerIndex",
