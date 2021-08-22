@@ -1,42 +1,6 @@
 [
   {
-    "name": "io.rsocket.internal.jctools.queues.MpscBlockingConsumerArrayQueueColdProducerFields",
-    "fields": [
-      {
-        "name": "producerLimit",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.rsocket.internal.jctools.queues.MpscArrayQueueProducerIndexField",
-    "fields": [
-      {
-        "name": "producerIndex",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.rsocket.internal.jctools.queues.MpscArrayQueueProducerLimitField",
-    "fields": [
-      {
-        "name": "producerLimit",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.rsocket.internal.jctools.queues.MpscArrayQueueConsumerIndexField",
-    "fields": [
-      {
-        "name": "consumerIndex",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.rsocket.internal.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
+    "NAME": "IO.rsocket.internal.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
     "fields": [
       {
         "name": "consumerIndex",
