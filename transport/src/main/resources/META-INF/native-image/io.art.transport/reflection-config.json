@@ -48,7 +48,7 @@
     "name": "org.jctools.queues.BaseMpscLinkedArrayQueueColdProducerFields",
     "fields": [
       {
-        "name": "producerIndex",
+        "name": "producerLimit",
         "allowUnsafeAccess": true
       }
     ]
