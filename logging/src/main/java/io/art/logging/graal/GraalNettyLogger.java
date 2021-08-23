@@ -1,11 +1,25 @@
-package io.art.logging.netty;
+package io.art.logging.graal;
 
+import com.oracle.svm.core.annotate.*;
 import io.art.core.property.*;
 import io.art.logging.*;
+import io.art.logging.netty.*;
 import io.netty.util.internal.logging.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.property.DisposableProperty.*;
+import static io.art.logging.netty.NettyLoggerFactory.*;
 import static org.graalvm.nativeimage.ImageInfo.*;
+
+
+@SuppressWarnings(UNUSED)
+@TargetClass(value = InternalLoggerFactory.class)
+final class TargetNettyInternalLoggerFactory {
+    @Substitute
+    private static InternalLoggerFactory newDefaultFactory(String name) {
+        return graalNettyLoggerFactory();
+    }
+}
 
 public class GraalNettyLogger extends AbstractInternalLogger {
     private final DisposableProperty<InternalLogger> logger;
