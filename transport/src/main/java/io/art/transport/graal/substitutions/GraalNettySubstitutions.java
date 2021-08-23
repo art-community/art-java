@@ -38,14 +38,6 @@ import java.security.cert.*;
 import java.util.*;
 import java.util.concurrent.*;
 
-@SuppressWarnings(UNUSED)
-@TargetClass(value = InternalLoggerFactory.class)
-final class TargetNettyInternalLoggerFactory {
-    @Substitute
-    private static InternalLoggerFactory newDefaultFactory(String name) {
-        return graalNettyLoggerFactory();
-    }
-}
 
 @SuppressWarnings(UNUSED)
 @TargetClass(value = SslProvider.class)

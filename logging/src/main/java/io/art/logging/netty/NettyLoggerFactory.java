@@ -1,12 +1,24 @@
 package io.art.logging.netty;
 
+import com.oracle.svm.core.annotate.*;
 import io.netty.util.internal.logging.*;
 import lombok.experimental.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.logging.Logging.*;
 import static io.art.logging.netty.NettyLoggerFactory.GraalNettyLoggerFactory.*;
+import static io.art.logging.netty.NettyLoggerFactory.*;
 import java.util.*;
+
+@SuppressWarnings(UNUSED)
+@TargetClass(value = InternalLoggerFactory.class)
+final class TargetNettyInternalLoggerFactory {
+    @Substitute
+    private static InternalLoggerFactory newDefaultFactory(String name) {
+        return graalNettyLoggerFactory();
+    }
+}
 
 @UtilityClass
 public class NettyLoggerFactory {
