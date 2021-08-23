@@ -22,7 +22,7 @@ public class GraalNettyFeatures implements Feature {
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         setProperty(NETTY_LEAK_DETECTION_PROPERTY, DEFAULT_NETTY_LEAK_DETECTION);
         try {
-            Class.forName(Epoll.class.getName());
+            Class.forName(Epoll.class.getName(), false, GraalNettyFeatures.class.getClassLoader());
             providerEpollAccess();
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
@@ -34,14 +34,14 @@ public class GraalNettyFeatures implements Feature {
     static void providerEpollAccess() {
         try {
             Class<?>[] classes = new Class<?>[]{
-                    Class.forName("io.netty.channel.epoll.LinuxSocket"),
-                    Class.forName("io.netty.channel.epoll.Native"),
-                    Class.forName("io.netty.channel.epoll.NativeStaticallyReferencedJniMethods"),
-                    Class.forName("io.netty.channel.unix.PeerCredentials"),
-                    Class.forName("io.netty.channel.DefaultFileRegion"),
-                    Class.forName("sun.nio.ch.FileChannelImpl"),
-                    Class.forName("java.io.FileDescriptor"),
-                    Class.forName("io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket"),
+                    Class.forName("io.netty.channel.epoll.LinuxSocket", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("io.netty.channel.epoll.Native", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("io.netty.channel.epoll.NativeStaticallyReferencedJniMethods", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.PeerCredentials", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("io.netty.channel.DefaultFileRegion", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("sun.nio.ch.FileChannelImpl", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("java.io.FileDescriptor", false, GraalNettyFeatures.class.getClassLoader()),
+                    Class.forName("io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket", false, GraalNettyFeatures.class.getClassLoader()),
             };
             for (Class<?> owner : classes) {
                 RuntimeReflection.register(owner);
