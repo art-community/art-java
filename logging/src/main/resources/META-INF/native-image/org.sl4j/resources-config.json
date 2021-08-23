@@ -2,7 +2,7 @@
   "resources": {
     "includes": [
       {
-        "pattern": "\\Qorg/slf4j/impl/StaticLoggerBinder.class\\E"
+        "pattern": "^org/slf4j/impl/StaticLoggerBinder.class$"
       }
     ]
   },

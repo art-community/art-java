@@ -2,7 +2,7 @@
   "resources": {
     "includes": [
       {
-        "pattern": "\\Qmodule.*\\E"
+        "pattern": ".*module.*$"
       }
     ]
   },
