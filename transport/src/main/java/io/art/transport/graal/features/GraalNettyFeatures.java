@@ -36,8 +36,10 @@ public class GraalNettyFeatures implements Feature {
             for (Class<?> owner : nettyEpollClasses()) {
                 RuntimeReflection.register(owner);
                 for (final Method method : owner.getDeclaredMethods()) {
-                    JNIRuntimeAccess.register(method);
-                    RuntimeReflection.register(method);
+                    if (Modifier.isNative(method.getModifiers())) {
+                        JNIRuntimeAccess.register(method);
+                        RuntimeReflection.register(method);
+                    }
                 }
                 for (final Field field : owner.getDeclaredFields()) {
                     JNIRuntimeAccess.register(field);
@@ -53,3 +55,4 @@ public class GraalNettyFeatures implements Feature {
         }
     }
 }
+

@@ -136,7 +136,16 @@ public interface TransportModuleConstants {
                     Class.forName("io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
                     Class.forName("io.netty.channel.unix.FileDescriptor", false, GraalConstants.class.getClassLoader()),
                     Class.forName("io.netty.channel.unix.LimitsStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.Socket", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.DatagramSocketAddress", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.net.InetSocketAddress", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.lang.String", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.lang.OutOfMemoryError", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.lang.RuntimeException", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.ChannelException", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.nio.channels.ClosedChannelException", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.io.IOException", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.net.PortUnreachableException", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.nio.ByteBuffer", false, GraalConstants.class.getClassLoader()),
             };
         }
 
