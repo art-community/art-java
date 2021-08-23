@@ -45,14 +45,10 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     private final LoggingModuleState state = new LoggingModuleState(manager);
 
     @Override
-    public void load(Context.Service contextService) {
+    public void launch(Context.Service contextService) {
         getLogManager().reset();
         setDefaultFactory(defaultNettyLoggerFactory());
         graalNettyLoggerFactory().dispose();
-    }
-
-    @Override
-    public void launch(Context.Service contextService) {
         useCustomLoggers(name -> new ReactorLogger(Logging.logger(name)));
         manager.activate();
     }
