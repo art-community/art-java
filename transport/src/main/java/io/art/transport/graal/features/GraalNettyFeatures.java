@@ -1,7 +1,5 @@
 package io.art.transport.graal.features;
 
-import io.art.logging.*;
-import io.art.logging.netty.*;
 import io.netty.util.internal.logging.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
@@ -11,15 +9,8 @@ import static java.lang.System.*;
 import java.util.*;
 
 public class GraalNettyFeatures implements Feature {
-    public static InternalLoggerFactory NETTY_LOGGER_FACTORY = new InternalLoggerFactory() {
-        @Override
-        protected InternalLogger newInstance(String name) {
-            return new NettyLogger(Logging.logger(name));
-        }
-    };
-
     public void beforeAnalysis(BeforeAnalysisAccess access) {
-        setDefaultFactory(NETTY_LOGGER_FACTORY);
+        setDefaultFactory(JdkLoggerFactory.INSTANCE);
         setProperty(MAX_UPDATE_ARRAY_SIZE_PROPERTY, DEFAULT_MAX_UPDATE_ARRAY_SIZE);
         setProperty(NETTY_MAX_ORDER_PROPERTY, DEFAULT_NETTY_MAX_ORDER);
         final byte[] machineIdBytes = new byte[EUI64_MAC_ADDRESS_LENGTH];
