@@ -125,6 +125,8 @@ public interface TransportModuleConstants {
         String NETTY_UNABLE_TO_WRAP_SSL_ENGINE_EXCEPTION = "Unable to wrap SSLEngine of type {0}";
 
         String[] NETTY_NATIVE_EPOLL_CLASSES = new String[]{
+                "io.netty.channel.DefaultFileRegion",
+                "io.netty.channel.ChannelException",
                 "io.netty.channel.epoll.LinuxSocket",
                 "io.netty.channel.epoll.Native",
                 "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods",
@@ -135,12 +137,12 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.FileDescriptor",
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
-                "io.netty.channel.DefaultFileRegion",
-                "io.netty.channel.ChannelException",
                 "io.netty.channel.unix.Socket"
         };
 
         String[] NETTY_NATIVE_KQUEUE_CLASSES = new String[]{
+                "io.netty.channel.DefaultFileRegion",
+                "io.netty.channel.ChannelException",
                 "io.netty.channel.kqueue.BsdSocket.java",
                 "io.netty.channel.kqueue.Native",
                 "io.netty.channel.kqueue.KQueueStaticallyReferencedJniMethods",
@@ -151,8 +153,6 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.FileDescriptor",
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
-                "io.netty.channel.DefaultFileRegion",
-                "io.netty.channel.ChannelException",
                 "io.netty.channel.unix.Socket"
         };
 
