@@ -1,14 +1,35 @@
 [
   {
-    "name": "io.netty.util.internal.NativeLibraryUtil",
+    "name": "io.netty.channel.ChannelException"
+  },
+  {
+    "name": "io.netty.channel.unix.Buffer"
+  },
+  {
+    "name": "io.netty.channel.unix.DatagramSocketAddress",
     "methods": [
       {
-        "name": "loadLibrary",
+        "name": "<init>",
         "parameterTypes": [
-          "java.lang.String",
-          "boolean"
+          "byte[]",
+          "int",
+          "int",
+          "int",
+          "io.netty.channel.unix.DatagramSocketAddress"
         ]
       }
     ]
+  },
+  {
+    "name": "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods"
+  },
+  {
+    "name": "io.netty.channel.unix.FileDescriptor"
+  },
+  {
+    "name": "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods"
+  },
+  {
+    "name": "io.netty.channel.unix.Socket"
   }
 ]
