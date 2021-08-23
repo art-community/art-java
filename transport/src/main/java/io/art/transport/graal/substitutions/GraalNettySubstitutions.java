@@ -300,9 +300,10 @@ final class TargetNettySslJdkSslContext {
                     if (behavior == SelectorFailureBehavior.NO_ADVERTISE) {
                         return new JdkAlpnApplicationProtocolNegotiator(false, config.supportedProtocols());
                     }
-                    throw new UnsupportedOperationException(NETTY_JDK_SSL_PROVIDER_EXCEPTION +
-                            config.selectorFailureBehavior() +
-                            NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION);
+                    String message = NETTY_JDK_SSL_PROVIDER_EXCEPTION
+                            + config.selectorFailureBehavior()
+                            + NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION;
+                    throw new UnsupportedOperationException(message);
                 }
                 switch (config.selectedListenerFailureBehavior()) {
                     case ACCEPT:
@@ -310,14 +311,16 @@ final class TargetNettySslJdkSslContext {
                     case FATAL_ALERT:
                         return new JdkAlpnApplicationProtocolNegotiator(true, config.supportedProtocols());
                     default:
-                        throw new UnsupportedOperationException(NETTY_JDK_SSL_PROVIDER_EXCEPTION +
-                                config.selectedListenerFailureBehavior() +
-                                NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION);
+                        String message = NETTY_JDK_SSL_PROVIDER_EXCEPTION
+                                + config.selectedListenerFailureBehavior()
+                                + NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION;
+                        throw new UnsupportedOperationException(message);
                 }
             default:
-                throw new UnsupportedOperationException(NETTY_JDK_SSL_PROVIDER_EXCEPTION +
-                        config.protocol() +
-                        NETTY_JDK_SSL_PROTOCOL_EXCEPTION);
+                String message = NETTY_JDK_SSL_PROVIDER_EXCEPTION
+                        + config.protocol()
+                        + NETTY_JDK_SSL_PROTOCOL_EXCEPTION;
+                throw new UnsupportedOperationException(message);
         }
     }
 
