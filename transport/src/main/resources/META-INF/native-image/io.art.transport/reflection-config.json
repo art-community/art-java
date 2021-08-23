@@ -112,361 +112,6 @@
     ]
   },
   {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueColdProducerFields",
-    "fields": [
-      {
-        "name": "producerLimit",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueConsumerFields",
-    "fields": [
-      {
-        "name": "consumerIndex",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseMpscLinkedArrayQueueProducerFields",
-    "fields": [
-      {
-        "name": "producerIndex",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueConsumerIndexField",
-    "fields": [
-      {
-        "name": "consumerIndex",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueProducerIndexField",
-    "fields": [
-      {
-        "name": "producerIndex",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueueProducerLimitField",
-    "fields": [
-      {
-        "name": "producerLimit",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseLinkedQueueConsumerNodeRef",
-    "fields": [
-      {
-        "name": "consumerNode",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseLinkedQueueProducerNodeRef",
-    "fields": [
-      {
-        "name": "producerNode",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.util.internal.shaded.org.jctools.queues.LinkedQueueNode",
-    "fields": [
-      {
-        "name": "next",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.buffer.AbstractByteBufAllocator",
-    "allDeclaredMethods": true
-  },
-  {
-    "name": "io.netty.buffer.AbstractReferenceCountedByteBuf",
-    "fields": [
-      {
-        "name": "refCnt",
-        "allowUnsafeAccess": true
-      }
-    ]
-  },
-  {
-    "name": "io.netty.channel.ChannelInboundHandlerAdapter",
-    "methods": [
-      {
-        "name": "channelActive",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelInactive",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelRead",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object"
-        ]
-      },
-      {
-        "name": "channelReadComplete",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelRegistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelUnregistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelWritabilityChanged",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "userEventTriggered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "io.netty.channel.ChannelInitializer",
-    "methods": [
-      {
-        "name": "channelRegistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "exceptionCaught",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Throwable"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "io.netty.channel.DefaultChannelPipeline$HeadContext",
-    "methods": [
-      {
-        "name": "bind",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.net.SocketAddress",
-          "io.netty.channel.ChannelPromise"
-        ]
-      },
-      {
-        "name": "channelActive",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelInactive",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelRead",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object"
-        ]
-      },
-      {
-        "name": "channelReadComplete",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelRegistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelUnregistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelWritabilityChanged",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "close",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "io.netty.channel.ChannelPromise"
-        ]
-      },
-      {
-        "name": "connect",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.net.SocketAddress",
-          "java.net.SocketAddress",
-          "io.netty.channel.ChannelPromise"
-        ]
-      },
-      {
-        "name": "deregister",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "io.netty.channel.ChannelPromise"
-        ]
-      },
-      {
-        "name": "disconnect",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "io.netty.channel.ChannelPromise"
-        ]
-      },
-      {
-        "name": "exceptionCaught",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Throwable"
-        ]
-      },
-      {
-        "name": "flush",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "read",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "userEventTriggered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object"
-        ]
-      },
-      {
-        "name": "write",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object",
-          "io.netty.channel.ChannelPromise"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "io.netty.channel.DefaultChannelPipeline$TailContext",
-    "methods": [
-      {
-        "name": "channelActive",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelInactive",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelRead",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object"
-        ]
-      },
-      {
-        "name": "channelReadComplete",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelRegistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelUnregistered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "channelWritabilityChanged",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext"
-        ]
-      },
-      {
-        "name": "exceptionCaught",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Throwable"
-        ]
-      },
-      {
-        "name": "userEventTriggered",
-        "parameterTypes": [
-          "io.netty.channel.ChannelHandlerContext",
-          "java.lang.Object"
-        ]
-      }
-    ]
-  },
-  {
-    "name": "io.netty.channel.epoll.Epoll"
-  },
-  {
-    "name": "io.netty.channel.kqueue.KQueue"
-  },
-  {
     "name": "reactor.netty.DisposableChannel",
     "methods": [
       {
@@ -542,7 +187,8 @@
     "name": "io.netty.buffer.AbstractReferenceCountedByteBuf",
     "fields": [
       {
-        "name": "refCnt"
+        "name": "refCnt",
+        "allowUnsafeAccess": true
       }
     ]
   },
@@ -879,6 +525,9 @@
     "name": "io.netty.channel.epoll.Epoll"
   },
   {
+    "name": "io.netty.channel.kqueue.KQueue"
+  },
+  {
     "name": "io.netty.handler.codec.ByteToMessageDecoder",
     "methods": [
       {
@@ -989,6 +638,33 @@
           "java.lang.String",
           "boolean"
         ]
+      }
+    ]
+  },
+  {
+    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseLinkedQueueConsumerNodeRef",
+    "fields": [
+      {
+        "name": "consumerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "io.netty.util.internal.shaded.org.jctools.queues.BaseLinkedQueueProducerNodeRef",
+    "fields": [
+      {
+        "name": "producerNode",
+        "allowUnsafeAccess": true
+      }
+    ]
+  },
+  {
+    "name": "io.netty.util.internal.shaded.org.jctools.queues.LinkedQueueNode",
+    "fields": [
+      {
+        "name": "next",
+        "allowUnsafeAccess": true
       }
     ]
   },

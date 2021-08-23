@@ -137,6 +137,7 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.DatagramSocketAddress",
                 "io.netty.channel.DefaultFileRegion",
                 "io.netty.channel.ChannelException",
+                "io.netty.channel.unix.Socket"
         };
 
         String[] NETTY_NATIVE_KQUEUE_CLASSES = new String[]{
@@ -152,6 +153,7 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.DatagramSocketAddress",
                 "io.netty.channel.DefaultFileRegion",
                 "io.netty.channel.ChannelException",
+                "io.netty.channel.unix.Socket"
         };
 
     }

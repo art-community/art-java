@@ -52,8 +52,5 @@
         "allowUnsafeAccess": true
       }
     ]
-  },
-  {
-    "name": "io.rsocket.transport.netty.RSocketLengthCodec"
   }
 ]
