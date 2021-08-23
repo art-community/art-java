@@ -21,6 +21,7 @@ import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
+import static io.art.transport.graal.features.GraalNettyFeatures.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
 import static io.netty.handler.codec.http.HttpHeaderValues.GZIP;
@@ -40,10 +41,9 @@ import java.util.concurrent.*;
 @SuppressWarnings(UNUSED)
 @TargetClass(value = InternalLoggerFactory.class)
 final class TargetNettyInternalLoggerFactory {
-
     @Substitute
     private static InternalLoggerFactory newDefaultFactory(String name) {
-        return JdkLoggerFactory.INSTANCE;
+        return NETTY_LOGGER_FACTORY;
     }
 }
 
