@@ -57,6 +57,7 @@ public class ChangesListener {
     }
 
     public ChangesListener dispose() {
+        index.set(0);
         values.clear();
         pending.set(false);
         created.set(false);
@@ -88,11 +89,11 @@ public class ChangesListener {
             return value;
         }
         Object current = values.get(index);
-        this.index.set(index + 1);
         if (!Objects.equals(value, current)) {
             values.set(index, value);
             pending.set(true);
         }
+        this.index.set(index + 1);
         return cast(value);
     }
 
