@@ -14,6 +14,7 @@ import io.netty.util.*;
 import io.netty.util.internal.*;
 import io.netty.util.internal.logging.*;
 import static com.oracle.svm.core.annotate.RecomputeFieldValue.Kind.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
@@ -165,7 +166,7 @@ final class TargetNettySslEngineType {
     }
 }
 
-@SuppressWarnings(ALL)
+@SuppressWarnings(UNUSED)
 @TargetClass(value = SslContext.class)
 final class TargetNettySslContext {
 
@@ -182,10 +183,10 @@ final class TargetNettySslContext {
             throw new IllegalArgumentException(format(NETTY_OSCP_EXCEPTION, provider));
         }
 
-        return (SslContext) (Object) new TargetNettyJdkSslServerContext(sslContextProvider,
+        return cast(new TargetNettyJdkSslServerContext(sslContextProvider,
                 trustCertCollection, trustManagerFactory, keyCertChain, key, keyPassword,
                 keyManagerFactory, ciphers, cipherFilter, apn, sessionCacheSize, sessionTimeout,
-                clientAuth, protocols, startTls, keyStoreType);
+                clientAuth, protocols, startTls, keyStoreType));
     }
 
     @Substitute
@@ -201,15 +202,15 @@ final class TargetNettySslContext {
             throw new IllegalArgumentException(format(NETTY_OSCP_EXCEPTION, provider));
         }
 
-        return (SslContext) (Object) new TargetNettyJdkSslClientContext(sslContextProvider,
+        return cast(new TargetNettyJdkSslClientContext(sslContextProvider,
                 trustCert, trustManagerFactory, keyCertChain, key, keyPassword,
                 keyManagerFactory, ciphers, cipherFilter, apn, protocols, sessionCacheSize,
-                sessionTimeout, keyStoreType);
+                sessionTimeout, keyStoreType));
     }
 
 }
 
-@SuppressWarnings(ALL)
+@SuppressWarnings(UNUSED)
 @TargetClass(className = NETTY_JDK_DEFAULT_APPLICATION_PROTOCOL_NEGOTIATOR)
 final class TargetNettyJdkDefaultApplicationProtocolNegotiator {
 
@@ -217,19 +218,19 @@ final class TargetNettyJdkDefaultApplicationProtocolNegotiator {
     public static TargetNettyJdkDefaultApplicationProtocolNegotiator INSTANCE;
 }
 
-@SuppressWarnings(ALL)
+@SuppressWarnings({UNUSED, DEPRECATION})
 @TargetClass(value = JdkSslContext.class)
 final class TargetNettySslJdkSslContext {
 
     @Substitute
     static JdkApplicationProtocolNegotiator toNegotiator(ApplicationProtocolConfig config, boolean isServer) {
         if (isNull(config)) {
-            return (JdkApplicationProtocolNegotiator) (Object) TargetNettyJdkDefaultApplicationProtocolNegotiator.INSTANCE;
+            return cast(TargetNettyJdkDefaultApplicationProtocolNegotiator.INSTANCE);
         }
 
         switch (config.protocol()) {
             case NONE:
-                return (JdkApplicationProtocolNegotiator) (Object) TargetNettyJdkDefaultApplicationProtocolNegotiator.INSTANCE;
+                return cast(TargetNettyJdkDefaultApplicationProtocolNegotiator.INSTANCE);
             case ALPN:
                 if (isServer) {
                     SelectorFailureBehavior behavior = config.selectorFailureBehavior();
@@ -239,10 +240,9 @@ final class TargetNettySslJdkSslContext {
                     if (behavior == SelectorFailureBehavior.NO_ADVERTISE) {
                         return new JdkAlpnApplicationProtocolNegotiator(false, config.supportedProtocols());
                     }
-                    throw new UnsupportedOperationException(new StringBuilder(NETTY_JDK_SSL_PROVIDER_EXCEPTION)
-                            .append(config.selectorFailureBehavior())
-                            .append(NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION)
-                            .toString());
+                    throw new UnsupportedOperationException(NETTY_JDK_SSL_PROVIDER_EXCEPTION +
+                            config.selectorFailureBehavior() +
+                            NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION);
                 }
                 switch (config.selectedListenerFailureBehavior()) {
                     case ACCEPT:
@@ -250,16 +250,14 @@ final class TargetNettySslJdkSslContext {
                     case FATAL_ALERT:
                         return new JdkAlpnApplicationProtocolNegotiator(true, config.supportedProtocols());
                     default:
-                        throw new UnsupportedOperationException(new StringBuilder(NETTY_JDK_SSL_PROVIDER_EXCEPTION)
-                                .append(config.selectedListenerFailureBehavior())
-                                .append(NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION)
-                                .toString());
+                        throw new UnsupportedOperationException(NETTY_JDK_SSL_PROVIDER_EXCEPTION +
+                                config.selectedListenerFailureBehavior() +
+                                NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION);
                 }
             default:
-                throw new UnsupportedOperationException(new StringBuilder(NETTY_JDK_SSL_PROVIDER_EXCEPTION)
-                        .append(config.protocol())
-                        .append(NETTY_JDK_SSL_PROTOCOL_EXCEPTION)
-                        .toString());
+                throw new UnsupportedOperationException(NETTY_JDK_SSL_PROVIDER_EXCEPTION +
+                        config.protocol() +
+                        NETTY_JDK_SSL_PROTOCOL_EXCEPTION);
         }
     }
 
