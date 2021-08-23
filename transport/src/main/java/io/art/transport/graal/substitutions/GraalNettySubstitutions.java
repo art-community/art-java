@@ -20,6 +20,7 @@ import org.graalvm.nativeimage.*;
 import static com.oracle.svm.core.annotate.RecomputeFieldValue.Kind.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
@@ -30,6 +31,7 @@ import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import javax.net.ssl.*;
+import java.net.*;
 import java.nio.*;
 import java.security.*;
 import java.security.cert.*;
@@ -515,6 +517,19 @@ final class TargetNettyDelegatingDecompressorFrameListener {
 
     }
 }
+
+@SuppressWarnings(UNUSED)
+@Platforms(Platform.WINDOWS.class)
+@TargetClass(className = NETTY_DIR_CONTEXT_UTILS_CLASS)
+final class TargetDirContextUtils {
+    @Substitute
+    static void addNameServers(List<InetSocketAddress> defaultNameServers, int defaultPort) {
+        for (String server : DEFAULT_DNS_SERVERS) {
+            defaultNameServers.add(new InetSocketAddress(server, defaultPort));
+        }
+    }
+}
+
 
 @SuppressWarnings(UNUSED)
 class GraalNettySubstitutions {
