@@ -5,7 +5,7 @@
         "pattern": ".*libnetty_resolver_dns_native_macos_x86_64.jnilib$"
       },
       {
-        "pattern": ".*libnetty_resolver_dns_native_macos_x86_64.jnilib$"
+        "pattern": ".*libnetty_transport_native_epoll_aarch_64.so$"
       },
       {
         "pattern": ".*libnetty_transport_native_epoll_x86_64.so$"
