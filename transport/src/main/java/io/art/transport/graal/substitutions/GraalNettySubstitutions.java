@@ -356,7 +356,7 @@ final class TargetNettyAbstractReferenceCounted {
     private static long REFCNT_FIELD_OFFSET;
 }
 
-final class NettyNettySchedulerFutureTaskHolder {
+final class NettySchedulerFutureTaskHolder {
     static final long START_TIME = System.nanoTime();
 }
 
@@ -365,12 +365,12 @@ final class NettyNettySchedulerFutureTaskHolder {
 final class TargetNettySchedulerFutureTask {
     @Substitute
     static long initialNanoTime() {
-        return NettyNettySchedulerFutureTaskHolder.START_TIME;
+        return NettySchedulerFutureTaskHolder.START_TIME;
     }
 
     @Substitute
     static long nanoTime() {
-        return System.nanoTime() - NettyNettySchedulerFutureTaskHolder.START_TIME;
+        return System.nanoTime() - NettySchedulerFutureTaskHolder.START_TIME;
     }
 
     @Alias
@@ -380,7 +380,7 @@ final class TargetNettySchedulerFutureTask {
 
     @Substitute
     public long delayNanos(long currentTimeNanos) {
-        return Math.max(0, deadlineNanos() - (currentTimeNanos - NettyNettySchedulerFutureTaskHolder.START_TIME));
+        return Math.max(0, deadlineNanos() - (currentTimeNanos - NettySchedulerFutureTaskHolder.START_TIME));
     }
 }
 
