@@ -389,11 +389,5 @@
         ]
       }
     ]
-  },
-  {
-    "name": "sun.nio.ch.FileChannelImpl"
-  },
-  {
-    "name": "java.io.FileDescriptor"
   }
 ]

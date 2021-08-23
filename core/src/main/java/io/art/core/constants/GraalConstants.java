@@ -18,6 +18,7 @@ public interface GraalConstants {
             "sun.nio.ch.FileChannelImpl",
             "java.lang.String",
             "java.nio.ByteBuffer",
-            "sun.net.dns.ResolverConfigurationImpl"
+            "sun.net.dns.ResolverConfigurationImpl",
+            "sun.instrument.InstrumentationImpl"
     };
 }
