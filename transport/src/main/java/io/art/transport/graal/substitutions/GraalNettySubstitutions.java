@@ -3,6 +3,7 @@ package io.art.transport.graal.substitutions;
 import com.oracle.svm.core.annotate.*;
 import com.oracle.svm.core.jdk.*;
 import io.art.core.exception.*;
+import io.art.transport.graal.*;
 import io.netty.buffer.*;
 import io.netty.channel.*;
 import io.netty.channel.embedded.*;
@@ -20,8 +21,8 @@ import static com.oracle.svm.core.annotate.RecomputeFieldValue.Kind.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.NetworkConstants.*;
+import static io.art.logging.netty.NettyLogger.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
-import static io.art.transport.graal.features.GraalNettyFeatures.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
 import static io.netty.handler.codec.http.HttpHeaderValues.GZIP;
@@ -43,12 +44,15 @@ import java.util.concurrent.*;
 final class TargetNettyInternalLoggerFactory {
     @Substitute
     private static InternalLoggerFactory newDefaultFactory(String name) {
-        return new InternalLoggerFactory() {
-            @Override
-            protected InternalLogger newInstance(String name) {
-                return NETTY_LOGGER.get().apply(name);
+        if (ImageInfo.inImageBuildtimeCode()) {
+            if (ImageSingletons.contains(GraalNettyLoggerFactory.class)) {
+                return ImageSingletons.lookup(GraalNettyLoggerFactory.class);
             }
-        };
+            GraalNettyLoggerFactory factory = new GraalNettyLoggerFactory();
+            ImageSingletons.add(GraalNettyLoggerFactory.class, factory);
+            return factory;
+        }
+        return NETTY_LOGGER_FACTORY;
     }
 }
 

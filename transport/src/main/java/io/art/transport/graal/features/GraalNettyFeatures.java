@@ -1,24 +1,15 @@
 package io.art.transport.graal.features;
 
-import io.art.core.property.*;
-import io.art.logging.*;
-import io.art.logging.netty.*;
-import io.netty.util.internal.logging.*;
+import io.art.transport.graal.*;
+import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
-import static io.art.core.property.DisposableProperty.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
 import static java.lang.System.*;
-import static org.graalvm.nativeimage.ImageInfo.*;
 import java.util.*;
-import java.util.function.*;
 
 public class GraalNettyFeatures implements Feature {
-    public final static DisposableProperty<Function<String, InternalLogger>> NETTY_LOGGER = disposable(GraalNettyFeatures::createLogger);
-
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
         setProperty(MAX_UPDATE_ARRAY_SIZE_PROPERTY, DEFAULT_MAX_UPDATE_ARRAY_SIZE);
@@ -33,8 +24,9 @@ public class GraalNettyFeatures implements Feature {
     }
 
     @Override
-    public void afterImageWrite(AfterImageWriteAccess access) {
-        NETTY_LOGGER.dispose();
+    public void afterAnalysis(AfterAnalysisAccess access) {
+        if (!ImageSingletons.contains(GraalNettyLoggerFactory.class)) return;
+        ImageSingletons.lookup(GraalNettyLoggerFactory.class).dispose();
     }
 
     private void registerKqueue() {
@@ -57,14 +49,6 @@ public class GraalNettyFeatures implements Feature {
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
-    }
-
-    private static Function<String, InternalLogger> createLogger() {
-        if (inImageBuildtimeCode() || !withLogging()) {
-            JdkLoggerFactory defaultFactory = cast(JdkLoggerFactory.INSTANCE);
-            return defaultFactory::newInstance;
-        }
-        return name -> new NettyLogger(Logging.logger(name));
     }
 }
 

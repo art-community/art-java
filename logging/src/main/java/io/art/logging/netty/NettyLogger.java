@@ -4,7 +4,9 @@ import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.netty.util.internal.logging.*;
 import reactor.util.annotation.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
@@ -14,7 +16,11 @@ public class NettyLogger extends AbstractInternalLogger {
     public final static InternalLoggerFactory NETTY_LOGGER_FACTORY = new InternalLoggerFactory() {
         @Override
         protected InternalLogger newInstance(String name) {
-            return new NettyLogger(Logging.logger(name));
+            if (withLogging()) {
+                return new NettyLogger(Logging.logger(name));
+            }
+            JdkLoggerFactory factory = cast(JdkLoggerFactory.INSTANCE);
+            return factory.newInstance(name);
         }
     };
 
