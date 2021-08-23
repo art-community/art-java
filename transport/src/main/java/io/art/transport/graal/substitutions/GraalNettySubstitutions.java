@@ -3,8 +3,6 @@ package io.art.transport.graal.substitutions;
 import com.oracle.svm.core.annotate.*;
 import com.oracle.svm.core.jdk.*;
 import io.art.core.exception.*;
-import io.art.logging.*;
-import io.art.logging.netty.*;
 import io.netty.buffer.*;
 import io.netty.channel.*;
 import io.netty.channel.embedded.*;
@@ -23,6 +21,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
+import static io.art.transport.graal.features.GraalNettyFeatures.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
 import static io.netty.handler.codec.http.HttpHeaderValues.GZIP;
@@ -44,14 +43,10 @@ import java.util.concurrent.*;
 final class TargetNettyInternalLoggerFactory {
     @Substitute
     private static InternalLoggerFactory newDefaultFactory(String name) {
-        JdkLoggerFactory defaultFactory = cast(JdkLoggerFactory.INSTANCE);
         return new InternalLoggerFactory() {
             @Override
             protected InternalLogger newInstance(String name) {
-                if (ImageInfo.inImageBuildtimeCode()) {
-                    return defaultFactory.newInstance(name);
-                }
-                return new NettyLogger(Logging.logger(name));
+                return NETTY_LOGGER.get().apply(name);
             }
         };
     }
