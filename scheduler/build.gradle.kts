@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-DEPENDENCIES {
-    API(PROJECT(":CORE"))
+dependencies {
+    api(project(":core"))
     implementation(project(":logging"))
 }
