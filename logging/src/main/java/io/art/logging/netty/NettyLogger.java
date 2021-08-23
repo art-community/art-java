@@ -1,9 +1,17 @@
 package io.art.logging.netty;
 
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.netty.util.internal.logging.*;
 
 public class NettyLogger extends AbstractInternalLogger {
+    public final static InternalLoggerFactory NETTY_LOGGER_FACTORY = new InternalLoggerFactory() {
+        @Override
+        protected InternalLogger newInstance(String name) {
+            return new NettyLogger(Logging.logger(name));
+        }
+    };
+
     private final Logger logger;
 
     public NettyLogger(Logger logger) {
