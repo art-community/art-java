@@ -12,9 +12,6 @@
       },
       {
         "pattern": ".*libnetty_transport_native_kqueue_x86_64.jnilib$"
-      },
-      {
-        "pattern": ".*io/netty/util/internal/NativeLibraryUtil.class$"
       }
     ]
   },
