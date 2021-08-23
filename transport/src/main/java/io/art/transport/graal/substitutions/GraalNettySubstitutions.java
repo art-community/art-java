@@ -17,7 +17,9 @@ import io.netty.util.internal.*;
 import io.netty.util.internal.logging.*;
 import static com.oracle.svm.core.annotate.RecomputeFieldValue.Kind.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
@@ -515,8 +517,9 @@ final class TargetNettyDelegatingDecompressorFrameListener {
 final class TargetDirContextUtils {
     @Substitute
     static void addNameServers(List<InetSocketAddress> defaultNameServers, int defaultPort) {
-        defaultNameServers.add(new InetSocketAddress("8.8.8.8", defaultPort));
-        defaultNameServers.add(new InetSocketAddress("4.4.4.4", defaultPort));
+        defaultNameServers.addAll(DEFAULT_DNS_SERVERS.stream()
+                .map(address -> new InetSocketAddress(address, defaultPort))
+                .collect(listCollector()));
     }
 }
 

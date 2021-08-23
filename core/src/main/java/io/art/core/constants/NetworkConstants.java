@@ -18,6 +18,9 @@
 
 package io.art.core.constants;
 
+import io.art.core.collection.*;
+import io.art.core.factory.*;
+
 public interface NetworkConstants {
     String BROADCAST_IP_ADDRESS = "0.0.0.0";
     String LOCALHOST_IP_ADDRESS = "127.0.0.1";
@@ -25,4 +28,9 @@ public interface NetworkConstants {
     int PORT_RANGE_MAX = 65535;
     int PORT_OFFSET = 100;
     String LOCALHOST = "localhost";
+    ImmutableSet<String> DEFAULT_DNS_SERVERS = SetFactory.immutableSetOf(
+            "8.8.8.8",
+            "8.8.4.4",
+            "1.1.1.1"
+    );
 }
