@@ -532,6 +532,9 @@
     "name": "reactor.netty.transport.ServerTransport$AcceptorInitializer"
   },
   {
+    "name": "io.netty.util.internal.NativeLibraryUtil"
+  },
+  {
     "name": "reactor.netty.transport.TransportConfig$TransportChannelInitializer"
   }
 ]
