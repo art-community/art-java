@@ -1,6 +1,8 @@
 package io.art.transport.graal.substitutions;
 
 import com.oracle.svm.core.annotate.*;
+import com.oracle.svm.core.jdk.*;
+import io.art.core.exception.*;
 import io.netty.buffer.*;
 import io.netty.channel.*;
 import io.netty.channel.embedded.*;
@@ -55,7 +57,7 @@ final class TargetNettySslProvider {
             case OPENSSL_REFCNT:
                 return false;
             default:
-                throw new UnsupportedOperationException(format(NETTY_SSL_PROVIDER_UNSUPPORTED, provider));
+                throw new UnsupportedOperationException(format(NETTY_SSL_PROVIDER_UNSUPPORTED_EXCEPTION, provider));
         }
     }
 }
@@ -69,13 +71,71 @@ final class TargetNettySslJdkAlpnApplicationProtocolNegotiator {
     }
 }
 
+@SuppressWarnings({UNUSED, DEPRECATION})
+@TargetClass(className = NETTY_JDK_ALPN_PROTOCOL_NEGOTIATOR_ALPN_WRAPPER_CLASS, onlyWith = JDK11OrLater.class)
+final class TargetNettyJdkAlpnApplicationProtocolNegotiatorAlpnWrapperJava11 {
+    @Substitute
+    public SSLEngine wrapSslEngine(SSLEngine engine, ByteBufAllocator alloc,
+                                   JdkApplicationProtocolNegotiator applicationNegotiator, boolean isServer) {
+        return cast(new TargetNettyJdkAlpnSslEngine(engine, applicationNegotiator, isServer));
+    }
+
+}
+
+@SuppressWarnings({UNUSED, DEPRECATION})
+@TargetClass(className = NETTY_JDK_ALPN_PROTOCOL_NEGOTIATOR_ALPN_WRAPPER_CLASS, onlyWith = JDK8OrEarlier.class)
+final class TargetNettyJdkAlpnApplicationProtocolNegotiator_AlpnWrapperJava8 {
+    @Substitute
+    public SSLEngine wrapSslEngine(SSLEngine engine, ByteBufAllocator alloc,
+                                   JdkApplicationProtocolNegotiator applicationNegotiator, boolean isServer) {
+        if (TargetNettyJettyAlpnSslEngine.isAvailable()) {
+            return isServer
+                    ? cast(TargetNettyJettyAlpnSslEngine.newServerEngine(engine, applicationNegotiator))
+                    : cast(TargetNettyJettyAlpnSslEngine.newClientEngine(engine, applicationNegotiator));
+        }
+        throw new InternalRuntimeException(format(NETTY_UNABLE_TO_WRAP_SSL_ENGINE_EXCEPTION, engine.getClass().getName()));
+    }
+
+}
+
+@SuppressWarnings({UNUSED, DEPRECATION})
+@TargetClass(className = NETTY_SSL_JETTY_ALPN_SSL_ENGINE_CLASS, onlyWith = JDK8OrEarlier.class)
+final class TargetNettyJettyAlpnSslEngine {
+    @Substitute
+    static boolean isAvailable() {
+        return false;
+    }
+
+    @Substitute
+    static TargetNettyJettyAlpnSslEngine newClientEngine(SSLEngine engine,
+                                                         JdkApplicationProtocolNegotiator applicationNegotiator) {
+        return null;
+    }
+
+    @Substitute
+    static TargetNettyJettyAlpnSslEngine newServerEngine(SSLEngine engine,
+                                                         JdkApplicationProtocolNegotiator applicationNegotiator) {
+        return null;
+    }
+}
+
+@SuppressWarnings({UNUSED, DEPRECATION})
+@TargetClass(className = NETTY_SSL_JDK_ALPN_SSL_ENGINE_CLASS, onlyWith = JDK11OrLater.class)
+final class TargetNettyJdkAlpnSslEngine {
+    @Alias
+    TargetNettyJdkAlpnSslEngine(final SSLEngine engine,
+                                final JdkApplicationProtocolNegotiator applicationNegotiator, final boolean isServer) {
+
+    }
+}
+
 @SuppressWarnings({UNUSED, FINAL_FIELD})
 @TargetClass(value = OpenSsl.class)
 final class TargetNettyOpenSsl {
 
     @Alias
     @RecomputeFieldValue(kind = FromAlias)
-    private static Throwable UNAVAILABILITY_CAUSE = new IllegalArgumentException(NETTY_OPEN_SSL_UNSUPPORTED);
+    private static Throwable UNAVAILABILITY_CAUSE = new IllegalArgumentException(NETTY_OPEN_SSL_UNSUPPORTED_EXCEPTION);
 
     @Alias
     @RecomputeFieldValue(kind = FromAlias)
@@ -211,7 +271,7 @@ final class TargetNettySslContext {
 }
 
 @SuppressWarnings(UNUSED)
-@TargetClass(className = NETTY_JDK_DEFAULT_APPLICATION_PROTOCOL_NEGOTIATOR)
+@TargetClass(className = NETTY_JDK_DEFAULT_APPLICATION_PROTOCOL_NEGOTIATOR_CLASS)
 final class TargetNettyJdkDefaultApplicationProtocolNegotiator {
 
     @Alias
@@ -448,7 +508,7 @@ final class TargetNettyDelegatingDecompressorFrameListener {
 }
 
 @SuppressWarnings(UNUSED)
-@TargetClass(value = TargetDirContextUtils.class)
+@TargetClass(className = NETTY_DIR_CONTEXT_UTILS_CLASS)
 final class TargetDirContextUtils {
     @Substitute
     static void addNameServers(List<InetSocketAddress> defaultNameServers, int defaultPort) {
