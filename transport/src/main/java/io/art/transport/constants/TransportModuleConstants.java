@@ -121,5 +121,24 @@ public interface TransportModuleConstants {
         String NETTY_SSL_PROVIDER_UNSUPPORTED_EXCEPTION = "SslProvider unsupported: {0}";
         String NETTY_OPEN_SSL_UNSUPPORTED_EXCEPTION = "OpenSSL unsupported";
         String NETTY_UNABLE_TO_WRAP_SSL_ENGINE_EXCEPTION = "Unable to wrap SSLEngine of type {0}";
+
+        static Class<?>[] nettyEpollClasses() throws ClassNotFoundException {
+            return new Class<?>[]{
+                    Class.forName("io.netty.channel.epoll.LinuxSocket", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.epoll.Native", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.epoll.NativeStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.PeerCredentials", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.DefaultFileRegion", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("sun.nio.ch.FileChannelImpl", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("java.io.FileDescriptor", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.Buffer", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.FileDescriptor", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.LimitsStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
+                    Class.forName("io.netty.channel.unix.Socket", false, GraalConstants.class.getClassLoader()),
+            };
+        }
+
     }
 }

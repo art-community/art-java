@@ -23,7 +23,7 @@ public class GraalNettyFeatures implements Feature {
         setProperty(NETTY_LEAK_DETECTION_PROPERTY, DEFAULT_NETTY_LEAK_DETECTION);
         try {
             Class.forName(Epoll.class.getName(), false, GraalNettyFeatures.class.getClassLoader());
-            providerEpollAccess();
+            provideEpollAccess();
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
         } catch (Throwable throwable) {
@@ -31,19 +31,9 @@ public class GraalNettyFeatures implements Feature {
         }
     }
 
-    static void providerEpollAccess() {
+    static void provideEpollAccess() {
         try {
-            Class<?>[] classes = new Class<?>[]{
-                    Class.forName("io.netty.channel.epoll.LinuxSocket", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("io.netty.channel.epoll.Native", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("io.netty.channel.epoll.NativeStaticallyReferencedJniMethods", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.PeerCredentials", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("io.netty.channel.DefaultFileRegion", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("sun.nio.ch.FileChannelImpl", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("java.io.FileDescriptor", false, GraalNettyFeatures.class.getClassLoader()),
-                    Class.forName("io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket", false, GraalNettyFeatures.class.getClassLoader()),
-            };
-            for (Class<?> owner : classes) {
+            for (Class<?> owner : nettyEpollClasses()) {
                 RuntimeReflection.register(owner);
                 for (final Method method : owner.getDeclaredMethods()) {
                     JNIRuntimeAccess.register(method);
