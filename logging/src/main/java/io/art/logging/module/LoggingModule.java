@@ -49,11 +49,11 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
         getLogManager().reset();
         setDefaultFactory(defaultNettyLoggerFactory());
         graalNettyLoggerFactory().dispose();
-        useCustomLoggers(name -> new ReactorLogger(Logging.logger(name)));
     }
 
     @Override
     public void launch(Context.Service contextService) {
+        useCustomLoggers(name -> new ReactorLogger(Logging.logger(name)));
         manager.activate();
     }
 
