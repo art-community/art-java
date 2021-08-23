@@ -40,7 +40,3 @@ dependencies {
 
     compileOnly("org.graalvm.nativeimage", "svm", graalVersion)
 }
-
-tasks.withType(JavaCompile::class.java) {
-    options.isDeprecation = true
-}
