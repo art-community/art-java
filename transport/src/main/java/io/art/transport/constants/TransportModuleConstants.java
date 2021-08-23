@@ -122,30 +122,32 @@ public interface TransportModuleConstants {
         String NETTY_OPEN_SSL_UNSUPPORTED_EXCEPTION = "OpenSSL unsupported";
         String NETTY_UNABLE_TO_WRAP_SSL_ENGINE_EXCEPTION = "Unable to wrap SSLEngine of type {0}";
 
-        static Class<?>[] nettyEpollClasses() throws ClassNotFoundException {
-            return new Class<?>[]{
-                    Class.forName("io.netty.channel.epoll.LinuxSocket", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.epoll.Native", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.epoll.NativeStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.PeerCredentials", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.DefaultFileRegion", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("sun.nio.ch.FileChannelImpl", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.io.FileDescriptor", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.Buffer", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.FileDescriptor", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.LimitsStaticallyReferencedJniMethods", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.unix.DatagramSocketAddress", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.net.InetSocketAddress", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.lang.String", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.lang.OutOfMemoryError", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.lang.RuntimeException", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("io.netty.channel.ChannelException", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.nio.channels.ClosedChannelException", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.io.IOException", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.net.PortUnreachableException", false, GraalConstants.class.getClassLoader()),
-                    Class.forName("java.nio.ByteBuffer", false, GraalConstants.class.getClassLoader()),
+        String EPOLL_CLASS_NAME = "io.netty.channel.epoll.Epoll";
+
+        static String[] nettyEpollClasses() {
+            return new String[]{
+                    "io.netty.channel.epoll.LinuxSocket",
+                    "io.netty.channel.epoll.Native",
+                    "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods",
+                    "io.netty.channel.unix.PeerCredentials",
+                    "io.netty.channel.DefaultFileRegion",
+                    "sun.nio.ch.FileChannelImpl",
+                    "java.io.FileDescriptor",
+                    "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket",
+                    "io.netty.channel.unix.Buffer",
+                    "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods",
+                    "io.netty.channel.unix.FileDescriptor",
+                    "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
+                    "io.netty.channel.unix.DatagramSocketAddress",
+                    "java.net.InetSocketAddress",
+                    "java.lang.String",
+                    "java.lang.OutOfMemoryError",
+                    "java.lang.RuntimeException",
+                    "io.netty.channel.ChannelException",
+                    "java.nio.channels.ClosedChannelException",
+                    "java.io.IOException",
+                    "java.net.PortUnreachableException",
+                    "java.nio.ByteBuffer"
             };
         }
 

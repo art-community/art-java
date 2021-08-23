@@ -1,7 +1,6 @@
 package io.art.transport.graal.features;
 
 import com.oracle.svm.core.jni.*;
-import io.netty.channel.epoll.*;
 import io.netty.util.internal.logging.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
@@ -22,7 +21,7 @@ public class GraalNettyFeatures implements Feature {
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         setProperty(NETTY_LEAK_DETECTION_PROPERTY, DEFAULT_NETTY_LEAK_DETECTION);
         try {
-            Class.forName(Epoll.class.getName(), false, GraalNettyFeatures.class.getClassLoader());
+            Class.forName(EPOLL_CLASS_NAME, false, GraalNettyFeatures.class.getClassLoader());
             provideEpollAccess();
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
@@ -31,9 +30,11 @@ public class GraalNettyFeatures implements Feature {
         }
     }
 
-    static void provideEpollAccess() {
+    private static void provideEpollAccess() {
         try {
-            for (Class<?> owner : nettyEpollClasses()) {
+            for (String className : nettyEpollClasses()) {
+                Class<?> owner = Class.forName(className, false, GraalNettyFeatures.class.getClassLoader());
+                JNIRuntimeAccess.register(owner);
                 RuntimeReflection.register(owner);
                 for (final Method method : owner.getDeclaredMethods()) {
                     JNIRuntimeAccess.register(method);
