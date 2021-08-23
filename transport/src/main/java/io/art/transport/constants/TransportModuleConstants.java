@@ -114,6 +114,7 @@ public interface TransportModuleConstants {
         String NETTY_SSL_JDK_ALPN_SSL_ENGINE_CLASS = "io.netty.handler.ssl.JdkAlpnSslEngine";
         String NETTY_DIR_CONTEXT_UTILS_CLASS = "io.netty.resolver.dns.DirContextUtils";
         String NETTY_EPOLL_CLASS_NAME = "io.netty.channel.epoll.Epoll";
+        String NETTY_KQUEUE_CLASS_NAME = "io.netty.channel.kqueue.KQueue";
 
         String NETTY_OSCP_EXCEPTION = "OCSP is not supported with this SslProvider: {0}";
         String NETTY_JDK_SSL_PROVIDER_EXCEPTION = "JDK provider does not support ";
@@ -123,32 +124,36 @@ public interface TransportModuleConstants {
         String NETTY_OPEN_SSL_UNSUPPORTED_EXCEPTION = "OpenSSL unsupported";
         String NETTY_UNABLE_TO_WRAP_SSL_ENGINE_EXCEPTION = "Unable to wrap SSLEngine of type {0}";
 
-        static String[] nettyEpollClasses() {
-            return new String[]{
-                    "io.netty.channel.epoll.LinuxSocket",
-                    "io.netty.channel.epoll.Native",
-                    "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods",
-                    "io.netty.channel.unix.PeerCredentials",
-                    "io.netty.channel.DefaultFileRegion",
-                    "sun.nio.ch.FileChannelImpl",
-                    "java.io.FileDescriptor",
-                    "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket",
-                    "io.netty.channel.unix.Buffer",
-                    "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods",
-                    "io.netty.channel.unix.FileDescriptor",
-                    "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
-                    "io.netty.channel.unix.DatagramSocketAddress",
-                    "java.net.InetSocketAddress",
-                    "java.lang.String",
-                    "java.lang.OutOfMemoryError",
-                    "java.lang.RuntimeException",
-                    "io.netty.channel.ChannelException",
-                    "java.nio.channels.ClosedChannelException",
-                    "java.io.IOException",
-                    "java.net.PortUnreachableException",
-                    "java.nio.ByteBuffer"
-            };
-        }
+        String[] NETTY_NATIVE_EPOLL_CLASSES = new String[]{
+                "io.netty.channel.epoll.LinuxSocket",
+                "io.netty.channel.epoll.Native",
+                "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods",
+                "io.netty.channel.unix.PeerCredentials",
+                "io.netty.channel.DefaultFileRegion",
+                "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket",
+                "io.netty.channel.unix.Buffer",
+                "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods",
+                "io.netty.channel.unix.FileDescriptor",
+                "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
+                "io.netty.channel.unix.DatagramSocketAddress",
+                "io.netty.channel.ChannelException",
+        };
+
+        String[] NETTY_NATIVE_KQUEUE_CLASSES = new String[]{
+                "io.netty.channel.kqueue.BsdSocket.java",
+                "io.netty.channel.kqueue.Native",
+                "io.netty.channel.kqueue.KQueueStaticallyReferencedJniMethods",
+                "io.netty.channel.kqueue.KQueueEventArray",
+                "io.netty.channel.unix.PeerCredentials",
+                "io.netty.channel.DefaultFileRegion",
+                "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket",
+                "io.netty.channel.unix.Buffer",
+                "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods",
+                "io.netty.channel.unix.FileDescriptor",
+                "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
+                "io.netty.channel.unix.DatagramSocketAddress",
+                "io.netty.channel.ChannelException",
+        };
 
     }
 }

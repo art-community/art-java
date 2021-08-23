@@ -19,9 +19,25 @@ public class GraalNettyFeatures implements Feature {
         final String nettyMachineId = formatAddress(machineIdBytes);
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         setProperty(NETTY_LEAK_DETECTION_PROPERTY, DEFAULT_NETTY_LEAK_DETECTION);
+        registerEpoll();
+        registerKqueue();
+    }
+
+    private void registerKqueue() {
+        try {
+            Class.forName(NETTY_KQUEUE_CLASS_NAME, false, GraalNettyFeatures.class.getClassLoader());
+            registerForNativeUsage(NETTY_NATIVE_KQUEUE_CLASSES);
+        } catch (ClassNotFoundException classNotFoundException) {
+            // Ignore
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    private void registerEpoll() {
         try {
             Class.forName(NETTY_EPOLL_CLASS_NAME, false, GraalNettyFeatures.class.getClassLoader());
-            registerForNativeUsage(nettyEpollClasses());
+            registerForNativeUsage(NETTY_NATIVE_EPOLL_CLASSES);
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
         } catch (Throwable throwable) {

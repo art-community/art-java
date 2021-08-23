@@ -11,6 +11,8 @@ public class GraalNativeRegistrator {
         for (String name : classes) {
             try {
                 registerForNativeUsage(Class.forName(name, false, GraalNativeRegistrator.class.getClassLoader()));
+            } catch (ClassNotFoundException classNotFoundException) {
+                // Ignore
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
