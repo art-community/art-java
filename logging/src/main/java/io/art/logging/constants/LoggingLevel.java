@@ -34,7 +34,7 @@ public enum LoggingLevel {
 
     public static LoggingLevel parse(String level, LoggingLevel defaultLevel) {
         return stream(LoggingLevel.values())
-                .filter(known -> known.name().toLowerCase().equals(level))
+                .filter(known -> known.name().equalsIgnoreCase(level))
                 .findFirst()
                 .orElse(defaultLevel);
     }
