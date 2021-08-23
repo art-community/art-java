@@ -39,7 +39,51 @@
     "name": "io.netty.channel.unix.PeerCredentials"
   },
   {
-    "name": "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods"
+    "name": "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods",
+    "methods": [
+      {
+        "name": "<init>"
+      },
+      {
+        "name": "epollin"
+      },
+      {
+        "name": "epollout"
+      },
+      {
+        "name": "epollrdhup"
+      },
+      {
+        "name": "epollet"
+      },
+      {
+        "name": "epollerr"
+      },
+      {
+        "name": "ssizeMax"
+      },
+      {
+        "name": "tcpMd5SigMaxKeyLen"
+      },
+      {
+        "name": "iovMax"
+      },
+      {
+        "name": "uioMaxIov"
+      },
+      {
+        "name": "isSupportingSendmmsg"
+      },
+      {
+        "name": "isSupportingRecvmmsg"
+      },
+      {
+        "name": "isSupportingTcpFastopen"
+      },
+      {
+        "name": "kernelVersion"
+      }
+    ]
   },
   {
     "name": "io.netty.channel.epoll.Native"
