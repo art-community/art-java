@@ -20,7 +20,6 @@ import org.graalvm.nativeimage.*;
 import static com.oracle.svm.core.annotate.RecomputeFieldValue.Kind.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
-import static io.art.core.constants.NetworkConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.handler.codec.compression.ZlibCodecFactory.*;
 import static io.netty.handler.codec.compression.ZlibWrapper.*;
@@ -31,7 +30,6 @@ import static java.text.MessageFormat.*;
 import static java.util.Collections.*;
 import static java.util.Objects.*;
 import javax.net.ssl.*;
-import java.net.*;
 import java.nio.*;
 import java.security.*;
 import java.security.cert.*;
@@ -358,7 +356,7 @@ final class TargetNettyAbstractReferenceCounted {
     private static long REFCNT_FIELD_OFFSET;
 }
 
-final class NettySchedulerFutureTaskHolder {
+final class NettyNettySchedulerFutureTaskHolder {
     static final long START_TIME = System.nanoTime();
 }
 
@@ -367,12 +365,12 @@ final class NettySchedulerFutureTaskHolder {
 final class TargetNettySchedulerFutureTask {
     @Substitute
     static long initialNanoTime() {
-        return NettySchedulerFutureTaskHolder.START_TIME;
+        return NettyNettySchedulerFutureTaskHolder.START_TIME;
     }
 
     @Substitute
     static long nanoTime() {
-        return System.nanoTime() - NettySchedulerFutureTaskHolder.START_TIME;
+        return System.nanoTime() - NettyNettySchedulerFutureTaskHolder.START_TIME;
     }
 
     @Alias
@@ -382,7 +380,7 @@ final class TargetNettySchedulerFutureTask {
 
     @Substitute
     public long delayNanos(long currentTimeNanos) {
-        return Math.max(0, deadlineNanos() - (currentTimeNanos - NettySchedulerFutureTaskHolder.START_TIME));
+        return Math.max(0, deadlineNanos() - (currentTimeNanos - NettyNettySchedulerFutureTaskHolder.START_TIME));
     }
 }
 
@@ -515,17 +513,6 @@ final class TargetNettyDelegatingDecompressorFrameListener {
         ChannelHandler[] handlers = {newZlibDecoder(ZlibWrapper.GZIP)};
         return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), handlers);
 
-    }
-}
-
-@SuppressWarnings(UNUSED)
-@TargetClass(className = NETTY_DIR_CONTEXT_UTILS_CLASS)
-final class TargetDirContextUtils {
-    @Substitute
-    static void addNameServers(List<InetSocketAddress> defaultNameServers, int defaultPort) {
-        for (String server : DEFAULT_DNS_SERVERS) {
-            defaultNameServers.add(new InetSocketAddress(server, defaultPort));
-        }
     }
 }
 
