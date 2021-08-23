@@ -36,7 +36,6 @@ dependencies {
 executable {
     main("MainKt")
     native {
-        test()
         windowsVisualStudioVars("G:/Development/VisualStudio/VC/Auxiliary/Build/vcvars64.bat")
     }
 }
