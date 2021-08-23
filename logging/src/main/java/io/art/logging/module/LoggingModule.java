@@ -28,7 +28,7 @@ import io.art.logging.state.*;
 import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
-import static io.art.logging.netty.NettyLogger.*;
+import static io.art.logging.netty.NettyLoggerFactory.*;
 import static io.netty.util.internal.logging.InternalLoggerFactory.*;
 import static java.util.logging.LogManager.*;
 import static lombok.AccessLevel.*;
@@ -47,7 +47,8 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     @Override
     public void launch(Context.Service contextService) {
         getLogManager().reset();
-        setDefaultFactory(NETTY_LOGGER_FACTORY);
+        setDefaultFactory(defaultNettyLoggerFactory());
+        graalNettyLoggerFactory().dispose();
         useCustomLoggers(name -> new ReactorLogger(Logging.logger(name)));
         manager.activate();
     }

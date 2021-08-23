@@ -1,29 +1,15 @@
 package io.art.logging.netty;
 
-import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.netty.util.internal.logging.*;
 import reactor.util.annotation.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
 import static java.util.regex.Matcher.*;
 
 public class NettyLogger extends AbstractInternalLogger {
-    public final static InternalLoggerFactory NETTY_LOGGER_FACTORY = new InternalLoggerFactory() {
-        @Override
-        protected InternalLogger newInstance(String name) {
-            if (withLogging()) {
-                return new NettyLogger(Logging.logger(name));
-            }
-            JdkLoggerFactory factory = cast(JdkLoggerFactory.INSTANCE);
-            return factory.newInstance(name);
-        }
-    };
-
     private final Logger logger;
 
     public NettyLogger(Logger logger) {

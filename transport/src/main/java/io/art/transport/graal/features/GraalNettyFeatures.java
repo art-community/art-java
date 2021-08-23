@@ -1,7 +1,5 @@
 package io.art.transport.graal.features;
 
-import io.art.transport.graal.*;
-import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
@@ -21,12 +19,6 @@ public class GraalNettyFeatures implements Feature {
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         registerEpoll();
         registerKqueue();
-    }
-
-    @Override
-    public void afterAnalysis(AfterAnalysisAccess access) {
-        if (!ImageSingletons.contains(GraalNettyLoggerFactory.class)) return;
-        ImageSingletons.lookup(GraalNettyLoggerFactory.class).dispose();
     }
 
     private void registerKqueue() {
