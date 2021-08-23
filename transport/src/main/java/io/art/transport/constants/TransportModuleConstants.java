@@ -137,7 +137,8 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.FileDescriptor",
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
-                "io.netty.channel.unix.Socket"
+                "io.netty.channel.unix.Socket",
+                "io.netty.channel.unix.Unix",
         };
 
         String[] NETTY_NATIVE_KQUEUE_CLASSES = new String[]{
@@ -153,7 +154,8 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.FileDescriptor",
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
-                "io.netty.channel.unix.Socket"
+                "io.netty.channel.unix.Socket",
+                "io.netty.channel.unix.Unix"
         };
 
     }
