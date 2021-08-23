@@ -1,0 +1,19 @@
+{
+  "resources": {
+    "includes": [
+      {
+        "pattern": "\\Q*libnetty_resolver_dns_native_macos_x86_64.jnilib*\\E"
+      },
+      {
+        "pattern": "\\Q*libnetty_transport_native_epoll_aarch_64.so*\\E"
+      },
+      {
+        "pattern": "\\Q*libnetty_transport_native_epoll_x86_64.so*\\E"
+      },
+      {
+        "pattern": "\\Q*libnetty_transport_native_kqueue_x86_64.jnilib*\\E"
+      }
+    ]
+  },
+  "bundles": []
+}
