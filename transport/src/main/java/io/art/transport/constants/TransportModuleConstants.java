@@ -128,14 +128,14 @@ public interface TransportModuleConstants {
                 "io.netty.channel.epoll.LinuxSocket",
                 "io.netty.channel.epoll.Native",
                 "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods",
-                "io.netty.channel.unix.PeerCredentials",
-                "io.netty.channel.DefaultFileRegion",
                 "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket",
+                "io.netty.channel.unix.PeerCredentials",
                 "io.netty.channel.unix.Buffer",
                 "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.FileDescriptor",
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
+                "io.netty.channel.DefaultFileRegion",
                 "io.netty.channel.ChannelException",
         };
 
@@ -145,13 +145,12 @@ public interface TransportModuleConstants {
                 "io.netty.channel.kqueue.KQueueStaticallyReferencedJniMethods",
                 "io.netty.channel.kqueue.KQueueEventArray",
                 "io.netty.channel.unix.PeerCredentials",
-                "io.netty.channel.DefaultFileRegion",
-                "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket",
                 "io.netty.channel.unix.Buffer",
                 "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.FileDescriptor",
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
+                "io.netty.channel.DefaultFileRegion",
                 "io.netty.channel.ChannelException",
         };
 
