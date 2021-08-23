@@ -24,6 +24,7 @@ dependencies {
     val jctoolsVersion: String by project
     val lz4Version: String by project
     val jetbrainsAnnotationsVersion: String by project
+    val graalVersion: String by project
 
     api("org.lz4", "lz4-java", lz4Version)
             .exclude("org.slf4j")
@@ -43,4 +44,5 @@ dependencies {
             .exclude("org.slf4j")
 
     compileOnly("org.jetbrains", "annotations", jetbrainsAnnotationsVersion)
+    compileOnly("org.graalvm.nativeimage", "svm", graalVersion)
 }

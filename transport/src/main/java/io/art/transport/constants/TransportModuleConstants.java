@@ -113,6 +113,7 @@ public interface TransportModuleConstants {
         String NETTY_SSL_JETTY_ALPN_SSL_ENGINE_CLASS = "io.netty.handler.ssl.JettyAlpnSslEngine";
         String NETTY_SSL_JDK_ALPN_SSL_ENGINE_CLASS = "io.netty.handler.ssl.JdkAlpnSslEngine";
         String NETTY_DIR_CONTEXT_UTILS_CLASS = "io.netty.resolver.dns.DirContextUtils";
+        String NETTY_EPOLL_CLASS_NAME = "io.netty.channel.epoll.Epoll";
 
         String NETTY_OSCP_EXCEPTION = "OCSP is not supported with this SslProvider: {0}";
         String NETTY_JDK_SSL_PROVIDER_EXCEPTION = "JDK provider does not support ";
@@ -121,8 +122,6 @@ public interface TransportModuleConstants {
         String NETTY_SSL_PROVIDER_UNSUPPORTED_EXCEPTION = "SslProvider unsupported: {0}";
         String NETTY_OPEN_SSL_UNSUPPORTED_EXCEPTION = "OpenSSL unsupported";
         String NETTY_UNABLE_TO_WRAP_SSL_ENGINE_EXCEPTION = "Unable to wrap SSLEngine of type {0}";
-
-        String EPOLL_CLASS_NAME = "io.netty.channel.epoll.Epoll";
 
         static String[] nettyEpollClasses() {
             return new String[]{
