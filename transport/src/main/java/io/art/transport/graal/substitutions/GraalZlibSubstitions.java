@@ -2,10 +2,11 @@ package io.art.transport.graal.substitutions;
 
 import com.oracle.svm.core.annotate.*;
 import io.netty.handler.codec.compression.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 
-@TargetClass(className = "io.netty.handler.codec.compression.ZlibCodecFactory")
-final class Target_io_netty_handler_codec_compression_ZlibCodecFactory {
-
+@SuppressWarnings(UNUSED)
+@TargetClass(value = ZlibCodecFactory.class)
+final class TargetNettyZlibCodecFactory {
     @Substitute
     public static ZlibEncoder newZlibEncoder(int compressionLevel) {
         return new JdkZlibEncoder(compressionLevel);
@@ -57,6 +58,7 @@ final class Target_io_netty_handler_codec_compression_ZlibCodecFactory {
     }
 }
 
+@SuppressWarnings(UNUSED)
 class GraalZlibSubstitutions {
 
 }

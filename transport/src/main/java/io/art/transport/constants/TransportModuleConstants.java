@@ -12,6 +12,7 @@ import java.time.*;
 
 public interface TransportModuleConstants {
     String TRANSPORT_LOGGER = "transport";
+
     interface Defaults {
         String DEFAULT_LOOP_RESOURCES_PREFIX = "common-transport";
         String DEFAULT_CONNECTION_PROVIDER_NAME = "common-connection";
@@ -91,5 +92,27 @@ public interface TransportModuleConstants {
             if (DIRECT.type.equalsIgnoreCase(type)) return DIRECT;
             return fallback;
         }
+    }
+
+    interface GraalConstants {
+        int EUI64_MAC_ADDRESS_LENGTH = 8;
+        String MAX_UPDATE_ARRAY_SIZE_PROPERTY = "sun.nio.ch.maxUpdateArraySize";
+        String DEFAULT_MAX_UPDATE_ARRAY_SIZE = "100";
+        String NETTY_MAX_ORDER_PROPERTY = "io.netty.allocator.maxOrder";
+        String DEFAULT_NETTY_MAX_ORDER = "100";
+        String NETTY_MACHINE_ID_PROPERTY = "io.netty.machineId";
+        String NETTY_LEAK_DETECTION_PROPERTY = "io.netty.leakDetection.level";
+        String DEFAULT_NETTY_LEAK_DETECTION = "DISABLED";
+        String NETTY_SSL_ENGINE_TYPE_CLASS = "io.netty.handler.ssl.SslHandler$SslEngineType";
+        String NETTY_CHANNEL_HANDLER_MASK_CLASS = "io.netty.channel.ChannelHandlerMask";
+        String NETTY_SCHEDULER_FUTURE_TASK_CLASS = "io.netty.util.concurrent.ScheduledFutureTask";
+        String NETTY_JDK_DEFAULT_APPLICATION_PROTOCOL_NEGOTIATOR = "io.netty.handler.ssl.JdkDefaultApplicationProtocolNegotiator";
+        String NETTY_REF_CNT_NAME = "refCnt";
+        String NETTY_OSCP_EXCEPTION = "OCSP is not supported with this SslProvider: {0}";
+        String NETTY_JDK_SSL_PROVIDER_EXCEPTION = "JDK provider does not support ";
+        String NETTY_JDK_SSL_FAILURE_BEHAVIOR_EXCEPTION = " failure behavior";
+        String NETTY_JDK_SSL_PROTOCOL_EXCEPTION = " protocol";
+        String NETTY_SSL_PROVIDER_UNSUPPORTED = "SslProvider unsupported: {0}";
+        String NETTY_OPEN_SSL_UNSUPPORTED = "OpenSSL unsupported";
     }
 }
