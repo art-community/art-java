@@ -32,10 +32,3 @@ dependencies {
     testEmbedded("org.junit.platform", "junit-platform-engine", junitPlatformVersion)
     testEmbedded("org.junit.platform", "junit-platform-console", junitPlatformVersion)
 }
-
-executable {
-    main("MainKt")
-    native {
-        graalWindowsVisualStudioVars("G:/Development/VisualStudio/VC/Auxiliary/Build/vcvars64.bat")
-    }
-}
