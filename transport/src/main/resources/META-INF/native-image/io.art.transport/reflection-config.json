@@ -1039,5 +1039,35 @@
         "name": "producerLimit"
       }
     ]
+  },
+  {
+    "name": "io.netty.channel.unix.ErrorsStaticallyReferencedJniMethods"
+  },
+  {
+    "name": "io.netty.channel.unix.FileDescriptor"
+  },
+  {
+    "name": "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods"
+  },
+  {
+    "name": "io.netty.channel.unix.Socket"
+  },
+  {
+    "name": "io.netty.channel.DefaultFileRegion"
+  },
+  {
+    "name": "io.netty.channel.unix.PeerCredentials"
+  },
+  {
+    "name": "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods"
+  },
+  {
+    "name": "io.netty.channel.epoll.Native"
+  },
+  {
+    "name": "io.netty.channel.epoll.LinuxSocket"
+  },
+  {
+    "name": "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket"
   }
 ]

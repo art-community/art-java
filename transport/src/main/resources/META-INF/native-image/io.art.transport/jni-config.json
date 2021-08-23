@@ -31,5 +31,23 @@
   },
   {
     "name": "io.netty.channel.unix.Socket"
+  },
+  {
+    "name": "io.netty.channel.DefaultFileRegion"
+  },
+  {
+    "name": "io.netty.channel.unix.PeerCredentials"
+  },
+  {
+    "name": "io.netty.channel.epoll.NativeStaticallyReferencedJniMethods"
+  },
+  {
+    "name": "io.netty.channel.epoll.Native"
+  },
+  {
+    "name": "io.netty.channel.epoll.LinuxSocket"
+  },
+  {
+    "name": "io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket"
   }
 ]
