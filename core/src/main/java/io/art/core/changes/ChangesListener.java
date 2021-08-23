@@ -41,6 +41,8 @@ public class ChangesListener {
     }
 
     public ChangesListener produce() {
+        index.set(0);
+
         if (values.isEmpty()) return this;
 
         if (created.compareAndSet(false, true)) {
@@ -51,11 +53,10 @@ public class ChangesListener {
             changeConsumers.forEach(Runnable::run);
         }
 
-        index.set(0);
         return this;
     }
 
-    public ChangesListener dispose(){
+    public ChangesListener dispose() {
         values.clear();
         pending.set(false);
         created.set(false);
@@ -87,11 +88,11 @@ public class ChangesListener {
             return value;
         }
         Object current = values.get(index);
-        if (!pending.get() && !Objects.equals(value, current)) {
+        this.index.set(index + 1);
+        if (!Objects.equals(value, current)) {
             values.set(index, value);
             pending.set(true);
         }
-        this.index.set(index + 1);
         return cast(value);
     }
 

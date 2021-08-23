@@ -59,6 +59,7 @@ public class RsocketWsClientConfiguration {
     public static RsocketWsClientConfiguration from(RsocketModuleRefresher refresher, RsocketWsClientConfiguration current, ConfigurationSource source) {
         RsocketWsClientConfiguration configuration = RsocketWsClientConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
+        configuration.connector = current.connector;
         configuration.clientDecorator = current.clientDecorator;
         configuration.transportDecorator = current.transportDecorator;
         configuration.path = orElse(source.getString(WS_PATH_KEY), current.path);
