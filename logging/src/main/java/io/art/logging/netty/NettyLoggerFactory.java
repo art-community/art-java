@@ -49,6 +49,7 @@ public class NettyLoggerFactory {
 
         public void dispose() {
             for (GraalNettyLogger logger : loggers.values()) {
+                System.out.println("Dispose : " + logger.name());
                 logger.dispose();
             }
         }

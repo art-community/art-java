@@ -52,13 +52,13 @@ public class GraalNettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void trace(String message, Throwable t) {
-        logger.get().trace(message, t);
+    public void trace(String message, Throwable throwable) {
+        logger.get().trace(message, throwable);
     }
 
     @Override
-    public void trace(Throwable t) {
-        logger.get().trace(t);
+    public void trace(Throwable throwable) {
+        logger.get().trace(throwable);
     }
 
     @Override
@@ -87,13 +87,13 @@ public class GraalNettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void debug(String message, Throwable t) {
-        logger.get().debug(message, t);
+    public void debug(String message, Throwable throwable) {
+        logger.get().debug(message, throwable);
     }
 
     @Override
-    public void debug(Throwable t) {
-        logger.get().debug(t);
+    public void debug(Throwable throwable) {
+        logger.get().debug(throwable);
     }
 
     @Override
@@ -122,13 +122,13 @@ public class GraalNettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void info(String message, Throwable t) {
-        logger.get().info(message, t);
+    public void info(String message, Throwable throwable) {
+        logger.get().info(message, throwable);
     }
 
     @Override
-    public void info(Throwable t) {
-        logger.get().info(t);
+    public void info(Throwable throwable) {
+        logger.get().info(throwable);
     }
 
     @Override
@@ -157,13 +157,13 @@ public class GraalNettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void warn(String message, Throwable t) {
-        logger.get().warn(message, t);
+    public void warn(String message, Throwable throwable) {
+        logger.get().warn(message, throwable);
     }
 
     @Override
-    public void warn(Throwable t) {
-        logger.get().warn(t);
+    public void warn(Throwable throwable) {
+        logger.get().warn(throwable);
     }
 
     @Override
@@ -192,13 +192,13 @@ public class GraalNettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void error(String message, Throwable t) {
-        logger.get().error(message, t);
+    public void error(String message, Throwable throwable) {
+        logger.get().error(message, throwable);
     }
 
     @Override
-    public void error(Throwable t) {
-        logger.get().error(t);
+    public void error(Throwable throwable) {
+        logger.get().error(throwable);
     }
 
     @Override
@@ -227,12 +227,12 @@ public class GraalNettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void log(InternalLogLevel level, String message, Throwable t) {
-        logger.get().log(level, message, t);
+    public void log(InternalLogLevel level, String message, Throwable throwable) {
+        logger.get().log(level, message, throwable);
     }
 
     @Override
-    public void log(InternalLogLevel level, Throwable t) {
-        logger.get().log(level, t);
+    public void log(InternalLogLevel level, Throwable throwable) {
+        logger.get().log(level, throwable);
     }
 }
