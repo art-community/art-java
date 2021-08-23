@@ -1,11 +1,14 @@
 package io.art.transport.graal.features;
 
+import com.oracle.svm.core.jni.*;
+import io.netty.channel.epoll.*;
 import io.netty.util.internal.logging.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
 import static io.netty.util.internal.logging.InternalLoggerFactory.*;
 import static java.lang.System.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class GraalNettyFeatures implements Feature {
@@ -18,5 +21,45 @@ public class GraalNettyFeatures implements Feature {
         final String nettyMachineId = formatAddress(machineIdBytes);
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         setProperty(NETTY_LEAK_DETECTION_PROPERTY, DEFAULT_NETTY_LEAK_DETECTION);
+        try {
+            Class.forName(Epoll.class.getName());
+            providerEpollAccess();
+        } catch (ClassNotFoundException classNotFoundException) {
+            // Ignore
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    static void providerEpollAccess() {
+        try {
+            Class<?>[] classes = new Class<?>[]{
+                    Class.forName("io.netty.channel.epoll.LinuxSocket"),
+                    Class.forName("io.netty.channel.epoll.Native"),
+                    Class.forName("io.netty.channel.epoll.NativeStaticallyReferencedJniMethods"),
+                    Class.forName("io.netty.channel.unix.PeerCredentials"),
+                    Class.forName("io.netty.channel.DefaultFileRegion"),
+                    Class.forName("sun.nio.ch.FileChannelImpl"),
+                    Class.forName("java.io.FileDescriptor"),
+                    Class.forName("io.netty.channel.epoll.NativeDatagramPacketArray$NativeDatagramPacket"),
+            };
+            for (Class<?> owner : classes) {
+                RuntimeReflection.register(owner);
+                for (final Method method : owner.getDeclaredMethods()) {
+                    JNIRuntimeAccess.register(method);
+                    RuntimeReflection.register(method);
+                }
+                for (final Field field : owner.getDeclaredFields()) {
+                    JNIRuntimeAccess.register(field);
+                    RuntimeReflection.register(field);
+                }
+                for (final Constructor<?> constructor : owner.getDeclaredConstructors()) {
+                    JNIRuntimeAccess.register(constructor);
+                    RuntimeReflection.register(constructor);
+                }
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 }
