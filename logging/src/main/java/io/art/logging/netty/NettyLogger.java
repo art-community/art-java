@@ -3,6 +3,12 @@ package io.art.logging.netty;
 import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.netty.util.internal.logging.*;
+import reactor.util.annotation.*;
+import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.StringConstants.*;
+import static java.lang.String.*;
+import static java.util.Objects.*;
+import static java.util.regex.Matcher.*;
 
 public class NettyLogger extends AbstractInternalLogger {
     public final static InternalLoggerFactory NETTY_LOGGER_FACTORY = new InternalLoggerFactory() {
@@ -25,28 +31,28 @@ public class NettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void trace(String msg) {
-        logger.trace(msg);
+    public void trace(String message) {
+        logger.trace(message);
     }
 
     @Override
-    public void trace(String format, Object arg) {
-        logger.trace(format, arg);
+    public void trace(String format, Object argument) {
+        trace(format(format, argument));
     }
 
     @Override
-    public void trace(String format, Object argA, Object argB) {
-        logger.trace(format, argA, argB);
+    public void trace(String format, Object firstArgument, Object secondArgument) {
+        trace(format(format, firstArgument, secondArgument));
     }
 
     @Override
-    public void trace(String format, Object... argArray) {
-        logger.trace(format, argArray);
+    public void trace(String format, Object... arguments) {
+        logger.trace(format(format, arguments));
     }
 
     @Override
-    public void trace(String msg, Throwable t) {
-        logger.trace(msg, t);
+    public void trace(String message, Throwable throwable) {
+        logger.trace(message);
     }
 
     @Override
@@ -55,28 +61,28 @@ public class NettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void debug(String msg) {
-        logger.debug(msg);
+    public void debug(String message) {
+        logger.debug(message);
     }
 
     @Override
-    public void debug(String format, Object arg) {
-        logger.debug(format, arg);
+    public void debug(String format, Object argument) {
+        debug(format(format, argument));
     }
 
     @Override
-    public void debug(String format, Object argA, Object argB) {
-        logger.debug(format, argA, argB);
+    public void debug(String format, Object firstArgument, Object secondArgument) {
+        debug(format(format, firstArgument, secondArgument));
     }
 
     @Override
-    public void debug(String format, Object... argArray) {
-        logger.debug(format, argArray);
+    public void debug(String format, Object... arguments) {
+        logger.debug(format(format, arguments));
     }
 
     @Override
-    public void debug(String msg, Throwable t) {
-        logger.debug(msg, t);
+    public void debug(String message, Throwable throwable) {
+        logger.debug(message, throwable);
     }
 
     @Override
@@ -85,28 +91,28 @@ public class NettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void info(String msg) {
-        logger.info(msg);
+    public void info(String message) {
+        logger.info(message);
     }
 
     @Override
-    public void info(String format, Object arg) {
-        logger.info(format, arg);
+    public void info(String format, Object argument) {
+        info(format(format, argument));
     }
 
     @Override
-    public void info(String format, Object argA, Object argB) {
-        logger.info(format, argA, argB);
+    public void info(String format, Object firstArgument, Object secondArgument) {
+        info(format(format, firstArgument, secondArgument));
     }
 
     @Override
-    public void info(String format, Object... argArray) {
-        logger.info(format, argArray);
+    public void info(String format, Object... arguments) {
+        logger.info(format(format, arguments));
     }
 
     @Override
-    public void info(String msg, Throwable t) {
-        logger.info(msg, t);
+    public void info(String message, Throwable throwable) {
+        logger.info(message, throwable);
     }
 
     @Override
@@ -115,28 +121,28 @@ public class NettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void warn(String msg) {
-        logger.warn(msg);
+    public void warn(String message) {
+        logger.warn(message);
     }
 
     @Override
-    public void warn(String format, Object arg) {
-        logger.warn(format, arg);
+    public void warn(String format, Object argument) {
+        warn(format(format, argument));
     }
 
     @Override
-    public void warn(String format, Object... argArray) {
-        logger.warn(format, argArray);
+    public void warn(String format, Object... arguments) {
+        logger.warn(format(format, arguments));
     }
 
     @Override
-    public void warn(String format, Object argA, Object argB) {
-        logger.warn(format, argA, argB);
+    public void warn(String format, Object firstArgument, Object secondArgument) {
+        warn(format(format, firstArgument, firstArgument));
     }
 
     @Override
-    public void warn(String msg, Throwable t) {
-        logger.warn(msg, t);
+    public void warn(String message, Throwable throwable) {
+        logger.warn(message, throwable);
     }
 
     @Override
@@ -145,27 +151,40 @@ public class NettyLogger extends AbstractInternalLogger {
     }
 
     @Override
-    public void error(String msg) {
-        logger.error(msg);
+    public void error(String message) {
+        logger.error(message);
     }
 
     @Override
-    public void error(String format, Object arg) {
-        logger.error(format, arg);
+    public void error(String format, Object argument) {
+        error(format(format, argument));
     }
 
     @Override
-    public void error(String format, Object argA, Object argB) {
-        logger.error(format, argA, argB);
+    public void error(String format, Object firstArgument, Object secondArgument) {
+        error(format(format, firstArgument, secondArgument));
     }
 
     @Override
-    public void error(String format, Object... argArray) {
-        logger.error(format, argArray);
+    public void error(String format, Object... arguments) {
+        logger.error(format(format, arguments));
     }
 
     @Override
-    public void error(String msg, Throwable t) {
-        logger.error(msg, t);
+    public void error(String message, Throwable throwable) {
+        logger.error(message, throwable);
+    }
+
+    private String format(@Nullable String from, @Nullable Object... arguments) {
+        if (isNull(from) || isEmpty(from)) {
+            return EMPTY_STRING;
+        }
+        String computed = from;
+        if (nonNull(arguments) && isNotEmpty(arguments)) {
+            for (Object argument : arguments) {
+                computed = computed.replaceFirst(FORMAT_REGEX, quoteReplacement(valueOf(argument)));
+            }
+        }
+        return computed;
     }
 }
