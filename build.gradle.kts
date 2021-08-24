@@ -1,5 +1,3 @@
-import io.art.gradle.common.logger.info
-
 /*
  * ART
  *
@@ -73,7 +71,6 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform()
-        addTestOutputListener { _, outputEvent -> info(outputEvent.message) }
     }
 
     java {
