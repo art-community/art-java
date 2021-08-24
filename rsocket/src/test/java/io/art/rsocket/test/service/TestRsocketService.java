@@ -50,22 +50,26 @@ public class TestRsocketService implements TestRsocket {
     }
 
     public String m10(Mono<String> input) {
+        input.subscribe();
         register("m10", input);
         return "test";
     }
 
     public Mono<String> m11(Mono<String> input) {
+        input.subscribe();
         register("m11", input);
         return Mono.just("test");
     }
 
     public Flux<String> m12(Mono<String> input) {
+        input.subscribe();
         register("m12", input);
         return Flux.just("test");
     }
 
 
     public void m13(Flux<String> input) {
+        input.subscribe();
         register("m13", input);
     }
 

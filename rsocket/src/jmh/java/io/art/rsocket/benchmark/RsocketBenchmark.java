@@ -36,6 +36,7 @@ import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.transport.module.TransportActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
 @Fork(value = 1)
 @Warmup(iterations = 1)
@@ -46,6 +47,7 @@ public class RsocketBenchmark {
     @State(value = Scope.Benchmark)
     public static class BenchmarkState {
         TestRsocket communicator;
+        Sinks.Many<String> m13;
 
         @Setup
         public void setup() {
@@ -61,8 +63,11 @@ public class RsocketBenchmark {
             );
             TestRsocketConnector connector = rsocketConnector(TestRsocketConnector.class);
             communicator = connector.testRsocket();
+            m13 = Sinks.many().unicast().onBackpressureBuffer();
+            communicator.m13(m13.asFlux());
         }
     }
+
 
     @Benchmark
     public void a(Blackhole blackhole, BenchmarkState state) {
@@ -126,21 +131,6 @@ public class RsocketBenchmark {
 
     @Benchmark
     public void m(Blackhole blackhole, BenchmarkState state) {
-        state.communicator.m13(Flux.just("test"));
-    }
-
-    @Benchmark
-    public void n(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.communicator.m14(Flux.just("test")));
-    }
-
-    @Benchmark
-    public void o(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(block(state.communicator.m15(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void p(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.communicator.m16(Flux.just("test"))));
+        state.m13.emitNext("test", FAIL_FAST);
     }
 }
