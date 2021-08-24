@@ -60,13 +60,13 @@ subprojects {
         annotationProcessor("org.projectlombok", "lombok", lombokVersion)
         testCompileOnly("org.projectlombok", "lombok", lombokVersion)
         testAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
+        testFixturesCompileOnly("org.projectlombok", "lombok", lombokVersion)
+        testFixturesAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
 
         testImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
         testRuntimeOnly("org.junit.jupiter", "junit-jupiter-engine", junitVersion)
-
-        testFixturesCompileOnly("org.projectlombok", "lombok", lombokVersion)
-        testFixturesAnnotationProcessor("org.projectlombok", "lombok", lombokVersion)
         testFixturesImplementation("org.junit.jupiter", "junit-jupiter-api", junitVersion)
+
     }
 
     tasks.test {
