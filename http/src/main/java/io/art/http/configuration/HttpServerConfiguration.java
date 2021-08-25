@@ -44,9 +44,7 @@ public class HttpServerConfiguration {
     private UnaryOperator<HttpServer> decorator;
     private ImmutableMap<String, HttpRouteConfiguration> routes;
     private boolean logging;
-    private int fragmentationMtu;
     private DataFormat defaultDataFormat;
-    private final Function<? extends Throwable, ?> exceptionMapper;
     private int port;
     private String host;
 
@@ -54,7 +52,6 @@ public class HttpServerConfiguration {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
         configuration.defaultDataFormat = JSON;
         configuration.logging = false;
-        configuration.fragmentationMtu = 0;
         configuration.decorator = UnaryOperator.identity();
         configuration.port = DEFAULT_PORT;
         configuration.host = BROADCAST_IP_ADDRESS;
@@ -69,10 +66,7 @@ public class HttpServerConfiguration {
         ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
         configuration.logging = serverLoggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), false));
-
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
-        configuration.fragmentationMtu = serverListener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), 0));
-
         configuration.port = serverListener.emit(orElse(source.getInteger(PORT_KEY), current.port));
         configuration.host = serverListener.emit(orElse(source.getString(HOST_KEY), current.host));
         configuration.routes = source.getNestedMap(ROUTES_SECTION, nested -> routeConfiguration(routeConfiguration(), nested));

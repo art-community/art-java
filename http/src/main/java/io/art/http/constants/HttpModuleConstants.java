@@ -33,26 +33,6 @@ public interface HttpModuleConstants {
         String SERVER_STOPPED = "HTTP server stopped";
         String COMMUNICATOR_STARTED = "HTTP communicator started\nConnector: {0}\nSetup payload\n{1}";
         String COMMUNICATOR_STOPPED = "HTTP communicator stopped\nConnector: {0}\nSetup payload\n{1}";
-
-        String FIRE_AND_FORGET_REQUEST_LOG = "HTTP executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
-        String FIRE_AND_FORGET_RESPONSE_LOG = "HTTP fireAndForget() completed";
-        String FIRE_AND_FORGET_EXCEPTION_LOG = "HTTP fireAndForget() failed\nException:\n{0}";
-
-        String METADATA_PUSH_REQUEST_LOG = "HTTP executing metadataPush().Data:\n{0}\nMetadata:\n{1}";
-        String METADATA_PUSH_RESPONSE_LOG = "HTTP metadataPush() completed";
-        String METADATA_PUSH_EXCEPTION_LOG = "HTTP metadataPush() failed\nException:\n{0}";
-
-        String REQUEST_RESPONSE_REQUEST_LOG = "HTTP executing requestResponse()\nData:\n{0}\nMetadata:\n{1}";
-        String RESPONSE_RESPONSE_LOG = "HTTP requestResponse() completed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_RESPONSE_EXCEPTION_LOG = "HTTP requestResponse() failed\nException:\n{0}";
-
-        String REQUEST_STREAM_REQUEST_LOG = "HTTP executing requestStream()\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_STREAM_RESPONSE_LOG = "HTTP requestStream() processed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_STREAM_EXCEPTION_LOG = "HTTP requestStream() failed\nException:\n{0}";
-
-        String REQUEST_CHANNEL_REQUEST_LOG = "HTTP requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_CHANNEL_RESPONSE_LOG = "HTTP requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
-        String REQUEST_CHANNEL_EXCEPTION_LOG = "HTTP requestChannel() failed\nException:\n{0}";
     }
 
     interface ConfigurationKeys {
@@ -60,9 +40,6 @@ public interface HttpModuleConstants {
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
-        String DEFAULT_SECTION = "default";
-
-        String TRANSPORT_SECTION = "transport";
         String TRANSPORT_WS_BASE_URL_KEY = "transport.ws.baseUrl";
 
         String LOGGING_KEY = "logging";
@@ -82,23 +59,11 @@ public interface HttpModuleConstants {
         String INTERVAL_KEY = "interval";
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
 
-        String CONNECTORS_KEY = "connectors";
-
         String PATH_KEY = "path";
         String METHOD_KEY = "method";
 
         String WS_AGGREGATE_FRAMES_KEY = "ws.aggregateFrames";
         String ROUTED_PATH_KEY = "routed.path";
-    }
-
-    interface HttpMethodNames {
-        String GET_METHOD_NAME = "GET";
-        String POST_METHOD_NAME = "POST";
-        String PUT_METHOD_NAME = "PUT";
-        String DELETE_METHOD_NAME = "DELETE";
-        String OPTIONS_METHOD_NAME = "OPTIONS";
-        String HEAD_METHOD_NAME = "HEAD";
-        String PATCH_METHOD_NAME = "PATCH";
     }
 
     enum HttpRouteType {
