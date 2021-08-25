@@ -57,24 +57,14 @@ public interface HttpModuleConstants {
 
     interface ConfigurationKeys {
         String HTTP_SECTION = "http";
-        String RESUME_SECTION = "produce";
-        String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
         String DEFAULT_SECTION = "default";
 
         String TRANSPORT_SECTION = "transport";
-        String TRANSPORT_MODE_KEY = "transport.mode";
-        String TRANSPORT_PORT_KEY = "transport.port";
-        String TRANSPORT_HOST_KEY = "transport.host";
-        String TRANSPORT_TCP_HOST_KEY = "transport.tcp.host";
-        String TRANSPORT_TCP_PORT_KEY = "transport.tcp.port";
         String TRANSPORT_WS_BASE_URL_KEY = "transport.ws.baseUrl";
-        String TRANSPORT_WS_PATH_KEY = "transport.ws.path";
-        String TRANSPORT_TCP_MAX_FRAME_LENGTH = "transport.tcp.maxFrameLength";
 
-        String PAYLOAD_DECODER_KEY = "payloadDecoder";
         String LOGGING_KEY = "logging";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
 
@@ -99,11 +89,6 @@ public interface HttpModuleConstants {
 
         String WS_AGGREGATE_FRAMES_KEY = "ws.aggregateFrames";
         String ROUTED_PATH_KEY = "routed.path";
-    }
-
-    interface ContextKeys {
-        String REQUESTER_HTTP_KEY = "requesterHttp";
-        String SETUP_PAYLOAD_KEY = "setupPayload";
     }
 
     interface HttpMethodNames {
