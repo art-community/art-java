@@ -24,20 +24,17 @@ import io.art.http.configuration.*;
 import io.art.http.manager.*;
 import io.art.http.refresher.*;
 import io.art.http.state.*;
-import io.art.logging.logger.*;
 import lombok.*;
-import reactor.netty.http.server.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
 import static io.art.http.configuration.HttpModuleConfiguration.*;
-import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Hooks.*;
 
 @Getter
 public class HttpModule implements StatefulModule<HttpModuleConfiguration, Configurator, HttpModuleState> {
     @Getter(lazy = true, value = PRIVATE)
     private static final StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState> httpModule = context().getStatefulModule(HttpModule.class.getSimpleName());
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(HttpModule.class);
     private final String id = HttpModule.class.getSimpleName();
     private final HttpModuleState state = new HttpModuleState();
     private final HttpModuleRefresher refresher = new HttpModuleRefresher();
@@ -49,27 +46,24 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
         return getHttpModule();
     }
 
-    public static HttpContext httpContext() {
-        return httpModule().state().localContext();
-    }
-
-    public static void httpContextFrom(HttpServerRequest request, HttpServerResponse response) {
-        httpModule().state().localContext(HttpContext.from(request, response));
-    }
-
     @Override
     public void launch(Context.Service contextService) {
-        if (configuration.isActivateServer()) {
+        onErrorDropped(emptyConsumer());
+        if (configuration.isEnableServer()) {
             manager.initializeServer();
         }
-        if (configuration.isActivateCommunicator()) {
+        if (!configuration.getConnectors().isEmpty()) {
             manager.initializeCommunicators();
         }
     }
 
     @Override
-    public void unload(Context.Service contextService) {
-        manager.disposeCommunicators();
-        manager.disposeServer();
+    public void shutdown(Context.Service contextService) {
+        if (configuration.isEnableServer()) {
+            manager.disposeServer();
+        }
+        if (!configuration.getConnectors().isEmpty()) {
+            manager.disposeCommunicators();
+        }
     }
 }
