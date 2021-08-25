@@ -73,6 +73,7 @@ public class HttpModuleConfiguration implements ModuleConfiguration {
 
         server = serverConfiguration(serverRefresher);
         enableServer = false;
+        httpServer = httpServerConfiguration();
 
         communicator = communicatorConfiguration(communicatorRefresher);
         connectors = emptyImmutableMap();

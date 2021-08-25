@@ -22,9 +22,11 @@ import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
+import lombok.Builder;
 import lombok.*;
 import reactor.netty.http.server.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.http.configuration.HttpRouteConfiguration.*;
@@ -56,6 +58,7 @@ public class HttpServerConfiguration {
         configuration.decorator = UnaryOperator.identity();
         configuration.port = DEFAULT_PORT;
         configuration.host = BROADCAST_IP_ADDRESS;
+        configuration.routes = emptyImmutableMap();
         return configuration;
     }
 

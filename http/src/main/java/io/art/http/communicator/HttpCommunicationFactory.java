@@ -24,7 +24,7 @@ public class HttpCommunicationFactory {
     }
 
     private static HttpClient createTcpClient(HttpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
-        HttpClient client = HttpClient.create();
+        HttpClient client = connectorConfiguration.getDecorator().apply(HttpClient.create().baseUrl(connectorConfiguration.getUrl()));
         return client;
     }
 }

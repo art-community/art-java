@@ -28,7 +28,7 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
     }
 
     public HttpCommunicatorConfigurator connector(Class<? extends Connector> connectorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
-        HttpConnectorConfiguration configuration = configurator.apply(connectorConfiguration().toBuilder()).build();
+        HttpConnectorConfiguration configuration = configurator.apply(connectorConfiguration(asId(connectorClass)).toBuilder()).build();
         connectors.put(asId(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> httpModule()
                 .configuration()
