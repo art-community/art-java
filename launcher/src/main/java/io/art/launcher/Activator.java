@@ -28,7 +28,7 @@ import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 
-@ForUsing
+@Public
 @Accessors(fluent = true)
 public class Activator {
     private final static Activator activator = new Activator();

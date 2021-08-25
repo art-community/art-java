@@ -30,7 +30,7 @@ import static java.text.MessageFormat.*;
 import java.util.*;
 
 @ToString
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 public abstract class MetaConstructor<T> {
     private final MetaType<T> type;

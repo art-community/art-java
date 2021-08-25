@@ -19,5 +19,7 @@
 package io.art.core.constants;
 
 public interface CommonConfigurationKeys {
-
+    String VERBOSE_KEY = "verbose";
+    String HOST_KEY = "host";
+    String PORT_KEY = "port";
 }

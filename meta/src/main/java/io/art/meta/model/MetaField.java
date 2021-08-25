@@ -23,7 +23,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 
 @ToString
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 @AllArgsConstructor
 public class MetaField<T> {

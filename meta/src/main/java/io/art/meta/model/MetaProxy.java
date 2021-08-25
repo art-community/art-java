@@ -6,7 +6,7 @@ import static io.art.core.factory.MapFactory.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForGenerator
+@Generation
 public abstract class MetaProxy {
     private final Map<MetaMethod<?>, Function<Object, Object>> invocations;
 

@@ -33,12 +33,14 @@ import lombok.*;
 import reactor.netty.http.server.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.DEFAULT;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
@@ -47,7 +49,7 @@ import static java.util.function.UnaryOperator.identity;
 import java.util.function.*;
 
 @Getter
-@ForUsing
+@Public
 @Builder(toBuilder = true)
 public class RsocketWsServerConfiguration {
     private int port;
@@ -65,7 +67,7 @@ public class RsocketWsServerConfiguration {
     private UnaryOperator<RSocketServer> decorator;
     private RsocketSslConfiguration ssl;
 
-    public static RsocketWsServerConfiguration defaults() {
+    public static RsocketWsServerConfiguration wsServerConfiguration() {
         RsocketWsServerConfiguration configuration = RsocketWsServerConfiguration.builder().build();
         configuration.wsDecorator = identity();
         configuration.decorator = identity();
@@ -82,7 +84,7 @@ public class RsocketWsServerConfiguration {
         return configuration;
     }
 
-    public static RsocketWsServerConfiguration from(RsocketModuleRefresher refresher, RsocketWsServerConfiguration current, ConfigurationSource source) {
+    public static RsocketWsServerConfiguration wsServerConfiguration(RsocketModuleRefresher refresher, RsocketWsServerConfiguration current, ConfigurationSource source) {
         RsocketWsServerConfiguration configuration = RsocketWsServerConfiguration.builder().build();
         configuration.interceptors = current.interceptors;
         configuration.decorator = current.decorator;

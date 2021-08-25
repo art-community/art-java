@@ -27,7 +27,7 @@ import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
 
-@ForUsing
+@Public
 public interface Reader {
     default <T> T read(MetaType<T> type, byte[] bytes) {
         return read(type, new ByteArrayInputStream(bytes));

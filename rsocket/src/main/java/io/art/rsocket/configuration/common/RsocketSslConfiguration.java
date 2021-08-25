@@ -1,12 +1,14 @@
 package io.art.rsocket.configuration.common;
 
+import io.art.core.annotation.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import java.io.*;
 
 @Getter
+@Public
 @Builder(toBuilder = true)
 public class RsocketSslConfiguration {
     private final File certificate;

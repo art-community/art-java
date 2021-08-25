@@ -28,7 +28,7 @@ import lombok.*;
 import static io.art.core.constants.StringConstants.*;
 import static java.util.Objects.*;
 
-@ForUsing
+@Public
 public class ConfiguratorInitializer implements ModuleInitializer<ConfiguratorModuleConfiguration, ConfiguratorModuleConfiguration.Configurator, ConfiguratorModule> {
     private CustomConfigurationsConfigurator registry = new CustomConfigurationsConfigurator();
 

@@ -25,5 +25,5 @@ import java.lang.annotation.*;
 
 @Target({TYPE, METHOD})
 @Retention(SOURCE)
-public @interface ForGenerator {
+public @interface Generation {
 }

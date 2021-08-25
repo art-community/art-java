@@ -10,7 +10,7 @@ import static io.art.configurator.module.ConfiguratorModule.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Configuring {
     public static ConfigurationSource configuration() {

@@ -20,42 +20,46 @@ package io.art.http.configuration;
 
 import io.art.core.changes.*;
 import io.art.core.collection.*;
-import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
-import io.art.value.constants.ValueModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.server.*;
-import java.util.function.*;
-import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
+import static io.art.http.configuration.HttpRouteConfiguration.*;
+import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.LOGGING_KEY;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
+import static io.art.transport.constants.TransportModuleConstants.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class HttpServerConfiguration {
-    private HttpServer httpServer;
-    private ImmutableMap<String, HttpServiceConfiguration> services;
-    private ServiceMethodIdentifier defaultServiceMethod;
+    private UnaryOperator<HttpServer> decorator;
+    private ImmutableMap<String, HttpRouteConfiguration> routes;
     private boolean logging;
     private int fragmentationMtu;
     private DataFormat defaultDataFormat;
     private final Function<? extends Throwable, ?> exceptionMapper;
+    private int port;
+    private String host;
 
-    public static HttpServerConfiguration defaults() {
+    public static HttpServerConfiguration httpServerConfiguration() {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
         configuration.defaultDataFormat = JSON;
         configuration.logging = false;
         configuration.fragmentationMtu = 0;
-        configuration.httpServer = HttpServer.create().port(DEFAULT_PORT);
+        configuration.decorator = UnaryOperator.identity();
+        configuration.port = DEFAULT_PORT;
+        configuration.host = BROADCAST_IP_ADDRESS;
         return configuration;
     }
 
-    public static HttpServerConfiguration from(HttpModuleRefresher refresher, ConfigurationSource source) {
+    public static HttpServerConfiguration httpServerConfiguration(HttpModuleRefresher refresher, HttpServerConfiguration current, ConfigurationSource source) {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
 
         ChangesListener serverListener = refresher.serverListener();
@@ -66,18 +70,9 @@ public class HttpServerConfiguration {
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
         configuration.fragmentationMtu = serverListener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), 0));
 
-        String serviceId = source.getString(SERVICE_ID_KEY);
-        String methodId = source.getString(METHOD_ID_KEY);
-
-        if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
-            configuration.defaultServiceMethod = serverListener.emit(serviceMethodId(serviceId, methodId));
-        }
-
-        int port = serverListener.emit(orElse(source.getInteger(TRANSPORT_PORT_KEY), DEFAULT_PORT));
-        String host = serverListener.emit(orElse(source.getString(TRANSPORT_HOST_KEY), BROADCAST_IP_ADDRESS));
-
-        configuration.httpServer = HttpServer.create().port(serverListener.emit(port)).host(serverListener.emit(host));
-        configuration.services = source.getNestedMap(SERVICES_KEY, HttpServiceConfiguration::from);
+        configuration.port = serverListener.emit(orElse(source.getInteger(PORT_KEY), current.port));
+        configuration.host = serverListener.emit(orElse(source.getString(HOST_KEY), current.host));
+        configuration.routes = source.getNestedMap(ROUTES_SECTION, nested -> routeConfiguration(routeConfiguration(), nested));
 
         return configuration;
     }

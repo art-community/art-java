@@ -43,7 +43,7 @@ import java.io.*;
 import java.util.*;
 
 
-@ForUsing
+@Public
 @AllArgsConstructor
 public class YamlReader implements Reader {
     private final YAMLFactory jsonFactory;

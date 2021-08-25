@@ -16,12 +16,11 @@ public class HttpModuleRefresher implements ModuleRefresher {
     private final ChangesListenerRegistry connectorLoggingListeners = changesListenerRegistry();
     private final Consumer consumer = new Consumer();
 
-    public HttpModuleRefresher produce() {
+    public void produce() {
         serverListener.produce();
         serverLoggingListener.produce();
         connectorListeners.produce();
         connectorLoggingListeners.produce();
-        return this;
     }
 
     @Getter

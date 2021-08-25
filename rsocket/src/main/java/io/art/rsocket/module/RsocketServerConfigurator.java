@@ -10,7 +10,7 @@ import io.art.server.configurator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerConfigurator> {
     private boolean tcp;
     private boolean ws;

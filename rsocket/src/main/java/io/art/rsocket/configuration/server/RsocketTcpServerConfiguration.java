@@ -33,12 +33,14 @@ import lombok.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.DEFAULT;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.rsocket.frame.FrameLengthCodec.*;
 import static io.rsocket.frame.decoder.PayloadDecoder.ZERO_COPY;
@@ -47,7 +49,7 @@ import static java.util.function.UnaryOperator.identity;
 import java.util.function.*;
 
 @Getter
-@ForUsing
+@Public
 @Builder(toBuilder = true)
 public class RsocketTcpServerConfiguration {
     private int maxFrameLength;
@@ -66,7 +68,7 @@ public class RsocketTcpServerConfiguration {
     private UnaryOperator<RSocketServer> decorator;
     private RsocketSslConfiguration ssl;
 
-    public static RsocketTcpServerConfiguration defaults() {
+    public static RsocketTcpServerConfiguration tcpServerConfiguration() {
         RsocketTcpServerConfiguration configuration = RsocketTcpServerConfiguration.builder().build();
         configuration.tcpDecorator = identity();
         configuration.decorator = identity();
@@ -84,7 +86,7 @@ public class RsocketTcpServerConfiguration {
         return configuration;
     }
 
-    public static RsocketTcpServerConfiguration from(RsocketModuleRefresher refresher, RsocketTcpServerConfiguration current, ConfigurationSource source) {
+    public static RsocketTcpServerConfiguration tcpServerConfiguration(RsocketModuleRefresher refresher, RsocketTcpServerConfiguration current, ConfigurationSource source) {
         RsocketTcpServerConfiguration configuration = RsocketTcpServerConfiguration.builder().build();
         configuration.tcpDecorator = current.tcpDecorator;
         configuration.decorator = current.decorator;

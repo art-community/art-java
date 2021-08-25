@@ -28,17 +28,22 @@ import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.transport.module.TransportModule.*;
 import static io.art.yaml.module.YamlModule.*;
 import static io.netty.buffer.ByteBufAllocator.*;
 import static lombok.AccessLevel.*;
+import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor(access = PRIVATE)
 public class TransportPayloadWriter {
     private final DataFormat dataFormat;
+
+    private final static Map<DataFormat, TransportPayloadWriter> CACHE = map(4);
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<TypedObject, ByteBuf> writer = writer(dataFormat);
@@ -102,6 +107,6 @@ public class TransportPayloadWriter {
     }
 
     public static TransportPayloadWriter transportPayloadWriter(DataFormat dataFormat) {
-        return new TransportPayloadWriter(dataFormat);
+        return putIfAbsent(CACHE, dataFormat, () -> new TransportPayloadWriter(dataFormat));
     }
 }

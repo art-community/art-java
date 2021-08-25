@@ -30,13 +30,12 @@ import static io.art.core.extensions.CollectionExtensions.skip;
 import static io.art.core.factory.MapFactory.*;
 import static java.lang.String.join;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import java.util.*;
 
 @ToString
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 public abstract class MetaPackage {
     private final String name;

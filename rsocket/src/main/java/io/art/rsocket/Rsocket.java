@@ -8,7 +8,7 @@ import lombok.experimental.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Rsocket {
     public static <T extends Connector> T rsocketConnector(Class<T> connectorClass) {

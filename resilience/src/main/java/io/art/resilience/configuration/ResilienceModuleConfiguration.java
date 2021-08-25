@@ -23,7 +23,7 @@ import io.art.core.module.*;
 import lombok.*;
 
 @Getter
-@ForUsing
+@Public
 public class ResilienceModuleConfiguration implements ModuleConfiguration {
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<ResilienceModuleConfiguration, Configurator> {

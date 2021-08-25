@@ -7,7 +7,7 @@ import lombok.experimental.*;
 import static io.art.yaml.module.YamlModule.*;
 import static lombok.AccessLevel.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Yaml {
     private final static Provider provider = new Provider();

@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration.common;
 
+import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.core.source.*;
 import lombok.*;
@@ -31,6 +32,7 @@ import static reactor.util.retry.Retry.*;
 import java.time.*;
 
 @Getter
+@Public
 @Builder(toBuilder = true)
 public class RsocketRetryConfiguration {
     private Duration minBackoff;

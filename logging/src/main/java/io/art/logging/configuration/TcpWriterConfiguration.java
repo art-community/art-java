@@ -21,7 +21,7 @@ package io.art.logging.configuration;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 
 @Getter
 @Builder(toBuilder = true)

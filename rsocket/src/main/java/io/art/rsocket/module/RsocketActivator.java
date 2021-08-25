@@ -25,7 +25,7 @@ import static io.art.core.module.ModuleActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class RsocketActivator {
     public static ModuleActivator rsocket() {

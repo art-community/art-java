@@ -25,7 +25,7 @@ import lombok.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
 
-@ForGenerator
+@Generation
 @EqualsAndHashCode(callSuper = true)
 public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
 

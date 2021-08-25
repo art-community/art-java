@@ -27,9 +27,9 @@ import io.art.resilience.constants.*;
 import lombok.Builder;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
 @Getter
@@ -41,7 +41,7 @@ public class CommunicatorActionConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static CommunicatorActionConfiguration from(CommunicatorRefresher refresher, CommunicatorActionConfiguration current, ConfigurationSource source) {
+    public static CommunicatorActionConfiguration communicatorActionConfiguration(CommunicatorRefresher refresher, CommunicatorActionConfiguration current, ConfigurationSource source) {
         CommunicatorActionConfiguration currentConfiguration = orElse(current, CommunicatorActionConfiguration::defaults);
         CommunicatorActionConfiguration configuration = CommunicatorActionConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();

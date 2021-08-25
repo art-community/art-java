@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration.common;
 
+import io.art.core.annotation.*;
 import io.art.core.source.*;
 import io.rsocket.core.*;
 import lombok.*;
@@ -28,6 +29,7 @@ import static java.util.Objects.*;
 import java.time.*;
 
 @Getter
+@Public
 @Builder(toBuilder = true)
 public class RsocketResumeConfiguration {
     private boolean cleanupStoreOnKeepAlive;

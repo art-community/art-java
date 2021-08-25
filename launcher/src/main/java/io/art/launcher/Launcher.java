@@ -46,7 +46,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Launcher {
     private static final AtomicBoolean launched = new AtomicBoolean(false);

@@ -25,6 +25,7 @@ import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
@@ -46,7 +47,7 @@ public class RsocketTcpClientConfiguration {
     private UnaryOperator<TcpClient> clientDecorator;
     private UnaryOperator<TcpClientTransport> transportDecorator;
 
-    public static RsocketTcpClientConfiguration defaults(String connector) {
+    public static RsocketTcpClientConfiguration tcpClientConfiguration(String connector) {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
         configuration.maxFrameLength = FRAME_LENGTH_MASK;
         configuration.clientDecorator = identity();
@@ -57,7 +58,7 @@ public class RsocketTcpClientConfiguration {
         return configuration;
     }
 
-    public static RsocketTcpClientConfiguration from(RsocketModuleRefresher refresher, RsocketTcpClientConfiguration current, ConfigurationSource source) {
+    public static RsocketTcpClientConfiguration tcpClientConfiguration(RsocketModuleRefresher refresher, RsocketTcpClientConfiguration current, ConfigurationSource source) {
         RsocketTcpClientConfiguration configuration = RsocketTcpClientConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.connector = current.connector;

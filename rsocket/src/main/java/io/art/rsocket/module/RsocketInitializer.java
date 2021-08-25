@@ -35,7 +35,7 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfiguration, RsocketModuleConfiguration.Configurator, RsocketModule> {
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
     private final RsocketCommunicatorConfigurator communicatorConfigurator = new RsocketCommunicatorConfigurator();

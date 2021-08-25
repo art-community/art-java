@@ -19,7 +19,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<RsocketCommunicatorConfigurator> {
     private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private final Map<String, RsocketWsConnectorConfiguration> wsConnectors = map();

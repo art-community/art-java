@@ -1,16 +1,16 @@
 package io.art.rsocket.module;
 
 import io.art.core.annotation.*;
-import io.art.rsocket.configuration.communicator.common.*;
-import io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import io.art.rsocket.configuration.communicator.ws.*;
-import io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientGroupConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public class RsocketWsConnectorConfigurator {
     private final String connector;
@@ -29,7 +29,7 @@ public class RsocketWsConnectorConfigurator {
     }
 
     public RsocketWsConnectorConfigurator single(UnaryOperator<RsocketWsClientConfigurationBuilder> configurator) {
-        single = configurator.apply(RsocketWsClientConfiguration.defaults(connector).toBuilder()).build();
+        single = configurator.apply(wsClientConfiguration(connector).toBuilder()).build();
         return this;
     }
 
@@ -40,9 +40,9 @@ public class RsocketWsConnectorConfigurator {
 
     RsocketWsConnectorConfiguration configure() {
         return RsocketWsConnectorConfiguration.builder()
-                .commonConfiguration(commonConfigurator.apply(RsocketCommonConnectorConfiguration.defaults(connector).toBuilder()).build())
-                .groupConfiguration(orElse(group, RsocketWsClientGroupConfiguration.defaults(connector)))
-                .singleConfiguration(orElse(single, RsocketWsClientConfiguration.defaults(connector)))
+                .commonConfiguration(commonConfigurator.apply(commonConnectorConfiguration(connector).toBuilder()).build())
+                .groupConfiguration(orElse(group, wsClientGroupConfiguration(connector)))
+                .singleConfiguration(orElse(single, wsClientConfiguration(connector)))
                 .build();
     }
 }

@@ -13,7 +13,7 @@ import static java.util.Optional.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Meta {
     public static <T, M extends MetaClass<T>> M declaration(Class<T> type) {

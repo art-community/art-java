@@ -37,7 +37,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
-@ForUsing
+@Public
 @AllArgsConstructor
 public class YamlWriter implements Writer {
     private final YAMLFactory jsonFactory;

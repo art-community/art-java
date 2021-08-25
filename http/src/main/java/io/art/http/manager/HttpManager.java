@@ -23,41 +23,39 @@ import io.art.communicator.action.*;
 import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.http.server.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import lombok.*;
 import reactor.core.*;
-import static io.art.communicator.module.CommunicatorModule.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.logging.module.LoggingModule.*;
-import static io.art.http.constants.HttpModuleConstants.HttpProtocol.*;
 import static lombok.AccessLevel.*;
 
 public class HttpManager {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(HttpManager.class);
+    private static final Logger logger = Logging.logger(HttpManager.class);
 
+    private final HttpModuleConfiguration configuration;
     private final HttpServer server;
 
     public HttpManager(HttpModuleRefresher refresher, HttpModuleConfiguration configuration) {
+        this.configuration = configuration;
         this.server = new HttpServer(refresher, configuration);
     }
 
     public void initializeCommunicators() {
-        communicatorModule()
-                .configuration()
-                .getRegistry()
-                .getByProtocol(HTTP)
-                .values()
-                .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::initialize));
+        configuration.getCommunicator()
+                .getConnectors()
+                .actions()
+                .forEach(CommunicatorAction::initialize);
     }
 
     public void disposeCommunicators() {
-        communicatorModule().configuration()
-                .getRegistry()
-                .getByProtocol(HTTP)
-                .values()
-                .forEach(proxy -> proxy.getActions().values().forEach(CommunicatorAction::dispose));
+        configuration.getCommunicator()
+                .getConnectors()
+                .actions()
+                .forEach(CommunicatorAction::dispose);
     }
+
 
     public void initializeServer() {
         server.initialize();

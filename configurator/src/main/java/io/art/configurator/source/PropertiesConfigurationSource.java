@@ -25,7 +25,7 @@ import static com.typesafe.config.ConfigFactory.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.constants.StringConstants.*;
 
-@ForUsing
+@Public
 public class PropertiesConfigurationSource implements NestedConfiguration {
     @Delegate
     private final TypesafeConfigurationSource typesafeConfigurationSource = new TypesafeConfigurationSource(ConfigurationSourceParameters.builder()

@@ -29,7 +29,7 @@ import static io.art.scheduler.executor.deferred.DeferredExecutor.*;
 import java.time.*;
 
 @Getter
-@ForUsing
+@Public
 public class SchedulerModuleConfiguration implements ModuleConfiguration {
     private final DeferredExecutor deferredExecutor = deferredExecutorBuilder()
             .exceptionHandler(new DefaultExceptionHandler())

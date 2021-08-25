@@ -7,7 +7,7 @@ import lombok.experimental.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static lombok.AccessLevel.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class MessagePack {
     private final static Provider provider = new Provider();

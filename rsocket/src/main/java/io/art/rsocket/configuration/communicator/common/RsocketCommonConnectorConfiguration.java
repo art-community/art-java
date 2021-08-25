@@ -10,6 +10,7 @@ import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.strategy.ServiceMethodStrategy.*;
 import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
@@ -18,6 +19,7 @@ import static io.art.rsocket.configuration.common.RsocketSslConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static java.util.function.UnaryOperator.*;
@@ -43,7 +45,7 @@ public class RsocketCommonConnectorConfiguration {
     private UnaryOperator<RSocketConnector> decorator;
     private RsocketSslConfiguration ssl;
 
-    public static RsocketCommonConnectorConfiguration defaults(String connector) {
+    public static RsocketCommonConnectorConfiguration commonConnectorConfiguration(String connector) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
         configuration.dataFormat = MESSAGE_PACK;
         configuration.metaDataFormat = MESSAGE_PACK;
@@ -62,7 +64,7 @@ public class RsocketCommonConnectorConfiguration {
         return configuration;
     }
 
-    public static RsocketCommonConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketCommonConnectorConfiguration current, ConfigurationSource source) {
+    public static RsocketCommonConnectorConfiguration commonConnectorConfiguration(RsocketModuleRefresher refresher, RsocketCommonConnectorConfiguration current, ConfigurationSource source) {
         RsocketCommonConnectorConfiguration configuration = RsocketCommonConnectorConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(current.connector);

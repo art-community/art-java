@@ -41,7 +41,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
-@ForUsing
+@Public
 public class MessagePackWriter implements Writer {
     @Override
     public void write(TypedObject model, ByteBuffer buffer) {

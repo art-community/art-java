@@ -56,6 +56,19 @@ public interface TransportModuleConstants {
         String BUFFER_TYPE_KEY = "type";
         String BUFFER_INITIAL_CAPACITY_KEY = "initialCapacity";
         String BUFFER_MAX_CAPACITY_KEY = "maxCapacity";
+
+        String SSL_SECTION = "ssl";
+        String DATA_FORMAT_KEY = "dataFormat";
+        String META_DATA_FORMAT_KEY = "metaDataFormat";
+        String SERVICE_ID_KEY = "serviceId";
+        String METHOD_ID_KEY = "methodId";
+        String TIMEOUT_KEY = "timeout";
+        String PAYLOAD_DECODER_KEY = "payloadDecoder";
+        String CERTIFICATE_KEY = "certificate";
+        String KEY_KEY = "key";
+        String PASSWORD_KEY = "password";
+        String DEACTIVATED_KEY = "deactivated";
+        String LOGGING_KEY = "logging";
     }
 
     @Getter

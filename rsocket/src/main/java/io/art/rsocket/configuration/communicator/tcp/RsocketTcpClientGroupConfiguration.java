@@ -30,6 +30,7 @@ import static io.art.communicator.constants.CommunicatorConstants.ConfigurationK
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpClientConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static java.util.function.UnaryOperator.*;
@@ -44,7 +45,7 @@ public class RsocketTcpClientGroupConfiguration {
     private UnaryOperator<TcpClient> clientDecorator;
     private UnaryOperator<TcpClientTransport> transportDecorator;
 
-    public static RsocketTcpClientGroupConfiguration defaults(String connector) {
+    public static RsocketTcpClientGroupConfiguration tcpClientGroupConfiguration(String connector) {
         RsocketTcpClientGroupConfiguration configuration = RsocketTcpClientGroupConfiguration.builder().build();
         configuration.balancer = ROUND_ROBIN;
         configuration.clientConfigurations = emptyImmutableSet();
@@ -54,7 +55,7 @@ public class RsocketTcpClientGroupConfiguration {
         return configuration;
     }
 
-    public static RsocketTcpClientGroupConfiguration from(RsocketModuleRefresher refresher, RsocketTcpClientGroupConfiguration current, ConfigurationSource source) {
+    public static RsocketTcpClientGroupConfiguration tcpClientGroupConfiguration(RsocketModuleRefresher refresher, RsocketTcpClientGroupConfiguration current, ConfigurationSource source) {
         RsocketTcpClientGroupConfiguration configuration = RsocketTcpClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
         configuration.clientDecorator = current.clientDecorator;
@@ -67,7 +68,7 @@ public class RsocketTcpClientGroupConfiguration {
     }
 
     private static RsocketTcpClientConfiguration clientConfiguration(RsocketModuleRefresher refresher, RsocketTcpClientGroupConfiguration current, NestedConfiguration nested) {
-        RsocketTcpClientConfiguration defaults = RsocketTcpClientConfiguration.defaults(current.connector);
-        return RsocketTcpClientConfiguration.from(refresher, defaults, nested);
+        RsocketTcpClientConfiguration defaults = tcpClientConfiguration(current.connector);
+        return tcpClientConfiguration(refresher, defaults, nested);
     }
 }

@@ -42,7 +42,7 @@ import java.io.*;
 import java.util.*;
 
 
-@ForUsing
+@Public
 @AllArgsConstructor
 public class JsonReader implements Reader {
     private final JsonFactory jsonFactory;

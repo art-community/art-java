@@ -30,7 +30,7 @@ import static io.art.logging.constants.LoggingModuleConstants.ConfigurationKeys.
 import static io.art.logging.constants.LoggingModuleConstants.Defaults.*;
 
 @Getter
-@ForUsing
+@Public
 public class LoggingModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, LoggerConfiguration> loggers = emptyImmutableMap();
 

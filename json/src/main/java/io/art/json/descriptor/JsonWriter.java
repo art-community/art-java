@@ -37,7 +37,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.*;
 
-@ForUsing
+@Public
 @AllArgsConstructor
 public class JsonWriter implements Writer {
     private final JsonFactory jsonFactory;

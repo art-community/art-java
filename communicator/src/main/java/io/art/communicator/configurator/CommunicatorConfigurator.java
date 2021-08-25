@@ -38,7 +38,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurator<C>> {
     private final List<ClassBasedConfiguration> classBased = linkedList();

@@ -26,7 +26,7 @@ import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.property.LazyProperty.*;
 
-@ForUsing
+@Public
 @AllArgsConstructor
 public class MetaModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<? extends MetaLibrary> library;

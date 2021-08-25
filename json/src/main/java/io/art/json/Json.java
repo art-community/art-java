@@ -7,7 +7,7 @@ import lombok.experimental.*;
 import static io.art.json.module.JsonModule.*;
 import static lombok.AccessLevel.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Json {
     private final static Provider provider = new Provider();

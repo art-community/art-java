@@ -2,7 +2,7 @@ package io.art.core.constants;
 
 import io.art.core.annotation.*;
 
-@ForGenerator
+@Generation
 public interface CompilerSuppressingWarnings {
     String ALL = "all";
     String WARNINGS = "warnings";

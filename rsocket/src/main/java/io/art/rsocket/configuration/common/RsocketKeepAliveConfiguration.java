@@ -18,6 +18,7 @@
 
 package io.art.rsocket.configuration.common;
 
+import io.art.core.annotation.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -26,6 +27,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 
 @Getter
+@Public
 @Builder(toBuilder = true)
 public class RsocketKeepAliveConfiguration {
     private final Duration interval;

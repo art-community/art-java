@@ -22,8 +22,6 @@ public interface ServerConstants {
     interface ConfigurationKeys {
         String SERVER_SECTION = "server";
         String SERVER_SERVICES_KEY = "services";
-        String DEACTIVATED_KEY = "deactivated";
-        String LOGGING_KEY = "logging";
         String VALIDATING_KEY = "validating";
         String METHODS_KEY = "methods";
     }

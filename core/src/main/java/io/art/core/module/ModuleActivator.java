@@ -25,7 +25,7 @@ import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
 @Builder
-@ForUsing
+@Public
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ModuleActivator {
     @Getter

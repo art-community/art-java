@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import lombok.*;
 
 @Getter
-@ForUsing
+@Public
 @AllArgsConstructor
 public class TypedObject {
     private final MetaType<?> type;

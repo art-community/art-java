@@ -18,7 +18,6 @@
 
 package io.art.http.constants;
 
-import io.art.communicator.constants.CommunicatorConstants.*;
 import lombok.*;
 import java.time.*;
 
@@ -58,17 +57,12 @@ public interface HttpModuleConstants {
 
     interface ConfigurationKeys {
         String HTTP_SECTION = "http";
-        String SERVER_SECTION = "server";
-        String COMMUNICATOR_SECTION = "communicator";
         String RESUME_SECTION = "produce";
         String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
 
         String DEFAULT_SECTION = "default";
-        String DATA_FORMAT_KEY = "dataFormat";
-        String SERVICE_ID_KEY = "serviceId";
-        String METHOD_ID_KEY = "methodId";
 
         String TRANSPORT_SECTION = "transport";
         String TRANSPORT_MODE_KEY = "transport.mode";
@@ -93,7 +87,7 @@ public interface HttpModuleConstants {
         String MAX_IN_ROW_KEY = "maxInRow";
         String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
 
-        String SERVICES_KEY = "services";
+        String ROUTES_SECTION = "routes";
 
         String INTERVAL_KEY = "interval";
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
@@ -102,6 +96,9 @@ public interface HttpModuleConstants {
 
         String PATH_KEY = "path";
         String METHOD_KEY = "method";
+
+        String WS_AGGREGATE_FRAMES_KEY = "ws.aggregateFrames";
+        String ROUTED_PATH_KEY = "routed.path";
     }
 
     interface ContextKeys {
@@ -119,14 +116,14 @@ public interface HttpModuleConstants {
         String PATCH_METHOD_NAME = "PATCH";
     }
 
-    enum HttpMethodType {
+    enum HttpRouteType {
         GET,
         POST,
         PUT,
         DELETE,
         OPTIONS,
         HEAD,
-//        PATCH,
+        PATCH,
         DIRECTORY,
         FILE,
         WEBSOCKET
@@ -141,11 +138,6 @@ public interface HttpModuleConstants {
         int DEFAULT_PORT = 80;
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
-    }
-
-    interface Fields {
-        String SETUP_PAYLOAD_DATA_FORMAT_FIELD = "dataFormat";
-        String SETUP_PAYLOAD_META_DATA_FORMAT_FIELD = "metaDataFormat";
     }
 
     @Getter
@@ -167,40 +159,5 @@ public interface HttpModuleConstants {
             if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
             return fallback;
         }
-    }
-
-    @Getter
-    @AllArgsConstructor
-    enum PayloadDecoderMode {
-        ZERO_COPY("zeroCopy"),
-        DEFAULT("default");
-
-        private final String decoder;
-
-        public static PayloadDecoderMode httpPayloadDecoder(String decoder) {
-            return httpPayloadDecoder(decoder, DEFAULT);
-        }
-
-        public static PayloadDecoderMode httpPayloadDecoder(String decoder, PayloadDecoderMode fallback) {
-            if (ZERO_COPY.decoder.equalsIgnoreCase(decoder)) return ZERO_COPY;
-            if (DEFAULT.decoder.equalsIgnoreCase(decoder)) return DEFAULT;
-            return fallback;
-        }
-    }
-
-    enum CommunicationMode {
-        FIRE_AND_FORGET,
-        REQUEST_RESPONSE,
-        REQUEST_STREAM,
-        REQUEST_CHANNEL,
-        METADATA_PUSH
-    }
-
-    @Getter
-    @AllArgsConstructor
-    enum HttpProtocol implements CommunicatorProtocol {
-        HTTP("http");
-
-        String protocol;
     }
 }

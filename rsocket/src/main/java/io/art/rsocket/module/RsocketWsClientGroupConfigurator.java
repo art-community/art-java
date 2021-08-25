@@ -9,7 +9,7 @@ import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public class RsocketWsClientGroupConfigurator {
     private final String connector;
@@ -17,12 +17,12 @@ public class RsocketWsClientGroupConfigurator {
     private final Set<RsocketWsClientConfiguration> clients = set();
 
     public RsocketWsClientGroupConfigurator client(UnaryOperator<RsocketWsClientConfigurationBuilder> configurator) {
-        clients.add(configurator.apply(RsocketWsClientConfiguration.defaults(connector).toBuilder()).build());
+        clients.add(configurator.apply(RsocketWsClientConfiguration.wsClientConfiguration(connector).toBuilder()).build());
         return this;
     }
 
     RsocketWsClientGroupConfiguration configure() {
-        return RsocketWsClientGroupConfiguration.defaults(connector)
+        return RsocketWsClientGroupConfiguration.wsClientGroupConfiguration(connector)
                 .toBuilder()
                 .balancer(balancer)
                 .clientConfigurations(immutableSetOf(clients))

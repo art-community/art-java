@@ -44,7 +44,7 @@ public class RsocketWsClientGroupConfiguration {
     private UnaryOperator<HttpClient> clientDecorator;
     private UnaryOperator<WebsocketClientTransport> transportDecorator;
 
-    public static RsocketWsClientGroupConfiguration defaults(String connector) {
+    public static RsocketWsClientGroupConfiguration wsClientGroupConfiguration(String connector) {
         RsocketWsClientGroupConfiguration configuration = RsocketWsClientGroupConfiguration.builder().build();
         configuration.balancer = ROUND_ROBIN;
         configuration.clientConfigurations = emptyImmutableSet();
@@ -54,7 +54,7 @@ public class RsocketWsClientGroupConfiguration {
         return configuration;
     }
 
-    public static RsocketWsClientGroupConfiguration from(RsocketModuleRefresher refresher, RsocketWsClientGroupConfiguration current, ConfigurationSource source) {
+    public static RsocketWsClientGroupConfiguration wsClientGroupConfiguration(RsocketModuleRefresher refresher, RsocketWsClientGroupConfiguration current, ConfigurationSource source) {
         RsocketWsClientGroupConfiguration configuration = RsocketWsClientGroupConfiguration.builder().build();
         configuration.connector = current.connector;
         configuration.clientDecorator = current.clientDecorator;
@@ -67,7 +67,7 @@ public class RsocketWsClientGroupConfiguration {
     }
 
     private static RsocketWsClientConfiguration clientConfiguration(RsocketModuleRefresher refresher, RsocketWsClientGroupConfiguration current, NestedConfiguration nested) {
-        RsocketWsClientConfiguration defaults = RsocketWsClientConfiguration.defaults(current.connector);
-        return RsocketWsClientConfiguration.from(refresher, defaults, nested);
+        RsocketWsClientConfiguration defaults = RsocketWsClientConfiguration.wsClientConfiguration(current.connector);
+        return RsocketWsClientConfiguration.wsClientConfiguration(refresher, defaults, nested);
     }
 }

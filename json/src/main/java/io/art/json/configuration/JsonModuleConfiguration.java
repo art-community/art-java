@@ -26,7 +26,7 @@ import io.art.json.descriptor.*;
 import lombok.*;
 
 @Getter
-@ForUsing
+@Public
 public class JsonModuleConfiguration implements ModuleConfiguration {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final JsonReader reader = new JsonReader(objectMapper.getFactory());

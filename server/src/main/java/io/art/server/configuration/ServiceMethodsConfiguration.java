@@ -29,7 +29,9 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.server.configuration.ServiceMethodConfiguration.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
 @Getter
@@ -42,7 +44,7 @@ public class ServiceMethodsConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static ServiceMethodsConfiguration from(ServerRefresher refresher, ServiceMethodsConfiguration current, ConfigurationSource source) {
+    public static ServiceMethodsConfiguration serviceMethodsConfiguration(ServerRefresher refresher, ServiceMethodsConfiguration current, ConfigurationSource source) {
         final ServiceMethodsConfiguration currentConfiguration = orElse(current, ServiceMethodsConfiguration::defaults);
         ServiceMethodsConfiguration configuration = ServiceMethodsConfiguration.builder().build();
         ChangesListener deactivationListener = refresher.deactivationListener();
@@ -56,7 +58,7 @@ public class ServiceMethodsConfiguration {
     }
 
     private static ServiceMethodConfiguration getMethod(ServerRefresher refresher, ServiceMethodsConfiguration currentConfiguration, NestedConfiguration method) {
-        return ServiceMethodConfiguration.from(refresher, currentConfiguration.methods.get(method.getParent()), method);
+        return serviceMethodConfiguration(refresher, currentConfiguration.methods.get(method.getParent()), method);
     }
 
     public static ServiceMethodsConfiguration defaults() {

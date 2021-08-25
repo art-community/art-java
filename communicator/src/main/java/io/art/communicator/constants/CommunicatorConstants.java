@@ -20,14 +20,12 @@ package io.art.communicator.constants;
 
 public interface CommunicatorConstants {
     interface Errors {
-        String COMMUNICATOR_WAS_NOT_REGISTERED = "Communicator with {0} was not registered";
         String COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY = "Communicator interface {0} has methods:\n{1} with >1 parameters. Proxy could be created only for <2 parameter methods interfaces";
         String CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY = "Connector interface {0} has methods:\n{1} with return type that is not proxy type";
     }
 
     interface LoggingMessages {
         String COMMUNICATOR_LOGGER = "communicator";
-        String COMMUNICATOR_REGISTRATION_MESSAGE = "Registered communicator: ''{0}'' with actions: {1}";
         String COMMUNICATOR_SUBSCRIBED_MESSAGE = "Communicator subscribed: ''{0}.{1}''";
         String COMMUNICATOR_INPUT_DATA = "Communicator ''{0}.{1}'' input:\n{2}";
         String COMMUNICATOR_OUTPUT_DATA = "Communicator ''{0}.{1}'' output:\n{2}";
@@ -36,17 +34,9 @@ public interface CommunicatorConstants {
     }
 
     interface ConfigurationKeys {
+        String CONNECTORS_SECTION = "connectors";
         String COMMUNICATOR_SECTION = "communicator";
         String TARGETS_SECTION = "targets";
         String ACTIONS_SECTION = "actions";
-        String LOGGING_KEY = "logging";
-        String DEACTIVATED_KEY = "deactivated";
-        String CONNECTOR_KEY = "connector";
-    }
-
-    interface CommunicatorProtocol {
-        String getProtocol();
-
-        String name();
     }
 }

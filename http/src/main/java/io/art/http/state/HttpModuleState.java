@@ -19,25 +19,21 @@
 package io.art.http.state;
 
 import io.art.core.module.*;
-import io.art.server.module.*;
-
+import io.art.meta.model.*;
 import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
-    private final ThreadLocal<HttpContext> threadLocalContext = new ThreadLocal<>();
+    private final MetaLocalState<HttpLocalState> localState = new MetaLocalState<>();
 
-    public void localContext(Function<HttpContext, HttpContext> functor) {
-        threadLocalContext.set(functor.apply(threadLocalContext.get()));
+    public void httpState(MetaClass<?> owner, MetaMethod<?> method, HttpLocalState state) {
+        localState.set(owner, method, state);
     }
 
-    public void localContext(HttpContext context) {
-        threadLocalContext.set(context);
+    public <C, M extends MetaClass<C>> HttpLocalState httpState(Class<C> owner, Function<M, MetaMethod<?>> method) {
+        return localState.get(owner, method);
     }
 
-    public HttpContext localContext() {
-        return ServerModule.serverModule().state().localState().getContext().get(HttpContext.class);
+    public <C, M extends MetaClass<C>> void clearHttpState(MetaClass<?> owner, MetaMethod<?> method) {
+        localState.remove(owner, method);
     }
-
-
-
 }

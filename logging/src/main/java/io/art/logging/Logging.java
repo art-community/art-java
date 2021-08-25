@@ -9,7 +9,7 @@ import static io.art.logging.constants.LoggingModuleConstants.*;
 import static io.art.logging.module.LoggingModule.*;
 import java.util.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Logging {
     public static Logger logger() {

@@ -41,8 +41,6 @@ public interface LoggingModuleConstants {
         String SUFFIX_KEY = "suffix";
         String TIMESTAMP_FORMAT_KEY = "timestampFormat";
         String ROTATION_PERIOD_KEY = "rotationPeriod";
-        String HOST_KEY = "host";
-        String PORT_KEY = "port";
     }
 
     interface Defaults {

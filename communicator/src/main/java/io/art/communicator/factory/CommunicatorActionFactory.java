@@ -9,6 +9,7 @@ import io.art.communicator.refresher.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
+import static io.art.communicator.configuration.CommunicatorConfiguration.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -41,7 +42,7 @@ public class CommunicatorActionFactory {
 
     public CommunicatorAction preconfiguredCommunicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
-        CommunicatorConfiguration configuration = CommunicatorConfiguration.defaults(new CommunicatorRefresher());
+        CommunicatorConfiguration configuration = communicatorConfiguration(new CommunicatorRefresher());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(method.returnType())

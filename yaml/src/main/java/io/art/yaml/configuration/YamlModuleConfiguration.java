@@ -26,7 +26,7 @@ import io.art.yaml.descriptor.*;
 import lombok.*;
 
 @Getter
-@ForUsing
+@Public
 public class YamlModuleConfiguration implements ModuleConfiguration {
     private final YAMLMapper objectMapper = new YAMLMapper();
     private final YamlReader reader = new YamlReader(objectMapper.getFactory());

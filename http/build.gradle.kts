@@ -17,22 +17,10 @@
  */
 
 dependencies {
-    val nettyVersion: String by project
-    val reactorNettyVersion: String by project
-
-    implementation(project(":core"))
-    implementation(project(":meta"))
+    api(project(":core"))
+    api(project(":meta"))
+    api(project(":transport"))
+    api(project(":server"))
+    api(project(":communicator"))
     implementation(project(":logging"))
-    implementation(project(":transport"))
-    implementation(project(":server"))
-    implementation(project(":communicator"))
-
-    api("io.projectreactor.netty", "reactor-netty", reactorNettyVersion)
-            .exclude("io.zipkin.brave")
-            .exclude("io.netty")
-            .exclude("io.projectreactor", "reactor-core")
-            .exclude("org.slf4j")
-
-    api("io.netty", "netty-all", nettyVersion)
-            .exclude("org.slf4j")
 }

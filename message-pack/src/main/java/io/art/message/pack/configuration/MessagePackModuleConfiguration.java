@@ -25,7 +25,7 @@ import io.art.message.pack.descriptor.*;
 import lombok.*;
 
 @Getter
-@ForUsing
+@Public
 public class MessagePackModuleConfiguration implements ModuleConfiguration {
     private final MessagePackReader reader = new MessagePackReader();
     private final MessagePackWriter writer = new MessagePackWriter();

@@ -28,6 +28,7 @@ import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
 @Getter
@@ -39,7 +40,7 @@ public class ServiceMethodConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static ServiceMethodConfiguration from(ServerRefresher refresher, ServiceMethodConfiguration current, ConfigurationSource source) {
+    public static ServiceMethodConfiguration serviceMethodConfiguration(ServerRefresher refresher, ServiceMethodConfiguration current, ConfigurationSource source) {
         current = orElse(current, ServiceMethodConfiguration::defaults);
         ServiceMethodConfiguration configuration = ServiceMethodConfiguration.builder().build();
         ChangesListener deactivationListener = refresher.deactivationListener();

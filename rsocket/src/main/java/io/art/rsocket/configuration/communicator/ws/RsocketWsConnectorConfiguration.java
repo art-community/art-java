@@ -5,6 +5,9 @@ import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientGroupConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 
 @Getter
@@ -14,36 +17,38 @@ public class RsocketWsConnectorConfiguration {
     private RsocketWsClientGroupConfiguration groupConfiguration;
     private RsocketWsClientConfiguration singleConfiguration;
 
-    public static RsocketWsConnectorConfiguration from(RsocketModuleRefresher refresher, RsocketWsConnectorConfiguration current, ConfigurationSource source) {
-        RsocketWsConnectorConfiguration currentConfiguration = orElse(current, () -> defaults(source.getParent()));
+    public static RsocketWsConnectorConfiguration wsConnectorConfiguration(RsocketModuleRefresher refresher, RsocketWsConnectorConfiguration current, ConfigurationSource source) {
+        RsocketWsConnectorConfiguration currentConfiguration = orElse(current, () -> wsConnectorConfiguration(source.getParent()));
 
         RsocketWsConnectorConfiguration configuration = RsocketWsConnectorConfiguration.builder().build();
-        configuration.commonConfiguration = RsocketCommonConnectorConfiguration.from(refresher, currentConfiguration.commonConfiguration, source);
+        configuration.commonConfiguration = commonConnectorConfiguration(refresher, currentConfiguration.commonConfiguration, source);
 
         RsocketWsClientGroupConfiguration groupConfiguration = source.getNested(GROUP_SECTION, nested -> groupConfiguration(refresher, currentConfiguration, nested));
-        RsocketWsClientGroupConfiguration defaultGroup = RsocketWsClientGroupConfiguration.defaults(currentConfiguration.commonConfiguration.getConnector());
+        RsocketWsClientGroupConfiguration defaultGroup = wsClientGroupConfiguration(currentConfiguration.commonConfiguration.getConnector());
         configuration.groupConfiguration = orElse(groupConfiguration, orElse(currentConfiguration.groupConfiguration, defaultGroup));
 
         RsocketWsClientConfiguration clientConfiguration = source.getNested(SINGLE_SECTION, nested -> singleConfiguration(refresher, currentConfiguration, nested));
-        RsocketWsClientConfiguration defaultSingle = RsocketWsClientConfiguration.defaults(currentConfiguration.commonConfiguration.getConnector());
+        RsocketWsClientConfiguration defaultSingle = wsClientConfiguration(currentConfiguration.commonConfiguration.getConnector());
         configuration.singleConfiguration = orElse(clientConfiguration, orElse(currentConfiguration.singleConfiguration, defaultSingle));
 
         return configuration;
     }
 
-    public static RsocketWsConnectorConfiguration defaults(String connector) {
+    public static RsocketWsConnectorConfiguration wsConnectorConfiguration(String connector) {
         return RsocketWsConnectorConfiguration.builder()
-                .commonConfiguration(RsocketCommonConnectorConfiguration.defaults(connector))
+                .commonConfiguration(commonConnectorConfiguration(connector))
                 .build();
     }
 
     private static RsocketWsClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, RsocketWsConnectorConfiguration current, NestedConfiguration nested) {
-        RsocketWsClientConfiguration clientConfiguration = orElse(current.singleConfiguration, RsocketWsClientConfiguration.defaults(current.commonConfiguration.getConnector()));
-        return RsocketWsClientConfiguration.from(refresher, clientConfiguration, nested);
+        RsocketWsClientConfiguration wsClientConfiguration = wsClientConfiguration(current.commonConfiguration.getConnector());
+        RsocketWsClientConfiguration clientConfiguration = orElse(current.singleConfiguration, wsClientConfiguration);
+        return wsClientConfiguration(refresher, clientConfiguration, nested);
     }
 
     private static RsocketWsClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, RsocketWsConnectorConfiguration current, NestedConfiguration nested) {
-        RsocketWsClientGroupConfiguration groupConfiguration = orElse(current.groupConfiguration, RsocketWsClientGroupConfiguration.defaults(current.commonConfiguration.getConnector()));
-        return RsocketWsClientGroupConfiguration.from(refresher, groupConfiguration, nested);
+        RsocketWsClientGroupConfiguration wsClientGroupConfiguration = wsClientGroupConfiguration(current.commonConfiguration.getConnector());
+        RsocketWsClientGroupConfiguration groupConfiguration = orElse(current.groupConfiguration, wsClientGroupConfiguration);
+        return wsClientGroupConfiguration(refresher, groupConfiguration, nested);
     }
 }

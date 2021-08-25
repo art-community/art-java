@@ -27,6 +27,7 @@ import io.art.core.source.*;
 import io.art.resilience.configuration.*;
 import lombok.Builder;
 import lombok.*;
+import static io.art.communicator.configuration.CommunicatorActionsConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
@@ -95,7 +96,7 @@ public class CommunicatorConfiguration {
         return mapper.apply(actionConfiguration);
     }
 
-    public static CommunicatorConfiguration from(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
+    public static CommunicatorConfiguration communicatorConfiguration(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
         CommunicatorConfigurationBuilder builder = current.toBuilder();
         builder.configurations(lazy(() -> merge(current.configurations.get(), ofNullable(source.getNested(COMMUNICATOR_SECTION))
                 .map(communicator -> communicator.getNestedMap(TARGETS_SECTION, actions -> getActions(current, builder, actions)))
@@ -105,11 +106,11 @@ public class CommunicatorConfiguration {
     }
 
     private static CommunicatorActionsConfiguration getActions(CommunicatorConfiguration current, CommunicatorConfigurationBuilder builder, NestedConfiguration actions) {
-        return CommunicatorActionsConfiguration.from(builder.refresher, current.configurations.get().get(actions.getParent()), actions);
+        return communicatorActionsConfiguration(builder.refresher, current.configurations.get().get(actions.getParent()), actions);
     }
 
 
-    public static CommunicatorConfiguration defaults(CommunicatorRefresher refresher) {
+    public static CommunicatorConfiguration communicatorConfiguration(CommunicatorRefresher refresher) {
         return CommunicatorConfiguration.builder()
                 .refresher(refresher)
                 .consumer(refresher.consumer())

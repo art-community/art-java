@@ -6,5 +6,5 @@ import java.lang.annotation.*;
 
 @Target({TYPE})
 @Retention(SOURCE)
-public @interface ForUsing {
+public @interface Public {
 }

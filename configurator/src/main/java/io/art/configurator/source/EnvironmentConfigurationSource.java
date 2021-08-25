@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.function.*;
 
 @Getter
-@ForUsing
+@Public
 @AllArgsConstructor
 public class EnvironmentConfigurationSource implements NestedConfiguration {
     private final String section;

@@ -31,7 +31,7 @@ import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
     private final List<ClassBasedConfiguration> classBased = linkedList();

@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @ToString
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 public abstract class MetaLibrary {
     private ImmutableMap<Class<?>, MetaClass<?>> classes;

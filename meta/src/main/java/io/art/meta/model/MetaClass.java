@@ -43,7 +43,7 @@ import static java.util.function.Function.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
     private final MetaType<T> definition;

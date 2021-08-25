@@ -27,7 +27,7 @@ import static io.art.core.factory.MapFactory.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 public abstract class MetaMethod<T> {
     private final String name;

@@ -45,7 +45,7 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForGenerator
+@Generation
 @EqualsAndHashCode
 @Accessors(fluent = true)
 @Builder(toBuilder = true)

@@ -35,7 +35,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public class PeriodicExecutor {
     private final Map<String, Future<?>> executingTasks = concurrentMap();

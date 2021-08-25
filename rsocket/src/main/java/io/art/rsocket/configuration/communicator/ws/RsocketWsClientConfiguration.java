@@ -25,6 +25,7 @@ import io.rsocket.transport.netty.client.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
@@ -45,7 +46,7 @@ public class RsocketWsClientConfiguration {
     private UnaryOperator<HttpClient> clientDecorator;
     private UnaryOperator<WebsocketClientTransport> transportDecorator;
 
-    public static RsocketWsClientConfiguration defaults(String connector) {
+    public static RsocketWsClientConfiguration wsClientConfiguration(String connector) {
         RsocketWsClientConfiguration configuration = RsocketWsClientConfiguration.builder().build();
         configuration.path = DEFAULT_WS_PATH;
         configuration.clientDecorator = identity();
@@ -56,7 +57,7 @@ public class RsocketWsClientConfiguration {
         return configuration;
     }
 
-    public static RsocketWsClientConfiguration from(RsocketModuleRefresher refresher, RsocketWsClientConfiguration current, ConfigurationSource source) {
+    public static RsocketWsClientConfiguration wsClientConfiguration(RsocketModuleRefresher refresher, RsocketWsClientConfiguration current, ConfigurationSource source) {
         RsocketWsClientConfiguration configuration = RsocketWsClientConfiguration.builder().build();
         ChangesListener listener = refresher.connectorListeners().listenerFor(current.connector);
         configuration.connector = current.connector;

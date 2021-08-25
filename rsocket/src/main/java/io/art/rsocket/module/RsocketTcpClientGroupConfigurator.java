@@ -9,7 +9,7 @@ import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public class RsocketTcpClientGroupConfigurator {
     private final String connector;
@@ -17,12 +17,12 @@ public class RsocketTcpClientGroupConfigurator {
     private final Set<RsocketTcpClientConfiguration> clients = set();
 
     public RsocketTcpClientGroupConfigurator client(UnaryOperator<RsocketTcpClientConfigurationBuilder> configurator) {
-        clients.add(configurator.apply(RsocketTcpClientConfiguration.defaults(connector).toBuilder()).build());
+        clients.add(configurator.apply(RsocketTcpClientConfiguration.tcpClientConfiguration(connector).toBuilder()).build());
         return this;
     }
 
     RsocketTcpClientGroupConfiguration configure() {
-        return RsocketTcpClientGroupConfiguration.defaults(connector)
+        return RsocketTcpClientGroupConfiguration.tcpClientGroupConfiguration(connector)
                 .toBuilder()
                 .balancer(balancer)
                 .clientConfigurations(immutableSetOf(clients))

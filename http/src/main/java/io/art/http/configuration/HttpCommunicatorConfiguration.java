@@ -39,10 +39,10 @@ public class HttpCommunicatorConfiguration {
                 .orElseGet(() -> let(defaultConnectorConfiguration, HttpConnectorConfiguration::isLogging, false));
     }
 
-    public static HttpCommunicatorConfiguration from(HttpModuleRefresher refresher, ConfigurationSource source) {
+    public static HttpCommunicatorConfiguration communicatorConfiguration(HttpModuleRefresher refresher, ConfigurationSource source) {
         HttpCommunicatorConfiguration configuration = new HttpCommunicatorConfiguration();
-        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), HttpConnectorConfiguration::httpConnector, defaults());
-        configuration.connectorConfigurations = source.getNestedMap(CONNECTORS_KEY, connector -> httpConnector(refresher, configuration.defaultConnectorConfiguration, connector));
+        configuration.defaultConnectorConfiguration = let(source.getNested(DEFAULT_SECTION), HttpConnectorConfiguration::connectorConfiguration, HttpConnectorConfiguration.connectorConfiguration());
+        configuration.connectorConfigurations = source.getNestedMap(CONNECTORS_KEY, connector -> connectorConfiguration(refresher, configuration.defaultConnectorConfiguration, connector));
         return configuration;
     }
 }

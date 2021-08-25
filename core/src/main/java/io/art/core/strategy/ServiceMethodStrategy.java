@@ -9,7 +9,7 @@ import static io.art.core.strategy.ServiceMethodStrategy.Strategy.*;
 import java.util.function.*;
 
 public class ServiceMethodStrategy {
-    private Strategy strategy = BY_COMMUNICATOR;
+    private Strategy strategy = AUTOMATIC;
     private String manualId;
     private Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer;
 
@@ -26,32 +26,32 @@ public class ServiceMethodStrategy {
 
     public static ServiceMethodStrategy byCommunicator() {
         ServiceMethodStrategy strategy = new ServiceMethodStrategy();
-        strategy.strategy = BY_COMMUNICATOR;
+        strategy.strategy = AUTOMATIC;
         return strategy;
     }
 
     public static ServiceMethodStrategy fromCommunicator(Function<CommunicatorActionIdentifier, ServiceMethodIdentifier> transformer) {
         ServiceMethodStrategy strategy = new ServiceMethodStrategy();
-        strategy.strategy = FROM_COMMUNICATOR;
+        strategy.strategy = TRANSFORMED;
         strategy.transformer = transformer;
         return strategy;
     }
 
     public ServiceMethodIdentifier id(CommunicatorActionIdentifier id) {
         switch (strategy) {
-            case BY_COMMUNICATOR:
+            case AUTOMATIC:
                 return serviceMethodId(id.getCommunicatorId(), id.getActionId());
             case MANUAL:
                 return serviceMethodId(manualId, id.getActionId());
-            case FROM_COMMUNICATOR:
+            case TRANSFORMED:
                 return transformer.apply(id);
         }
         throw new ImpossibleSituationException();
     }
 
     enum Strategy {
-        BY_COMMUNICATOR,
+        AUTOMATIC,
         MANUAL,
-        FROM_COMMUNICATOR
+        TRANSFORMED
     }
 }

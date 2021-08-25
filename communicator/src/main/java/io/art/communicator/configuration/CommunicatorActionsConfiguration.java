@@ -27,10 +27,12 @@ import io.art.resilience.constants.*;
 import lombok.Builder;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.communicator.configuration.CommunicatorActionConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import java.util.function.*;
 
 @Getter
@@ -43,7 +45,7 @@ public class CommunicatorActionsConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
-    public static CommunicatorActionsConfiguration from(CommunicatorRefresher refresher, CommunicatorActionsConfiguration current, ConfigurationSource source) {
+    public static CommunicatorActionsConfiguration communicatorActionsConfiguration(CommunicatorRefresher refresher, CommunicatorActionsConfiguration current, ConfigurationSource source) {
         CommunicatorActionsConfiguration currentConfiguration = orElse(current, CommunicatorActionsConfiguration::defaults);
         CommunicatorActionsConfiguration configuration = CommunicatorActionsConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();
@@ -58,7 +60,7 @@ public class CommunicatorActionsConfiguration {
     }
 
     private static CommunicatorActionConfiguration getAction(CommunicatorRefresher refresher, CommunicatorActionsConfiguration currentConfiguration, NestedConfiguration action) {
-        return CommunicatorActionConfiguration.from(refresher, currentConfiguration.actions.get(action.getParent()), action);
+        return communicatorActionConfiguration(refresher, currentConfiguration.actions.get(action.getParent()), action);
     }
 
     public static CommunicatorActionsConfiguration defaults() {

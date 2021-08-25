@@ -21,153 +21,190 @@ package io.art.http.router;
 import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.http.configuration.*;
-import io.art.http.exception.*;
 import io.art.http.state.*;
+import io.art.meta.invoker.*;
+import io.art.meta.model.*;
+import io.art.server.configuration.*;
 import io.art.server.method.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
-import io.art.value.constants.ValueModuleConstants.*;
-import io.art.value.immutable.*;
-import io.netty.buffer.*;
+import io.netty.handler.codec.http.*;
+import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
-import reactor.util.context.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.model.ServiceMethodIdentifier.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.http.constants.HttpModuleConstants.Errors.*;
+import static io.art.core.constants.BufferConstants.*;
+import static io.art.core.mime.MimeType.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.module.HttpModule.*;
-import static io.art.server.constants.ServerConstants.StateKeys.*;
-import static io.art.server.module.ServerModule.*;
-import static io.art.server.state.ServerModuleState.ServerThreadLocalState.*;
-import static io.art.value.mime.MimeTypeDataFormatMapper.*;
+import static io.art.http.state.HttpLocalState.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static io.art.meta.model.TypedObject.*;
+import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
+import static io.art.transport.payload.TransportPayloadReader.*;
+import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
-import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import java.nio.file.*;
-import java.util.*;
+import java.util.Map.*;
+import java.util.function.*;
 
 public class HttpRouter {
-    public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration configuration) {
-        for (Map.Entry<String, HttpServiceConfiguration> service : configuration.getServices().entrySet()) {
-            for (Map.Entry<String, HttpMethodConfiguration> method : service.getValue().getMethods().entrySet()) {
-                HttpMethodConfiguration methodValue = method.getValue();
-                HttpMethodType httpMethodType = methodValue.getMethod();
-                switch (httpMethodType) {
-                    case GET:
-                        routes.get(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
-                        break;
-                    case POST:
-                        routes.post(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
-                        break;
-                    case PUT:
-                        routes.put(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
-                        break;
-                    case DELETE:
-                        routes.delete(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
-                        break;
-                    case OPTIONS:
-                        routes.options(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
-                        break;
-                    case HEAD:
-                        routes.head(methodValue.getPath(), (request, response) -> handleHttp(findSpecification(serviceMethodId(service.getKey(), method.getKey())), request, response));
-                        break;
-                    case WEBSOCKET:
-                        routes.ws(methodValue.getPath(), (inbound, outbound) -> handleWebsocket(findSpecification(serviceMethodId(service.getKey(), method.getKey())), inbound, outbound));
-                        break;
-                    case FILE:
-                        routes.file(methodValue.getPath(), methodValue.getFilePath());
-                        break;
-                    case DIRECTORY:
-                        routes.directory(methodValue.getPath(), Paths.get(methodValue.getFilePath()));
-                        break;
-                }
+    private final HttpModuleState state;
+
+    public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
+        state = httpModule().state();
+        setupRoutes(routes, httpConfiguration, serverConfiguration);
+    }
+
+    private void setupRoutes(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
+        for (Entry<String, HttpRouteConfiguration> route : httpConfiguration.getRoutes().entrySet()) {
+            HttpRouteConfiguration routeValue = route.getValue();
+            HttpRouteType httpMethodType = routeValue.getType();
+            ServiceMethodIdentifier serviceMethodId = routeValue.getServiceMethodId();
+            String path = routeValue.getPath().route(serviceMethodId);
+            ServiceMethod serviceMethod = serverConfiguration.getMethods().get().get(serviceMethodId);
+            switch (httpMethodType) {
+                case GET:
+                    routes.get(path, handleHttp(serviceMethod, routeValue));
+                    break;
+                case POST:
+                    routes.post(path, handleHttp(serviceMethod, routeValue));
+                    break;
+                case PUT:
+                    routes.put(path, handleHttp(serviceMethod, routeValue));
+                    break;
+                case DELETE:
+                    routes.delete(path, handleHttp(serviceMethod, routeValue));
+                    break;
+                case OPTIONS:
+                    routes.options(path, handleHttp(serviceMethod, routeValue));
+                    break;
+                case HEAD:
+                    routes.head(path, handleHttp(serviceMethod, routeValue));
+                    break;
+                case WEBSOCKET:
+                    routes.ws(path, handleWebsocket(serviceMethod, routeValue));
+                    break;
+                case FILE:
+                    routes.file(path, routeValue.getPathConfiguration().getPath());
+                    break;
+                case DIRECTORY:
+                    routes.directory(path, routeValue.getPathConfiguration().getPath());
+                    break;
             }
         }
     }
 
-    private Publisher<Void> handleWebsocket(ServiceMethod specification, WebsocketInbound inbound, WebsocketOutbound outbound) {
-        DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
-        DataFormat inputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.parseMimeType(inbound.headers().get(CONTENT_TYPE))),
-                ignored -> defaultDataFormat);
-        DataFormat outputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.parseMimeType(inbound.headers().get(ACCEPT))),
-                ignored -> defaultDataFormat);
-        TransportPayloadReader reader = specification
-                .getConfiguration()
-                .getReader(serviceMethodId(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
-        TransportPayloadWriter writer = specification
-                .getConfiguration()
-                .getWriter(serviceMethodId(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
-        return inbound.receive()
-                .map(reader::read)
-                .map(TransportPayload::getValue)
-                .transform(specification::serve)
-                .map(writer::write)
-                .transform(outbound::send)
-                .then();
-
+    private WsRouting handleWebsocket(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration) {
+        DataFormat defaultDataFormat = routeConfiguration.getDefaultDataFormat();
+        MimeType defaultMimeType = toMimeType(defaultDataFormat);
+        MetaType<?> inputMappingType = serviceMethod.getInputType();
+        if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
+            inputMappingType = inputMappingType.parameters().get(0);
+        }
+        MetaType<?> outputMappingType = serviceMethod.getOutputType();
+        if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
+            outputMappingType = outputMappingType.parameters().get(0);
+        }
+        return new WsRouting(
+                serviceMethod,
+                routeConfiguration,
+                defaultMimeType,
+                inputMappingType,
+                outputMappingType
+        );
     }
 
-    private Publisher<Void> handleHttp(ServiceMethod specification, HttpServerRequest request, HttpServerResponse response) {
-        DataFormat defaultDataFormat = findMethodConfiguration(specification).getDefaultDataFormat();
-        DataFormat inputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.parseMimeType(request.requestHeaders().get(CONTENT_TYPE))),
-                ignored -> defaultDataFormat);
-        DataFormat outputDataFormat = ignoreException(
-                () -> fromMimeType(MimeType.parseMimeType(request.requestHeaders().get(ACCEPT))),
-                ignored -> defaultDataFormat);
-
-        Sinks.Many<ByteBuf> unicast = Sinks.many().unicast().onBackpressureBuffer();
-        TransportPayloadReader reader = specification
-                .getConfiguration()
-                .getReader(serviceMethodId(specification.getServiceId(), specification.getMethodId()), inputDataFormat);
-        TransportPayloadWriter writer = specification
-                .getConfiguration()
-                .getWriter(serviceMethodId(specification.getServiceId(), specification.getMethodId()), outputDataFormat);
-
-        return request.receive()
-                .map(reader::read)
-                .map(TransportPayload::getValue)
-                .transform(specification::serve)
-                .onErrorResume(throwable -> mapException(specification, throwable))
-                .map(writer::write)
-                .contextWrite(ctx -> setContext(ctx
-                        .put(HttpContext.class, HttpContext.from(request, response))
-                        .put(SERVICE_METHOD_ID, specification))
-                )
-                .doOnNext(unicast::tryEmitNext)
-                .doOnComplete(unicast::tryEmitComplete)
-                .doOnError(unicast::tryEmitError)
-                .thenMany(response.send(unicast.asFlux()));
+    private HttpRouting handleHttp(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration) {
+        DataFormat defaultDataFormat = routeConfiguration.getDefaultDataFormat();
+        MimeType defaultMimeType = toMimeType(defaultDataFormat);
+        MetaType<?> inputMappingType = serviceMethod.getInputType();
+        if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
+            inputMappingType = inputMappingType.parameters().get(0);
+        }
+        MetaType<?> outputMappingType = serviceMethod.getOutputType();
+        if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
+            outputMappingType = outputMappingType.parameters().get(0);
+        }
+        return new HttpRouting(
+                serviceMethod,
+                routeConfiguration,
+                defaultMimeType,
+                inputMappingType,
+                outputMappingType
+        );
     }
 
-    private Flux<Value> mapException(ServiceMethod specification, Throwable exception) {
-        Object result = httpModule().configuration().getServerConfiguration()
-                .getExceptionMapper()
-                .apply(cast(exception));
-        return isNull(result) ?
-                Flux.empty() :
-                Flux.just(specification.getOutputType().map(cast(result)));
+    @RequiredArgsConstructor
+    private static class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
+        final ServiceMethod serviceMethod;
+        final HttpRouteConfiguration routeConfiguration;
+        final MimeType defaultMimeType;
+        final MetaType<?> inputMappingType;
+        final MetaType<?> outputMappingType;
+
+        @Override
+        public Publisher<Void> apply(WebsocketInbound inbound, WebsocketOutbound outbound) {
+            DataFormat inputDataFormat = fromMimeType(parseMimeType(inbound.headers().get(CONTENT_TYPE), defaultMimeType));
+            DataFormat outputDataFormat = fromMimeType(parseMimeType(inbound.headers().get(ACCEPT), defaultMimeType));
+            TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
+            TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
+
+            Flux<Object> input = inbound.receive()
+                    .map(data -> reader.read(data, inputMappingType))
+                    .filter(data -> !data.isEmpty())
+                    .map(TransportPayload::getValue);
+
+            if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
+                return outbound
+                        .send(serviceMethod.serve(input).map(ignore -> EMPTY_NETTY_BUFFER))
+                        .then();
+            }
+
+            return outbound
+                    .send(serviceMethod
+                            .serve(input)
+                            .map(value -> writer.write(typed(outputMappingType, value))))
+                    .then();
+        }
     }
 
-    private Context setContext(Context context) {
-        serverModule().state().localState(fromContext(context));
-        return context;
-    }
+    @RequiredArgsConstructor
+    private class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
+        final ServiceMethod serviceMethod;
+        final HttpRouteConfiguration routeConfiguration;
+        final MimeType defaultMimeType;
+        final MetaType<?> inputMappingType;
+        final MetaType<?> outputMappingType;
 
-    private ServiceMethod findSpecification(ServiceMethodIdentifier serviceMethodId) {
-        return specifications()
-                .findMethodById(serviceMethodId)
-                .orElseThrow(() -> new HttpException(format(SPECIFICATION_NOT_FOUND, serviceMethodId)));
-    }
+        @Override
+        public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
+            HttpHeaders headers = request.requestHeaders();
+            DataFormat inputDataFormat = fromMimeType(parseMimeType(headers.get(CONTENT_TYPE), defaultMimeType));
+            DataFormat outputDataFormat = fromMimeType(parseMimeType(headers.get(ACCEPT), defaultMimeType));
+            TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
+            TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
-    private HttpMethodConfiguration findMethodConfiguration(ServiceMethod specification) {
-        return httpModule().configuration().getServerConfiguration()
-                .getServices().get(specification.getServiceId())
-                .getMethods().get(specification.getMethodId());
+            MetaMethodInvoker invoker = serviceMethod.getInvoker();
+            state.httpState(invoker.getOwner(), invoker.getDelegate(), httpLocalState(request, response));
+
+            Flux<Object> input = request.receive()
+                    .map(data -> reader.read(data, inputMappingType))
+                    .filter(data -> !data.isEmpty())
+                    .map(TransportPayload::getValue);
+
+            if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
+                return response
+                        .send(serviceMethod.serve(input).map(ignore -> EMPTY_NETTY_BUFFER))
+                        .then();
+            }
+
+            return response
+                    .send(serviceMethod
+                            .serve(input)
+                            .map(value -> writer.write(typed(outputMappingType, value))))
+                    .then();
+        }
     }
 }

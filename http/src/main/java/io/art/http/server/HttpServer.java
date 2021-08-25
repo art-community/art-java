@@ -22,23 +22,22 @@ import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.http.router.*;
+import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.server.*;
 import lombok.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
-
 import static io.art.core.property.Property.*;
 import static io.art.http.constants.HttpModuleConstants.LoggingMessages.*;
 import static io.art.http.manager.HttpManager.*;
-import static io.art.logging.module.LoggingModule.*;
 import static lombok.AccessLevel.*;
 
 @RequiredArgsConstructor
 public class HttpServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = logger(HttpServer.class);
+    private static final Logger logger = Logging.logger(HttpServer.class);
 
     private final HttpModuleConfiguration configuration;
     private final Property<DisposableServer> server;
@@ -67,10 +66,14 @@ public class HttpServer implements Server {
     }
 
     private DisposableServer createServer() {
-        reactor.netty.http.server.HttpServer server = configuration.getServerConfiguration().getHttpServer()
-                .route(routes -> new HttpRouter(routes, configuration.getServerConfiguration()));
+        HttpServerConfiguration serverConfiguration = configuration.getHttpServer();
+        reactor.netty.http.server.HttpServer server = reactor.netty.http.server.HttpServer
+                .create()
+                .port(serverConfiguration.getPort())
+                .host(serverConfiguration.getHost())
+                .route(routes -> new HttpRouter(routes, serverConfiguration, configuration.getServer()));
         Mono<? extends DisposableServer> bind = server.bind();
-        if (configuration.getServerConfiguration().isLogging()) {
+        if (serverConfiguration.isLogging()) {
             bind = bind
                     .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
@@ -84,8 +87,9 @@ public class HttpServer implements Server {
     }
 
     private void setupCloser(DisposableServer server) {
+        HttpServerConfiguration serverConfiguration = configuration.getHttpServer();
         this.closer = server.onDispose();
-        if (configuration.getServerConfiguration().isLogging()) {
+        if (serverConfiguration.isLogging()) {
             this.closer = server.onDispose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
         }
     }

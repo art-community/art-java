@@ -30,7 +30,7 @@ import static java.time.LocalDateTime.*;
 import java.time.*;
 import java.util.concurrent.*;
 
-@ForUsing
+@Public
 @UtilityClass
 public class Scheduling {
     public static DeferredExecutor deferredExecutor() {

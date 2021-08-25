@@ -142,7 +142,7 @@ public class RsocketCommunication implements Communication {
                 Sinks.One<Object> sink = one();
                 subscribeMono(input, sink);
                 return client
-                        .fireAndForget(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .fireAndForget(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, element)))))
                         .flux()
                         .switchMap(ignore -> emptyTransportPayloadFlux());
             };
@@ -164,7 +164,7 @@ public class RsocketCommunication implements Communication {
             return input -> {
                 Sinks.One<Object> sink = one();
                 subscribeMono(input, sink);
-                return client.requestResponse(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                return client.requestResponse(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, element)))))
                         .flux()
                         .map(payload -> readRsocketPayload(reader, payload, outputMappingType));
             };
@@ -187,7 +187,7 @@ public class RsocketCommunication implements Communication {
                 Sinks.One<Object> sink = one();
                 subscribeMono(input, sink);
                 return client
-                        .requestStream(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .requestStream(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, element)))))
                         .map(payload -> readRsocketPayload(reader, payload, outputMappingType));
             };
         }
@@ -215,7 +215,7 @@ public class RsocketCommunication implements Communication {
                 Sinks.One<Object> sink = one();
                 subscribeMono(input, sink);
                 return client
-                        .metadataPush(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, action)))))
+                        .metadataPush(sink.asMono().map(element -> create(writer.write(typed(inputMappingType, element)))))
                         .flux()
                         .switchMap(ignore -> emptyTransportPayloadFlux());
             };

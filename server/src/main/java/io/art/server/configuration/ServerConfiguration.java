@@ -29,6 +29,7 @@ import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.server.configuration.ServiceMethodsConfiguration.*;
 import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -94,7 +95,12 @@ public class ServerConfiguration {
         return mapper.apply(methodConfiguration);
     }
 
-    public static ServerConfiguration from(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
+    private static ServiceMethodsConfiguration getService(ServerConfiguration currentConfiguration, ServerConfigurationBuilder builder, NestedConfiguration service) {
+        ServiceMethodsConfiguration current = currentConfiguration.configurations.get().get(service.getParent());
+        return serviceMethodsConfiguration(builder.refresher, current, service);
+    }
+
+    public static ServerConfiguration serverConfiguration(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
         ServerConfigurationBuilder builder = current.toBuilder();
         builder.configurations = lazy(() -> merge(current.configurations.get(), ofNullable(source.getNested(SERVER_SECTION))
                 .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> getService(current, builder, service)))
@@ -103,12 +109,7 @@ public class ServerConfiguration {
         return builder.build();
     }
 
-    private static ServiceMethodsConfiguration getService(ServerConfiguration currentConfiguration, ServerConfigurationBuilder builder, NestedConfiguration service) {
-        ServiceMethodsConfiguration current = currentConfiguration.configurations.get().get(service.getParent());
-        return ServiceMethodsConfiguration.from(builder.refresher, current, service);
-    }
-
-    public static ServerConfiguration defaults(ServerRefresher refresher) {
+    public static ServerConfiguration serverConfiguration(ServerRefresher refresher) {
         return ServerConfiguration.builder().refresher(refresher)
                 .consumer(refresher.consumer())
                 .methods(lazy(ImmutableMap::emptyImmutableMap))

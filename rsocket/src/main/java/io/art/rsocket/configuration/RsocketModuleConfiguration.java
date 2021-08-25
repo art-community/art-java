@@ -24,20 +24,28 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
-import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
+import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
 import io.art.server.refresher.*;
 import lombok.*;
+import static io.art.communicator.configuration.CommunicatorConfiguration.*;
+import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpConnectorConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.*;
+import static io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
+import static io.art.rsocket.configuration.server.RsocketWsServerConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static io.art.server.configuration.ServerConfiguration.*;
+import static io.art.server.constants.ServerConstants.ConfigurationKeys.*;
 import static java.util.Optional.*;
 import java.util.*;
 
-@ForUsing
+@Public
 @RequiredArgsConstructor
 public class RsocketModuleConfiguration implements ModuleConfiguration {
     private final RsocketModuleRefresher refresher;
@@ -78,13 +86,13 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         communicatorRefresher = new CommunicatorRefresher();
         consumer = refresher.consumer();
 
-        server = ServerConfiguration.defaults(serverRefresher);
-        tcpServer = RsocketTcpServerConfiguration.defaults();
-        wsServer = RsocketWsServerConfiguration.defaults();
+        server = serverConfiguration(serverRefresher);
+        tcpServer = tcpServerConfiguration();
+        wsServer = wsServerConfiguration();
         enableTcpServer = false;
         enableWsServer = false;
 
-        communicator = CommunicatorConfiguration.defaults(communicatorRefresher);
+        communicator = communicatorConfiguration(communicatorRefresher);
         tcpConnectors = emptyImmutableMap();
         wsConnectors = emptyImmutableMap();
     }
@@ -126,20 +134,20 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private ServerConfiguration server(NestedConfiguration server) {
-            return ServerConfiguration.from(configuration.serverRefresher, configuration.server, server);
+            return serverConfiguration(configuration.serverRefresher, configuration.server, server);
         }
 
         private RsocketWsServerConfiguration wsServer(NestedConfiguration server) {
-            return RsocketWsServerConfiguration.from(configuration.refresher, configuration.wsServer, server);
+            return wsServerConfiguration(configuration.refresher, configuration.wsServer, server);
         }
 
         private RsocketTcpServerConfiguration tcpServer(NestedConfiguration server) {
-            return RsocketTcpServerConfiguration.from(configuration.refresher, configuration.tcpServer, server);
+            return tcpServerConfiguration(configuration.refresher, configuration.tcpServer, server);
         }
 
 
         private CommunicatorConfiguration communicator(NestedConfiguration communicator) {
-            return CommunicatorConfiguration.from(configuration.communicatorRefresher, configuration.communicator, communicator);
+            return communicatorConfiguration(configuration.communicatorRefresher, configuration.communicator, communicator);
         }
 
         private ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors(NestedConfiguration communicator) {
@@ -147,7 +155,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private RsocketWsConnectorConfiguration wsConnector(NestedConfiguration nested, RsocketWsConnectorConfiguration current) {
-            return RsocketWsConnectorConfiguration.from(configuration.refresher, current, nested);
+            return wsConnectorConfiguration(configuration.refresher, current, nested);
         }
 
         private ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors(NestedConfiguration communicator) {
@@ -155,7 +163,7 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
         }
 
         private RsocketTcpConnectorConfiguration tcpConnector(NestedConfiguration nested, RsocketTcpConnectorConfiguration current) {
-            return RsocketTcpConnectorConfiguration.from(configuration.refresher, current, nested);
+            return tcpConnectorConfiguration(configuration.refresher, current, nested);
         }
 
 

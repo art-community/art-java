@@ -20,25 +20,24 @@ package io.art.http.configuration;
 
 import io.art.core.changes.*;
 import io.art.core.source.*;
-import io.art.http.constants.HttpModuleConstants.*;
 import io.art.http.refresher.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.configuration.HttpKeepAliveConfiguration.*;
 import static io.art.http.configuration.HttpRetryConfiguration.*;
+import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.LOGGING_KEY;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
-import static io.art.http.constants.HttpModuleConstants.PayloadDecoderMode.*;
-import static io.art.value.constants.ValueModuleConstants.*;
-import static io.art.value.constants.ValueModuleConstants.DataFormat.*;
+import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static reactor.netty.http.client.HttpClient.*;
 
 @Getter
-@RequiredArgsConstructor
+@Builder(toBuilder = true)
 public class HttpConnectorConfiguration {
-    private String connectorId;
-    private PayloadDecoderMode payloadDecoderMode;
+    private String connector;
     private int maxInboundPayloadSize;
     private int fragment;
     private HttpKeepAliveConfiguration keepAlive;
@@ -49,25 +48,23 @@ public class HttpConnectorConfiguration {
     private boolean logging;
     private DataFormat dataFormat;
 
-    public static HttpConnectorConfiguration defaults() {
-        HttpConnectorConfiguration configuration = new HttpConnectorConfiguration();
+    public static HttpConnectorConfiguration connectorConfiguration() {
+        HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
         configuration.logging = false;
         configuration.fragment = 0;
         configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
-        configuration.payloadDecoderMode = DEFAULT;
         configuration.dataFormat = JSON;
         configuration.httpWebSocketPath = SLASH;
         return configuration;
     }
 
-    public static HttpConnectorConfiguration httpConnector(ConfigurationSource source) {
-        HttpConnectorConfiguration configuration = new HttpConnectorConfiguration();
-        HttpConnectorConfiguration defaults = defaults();
+    public static HttpConnectorConfiguration connectorConfiguration(ConfigurationSource source) {
+        HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
+        HttpConnectorConfiguration defaults = connectorConfiguration();
 
         configuration.logging = orElse(source.getBoolean(LOGGING_KEY), defaults.logging);
         configuration.fragment = orElse(source.getInteger(FRAGMENTATION_MTU_KEY), defaults.fragment);
         configuration.maxInboundPayloadSize = orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize);
-        configuration.payloadDecoderMode = httpPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode);
         configuration.dataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat);
         configuration.keepAlive = source.getNested(KEEP_ALIVE_SECTION, HttpKeepAliveConfiguration::httpKeepAlive);
         configuration.retry = source.getNested(RECONNECT_SECTION, HttpRetryConfiguration::httpRetry);
@@ -84,17 +81,16 @@ public class HttpConnectorConfiguration {
         return configuration;
     }
 
-    public static HttpConnectorConfiguration httpConnector(HttpModuleRefresher refresher, HttpConnectorConfiguration defaults, ConfigurationSource source) {
-        HttpConnectorConfiguration configuration = new HttpConnectorConfiguration();
-        configuration.connectorId = source.getParent();
+    public static HttpConnectorConfiguration connectorConfiguration(HttpModuleRefresher refresher, HttpConnectorConfiguration defaults, ConfigurationSource source) {
+        HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
+        configuration.connector = source.getParent();
 
-        ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connectorId);
-        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connectorId);
+        ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connector);
+        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connector);
 
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), defaults.logging));
 
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), defaults.dataFormat));
-        configuration.payloadDecoderMode = listener.emit(httpPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), defaults.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), defaults.maxInboundPayloadSize));
         configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), defaults.fragment));
         configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> httpKeepAlive(section, defaults.keepAlive), defaults.keepAlive));

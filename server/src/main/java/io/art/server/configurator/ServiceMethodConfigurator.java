@@ -9,7 +9,7 @@ import static io.art.core.factory.ListFactory.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 public class ServiceMethodConfigurator {
     private boolean logging = false;
     private boolean validating = true;

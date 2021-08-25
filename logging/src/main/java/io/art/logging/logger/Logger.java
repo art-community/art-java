@@ -23,7 +23,7 @@ import io.art.logging.constants.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.extensions.StringExtensions.*;
 
-@ForUsing
+@Public
 public interface Logger {
     String getName();
 

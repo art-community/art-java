@@ -67,37 +67,22 @@ public interface RsocketModuleConstants {
 
     interface ConfigurationKeys {
         String RSOCKET_SECTION = "rsocket";
-        String SERVER_SECTION = "server";
-        String COMMUNICATOR_SECTION = "communicator";
-        String CONNECTORS_SECTION = "connectors";
         String RESUME_SECTION = "resume";
         String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
-        String SSL_SECTION = "ssl";
         String GROUP_SECTION = "group";
         String SINGLE_SECTION = "single";
-
-        String DATA_FORMAT_KEY = "dataFormat";
-        String META_DATA_FORMAT_KEY = "metaDataFormat";
-        String SERVICE_ID_KEY = "serviceId";
-        String METHOD_ID_KEY = "methodId";
-
         String BALANCER_KEY = "balancer";
 
-        String PORT_KEY = "port";
-        String HOST_KEY = "host";
-        String TIMEOUT_KEY = "timeout";
         String WS_PATH_KEY = "ws.path";
         String TCP_MAX_FRAME_LENGTH_KEY = "tcp.maxFrameLength";
 
-        String PAYLOAD_DECODER_KEY = "payloadDecoder";
-        String VERBOSE_KEY = "verbose";
         String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
-
         String CLEANUP_STORE_ON_KEEP_ALIVE_KEY = "cleanupStoreOnKeepAlive";
         String SESSION_DURATION_KEY = "sessionDuration";
         String STREAM_TIMEOUT_KEY = "streamTimeout";
+
         String POLICY_KEY = "policy";
         String BACKOFF_MAX_ATTEMPTS_KEY = "backoff.maxAttempts";
         String BACKOFF_MIN_BACKOFF_KEY = "backoff.minBackoff";
@@ -109,10 +94,6 @@ public interface RsocketModuleConstants {
 
         String INTERVAL_KEY = "interval";
         String MAX_LIFE_TIME_KEY = "maxLifeTime";
-
-        String CERTIFICATE_KEY = "certificate";
-        String KEY_KEY = "key";
-        String PASSWORD_KEY = "key";
     }
 
     interface Defaults {

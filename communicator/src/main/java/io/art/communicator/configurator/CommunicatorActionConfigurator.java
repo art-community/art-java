@@ -13,7 +13,7 @@ import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 public class CommunicatorActionConfigurator {
     private boolean logging = false;
     private boolean deactivated = false;

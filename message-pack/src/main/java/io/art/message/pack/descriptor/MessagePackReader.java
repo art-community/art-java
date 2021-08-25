@@ -43,7 +43,7 @@ import java.nio.*;
 import java.util.*;
 
 
-@ForUsing
+@Public
 public class MessagePackReader implements Reader {
     @Override
     public <T> T read(MetaType<T> type, InputStream inputStream) {

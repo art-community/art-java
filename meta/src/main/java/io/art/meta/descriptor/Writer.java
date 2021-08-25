@@ -31,7 +31,7 @@ import java.nio.*;
 import java.nio.charset.*;
 import java.util.function.*;
 
-@ForUsing
+@Public
 public interface Writer {
     default void write(TypedObject object, ByteBuffer buffer, Function<IOException, ? extends RuntimeException> catcher) {
         try (NioByteBufferOutputStream outputStream = new NioByteBufferOutputStream(buffer)) {
