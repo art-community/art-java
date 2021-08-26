@@ -18,6 +18,11 @@
 
 package io.art.server.benchmark;
 
+import io.art.logging.*;
+import io.art.logging.configuration.*;
+import io.art.logging.constants.*;
+import io.art.logging.logger.*;
+import io.art.logging.module.*;
 import io.art.meta.*;
 import io.art.server.method.*;
 import io.art.server.test.meta.*;
@@ -25,8 +30,6 @@ import io.art.server.test.meta.MetaServerTest.MetaIoPackage.MetaArtPackage.MetaS
 import io.art.server.test.service.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.*;
-import reactor.core.publisher.*;
-import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -60,11 +63,15 @@ public class ServerBenchmark {
         ServiceMethod m14;
         ServiceMethod m15;
         ServiceMethod m16;
+        Logger logger;
 
         @Setup
         public void setup() {
-            initialize(meta(MetaServerTest::new));
+            initialize(meta(MetaServerTest::new), LoggingActivator.logging(logging -> logging.configureDefaultWriter(writer -> writer
+                    .type(LoggingWriterType.FILE)
+                    .file(FileWriterConfiguration.builder().build()))));
             meta = Meta.library();
+            logger = Logging.logger();
             serviceClass = declaration(BenchmarkService.class);
             m1 = preconfiguredServiceMethod(serviceClass, serviceClass.m1Method());
             m2 = preconfiguredServiceMethod(serviceClass, serviceClass.m2Method());
@@ -87,81 +94,81 @@ public class ServerBenchmark {
 
     @Benchmark
     public void a(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m1.serve(Flux.just("test"))));
+        state.logger.info("test");
     }
-
-    @Benchmark
-    public void b(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m2.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void c(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m3.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void d(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m4.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void e(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m5.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void f(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m6.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void g(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m7.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void h(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m8.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void i(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m9.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void j(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m10.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void k(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m11.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void l(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m12.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void m(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m13.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void n(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m14.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void o(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m15.serve(Flux.just("test"))));
-    }
-
-    @Benchmark
-    public void p(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(blockFirst(state.m16.serve(Flux.just("test"))));
-    }
+//
+//    @Benchmark
+//    public void b(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m2.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void c(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m3.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void d(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m4.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void e(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m5.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void f(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m6.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void g(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m7.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void h(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m8.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void i(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m9.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void j(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m10.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void k(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m11.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void l(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m12.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void m(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m13.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void n(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m14.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void o(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m15.serve(Flux.just("test"))));
+//    }
+//
+//    @Benchmark
+//    public void p(Blackhole blackhole, BenchmarkState state) {
+//        blackhole.consume(blockFirst(state.m16.serve(Flux.just("test"))));
+//    }
 }

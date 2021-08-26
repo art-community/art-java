@@ -81,8 +81,8 @@ public class FileWriter implements LoggerWriter {
 
     @Override
     public void write(LoggingMessage message) {
-        rotate();
         writeToFile(format(message));
+        rotate();
     }
 
     private void rotate() {
