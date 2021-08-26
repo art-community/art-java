@@ -10,13 +10,11 @@ import static io.art.core.changes.ChangesListener.*;
 public class CommunicatorRefresher {
     private final ChangesListener deactivationListener = changesListener();
     private final ChangesListener loggingListener = changesListener();
-    private final ChangesListener resilienceListener = changesListener();
     private final Consumer consumer = new Consumer();
 
     public void produce() {
         loggingListener.produce();
         deactivationListener.produce();
-        resilienceListener.produce();
     }
 
     @Getter
@@ -24,6 +22,5 @@ public class CommunicatorRefresher {
     public class Consumer {
         private final ChangesConsumer loggingConsumer = loggingListener.consumer();
         private final ChangesConsumer deactivationConsumer = deactivationListener.consumer();
-        private final ChangesConsumer resilienceConsumer = resilienceListener.consumer();
     }
 }

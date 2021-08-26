@@ -22,8 +22,6 @@ import io.art.communicator.refresher.*;
 import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
-import io.art.resilience.configuration.*;
-import io.art.resilience.constants.*;
 import lombok.Builder;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -37,7 +35,6 @@ import java.util.function.*;
 public class CommunicatorActionConfiguration {
     private boolean logging;
     private boolean deactivated;
-    private ResilienceConfiguration resilience;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
@@ -48,9 +45,6 @@ public class CommunicatorActionConfiguration {
         ChangesListener deactivationListener = refresher.deactivationListener();
         configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
         configuration.deactivated = deactivationListener.emit(orElse(source.getBoolean(DEACTIVATED_KEY), current.deactivated));
-        String resilienceSection = ResilienceModuleConstants.ConfigurationKeys.RESILIENCE_SECTION;
-        ResilienceConfiguration resilience = source.getNested(resilienceSection, action -> ResilienceConfiguration.from(refresher.resilienceListener(), action));
-        configuration.resilience = orElse(resilience, currentConfiguration.resilience);
         return configuration;
     }
 

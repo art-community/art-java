@@ -8,7 +8,6 @@ public interface ModuleIdentifiers {
     String JSON_MODULE_ID = "JsonModule";
     String YAML_MODULE_ID = "YamlModule";
     String MESSAGE_PACK_MODULE_ID = "MessagePack";
-    String RESILIENCE_MODULE_ID = "ResilienceModule";
     String CONFIGURATOR_MODULE_ID = "ConfiguratorModule";
     String META_MODULE_ID = "MetaModule";
 

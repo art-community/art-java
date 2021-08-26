@@ -26,7 +26,6 @@ dependencies {
     api(project(":meta"))
     api(project(":transport"))
 
-    implementation(project(":resilience"))
     implementation(project(":logging"))
 }
 

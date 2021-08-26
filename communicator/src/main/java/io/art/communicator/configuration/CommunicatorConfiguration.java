@@ -24,7 +24,6 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
-import io.art.resilience.configuration.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorActionsConfiguration.*;
@@ -54,11 +53,6 @@ public class CommunicatorConfiguration {
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
         CommunicatorActionsConfiguration actionsConfiguration = configurations.get().get(id.getCommunicatorId());
         return ofNullable(actionsConfiguration).map(configuration -> configuration.getActions().get(id.getActionId()));
-    }
-
-    public Optional<ResilienceConfiguration> getResilienceConfiguration(CommunicatorActionIdentifier id) {
-        return getActionConfiguration(id)
-                .map(CommunicatorActionConfiguration::getResilience);
     }
 
     public boolean isLogging(CommunicatorActionIdentifier identifier) {

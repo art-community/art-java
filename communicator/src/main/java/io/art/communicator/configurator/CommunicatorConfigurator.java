@@ -14,7 +14,6 @@ import io.art.core.communication.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
-import io.art.resilience.configuration.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
@@ -183,7 +182,6 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
         boolean deactivated = communicatorConfiguration.isDeactivated(id);
         boolean logging = withLogging() && communicatorConfiguration.isLogging(id);
-        Optional<ResilienceConfiguration> resilience = communicatorConfiguration.getResilienceConfiguration(id);
 
         if (deactivated) {
             builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
@@ -191,10 +189,6 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
 
         if (logging) {
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
-        }
-
-        if (resilience.isPresent() && withResilience()) {
-            builder.inputDecorator(new CommunicatorResilienceDecorator(id, communicatorConfiguration));
         }
 
         CommunicatorActionsConfiguration actionsConfiguration = communicatorConfiguration.getConfigurations().get().get(id.getCommunicatorId());

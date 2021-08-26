@@ -20,7 +20,6 @@ rootProject.name = "art-java"
 include("core")
 include("logging")
 include("transport")
-include("resilience")
 include("launcher")
 include("configurator")
 include("json")
