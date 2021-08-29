@@ -36,22 +36,24 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    public HttpServerConfigurator service(Class<?> serviceClass) {
+    public HttpServerConfigurator routeService(Class<?> serviceClass) {
         return configureService(serviceClass, UnaryOperator.identity());
     }
 
-    public HttpServerConfigurator service(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+    public HttpServerConfigurator routeService(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+        configureService(serviceClass);
         classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
         return this;
     }
 
     public <T extends MetaClass<?>>
-    HttpServerConfigurator method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
-        return method(serviceClass, serviceMethod, identity());
+    HttpServerConfigurator routeMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
+        return routeMethod(serviceClass, serviceMethod, identity());
     }
 
     public <T extends MetaClass<?>>
-    HttpServerConfigurator method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+    HttpServerConfigurator routeMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+        configureMethod(serviceClass, serviceMethod);
         methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
         return this;
     }
@@ -129,13 +131,6 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<?>> serviceClass;
         final Function<? extends MetaClass<?>, MetaMethod<?>> serviceMethod;
-        final UnaryOperator<HttpRouteConfigurationBuilder> decorator;
-    }
-
-    @RequiredArgsConstructor
-    private static class MethodConfiguration {
-        final MetaClass<?> serviceClass;
-        final MetaMethod<?> serviceMethod;
         final UnaryOperator<HttpRouteConfigurationBuilder> decorator;
     }
 }
