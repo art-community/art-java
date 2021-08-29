@@ -169,7 +169,7 @@ public class HttpRouter {
             TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
             Flux<Object> input = inbound.receive()
-                    .map(data -> reader.read(data, inputMappingType))
+                    .map(data -> reader.read(data.retain(), inputMappingType))
                     .filter(data -> !data.isEmpty())
                     .map(TransportPayload::getValue);
 
