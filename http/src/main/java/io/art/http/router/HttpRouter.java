@@ -63,7 +63,7 @@ public class HttpRouter {
     }
 
     private void setupRoutes(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
-        for (HttpRouteConfiguration route : httpConfiguration.getRoutes()) {
+        for (HttpRouteConfiguration route : httpConfiguration.getRoutes().get()) {
             HttpRouteType httpMethodType = route.getType();
             ServiceMethodIdentifier serviceMethodId = route.getServiceMethodId();
             String path = route.getPath().route(serviceMethodId);

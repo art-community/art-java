@@ -36,8 +36,8 @@ public interface HttpModuleConstants {
         String HTTP_COMMUNICATOR_LOGGER = "http-communicator";
         String HTTP_SERVER_LOGGER = "http-server";
         String HTTP_DISPOSING = "Disposing HTTP";
-        String HTTP_SERVER_STARTED = "HTTP {0} server started - {1}:{2}";
-        String HTTP_SERVER_STOPPED = "HTTP {0} server stopped - {1}:{2}";
+        String HTTP_SERVER_STARTED = "HTTP server started - {0}:{1}";
+        String HTTP_SERVER_STOPPED = "HTTP server stopped - {0}:{1}";
         String HTTP_COMMUNICATOR_STARTED = "HTTP communicator connector started: {0}";
         String HTTP_COMMUNICATOR_STOPPED = "HTTP communicator connector stopped: {0}";
     }

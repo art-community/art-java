@@ -31,7 +31,6 @@ import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.http.configuration.HttpRouteConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.http.constants.HttpModuleConstants.*;
@@ -89,9 +88,13 @@ public class HttpServerConfiguration {
         configuration.forward = serverListener.emit(orElse(source.getBoolean(FORWARD_KEY), current.forward));
         configuration.idleTimeout = serverListener.emit(orElse(source.getDuration(IDLE_TIMEOUT_KEY), current.idleTimeout));
         configuration.protocol = serverListener.emit(httpProtocol(source.getString(PROTOCOL_KEY), current.protocol));
-        configuration.routes = lazy(() -> merge(source.getNestedArray(ROUTES_SECTION, nested -> routeConfiguration(routeConfiguration(), nested)), current.routes.get()));
+        configuration.routes = lazy(() -> merge(source.getNestedArray(ROUTES_SECTION, HttpServerConfiguration::routeConfiguration), current.routes.get()));
 
         return configuration;
+    }
+
+    private static HttpRouteConfiguration routeConfiguration(NestedConfiguration nested) {
+        return HttpRouteConfiguration.routeConfiguration(HttpRouteConfiguration.routeConfiguration(), nested);
     }
 
 }

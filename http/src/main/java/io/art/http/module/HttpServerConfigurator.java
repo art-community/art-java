@@ -37,7 +37,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     }
 
     public HttpServerConfigurator routeService(Class<?> serviceClass) {
-        return configureService(serviceClass, UnaryOperator.identity());
+        return routeService(serviceClass, UnaryOperator.identity());
     }
 
     public HttpServerConfigurator routeService(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
@@ -59,7 +59,9 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     }
 
     HttpServerConfiguration configure(HttpServerConfiguration current) {
-        return configurator.apply(current.toBuilder().routes(lazy(this::configureRoutes))).build();
+        return configurator
+                .apply(current.toBuilder().routes(lazy(this::configureRoutes)))
+                .build();
     }
 
     ServerConfiguration configureServer(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
