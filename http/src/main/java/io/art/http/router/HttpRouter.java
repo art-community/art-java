@@ -22,6 +22,7 @@ import io.art.core.mime.*;
 import io.art.core.model.*;
 import io.art.http.configuration.*;
 import io.art.http.state.*;
+import io.art.logging.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
@@ -42,7 +43,6 @@ import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.constants.HttpModuleConstants.Warnings.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
-import static io.art.logging.Logging.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
@@ -52,7 +52,6 @@ import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.nio.file.*;
-import java.util.Map.*;
 import java.util.function.*;
 
 public class HttpRouter {
@@ -64,38 +63,37 @@ public class HttpRouter {
     }
 
     private void setupRoutes(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
-        for (Entry<String, HttpRouteConfiguration> route : httpConfiguration.getRoutes().entrySet()) {
-            HttpRouteConfiguration routeValue = route.getValue();
-            HttpRouteType httpMethodType = routeValue.getType();
-            ServiceMethodIdentifier serviceMethodId = routeValue.getServiceMethodId();
-            String path = routeValue.getPath().route(serviceMethodId);
+        for (HttpRouteConfiguration route : httpConfiguration.getRoutes()) {
+            HttpRouteType httpMethodType = route.getType();
+            ServiceMethodIdentifier serviceMethodId = route.getServiceMethodId();
+            String path = route.getPath().route(serviceMethodId);
             ServiceMethod serviceMethod = serverConfiguration.getMethods().get().get(serviceMethodId);
             switch (httpMethodType) {
                 case GET:
-                    routes.get(path, handleHttp(serviceMethod, routeValue));
+                    routes.get(path, handleHttp(serviceMethod, route));
                     break;
                 case POST:
-                    routes.post(path, handleHttp(serviceMethod, routeValue));
+                    routes.post(path, handleHttp(serviceMethod, route));
                     break;
                 case PUT:
-                    routes.put(path, handleHttp(serviceMethod, routeValue));
+                    routes.put(path, handleHttp(serviceMethod, route));
                     break;
                 case DELETE:
-                    routes.delete(path, handleHttp(serviceMethod, routeValue));
+                    routes.delete(path, handleHttp(serviceMethod, route));
                     break;
                 case OPTIONS:
-                    routes.options(path, handleHttp(serviceMethod, routeValue));
+                    routes.options(path, handleHttp(serviceMethod, route));
                     break;
                 case HEAD:
-                    routes.head(path, handleHttp(serviceMethod, routeValue));
+                    routes.head(path, handleHttp(serviceMethod, route));
                     break;
                 case WS:
-                    routes.ws(path, handleWebsocket(serviceMethod, routeValue));
+                    routes.ws(path, handleWebsocket(serviceMethod, route));
                     break;
                 case PATH:
-                    Path routePath = routeValue.getPathConfiguration().getPath();
+                    Path routePath = route.getPathConfiguration().getPath();
                     if (withLogging() && !routePath.toFile().exists()) {
-                        logger(HTTP_SERVER_LOGGER).warn(format(ROUTE_PATH_NOT_EXISTS, routePath.toAbsolutePath()));
+                        Logging.logger(HTTP_SERVER_LOGGER).warn(format(ROUTE_PATH_NOT_EXISTS, routePath.toAbsolutePath()));
                         break;
                     }
                     if (routePath.toFile().isDirectory()) {

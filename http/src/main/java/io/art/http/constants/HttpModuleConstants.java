@@ -18,6 +18,7 @@
 
 package io.art.http.constants;
 
+import io.art.core.exception.*;
 import lombok.*;
 import reactor.netty.http.*;
 
@@ -82,6 +83,20 @@ public interface HttpModuleConstants {
                 if (value.name().equalsIgnoreCase(type)) return value;
             }
             return fallback;
+        }
+
+        public static boolean methodStartWithExcludePath(String methodName) {
+            for (HttpRouteType value : values()) {
+                if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return true;
+            }
+            return false;
+        }
+
+        public static HttpRouteType extractRouteType(String methodName) {
+            for (HttpRouteType value : values()) {
+                if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return value;
+            }
+            throw new ImpossibleSituationException();
         }
     }
 

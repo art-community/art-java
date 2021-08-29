@@ -69,6 +69,6 @@ public class HttpManager {
         if (http.isDisposed()) {
             return;
         }
-        ignoreException(http::dispose, getLogger()::error);
+        ignoreException(http::dispose);
     }
 }

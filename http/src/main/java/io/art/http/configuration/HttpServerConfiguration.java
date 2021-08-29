@@ -20,16 +20,17 @@ package io.art.http.configuration;
 
 import io.art.core.changes.*;
 import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
-import lombok.Builder;
 import lombok.*;
 import reactor.netty.http.*;
 import reactor.netty.http.server.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.http.configuration.HttpRouteConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
@@ -45,7 +46,7 @@ import java.util.function.*;
 @Builder(toBuilder = true)
 public class HttpServerConfiguration {
     private UnaryOperator<HttpServer> decorator;
-    private ImmutableMap<String, HttpRouteConfiguration> routes;
+    private LazyProperty<ImmutableArray<HttpRouteConfiguration>> routes;
     private DataFormat defaultDataFormat;
     private int port;
     private boolean verbose;
@@ -69,7 +70,7 @@ public class HttpServerConfiguration {
         configuration.decorator = UnaryOperator.identity();
         configuration.port = DEFAULT_PORT;
         configuration.host = BROADCAST_IP_ADDRESS;
-        configuration.routes = emptyImmutableMap();
+        configuration.routes = lazy(ImmutableArray::emptyImmutableArray);
         return configuration;
     }
 
@@ -88,7 +89,7 @@ public class HttpServerConfiguration {
         configuration.forward = serverListener.emit(orElse(source.getBoolean(FORWARD_KEY), current.forward));
         configuration.idleTimeout = serverListener.emit(orElse(source.getDuration(IDLE_TIMEOUT_KEY), current.idleTimeout));
         configuration.protocol = serverListener.emit(httpProtocol(source.getString(PROTOCOL_KEY), current.protocol));
-        configuration.routes = source.getNestedMap(ROUTES_SECTION, nested -> routeConfiguration(routeConfiguration(), nested));
+        configuration.routes = lazy(() -> merge(source.getNestedArray(ROUTES_SECTION, nested -> routeConfiguration(routeConfiguration(), nested)), current.routes.get()));
 
         return configuration;
     }

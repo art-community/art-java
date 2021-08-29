@@ -36,7 +36,7 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
                 .getConnectors()
                 .getCommunicator(connectorClass, communicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createHttpCommunication(configuration, identifier);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createHttpCommunication(configuration);
         registerConnector(connectorClass, communicatorFunction, communicationFunction);
         return this;
     }

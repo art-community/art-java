@@ -30,15 +30,17 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.manager.HttpManager.*;
+import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 
 @RequiredArgsConstructor
 public class HttpServer implements Server {
     @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = Logging.logger(HttpServer.class);
+    private static final Logger logger = Logging.logger(HTTP_SERVER_LOGGER);
 
     private final HttpModuleConfiguration configuration;
     private final Property<DisposableServer> server;
@@ -68,20 +70,23 @@ public class HttpServer implements Server {
 
     private DisposableServer createServer() {
         HttpServerConfiguration serverConfiguration = configuration.getHttpServer();
+        String host = serverConfiguration.getHost();
+        int port = serverConfiguration.getPort();
         reactor.netty.http.server.HttpServer server = reactor.netty.http.server.HttpServer
                 .create()
-                .port(serverConfiguration.getPort())
-                .host(serverConfiguration.getHost())
+                .port(port)
+                .host(host)
                 .accessLog(withLogging() && (serverConfiguration.isAccessLog() || serverConfiguration.isVerbose()))
                 .wiretap(withLogging() && (serverConfiguration.isWiretapLog() || serverConfiguration.isVerbose()))
                 .forwarded(serverConfiguration.isForward())
                 .compress(serverConfiguration.isCompress())
                 .protocol(serverConfiguration.getProtocol())
                 .route(routes -> new HttpRouter(routes, serverConfiguration, configuration.getServer()));
+        server = serverConfiguration.getDecorator().apply(server);
         Mono<? extends DisposableServer> bind = server.bind();
         if (withLogging()) {
             bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(HTTP_SERVER_STARTED))
+                    .doOnSubscribe(subscription -> getLogger().info(format(HTTP_SERVER_STARTED, host, EMPTY_STRING + port)))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return bind.block();
@@ -93,9 +98,14 @@ public class HttpServer implements Server {
     }
 
     private void setupCloser(DisposableServer server) {
+        HttpServerConfiguration serverConfiguration = configuration.getHttpServer();
+        String host = serverConfiguration.getHost();
+        int port = serverConfiguration.getPort();
         this.closer = server.onDispose();
         if (withLogging()) {
-            this.closer = server.onDispose().doOnSuccess(ignore -> getLogger().info(HTTP_SERVER_STOPPED));
+            this.closer = server
+                    .onDispose()
+                    .doOnSuccess(ignore -> getLogger().info(format(HTTP_SERVER_STOPPED, host, EMPTY_STRING + port)));
         }
     }
 }

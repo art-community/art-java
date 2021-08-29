@@ -34,7 +34,6 @@ import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
 import static io.art.http.strategy.RouteByServiceMethodStrategy.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
-import static java.util.Objects.*;
 import java.nio.file.*;
 
 @Getter
@@ -63,7 +62,10 @@ public class HttpRouteConfiguration {
         configuration.type = httpRouteType(source.getString(METHOD_KEY).toUpperCase(), configuration.type);
         switch (configuration.type) {
             case PATH:
-                Path path = let(source.getString(FILE_PATH_KEY), Paths::get, let(current.pathConfiguration, HttpPathRouteConfiguration::getPath));
+                Path path = let(source.getString(FILE_PATH_KEY),
+                        Paths::get,
+                        let(current.pathConfiguration, HttpPathRouteConfiguration::getPath)
+                );
                 configuration.pathConfiguration = HttpPathRouteConfiguration.builder()
                         .path(path)
                         .build();
@@ -71,9 +73,7 @@ public class HttpRouteConfiguration {
             case WS:
                 Integer aggregateFrames = source.getInteger(WS_AGGREGATE_FRAMES_KEY);
                 HttpWsRouteConfigurationBuilder wsBuilder = HttpWsRouteConfiguration.builder();
-                if (nonNull(aggregateFrames)) {
-                    wsBuilder.aggregateFrames(aggregateFrames);
-                }
+                apply(aggregateFrames, wsBuilder::aggregateFrames);
                 configuration.wsConfiguration = wsBuilder.build();
                 break;
         }
