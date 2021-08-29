@@ -213,23 +213,28 @@ public class HttpRouter {
             HttpLocalState localState = httpLocalState(request, response);
             state.httpState(invoker.getOwner(), invoker.getDelegate(), localState);
 
+            Sinks.Many<Void> responder = Sinks.many().unicast().onBackpressureBuffer();
             Flux<Object> input = request
                     .receive()
                     .retain()
                     .map(data -> reader.read(data, inputMappingType))
                     .filter(data -> !data.isEmpty())
-                    .map(TransportPayload::getValue);
+                    .map(TransportPayload::getValue)
+                    .doOnComplete(() -> responder.emitComplete(FAIL_FAST));
 
             if (isNull(serviceMethod.getOutputType().internalKind()) || serviceMethod.getOutputType().internalKind() == VOID) {
-                Sinks.One<Void> responder = Sinks.one();
-                serviceMethod.serve(input.doOnComplete(() -> responder.emitEmpty(FAIL_FAST)));
-                return localState.response().sendObject(responder.asMono()).then();
+                if (isNull(serviceMethod.getInputType())) {
+                    serviceMethod.serve(Flux.empty());
+                    return localState.response().send();
+                }
+                serviceMethod.serve(input);
+                return localState.response().sendObject(responder.asFlux()).then();
             }
 
             return localState
                     .response()
                     .send(serviceMethod.serve(input).map(value -> writer.write(typed(outputMappingType, value))))
-                    .then();
+                    .then(responder.asFlux());
         }
     }
 }
