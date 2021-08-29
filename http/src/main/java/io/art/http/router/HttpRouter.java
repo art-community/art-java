@@ -37,6 +37,7 @@ import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.constants.HttpModuleConstants.*;
@@ -213,28 +214,33 @@ public class HttpRouter {
             HttpLocalState localState = httpLocalState(request, response);
             state.httpState(invoker.getOwner(), invoker.getDelegate(), localState);
 
-            Sinks.Many<Void> responder = Sinks.many().unicast().onBackpressureBuffer();
+            Sinks.One<Void> responder = Sinks.one();
             Flux<Object> input = request
                     .receive()
                     .retain()
                     .map(data -> reader.read(data, inputMappingType))
                     .filter(data -> !data.isEmpty())
-                    .map(TransportPayload::getValue)
-                    .doOnComplete(() -> responder.emitComplete(FAIL_FAST));
+                    .map(TransportPayload::getValue);
 
-            if (isNull(serviceMethod.getOutputType().internalKind()) || serviceMethod.getOutputType().internalKind() == VOID) {
+            if (serviceMethod.getOutputType().internalKind() != FLUX && serviceMethod.getOutputType().internalKind() != MONO) {
                 if (isNull(serviceMethod.getInputType())) {
                     serviceMethod.serve(Flux.empty());
                     return localState.response().send();
                 }
-                serviceMethod.serve(input);
-                return localState.response().sendObject(responder.asFlux()).then();
+                return localState
+                        .response()
+                        .send(serviceMethod
+                                .serve(input.doOnComplete(() -> responder.emitEmpty(FAIL_FAST)))
+                                .map(value -> writer.write(typed(outputMappingType, value)))
+                                .defaultIfEmpty(EMPTY_NETTY_BUFFER))
+                        .then(responder.asMono());
             }
 
             return localState
                     .response()
-                    .send(serviceMethod.serve(input).map(value -> writer.write(typed(outputMappingType, value))))
-                    .then(responder.asFlux());
+                    .send(serviceMethod
+                            .serve(input)
+                            .map(value -> writer.write(typed(outputMappingType, value))));
         }
     }
 }
