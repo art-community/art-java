@@ -20,6 +20,7 @@ package io.art.http.configuration;
 
 import io.art.core.model.*;
 import io.art.core.source.*;
+import io.art.http.configuration.HttpRouteConfiguration.HttpWsRouteConfiguration.*;
 import io.art.http.strategy.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
@@ -29,10 +30,11 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
 import static io.art.http.strategy.RouteByServiceMethodStrategy.*;
-import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.LOGGING_KEY;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import static java.util.Objects.*;
 import java.nio.file.*;
 
 @Getter
@@ -41,7 +43,6 @@ public class HttpRouteConfiguration {
     private RouteByServiceMethodStrategy path;
     private HttpRouteType type;
     private boolean deactivated;
-    private boolean logging;
     private DataFormat defaultDataFormat;
     private HttpWsRouteConfiguration wsConfiguration;
     private HttpPathRouteConfiguration pathConfiguration;
@@ -51,28 +52,29 @@ public class HttpRouteConfiguration {
         HttpRouteConfiguration configuration = HttpRouteConfiguration.builder().build();
         configuration.path = manual(SLASH);
         configuration.deactivated = false;
-        configuration.logging = false;
-        configuration.type = HttpRouteType.GET;
+        configuration.type = GET;
         configuration.defaultDataFormat = JSON;
         return configuration;
     }
 
     public static HttpRouteConfiguration routeConfiguration(HttpRouteConfiguration current, ConfigurationSource source) {
-        HttpRouteConfiguration configuration = HttpRouteConfiguration.builder().build();
-        configuration.deactivated = source.getBoolean(DEACTIVATED_KEY);
-        configuration.logging = source.getBoolean(LOGGING_KEY);
-        configuration.type = HttpRouteType.valueOf(source.getString(METHOD_KEY).toUpperCase());
+        HttpRouteConfiguration configuration = current.toBuilder().build();
+        configuration.deactivated = orElse(source.getBoolean(DEACTIVATED_KEY), configuration.deactivated);
+        configuration.type = httpRouteType(source.getString(METHOD_KEY).toUpperCase(), configuration.type);
         switch (configuration.type) {
-            case DIRECTORY:
-            case FILE:
+            case PATH:
+                Path path = let(source.getString(ROUTED_PATH_KEY), Paths::get, let(current.pathConfiguration, HttpPathRouteConfiguration::getPath));
                 configuration.pathConfiguration = HttpPathRouteConfiguration.builder()
-                        .path(Paths.get(source.getString(ROUTED_PATH_KEY)))
+                        .path(path)
                         .build();
                 break;
-            case WEBSOCKET:
-                configuration.wsConfiguration = HttpWsRouteConfiguration.builder()
-                        .aggregateFrames(source.getInteger(WS_AGGREGATE_FRAMES_KEY))
-                        .build();
+            case WS:
+                Integer aggregateFrames = source.getInteger(WS_AGGREGATE_FRAMES_KEY);
+                HttpWsRouteConfigurationBuilder wsBuilder = HttpWsRouteConfiguration.builder();
+                if (nonNull(aggregateFrames)) {
+                    wsBuilder.aggregateFrames(aggregateFrames);
+                }
+                configuration.wsConfiguration = wsBuilder.build();
                 break;
         }
         String serviceId = source.getString(SERVICE_ID_KEY);

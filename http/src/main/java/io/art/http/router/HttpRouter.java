@@ -83,7 +83,7 @@ public class HttpRouter {
                 case HEAD:
                     routes.head(path, handleHttp(serviceMethod, routeValue));
                     break;
-                case WEBSOCKET:
+                case WS:
                     routes.ws(path, handleWebsocket(serviceMethod, routeValue));
                     break;
                 case FILE:

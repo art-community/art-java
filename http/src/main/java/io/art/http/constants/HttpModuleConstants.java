@@ -19,6 +19,7 @@
 package io.art.http.constants;
 
 import lombok.*;
+import reactor.netty.http.*;
 import java.time.*;
 
 public interface HttpModuleConstants {
@@ -64,19 +65,36 @@ public interface HttpModuleConstants {
 
         String WS_AGGREGATE_FRAMES_KEY = "ws.aggregateFrames";
         String ROUTED_PATH_KEY = "routed.path";
+
+        String FORWARD_KEY = "forward";
+        String IDLE_TIMEOUT_KEY = "idleTimeout";
+        String PROTOCOL_KEY = "protocol";
+        String ACCESS_LOG_KEY = "accessLog";
+        String WRITETAP_LOG_KEY = "wiretapLog";
     }
 
+
+    @Getter
+    @AllArgsConstructor
     enum HttpRouteType {
-        GET,
-        POST,
-        PUT,
-        DELETE,
-        OPTIONS,
-        HEAD,
-        PATCH,
-        DIRECTORY,
-        FILE,
-        WEBSOCKET
+        GET("get"),
+        POST("post"),
+        PUT("put"),
+        DELETE("delete"),
+        OPTIONS("options"),
+        HEAD("head"),
+        PATCH("patch"),
+        PATH("path"),
+        WS("WS");
+
+        private final String type;
+
+        public static HttpRouteType httpRouteType(String type, HttpRouteType fallback) {
+            for (HttpRouteType value : HttpRouteType.values()) {
+                if (value.name().equalsIgnoreCase(type)) return value;
+            }
+            return fallback;
+        }
     }
 
     interface Defaults {
@@ -88,6 +106,7 @@ public interface HttpModuleConstants {
         int DEFAULT_PORT = 80;
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
+        Duration DEFAULT_IDLE_TIMEOUT = Duration.ofSeconds(10);
     }
 
     @Getter
@@ -102,12 +121,17 @@ public interface HttpModuleConstants {
         private final String policy;
 
         public static RetryPolicy httpRetryPolicy(String policy, RetryPolicy fallback) {
-            if (BACKOFF.policy.equalsIgnoreCase(policy)) return BACKOFF;
-            if (FIXED_DELAY.policy.equalsIgnoreCase(policy)) return FIXED_DELAY;
-            if (MAX.policy.equalsIgnoreCase(policy)) return MAX;
-            if (MAX_IN_A_ROW.policy.equalsIgnoreCase(policy)) return MAX_IN_A_ROW;
-            if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
+            for (RetryPolicy value : RetryPolicy.values()) {
+                if (value.name().equalsIgnoreCase(policy)) return value;
+            }
             return fallback;
         }
+    }
+
+    static HttpProtocol httpProtocol(String protocol, HttpProtocol fallback) {
+        for (HttpProtocol value : HttpProtocol.values()) {
+            if (value.name().equalsIgnoreCase(protocol)) return value;
+        }
+        return fallback;
     }
 }
