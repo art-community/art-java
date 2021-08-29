@@ -36,6 +36,7 @@ import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.constants.HttpModuleConstants.*;
@@ -56,13 +57,15 @@ import java.util.function.*;
 
 public class HttpRouter {
     private final HttpModuleState state;
+    private HttpServerConfiguration httpConfiguration;
 
     public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
+        this.httpConfiguration = httpConfiguration;
         state = httpModule().state();
-        setupRoutes(routes, httpConfiguration, serverConfiguration);
+        setupRoutes(routes, serverConfiguration);
     }
 
-    private void setupRoutes(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
+    private void setupRoutes(HttpServerRoutes routes, ServerConfiguration serverConfiguration) {
         for (HttpRouteConfiguration route : httpConfiguration.getRoutes().get()) {
             HttpRouteType httpMethodType = route.getType();
             ServiceMethodIdentifier serviceMethodId = route.getServiceMethodId();
@@ -107,7 +110,7 @@ public class HttpRouter {
     }
 
     private WsRouting handleWebsocket(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration) {
-        DataFormat defaultDataFormat = routeConfiguration.getDefaultDataFormat();
+        DataFormat defaultDataFormat = orElse(routeConfiguration.getDefaultDataFormat(), httpConfiguration.getDefaultDataFormat());
         MimeType defaultMimeType = toMimeType(defaultDataFormat);
         MetaType<?> inputMappingType = serviceMethod.getInputType();
         if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
@@ -127,7 +130,7 @@ public class HttpRouter {
     }
 
     private HttpRouting handleHttp(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration) {
-        DataFormat defaultDataFormat = routeConfiguration.getDefaultDataFormat();
+        DataFormat defaultDataFormat = orElse(routeConfiguration.getDefaultDataFormat(), httpConfiguration.getDefaultDataFormat());
         MimeType defaultMimeType = toMimeType(defaultDataFormat);
         MetaType<?> inputMappingType = serviceMethod.getInputType();
         if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {

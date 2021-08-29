@@ -21,7 +21,7 @@ package io.art.http.configuration;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.http.configuration.HttpRouteConfiguration.HttpWsRouteConfiguration.*;
-import io.art.http.strategy.*;
+import io.art.http.path.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
@@ -31,7 +31,7 @@ import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
-import static io.art.http.strategy.RouteByServiceMethodStrategy.*;
+import static io.art.http.path.HttpPath.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import java.nio.file.*;
@@ -39,7 +39,7 @@ import java.nio.file.*;
 @Getter
 @Builder(toBuilder = true)
 public class HttpRouteConfiguration {
-    private RouteByServiceMethodStrategy path;
+    private HttpPath path;
     private HttpRouteType type;
     private boolean deactivated;
     private DataFormat defaultDataFormat;
@@ -60,6 +60,7 @@ public class HttpRouteConfiguration {
         HttpRouteConfiguration configuration = current.toBuilder().build();
         configuration.deactivated = orElse(source.getBoolean(DEACTIVATED_KEY), configuration.deactivated);
         configuration.type = httpRouteType(source.getString(METHOD_KEY).toUpperCase(), configuration.type);
+        configuration.defaultDataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), current.defaultDataFormat);
         switch (configuration.type) {
             case PATH:
                 Path path = let(source.getString(FILE_PATH_KEY),

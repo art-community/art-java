@@ -2,9 +2,9 @@ package io.art.http.module;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.extensions.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;
-import io.art.http.configuration.HttpRouteConfiguration.*;
 import io.art.http.configuration.HttpServerConfiguration.*;
 import io.art.http.constants.HttpModuleConstants.*;
 import io.art.meta.model.*;
@@ -18,8 +18,9 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.http.configuration.HttpRouteConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
-import static io.art.http.strategy.RouteByServiceMethodStrategy.*;
+import static io.art.http.path.HttpPath.*;
 import static io.art.meta.Meta.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -71,27 +72,30 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     private ImmutableArray<HttpRouteConfiguration> configureRoutes() {
         ImmutableArray.Builder<HttpRouteConfiguration> routes = immutableArrayBuilder();
         for (ClassBasedConfiguration classBasedConfiguration : classBased) {
-            HttpRouteConfigurationBuilder configurationBuilder = HttpRouteConfiguration.builder();
+            HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = classBasedConfiguration.serviceClass.get();
             for (Map.Entry<HttpRouteType, MetaMethod<?>> method : extractHttpMethods(metaClass).entrySet()) {
-                classBasedConfiguration.decorator.apply(configurationBuilder.type(method.getKey())
+                configurationBuilder.type(method.getKey())
                         .path(byServiceMethod())
-                        .serviceMethodId(serviceMethodId(asId(metaClass.getClass()), method.getValue().name())));
+                        .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.getValue().name()));
+                getServiceDecorator(metaClass).apply(configurationBuilder);
                 getMethodDecorator(metaClass, method.getValue()).apply(configurationBuilder);
                 routes.add(configurationBuilder.build());
             }
         }
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
-            HttpRouteConfigurationBuilder configurationBuilder = HttpRouteConfiguration.builder();
+            HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
             MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(metaClass));
             if (methodStartWithExcludePath(method.name())) {
-                methodBasedConfiguration.decorator.apply(configurationBuilder.type(extractRouteType(method.name()))
-                        .path(byServiceMethod())
-                        .serviceMethodId(serviceMethodId(asId(metaClass.getClass()), method.name())));
-                getServiceDecorator(metaClass).apply(configurationBuilder);
-                routes.add(configurationBuilder.build());
+                configurationBuilder.type(extractRouteType(method.name()));
             }
+            configurationBuilder
+                    .path(byServiceMethod())
+                    .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.name()));
+            getMethodDecorator(metaClass, method).apply(configurationBuilder);
+            getServiceDecorator(metaClass).apply(configurationBuilder);
+            routes.add(configurationBuilder.build());
         }
         return routes.build();
     }
@@ -108,8 +112,8 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return classBased
                 .stream()
                 .filter(classConfiguration -> serviceClass.equals(classConfiguration.serviceClass.get()))
-                .findFirst()
                 .map(classConfiguration -> classConfiguration.decorator)
+                .reduce(FunctionExtensions::then)
                 .orElse(identity());
     }
 
@@ -117,9 +121,9 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
-                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
-                .findFirst()
+                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod.apply(cast(methodConfiguration.serviceClass.get()))))
                 .map(methodConfiguration -> methodConfiguration.decorator)
+                .reduce(FunctionExtensions::then)
                 .orElse(identity());
     }
 

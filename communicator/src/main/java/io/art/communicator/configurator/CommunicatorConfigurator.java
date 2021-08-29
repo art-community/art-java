@@ -11,6 +11,7 @@ import io.art.core.annotation.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
 import io.art.core.communication.*;
+import io.art.core.extensions.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
@@ -90,7 +91,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             Map<String, CommunicatorActionConfiguration> actions = map();
             for (MetaMethod<?> method : communicatorClass.methods()) {
                 UnaryOperator<CommunicatorActionConfigurator> decorator = getActionDecorator(communicatorClass, method);
-                decorator = then(classBasedConfiguration.decorator, decorator);
+                decorator = then(getCommunicatorDecorator(communicatorClass), decorator);
                 CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
                 actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
             }
@@ -108,7 +109,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             if (nonNull(existed)) actions = existed.getActions().toMutable();
             MetaMethod<?> method = methodBasedConfiguration.actionMethod.apply(cast(communicatorClass));
             UnaryOperator<CommunicatorActionConfigurator> decorator = getCommunicatorDecorator(communicatorClass);
-            decorator = then(decorator, methodBasedConfiguration.decorator);
+            decorator = then(decorator, getActionDecorator(communicatorClass, method));
             CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
             actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
             configurations.put(communicatorId, orElse(existed, CommunicatorActionsConfiguration.defaults()).toBuilder()
@@ -153,8 +154,8 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return classBased
                 .stream()
                 .filter(classConfiguration -> communicatorClass.equals(classConfiguration.communicatorClass.get()))
-                .findFirst()
                 .map(classConfiguration -> classConfiguration.decorator)
+                .reduce(FunctionExtensions::then)
                 .orElse(identity());
     }
 
@@ -162,9 +163,9 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> communicatorClass.equals(methodConfiguration.communicatorClass.get()))
-                .filter(methodConfiguration -> method.equals(methodConfiguration.actionMethod))
-                .findFirst()
+                .filter(methodConfiguration -> method.equals(methodConfiguration.actionMethod.apply(cast(methodConfiguration.communicatorClass.get()))))
                 .map(methodConfiguration -> methodConfiguration.decorator)
+                .reduce(FunctionExtensions::then)
                 .orElse(identity());
     }
 
