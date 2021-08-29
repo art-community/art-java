@@ -37,12 +37,12 @@ public interface RsocketModuleConstants {
     interface LoggingMessages {
         String RSOCKET_COMMUNICATOR_LOGGER = "rsocket-communicator";
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
-        String SERVER_STARTED = "RSocket {0} server started - {1}:{2}";
-        String SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
+        String RSOCKET_SERVER_STARTED = "RSocket {0} server started - {1}:{2}";
+        String RSOCKET_SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
 
-        String COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}";
-        String COMMUNICATOR_STARTED_VERBOSE = "RSocket communicator connector started: {0}\nSetup payload:\n{1}";
-        String COMMUNICATOR_STOPPED = "RSocket communicator connector stopped: {0}";
+        String RSOCKET_COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}";
+        String RSOCKET_COMMUNICATOR_STARTED_VERBOSE = "RSocket communicator connector started: {0}\nSetup payload:\n{1}";
+        String RSOCKET_COMMUNICATOR_STOPPED = "RSocket communicator connector stopped: {0}";
 
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";

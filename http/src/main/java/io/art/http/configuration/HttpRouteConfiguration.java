@@ -63,7 +63,7 @@ public class HttpRouteConfiguration {
         configuration.type = httpRouteType(source.getString(METHOD_KEY).toUpperCase(), configuration.type);
         switch (configuration.type) {
             case PATH:
-                Path path = let(source.getString(ROUTED_PATH_KEY), Paths::get, let(current.pathConfiguration, HttpPathRouteConfiguration::getPath));
+                Path path = let(source.getString(FILE_PATH_KEY), Paths::get, let(current.pathConfiguration, HttpPathRouteConfiguration::getPath));
                 configuration.pathConfiguration = HttpPathRouteConfiguration.builder()
                         .path(path)
                         .build();

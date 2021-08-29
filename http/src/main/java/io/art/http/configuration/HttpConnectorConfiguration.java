@@ -25,40 +25,41 @@ import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.http.configuration.HttpKeepAliveConfiguration.*;
-import static io.art.http.configuration.HttpRetryConfiguration.*;
-import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.LOGGING_KEY;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import java.time.*;
 import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class HttpConnectorConfiguration {
     private String connector;
-    private int maxInboundPayloadSize;
-    private int fragment;
-    private HttpKeepAliveConfiguration keepAlive;
-    private HttpRetryConfiguration retry;
-    private int tcpMaxFrameLength;
+    private boolean retry;
+    private boolean keepAlive;
+    private boolean verbose;
+    private boolean compress;
+    private boolean wiretapLog;
+    private boolean followRedirect;
     private UnaryOperator<HttpClient> decorator;
-    private String httpWebSocketPath;
-    private boolean logging;
     private DataFormat dataFormat;
     private String url;
+    private Duration responseTimeout;
 
     public static HttpConnectorConfiguration connectorConfiguration(String connector) {
         HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
         configuration.connector = connector;
-        configuration.logging = false;
-        configuration.fragment = 0;
-        configuration.maxInboundPayloadSize = Integer.MAX_VALUE;
+        configuration.verbose = false;
+        configuration.compress = false;
+        configuration.wiretapLog = false;
+        configuration.followRedirect = true;
+        configuration.retry = true;
+        configuration.keepAlive = true;
         configuration.dataFormat = JSON;
-        configuration.httpWebSocketPath = SLASH;
         configuration.decorator = UnaryOperator.identity();
         configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + SLASH;
         return configuration;
@@ -69,16 +70,16 @@ public class HttpConnectorConfiguration {
         configuration.connector = source.getParent();
 
         ChangesListener listener = refresher.connectorListeners().listenerFor(configuration.connector);
-        ChangesListener loggingListener = refresher.connectorLoggingListeners().listenerFor(configuration.connector);
 
-        configuration.logging = loggingListener.emit(orElse(source.getBoolean(LOGGING_KEY), current.logging));
-
+        configuration.verbose = listener.emit(orElse(source.getBoolean(VERBOSE_KEY), current.verbose));
+        configuration.compress = listener.emit(orElse(source.getBoolean(COMPRESS_KEY), current.compress));
         configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), current.dataFormat));
-        configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
-        configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), current.fragment));
-        configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> httpKeepAlive(section, current.keepAlive), current.keepAlive));
-        configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> httpRetry(section, current.retry), current.retry));
-        configuration.url = listener.emit(source.getString(TRANSPORT_WS_BASE_URL_KEY));
+        configuration.keepAlive = listener.emit(orElse(source.getBoolean(KEEP_ALIVE_KEY), current.keepAlive));
+        configuration.retry = listener.emit(orElse(source.getBoolean(RETRY_KEY), current.retry));
+        configuration.followRedirect = listener.emit(orElse(source.getBoolean(FOLLOW_REDIRECT_KEY), current.followRedirect));
+        configuration.responseTimeout = listener.emit(orElse(source.getDuration(RESPONSE_TIMEOUT_KEY), current.responseTimeout));
+        configuration.wiretapLog = listener.emit(orElse(source.getBoolean(WIRETAP_LOG_KEY), current.wiretapLog));
+        configuration.url = listener.emit(source.getString(URL_KEY));
 
         return configuration;
     }

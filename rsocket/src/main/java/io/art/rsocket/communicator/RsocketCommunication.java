@@ -97,7 +97,7 @@ public class RsocketCommunication implements Communication {
     private void disposeClient(RSocketClient rsocket) {
         disposeRsocket(rsocket);
         if (withLogging()) {
-            getLogger().info(format(COMMUNICATOR_STOPPED, connectorConfiguration.getConnector()));
+            getLogger().info(format(RSOCKET_COMMUNICATOR_STOPPED, connectorConfiguration.getConnector()));
         }
     }
 

@@ -34,18 +34,24 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.http.constants.HttpModuleConstants.Messages.*;
+import static io.art.http.constants.HttpModuleConstants.Warnings.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
+import static io.art.logging.Logging.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static io.art.transport.payload.TransportPayloadReader.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import java.nio.file.*;
 import java.util.Map.*;
 import java.util.function.*;
 
@@ -86,11 +92,17 @@ public class HttpRouter {
                 case WS:
                     routes.ws(path, handleWebsocket(serviceMethod, routeValue));
                     break;
-                case FILE:
-                    routes.file(path, routeValue.getPathConfiguration().getPath());
-                    break;
-                case DIRECTORY:
-                    routes.directory(path, routeValue.getPathConfiguration().getPath());
+                case PATH:
+                    Path routePath = routeValue.getPathConfiguration().getPath();
+                    if (withLogging() && !routePath.toFile().exists()) {
+                        logger(HTTP_SERVER_LOGGER).warn(format(ROUTE_PATH_NOT_EXISTS, routePath.toAbsolutePath()));
+                        break;
+                    }
+                    if (routePath.toFile().isDirectory()) {
+                        routes.directory(path, routePath);
+                        break;
+                    }
+                    routes.file(path, routePath);
                     break;
             }
         }

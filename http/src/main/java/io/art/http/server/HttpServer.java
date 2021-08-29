@@ -29,8 +29,9 @@ import lombok.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.property.Property.*;
-import static io.art.http.constants.HttpModuleConstants.LoggingMessages.*;
+import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.manager.HttpManager.*;
 import static lombok.AccessLevel.*;
 
@@ -71,11 +72,16 @@ public class HttpServer implements Server {
                 .create()
                 .port(serverConfiguration.getPort())
                 .host(serverConfiguration.getHost())
+                .accessLog(withLogging() && (serverConfiguration.isAccessLog() || serverConfiguration.isVerbose()))
+                .wiretap(withLogging() && (serverConfiguration.isWiretapLog() || serverConfiguration.isVerbose()))
+                .forwarded(serverConfiguration.isForward())
+                .compress(serverConfiguration.isCompress())
+                .protocol(serverConfiguration.getProtocol())
                 .route(routes -> new HttpRouter(routes, serverConfiguration, configuration.getServer()));
         Mono<? extends DisposableServer> bind = server.bind();
-        if (serverConfiguration.isLogging()) {
+        if (withLogging()) {
             bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(SERVER_STARTED))
+                    .doOnSubscribe(subscription -> getLogger().info(HTTP_SERVER_STARTED))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return bind.block();
@@ -87,10 +93,9 @@ public class HttpServer implements Server {
     }
 
     private void setupCloser(DisposableServer server) {
-        HttpServerConfiguration serverConfiguration = configuration.getHttpServer();
         this.closer = server.onDispose();
-        if (serverConfiguration.isLogging()) {
-            this.closer = server.onDispose().doOnSuccess(ignore -> getLogger().info(SERVER_STOPPED));
+        if (withLogging()) {
+            this.closer = server.onDispose().doOnSuccess(ignore -> getLogger().info(HTTP_SERVER_STOPPED));
         }
     }
 }

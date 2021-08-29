@@ -77,14 +77,13 @@ public class HttpServerConfiguration {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
 
         ChangesListener serverListener = refresher.serverListener();
-        ChangesListener serverLoggingListener = refresher.serverLoggingListener();
 
         configuration.defaultDataFormat = serverListener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), JSON));
         configuration.port = serverListener.emit(orElse(source.getInteger(PORT_KEY), current.port));
         configuration.host = serverListener.emit(orElse(source.getString(HOST_KEY), current.host));
         configuration.verbose = serverListener.emit(orElse(source.getBoolean(VERBOSE_KEY), current.verbose));
         configuration.accessLog = serverListener.emit(orElse(source.getBoolean(ACCESS_LOG_KEY), current.accessLog));
-        configuration.wiretapLog = serverListener.emit(orElse(source.getBoolean(WRITETAP_LOG_KEY), current.wiretapLog));
+        configuration.wiretapLog = serverListener.emit(orElse(source.getBoolean(WIRETAP_LOG_KEY), current.wiretapLog));
         configuration.compress = serverListener.emit(orElse(source.getBoolean(COMPRESS_KEY), current.compress));
         configuration.forward = serverListener.emit(orElse(source.getBoolean(FORWARD_KEY), current.forward));
         configuration.idleTimeout = serverListener.emit(orElse(source.getDuration(IDLE_TIMEOUT_KEY), current.idleTimeout));

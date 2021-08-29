@@ -20,7 +20,6 @@ package io.art.http.constants;
 
 import lombok.*;
 import reactor.netty.http.*;
-import java.time.*;
 
 public interface HttpModuleConstants {
     interface Errors {
@@ -28,49 +27,38 @@ public interface HttpModuleConstants {
         String CONFIGURATION_PARAMETER_NOT_EXISTS = "HTTP configuration parameter does not exists: ''{0}''";
     }
 
-    interface LoggingMessages {
+    interface Warnings {
+        String ROUTE_PATH_NOT_EXISTS = "Specified file route path does not exists: {0}";
+    }
+
+    interface Messages {
+        String HTTP_COMMUNICATOR_LOGGER = "http-communicator";
+        String HTTP_SERVER_LOGGER = "http-server";
         String HTTP_DISPOSING = "Disposing HTTP";
-        String SERVER_STARTED = "HTTP server started";
-        String SERVER_STOPPED = "HTTP server stopped";
-        String COMMUNICATOR_STARTED = "HTTP communicator started\nConnector: {0}\nSetup payload\n{1}";
-        String COMMUNICATOR_STOPPED = "HTTP communicator stopped\nConnector: {0}\nSetup payload\n{1}";
+        String HTTP_SERVER_STARTED = "HTTP {0} server started - {1}:{2}";
+        String HTTP_SERVER_STOPPED = "HTTP {0} server stopped - {1}:{2}";
+        String HTTP_COMMUNICATOR_STARTED = "HTTP communicator connector started: {0}";
+        String HTTP_COMMUNICATOR_STOPPED = "HTTP communicator connector stopped: {0}";
     }
 
     interface ConfigurationKeys {
         String HTTP_SECTION = "http";
-        String RECONNECT_SECTION = "reconnect";
-        String KEEP_ALIVE_SECTION = "keepAlive";
-
-        String TRANSPORT_WS_BASE_URL_KEY = "transport.ws.baseUrl";
-
-        String LOGGING_KEY = "logging";
-        String FRAGMENTATION_MTU_KEY = "fragmentationMtu";
-
-        String POLICY_KEY = "policy";
-        String BACKOFF_MAX_ATTEMPTS_KEY = "backoff.maxAttempts";
-        String BACKOFF_MIN_BACKOFF_KEY = "backoff.minBackoff";
-        String FIXED_DELAY_MAX_ATTEMPTS_KEY = "fixedDelay.maxAttempts";
-        String FIXED_DELAY_KEY = "fixedDelay.delay";
-        String MAX_KEY = "max";
-        String MAX_IN_ROW_KEY = "maxInRow";
-        String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
-
         String ROUTES_SECTION = "routes";
 
-        String INTERVAL_KEY = "interval";
-        String MAX_LIFE_TIME_KEY = "maxLifeTime";
-
+        String URL_KEY = "url";
         String PATH_KEY = "path";
         String METHOD_KEY = "method";
-
         String WS_AGGREGATE_FRAMES_KEY = "ws.aggregateFrames";
-        String ROUTED_PATH_KEY = "routed.path";
-
+        String FILE_PATH_KEY = "file.path";
         String FORWARD_KEY = "forward";
         String IDLE_TIMEOUT_KEY = "idleTimeout";
         String PROTOCOL_KEY = "protocol";
         String ACCESS_LOG_KEY = "accessLog";
-        String WRITETAP_LOG_KEY = "wiretapLog";
+        String WIRETAP_LOG_KEY = "wiretapLog";
+        String RETRY_KEY = "retry";
+        String KEEP_ALIVE_KEY = "keepAlive";
+        String FOLLOW_REDIRECT_KEY = "followRedirect";
+        String RESPONSE_TIMEOUT_KEY = "responseTimeout";
     }
 
 
@@ -98,34 +86,7 @@ public interface HttpModuleConstants {
     }
 
     interface Defaults {
-        long DEFAULT_RETRY_MAX_ATTEMPTS = 3;
-        Duration DEFAULT_RETRY_MIN_BACKOFF = Duration.ofSeconds(1);
-        Duration DEFAULT_RETRY_FIXED_DELAY = Duration.ofSeconds(1);
-        int DEFAULT_RETRY_MAX = 1;
-        int DEFAULT_RETRY_MAX_IN_ROW = 1;
         int DEFAULT_PORT = 80;
-        Duration DEFAULT_KEEP_ALIVE_INTERVAL = Duration.ofSeconds(20);
-        Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = Duration.ofSeconds(90);
-        Duration DEFAULT_IDLE_TIMEOUT = Duration.ofSeconds(10);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    enum RetryPolicy {
-        BACKOFF("backoff"),
-        FIXED_DELAY("fixedDelay"),
-        MAX("max"),
-        MAX_IN_A_ROW("maxInARow"),
-        INDEFINITELY("indefinitely");
-
-        private final String policy;
-
-        public static RetryPolicy httpRetryPolicy(String policy, RetryPolicy fallback) {
-            for (RetryPolicy value : RetryPolicy.values()) {
-                if (value.name().equalsIgnoreCase(policy)) return value;
-            }
-            return fallback;
-        }
     }
 
     static HttpProtocol httpProtocol(String protocol, HttpProtocol fallback) {
