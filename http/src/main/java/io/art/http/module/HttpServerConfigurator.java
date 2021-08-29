@@ -53,7 +53,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     public <T extends MetaClass<?>>
     HttpServerConfigurator method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
-        return cast(this);
+        return this;
     }
 
     HttpServerConfiguration configure(HttpServerConfiguration current) {
@@ -73,6 +73,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
                 classBasedConfiguration.decorator.apply(configurationBuilder.type(method.getKey())
                         .path(byServiceMethod())
                         .serviceMethodId(serviceMethodId(asId(metaClass.getClass()), method.getValue().name())));
+                getMethodDecorator(metaClass, method.getValue()).apply(configurationBuilder);
                 routes.add(configurationBuilder.build());
             }
         }
@@ -84,6 +85,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
                 methodBasedConfiguration.decorator.apply(configurationBuilder.type(extractRouteType(method.name()))
                         .path(byServiceMethod())
                         .serviceMethodId(serviceMethodId(asId(metaClass.getClass()), method.name())));
+                getServiceDecorator(metaClass).apply(configurationBuilder);
                 routes.add(configurationBuilder.build());
             }
         }
@@ -96,6 +98,25 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
                 .filter(method -> method.parameters().size() < 2)
                 .filter(method -> methodStartWithExcludePath(method.name()))
                 .collect(mapCollector(method -> extractRouteType(method.name()), Function.identity()));
+    }
+
+    private UnaryOperator<HttpRouteConfigurationBuilder> getServiceDecorator(MetaClass<?> serviceClass) {
+        return classBased
+                .stream()
+                .filter(classConfiguration -> serviceClass.equals(classConfiguration.serviceClass.get()))
+                .findFirst()
+                .map(classConfiguration -> classConfiguration.decorator)
+                .orElse(identity());
+    }
+
+    private UnaryOperator<HttpRouteConfigurationBuilder> getMethodDecorator(MetaClass<?> serviceClass, MetaMethod<?> method) {
+        return methodBased
+                .stream()
+                .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
+                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
+                .findFirst()
+                .map(methodConfiguration -> methodConfiguration.decorator)
+                .orElse(identity());
     }
 
     @RequiredArgsConstructor
