@@ -57,7 +57,7 @@ import java.util.function.*;
 
 public class HttpRouter {
     private final HttpModuleState state;
-    private HttpServerConfiguration httpConfiguration;
+    private final HttpServerConfiguration httpConfiguration;
 
     public HttpRouter(HttpServerRoutes routes, HttpServerConfiguration httpConfiguration, ServerConfiguration serverConfiguration) {
         this.httpConfiguration = httpConfiguration;
@@ -200,22 +200,27 @@ public class HttpRouter {
             TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
             MetaMethodInvoker invoker = serviceMethod.getInvoker();
-            state.httpState(invoker.getOwner(), invoker.getDelegate(), httpLocalState(request, response));
+
+            HttpLocalState localState = httpLocalState(request, response);
+            state.httpState(invoker.getOwner(), invoker.getDelegate(), localState);
 
             Flux<Object> input = request.receive()
                     .map(data -> reader.read(data, inputMappingType))
                     .filter(data -> !data.isEmpty())
                     .map(TransportPayload::getValue);
 
+            Flux<Object> output = serviceMethod.serve(input);
+
             if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
-                return response
-                        .send(serviceMethod.serve(input).map(ignore -> EMPTY_NETTY_BUFFER))
+                return localState
+                        .response()
+                        .send(output.map(ignore -> EMPTY_NETTY_BUFFER))
                         .then();
             }
 
-            return response
-                    .send(serviceMethod
-                            .serve(input)
+            return localState
+                    .response()
+                    .send(output
                             .map(value -> writer.write(typed(outputMappingType, value))))
                     .then();
         }

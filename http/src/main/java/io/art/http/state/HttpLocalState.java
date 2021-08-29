@@ -20,8 +20,8 @@ import java.util.*;
 public class HttpLocalState {
     private final HttpServerRequest request;
     private final HttpServerResponse response;
-    private final Map<String, String> pathParams;
-    private final Map<String, String> queryParams;
+    private final Map<String, String> pathParameters;
+    private final Map<String, String> queryParameters;
     private final HttpHeaders requestHeaders;
     private final Map<CharSequence, Set<Cookie>> requestCookies;
     private final String scheme;
@@ -31,8 +31,8 @@ public class HttpLocalState {
     private HttpLocalState(HttpServerRequest request, HttpServerResponse response) {
         this.request = request;
         this.response = response;
-        pathParams = isNull(request.params()) ? emptyMap() : request.params();
-        queryParams = parseQuery(request);
+        pathParameters = isNull(request.params()) ? emptyMap() : request.params();
+        queryParameters = parseQuery(request);
         requestHeaders = request.requestHeaders();
         requestCookies = request.cookies();
         scheme = request.scheme();

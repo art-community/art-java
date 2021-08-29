@@ -34,6 +34,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.Property.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.manager.HttpManager.*;
+import static io.netty.handler.logging.LogLevel.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
 
@@ -77,11 +78,15 @@ public class HttpServer implements Server {
                 .port(port)
                 .host(host)
                 .accessLog(withLogging() && (serverConfiguration.isAccessLog() || serverConfiguration.isVerbose()))
-                .wiretap(withLogging() && (serverConfiguration.isWiretapLog() || serverConfiguration.isVerbose()))
                 .forwarded(serverConfiguration.isForward())
                 .compress(serverConfiguration.isCompress())
                 .protocol(serverConfiguration.getProtocol())
                 .route(routes -> new HttpRouter(routes, serverConfiguration, configuration.getServer()));
+        if (withLogging()) {
+            if (serverConfiguration.isVerbose() || serverConfiguration.isWiretapLog()) {
+                server.wiretap(HTTP_SERVER_LOGGER, INFO);
+            }
+        }
         server = serverConfiguration.getDecorator().apply(server);
         Mono<? extends DisposableServer> bind = server.bind();
         if (withLogging()) {
