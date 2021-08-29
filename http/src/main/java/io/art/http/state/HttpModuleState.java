@@ -23,17 +23,30 @@ import io.art.meta.model.*;
 import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
-    private final MetaLocalState<HttpLocalState> localState = new MetaLocalState<>();
+    private final MetaLocalState<HttpLocalState> httpLocalState = new MetaLocalState<>();
+    private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
 
     public void httpState(MetaClass<?> owner, MetaMethod<?> method, HttpLocalState state) {
-        localState.set(owner, method, state);
+        httpLocalState.set(owner, method, state);
     }
 
     public <C, M extends MetaClass<C>> HttpLocalState httpState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return localState.get(owner, method);
+        return httpLocalState.get(owner, method);
     }
 
     public <C, M extends MetaClass<C>> void clearHttpState(MetaClass<?> owner, MetaMethod<?> method) {
-        localState.remove(owner, method);
+        httpLocalState.remove(owner, method);
+    }
+
+    public void wsState(MetaClass<?> owner, MetaMethod<?> method, WsLocalState state) {
+        wsLocalState.set(owner, method, state);
+    }
+
+    public <C, M extends MetaClass<C>> WsLocalState wsState(Class<C> owner, Function<M, MetaMethod<?>> method) {
+        return wsLocalState.get(owner, method);
+    }
+
+    public <C, M extends MetaClass<C>> void clearWsState(MetaClass<?> owner, MetaMethod<?> method) {
+        wsLocalState.remove(owner, method);
     }
 }

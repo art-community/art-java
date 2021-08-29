@@ -37,7 +37,6 @@ import reactor.netty.http.server.*;
 import reactor.netty.http.websocket.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.constants.HttpModuleConstants.*;
@@ -45,6 +44,7 @@ import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.constants.HttpModuleConstants.Warnings.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
+import static io.art.http.state.WsLocalState.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
@@ -155,7 +155,7 @@ public class HttpRouter {
     }
 
     @RequiredArgsConstructor
-    private static class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
+    private class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
         final ServiceMethod serviceMethod;
         final HttpRouteConfiguration routeConfiguration;
         final MimeType defaultMimeType;
@@ -169,21 +169,26 @@ public class HttpRouter {
             TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
             TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
-            Flux<Object> input = inbound.receive()
-                    .map(data -> reader.read(data.retain(), inputMappingType))
+            MetaMethodInvoker invoker = serviceMethod.getInvoker();
+            WsLocalState localState = wsLocalState(inbound, outbound);
+            state.wsState(invoker.getOwner(), invoker.getDelegate(), localState);
+
+            Flux<Object> input = inbound
+                    .receive()
+                    .retain()
+                    .map(data -> reader.read(data, inputMappingType))
                     .filter(data -> !data.isEmpty())
                     .map(TransportPayload::getValue);
 
-            if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
-                return outbound
-                        .send(serviceMethod.serve(input).map(ignore -> EMPTY_NETTY_BUFFER))
-                        .then();
+            if (isNull(serviceMethod.getOutputType().internalKind()) || serviceMethod.getOutputType().internalKind() == VOID) {
+                Sinks.One<Void> responder = Sinks.one();
+                serviceMethod.serve(input.doOnComplete(() -> responder.emitEmpty(FAIL_FAST)));
+                return localState.outbound().sendObject(responder.asMono()).then();
             }
 
-            return outbound
-                    .send(serviceMethod
-                            .serve(input)
-                            .map(value -> writer.write(typed(outputMappingType, value))))
+            return localState
+                    .outbound()
+                    .send(serviceMethod.serve(input).map(value -> writer.write(typed(outputMappingType, value))))
                     .then();
         }
     }
@@ -205,7 +210,6 @@ public class HttpRouter {
             TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
             MetaMethodInvoker invoker = serviceMethod.getInvoker();
-
             HttpLocalState localState = httpLocalState(request, response);
             state.httpState(invoker.getOwner(), invoker.getDelegate(), localState);
 
@@ -222,11 +226,9 @@ public class HttpRouter {
                 return localState.response().sendObject(responder.asMono()).then();
             }
 
-            Flux<Object> output = serviceMethod.serve(input);
-
             return localState
                     .response()
-                    .send(output.map(value -> writer.write(typed(outputMappingType, value))))
+                    .send(serviceMethod.serve(input).map(value -> writer.write(typed(outputMappingType, value))))
                     .then();
         }
     }
