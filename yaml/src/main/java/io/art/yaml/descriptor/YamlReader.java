@@ -46,18 +46,22 @@ import java.util.*;
 @Public
 @AllArgsConstructor
 public class YamlReader implements Reader {
-    private final YAMLFactory jsonFactory;
+    private final YAMLFactory yamlFactory;
 
     @Override
-    public <T> T read(MetaType<T> type, InputStream json) {
-        if (isNull(json)) return null;
+    public <T> T read(MetaType<T> type, InputStream yaml) {
+        if (isNull(yaml)) return null;
         MetaTransformer<T> transformer = type.inputTransformer();
-        try (YAMLParser parser = jsonFactory.createParser(json)) {
+        if (type.externalKind() == LAZY) {
+            Object lazy = read(type.parameters().get(0), yaml);
+            return transformer.fromLazy(() -> lazy);
+        }
+        try (YAMLParser parser = yamlFactory.createParser(yaml)) {
             JsonToken nextToken = parser.nextToken();
             if (isNull(nextToken) || nextToken == VALUE_NULL) return null;
             switch (type.externalKind()) {
                 case LAZY:
-                    return transformer.fromLazy(() -> read(type.parameters().get(0), json));
+                    return transformer.fromLazy(() -> read(type.parameters().get(0), yaml));
                 case STRING:
                     return transformer.fromString(parser.getText());
                 case LONG:

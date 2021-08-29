@@ -51,12 +51,14 @@ public class JsonReader implements Reader {
     public <T> T read(MetaType<T> type, InputStream json) {
         if (isNull(json)) return null;
         MetaTransformer<T> transformer = type.inputTransformer();
+        if (type.externalKind() == LAZY) {
+            Object lazy = read(type.parameters().get(0), json);
+            return transformer.fromLazy(() -> lazy);
+        }
         try (JsonParser parser = jsonFactory.createParser(json)) {
             JsonToken nextToken = parser.nextToken();
             if (isNull(nextToken) || nextToken == VALUE_NULL) return null;
             switch (type.externalKind()) {
-                case LAZY:
-                    return transformer.fromLazy(() -> read(type.parameters().get(0), json));
                 case STRING:
                     return transformer.fromString(parser.getText());
                 case LONG:

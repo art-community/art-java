@@ -38,6 +38,7 @@ import reactor.netty.http.websocket.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.BufferConstants.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
@@ -69,29 +70,32 @@ public class HttpRouter {
         for (HttpRouteConfiguration route : httpConfiguration.getRoutes().get()) {
             HttpRouteType httpMethodType = route.getType();
             ServiceMethodIdentifier serviceMethodId = route.getServiceMethodId();
-            String path = route.getPath().route(serviceMethodId);
+            StringBuilder path = new StringBuilder(route.getPath().route(serviceMethodId));
+            for (String parameter : route.getPathParameters()) {
+                path.append(SLASH).append(OPENING_BRACES).append(parameter).append(CLOSING_BRACES);
+            }
             ServiceMethod serviceMethod = serverConfiguration.getMethods().get().get(serviceMethodId);
             switch (httpMethodType) {
                 case GET:
-                    routes.get(path, handleHttp(serviceMethod, route));
+                    routes.get(path.toString(), handleHttp(serviceMethod, route));
                     break;
                 case POST:
-                    routes.post(path, handleHttp(serviceMethod, route));
+                    routes.post(path.toString(), handleHttp(serviceMethod, route));
                     break;
                 case PUT:
-                    routes.put(path, handleHttp(serviceMethod, route));
+                    routes.put(path.toString(), handleHttp(serviceMethod, route));
                     break;
                 case DELETE:
-                    routes.delete(path, handleHttp(serviceMethod, route));
+                    routes.delete(path.toString(), handleHttp(serviceMethod, route));
                     break;
                 case OPTIONS:
-                    routes.options(path, handleHttp(serviceMethod, route));
+                    routes.options(path.toString(), handleHttp(serviceMethod, route));
                     break;
                 case HEAD:
-                    routes.head(path, handleHttp(serviceMethod, route));
+                    routes.head(path.toString(), handleHttp(serviceMethod, route));
                     break;
                 case WS:
-                    routes.ws(path, handleWebsocket(serviceMethod, route));
+                    routes.ws(path.toString(), handleWebsocket(serviceMethod, route));
                     break;
                 case PATH:
                     Path routePath = route.getPathConfiguration().getPath();
@@ -100,10 +104,10 @@ public class HttpRouter {
                         break;
                     }
                     if (routePath.toFile().isDirectory()) {
-                        routes.directory(path, routePath);
+                        routes.directory(path.toString(), routePath);
                         break;
                     }
-                    routes.file(path, routePath);
+                    routes.file(path.toString(), routePath);
                     break;
             }
         }
@@ -204,8 +208,8 @@ public class HttpRouter {
             HttpLocalState localState = httpLocalState(request, response);
             state.httpState(invoker.getOwner(), invoker.getDelegate(), localState);
 
-            Flux<Object> input = request.receive()
-                    .map(data -> reader.read(data, inputMappingType))
+            Flux<Object> input = request.receiveContent()
+                    .map(data -> reader.read(data.content().retain(), inputMappingType))
                     .filter(data -> !data.isEmpty())
                     .map(TransportPayload::getValue);
 

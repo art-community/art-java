@@ -37,6 +37,7 @@ import static io.art.http.manager.HttpManager.*;
 import static io.netty.handler.logging.LogLevel.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
+import static reactor.netty.transport.logging.AdvancedByteBufFormat.*;
 
 @RequiredArgsConstructor
 public class HttpServer implements Server {
@@ -84,7 +85,7 @@ public class HttpServer implements Server {
                 .route(routes -> new HttpRouter(routes, serverConfiguration, configuration.getServer()));
         if (withLogging()) {
             if (serverConfiguration.isVerbose() || serverConfiguration.isWiretapLog()) {
-                server.wiretap(HTTP_SERVER_LOGGER, INFO);
+                server = server.wiretap(HTTP_SERVER_LOGGER, INFO, HEX_DUMP);
             }
         }
         server = serverConfiguration.getDecorator().apply(server);

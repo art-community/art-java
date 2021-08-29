@@ -18,15 +18,20 @@
 
 package io.art.http.configuration;
 
+import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
 import io.art.http.configuration.HttpRouteConfiguration.HttpWsRouteConfiguration.*;
 import io.art.http.path.*;
 import io.art.transport.constants.TransportModuleConstants.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.*;
@@ -45,6 +50,7 @@ public class HttpRouteConfiguration {
     private DataFormat defaultDataFormat;
     private HttpWsRouteConfiguration wsConfiguration;
     private HttpPathRouteConfiguration pathConfiguration;
+    private ImmutableSet<String> pathParameters;
     private ServiceMethodIdentifier serviceMethodId;
 
     public static HttpRouteConfiguration routeConfiguration() {
@@ -53,6 +59,7 @@ public class HttpRouteConfiguration {
         configuration.deactivated = false;
         configuration.type = GET;
         configuration.defaultDataFormat = JSON;
+        configuration.pathParameters = emptyImmutableSet();
         return configuration;
     }
 
@@ -61,6 +68,7 @@ public class HttpRouteConfiguration {
         configuration.deactivated = orElse(source.getBoolean(DEACTIVATED_KEY), configuration.deactivated);
         configuration.type = httpRouteType(source.getString(METHOD_KEY).toUpperCase(), configuration.type);
         configuration.defaultDataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), current.defaultDataFormat);
+        configuration.pathParameters = merge(immutableSetOf(source.getStringArray(PATH_PARAMETERS_KEY)), current.pathParameters);
         switch (configuration.type) {
             case PATH:
                 Path path = let(source.getString(FILE_PATH_KEY),

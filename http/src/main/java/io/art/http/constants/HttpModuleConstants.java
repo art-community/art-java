@@ -60,6 +60,7 @@ public interface HttpModuleConstants {
         String KEEP_ALIVE_KEY = "keepAlive";
         String FOLLOW_REDIRECT_KEY = "followRedirect";
         String RESPONSE_TIMEOUT_KEY = "responseTimeout";
+        String PATH_PARAMETERS_KEY = "pathParameters";
     }
 
 
