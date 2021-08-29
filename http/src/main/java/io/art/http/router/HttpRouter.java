@@ -53,6 +53,7 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import java.nio.file.*;
 import java.util.function.*;
 
@@ -208,24 +209,24 @@ public class HttpRouter {
             HttpLocalState localState = httpLocalState(request, response);
             state.httpState(invoker.getOwner(), invoker.getDelegate(), localState);
 
-            Flux<Object> input = request.receiveContent()
-                    .map(data -> reader.read(data.content().retain(), inputMappingType))
+            Flux<Object> input = request
+                    .receive()
+                    .retain()
+                    .map(data -> reader.read(data, inputMappingType))
                     .filter(data -> !data.isEmpty())
                     .map(TransportPayload::getValue);
 
-            Flux<Object> output = serviceMethod.serve(input);
-
-            if (isNull(outputMappingType) || outputMappingType.internalKind() == VOID) {
-                return localState
-                        .response()
-                        .send(output.map(ignore -> EMPTY_NETTY_BUFFER))
-                        .then();
+            if (isNull(serviceMethod.getOutputType().internalKind()) || serviceMethod.getOutputType().internalKind() == VOID) {
+                Sinks.One<Void> responder = Sinks.one();
+                serviceMethod.serve(input.doOnComplete(() -> responder.emitEmpty(FAIL_FAST)));
+                return localState.response().sendObject(responder.asMono()).then();
             }
+
+            Flux<Object> output = serviceMethod.serve(input);
 
             return localState
                     .response()
-                    .send(output
-                            .map(value -> writer.write(typed(outputMappingType, value))))
+                    .send(output.map(value -> writer.write(typed(outputMappingType, value))))
                     .then();
         }
     }

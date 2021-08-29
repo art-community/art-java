@@ -47,7 +47,7 @@ public interface LoggingModuleConstants {
         String DEFAULT_LOG_FILE_NAME_EXTENSION = ".log";
         DateTimeFormatter DEFAULT_LOG_DATE_TIME_FORMAT = DEFAULT_FORMATTER;
         DateTimeFormatter DEFAULT_LOG_FILE_TIME_STAMP_FORMAT = DD_MM_YYYY_DASH_FORMAT;
-        Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofSeconds(10);
+        Duration DEFAULT_LOG_FILE_ROTATION_PERIOD = ofDays(1);
         int DEFAULT_QUEUE_CAPACITY = DEFAULT_MPSC_BLOCKING_QUEUE_CAPACITY;
     }
 
