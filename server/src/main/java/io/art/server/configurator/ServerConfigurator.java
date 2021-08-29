@@ -39,22 +39,22 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
     private final List<MethodBasedConfiguration> methodBased = linkedList();
 
 
-    public S configureService(Class<?> serviceClass) {
-        return configureService(serviceClass, identity());
+    public S service(Class<?> serviceClass) {
+        return service(serviceClass, identity());
     }
 
-    public S configureService(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    public S service(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
         return cast(this);
     }
 
     public <T extends MetaClass<?>>
-    S configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
-        return configureMethod(serviceClass, serviceMethod, identity());
+    S method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
+        return method(serviceClass, serviceMethod, identity());
     }
 
     public <T extends MetaClass<?>>
-    S configureMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+    S method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
         return cast(this);
     }

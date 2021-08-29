@@ -29,7 +29,7 @@ public class RsocketTest {
                 messagePack(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
-                        .server(server -> server.tcp().configureService(TestRsocketService.class)))
+                        .server(server -> server.tcp().service(TestRsocketService.class)))
         );
     }
 

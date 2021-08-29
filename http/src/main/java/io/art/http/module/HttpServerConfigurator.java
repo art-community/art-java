@@ -37,24 +37,24 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    public HttpServerConfigurator routeService(Class<?> serviceClass) {
-        return routeService(serviceClass, UnaryOperator.identity());
+    public HttpServerConfigurator route(Class<?> serviceClass) {
+        return route(serviceClass, UnaryOperator.identity());
     }
 
-    public HttpServerConfigurator routeService(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
-        configureService(serviceClass);
+    public HttpServerConfigurator route(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+        service(serviceClass);
         classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
         return this;
     }
 
     public <T extends MetaClass<?>>
-    HttpServerConfigurator routeMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
-        return routeMethod(serviceClass, serviceMethod, identity());
+    HttpServerConfigurator route(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
+        return route(serviceClass, serviceMethod, identity());
     }
 
     public <T extends MetaClass<?>>
-    HttpServerConfigurator routeMethod(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
-        configureMethod(serviceClass, serviceMethod);
+    HttpServerConfigurator route(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+        method(serviceClass, serviceMethod);
         methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
         return this;
     }

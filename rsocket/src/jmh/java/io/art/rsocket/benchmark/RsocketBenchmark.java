@@ -59,7 +59,7 @@ public class RsocketBenchmark {
                             .communicator(communicator -> communicator
                                     .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(manual(BenchmarkRsocketService.class))))
                             )
-                            .server(server -> server.tcp().configureService(BenchmarkRsocketService.class)))
+                            .server(server -> server.tcp().service(BenchmarkRsocketService.class)))
             );
             TestRsocketConnector connector = rsocketConnector(TestRsocketConnector.class);
             communicator = connector.testRsocket();
