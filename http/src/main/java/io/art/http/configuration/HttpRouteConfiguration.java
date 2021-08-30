@@ -21,7 +21,7 @@ package io.art.http.configuration;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
-import io.art.http.configuration.HttpRouteConfiguration.HttpWsRouteConfiguration.*;
+import io.art.http.configuration.HttpWsRouteConfiguration.*;
 import io.art.http.path.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.Builder;
@@ -96,17 +96,5 @@ public class HttpRouteConfiguration {
         apply(source.getString(PATH_KEY), path -> configuration.path = manual(path));
 
         return configuration;
-    }
-
-    @Getter
-    @Builder(toBuilder = true)
-    public static class HttpWsRouteConfiguration {
-        private final int aggregateFrames;
-    }
-
-    @Getter
-    @Builder(toBuilder = true)
-    public static class HttpPathRouteConfiguration {
-        private final Path path;
     }
 }
