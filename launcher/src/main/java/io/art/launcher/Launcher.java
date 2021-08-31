@@ -83,7 +83,7 @@ public class Launcher {
                 .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())));
 
         prepareInitialization(contextConfiguration.printer(printer).build());
-        ModuleInitializationOperator<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
+        ModuleInitializationProvider<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
         configuratorModule
                 .loadSources()
                 .configure(configurator -> configurator.initialize(configuratorActivatorInitializer.get().initialize(configuratorModule)));
@@ -95,7 +95,7 @@ public class Launcher {
 
         for (ModuleActivator moduleActivator : mutableActivators.values()) {
             Module<?, ?> module = moduleActivator.getFactory().get();
-            ModuleInitializationOperator<?> initializer = moduleActivator.getInitializer();
+            ModuleInitializationProvider<?> initializer = moduleActivator.getInitializer();
             if (nonNull(initializer)) {
                 module.configure(configurator -> configurator.initialize(cast(initializer.get().initialize(cast(module)))));
             }

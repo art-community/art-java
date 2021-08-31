@@ -61,7 +61,7 @@ public class Initializer {
         Builder<Module<?, ?>> builder = immutableSetBuilder();
         for (ModuleActivator activator : modules) {
             Module<?, ?> module = activator.getFactory().get();
-            ModuleInitializationOperator<?> initializer = activator.getInitializer();
+            ModuleInitializationProvider<?> initializer = activator.getInitializer();
             if (nonNull(initializer)) {
                 module.configure(configurator -> configurator.initialize(cast(initializer.get().initialize(cast(module)))));
             }

@@ -34,14 +34,14 @@ public class ModuleActivator {
     @Getter
     private final ModuleFactory<?> factory;
     @Getter
-    private final ModuleInitializationOperator<?> initializer;
+    private final ModuleInitializationProvider<?> initializer;
     private final Set<ModuleActivator> dependencies = set();
 
     public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
         return module(moduleClass.getSimpleName(), moduleFactory);
     }
 
-    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializationOperator<?> initializer) {
+    public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory, ModuleInitializationProvider<?> initializer) {
         return module(moduleClass.getSimpleName(), moduleFactory, initializer);
     }
 
@@ -52,7 +52,7 @@ public class ModuleActivator {
                 .build();
     }
 
-    public static ModuleActivator module(String id, ModuleFactory<?> moduleFactory, ModuleInitializationOperator<?> initializer) {
+    public static ModuleActivator module(String id, ModuleFactory<?> moduleFactory, ModuleInitializationProvider<?> initializer) {
         return ModuleActivator.builder()
                 .id(id)
                 .initializer(initializer)

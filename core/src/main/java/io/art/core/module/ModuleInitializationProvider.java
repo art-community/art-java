@@ -21,5 +21,5 @@ package io.art.core.module;
 import java.util.function.*;
 
 @FunctionalInterface
-public interface ModuleInitializationOperator<Initializer extends ModuleInitializer<?, ?, ?>> extends Supplier<Initializer> {
+public interface ModuleInitializationProvider<Initializer extends ModuleInitializer<?, ?, ?>> extends Supplier<Initializer> {
 }
