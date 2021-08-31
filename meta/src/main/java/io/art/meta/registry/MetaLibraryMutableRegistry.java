@@ -8,17 +8,17 @@ import java.util.*;
 import java.util.function.*;
 
 public class MetaLibraryMutableRegistry {
-    private final static Map<Class<?>, Supplier<MetaLibrary>> REGISTRY = map();
+    private final static Map<Class<?>, Supplier<MetaLibrary>> registry = map();
 
     public static ImmutableArray<Supplier<MetaLibrary>> get() {
-        return immutableArrayOf(REGISTRY.values());
+        return immutableArrayOf(registry.values());
     }
 
     public static void clear() {
-        REGISTRY.clear();
+        registry.clear();
     }
 
     public static void registerMetaLibrary(Class<? extends MetaLibrary> libraryClass, Supplier<MetaLibrary> library) {
-        REGISTRY.putIfAbsent(libraryClass, library);
+        registry.putIfAbsent(libraryClass, library);
     }
 }

@@ -23,7 +23,6 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.exception.*;
 import io.art.meta.model.MetaProperty.*;
-import io.art.meta.registry.*;
 import io.art.meta.schema.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -51,6 +50,7 @@ public abstract class MetaClass<T> {
     private final Map<String, MetaField<?>> fields;
     private final Set<MetaMethod<?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
+    private final static Map<Class<?>, MetaClass<?>> mutableRegistry = map();
     private MetaProviderTemplate provider;
     private MetaCreatorTemplate creator;
 
@@ -60,7 +60,7 @@ public abstract class MetaClass<T> {
         fields = map();
         methods = set();
         classes = map();
-        MetaClassMutableRegistry.register(this);
+        mutableRegistry.put(definition().type(), this);
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
@@ -274,5 +274,17 @@ public abstract class MetaClass<T> {
 
     public String toString() {
         return definition.toString();
+    }
+
+    static void clearClassMutableRegistry() {
+        mutableRegistry.clear();
+    }
+
+    static ImmutableMap<Class<?>, MetaClass<?>> getClassMutableRegistry() {
+        return immutableMapOf(mutableRegistry);
+    }
+
+    static boolean hasClassInMutableRegistry(Class<?> type) {
+        return mutableRegistry.containsKey(type);
     }
 }

@@ -16,11 +16,10 @@
  * limitations under the License.
  */
 
-package io.art.meta.computer;
+package io.art.meta.model;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.meta.model.*;
 import io.art.meta.registry.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;

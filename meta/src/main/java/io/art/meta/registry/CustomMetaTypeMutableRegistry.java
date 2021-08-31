@@ -7,21 +7,21 @@ import static java.util.Objects.*;
 import java.util.*;
 
 public class CustomMetaTypeMutableRegistry {
-    private final static Map<Class<?>, MetaType<?>> REGISTRY = map();
-    private final static Map<Class<?>, MetaType<?>> CACHE = map();
+    private final static Map<Class<?>, MetaType<?>> registry = map();
+    private final static Map<Class<?>, MetaType<?>> cache = map();
 
     public static void clear() {
-        REGISTRY.clear();
+        registry.clear();
     }
 
     public static MetaType<?> get(Class<?> type) {
-        MetaType<?> cached = CACHE.get(type);
+        MetaType<?> cached = cache.get(type);
         if (nonNull(cached)) return cached;
-        CACHE.put(type, cached = searchByClass(REGISTRY, type));
+        cache.put(type, cached = searchByClass(registry, type));
         return cached;
     }
 
     public static void register(MetaType<?> metaType) {
-        REGISTRY.put(metaType.type(), metaType);
+        registry.put(metaType.type(), metaType);
     }
 }

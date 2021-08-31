@@ -21,7 +21,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class RuntimeMetaType {
-    private final static Map<Type, MetaType<?>> CACHE = map();
+    private final static Map<Type, MetaType<?>> cache = map();
 
     public static <T> MetaType<T> defineMetaType() {
         TypeReference<T> typeReference = new TypeReference<T>() {
@@ -30,7 +30,7 @@ public class RuntimeMetaType {
     }
 
     public static <T> MetaType<T> defineMetaType(Type type) {
-        return cast(putIfAbsent(CACHE, type, () -> createMetaType(type)));
+        return cast(putIfAbsent(cache, type, () -> createMetaType(type)));
     }
 
     public static <T> MetaType<T> createMetaType(Class<T> type, MetaType<?>... parameters) {

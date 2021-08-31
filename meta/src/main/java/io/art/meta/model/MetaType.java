@@ -34,8 +34,8 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.meta.computer.MetaTypeKindComputer.*;
-import static io.art.meta.computer.TransformersComputer.*;
+import static io.art.meta.model.MetaTypeKindComputer.*;
+import static io.art.meta.model.TransformersComputer.*;
 import static io.art.meta.constants.MetaConstants.ClassNames.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.module.MetaModule.*;
@@ -93,7 +93,7 @@ public class MetaType<T> {
     @EqualsAndHashCode.Exclude
     private final MetaClass<T> declaration = cast(metaModule().configuration().library().classes().get(type));
 
-    private final static Map<CacheKey, MetaType<?>> CACHE = weakMap();
+    private final static Map<CacheKey, MetaType<?>> cache = weakMap();
 
     private final Set<MetaTypeModifiers> modifiers = set();
 
@@ -102,7 +102,7 @@ public class MetaType<T> {
     }
 
     protected MetaType<T> beginComputation() {
-        CACHE.clear();
+        cache.clear();
 
         if (Validatable.class.isAssignableFrom(type)) {
             modifiers.add(VALIDATABLE);
@@ -155,7 +155,7 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
-        return cast(putIfAbsent(CACHE, CacheKey.of(type, parameters), () -> MetaType.<T>createTypeBuilder(type)
+        return cast(putIfAbsent(cache, CacheKey.of(type, parameters), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(immutableArrayOf(parameters))
                 .build()));
@@ -163,7 +163,7 @@ public class MetaType<T> {
 
 
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
-        return cast(putIfAbsent(CACHE, CacheKey.of(type), () -> MetaType.<T>createTypeBuilder(type)
+        return cast(putIfAbsent(cache, CacheKey.of(type), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .enumFactory(enumFactory)
@@ -171,7 +171,7 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
-        return cast(putIfAbsent(CACHE, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>createTypeBuilder(type)
+        return cast(putIfAbsent(cache, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .arrayFactory(cast(arrayFactory))

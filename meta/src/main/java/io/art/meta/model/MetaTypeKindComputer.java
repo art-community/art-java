@@ -16,16 +16,15 @@
  * limitations under the License.
  */
 
-package io.art.meta.computer;
+package io.art.meta.model;
 
 import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.meta.constants.MetaConstants.*;
-import io.art.meta.model.*;
-import io.art.meta.registry.*;
 import io.netty.buffer.*;
 import reactor.core.publisher.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static io.art.meta.model.MetaClass.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.*;
@@ -38,7 +37,7 @@ public class MetaTypeKindComputer {
     public static MetaTypeInternalKind computeInternalKind(MetaType<?> metaType) {
         if (nonNull(metaType.internalKind())) return metaType.internalKind();
         Class<?> type = metaType.type();
-        if (MetaClassMutableRegistry.contains(type)) return ENTITY;
+        if (hasClassInMutableRegistry(type)) return ENTITY;
         if (type.isEnum()) return ENUM;
         if (long[].class.equals(type)) return LONG_ARRAY;
         if (int[].class.equals(type)) return INTEGER_ARRAY;
