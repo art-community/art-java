@@ -196,7 +196,7 @@ public class RsocketCommunicationFactory {
         if (withLogging()) {
             configured = common.isVerbose()
                     ? configured
-                    .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED_VERBOSE, common.getConnector(), asPrettyString(setupPayload))))
+                    .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED_VERBOSE, common.getConnector(), toPrettyString(setupPayload))))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
                     : configured
                     .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED, common.getConnector())))

@@ -68,12 +68,12 @@ public class CommunicatorLoggingDecorator implements UnaryOperator<Flux<Object>>
 
     private void logInput(Object data) {
         if (!enabled.get()) return;
-        logger.info(format(COMMUNICATOR_INPUT_DATA, id.getCommunicatorId(), id.getActionId(), asPrettyString(data)));
+        logger.info(format(COMMUNICATOR_INPUT_DATA, id.getCommunicatorId(), id.getActionId(), toPrettyString(data)));
     }
 
     private void logOutput(Object data) {
         if (!enabled.get()) return;
-        logger.info(format(COMMUNICATOR_OUTPUT_DATA, id.getCommunicatorId(), id.getActionId(), asPrettyString(data)));
+        logger.info(format(COMMUNICATOR_OUTPUT_DATA, id.getCommunicatorId(), id.getActionId(), toPrettyString(data)));
     }
 
     private void logException(Throwable exception) {

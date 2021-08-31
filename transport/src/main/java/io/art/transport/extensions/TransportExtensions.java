@@ -9,7 +9,7 @@ import static io.art.meta.model.TypedObject.*;
 
 @UtilityClass
 public class TransportExtensions {
-    public static String asPrettyString(Object data) {
+    public static String toPrettyString(Object data) {
         return withMeta() && findDeclaration(data.getClass()).isPresent()
                 ? withYaml() ? Yaml.yaml().writer().writeToString(typed(declaration(data.getClass()).definition(), data))
                 : withJson() ? Json.json().writer().writeToString(typed(declaration(data.getClass()).definition(), data))
