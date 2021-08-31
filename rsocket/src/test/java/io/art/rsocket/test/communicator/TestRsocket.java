@@ -1,6 +1,6 @@
 package io.art.rsocket.test.communicator;
 
-import io.art.core.communication.*;
+import io.art.communicator.*;
 import reactor.core.publisher.*;
 
 public interface TestRsocket extends Communicator {

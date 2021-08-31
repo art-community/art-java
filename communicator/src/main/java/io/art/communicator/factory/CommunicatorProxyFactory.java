@@ -1,9 +1,9 @@
 package io.art.communicator.factory;
 
+import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.model.*;
-import io.art.core.communication.*;
 import io.art.meta.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;

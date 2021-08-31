@@ -115,4 +115,9 @@ public interface MetaConstants {
         String CLASS_WITHOUT_PROXY = "Class {0} has not proxy. Proxy could be created only for interfaces";
         String UNKOWN_RUNTIME_META_TYPE_CLASS = "We can not compute meta type in runtime for reflection Type: {0}";
     }
+
+    interface ClassNames {
+        String COMMUNICATOR_NAME = "io.art.communicator.Communicator";
+        String CONNECTOR_NAME = "io.art.communicator.Connector";
+    }
 }

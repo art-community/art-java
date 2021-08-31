@@ -57,7 +57,7 @@ public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
         if (disabled()) return;
         if (isNull(data)) throw (ValidationException) NULL_EXCEPTION.fillInStackTrace();
         Validatable requestData = (Validatable) data;
-        requestData.onValidating(new Validator(requestData));
+        requestData.validate(new Validator(requestData));
     }
 
     private boolean disabled() {

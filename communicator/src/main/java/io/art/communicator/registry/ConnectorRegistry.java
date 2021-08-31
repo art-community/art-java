@@ -1,9 +1,9 @@
 package io.art.communicator.registry;
 
+import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
-import io.art.core.communication.*;
 import io.art.core.property.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;

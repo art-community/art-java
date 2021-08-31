@@ -1,7 +1,7 @@
 package io.art.http;
 
+import io.art.communicator.*;
 import io.art.core.annotation.*;
-import io.art.core.communication.*;
 import io.art.http.state.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;

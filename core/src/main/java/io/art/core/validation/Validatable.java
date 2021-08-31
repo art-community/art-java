@@ -19,7 +19,7 @@
 package io.art.core.validation;
 
 public interface Validatable {
-    default void onValidating(Validator validator) {
+    default void validate(Validator validator) {
 
     }
 }

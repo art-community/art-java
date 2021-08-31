@@ -1,11 +1,11 @@
 package io.art.http.module;
 
+import io.art.communicator.*;
 import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.communication.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;

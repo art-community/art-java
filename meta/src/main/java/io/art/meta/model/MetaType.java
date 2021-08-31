@@ -20,7 +20,6 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.communication.*;
 import io.art.core.validation.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.registry.*;
@@ -37,6 +36,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.computer.MetaTypeKindComputer.*;
 import static io.art.meta.computer.TransformersComputer.*;
+import static io.art.meta.constants.MetaConstants.ClassNames.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.meta.state.MetaComputationState.*;
@@ -107,24 +107,27 @@ public class MetaType<T> {
             modifiers.add(VALIDATABLE);
         }
 
-        if (Communicator.class.isAssignableFrom(type)) {
+        if (COMMUNICATOR_NAME.equals(type.getName())) {
             modifiers.add(COMMUNICATOR);
         }
 
-        if (Connector.class.isAssignableFrom(type)) {
+        if (CONNECTOR_NAME.equals(type.getName())) {
             modifiers.add(CONNECTOR);
         }
 
         if (nonNull(arrayComponentType)) {
             rememberValidation(arrayComponentType, validate(arrayComponentType.beginComputation()));
         }
+
         for (MetaType<?> parameter : parameters) {
             rememberValidation(parameter, validate(parameter.beginComputation()));
         }
+
         if (isNull(internalKind)) {
             internalKind = computeInternalKind(this);
             rememberValidation(this, validate(this));
         }
+
         return this;
     }
 
@@ -132,15 +135,19 @@ public class MetaType<T> {
         if (nonNull(arrayComponentType)) {
             arrayComponentType.completeComputation();
         }
+
         for (MetaType<?> parameter : parameters) {
             parameter.completeComputation();
         }
+
         if (isNull(externalKind)) {
             externalKind = computeExternalKind(this);
         }
+
         if (isNull(inputTransformer)) {
             inputTransformer = cast(computeInputTransformer(this));
         }
+
         if (isNull(outputTransformer)) {
             outputTransformer = cast(computeOutputTransformer(this));
         }
