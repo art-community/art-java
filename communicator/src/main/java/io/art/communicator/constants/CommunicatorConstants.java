@@ -20,8 +20,8 @@ package io.art.communicator.constants;
 
 public interface CommunicatorConstants {
     interface Errors {
-        String COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY = "Communicator interface {0} has methods:\n{1} with >1 parameters. Proxy could be created only for <2 parameter methods interfaces";
-        String CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY = "Connector interface {0} has methods:\n{1} with return type that is not proxy type";
+        String COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY = "Communicator interface {0} has methods:\n[{1}] with >1 parameters. Proxy could be created only for <2 parameter methods interfaces";
+        String CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY = "Connector interface {0} has methods:\n[{1}] with return type that is not proxy type";
     }
 
     interface LoggingMessages {

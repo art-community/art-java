@@ -5,7 +5,7 @@ import static java.util.Objects.*;
 import java.util.*;
 
 @UtilityClass
-public class ClassMapSearcher {
+public class ClassSearcher {
     public static <T> T searchByClass(Map<Class<?>, T> map, Class<?> searching) {
         T value = map.get(searching);
         if (nonNull(value)) return value;
@@ -26,5 +26,15 @@ public class ClassMapSearcher {
         }
 
         return null;
+    }
+
+    public static boolean isAssignableFrom(Class<?> searching, String interfaceName) {
+        if (searching.getName().equals(interfaceName)) return true;
+
+        for (Class<?> typeInterface : searching.getInterfaces()) {
+            return isAssignableFrom(typeInterface, interfaceName);
+        }
+
+        return false;
     }
 }

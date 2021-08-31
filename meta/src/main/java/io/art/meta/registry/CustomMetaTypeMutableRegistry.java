@@ -2,7 +2,7 @@ package io.art.meta.registry;
 
 import io.art.meta.model.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.meta.searcher.ClassMapSearcher.*;
+import static io.art.meta.searcher.ClassSearcher.*;
 import static java.util.Objects.*;
 import java.util.*;
 

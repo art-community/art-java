@@ -39,6 +39,7 @@ import static io.art.meta.computer.TransformersComputer.*;
 import static io.art.meta.constants.MetaConstants.ClassNames.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.module.MetaModule.*;
+import static io.art.meta.searcher.ClassSearcher.*;
 import static io.art.meta.state.MetaComputationState.*;
 import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Objects.*;
@@ -107,11 +108,11 @@ public class MetaType<T> {
             modifiers.add(VALIDATABLE);
         }
 
-        if (COMMUNICATOR_NAME.equals(type.getName())) {
+        if (isAssignableFrom(type, COMMUNICATOR_NAME)) {
             modifiers.add(COMMUNICATOR);
         }
 
-        if (CONNECTOR_NAME.equals(type.getName())) {
+        if (isAssignableFrom(type, CONNECTOR_NAME)) {
             modifiers.add(CONNECTOR);
         }
 
