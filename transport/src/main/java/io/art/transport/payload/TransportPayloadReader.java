@@ -41,7 +41,7 @@ import java.util.function.*;
 public class TransportPayloadReader {
     private final DataFormat dataFormat;
 
-    private final static Map<DataFormat, TransportPayloadReader> CACHE = map(4);
+    private final static Map<DataFormat, TransportPayloadReader> cache = map(DataFormat.values().length);
 
     @Getter(lazy = true, value = PRIVATE)
     private final BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader = reader(dataFormat);
@@ -78,6 +78,6 @@ public class TransportPayloadReader {
     }
 
     public static TransportPayloadReader transportPayloadReader(DataFormat dataFormat) {
-        return putIfAbsent(CACHE, dataFormat, () -> new TransportPayloadReader(dataFormat));
+        return putIfAbsent(cache, dataFormat, () -> new TransportPayloadReader(dataFormat));
     }
 }

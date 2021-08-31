@@ -43,7 +43,7 @@ import java.util.function.*;
 public class TransportPayloadWriter {
     private final DataFormat dataFormat;
 
-    private final static Map<DataFormat, TransportPayloadWriter> CACHE = map(4);
+    private final static Map<DataFormat, TransportPayloadWriter> cache = map(DataFormat.values().length);
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<TypedObject, ByteBuf> writer = writer(dataFormat);
@@ -107,6 +107,6 @@ public class TransportPayloadWriter {
     }
 
     public static TransportPayloadWriter transportPayloadWriter(DataFormat dataFormat) {
-        return putIfAbsent(CACHE, dataFormat, () -> new TransportPayloadWriter(dataFormat));
+        return putIfAbsent(cache, dataFormat, () -> new TransportPayloadWriter(dataFormat));
     }
 }
