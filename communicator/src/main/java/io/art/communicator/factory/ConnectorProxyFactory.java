@@ -27,8 +27,8 @@ public class ConnectorProxyFactory {
                 .collect(mapCollector(identity(), method -> method.returnType().declaration()));
 
         if (proxies.size() != connectorClass.methods().size()) {
-            String invalidMethods = joinMethods(connectorClass, proxies::containsKey);
-            throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHOD_FOR_PROXY, connectorClass.definition().type().getName(), invalidMethods));
+            String invalidMethods = joinMethods(connectorClass, method -> !proxies.containsKey(method));
+            throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHODS, connectorClass.definition().type().getName(), invalidMethods));
         }
 
         LazyProperty<Map<String, ? extends Communicator>> cache = lazy(() -> proxies

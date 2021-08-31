@@ -47,8 +47,8 @@ public class CommunicatorProxyFactory {
                 .collect(mapCollector(identity(), provider));
 
         if (actions.size() != proxyClass.methods().size()) {
-            String invalidMethods = joinMethods(proxyClass, actions::containsKey);
-            throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHOD_FOR_PROXY, proxyClass.definition().type().getName(), invalidMethods));
+            String invalidMethods = joinMethods(proxyClass, method -> !actions.containsKey(method));
+            throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHODS, proxyClass.definition().type().getName(), invalidMethods));
         }
 
         Map<MetaMethod<?>, Function<Object, Object>> invocations = actions
