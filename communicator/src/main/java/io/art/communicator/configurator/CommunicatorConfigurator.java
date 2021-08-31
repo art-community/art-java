@@ -46,16 +46,16 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
 
 
-    public C configureCommunicator(Class<? extends Communicator> communicatorClass,
-                                   UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public C communicator(Class<? extends Communicator> communicatorClass,
+                          UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
         return cast(this);
     }
 
     public <T extends MetaClass<? extends Communicator>>
-    C configureCommunicator(Class<? extends Communicator> communicatorClass,
-                            Function<T, MetaMethod<?>> actionMethod,
-                            UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    C communicator(Class<? extends Communicator> communicatorClass,
+                   Function<T, MetaMethod<?>> actionMethod,
+                   UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
         return cast(this);
     }
