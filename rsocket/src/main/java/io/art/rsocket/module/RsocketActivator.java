@@ -20,7 +20,10 @@ package io.art.rsocket.module;
 
 import io.art.core.annotation.*;
 import io.art.core.module.*;
+import io.art.meta.module.*;
+import io.art.rsocket.meta.*;
 import lombok.experimental.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.module.ModuleActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
@@ -33,6 +36,7 @@ public class RsocketActivator {
     }
 
     public static ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
-        return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()));
+        return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()))
+                .<MetaInitializer>decorate(META_MODULE_ID, meta -> meta.registerLibrary(MetaRsocket::new));
     }
 }

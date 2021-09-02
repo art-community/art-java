@@ -7,21 +7,18 @@ import static java.util.Objects.*;
 import java.util.*;
 
 public class CustomMetaTransformerMutableRegistry {
-    private final static Map<Class<?>, CustomTransformers> registry = map();
-    private final static Map<Class<?>, CustomTransformers> cache = map();
+    private final Map<Class<?>, CustomTransformers> registry = map();
+    private final Map<Class<?>, CustomTransformers> cache = map();
 
-    public static void clear() {
-        registry.clear();
-    }
-
-    public static CustomTransformers get(Class<?> type) {
+    public CustomTransformers get(Class<?> type) {
         CustomTransformers cached = cache.get(type);
         if (nonNull(cached)) return cached;
         cache.put(type, cached = searchByClass(registry, type));
         return cached;
     }
 
-    public static void register(Class<?> type, CustomTransformers transformers) {
+    public CustomMetaTransformerMutableRegistry register(Class<?> type, CustomTransformers transformers) {
         registry.put(type, transformers);
+        return this;
     }
 }

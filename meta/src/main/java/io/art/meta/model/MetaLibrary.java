@@ -21,8 +21,8 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import io.art.core.caster.*;
 import io.art.core.collection.*;
+import io.art.meta.configuration.*;
 import io.art.meta.exception.*;
-import io.art.meta.registry.*;
 import io.art.meta.validator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -41,7 +41,6 @@ import static java.util.Objects.*;
 import static java.util.Optional.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
-import java.util.function.*;
 
 @ToString
 @Generation
@@ -90,19 +89,17 @@ public abstract class MetaLibrary {
         return empty();
     }
 
-    public void compute() {
+    public void compute(MetaModuleConfiguration configuration) {
         if (computed.get()) return;
-        List<MetaLibrary> registryDependencies = MetaLibraryMutableRegistry
+        List<MetaLibrary> registryDependencies = configuration.getDependencies()
                 .get()
                 .stream()
-                .map(Supplier::get)
                 .collect(listCollector());
         for (MetaLibrary dependency : registryDependencies) {
             dependency.computeLibrary();
         }
         computeLibrary();
         clearClassMutableRegistry();
-        MetaLibraryMutableRegistry.clear();
     }
 
     private void computeLibrary() {

@@ -18,21 +18,33 @@
 
 package io.art.meta.configuration;
 
-import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.meta.model.*;
+import io.art.meta.registry.*;
 import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.property.LazyProperty.*;
 
-@Public
-@AllArgsConstructor
+@Getter
+@Accessors
 public class MetaModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<? extends MetaLibrary> library;
+    private LazyProperty<ImmutableArray<? extends MetaLibrary>> dependencies;
+    private CustomMetaTypeMutableRegistry customTypes;
+    private CustomMetaTransformerMutableRegistry customTransformers;
 
     public MetaLibrary library() {
         return library.get();
+    }
+
+    public MetaModuleConfiguration(LazyProperty<? extends MetaLibrary> library) {
+        this.library = library;
+        dependencies = lazy(ImmutableArray::emptyImmutableArray);
+        customTransformers = new CustomMetaTransformerMutableRegistry();
+        customTypes = new CustomMetaTypeMutableRegistry();
     }
 
     @RequiredArgsConstructor
@@ -47,6 +59,9 @@ public class MetaModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator initialize(MetaModuleConfiguration configuration) {
             this.configuration.library = lazy(configuration::library);
+            this.configuration.customTypes = configuration.getCustomTypes();
+            this.configuration.customTransformers = configuration.getCustomTransformers();
+            this.configuration.dependencies = configuration.getDependencies();
             return this;
         }
     }

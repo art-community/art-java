@@ -22,7 +22,6 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.validation.*;
 import io.art.meta.constants.MetaConstants.*;
-import io.art.meta.registry.*;
 import io.art.meta.transformer.*;
 import lombok.Builder;
 import lombok.*;
@@ -34,10 +33,10 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
-import static io.art.meta.model.MetaTypeKindComputer.*;
-import static io.art.meta.model.TransformersComputer.*;
 import static io.art.meta.constants.MetaConstants.ClassNames.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
+import static io.art.meta.model.MetaTypeKindComputer.*;
+import static io.art.meta.model.TransformersComputer.*;
 import static io.art.meta.module.MetaModule.*;
 import static io.art.meta.searcher.ClassSearcher.*;
 import static io.art.meta.state.MetaComputationState.*;
@@ -180,7 +179,7 @@ public class MetaType<T> {
     }
 
     private static <T> MetaTypeBuilder<T> createTypeBuilder(Class<?> type) {
-        MetaType<T> custom = cast(CustomMetaTypeMutableRegistry.get(type));
+        MetaType<T> custom = cast(metaModule().configuration().getCustomTypes().get(type));
         return let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
     }
 

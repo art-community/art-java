@@ -7,13 +7,13 @@ import lombok.experimental.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.module.ModuleActivator.*;
 import static io.art.core.property.LazyProperty.*;
+import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @UtilityClass
 public class MetaActivator {
     public ModuleActivator meta(Supplier<? extends MetaLibrary> factory) {
-        LazyProperty<? extends MetaLibrary> library = lazy(factory);
-        return module(META_MODULE_ID, () -> new MetaModule(library));
+        return meta(factory, identity());
     }
 
     public ModuleActivator meta(Supplier<? extends MetaLibrary> factory, UnaryOperator<MetaInitializer> initializer) {

@@ -18,18 +18,41 @@
 
 package io.art.meta.module;
 
+import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.meta.configuration.*;
 import io.art.meta.configuration.MetaModuleConfiguration.*;
 import io.art.meta.model.*;
+import io.art.meta.registry.*;
+import io.art.meta.transformer.*;
 import lombok.*;
+import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.factory.ListFactory.*;
+import static io.art.core.property.LazyProperty.*;
+import java.util.*;
+import java.util.function.*;
 
 public class MetaInitializer implements ModuleInitializer<MetaModuleConfiguration, Configurator, MetaModule> {
     private final Initial configuration;
 
     public MetaInitializer(LazyProperty<? extends MetaLibrary> library) {
         configuration = new Initial(library);
+    }
+
+    public MetaInitializer registerCustomType(MetaType<?> type) {
+        configuration.customTypes.register(type);
+        return this;
+    }
+
+    public MetaInitializer registerCustomTransformers(Class<?> type, CustomTransformers transformers) {
+        configuration.customTransformers.register(type, transformers);
+        return this;
+    }
+
+    public MetaInitializer registerLibrary(Supplier<? extends MetaLibrary> provider) {
+        configuration.dependencies.add(lazy(provider));
+        return this;
     }
 
     @Override
@@ -39,8 +62,19 @@ public class MetaInitializer implements ModuleInitializer<MetaModuleConfiguratio
 
     @Getter
     private static class Initial extends MetaModuleConfiguration {
+        private final CustomMetaTypeMutableRegistry customTypes;
+        private final CustomMetaTransformerMutableRegistry customTransformers;
+        private final List<LazyProperty<? extends MetaLibrary>> dependencies;
+
         public Initial(LazyProperty<? extends MetaLibrary> library) {
             super(library);
+            customTransformers = new CustomMetaTransformerMutableRegistry();
+            customTypes = new CustomMetaTypeMutableRegistry();
+            dependencies = linkedList();
+        }
+
+        public LazyProperty<ImmutableArray<? extends MetaLibrary>> getDependencies() {
+            return lazy(() -> dependencies.stream().map(LazyProperty::get).collect(immutableArrayCollector()));
         }
     }
 }
