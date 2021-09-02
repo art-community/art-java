@@ -21,6 +21,7 @@ package io.art.core.module;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import lombok.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import java.util.*;
 
@@ -36,6 +37,7 @@ public class ModuleActivator {
     @Getter
     private final ModuleInitializationProvider<?> initializer;
     private final Set<ModuleActivator> dependencies = set();
+    private final Map<String, ModuleInitializationOperator<?>> decorators = map();
 
     public static ModuleActivator module(Class<?> moduleClass, ModuleFactory<?> moduleFactory) {
         return module(moduleClass.getSimpleName(), moduleFactory);
@@ -64,8 +66,17 @@ public class ModuleActivator {
         return immutableSetOf(dependencies);
     }
 
-    public ModuleActivator with(ModuleActivator dependency) {
+    public ImmutableMap<String, ModuleInitializationOperator<?>> decorators() {
+        return immutableMapOf(decorators);
+    }
+
+    public ModuleActivator dependency(ModuleActivator dependency) {
         dependencies.add(dependency);
+        return this;
+    }
+
+    public ModuleActivator decorate(String moduleId, ModuleInitializationOperator<?> operator) {
+        decorators.put(moduleId, operator);
         return this;
     }
 }

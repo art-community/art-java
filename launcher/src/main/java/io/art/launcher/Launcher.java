@@ -65,6 +65,7 @@ public class Launcher {
 
     private static void configuredLaunch(Activator activator, ModuleActivator configuratorActivator) {
         ImmutableMap<String, ModuleActivator> activators = activator.activators();
+        ImmutableMap<String, ModuleInitializationOperator<?>> decorators = activator.decorators();
 
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
 
@@ -83,10 +84,11 @@ public class Launcher {
                 .reload(module -> module.configure(configurator -> configurator.from(configuratorModule.orderedSources())));
 
         prepareInitialization(contextConfiguration.printer(printer).build());
-        ModuleInitializationProvider<ConfiguratorInitializer> configuratorActivatorInitializer = cast(configuratorActivator.getInitializer());
+        ModuleInitializationProvider<ConfiguratorInitializer> configuratorInitializer = cast(configuratorActivator.getInitializer());
+        ModuleInitializationOperator<ConfiguratorInitializer> configuratorDecorator = cast(orElse(decorators.get(CONFIGURATOR_MODULE_ID), ModuleInitializationOperator.identity()));
         configuratorModule
                 .loadSources()
-                .configure(configurator -> configurator.initialize(configuratorActivatorInitializer.get().initialize(configuratorModule)));
+                .configure(configurator -> configurator.initialize(configuratorDecorator.apply(configuratorInitializer.get()).initialize(configuratorModule)));
         ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
 
         builder.add(configuratorModule);
@@ -95,9 +97,10 @@ public class Launcher {
 
         for (ModuleActivator moduleActivator : mutableActivators.values()) {
             Module<?, ?> module = moduleActivator.getFactory().get();
+            ModuleInitializationOperator<?> decorator = cast(orElse(decorators.get(module.getId()), ModuleInitializationOperator.identity()));
             ModuleInitializationProvider<?> initializer = moduleActivator.getInitializer();
             if (nonNull(initializer)) {
-                module.configure(configurator -> configurator.initialize(cast(initializer.get().initialize(cast(module)))));
+                module.configure(configurator -> configurator.initialize(cast(decorator.apply(cast(initializer.get())).initialize(cast(module)))));
             }
             module.configure(configurator -> configurator.from(configuratorModule.orderedSources()));
             builder.add(module);

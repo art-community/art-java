@@ -24,6 +24,8 @@ import io.art.core.extensions.*;
 import io.art.core.module.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import java.util.*;
@@ -68,6 +70,19 @@ public class Activator {
 
     public ImmutableMap<String, ModuleActivator> activators() {
         return immutableMapOf(activators);
+    }
+
+    public ImmutableMap<String, ModuleInitializationOperator<?>> decorators() {
+        Map<String, ModuleInitializationOperator<?>> decorators = map();
+        for (Map.Entry<String, ModuleActivator> activatorEntry : activators.entrySet()) {
+            for (Map.Entry<String, ModuleInitializationOperator<?>> decoratorEntry : activatorEntry.getValue().decorators().entrySet()) {
+                if (activators.containsKey(decoratorEntry.getKey())) {
+                    ModuleInitializationOperator<?> existed = orElse(decorators.get(decoratorEntry.getKey()), ModuleInitializationOperator.identity());
+                    decorators.put(decoratorEntry.getKey(), value -> decoratorEntry.getValue().apply(cast(existed.apply(cast(value)))));
+                }
+            }
+        }
+        return immutableMapOf(decorators);
     }
 
     public Activator module(ModuleActivator activator) {
