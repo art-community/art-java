@@ -26,6 +26,7 @@ import io.art.meta.model.*;
 import io.art.meta.registry.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
 import static io.art.core.property.LazyProperty.*;
 
 @Getter
@@ -33,8 +34,8 @@ import static io.art.core.property.LazyProperty.*;
 public class MetaModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<? extends MetaLibrary> library;
     private LazyProperty<ImmutableArray<? extends MetaLibrary>> dependencies;
-    private CustomMetaTypeMutableRegistry customTypes;
-    private CustomMetaTransformerMutableRegistry customTransformers;
+    private CustomMetaTypeRegistry customTypes;
+    private CustomMetaTransformerRegistry customTransformers;
 
     public MetaLibrary library() {
         return library.get();
@@ -43,8 +44,8 @@ public class MetaModuleConfiguration implements ModuleConfiguration {
     public MetaModuleConfiguration(LazyProperty<? extends MetaLibrary> library) {
         this.library = library;
         dependencies = lazy(ImmutableArray::emptyImmutableArray);
-        customTransformers = new CustomMetaTransformerMutableRegistry();
-        customTypes = new CustomMetaTypeMutableRegistry();
+        customTransformers = new CustomMetaTransformerRegistry(emptyImmutableMap());
+        customTypes = new CustomMetaTypeRegistry(emptyImmutableMap());
     }
 
     @RequiredArgsConstructor

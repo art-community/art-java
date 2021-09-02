@@ -62,19 +62,27 @@ public class MetaInitializer implements ModuleInitializer<MetaModuleConfiguratio
 
     @Getter
     private static class Initial extends MetaModuleConfiguration {
-        private final CustomMetaTypeMutableRegistry customTypes;
-        private final CustomMetaTransformerMutableRegistry customTransformers;
+        private final CustomMetaTypeRegistrator customTypes;
+        private final CustomMetaTransformerRegistrator customTransformers;
         private final List<LazyProperty<? extends MetaLibrary>> dependencies;
 
         public Initial(LazyProperty<? extends MetaLibrary> library) {
             super(library);
-            customTransformers = new CustomMetaTransformerMutableRegistry();
-            customTypes = new CustomMetaTypeMutableRegistry();
+            customTransformers = new CustomMetaTransformerRegistrator();
+            customTypes = new CustomMetaTypeRegistrator();
             dependencies = linkedList();
         }
 
         public LazyProperty<ImmutableArray<? extends MetaLibrary>> getDependencies() {
             return lazy(() -> dependencies.stream().map(LazyProperty::get).collect(immutableArrayCollector()));
+        }
+
+        public CustomMetaTypeRegistry getCustomTypes() {
+            return new CustomMetaTypeRegistry(customTypes.getRegistry());
+        }
+
+        public CustomMetaTransformerRegistry getCustomTransformers() {
+            return new CustomMetaTransformerRegistry(customTransformers.registry());
         }
     }
 }
