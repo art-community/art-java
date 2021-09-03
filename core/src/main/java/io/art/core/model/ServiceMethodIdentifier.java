@@ -34,4 +34,9 @@ public class ServiceMethodIdentifier {
     public static ServiceMethodIdentifier serviceMethodId(String serviceId, String methodId) {
         return putIfAbsent(CACHE, EMPTY_STRING + serviceId + methodId, () -> new ServiceMethodIdentifier(serviceId, methodId));
     }
+
+    @Override
+    public String toString() {
+        return OPENING_BRACKET + serviceId + DOT  + methodId + CLOSING_BRACKET;
+    }
 }

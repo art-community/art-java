@@ -1,9 +1,13 @@
 package io.art.rsocket.message;
 
+import io.art.communicator.*;
+import io.art.communicator.model.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.communicator.ws.*;
+import io.art.server.method.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
@@ -36,14 +40,27 @@ public class RsocketMessageBuilder {
                     .append(configuration.getWsServer().getPort())
                     .append("\n\t");
         }
-        message.append("Methods:\n\t\t").append(configuration.getServer()
+        ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer()
                 .getMethods()
-                .get()
-                .entrySet()
-                .stream()
-                .map(entry -> entry.getKey() + SPACE + COLON + SPACE + entry.getValue().getInvoker().getDelegate())
-                .collect(joining("\n\t\t")));
-        message.append("\n\t");
+                .get();
+        if (!methods.isEmpty()) {
+            message.append("Service methods:\n\t\t").append(methods
+                    .entrySet()
+                    .stream()
+                    .map(entry -> entry.getKey() + SPACE + COLON + SPACE + entry.getValue().getInvoker().getDelegate())
+                    .collect(joining("\n\t\t")))
+                    .append("\n\t");
+        }
+        ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
+                .getConnectors()
+                .communicators();
+        if (!communicators.isEmpty()) {
+            message.append("Communicator proxies:\n\t\t").append(communicators
+                    .stream()
+                    .map(action -> action.getCommunicator().getClass().getInterfaces()[0].getName())
+                    .collect(joining("\n\t\t")))
+                    .append("\n\t");
+        }
         if (!tcpConnectors.isEmpty()) {
             message.append("TCP Connectors:\n\t\t").append(tcpConnectors.entrySet()
                     .stream()

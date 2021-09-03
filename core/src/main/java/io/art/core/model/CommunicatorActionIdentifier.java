@@ -34,4 +34,9 @@ public class CommunicatorActionIdentifier {
     public static CommunicatorActionIdentifier communicatorActionId(String communicatorId, String actionId) {
         return putIfAbsent(CACHE, EMPTY_STRING + communicatorId + actionId, () -> new CommunicatorActionIdentifier(communicatorId, actionId));
     }
+
+    @Override
+    public String toString() {
+        return OPENING_BRACKET + communicatorId + DOT + actionId + CLOSING_BRACKET;
+    }
 }

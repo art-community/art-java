@@ -1,7 +1,9 @@
 package io.art.http.message;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.http.configuration.*;
+import io.art.server.method.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
@@ -21,16 +23,16 @@ public class HttpMessageBuilder {
                     .append(configuration.getHttpServer().getPort())
                     .append("\n\t");
         }
-        message.append("Methods:\n\t\t").append(configuration.getServer()
-                .getMethods()
+        ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer().getMethods().get();
+        message.append("Routes:\n\t\t").append(configuration.getHttpServer()
+                .getRoutes()
                 .get()
-                .entrySet()
                 .stream()
-                .map(entry -> entry.getKey() + SPACE + COLON + SPACE + entry.getValue().getInvoker().getDelegate())
+                .map(route -> route.getType() + SPACE + route.getPath().route(route.getServiceMethodId()) + " to " + route.getServiceMethodId() + " : " + methods.get(route.getServiceMethodId()).getInvoker().getDelegate())
                 .collect(joining("\n\t\t")));
-        message.append("\n\t");
         ImmutableMap<String, HttpConnectorConfiguration> connectors = configuration.getConnectors();
         if (!connectors.isEmpty()) {
+            message.append("\n\t");
             message.append("HTTP Connectors:\n\t\t").append(connectors.entrySet()
                     .stream()
                     .map(HttpMessageBuilder::addConnector)
