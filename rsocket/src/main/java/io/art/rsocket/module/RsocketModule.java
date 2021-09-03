@@ -18,16 +18,23 @@
 
 package io.art.rsocket.module;
 
+import io.art.core.collection.*;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.rsocket.configuration.*;
+import io.art.rsocket.configuration.communicator.tcp.*;
+import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.manager.*;
 import io.art.rsocket.refresher.*;
 import io.art.rsocket.state.*;
 import lombok.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
+import static io.art.logging.Logging.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.message.RsocketMessageBuilder.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Hooks.*;
 
@@ -49,12 +56,17 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     @Override
     public void launch(Context.Service contextService) {
         onErrorDropped(emptyConsumer());
-        if (configuration.isEnableTcpServer() || configuration.isEnableWsServer()) {
+        boolean hasTcpServer = configuration.isEnableTcpServer();
+        boolean hasWsServer = configuration.isEnableWsServer();
+        if (hasTcpServer || hasWsServer) {
             manager.initializeServers();
         }
-        if (!configuration.getWsConnectors().isEmpty() || !configuration.getTcpConnectors().isEmpty()) {
+        ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors = configuration.getWsConnectors();
+        ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors = configuration.getTcpConnectors();
+        if (!wsConnectors.isEmpty() || !tcpConnectors.isEmpty()) {
             manager.initializeCommunicators();
         }
+        withLogging(() -> logger(RSOCKET_LOGGER).info(rsocketLaunchedMessage(configuration)));
     }
 
     @Override

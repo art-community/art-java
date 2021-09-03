@@ -35,9 +35,9 @@ public interface RsocketModuleConstants {
     }
 
     interface LoggingMessages {
+        String RSOCKET_LOGGER = "rsocket";
         String RSOCKET_COMMUNICATOR_LOGGER = "rsocket-communicator";
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
-        String RSOCKET_SERVER_STARTED = "RSocket {0} server started - {1}:{2}";
         String RSOCKET_SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
 
         String RSOCKET_COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}";

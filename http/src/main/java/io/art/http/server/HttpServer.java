@@ -91,9 +91,7 @@ public class HttpServer implements Server {
         server = serverConfiguration.getDecorator().apply(server);
         Mono<? extends DisposableServer> bind = server.bind();
         if (withLogging()) {
-            bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(format(HTTP_SERVER_STARTED, host, EMPTY_STRING + port)))
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            bind = bind.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return bind.block();
     }

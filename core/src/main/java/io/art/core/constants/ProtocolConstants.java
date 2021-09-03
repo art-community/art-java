@@ -23,6 +23,8 @@ public interface ProtocolConstants {
     String HTTPS_SCHEME = "https";
     String WS_SCHEME = "ws";
     String WSS_SCHEME = "wss";
+    String TCP_SCHEME = "tcp";
+    String TCPS_SCHEME = "tcps";
     int DEFAULT_HTTP_PORT = 80;
     int DEFAULT_HTTPS_PORT = 443;
 }

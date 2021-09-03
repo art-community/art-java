@@ -154,10 +154,7 @@ public class RsocketServer implements Server {
                 .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
         if (withLogging()) {
-            String message = format(RSOCKET_SERVER_STARTED, type, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
-            bind = bind
-                    .doOnSubscribe(subscription -> getLogger().info(message))
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            bind = bind.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return block(bind);
     }

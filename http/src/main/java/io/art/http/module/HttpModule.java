@@ -25,9 +25,13 @@ import io.art.http.manager.*;
 import io.art.http.refresher.*;
 import io.art.http.state.*;
 import lombok.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
 import static io.art.http.configuration.HttpModuleConfiguration.*;
+import static io.art.http.constants.HttpModuleConstants.Messages.*;
+import static io.art.http.message.HttpMessageBuilder.*;
+import static io.art.logging.Logging.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Hooks.*;
 
@@ -55,6 +59,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
         if (!configuration.getConnectors().isEmpty()) {
             manager.initializeCommunicators();
         }
+        withLogging(() -> logger(HTTP_LOGGER).info(httpLaunchedMessage(configuration)));
     }
 
     @Override
