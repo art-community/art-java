@@ -36,6 +36,14 @@ public class HttpMessageBuilder {
                     .map(route -> route.getType() + SPACE + route.getPath().route(route.getServiceMethodId()) + " to " + route.getServiceMethodId() + " : " + methods.get(route.getServiceMethodId()).getInvoker())
                     .collect(joining("\n\t\t")));
         }
+        ImmutableMap<String, HttpConnectorConfiguration> connectors = configuration.getConnectors();
+        if (!connectors.isEmpty()) {
+            message.append("\n\t");
+            message.append("HTTP Connectors:\n\t\t").append(connectors.entrySet()
+                    .stream()
+                    .map(HttpMessageBuilder::addConnector)
+                    .collect(Collectors.joining("\n\t\t")));
+        }
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
                 .getConnectors()
                 .communicators();
@@ -45,14 +53,6 @@ public class HttpMessageBuilder {
                     .map(HttpMessageBuilder::buildCommunicatorMessage)
                     .collect(joining("\n\t\t")))
                     .append("\n\t");
-        }
-        ImmutableMap<String, HttpConnectorConfiguration> connectors = configuration.getConnectors();
-        if (!connectors.isEmpty()) {
-            message.append("\n\t");
-            message.append("HTTP Connectors:\n\t\t").append(connectors.entrySet()
-                    .stream()
-                    .map(HttpMessageBuilder::addConnector)
-                    .collect(Collectors.joining("\n\t\t")));
         }
         return message.toString();
     }
@@ -67,7 +67,7 @@ public class HttpMessageBuilder {
                         .getActions()
                         .entrySet()
                         .stream()
-                        .map(action -> action.getKey().toString() + " : " + action.getValue().getMethod())
+                        .map(action -> "[connector = " + action.getValue().getCommunication() + "] " + action.getKey().toString() + " : " + action.getValue().getMethod())
                         .collect(joining("\n\t\t\t\t"));
     }
 

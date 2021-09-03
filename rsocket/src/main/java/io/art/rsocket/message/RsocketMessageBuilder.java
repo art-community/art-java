@@ -51,6 +51,21 @@ public class RsocketMessageBuilder {
                     .collect(joining("\n\t\t")))
                     .append("\n\t");
         }
+        if (!tcpConnectors.isEmpty()) {
+            message.append("TCP Connectors:\n\t\t").append(tcpConnectors.entrySet()
+                    .stream()
+                    .map(RsocketMessageBuilder::addTcpConnector)
+                    .collect(Collectors.joining("\n\t\t")))
+                    .append("\n\t");
+        }
+        if (!wsConnectors.isEmpty()) {
+            message.append("WS Connectors:\n\t\t").append(wsConnectors.entrySet()
+                    .stream()
+                    .map(RsocketMessageBuilder::addWsConnector)
+                    .collect(Collectors.joining("\n\t\t")))
+                    .append("\n\t");
+
+        }
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
                 .getConnectors()
                 .communicators();
@@ -58,21 +73,7 @@ public class RsocketMessageBuilder {
             message.append("Communicator proxies:\n\t\t").append(communicators
                     .stream()
                     .map(RsocketMessageBuilder::buildCommunicatorMessage)
-                    .collect(joining("\n\t\t")))
-                    .append("\n\t");
-        }
-        if (!tcpConnectors.isEmpty()) {
-            message.append("TCP Connectors:\n\t\t").append(tcpConnectors.entrySet()
-                    .stream()
-                    .map(RsocketMessageBuilder::addTcpConnector)
-                    .collect(Collectors.joining("\n\t\t")));
-        }
-        if (!wsConnectors.isEmpty()) {
-            message.append("WS Connectors:\n\t\t").append(wsConnectors.entrySet()
-                    .stream()
-                    .map(RsocketMessageBuilder::addWsConnector)
-                    .collect(Collectors.joining("\n\t\t")));
-
+                    .collect(joining("\n\t\t")));
         }
         return message.toString();
     }
@@ -87,7 +88,7 @@ public class RsocketMessageBuilder {
                         .getActions()
                         .entrySet()
                         .stream()
-                        .map(action -> action.getKey().toString() + " : " + action.getValue().getMethod())
+                        .map(action -> "[connector = " + action.getValue().getCommunication() + "] " + action.getKey().toString() + " : " + action.getValue().getMethod())
                         .collect(joining("\n\t\t\t\t"));
     }
 

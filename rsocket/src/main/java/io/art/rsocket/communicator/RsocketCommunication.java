@@ -250,4 +250,9 @@ public class RsocketCommunication implements Communication {
         }
         return REQUEST_RESPONSE;
     }
+
+    @Override
+    public String toString() {
+        return connectorConfiguration.getConnector();
+    }
 }

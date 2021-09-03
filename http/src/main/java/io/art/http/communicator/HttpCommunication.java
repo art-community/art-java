@@ -87,5 +87,10 @@ public class HttpCommunication implements Communication {
                 .send(input.map(value -> writer.write(typed(inputMappingType, value))))
                 .response((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)));
     }
+
+    @Override
+    public String toString() {
+        return connectorConfiguration.getConnector();
+    }
 }
 
