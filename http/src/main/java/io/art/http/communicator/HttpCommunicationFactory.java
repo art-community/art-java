@@ -33,7 +33,7 @@ public class HttpCommunicationFactory {
                 .disableRetry(!connectorConfiguration.isRetry())
                 .keepAlive(connectorConfiguration.isKeepAlive())
                 .baseUrl(connectorConfiguration.getUrl());
-        if (withLogging()) {
+        if (withLogging() && connectorConfiguration.isVerbose()) {
             httpClient = httpClient
                     .doOnConnected(ignore -> getLogger().info(format(HTTP_COMMUNICATOR_STARTED, connectorConfiguration.getConnector())))
                     .doOnDisconnected(ignore -> getLogger().info(format(HTTP_COMMUNICATOR_STOPPED, connectorConfiguration.getConnector())));

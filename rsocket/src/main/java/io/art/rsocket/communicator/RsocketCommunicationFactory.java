@@ -193,13 +193,9 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient configureSocket(RsocketCommonConnectorConfiguration common, Mono<RSocket> socket, RsocketSetupPayload setupPayload) {
         Mono<RSocket> configured = socket.timeout(common.getTimeout());
-        if (withLogging()) {
-            configured = common.isVerbose()
-                    ? configured
-                    .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED_VERBOSE, common.getConnector(), toPrettyString(setupPayload))))
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable))
-                    : configured
-                    .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED, common.getConnector())))
+        if (withLogging() && common.isVerbose()) {
+            configured = configured
+                    .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED, common.getConnector(), toPrettyString(setupPayload))))
                     .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
         }
         return from(configured);

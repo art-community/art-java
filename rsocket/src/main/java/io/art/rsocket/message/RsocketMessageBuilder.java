@@ -89,7 +89,7 @@ public class RsocketMessageBuilder {
                         .entrySet()
                         .stream()
                         .map(action -> "[connector = " + action.getValue().getCommunication() + "] " + action.getKey().toString() + " : " + action.getValue().getMethod())
-                        .collect(joining("\n\t\t\t\t"));
+                        .collect(joining("\n\t\t\t"));
     }
 
     private String addTcpConnector(Map.Entry<String, RsocketTcpConnectorConfiguration> entry) {

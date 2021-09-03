@@ -24,7 +24,7 @@ public class RsocketTest {
     public static void setup() {
         initialize(
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
-                logging(logging -> logging.configureDefault(builder -> builder.enabled(false))),
+                logging(),
                 transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
