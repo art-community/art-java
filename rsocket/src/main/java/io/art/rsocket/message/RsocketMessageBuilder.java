@@ -47,7 +47,7 @@ public class RsocketMessageBuilder {
             message.append("Service methods:\n\t\t").append(methods
                     .entrySet()
                     .stream()
-                    .map(entry -> entry.getKey() + SPACE + COLON + SPACE + entry.getValue().getInvoker().getDelegate())
+                    .map(entry -> entry.getKey() + SPACE + COLON + SPACE + entry.getValue().getInvoker())
                     .collect(joining("\n\t\t")))
                     .append("\n\t");
         }
@@ -57,7 +57,7 @@ public class RsocketMessageBuilder {
         if (!communicators.isEmpty()) {
             message.append("Communicator proxies:\n\t\t").append(communicators
                     .stream()
-                    .map(action -> action.getCommunicator().getClass().getInterfaces()[0].getName())
+                    .map(communicator -> communicator.getCommunicator().getClass().getInterfaces()[0].getName() + ":\n\t\t\t" + communicator.getActions().entrySet().stream().map(action -> action.getKey().toString() + " : " + action.getValue().getMethod()).collect(joining("\n\t\t\t\t")))
                     .collect(joining("\n\t\t")))
                     .append("\n\t");
         }

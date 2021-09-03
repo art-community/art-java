@@ -6,6 +6,7 @@ import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.singleton.SingletonsRegistry.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
@@ -55,5 +56,10 @@ public class MetaMethodInvoker implements Invoker {
     @Override
     public Object invoke(Object[] arguments) {
         return invokeWithParameters.apply(arguments);
+    }
+
+    @Override
+    public String toString() {
+        return owner.definition().type() + SPACE + OPENING_BRACES + SPACE + delegate + SPACE + CLOSING_BRACES;
     }
 }

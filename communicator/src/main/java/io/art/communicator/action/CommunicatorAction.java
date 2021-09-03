@@ -58,6 +58,9 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final Communication communication;
 
+    @Getter
+    private final MetaMethod<?> method;
+
     @Getter(lazy = true, value = PRIVATE)
     private final Supplier<Object> producer = selectProducer();
 

@@ -1,5 +1,7 @@
 package io.art.http.message;
 
+import io.art.communicator.*;
+import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.http.configuration.*;
@@ -23,13 +25,27 @@ public class HttpMessageBuilder {
                     .append(configuration.getHttpServer().getPort())
                     .append("\n\t");
         }
-        ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer().getMethods().get();
-        message.append("Routes:\n\t\t").append(configuration.getHttpServer()
-                .getRoutes()
-                .get()
-                .stream()
-                .map(route -> route.getType() + SPACE + route.getPath().route(route.getServiceMethodId()) + " to " + route.getServiceMethodId() + " : " + methods.get(route.getServiceMethodId()).getInvoker().getDelegate())
-                .collect(joining("\n\t\t")));
+        ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer()
+                .getMethods()
+                .get();
+        if (!methods.isEmpty()) {
+            message.append("Routes:\n\t\t").append(configuration.getHttpServer()
+                    .getRoutes()
+                    .get()
+                    .stream()
+                    .map(route -> route.getType() + SPACE + route.getPath().route(route.getServiceMethodId()) + " to " + route.getServiceMethodId() + " : " + methods.get(route.getServiceMethodId()).getInvoker())
+                    .collect(joining("\n\t\t")));
+        }
+        ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
+                .getConnectors()
+                .communicators();
+        if (!communicators.isEmpty()) {
+            message.append("Communicator proxies:\n\t\t").append(communicators
+                    .stream()
+                    .map(communicator -> communicator.getCommunicator().getClass().getInterfaces()[0].getName() + "\n\t\tActions: " + communicator.getActions().entrySet().stream().map(action -> action.getKey().toString()).collect(joining(",")))
+                    .collect(joining("\n\t\t")))
+                    .append("\n\t");
+        }
         ImmutableMap<String, HttpConnectorConfiguration> connectors = configuration.getConnectors();
         if (!connectors.isEmpty()) {
             message.append("\n\t");
