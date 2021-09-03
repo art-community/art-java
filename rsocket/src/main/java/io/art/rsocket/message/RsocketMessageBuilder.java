@@ -11,85 +11,84 @@ import io.art.server.method.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
-import java.util.stream.*;
 
 @UtilityClass
 public class RsocketMessageBuilder {
     public static String rsocketLaunchedMessage(RsocketModuleConfiguration configuration) {
-        StringBuilder message = new StringBuilder("RSocket module launched\n\t");
+        StringBuilder message = new StringBuilder(RSOCKET_LAUNCHED_MESSAGE_PART);
         boolean hasTcpServer = configuration.isEnableTcpServer();
         boolean hasWsServer = configuration.isEnableWsServer();
         ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors = configuration.getWsConnectors();
         ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors = configuration.getTcpConnectors();
         if (hasTcpServer) {
-            message.append("TCP Server - ")
+            message.append(RSOCKET_TCP_SERVER_MESSAGE_PART)
                     .append(isNull(configuration.getTcpServer().getSsl()) ? TCP_SCHEME + SCHEME_DELIMITER : TCPS_SCHEME + SCHEME_DELIMITER)
                     .append(configuration.getTcpServer().getHost())
                     .append(COLON)
                     .append(configuration.getTcpServer().getPort())
-                    .append("\n\t");
+                    .append(newLineTabulation(1));
         }
         if (hasWsServer) {
-            message.append("WS Server - ")
+            message.append(RSOCKET_WS_SERVER_MESSAGE_PART)
                     .append(isNull(configuration.getWsServer().getSsl()) ? WS_SCHEME + SCHEME_DELIMITER : WSS_SCHEME + SCHEME_DELIMITER)
                     .append(configuration.getWsServer().getHost())
                     .append(COLON)
                     .append(configuration.getWsServer().getPort())
-                    .append("\n\t");
+                    .append(newLineTabulation(1));
         }
         ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer()
                 .getMethods()
                 .get();
         if (!methods.isEmpty()) {
-            message.append("Service methods:\n\t\t").append(methods
+            message.append(RSOCKET_SERVICE_METHODS_MESSAGE_PART).append(methods
                     .entrySet()
                     .stream()
                     .map(entry -> entry.getKey() + SPACE + COLON + SPACE + entry.getValue().getInvoker())
-                    .collect(joining("\n\t\t")))
-                    .append("\n\t");
+                    .collect(joining(newLineTabulation(2))))
+                    .append(newLineTabulation(1));
         }
         if (!tcpConnectors.isEmpty()) {
-            message.append("TCP Connectors:\n\t\t").append(tcpConnectors.entrySet()
+            message.append(RSOCKET_TCP_CONNECTORS_MESSAGE_PART).append(tcpConnectors.entrySet()
                     .stream()
                     .map(RsocketMessageBuilder::addTcpConnector)
-                    .collect(Collectors.joining("\n\t\t")))
-                    .append("\n\t");
+                    .collect(joining(newLineTabulation(2))))
+                    .append(newLineTabulation(1));
         }
         if (!wsConnectors.isEmpty()) {
-            message.append("WS Connectors:\n\t\t").append(wsConnectors.entrySet()
+            message.append(RSOCKET_WS_CONNECTORS_MESSAGE_PART).append(wsConnectors.entrySet()
                     .stream()
                     .map(RsocketMessageBuilder::addWsConnector)
-                    .collect(Collectors.joining("\n\t\t")))
-                    .append("\n\t");
+                    .collect(joining(newLineTabulation(2))))
+                    .append(newLineTabulation(1));
 
         }
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
                 .getConnectors()
                 .communicators();
         if (!communicators.isEmpty()) {
-            message.append("Communicator proxies:\n\t\t").append(communicators
+            message.append(RSOCKET_COMMUNICATOR_PROXIES_MESSAGE_PART).append(communicators
                     .stream()
                     .map(RsocketMessageBuilder::buildCommunicatorMessage)
-                    .collect(joining("\n\t\t")));
+                    .collect(joining(newLineTabulation(2))));
         }
         return message.toString();
     }
 
     private static String buildCommunicatorMessage(CommunicatorProxy<? extends Communicator> communicator) {
-        return communicator
-                .getCommunicator()
-                .getClass()
-                .getInterfaces()[0].getName() +
-                ":\n\t\t\t" +
+        String interfaceName = communicator.getCommunicator().getClass().getInterfaces()[0].getName();
+        return interfaceName +
+                newLineTabulation(3) +
                 communicator
                         .getActions()
                         .entrySet()
                         .stream()
-                        .map(action -> "[connector = " + action.getValue().getCommunication() + "] " + action.getKey().toString() + " : " + action.getValue().getMethod())
-                        .collect(joining("\n\t\t\t"));
+                        .map(action -> format(RSOCKET_CONNECTOR_MESSAGE_PART, action.getValue().getCommunication(), action.getKey(), action.getValue().getMethod()))
+                        .collect(joining(newLineTabulation(4)));
     }
 
     private String addTcpConnector(Map.Entry<String, RsocketTcpConnectorConfiguration> entry) {

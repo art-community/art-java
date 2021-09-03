@@ -18,7 +18,9 @@
 
 package io.art.core.constants;
 
+import static io.vavr.collection.Stream.*;
 import static java.util.regex.Pattern.*;
+import static java.util.stream.Collectors.*;
 import java.util.regex.*;
 
 public interface StringConstants {
@@ -61,7 +63,6 @@ public interface StringConstants {
     String IP_ADDRESS_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
     Pattern IP_4_REGEX_PATTERN = compile(IP_ADDRESS_REGEX);
     String TABULATION = "\t";
-    String DOUBLE_TABULATION = "\t\t";
     String DOLLAR = "$";
     String AT_SIGN = "@";
     String WINDOWS_DISK_PATH_SLASH = ":/";
@@ -78,4 +79,12 @@ public interface StringConstants {
     String FORMAT_REGEX = "\\{}";
     Pattern FORMAT_REGEX_PATTERN = compile(FORMAT_REGEX);
     String NEXT_ARROW = "->";
+
+    static String tabulation(int count) {
+        return range(0, count).map(ignore -> TABULATION).collect(joining());
+    }
+
+    static String newLineTabulation(int count) {
+        return NEW_LINE + tabulation(count);
+    }
 }
