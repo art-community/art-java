@@ -106,7 +106,7 @@ public class HttpServer implements Server {
         String host = serverConfiguration.getHost();
         int port = serverConfiguration.getPort();
         this.closer = server.onDispose();
-        if (withLogging()) {
+        if (withLogging() && serverConfiguration.isVerbose()) {
             this.closer = server
                     .onDispose()
                     .doOnSuccess(ignore -> getLogger().info(format(HTTP_SERVER_STOPPED, host, EMPTY_STRING + port)));

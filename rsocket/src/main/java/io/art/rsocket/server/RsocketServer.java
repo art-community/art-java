@@ -216,7 +216,7 @@ public class RsocketServer implements Server {
     private void setupTcpCloser(CloseableChannel channel) {
         this.tcpCloser = channel.onClose();
         RsocketTcpServerConfiguration serverConfiguration = configuration.getTcpServer();
-        if (withLogging()) {
+        if (withLogging() && serverConfiguration.isVerbose()) {
             String message = format(RSOCKET_SERVER_STOPPED, TCP_SERVER_TYPE, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
             this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
         }
@@ -225,7 +225,7 @@ public class RsocketServer implements Server {
     private void setupWsCloser(CloseableChannel channel) {
         this.wsCloser = channel.onClose();
         RsocketWsServerConfiguration serverConfiguration = configuration.getWsServer();
-        if (withLogging()) {
+        if (withLogging() && serverConfiguration.isVerbose()) {
             String message = format(RSOCKET_SERVER_STOPPED, WS_SERVER_TYPE, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
             this.wsCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
         }
