@@ -57,7 +57,7 @@ public class RsocketMessageBuilder {
         if (!communicators.isEmpty()) {
             message.append("Communicator proxies:\n\t\t").append(communicators
                     .stream()
-                    .map(communicator -> communicator.getCommunicator().getClass().getInterfaces()[0].getName() + ":\n\t\t\t" + communicator.getActions().entrySet().stream().map(action -> action.getKey().toString() + " : " + action.getValue().getMethod()).collect(joining("\n\t\t\t\t")))
+                    .map(RsocketMessageBuilder::buildCommunicatorMessage)
                     .collect(joining("\n\t\t")))
                     .append("\n\t");
         }
@@ -75,6 +75,20 @@ public class RsocketMessageBuilder {
 
         }
         return message.toString();
+    }
+
+    private static String buildCommunicatorMessage(CommunicatorProxy<? extends Communicator> communicator) {
+        return communicator
+                .getCommunicator()
+                .getClass()
+                .getInterfaces()[0].getName() +
+                ":\n\t\t\t" +
+                communicator
+                        .getActions()
+                        .entrySet()
+                        .stream()
+                        .map(action -> action.getKey().toString() + " : " + action.getValue().getMethod())
+                        .collect(joining("\n\t\t\t\t"));
     }
 
     private String addTcpConnector(Map.Entry<String, RsocketTcpConnectorConfiguration> entry) {
