@@ -61,7 +61,10 @@ public class RsocketWsClientGroupConfiguration {
         configuration.transportDecorator = current.transportDecorator;
         configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
 
-        ImmutableSet<RsocketWsClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
+        ImmutableSet<RsocketWsClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(
+                TARGETS_SECTION,
+                nested -> clientConfiguration(refresher, current, nested)
+        ));
         configuration.clientConfigurations = merge(current.clientConfigurations, clientConfigurations);
         return configuration;
     }
