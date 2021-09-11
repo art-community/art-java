@@ -62,7 +62,10 @@ public class RsocketTcpClientGroupConfiguration {
         configuration.transportDecorator = current.transportDecorator;
         configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
 
-        ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(TARGETS_SECTION, nested -> clientConfiguration(refresher, current, nested)));
+        ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(
+                TARGETS_SECTION,
+                nested -> clientConfiguration(refresher, current, nested)
+        ));
         configuration.clientConfigurations = merge(current.clientConfigurations, clientConfigurations);
         return configuration;
     }
