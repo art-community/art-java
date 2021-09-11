@@ -75,8 +75,8 @@ public class ModuleActivator {
         return this;
     }
 
-    public <Initializer extends ModuleInitializer<?, ?, ?>> ModuleActivator decorate(String moduleId, ModuleInitializationOperator<Initializer> operator) {
-        decorators.put(moduleId, operator);
+    public <Initializer extends ModuleInitializer<?, ?, ?>> ModuleActivator decorator(String moduleId, ModuleInitializationOperator<Initializer> decorator) {
+        decorators.put(moduleId, decorator);
         return this;
     }
 }

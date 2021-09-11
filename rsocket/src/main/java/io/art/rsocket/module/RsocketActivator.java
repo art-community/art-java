@@ -37,6 +37,6 @@ public class RsocketActivator {
 
     public static ModuleActivator rsocket(UnaryOperator<RsocketInitializer> initializer) {
         return module(RsocketModule.class, RsocketModule::new, () -> initializer.apply(new RsocketInitializer()))
-                .<MetaInitializer>decorate(META_MODULE_ID, meta -> meta.registerLibrary(MetaRsocket::new));
+                .<MetaInitializer>decorator(META_MODULE_ID, meta -> meta.registerLibrary(MetaRsocket::new));
     }
 }
