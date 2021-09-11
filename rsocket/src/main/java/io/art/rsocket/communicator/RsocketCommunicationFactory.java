@@ -102,7 +102,9 @@ public class RsocketCommunicationFactory {
                 .build();
     }
 
-    private static Mono<RSocket> createTcpClient(RsocketCommonConnectorConfiguration connectorConfiguration, RsocketTcpClientConfiguration clientConfiguration, RSocketConnector connector) {
+    private static Mono<RSocket> createTcpClient(RsocketCommonConnectorConfiguration connectorConfiguration,
+                                                 RsocketTcpClientConfiguration clientConfiguration,
+                                                 RSocketConnector connector) {
         UnaryOperator<TcpClient> clientDecorator = clientConfiguration.getClientDecorator();
         UnaryOperator<TcpClientTransport> transportDecorator = clientConfiguration.getTransportDecorator();
         TcpClient client = clientDecorator.apply(TcpClient.create()
@@ -146,7 +148,9 @@ public class RsocketCommunicationFactory {
                 .build();
     }
 
-    private static Mono<RSocket> createWsClient(RsocketCommonConnectorConfiguration connectorConfiguration, RsocketWsClientConfiguration clientConfiguration, RSocketConnector connector) {
+    private static Mono<RSocket> createWsClient(RsocketCommonConnectorConfiguration connectorConfiguration,
+                                                RsocketWsClientConfiguration clientConfiguration,
+                                                RSocketConnector connector) {
         UnaryOperator<HttpClient> clientDecorator = clientConfiguration.getClientDecorator();
         UnaryOperator<WebsocketClientTransport> transportDecorator = clientConfiguration.getTransportDecorator();
         HttpClient client = clientDecorator.apply(HttpClient.create()
