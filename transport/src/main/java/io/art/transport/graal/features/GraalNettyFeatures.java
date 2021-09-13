@@ -1,5 +1,6 @@
 package io.art.transport.graal.features;
 
+import com.oracle.svm.core.os.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
@@ -46,10 +47,9 @@ public class GraalNettyFeatures implements Feature {
 
     private void registerMacOsClasses() {
         try {
-            Class.forName(NETTY_MAC_OS_DNS_CLASS, false, GraalNettyFeatures.class.getClassLoader());
-            registerForNativeUsage(NETTY_MAC_OS_CLASSES);
-        } catch (ClassNotFoundException classNotFoundException) {
-            // Ignore
+            if (IsDefined.isDarwin()) {
+                registerForNativeUsage(NETTY_MAC_OS_CLASSES);
+            }
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }

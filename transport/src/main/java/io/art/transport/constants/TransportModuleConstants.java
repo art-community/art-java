@@ -120,7 +120,6 @@ public interface TransportModuleConstants {
         String NETTY_SSL_ENGINE_TYPE_CLASS = "io.netty.handler.ssl.SslHandler$SslEngineType";
         String NETTY_CHANNEL_HANDLER_MASK_CLASS = "io.netty.channel.ChannelHandlerMask";
         String NETTY_SCHEDULER_FUTURE_TASK_CLASS = "io.netty.util.concurrent.ScheduledFutureTask";
-        String NETTY_MAC_OS_DNS_CLASS = "io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider";
         String NETTY_REF_CNT_NAME = "refCnt";
         String NETTY_JDK_DEFAULT_APPLICATION_PROTOCOL_NEGOTIATOR_CLASS = "io.netty.handler.ssl.JdkDefaultApplicationProtocolNegotiator";
         String NETTY_JDK_ALPN_PROTOCOL_NEGOTIATOR_ALPN_WRAPPER_CLASS = "io.netty.handler.ssl.JdkAlpnApplicationProtocolNegotiator$AlpnWrapper";
