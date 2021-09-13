@@ -19,6 +19,7 @@ public class GraalNettyFeatures implements Feature {
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         registerEpoll();
         registerKqueue();
+        registerMacOsClasses();
     }
 
     private void registerKqueue() {
@@ -36,6 +37,17 @@ public class GraalNettyFeatures implements Feature {
         try {
             Class.forName(NETTY_EPOLL_CLASS_NAME, false, GraalNettyFeatures.class.getClassLoader());
             registerForNativeUsage(NETTY_NATIVE_EPOLL_CLASSES);
+        } catch (ClassNotFoundException classNotFoundException) {
+            // Ignore
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+    }
+
+    private void registerMacOsClasses() {
+        try {
+            Class.forName(NETTY_MAC_OS_DNS_CLASS, false, GraalNettyFeatures.class.getClassLoader());
+            registerForNativeUsage(NETTY_MAC_OS_CLASSES);
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
         } catch (Throwable throwable) {
