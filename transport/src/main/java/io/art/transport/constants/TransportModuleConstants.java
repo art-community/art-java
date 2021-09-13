@@ -168,7 +168,8 @@ public interface TransportModuleConstants {
                 "io.netty.channel.unix.LimitsStaticallyReferencedJniMethods",
                 "io.netty.channel.unix.DatagramSocketAddress",
                 "io.netty.channel.unix.Socket",
-                "io.netty.channel.unix.Unix"
+                "io.netty.channel.unix.Unix",
+                "io.netty.resolver.dns.macos.MacOSDnsServerAddressStreamProvider"
         };
 
     }
