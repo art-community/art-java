@@ -157,7 +157,7 @@ public interface TransportModuleConstants {
         String[] NETTY_NATIVE_KQUEUE_CLASSES = new String[]{
                 "io.netty.channel.DefaultFileRegion",
                 "io.netty.channel.ChannelException",
-                "io.netty.channel.kqueue.BsdSocket.java",
+                "io.netty.channel.kqueue.BsdSocket",
                 "io.netty.channel.kqueue.Native",
                 "io.netty.channel.kqueue.KQueueStaticallyReferencedJniMethods",
                 "io.netty.channel.kqueue.KQueueEventArray",
