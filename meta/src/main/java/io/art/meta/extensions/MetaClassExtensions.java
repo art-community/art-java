@@ -1,4 +1,4 @@
-package io.art.communicator.extensions;
+package io.art.meta.extensions;
 
 import io.art.meta.model.*;
 import lombok.experimental.*;
