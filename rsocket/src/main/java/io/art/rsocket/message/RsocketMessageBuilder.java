@@ -4,15 +4,16 @@ import io.art.communicator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.meta.invoker.*;
 import io.art.meta.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.server.method.*;
+import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -56,17 +57,26 @@ public class RsocketMessageBuilder {
         }
         ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer().getMethods().get();
         if (!methods.isEmpty()) {
-            Map<MetaType<?>, List<MetaMethodInvoker>> serviceMethods = methods
-                    .entrySet()
+            @AllArgsConstructor
+            @EqualsAndHashCode
+            class ServiceKey {
+                final MetaType<?> type;
+                final String id;
+            }
+
+            Map<ServiceKey, List<ServiceMethod>> serviceMethods = methods
+                    .values()
                     .stream()
-                    .map(entry -> entry.getValue().getInvoker())
-                    .collect(groupingBy(invoker -> invoker.getOwner().definition()));
+                    .collect(groupingBy(entry -> new ServiceKey(entry.getInvoker().getOwner().definition(), entry.getId().getServiceId())));
             String methodsAsString = serviceMethods
                     .entrySet()
                     .stream()
-                    .map(entry -> entry.getKey()
+                    .map(entry -> format(RSOCKET_SERVICE_MESSAGE_PART, entry.getKey().id, entry.getKey().type)
                             + newLineTabulation(3)
-                            + entry.getValue().stream().map(invoker -> invoker.getDelegate().toString()).collect(joining(newLineTabulation(3))))
+                            + entry.getValue()
+                            .stream()
+                            .map(method -> format(RSOCKET_SERVICE_METHOD_MESSAGE_PART, method.getId().getMethodId(), method.getInvoker().getDelegate()))
+                            .collect(joining(newLineTabulation(3))))
                     .collect(joining(newLineTabulation(2)));
             message.append(format(RSOCKET_SERVICES_MESSAGE_PART, methodsAsString));
         }
@@ -78,19 +88,22 @@ public class RsocketMessageBuilder {
                     .stream()
                     .map(RsocketMessageBuilder::buildCommunicatorMessage)
                     .collect(joining(newLineTabulation(2)));
-            message.append(format(RSOCKET_COMMUNICATOR_PROXIES_MESSAGE_PART, communicatorsString));
+            message.append(format(RSOCKET_COMMUNICATORS_MESSAGE_PART, communicatorsString));
         }
         return message.toString();
     }
 
     private static String buildCommunicatorMessage(CommunicatorProxy<? extends Communicator> communicator) {
-        String interfaceName = communicator.getCommunicator().getClass().getInterfaces()[0].getSimpleName();
+        String interfaceName = format(RSOCKET_COMMUNICATOR_MESSAGE_PART,
+                asId(communicator.getCommunicator().getClass().getInterfaces()[0]),
+                communicator.getCommunicator().getClass().getInterfaces()[0].getSimpleName());
         String actionsString = communicator
                 .getActions()
                 .entrySet()
                 .stream()
-                .map(action -> format(RSOCKET_CONNECTOR_MESSAGE_PART,
+                .map(action -> format(RSOCKET_COMMUNICATOR_ACTION_MESSAGE_PART,
                         action.getValue().getCommunication(),
+                        action.getValue().getId().getActionId(),
                         action.getValue().getMethod()))
                 .collect(joining(newLineTabulation(3)));
         return interfaceName + newLineTabulation(3) + actionsString;
