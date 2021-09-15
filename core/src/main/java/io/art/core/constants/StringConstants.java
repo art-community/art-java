@@ -79,6 +79,7 @@ public interface StringConstants {
     String FORMAT_REGEX = "\\{}";
     Pattern FORMAT_REGEX_PATTERN = compile(FORMAT_REGEX);
     String NEXT_ARROW = "->";
+    String URI_FORMAT = "{0}://{1}:{2}";
 
     static String tabulation(int count) {
         return range(0, count).map(ignore -> TABULATION).collect(joining());

@@ -24,6 +24,8 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.meta.constants.MetaConstants.*;
+import static java.text.MessageFormat.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 
@@ -65,10 +67,11 @@ public abstract class MetaMethod<T> {
 
     @Override
     public String toString() {
-        return returnType.type().getName() + SPACE
-                + name
-                + OPENING_BRACKET
-                + parameters.values().stream().map(parameter -> parameter.type().type().getName() + SPACE + parameter.name()).collect(joining(COMMA))
-                + CLOSING_BRACKET;
+        String parameters = this.parameters
+                .values()
+                .stream()
+                .map(parameter -> parameter.type() + SPACE + parameter.name())
+                .collect(joining(COMMA));
+        return format(METHOD_FORMAT, returnType, name, parameters);
     }
 }

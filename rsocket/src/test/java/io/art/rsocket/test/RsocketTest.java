@@ -2,6 +2,7 @@ package io.art.rsocket.test;
 
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
+import io.art.rsocket.test.communicator.TestRsocket2.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
@@ -28,8 +29,8 @@ public class RsocketTest {
                 transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
-                        .server(server -> server.tcp().service(TestRsocketService.class)))
+                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class).tcp(TestRsocketConnector2.class))
+                        .server(server -> server.tcp().service(TestRsocketService.class).service(TestRsocketService2.class)))
         );
     }
 

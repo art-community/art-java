@@ -84,7 +84,7 @@ public class RuntimeMetaType {
                             return enumValue;
                         }
                     }
-                    throw new MetaException(format(UNKOWN_RUNTIME_META_TYPE_CLASS, type));
+                    throw new MetaException(format(UNKNOWN_RUNTIME_META_TYPE_CLASS, type));
                 };
                 return computeMetaType(metaEnum(asClass, cast(enumFactory)));
             }
@@ -93,6 +93,6 @@ public class RuntimeMetaType {
         if (type instanceof WildcardType) {
             return defineMetaType(((WildcardType) type).getUpperBounds()[0]);
         }
-        throw new MetaException(format(UNKOWN_RUNTIME_META_TYPE_CLASS, type));
+        throw new MetaException(format(UNKNOWN_RUNTIME_META_TYPE_CLASS, type));
     }
 }

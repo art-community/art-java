@@ -82,7 +82,9 @@ public interface MetaConstants {
     enum MetaTypeModifiers {
         VALIDATABLE,
         COMMUNICATOR,
-        CONNECTOR
+        CONNECTOR,
+        ARRAY,
+        PARAMETRIZED
     }
 
     interface Errors {
@@ -113,11 +115,14 @@ public interface MetaConstants {
         String UNABLE_TO_CREATE_SINGLETON = "Class {0} hasn't 0-args constructor. We can't use it for method invoker";
         String META_CLASS_FOR_CLASS_NOT_EXISTS = "Class {0} has not meta class. Check Meta Library class";
         String CLASS_WITHOUT_PROXY = "Class {0} has not proxy. Proxy could be created only for interfaces";
-        String UNKOWN_RUNTIME_META_TYPE_CLASS = "We can not compute meta type in runtime for reflection Type: {0}";
+        String UNKNOWN_RUNTIME_META_TYPE_CLASS = "We can not compute meta type in runtime for reflection Type: {0}";
     }
 
     interface ClassNames {
         String COMMUNICATOR_NAME = "io.art.communicator.Communicator";
         String CONNECTOR_NAME = "io.art.communicator.Connector";
     }
+
+    String INVOKER_FORMAT = "{0} '{ '{1}' }'";
+    String METHOD_FORMAT = "{0} {1}'('{2}')'";
 }

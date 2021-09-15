@@ -6,9 +6,9 @@ import io.art.meta.exception.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.singleton.SingletonsRegistry.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
+import static io.art.meta.constants.MetaConstants.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.util.function.*;
@@ -35,7 +35,7 @@ public class MetaMethodInvoker implements Invoker {
         }
         MetaConstructor<?> constructor = owner.creator().noPropertiesConstructor();
         if (isNull(constructor)) {
-            throw new MetaException(format(UNABLE_TO_CREATE_SINGLETON, owner.definition().type().getName()));
+            throw new MetaException(format(UNABLE_TO_CREATE_SINGLETON, owner.definition().type()));
         }
         Object singleton = singleton(owner.definition().type(), constructor::invokeCatched);
         invokeWithoutParameters = () -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton));
@@ -60,6 +60,6 @@ public class MetaMethodInvoker implements Invoker {
 
     @Override
     public String toString() {
-        return owner.definition().type() + SPACE + OPENING_BRACES + SPACE + delegate + SPACE + CLOSING_BRACES;
+        return format(INVOKER_FORMAT, owner.definition(), delegate);
     }
 }

@@ -19,6 +19,7 @@ import io.rsocket.frame.decoder.*;
 import io.rsocket.loadbalance.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
+import io.rsocket.util.*;
 import lombok.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
@@ -75,7 +76,7 @@ public class RsocketCommunicationFactory {
         ByteBuffer payloadData = transportPayloadWriter(common.getDataFormat())
                 .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
                 .nioBuffer();
-        Payload payload = create(payloadData);
+        Payload payload = DefaultPayload.create(payloadData);
         RSocketConnector connector = createConnector(common, payload);
         RsocketTcpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
         if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {

@@ -14,6 +14,7 @@ import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.MethodDecoratorScope.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static java.util.Objects.*;
 
@@ -28,7 +29,7 @@ public class ServiceMethodFactory {
     }
 
     public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<?> method) {
-        return ServiceMethodIdentifier.serviceMethodId(owner.definition().type().getSimpleName(), method.name());
+        return ServiceMethodIdentifier.serviceMethodId(asId(owner.definition().type()), method.name());
     }
 
     public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {

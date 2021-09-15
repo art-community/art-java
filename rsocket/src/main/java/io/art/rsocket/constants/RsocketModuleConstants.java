@@ -64,13 +64,13 @@ public interface RsocketModuleConstants {
         String REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed\nException:\n{0}";
 
         String RSOCKET_LAUNCHED_MESSAGE_PART = "RSocket module launched\n\t";
-        String RSOCKET_TCP_SERVER_MESSAGE_PART = "TCP Server - ";
-        String RSOCKET_WS_SERVER_MESSAGE_PART = "WS Server - ";
-        String RSOCKET_SERVICE_METHODS_MESSAGE_PART = "Service methods:\n\t\t";
-        String RSOCKET_TCP_CONNECTORS_MESSAGE_PART = "TCP Connectors:\n\t\t";
-        String RSOCKET_WS_CONNECTORS_MESSAGE_PART = "WS Connectors:\n\t\t";
-        String RSOCKET_COMMUNICATOR_PROXIES_MESSAGE_PART = "Communicator proxies:\n\t\t";
-        String RSOCKET_CONNECTOR_MESSAGE_PART = "[connector = {0}] {1} : {2}";
+        String RSOCKET_TCP_SERVER_MESSAGE_PART = "TCP Server - {0}://{1}:{2}\n\t";
+        String RSOCKET_WS_SERVER_MESSAGE_PART = "WS Server - {0}://{1}:{2}\n\t";
+        String RSOCKET_SERVICES_MESSAGE_PART = "Services:\n\t\t{0}\n\t";
+        String RSOCKET_TCP_CONNECTORS_MESSAGE_PART = "TCP Connectors:\n\t\t{0}\n\t";
+        String RSOCKET_WS_CONNECTORS_MESSAGE_PART = "WS Connectors:\n\t\t{0}\n\t";
+        String RSOCKET_COMMUNICATOR_PROXIES_MESSAGE_PART = "Communicators:\n\t\t{0}";
+        String RSOCKET_CONNECTOR_MESSAGE_PART = "[connector = {0}] {1}";
     }
 
     interface ConfigurationKeys {

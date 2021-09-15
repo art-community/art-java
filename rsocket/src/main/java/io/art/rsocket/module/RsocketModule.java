@@ -63,7 +63,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
         }
         ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors = configuration.getWsConnectors();
         ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors = configuration.getTcpConnectors();
-        if (!wsConnectors.isEmpty() || !tcpConnectors.isEmpty()) {
+        if (!tcpConnectors.isEmpty() || !wsConnectors.isEmpty()) {
             manager.initializeCommunicators();
         }
         withLogging(() -> logger(RSOCKET_LOGGER).info(rsocketLaunchedMessage(configuration)));

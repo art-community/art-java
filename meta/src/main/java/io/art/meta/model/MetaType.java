@@ -29,6 +29,7 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
@@ -42,6 +43,7 @@ import static io.art.meta.searcher.ClassSearcher.*;
 import static io.art.meta.state.MetaComputationState.*;
 import static io.art.meta.validator.MetaTypeValidator.*;
 import static java.util.Objects.*;
+import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -105,6 +107,14 @@ public class MetaType<T> {
 
         if (Validatable.class.isAssignableFrom(type)) {
             modifiers.add(VALIDATABLE);
+        }
+
+        if (type.isArray()) {
+            modifiers.add(ARRAY);
+        }
+
+        if (!parameters.isEmpty()) {
+            modifiers.add(PARAMETRIZED);
         }
 
         if (isAssignableFrom(type, COMMUNICATOR_NAME)) {
@@ -216,6 +226,10 @@ public class MetaType<T> {
 
     @Override
     public String toString() {
-        return type.toString();
+        String ownerName = type.getSimpleName();
+        if (!parameters.isEmpty()) {
+            ownerName += parameters.stream().map(MetaType::toString).collect(joining(COMMA, LESS, MORE));
+        }
+        return ownerName;
     }
 }
