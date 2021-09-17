@@ -24,12 +24,12 @@ public class RsocketTest {
     public static void setup() {
         initialize(
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
-                logging(logging -> logging.configureDefault(defaultLogger -> defaultLogger.enabled(true))),
+                logging(logging -> logging.configureDefault(defaultLogger -> defaultLogger.enabled(false))),
                 transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
                         .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
-                        .server(server -> server.tcp(tcp -> tcp.verbose(true)).service(TestRsocketService.class)))
+                        .server(server -> server.tcp().service(TestRsocketService.class)))
         );
     }
 
