@@ -35,6 +35,8 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.ClassNames.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
+import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.ARRAY;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.model.MetaTypeKindComputer.*;
 import static io.art.meta.model.TransformersComputer.*;
@@ -154,11 +156,11 @@ public class MetaType<T> {
             externalKind = computeExternalKind(this);
         }
 
-        if (isNull(inputTransformer)) {
+        if (isNull(inputTransformer) && internalKind != UNKNOWN) {
             inputTransformer = cast(computeInputTransformer(this));
         }
 
-        if (isNull(outputTransformer)) {
+        if (isNull(outputTransformer) && internalKind != UNKNOWN) {
             outputTransformer = cast(computeOutputTransformer(this));
         }
     }

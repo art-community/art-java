@@ -21,6 +21,9 @@ package io.art.core.exception;
 import io.art.core.validation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.constants.StringConstants.*;
+import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 
 public class ValidationException extends RuntimeException {
     @Getter
@@ -36,6 +39,13 @@ public class ValidationException extends RuntimeException {
         super(expression.getErrorMessage());
         this.expression = expression;
         this.model = model;
+    }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage() + newLineTabulation(2) + stream(getStackTrace())
+                .map(StackTraceElement::toString)
+                .collect(joining(newLineTabulation(2)));
     }
 
     public <T extends Validatable> T model() {

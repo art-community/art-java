@@ -56,11 +56,7 @@ public class MetaTypeValidator {
             case OUTPUT_STREAM:
             case NIO_BUFFER:
             case NETTY_BUFFER:
-                break;
             case ARRAY:
-                if (type.arrayComponentType().internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(ARRAY_WITH_UNKNOWN_TYPE, type));
-                }
                 break;
             case COLLECTION:
             case IMMUTABLE_COLLECTION:
@@ -74,20 +70,11 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format(COLLECTION_WITHOUT_PARAMETERS, type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(COLLECTION_WITH_UNKNOWN_TYPE, type));
-                }
                 break;
             case MAP:
             case IMMUTABLE_MAP:
                 if (type.parameters().size() != 2) {
                     return new ValidationResult(false, format(MAP_WITHOUT_PARAMETERS, type));
-                }
-                if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(MAP_WITH_UNKNOWN_KEY_TYPE, type));
-                }
-                if (type.parameters().get(1).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(MAP_WITH_UNKNOWN_VALUE_TYPE, type));
                 }
                 break;
             case FLUX:
@@ -95,36 +82,22 @@ public class MetaTypeValidator {
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format(PUBLISHER_WITHOUT_PARAMETERS, type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(PUBLISHER_WITH_UNKNOWN_PARAMETER, type));
-                }
                 break;
             case LAZY:
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format(LAZY_WITHOUT_PARAMETERS, type));
-                }
-                if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(LAZY_WITH_UNKNOWN_PARAMETER, type));
                 }
                 break;
             case OPTIONAL:
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format(OPTIONAL_WITHOUT_PARAMETERS, type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(OPTION_WITH_UNKNOWN_PARAMETER, type));
-                }
                 break;
             case SUPPLIER:
                 if (type.parameters().isEmpty()) {
                     return new ValidationResult(false, format(SUPPLIER_WITHOUT_PARAMETERS, type));
                 }
-                if (type.parameters().get(0).internalKind() == UNKNOWN) {
-                    return new ValidationResult(false, format(SUPPLIER_WITH_UNKNOWN_PARAMETER, type));
-                }
                 break;
-            case UNKNOWN:
-                return new ValidationResult(false, format(UNKNOWN_TYPE, type));
         }
         return new ValidationResult(true, EMPTY_STRING);
     }
