@@ -31,7 +31,6 @@ import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.core.property.Property.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
-import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.payload.TransportPayloadReader.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
 import static java.util.Objects.*;
@@ -83,9 +82,12 @@ public class HttpCommunication implements Communication {
         TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getDataFormat());
         TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getDataFormat());
         HttpClient client = this.client.get();
-        return input -> client.put()
-                .send(input.map(value -> writer.write(typed(inputMappingType, value))))
-                .response((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)));
+        return input -> client
+                .get()
+                .responseSingle((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)))
+                .flux()
+                .filter(payload -> !payload.isEmpty())
+                .map(TransportPayload::getValue);
     }
 
     @Override
