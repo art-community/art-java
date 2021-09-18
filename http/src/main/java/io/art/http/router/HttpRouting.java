@@ -6,12 +6,12 @@ import io.art.http.state.*;
 import io.art.meta.model.*;
 import io.art.server.method.*;
 import io.art.transport.payload.*;
+import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
 import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
-import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
@@ -23,6 +23,7 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import java.util.function.*;
 
 class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
@@ -60,26 +61,34 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         HttpLocalState localState = httpLocalState(request, response);
         state.httpState(owner, delegate, localState);
 
-        if (isNull(inputType)) {
-            return localState
-                    .response()
-                    .send(serviceMethod.serve(Flux.empty())
-                            .map(value -> writer.write(typed(outputMappingType, value)))
-                            .defaultIfEmpty(emptyNettyBuffer()));
-        }
+        Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
 
-        Flux<Object> input = request
+        Flux<ByteBuf> requestInput = localState
+                .request()
                 .receive()
                 .retain()
+                .doOnComplete(() -> emptyCompleter.emitEmpty(FAIL_FAST));
+
+        if (isNull(inputType)) {
+            Flux<ByteBuf> output = serviceMethod
+                    .serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)))
+                    .switchIfEmpty(emptyCompleter.asMono());
+
+            return localState
+                    .response()
+                    .send(output);
+        }
+
+        Flux<Object> input = requestInput
                 .map(data -> reader.read(data, inputMappingType))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue);
 
-        return localState
-                .response()
-                .send(serviceMethod
-                        .serve(input)
-                        .map(value -> writer.write(typed(outputMappingType, value)))
-                        .defaultIfEmpty(emptyNettyBuffer()));
+        Flux<ByteBuf> output = serviceMethod
+                .serve(input)
+                .map(value -> writer.write(typed(outputMappingType, value)))
+                .switchIfEmpty(emptyCompleter.asMono());
+
+        return localState.response().send(output);
     }
 }
