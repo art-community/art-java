@@ -21,11 +21,11 @@ public class HttpCommunicationFactory {
     public static HttpCommunication createHttpCommunication(HttpConnectorConfiguration connectorConfiguration) {
         String connector = connectorConfiguration.getConnector();
         HttpModuleConfiguration moduleConfiguration = httpModule().configuration();
-        Supplier<HttpClient> client = () -> createTcpClient(moduleConfiguration.getConnectors().get(connector));
+        Supplier<HttpClient> client = () -> createClient(moduleConfiguration.getConnectors().get(connector));
         return new HttpCommunication(client, moduleConfiguration, connectorConfiguration);
     }
 
-    private static HttpClient createTcpClient(HttpConnectorConfiguration connectorConfiguration) {
+    private static HttpClient createClient(HttpConnectorConfiguration connectorConfiguration) {
         HttpClient httpClient = HttpClient.create()
                 .compress(connectorConfiguration.isCompress())
                 .wiretap(withLogging() && (connectorConfiguration.isWiretapLog() || connectorConfiguration.isVerbose()))
