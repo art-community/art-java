@@ -82,39 +82,33 @@ public class ServiceMethod {
 
     private Function<Flux<Object>, Flux<Object>> emptyInputHandler() {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
-            return empty -> {
-                try {
-                    subscribeEmpty(empty);
-                    invoker.invoke();
-                    return Flux.empty();
-                } catch (Throwable throwable) {
-                    return Flux.error(throwable);
-                }
+            return input -> {
+                Sinks.One<Object> sink = one();
+                subscribeEmptyEmpty(input, sink);
+                return Flux.from(sink.asMono());
             };
         }
 
-        if (outputType.internalKind() == MONO || outputType.internalKind() == FLUX) {
-            return empty -> {
-                try {
-                    subscribeEmpty(empty);
-                    Object output = invoker.invoke();
-                    if (isNull(output)) return Flux.empty();
-                    return from(asPublisher(output));
-                } catch (Throwable throwable) {
-                    return Flux.error(throwable);
-                }
+        if (outputType.internalKind() == MONO) {
+            return input -> {
+                Sinks.One<Object> result = one();
+                subscribeEmptyMono(input, result);
+                return from(result.asMono());
             };
         }
 
-        return empty -> {
-            try {
-                subscribeEmpty(empty);
-                Object output = invoker.invoke();
-                if (isNull(output)) return Flux.empty();
-                return just(output);
-            } catch (Throwable throwable) {
-                return Flux.error(throwable);
-            }
+        if (outputType.internalKind() == FLUX) {
+            return input -> {
+                Sinks.Many<Object> sink = many().unicast().onBackpressureBuffer();
+                subscribeEmptyFlux(input, sink);
+                return sink.asFlux();
+            };
+        }
+
+        return input -> {
+            Sinks.Many<Object> sink = many().unicast().onBackpressureBuffer();
+            subscribeEmptyBlocking(input, sink);
+            return sink.asFlux();
         };
     }
 
@@ -230,12 +224,40 @@ public class ServiceMethod {
     }
 
 
-    private void subscribeEmpty(Flux<Object> empty) {
-        empty.subscribe();
+    private void subscribeEmptyBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
+        input
+                .doOnError(error -> sink.emitError(error, FAIL_FAST))
+                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
+                .doOnSubscribe(ignore -> callBlockingOutput(sink))
+                .subscribe();
+    }
+
+    private void subscribeEmptyFlux(Flux<Object> input, Sinks.Many<Object> sink) {
+        input
+                .doOnError(error -> sink.emitError(error, FAIL_FAST))
+                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
+                .doOnSubscribe(ignore -> callFluxOutput(sink))
+                .subscribe();
+    }
+
+    private void subscribeEmptyMono(Flux<Object> input, Sinks.One<Object> sink) {
+        input
+                .doOnError(error -> sink.emitError(error, FAIL_FAST))
+                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
+                .doOnSubscribe(ignore -> callMonoOutput(sink))
+                .subscribe();
+    }
+
+    private void subscribeEmptyEmpty(Flux<Object> input, Sinks.One<Object> sink) {
+        input
+                .doOnError(error -> sink.emitError(error, FAIL_FAST))
+                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
+                .doOnSubscribe(ignore -> callEmptyOutput(sink))
+                .subscribe();
     }
 
 
-    private void subscribeBlockingBlocking(Flux<Object> input, Many<Object> sink) {
+    private void subscribeBlockingBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
                 .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
@@ -343,7 +365,7 @@ public class ServiceMethod {
                 return;
             }
             asMono(output)
-                    .doOnSuccess(resultElement -> emitMonoElement(resultElement, sink))
+                    .doOnSuccess(resultElement -> sink.emitValue(resultElement, FAIL_FAST))
                     .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
                     .subscribe();
         } catch (Throwable throwable) {
@@ -352,12 +374,62 @@ public class ServiceMethod {
     }
 
 
-    private void emitMonoElement(Object element, One<Object> sink) {
-        if (isNull(element)) {
+    private void callEmptyOutput(Sinks.One<Object> sink) {
+        try {
+            invoker.invoke();
             sink.emitEmpty(FAIL_FAST);
-            return;
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
         }
-        sink.emitValue(element, FAIL_FAST);
+    }
+
+    private void callBlockingOutput(Sinks.Many<Object> sink) {
+        try {
+            Object output = invoker.invoke();
+            if (isNull(output)) {
+                sink.emitComplete(FAIL_FAST);
+                return;
+            }
+            sink.emitNext(output, FAIL_FAST);
+            sink.emitComplete(FAIL_FAST);
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+            sink.emitComplete(FAIL_FAST);
+        }
+    }
+
+    private void callFluxOutput(Sinks.Many<Object> sink) {
+        try {
+            Object output = invoker.invoke();
+            if (isNull(output)) {
+                sink.emitComplete(FAIL_FAST);
+                return;
+            }
+            asFlux(output)
+                    .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
+                    .doOnNext(resultElement -> sink.emitNext(resultElement, FAIL_FAST))
+                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
+                    .subscribe();
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+            sink.emitComplete(FAIL_FAST);
+        }
+    }
+
+    private void callMonoOutput(Sinks.One<Object> sink) {
+        try {
+            Object output = invoker.invoke();
+            if (isNull(output)) {
+                sink.emitEmpty(FAIL_FAST);
+                return;
+            }
+            asMono(output)
+                    .doOnSuccess(resultElement -> sink.emitValue(resultElement, FAIL_FAST))
+                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
+                    .subscribe();
+        } catch (Throwable throwable) {
+            sink.emitError(throwable, FAIL_FAST);
+        }
     }
 
 
