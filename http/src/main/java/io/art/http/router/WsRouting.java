@@ -64,7 +64,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.outbound().send(output).then();
+             return localState.outbound().send(output).then();
         }
 
         Sinks.One<ByteBuf> emptyCompleter = Sinks.one();

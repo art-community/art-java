@@ -227,7 +227,6 @@ public class ServiceMethod {
     private void subscribeEmptyBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                 .doOnSubscribe(ignore -> callBlockingOutput(sink))
                 .subscribe();
     }
@@ -235,7 +234,6 @@ public class ServiceMethod {
     private void subscribeEmptyFlux(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                 .doOnSubscribe(ignore -> callFluxOutput(sink))
                 .subscribe();
     }
@@ -243,7 +241,6 @@ public class ServiceMethod {
     private void subscribeEmptyMono(Flux<Object> input, Sinks.One<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
                 .doOnSubscribe(ignore -> callMonoOutput(sink))
                 .subscribe();
     }
@@ -251,7 +248,6 @@ public class ServiceMethod {
     private void subscribeEmptyEmpty(Flux<Object> input, Sinks.One<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
                 .doOnSubscribe(ignore -> callEmptyOutput(sink))
                 .subscribe();
     }
@@ -260,28 +256,24 @@ public class ServiceMethod {
     private void subscribeBlockingBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                 .subscribe(element -> emitBlockingOutput(element, sink));
     }
 
     private void subscribeBlockingFlux(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                 .subscribe(element -> emitFluxOutput(element, sink));
     }
 
     private void subscribeBlockingMono(Flux<Object> input, Sinks.One<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
                 .subscribe(element -> emitMonoOutput(element, sink));
     }
 
     private void subscribeBlockingEmpty(Flux<Object> input, Sinks.One<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
                 .subscribe(element -> emitEmptyOutput(element, sink));
     }
 
@@ -289,28 +281,24 @@ public class ServiceMethod {
     private void subscribeMonoBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                 .subscribe(element -> emitBlockingOutput(Mono.just(element), sink));
     }
 
     private void subscribeMonoFlux(Flux<Object> input, Sinks.Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
                 .subscribe(element -> emitFluxOutput(Mono.just(element), sink));
     }
 
     private void subscribeMonoMono(Flux<Object> input, Sinks.One<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
                 .subscribe(element -> emitMonoOutput(Mono.just(element), sink));
     }
 
     private void subscribeMonoEmpty(Flux<Object> input, Sinks.One<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnComplete(() -> sink.emitEmpty(FAIL_FAST))
                 .subscribe(element -> emitEmptyOutput(Mono.just(element), sink));
     }
 

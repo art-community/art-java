@@ -74,7 +74,7 @@ public interface HttpModuleConstants {
         HEAD("head"),
         PATCH("patch"),
         PATH("path"),
-        WS("WS");
+        WS("ws");
 
         private final String type;
 
