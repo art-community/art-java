@@ -3,11 +3,9 @@ package io.art.http.router;
 import io.art.core.mime.*;
 import io.art.http.configuration.*;
 import io.art.http.state.*;
-import io.art.meta.constants.*;
 import io.art.meta.model.*;
 import io.art.server.method.*;
 import io.art.transport.payload.*;
-import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
 import lombok.*;
 import org.reactivestreams.*;
@@ -17,7 +15,6 @@ import static io.art.core.constants.BufferConstants.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
@@ -26,7 +23,6 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import java.util.function.*;
 
 class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
@@ -38,7 +34,6 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
     private final HttpModuleState state;
     private final MetaClass<?> owner;
     private final MetaMethod<?> delegate;
-    private final MetaConstants.MetaTypeInternalKind outputKind;
     private final MetaType<?> inputType;
 
     @Builder(access = PACKAGE)
@@ -51,7 +46,6 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         state = httpModule().state();
         owner = serviceMethod.getInvoker().getOwner();
         delegate = serviceMethod.getInvoker().getDelegate();
-        outputKind = serviceMethod.getOutputType().internalKind();
         inputType = serviceMethod.getInputType();
     }
 
@@ -74,7 +68,6 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                             .defaultIfEmpty(emptyNettyBuffer()));
         }
 
-        Sinks.One<Void> responder = Sinks.one();
         Flux<Object> input = request
                 .receive()
                 .retain()
@@ -82,23 +75,11 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue);
 
-        if (outputKind != FLUX && outputKind != MONO) {
-            Flux<ByteBuf> output = serviceMethod
-                    .serve(input)
-                    .map(value -> writer.write(typed(outputMappingType, value)))
-                    .defaultIfEmpty(emptyNettyBuffer())
-                    .doOnComplete(() -> responder.emitEmpty(FAIL_FAST));
-
-            return localState
-                    .response()
-                    .send(output)
-                    .then(responder.asMono());
-        }
-
         return localState
                 .response()
                 .send(serviceMethod
                         .serve(input)
-                        .map(value -> writer.write(typed(outputMappingType, value))));
+                        .map(value -> writer.write(typed(outputMappingType, value)))
+                        .defaultIfEmpty(emptyNettyBuffer()));
     }
 }
