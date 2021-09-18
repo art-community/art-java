@@ -14,6 +14,7 @@ import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.MapCollector.*;
+import static io.art.core.collector.SetCollector.setCollector;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -74,12 +75,12 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         for (ClassBasedConfiguration classBasedConfiguration : classBased) {
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = classBasedConfiguration.serviceClass.get();
-            for (Map.Entry<HttpRouteType, MetaMethod<?>> method : extractHttpMethods(metaClass).entrySet()) {
-                configurationBuilder.type(method.getKey())
+            for (MetaMethod<?> method : extractHttpMethods(metaClass)) {
+                configurationBuilder.type(extractRouteType(method.name()))
                         .path(byServiceMethod())
-                        .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.getValue().name()));
+                        .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.name()));
                 getServiceDecorator(metaClass).apply(configurationBuilder);
-                getMethodDecorator(metaClass, method.getValue()).apply(configurationBuilder);
+                getMethodDecorator(metaClass, method).apply(configurationBuilder);
                 routes.add(configurationBuilder.build());
             }
         }
@@ -100,12 +101,12 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return routes.build();
     }
 
-    private static Map<HttpRouteType, MetaMethod<?>> extractHttpMethods(MetaClass<?> serviceClass) {
+    private static Set<MetaMethod<?>> extractHttpMethods(MetaClass<?> serviceClass) {
         return serviceClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() < 2)
                 .filter(method -> methodStartWithExcludePath(method.name()))
-                .collect(mapCollector(method -> extractRouteType(method.name()), Function.identity()));
+                .collect(setCollector());
     }
 
     private UnaryOperator<HttpRouteConfigurationBuilder> getServiceDecorator(MetaClass<?> serviceClass) {
