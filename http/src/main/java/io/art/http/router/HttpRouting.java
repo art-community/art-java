@@ -66,16 +66,25 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         HttpLocalState localState = httpLocalState(request, response);
         state.httpState(owner, delegate, localState);
 
+        if (isNull(inputType)) {
+            return localState
+                    .response()
+                    .send(serviceMethod.serve(Flux.empty())
+                            .map(value -> writer.write(typed(outputMappingType, value)))
+                            .defaultIfEmpty(emptyNettyBuffer()));
+        }
+
         Sinks.One<Void> responder = Sinks.one();
         Flux<Object> input = request
                 .receive()
+                .retain()
                 .map(data -> reader.read(data, inputMappingType))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue);
 
         if (outputKind != FLUX && outputKind != MONO) {
             Flux<ByteBuf> output = serviceMethod
-                    .serve(isNull(inputType) ? Flux.empty() : input)
+                    .serve(input)
                     .map(value -> writer.write(typed(outputMappingType, value)))
                     .defaultIfEmpty(emptyNettyBuffer())
                     .doOnComplete(() -> responder.emitEmpty(FAIL_FAST));
