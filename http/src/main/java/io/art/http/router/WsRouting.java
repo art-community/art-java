@@ -22,7 +22,6 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import java.util.function.*;
 
 class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
@@ -64,21 +63,18 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
             return localState.outbound().send(output).then();
         }
 
-        Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
-
         Flux<Object> input = localState
                 .inbound()
+                .aggregateFrames()
                 .receive()
                 .retain()
                 .map(data -> reader.read(data, inputMappingType))
                 .filter(data -> !data.isEmpty())
-                .map(TransportPayload::getValue)
-                .doOnComplete(() -> emptyCompleter.emitEmpty(FAIL_FAST));
+                .map(TransportPayload::getValue);
 
         Flux<ByteBuf> output = serviceMethod
                 .serve(input)
-                .map(value -> writer.write(typed(outputMappingType, value)))
-                .switchIfEmpty(emptyCompleter.asMono());
+                .map(value -> writer.write(typed(outputMappingType, value)));
 
         return localState.outbound().send(output).then();
     }
