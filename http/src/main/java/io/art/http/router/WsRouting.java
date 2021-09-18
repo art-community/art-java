@@ -7,6 +7,7 @@ import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
 import io.art.server.method.*;
 import io.art.transport.payload.*;
+import io.netty.buffer.*;
 import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
@@ -14,7 +15,6 @@ import reactor.netty.http.websocket.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.WsLocalState.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
@@ -28,7 +28,8 @@ import java.util.function.*;
 
 class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
     private final ServiceMethod serviceMethod;
-    private HttpRouteConfiguration routeConfiguration;
+    private final MetaType<?> inputType;
+    private final HttpRouteConfiguration routeConfiguration;
     private final MimeType defaultMimeType;
     private final MetaType<?> inputMappingType;
     private final MetaType<?> outputMappingType;
@@ -48,6 +49,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         owner = serviceMethod.getInvoker().getOwner();
         delegate = serviceMethod.getInvoker().getDelegate();
         outputKind = serviceMethod.getOutputType().internalKind();
+        inputType = serviceMethod.getInputType();
     }
 
     @Override
@@ -57,25 +59,30 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
-        WsLocalState localState = wsLocalState(inbound, outbound);
+        WsLocalState localState = wsLocalState(inbound, outbound, routeConfiguration);
         state.wsState(owner, delegate, localState);
 
-        Flux<Object> input = inbound
+        if (isNull(inputType)) {
+            Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
+            return localState.outbound().send(output).then();
+        }
+
+        Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
+
+        Flux<Object> input = localState
+                .inbound()
                 .receive()
                 .retain()
                 .map(data -> reader.read(data, inputMappingType))
                 .filter(data -> !data.isEmpty())
-                .map(TransportPayload::getValue);
+                .map(TransportPayload::getValue)
+                .doOnComplete(() -> emptyCompleter.emitEmpty(FAIL_FAST));
 
-        if (isNull(outputKind) || outputKind == VOID) {
-            Sinks.One<Void> responder = Sinks.one();
-            serviceMethod.serve(input.doOnComplete(() -> responder.emitEmpty(FAIL_FAST)));
-            return localState.outbound().sendObject(responder.asMono()).then();
-        }
+        Flux<ByteBuf> output = serviceMethod
+                .serve(input)
+                .map(value -> writer.write(typed(outputMappingType, value)))
+                .switchIfEmpty(emptyCompleter.asMono());
 
-        return localState
-                .outbound()
-                .send(serviceMethod.serve(input).map(value -> writer.write(typed(outputMappingType, value))))
-                .then();
+        return localState.outbound().send(output).then();
     }
 }

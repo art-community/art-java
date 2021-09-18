@@ -1,6 +1,7 @@
 package io.art.http.state;
 
 import io.art.core.annotation.*;
+import io.art.http.configuration.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
@@ -27,10 +28,12 @@ public class HttpLocalState {
     private final String scheme;
     private final InetSocketAddress hostAddress;
     private final InetSocketAddress remoteAddress;
+    private final HttpRouteConfiguration routeConfiguration;
 
-    private HttpLocalState(HttpServerRequest request, HttpServerResponse response) {
+    private HttpLocalState(HttpServerRequest request, HttpServerResponse response, HttpRouteConfiguration routeConfiguration) {
         this.request = request;
         this.response = response;
+        this.routeConfiguration = routeConfiguration;
         pathParameters = isNull(request.params()) ? emptyMap() : request.params();
         queryParameters = parseQuery(request);
         requestHeaders = request.requestHeaders();
@@ -40,8 +43,8 @@ public class HttpLocalState {
         remoteAddress = request.remoteAddress();
     }
 
-    public static HttpLocalState httpLocalState(HttpServerRequest request, HttpServerResponse response) {
-        return new HttpLocalState(request, response);
+    public static HttpLocalState httpLocalState(HttpServerRequest request, HttpServerResponse response, HttpRouteConfiguration routeConfiguration) {
+        return new HttpLocalState(request, response, routeConfiguration);
     }
 
     public HttpResponseStatus responseStatus() {

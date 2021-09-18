@@ -38,7 +38,11 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
     private final MetaType<?> inputType;
 
     @Builder(access = PACKAGE)
-    private HttpRouting(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration, MimeType defaultMimeType, MetaType<?> inputMappingType, MetaType<?> outputMappingType) {
+    private HttpRouting(ServiceMethod serviceMethod,
+                        HttpRouteConfiguration routeConfiguration,
+                        MimeType defaultMimeType,
+                        MetaType<?> inputMappingType,
+                        MetaType<?> outputMappingType) {
         this.serviceMethod = serviceMethod;
         this.routeConfiguration = routeConfiguration;
         this.defaultMimeType = defaultMimeType;
@@ -58,12 +62,12 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
-        HttpLocalState localState = httpLocalState(request, response);
+        HttpLocalState localState = httpLocalState(request, response, routeConfiguration);
         state.httpState(owner, delegate, localState);
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.response().send(output);
+            return localState.response().send(output).then();
         }
 
         Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
@@ -82,6 +86,6 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                 .map(value -> writer.write(typed(outputMappingType, value)))
                 .switchIfEmpty(emptyCompleter.asMono());
 
-        return localState.response().send(output);
+        return localState.response().send(output).then();
     }
 }
