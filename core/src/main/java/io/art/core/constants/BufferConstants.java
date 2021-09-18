@@ -24,6 +24,12 @@ import java.nio.*;
 public interface BufferConstants {
     int DEFAULT_BUFFER_SIZE = 16536;
     float BUFFER_REALLOCATION_FACTOR = 1.1f;
-    ByteBuf EMPTY_NETTY_BUFFER = ByteBufAllocator.DEFAULT.buffer();
-    ByteBuffer EMPTY_NIO_BUFFER = ByteBuffer.allocate(0);
+
+    static ByteBuf emptyNettyBuffer() {
+        return ByteBufAllocator.DEFAULT.buffer();
+    }
+
+    static ByteBuffer emptyNioBuffer() {
+        return ByteBuffer.allocate(0);
+    }
 }

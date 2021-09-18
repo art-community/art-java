@@ -84,6 +84,7 @@ public class ServiceMethod {
         if (isNull(outputType) || outputType.internalKind() == VOID) {
             return empty -> {
                 try {
+                    subscribeEmpty(empty);
                     invoker.invoke();
                     return Flux.empty();
                 } catch (Throwable throwable) {
@@ -95,6 +96,7 @@ public class ServiceMethod {
         if (outputType.internalKind() == MONO || outputType.internalKind() == FLUX) {
             return empty -> {
                 try {
+                    subscribeEmpty(empty);
                     Object output = invoker.invoke();
                     if (isNull(output)) return Flux.empty();
                     return from(asPublisher(output));
@@ -106,6 +108,7 @@ public class ServiceMethod {
 
         return empty -> {
             try {
+                subscribeEmpty(empty);
                 Object output = invoker.invoke();
                 if (isNull(output)) return Flux.empty();
                 return just(output);
@@ -227,6 +230,11 @@ public class ServiceMethod {
     }
 
 
+    private void subscribeEmpty(Flux<Object> empty) {
+        empty.subscribe();
+    }
+
+
     private void subscribeBlockingBlocking(Flux<Object> input, Many<Object> sink) {
         input
                 .doOnError(error -> sink.emitError(error, FAIL_FAST))
@@ -342,6 +350,7 @@ public class ServiceMethod {
             sink.emitError(throwable, FAIL_FAST);
         }
     }
+
 
     private void emitMonoElement(Object element, One<Object> sink) {
         if (isNull(element)) {
