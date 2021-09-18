@@ -36,7 +36,11 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
     private final MetaMethod<?> delegate;
 
     @Builder(access = PACKAGE)
-    private WsRouting(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration, MimeType defaultMimeType, MetaType<?> inputMappingType, MetaType<?> outputMappingType) {
+    private WsRouting(ServiceMethod serviceMethod,
+                      HttpRouteConfiguration routeConfiguration,
+                      MimeType defaultMimeType,
+                      MetaType<?> inputMappingType,
+                      MetaType<?> outputMappingType) {
         this.serviceMethod = serviceMethod;
         this.routeConfiguration = routeConfiguration;
         this.defaultMimeType = defaultMimeType;
