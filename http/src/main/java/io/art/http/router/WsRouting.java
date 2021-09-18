@@ -3,7 +3,6 @@ package io.art.http.router;
 import io.art.core.mime.*;
 import io.art.http.configuration.*;
 import io.art.http.state.*;
-import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.model.*;
 import io.art.server.method.*;
 import io.art.transport.payload.*;
@@ -36,7 +35,6 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
     private final HttpModuleState state;
     private final MetaClass<?> owner;
     private final MetaMethod<?> delegate;
-    private final MetaTypeInternalKind outputKind;
 
     @Builder(access = PACKAGE)
     private WsRouting(ServiceMethod serviceMethod, HttpRouteConfiguration routeConfiguration, MimeType defaultMimeType, MetaType<?> inputMappingType, MetaType<?> outputMappingType) {
@@ -48,7 +46,6 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         state = httpModule().state();
         owner = serviceMethod.getInvoker().getOwner();
         delegate = serviceMethod.getInvoker().getDelegate();
-        outputKind = serviceMethod.getOutputType().internalKind();
         inputType = serviceMethod.getInputType();
     }
 
@@ -64,7 +61,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-             return localState.outbound().send(output).then();
+            return localState.outbound().send(output).then();
         }
 
         Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
