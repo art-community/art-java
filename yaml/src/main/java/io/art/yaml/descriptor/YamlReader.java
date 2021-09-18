@@ -23,6 +23,7 @@ import com.fasterxml.jackson.dataformat.yaml.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
+import io.art.core.extensions.*;
 import io.art.meta.descriptor.Reader;
 import io.art.meta.model.*;
 import io.art.meta.schema.MetaCreatorTemplate.*;
@@ -56,34 +57,24 @@ public class YamlReader implements Reader {
             Object lazy = read(type.parameters().get(0), yaml);
             return transformer.fromLazy(() -> lazy);
         }
+        switch (type.externalKind()) {
+            case STRING:
+            case LONG:
+            case DOUBLE:
+            case FLOAT:
+            case INTEGER:
+            case BOOLEAN:
+            case CHARACTER:
+            case SHORT:
+            case BYTE:
+                return transformer.fromString(InputStreamExtensions.toString(yaml));
+            case BINARY:
+                return transformer.fromByteArray(InputStreamExtensions.toByteArray(yaml));
+        }
         try (YAMLParser parser = yamlFactory.createParser(yaml)) {
             JsonToken nextToken = parser.nextToken();
             if (isNull(nextToken) || nextToken == VALUE_NULL) return null;
             switch (type.externalKind()) {
-                case LAZY:
-                    return transformer.fromLazy(() -> read(type.parameters().get(0), yaml));
-                case STRING:
-                    return transformer.fromString(parser.getText());
-                case LONG:
-                    return transformer.fromLong(parser.getLongValue());
-                case DOUBLE:
-                    return transformer.fromDouble(parser.getDoubleValue());
-                case FLOAT:
-                    return transformer.fromFloat(parser.getFloatValue());
-                case INTEGER:
-                    return transformer.fromInteger(parser.getIntValue());
-                case BOOLEAN:
-                    return transformer.fromBoolean(parser.getBooleanValue());
-                case CHARACTER:
-                    String text = parser.getText();
-                    if (isEmpty(text)) return null;
-                    return transformer.fromCharacter(text.charAt(0));
-                case SHORT:
-                    return transformer.fromShort(parser.getShortValue());
-                case BYTE:
-                    return transformer.fromByte(parser.getByteValue());
-                case BINARY:
-                    return transformer.fromByteArray(parser.getBinaryValue());
                 case MAP:
                 case LAZY_MAP:
                     return transformer.fromMap(parseMap(type, parser));
