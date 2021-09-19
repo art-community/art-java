@@ -27,7 +27,7 @@ import java.util.function.*;
 @Public
 @UtilityClass
 public class TestsActivator {
-    public ModuleActivator tests(UnaryOperator<TestsModuleInitializer> initializer) {
-        return module(TestsModule.class, TestsModule::new, () -> initializer.apply(new TestsModuleInitializer()));
+    public ModuleActivator tests(UnaryOperator<TestsInitializer> initializer) {
+        return module(TestsModule.class, TestsModule::new, () -> initializer.apply(new TestsInitializer()));
     }
 }

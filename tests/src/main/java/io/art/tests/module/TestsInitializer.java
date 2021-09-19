@@ -15,10 +15,10 @@ import static io.art.meta.Meta.*;
 import static io.art.tests.constants.TestsModuleConstants.Methods.*;
 import java.util.*;
 
-public class TestsModuleInitializer implements ModuleInitializer<TestsModuleConfiguration, TestsModuleConfiguration.Configurator, TestsModule> {
+public class TestsInitializer implements ModuleInitializer<TestsModuleConfiguration, TestsModuleConfiguration.Configurator, TestsModule> {
     private final Set<Class<?>> suitDefinitions = set();
 
-    public TestsModuleInitializer suit(Class<?> suitClass) {
+    public TestsInitializer suit(Class<?> suitClass) {
         suitDefinitions.add(suitClass);
         return this;
     }
