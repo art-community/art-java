@@ -43,7 +43,7 @@ public class TestsModuleConfiguration implements ModuleConfiguration {
 
         @Override
         public Configurator initialize(TestsModuleConfiguration configuration) {
-            configuration.suits = configuration.getSuits();
+            this.configuration.suits = configuration.getSuits();
             return this;
         }
     }

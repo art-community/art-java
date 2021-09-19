@@ -1,17 +1,19 @@
 package io.art.tests.invoker;
 
+import io.art.meta.invoker.*;
 import io.art.tests.configuration.*;
 import lombok.experimental.*;
+import static io.art.core.checker.NullityChecker.*;
 
 @UtilityClass
 public class TestSuitInvoker {
     public static void invokeTestSuit(TestSuitConfiguration suit) {
-        suit.getSetupInvoker().invoke();
+        apply(suit.getSetupInvoker(), MetaMethodInvoker::invoke);
         for (TestSuitConfiguration.TestConfiguration test : suit.getTests().values()) {
-            suit.getBeforeTestInvoker().invoke();
+            apply(suit.getBeforeTestInvoker(), MetaMethodInvoker::invoke);
             test.getTestInvoker().invoke();
-            suit.getAfterTestInvoker().invoke();
+            apply(suit.getAfterTestInvoker(), MetaMethodInvoker::invoke);
         }
-        suit.getCleanupInvoker().invoke();
+        apply(suit.getCleanupInvoker(), MetaMethodInvoker::invoke);
     }
 }
