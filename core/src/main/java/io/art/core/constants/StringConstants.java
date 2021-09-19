@@ -80,6 +80,7 @@ public interface StringConstants {
     Pattern FORMAT_REGEX_PATTERN = compile(FORMAT_REGEX);
     String NEXT_ARROW = "->";
     String URI_FORMAT = "{0}://{1}:{2}";
+    String VALUE_FIELD_NAME = "value";
 
     static String tabulation(int count) {
         return range(0, count).map(ignore -> TABULATION).collect(joining());

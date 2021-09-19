@@ -2,8 +2,13 @@ package io.art.core.property;
 
 import io.art.core.exception.*;
 import lombok.*;
+import org.jctools.util.*;
+import sun.misc.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.Errors.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.QueueFactory.*;
@@ -14,7 +19,21 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public class DisposableProperty<T> implements Supplier<T> {
-    private volatile T value;
+    private static final Object UNINITIALIZED = new Object();
+    private static final Unsafe UNSAFE = UnsafeAccess.UNSAFE;
+    private static final long VALUE_OFFSET;
+
+    static {
+        try {
+            VALUE_OFFSET = UNSAFE.objectFieldOffset(DisposableProperty.class.getDeclaredField(VALUE_FIELD_NAME));
+        } catch (Throwable throwable) {
+            throw new InternalRuntimeException(throwable);
+        }
+    }
+
+    @SuppressWarnings(FINAL_FIELD)
+    private T value = cast(UNINITIALIZED);
+
     private final Supplier<T> loader;
     private final AtomicBoolean initialized = new AtomicBoolean();
     private volatile Queue<Consumer<T>> creationConsumers;
@@ -56,26 +75,36 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public void dispose() {
-        while (nonNull(value)) {
-            if (this.initialized.compareAndSet(true, false)) {
-                T current = value;
-                value = null;
-                apply(disposeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(current)));
-            }
+        T current = value;
+        if (current == UNINITIALIZED) {
+            return;
+        }
+        current = cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
+        if (current == UNINITIALIZED) {
+            return;
+        }
+
+        final T currentValue = current;
+        if (UNSAFE.compareAndSwapObject(this, VALUE_OFFSET, current, UNINITIALIZED)) {
+            apply(disposeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(currentValue)));
         }
     }
 
     @Override
     public T get() {
-        if (nonNull(value)) return value;
-        for (; ; ) {
-            if (nonNull(value)) return value;
-            if (this.initialized.compareAndSet(false, true)) {
-                value = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
-                apply(creationConsumers, consumers -> erase(consumers, consumer -> consumer.accept(value)));
-                apply(initializationConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(value)));
+        T localValue = value;
+        if (localValue == UNINITIALIZED) {
+            localValue = cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
+            if (localValue == UNINITIALIZED) {
+                T loaded = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
+                localValue = UNSAFE.compareAndSwapObject(this, VALUE_OFFSET, UNINITIALIZED, loaded)
+                        ? loaded
+                        : cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
+                apply(creationConsumers, consumers -> erase(consumers, consumer -> consumer.accept(loaded)));
+                apply(initializationConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(loaded)));
             }
         }
+        return localValue;
     }
 
     public T value() {
