@@ -16,7 +16,18 @@
  * limitations under the License.
  */
 
-dependencies {
-    api(project(":core"))
-    api(project(":meta"))
+package io.art.tests.module;
+
+import io.art.core.annotation.*;
+import io.art.core.module.*;
+import lombok.experimental.*;
+import static io.art.core.module.ModuleActivator.*;
+import java.util.function.*;
+
+@Public
+@UtilityClass
+public class TestsActivator {
+    public ModuleActivator tests(UnaryOperator<TestsModuleInitializer> initializer) {
+        return module(TestsModule.class, TestsModule::new, () -> initializer.apply(new TestsModuleInitializer()));
+    }
 }
