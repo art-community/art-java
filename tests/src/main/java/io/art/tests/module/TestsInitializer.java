@@ -42,8 +42,24 @@ public class TestsInitializer implements ModuleInitializer<TestsModuleConfigurat
             Map<String, TestConfiguration> tests = map();
             for (MetaMethod<?> method : suitMeta.methods()) {
                 if (!method.parameters().isEmpty()) continue;
-                if (method.name().startsWith(TEST_METHOD_PREFIX)) {
-                    tests.put(method.name(), TestConfiguration.builder().testInvoker(new MetaMethodInvoker(suitMeta, method)).build());
+                switch (method.name()) {
+                    case SETUP_METHOD_NAME:
+                        suitBuilder.setupInvoker(new MetaMethodInvoker(suitMeta, method));
+                        break;
+                    case CLEANUP_METHOD_NAME:
+                        suitBuilder.cleanupInvoker(new MetaMethodInvoker(suitMeta, method));
+                        break;
+                    case BEFORE_TEST_METHOD_NAME:
+                        suitBuilder.beforeTestInvoker(new MetaMethodInvoker(suitMeta, method));
+                        break;
+                    case AFTER_TEST_METHOD_NAME:
+                        suitBuilder.afterTestInvoker(new MetaMethodInvoker(suitMeta, method));
+                        break;
+                    default:
+                        if (method.name().startsWith(TEST_METHOD_PREFIX)) {
+                            tests.put(method.name(), TestConfiguration.builder().testInvoker(new MetaMethodInvoker(suitMeta, method)).build());
+                        }
+                        break;
                 }
             }
             suits.put(suitMeta, suitBuilder.tests(immutableMapOf(tests)).build());

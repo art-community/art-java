@@ -2,29 +2,28 @@ package io.art.tests.invoker;
 
 import io.art.logging.*;
 import io.art.meta.exception.*;
-import io.art.tests.*;
+import io.art.meta.invoker.*;
 import io.art.tests.configuration.*;
 import lombok.experimental.*;
 import static com.google.common.base.Throwables.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.handler.CauseHandler.*;
 
 @UtilityClass
 public class TestSuitInvoker {
     public static void invokeTestSuit(TestSuitConfiguration suit) {
-        TestSuit instance = cast(suit.getDefinition().creator().instantiate().create());
-        instance.setup();
+        apply(suit.getSetupInvoker(), MetaMethodInvoker::invoke);
         for (TestSuitConfiguration.TestConfiguration test : suit.getTests().values()) {
-            instance.beforeTest();
+            apply(suit.getBeforeTestInvoker(), MetaMethodInvoker::invoke);
             try {
                 test.getTestInvoker().invoke();
             } catch (MetaException metaException) {
                 handleCause(metaException).consume(AssertionError.class, error -> logError(suit, error));
             }
-            instance.afterTest();
+            apply(suit.getAfterTestInvoker(), MetaMethodInvoker::invoke);
         }
-        instance.cleanup();
+        apply(suit.getCleanupInvoker(), MetaMethodInvoker::invoke);
     }
 
     private static void logError(TestSuitConfiguration suit, AssertionError error) {

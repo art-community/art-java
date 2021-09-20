@@ -10,6 +10,10 @@ import lombok.*;
 @Builder
 public class TestSuitConfiguration {
     private final MetaClass<? extends TestSuit> definition;
+    private final MetaMethodInvoker setupInvoker;
+    private final MetaMethodInvoker beforeTestInvoker;
+    private final MetaMethodInvoker cleanupInvoker;
+    private final MetaMethodInvoker afterTestInvoker;
     private final ImmutableMap<String, TestConfiguration> tests;
 
     @Getter
