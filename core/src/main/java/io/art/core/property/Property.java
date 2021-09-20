@@ -7,13 +7,13 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Arrays.*;
+import static java.util.Objects.deepEquals;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.function.*;
 
 public class Property<T> implements Supplier<T> {
-    private volatile DisposableProperty<T> disposable;
-    private final Consumer<T> disposer;
+    private final DisposableProperty<T> disposable;
     private volatile List<Predicate<T>> predicates;
     private volatile List<Consumer<T>> changeConsumers;
     private volatile List<Consumer<T>> disposeConsumers;
@@ -22,7 +22,6 @@ public class Property<T> implements Supplier<T> {
 
     public Property(Supplier<T> loader, Consumer<T> disposer) {
         disposable = DisposableProperty.disposable(loader, disposer);
-        this.disposer = disposer;
     }
 
 
@@ -98,21 +97,6 @@ public class Property<T> implements Supplier<T> {
         return created(ignore -> listener.get().consume(this));
     }
 
-
-    public Property<T> set(T newValue) {
-        if (let(predicates, predicates -> predicates.stream().anyMatch(predicate -> predicate.test(newValue)), false)) {
-            return this;
-        }
-        if (Objects.equals(disposable.get(), newValue)) {
-            return this;
-        }
-        disposable = DisposableProperty.disposable(() -> newValue, disposer);
-        apply(creationConsumers, consumers -> consumers.forEach(disposable::created));
-        apply(initializationConsumers, consumers -> consumers.forEach(disposable::initialized));
-        apply(disposeConsumers, consumers -> consumers.forEach(disposable::disposed));
-        apply(changeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(newValue)));
-        return this;
-    }
 
     public void refresh() {
         dispose();
