@@ -42,7 +42,7 @@ public class TestSuitInvoker {
     }
 
     private static void logError(TestSuitConfiguration suit, Throwable cause, String test) {
-        String message = format(TEST_COMPLETED_MESSAGE, test, getStackTraceAsString(cause));
+        String message = format(TEST_FAILED_MESSAGE, test, getStackTraceAsString(cause));
         if (withLogging()) {
             Logging.logger(suit.getDefinition().definition().type()).error(message);
             return;
