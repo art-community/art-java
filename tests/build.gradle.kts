@@ -19,4 +19,5 @@
 dependencies {
     api(project(":core"))
     api(project(":meta"))
+    implementation(project(":logging"))
 }

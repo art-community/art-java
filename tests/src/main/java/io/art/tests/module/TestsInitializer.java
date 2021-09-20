@@ -31,7 +31,7 @@ public class TestsInitializer implements ModuleInitializer<TestsModuleConfigurat
     private ImmutableMap<MetaClass<?>, TestSuitConfiguration> createSuits() {
         Map<MetaClass<?>, TestSuitConfiguration> suits = map();
         for (Class<?> definition : suitDefinitions) {
-            TestSuitConfigurationBuilder suitBuilder = TestSuitConfiguration.builder();
+            TestSuitConfigurationBuilder suitBuilder = TestSuitConfiguration.builder().definition(definition);
             MetaClass<?> suitMeta = declaration(definition);
             Map<String, TestConfiguration> tests = map();
             for (MetaMethod<?> method : suitMeta.methods()) {

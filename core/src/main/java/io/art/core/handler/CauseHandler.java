@@ -42,7 +42,7 @@ public class CauseHandler {
 
     public <C> CauseHandler consume(Class<C> causeClass, Consumer<C> handler) {
         Throwable cause = outer.getCause();
-        if (isNotEmpty(cause) && cause.getClass().equals(causeClass)) {
+        if (isNotEmpty(cause) && causeClass.isAssignableFrom(cause.getClass())) {
             handler.accept(cast(cause));
         }
         return this;
@@ -50,6 +50,10 @@ public class CauseHandler {
 
     public <T> T get() {
         return cast(result);
+    }
+
+    public void run() {
+        get();
     }
 
     public <T> T or(T defaultResult) {

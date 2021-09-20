@@ -7,6 +7,7 @@ import lombok.*;
 @Getter
 @Builder
 public class TestSuitConfiguration {
+    private final Class<?> definition;
     private final MetaMethodInvoker setupInvoker;
     private final MetaMethodInvoker beforeTestInvoker;
     private final MetaMethodInvoker cleanupInvoker;
