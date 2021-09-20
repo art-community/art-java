@@ -47,12 +47,10 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
     }
 
     @Override
-    public void load(Context.Service contextService) {
-        useCustomLoggers(EmptyReactorLogger::new);
-    }
-
-    @Override
     public void launch(Context.Service contextService) {
+        if (!withLogging()) {
+            useCustomLoggers(EmptyReactorLogger::new);
+        }
         configureCommonTransportPool(configuration.getCommonPoolConfiguration());
         withLogging(() -> Logging.logger(TRANSPORT_LOGGER).info(TRANSPORT_CONFIGURING_MESSAGE));
     }
