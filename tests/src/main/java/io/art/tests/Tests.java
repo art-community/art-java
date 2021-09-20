@@ -1,6 +1,6 @@
 package io.art.tests;
 
-public interface TestSuit {
+public interface Tests {
     default void setup() {
 
     }

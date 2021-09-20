@@ -127,8 +127,8 @@ public class MetaType<T> {
             modifiers.add(CONNECTOR);
         }
 
-        if (isAssignableFrom(type, TEST_SUIT_NAME)) {
-            modifiers.add(TEST_SUIT);
+        if (isAssignableFrom(type, TESTS_NAME)) {
+            modifiers.add(TESTS);
         }
 
         if (nonNull(arrayComponentType)) {

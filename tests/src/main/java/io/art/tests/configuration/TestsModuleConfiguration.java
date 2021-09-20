@@ -31,7 +31,7 @@ import static io.art.core.property.LazyProperty.*;
 @Getter
 @Public
 public class TestsModuleConfiguration implements ModuleConfiguration {
-    private LazyProperty<ImmutableMap<MetaClass<? extends TestSuit>, TestSuitConfiguration>> suits = lazy(ImmutableMap::emptyImmutableMap);
+    private LazyProperty<ImmutableMap<MetaClass<? extends Tests>, TestSuitConfiguration>> suits = lazy(ImmutableMap::emptyImmutableMap);
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<TestsModuleConfiguration, Configurator> {

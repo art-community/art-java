@@ -85,7 +85,7 @@ public interface MetaConstants {
         CONNECTOR,
         ARRAY,
         PARAMETRIZED,
-        TEST_SUIT
+        TESTS
     }
 
     interface Errors {
@@ -122,7 +122,7 @@ public interface MetaConstants {
     interface ClassNames {
         String COMMUNICATOR_NAME = "io.art.communicator.Communicator";
         String CONNECTOR_NAME = "io.art.communicator.Connector";
-        String TEST_SUIT_NAME = "io.art.tests.TestSuit";
+        String TESTS_NAME = "io.art.tests.Tests";
     }
 
     String INVOKER_FORMAT = "{0} '{ '{1}' }'";

@@ -35,7 +35,7 @@ public class HttpPath {
     public String route(ServiceMethodIdentifier id) {
         switch (strategy) {
             case AUTOMATIC:
-                return SLASH + decapitalize(id.getServiceId()) + SLASH + id.getMethodId();
+                return SLASH + id.getServiceId().toLowerCase() + SLASH + id.getMethodId().toLowerCase();
             case MANUAL:
                 return manualRoute;
             case TRANSFORMED:

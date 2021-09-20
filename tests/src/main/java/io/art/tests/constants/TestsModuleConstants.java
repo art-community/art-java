@@ -8,4 +8,10 @@ public interface TestsModuleConstants {
         String AFTER_TEST_METHOD_NAME = "afterTest";
         String TEST_METHOD_PREFIX = "test";
     }
+
+    interface Messages {
+        String TEST_INVOCATION_MESSAGE = "Test {0}";
+        String TEST_COMPLETED_MESSAGE = "Test {0} completed";
+        String TEST_FAILED_MESSAGE = "Test {0} failed:\n{1}";
+    }
 }

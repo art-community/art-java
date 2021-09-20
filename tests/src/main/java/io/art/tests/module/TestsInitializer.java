@@ -19,9 +19,9 @@ import static io.art.tests.constants.TestsModuleConstants.Methods.*;
 import java.util.*;
 
 public class TestsInitializer implements ModuleInitializer<TestsModuleConfiguration, TestsModuleConfiguration.Configurator, TestsModule> {
-    private final Set<Class<? extends TestSuit>> suitDefinitions = set();
+    private final Set<Class<? extends Tests>> suitDefinitions = set();
 
-    public TestsInitializer suit(Class<? extends TestSuit> suitClass) {
+    public TestsInitializer suit(Class<? extends Tests> suitClass) {
         suitDefinitions.add(suitClass);
         return this;
     }
@@ -31,11 +31,11 @@ public class TestsInitializer implements ModuleInitializer<TestsModuleConfigurat
         return new Initial(lazy(this::createSuits));
     }
 
-    private ImmutableMap<MetaClass<? extends TestSuit>, TestSuitConfiguration> createSuits() {
-        Map<MetaClass<? extends TestSuit>, TestSuitConfiguration> suits = map();
-        for (Class<? extends TestSuit> definition : suitDefinitions) {
-            MetaClass<? extends TestSuit> suitMeta = declaration(definition);
-            if (!suitMeta.definition().modifiers().contains(TEST_SUIT)) continue;
+    private ImmutableMap<MetaClass<? extends Tests>, TestSuitConfiguration> createSuits() {
+        Map<MetaClass<? extends Tests>, TestSuitConfiguration> suits = map();
+        for (Class<? extends Tests> definition : suitDefinitions) {
+            MetaClass<? extends Tests> suitMeta = declaration(definition);
+            if (!suitMeta.definition().modifiers().contains(TESTS)) continue;
             TestSuitConfigurationBuilder suitBuilder = TestSuitConfiguration.builder().definition(cast(suitMeta));
             Map<String, TestConfiguration> tests = map();
             for (MetaMethod<?> method : suitMeta.methods()) {
@@ -68,6 +68,6 @@ public class TestsInitializer implements ModuleInitializer<TestsModuleConfigurat
     @Getter
     @RequiredArgsConstructor
     private static class Initial extends TestsModuleConfiguration {
-        private final LazyProperty<ImmutableMap<MetaClass<? extends TestSuit>, TestSuitConfiguration>> suits;
+        private final LazyProperty<ImmutableMap<MetaClass<? extends Tests>, TestSuitConfiguration>> suits;
     }
 }

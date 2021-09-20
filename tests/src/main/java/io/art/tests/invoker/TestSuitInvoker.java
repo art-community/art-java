@@ -8,7 +8,9 @@ import lombok.experimental.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.handler.CauseHandler.*;
+import static io.art.tests.constants.TestsModuleConstants.Messages.*;
+import static io.art.tests.constants.TestsModuleConstants.Methods.*;
+import static java.text.MessageFormat.*;
 
 @UtilityClass
 public class TestSuitInvoker {
@@ -16,21 +18,44 @@ public class TestSuitInvoker {
         apply(suit.getSetupInvoker(), MetaMethodInvoker::invoke);
         for (TestSuitConfiguration.TestConfiguration test : suit.getTests().values()) {
             apply(suit.getBeforeTestInvoker(), MetaMethodInvoker::invoke);
+            String name = test.getTestInvoker().getDelegate().name();
+            name = name.substring(name.indexOf(TEST_METHOD_PREFIX) + 1);
             try {
+                logStart(suit, name);
                 test.getTestInvoker().invoke();
+                logComplete(suit, name);
             } catch (MetaException metaException) {
-                handleCause(metaException).consume(AssertionError.class, error -> logError(suit, error));
+                logError(suit, metaException.getCause(), name);
             }
             apply(suit.getAfterTestInvoker(), MetaMethodInvoker::invoke);
         }
         apply(suit.getCleanupInvoker(), MetaMethodInvoker::invoke);
     }
 
-    private static void logError(TestSuitConfiguration suit, AssertionError error) {
+    private static void logStart(TestSuitConfiguration suit, String test) {
+        String message = format(TEST_INVOCATION_MESSAGE, test);
         if (withLogging()) {
-            Logging.logger(suit.getDefinition().definition().type()).error(error.getMessage(), error);
+            Logging.logger(suit.getDefinition().definition().type()).info(message);
             return;
         }
-        System.err.println(getStackTraceAsString(error));
+        System.out.println(message);
+    }
+
+    private static void logError(TestSuitConfiguration suit, Throwable cause, String test) {
+        String message = format(TEST_COMPLETED_MESSAGE, test, getStackTraceAsString(cause));
+        if (withLogging()) {
+            Logging.logger(suit.getDefinition().definition().type()).error(message);
+            return;
+        }
+        System.err.println(message);
+    }
+
+    private static void logComplete(TestSuitConfiguration suit, String test) {
+        String message = format(TEST_COMPLETED_MESSAGE, test);
+        if (withLogging()) {
+            Logging.logger(suit.getDefinition().definition().type()).info(message);
+            return;
+        }
+        System.out.println(message);
     }
 }

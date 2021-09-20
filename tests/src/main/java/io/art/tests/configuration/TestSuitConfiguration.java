@@ -9,7 +9,7 @@ import lombok.*;
 @Getter
 @Builder
 public class TestSuitConfiguration {
-    private final MetaClass<? extends TestSuit> definition;
+    private final MetaClass<? extends Tests> definition;
     private final MetaMethodInvoker setupInvoker;
     private final MetaMethodInvoker beforeTestInvoker;
     private final MetaMethodInvoker cleanupInvoker;
