@@ -36,6 +36,7 @@ import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.extensions.FunctionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.initializer.Initializer.*;
@@ -113,11 +114,10 @@ public class Launcher {
 
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
         Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
-        printer.accept(DEFAULT_CONFIGURATION);
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
-                .onLoad(activator.onLoad())
+                .onLoad(before(() -> printer.accept(DEFAULT_CONFIGURATION), activator.onLoad()))
                 .onLaunch(activator.onLaunch())
                 .onShutdown(activator.onShutdown())
                 .beforeReload(activator.beforeReload())
