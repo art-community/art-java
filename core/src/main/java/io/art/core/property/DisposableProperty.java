@@ -3,7 +3,6 @@ package io.art.core.property;
 import io.art.core.exception.*;
 import lombok.*;
 import org.jctools.util.*;
-import sun.misc.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
@@ -20,7 +19,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class DisposableProperty<T> implements Supplier<T> {
     private static final Object UNINITIALIZED = new Object();
-    private static final Unsafe UNSAFE = UnsafeAccess.UNSAFE;
+    private static final sun.misc.Unsafe UNSAFE = UnsafeAccess.UNSAFE;
     private static final long VALUE_OFFSET;
 
     static {
