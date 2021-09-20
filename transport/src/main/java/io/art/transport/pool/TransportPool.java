@@ -54,9 +54,12 @@ public class TransportPool {
 
     public static void configureCommonTransportPool(TransportPoolConfiguration configuration) {
         TransportPool transportPool = new TransportPool(configuration);
+
         TcpResources.set(transportPool.provider);
         TcpResources.set(transportPool.loopResources);
+
         UdpResources.set(transportPool.loopResources);
+
         HttpResources.set(transportPool.provider);
         HttpResources.set(transportPool.loopResources);
     }

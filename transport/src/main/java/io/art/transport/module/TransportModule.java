@@ -23,6 +23,7 @@ import io.art.core.module.*;
 import io.art.logging.*;
 import io.art.transport.configuration.*;
 import io.art.transport.configuration.TransportModuleConfiguration.*;
+import io.art.transport.reactor.*;
 import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
@@ -31,6 +32,7 @@ import static io.art.transport.constants.TransportModuleConstants.Messages.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.pool.TransportPool.*;
 import static lombok.AccessLevel.*;
+import static reactor.util.Loggers.*;
 
 @Getter
 public class TransportModule implements StatelessModule<TransportModuleConfiguration, Configurator> {
@@ -42,6 +44,11 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
 
     public static StatelessModuleProxy<TransportModuleConfiguration> transportModule() {
         return getTransportModule();
+    }
+
+    @Override
+    public void load(Context.Service contextService) {
+        useCustomLoggers(EmptyReactorLogger::new);
     }
 
     @Override
