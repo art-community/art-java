@@ -16,7 +16,6 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.tests.constants.TestsModuleConstants.Methods.*;
-import static java.util.Objects.*;
 import java.util.*;
 
 public class TestsInitializer implements ModuleInitializer<TestsModuleConfiguration, TestsModuleConfiguration.Configurator, TestsModule> {
@@ -37,7 +36,6 @@ public class TestsInitializer implements ModuleInitializer<TestsModuleConfigurat
         for (Class<? extends TestSuit> definition : suitDefinitions) {
             MetaClass<? extends TestSuit> suitMeta = declaration(definition);
             if (!suitMeta.definition().modifiers().contains(TEST_SUIT)) continue;
-            if (isNull(suitMeta.creator().noPropertiesConstructor())) continue;
             TestSuitConfigurationBuilder suitBuilder = TestSuitConfiguration.builder().definition(cast(suitMeta));
             Map<String, TestConfiguration> tests = map();
             for (MetaMethod<?> method : suitMeta.methods()) {

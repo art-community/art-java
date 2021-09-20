@@ -141,11 +141,13 @@ public abstract class MetaClass<T> {
         Map<String, MetaProperty<?>> gettablePropertyMap = gettableProperties
                 .stream()
                 .collect(mapCollector(MetaProperty::name, identity()));
+
         provider = new MetaProviderTemplate(gettablePropertyMap, gettableProperties.toArray(new MetaProperty[0]));
 
         Map<String, MetaProperty<?>> constructablePropertyMap = constructableProperties
                 .stream()
                 .collect(mapCollector(MetaProperty::name, identity()));
+
         creator = MetaCreatorTemplate.builder()
                 .owner(this)
                 .propertyMap(constructablePropertyMap)
