@@ -5,6 +5,7 @@ import io.art.meta.exception.*;
 import io.art.meta.invoker.*;
 import io.art.tests.configuration.*;
 import lombok.experimental.*;
+import static com.google.common.base.Throwables.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.handler.CauseHandler.*;
@@ -28,6 +29,10 @@ public class TestSuitInvoker {
     }
 
     private static void logError(TestSuitConfiguration suit, AssertionError error) {
-        withLogging(() -> Logging.logger(suit.getDefinition()).error(error.getMessage(), error));
+        if (withLogging()) {
+            Logging.logger(suit.getDefinition()).error(error.getMessage(), error);
+            return;
+        }
+        System.err.println(getStackTraceAsString(error));
     }
 }
