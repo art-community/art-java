@@ -1,5 +1,8 @@
 package io.art.tests;
 
+import io.art.core.annotation.*;
+
+@Public
 public interface Tests {
     default void setup() {
 

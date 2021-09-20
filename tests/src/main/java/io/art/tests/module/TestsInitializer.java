@@ -1,5 +1,6 @@
 package io.art.tests.module;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -18,6 +19,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.tests.constants.TestsModuleConstants.Methods.*;
 import java.util.*;
 
+@Public
 public class TestsInitializer implements ModuleInitializer<TestsModuleConfiguration, TestsModuleConfiguration.Configurator, TestsModule> {
     private final Set<Class<? extends Tests>> suitDefinitions = set();
 
