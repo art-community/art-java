@@ -71,10 +71,9 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .from(new PropertiesConfigurationSource())
         );
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        String resourceName = modules.contains(TESTS_MODULE_ID) ? TEST_CONFIGURATION_FILE : DEFAULT_MODULE_CONFIGURATION_FILE;
         FILE_CONFIGURATION_EXTENSIONS.stream()
-                .map(extension -> loadResource(modules.contains(TESTS_MODULE_ID)
-                        ? TEST_CONFIGURATION_FILE + DOT + extension
-                        : DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension, loader))
+                .map(extension -> loadResource(resourceName + DOT + extension, loader))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(resource -> new FileConfigurationSource(EMPTY_STRING, RESOURCES_FILE, resource))
