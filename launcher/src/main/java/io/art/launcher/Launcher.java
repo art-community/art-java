@@ -37,6 +37,7 @@ import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
@@ -88,7 +89,7 @@ public class Launcher {
         ModuleInitializationProvider<ConfiguratorInitializer> configuratorInitializer = cast(configuratorActivator.getInitializer());
         ModuleInitializationOperator<ConfiguratorInitializer> configuratorDecorator = cast(orElse(decorators.get(CONFIGURATOR_MODULE_ID), ModuleInitializationOperator.identity()));
         configuratorModule
-                .loadSources()
+                .loadSources(immutableSetOf(activators.keySet()))
                 .configure(configurator -> configurator.initialize(configuratorDecorator.apply(configuratorInitializer.get()).initialize(configuratorModule)));
         ImmutableSet.Builder<Module<?, ?>> builder = immutableSetBuilder();
 

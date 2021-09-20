@@ -25,6 +25,7 @@ import static io.art.core.factory.ArrayFactory.*;
 
 public interface ConfiguratorModuleConstants {
     String DEFAULT_MODULE_CONFIGURATION_FILE = "module";
+    String TEST_CONFIGURATION_FILE = "test";
 
     @Getter
     @AllArgsConstructor

@@ -65,14 +65,16 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
         return configuration.orderedSources();
     }
 
-    public ConfiguratorModule loadSources() {
+    public ConfiguratorModule loadSources(ImmutableSet<String> modules) {
         configure(configurator -> configurator
                 .from(new EnvironmentConfigurationSource(EMPTY_STRING))
                 .from(new PropertiesConfigurationSource())
         );
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         FILE_CONFIGURATION_EXTENSIONS.stream()
-                .map(extension -> loadResource(loader, extension))
+                .map(extension -> loadResource(modules.contains(TESTS_MODULE_ID)
+                        ? TEST_CONFIGURATION_FILE + DOT + extension
+                        : DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension, loader))
                 .filter(Objects::nonNull)
                 .findFirst()
                 .map(resource -> new FileConfigurationSource(EMPTY_STRING, RESOURCES_FILE, resource))
@@ -92,8 +94,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
                 .forEach(file -> configure(configurator -> configurator.from(new FileConfigurationSource(EMPTY_STRING, CUSTOM_FILE, new FileProxy(file)))));
     }
 
-    private FileProxy loadResource(ClassLoader loader, String extension) {
-        String path = DEFAULT_MODULE_CONFIGURATION_FILE + DOT + extension;
+    private FileProxy loadResource(String path, ClassLoader loader) {
         return let(loader.getResourceAsStream(path), stream -> new FileProxy(path, () -> loader.getResourceAsStream(path)));
     }
 

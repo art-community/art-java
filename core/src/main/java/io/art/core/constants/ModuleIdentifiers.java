@@ -10,6 +10,7 @@ public interface ModuleIdentifiers {
     String MESSAGE_PACK_MODULE_ID = "MessagePack";
     String CONFIGURATOR_MODULE_ID = "ConfiguratorModule";
     String META_MODULE_ID = "MetaModule";
+    String TESTS_MODULE_ID = "TestsModule";
 
     ImmutableSet<String> PRELOADED_MODULES = ImmutableSet.<String>immutableSetBuilder()
             .add(CONFIGURATOR_MODULE_ID)
