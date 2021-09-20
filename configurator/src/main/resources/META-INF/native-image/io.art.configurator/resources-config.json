@@ -3,8 +3,11 @@
     "includes": [
       {
         "pattern": ".*module.*$"
+      },
+      {
+        "pattern": ".*test.*$"
       }
     ]
   },
-  "bundles": []
+  "BUNDLES": []
 }
