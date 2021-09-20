@@ -60,9 +60,7 @@ public class Launcher {
                 return;
             }
             defaultLaunch(activator);
-            return;
         }
-        throw new InternalRuntimeException(MODULES_ALREADY_LAUNCHED);
     }
 
     private static void configuredLaunch(Activator activator, ModuleActivator configuratorActivator) {
