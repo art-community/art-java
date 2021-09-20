@@ -24,13 +24,14 @@ import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.meta.model.*;
+import io.art.tests.*;
 import lombok.*;
 import static io.art.core.property.LazyProperty.*;
 
 @Getter
 @Public
 public class TestsModuleConfiguration implements ModuleConfiguration {
-    private LazyProperty<ImmutableMap<MetaClass<?>, TestSuitConfiguration>> suits = lazy(ImmutableMap::emptyImmutableMap);
+    private LazyProperty<ImmutableMap<MetaClass<? extends TestSuit>, TestSuitConfiguration>> suits = lazy(ImmutableMap::emptyImmutableMap);
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<TestsModuleConfiguration, Configurator> {

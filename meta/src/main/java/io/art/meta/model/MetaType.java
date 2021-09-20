@@ -127,6 +127,10 @@ public class MetaType<T> {
             modifiers.add(CONNECTOR);
         }
 
+        if (isAssignableFrom(type, TEST_SUIT_NAME)) {
+            modifiers.add(TEST_SUIT);
+        }
+
         if (nonNull(arrayComponentType)) {
             rememberValidation(arrayComponentType, validate(arrayComponentType.beginComputation()));
         }
