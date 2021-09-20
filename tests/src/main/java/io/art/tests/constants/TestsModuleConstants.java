@@ -10,8 +10,8 @@ public interface TestsModuleConstants {
     }
 
     interface Messages {
-        String TEST_INVOCATION_MESSAGE = "Test {0}";
-        String TEST_COMPLETED_MESSAGE = "Test {0} completed";
-        String TEST_FAILED_MESSAGE = "Test {0} failed:\n{1}";
+        String TEST_INVOCATION_MESSAGE = "Test ''{0}''";
+        String TEST_COMPLETED_MESSAGE = "Test ''{0}'' completed";
+        String TEST_FAILED_MESSAGE = "Test ''{0}'' failed:\n{1}";
     }
 }

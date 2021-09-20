@@ -59,6 +59,7 @@ public class Launcher {
                 return;
             }
             defaultLaunch(activator);
+            return;
         }
         throw new InternalRuntimeException(MODULES_ALREADY_LAUNCHED);
     }

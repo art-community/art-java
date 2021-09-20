@@ -19,7 +19,7 @@ public class TestSuitInvoker {
         for (TestSuitConfiguration.TestConfiguration test : suit.getTests().values()) {
             apply(suit.getBeforeTestInvoker(), MetaMethodInvoker::invoke);
             String name = test.getTestInvoker().getDelegate().name();
-            name = name.substring(name.indexOf(TEST_METHOD_PREFIX) + 1);
+            name = name.substring(name.indexOf(TEST_METHOD_PREFIX) + TEST_METHOD_PREFIX.length());
             try {
                 logStart(suit, name);
                 test.getTestInvoker().invoke();
