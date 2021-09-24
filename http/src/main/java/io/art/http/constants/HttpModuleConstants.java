@@ -85,7 +85,7 @@ public interface HttpModuleConstants {
             return fallback;
         }
 
-        public static boolean methodStartWithExcludePath(String methodName) {
+        public static boolean methodHasRouteTypePrefix(String methodName) {
             for (HttpRouteType value : values()) {
                 if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return true;
             }
@@ -97,6 +97,13 @@ public interface HttpModuleConstants {
                 if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return value;
             }
             throw new ImpossibleSituationException();
+        }
+
+        public static HttpRouteType extractRouteType(String methodName, HttpRouteType fallback) {
+            for (HttpRouteType value : values()) {
+                if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return value;
+            }
+            return fallback;
         }
     }
 

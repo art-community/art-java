@@ -30,6 +30,8 @@ import lombok.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.core.property.Property.*;
+import static io.art.http.constants.HttpModuleConstants.*;
+import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.transport.payload.TransportPayloadReader.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
@@ -45,6 +47,7 @@ public class HttpCommunication implements Communication {
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
+    private CommunicatorAction action;
 
     public HttpCommunication(Supplier<HttpClient> client, HttpModuleConfiguration module, HttpConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
@@ -66,6 +69,7 @@ public class HttpCommunication implements Communication {
             outputMappingType = outputMappingType.parameters().get(0);
         }
         client.initialize();
+        this.action = action;
     }
 
     @Override
@@ -82,9 +86,37 @@ public class HttpCommunication implements Communication {
         TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getDataFormat());
         TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getDataFormat());
         HttpClient client = this.client.get();
+        HttpRouteType routeType = extractRouteType(action.getId().getActionId(), GET);
+
+        switch (routeType) {
+            case GET:
+                return input -> readResponse(reader, client.get());
+            case OPTIONS:
+                return input -> readResponse(reader, client.options());
+            case HEAD:
+                return input -> readResponse(reader, client.head());
+            case POST:
+                break;
+            case PUT:
+                break;
+            case DELETE:
+                break;
+            case PATCH:
+                break;
+            case WS:
+                break;
+        }
+
         return input -> client
                 .get()
                 .responseSingle((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)))
+                .flux()
+                .filter(payload -> !payload.isEmpty())
+                .map(TransportPayload::getValue);
+    }
+
+    private Flux<Object> readResponse(TransportPayloadReader reader, HttpClient.ResponseReceiver<?> responseReceiver) {
+        return responseReceiver.responseSingle((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)))
                 .flux()
                 .filter(payload -> !payload.isEmpty())
                 .map(TransportPayload::getValue);

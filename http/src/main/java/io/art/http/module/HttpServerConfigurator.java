@@ -6,14 +6,12 @@ import io.art.core.extensions.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.configuration.HttpServerConfiguration.*;
-import io.art.http.constants.HttpModuleConstants.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.server.configurator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
-import static io.art.core.collector.MapCollector.*;
 import static io.art.core.collector.SetCollector.setCollector;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
@@ -88,7 +86,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
             MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(metaClass));
-            if (methodStartWithExcludePath(method.name())) {
+            if (methodHasRouteTypePrefix(method.name())) {
                 configurationBuilder.type(extractRouteType(method.name()));
             }
             configurationBuilder
@@ -105,7 +103,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return serviceClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() < 2)
-                .filter(method -> methodStartWithExcludePath(method.name()))
+                .filter(method -> methodHasRouteTypePrefix(method.name()))
                 .collect(setCollector());
     }
 

@@ -53,7 +53,6 @@ public class RsocketMessageBuilder {
                     .map(RsocketMessageBuilder::addWsConnector)
                     .collect(joining(newLineTabulation(2)));
             message.append(format(RSOCKET_WS_CONNECTORS_MESSAGE_PART, connectorsString));
-
         }
         ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer().getMethods().get();
         if (!methods.isEmpty()) {
