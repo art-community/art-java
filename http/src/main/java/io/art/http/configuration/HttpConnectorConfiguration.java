@@ -91,7 +91,7 @@ public class HttpConnectorConfiguration {
         configuration.followRedirect = listener.emit(orElse(source.getBoolean(FOLLOW_REDIRECT_KEY), current.followRedirect));
         configuration.responseTimeout = listener.emit(orElse(source.getDuration(RESPONSE_TIMEOUT_KEY), current.responseTimeout));
         configuration.wiretapLog = listener.emit(orElse(source.getBoolean(WIRETAP_LOG_KEY), current.wiretapLog));
-        configuration.url = listener.emit(source.getString(URL_KEY));
+        configuration.url = listener.emit(orElse(source.getString(URL_KEY), current.url));
 
         return configuration;
     }
