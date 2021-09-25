@@ -21,22 +21,24 @@ package io.art.http.configuration;
 import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
+import io.art.http.path.*;
 import io.art.http.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
-import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.cookie.Cookie;
+import io.netty.handler.codec.http.cookie.*;
+import lombok.Builder;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
+import static io.art.http.path.HttpCommunicationUri.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import java.time.*;
-import java.util.*;
 import java.util.function.*;
 
 @Getter
@@ -55,6 +57,7 @@ public class HttpConnectorConfiguration {
     private ImmutableMap<String, String> headers;
     private ImmutableMap<String, Cookie> cookies;
     private Duration responseTimeout;
+    private HttpCommunicationUri uri;
 
     public static HttpConnectorConfiguration connectorConfiguration(String connector) {
         HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
@@ -68,6 +71,9 @@ public class HttpConnectorConfiguration {
         configuration.dataFormat = JSON;
         configuration.decorator = UnaryOperator.identity();
         configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + SLASH;
+        configuration.uri = manual(EMPTY_STRING);
+        configuration.headers = emptyImmutableMap();
+        configuration.cookies = emptyImmutableMap();
         return configuration;
     }
 

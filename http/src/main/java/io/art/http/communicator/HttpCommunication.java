@@ -32,6 +32,7 @@ import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
 import reactor.core.publisher.*;
+import reactor.netty.*;
 import reactor.netty.http.client.*;
 import reactor.netty.http.client.HttpClient.*;
 import reactor.netty.http.websocket.*;
@@ -135,10 +136,7 @@ public class HttpCommunication implements Communication {
             cookies.values().forEach(client::cookie);
         }
 
-        StringBuilder uri = new StringBuilder(SLASH)
-                .append(action.getId().getCommunicatorId())
-                .append(SLASH)
-                .append(action.getId().getCommunicatorId());
+        StringBuilder uri = new StringBuilder(connectorConfiguration.getUri().make(action.getId()));
         for (String parameter : decorator.getPathParameters()) {
             uri.append(SLASH).append(parameter);
         }
@@ -163,33 +161,36 @@ public class HttpCommunication implements Communication {
         connectorConfiguration.getHeaders().forEach(headers::add);
         connectorConfiguration.getCookies().values().forEach(client::cookie);
 
-        StringBuilder uri = new StringBuilder(SLASH)
-                .append(action.getId().getCommunicatorId())
-                .append(SLASH)
-                .append(action.getId().getCommunicatorId());
-
+        StringBuilder uri = new StringBuilder(connectorConfiguration.getUri().make(action.getId()));
         return processCommunication(builder.route(route).client(client).uri(uri).build());
     }
 
     private Flux<Object> processCommunication(ProcessingConfiguration configuration) {
         switch (configuration.route) {
             case GET:
-                return readResponse(configuration.reader, configuration.client.get().uri(configuration.uri.toString()));
+                ResponseReceiver<?> responseReceiver = configuration.client.get().uri(configuration.uri.toString());
+                return readResponse(configuration.reader, responseReceiver);
             case OPTIONS:
-                return readResponse(configuration.reader, configuration.client.options().uri(configuration.uri.toString()));
+                responseReceiver = configuration.client.options().uri(configuration.uri.toString());
+                return readResponse(configuration.reader, responseReceiver);
             case HEAD:
-                return readResponse(configuration.reader, configuration.client.head().uri(configuration.uri.toString()));
+                responseReceiver = configuration.client.head().uri(configuration.uri.toString());
+                return readResponse(configuration.reader, responseReceiver);
             case POST:
-                ResponseReceiver<?> responseReceiver = writeRequest(configuration.input, configuration.writer, configuration.client.post().uri(configuration.uri.toString()));
+                RequestSender requestSender = configuration.client.post().uri(configuration.uri.toString());
+                responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case PUT:
-                responseReceiver = writeRequest(configuration.input, configuration.writer, configuration.client.put().uri(configuration.uri.toString()));
+                requestSender = configuration.client.put().uri(configuration.uri.toString());
+                responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case DELETE:
-                responseReceiver = writeRequest(configuration.input, configuration.writer, configuration.client.delete().uri(configuration.uri.toString()));
+                requestSender = configuration.client.delete().uri(configuration.uri.toString());
+                responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case PATCH:
-                responseReceiver = writeRequest(configuration.input, configuration.writer, configuration.client.patch().uri(configuration.uri.toString()));
+                requestSender = configuration.client.patch().uri(configuration.uri.toString());
+                responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case WS:
                 return configuration
@@ -202,6 +203,9 @@ public class HttpCommunication implements Communication {
     }
 
     private Flux<Object> readResponse(TransportPayloadReader reader, ResponseReceiver<?> responseReceiver) {
+        if (isNull(outputMappingType)) {
+            return responseReceiver.response().thenMany(Flux.empty());
+        }
         return responseReceiver.responseSingle((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)))
                 .flux()
                 .filter(payload -> !payload.isEmpty())
@@ -209,18 +213,34 @@ public class HttpCommunication implements Communication {
     }
 
     private ResponseReceiver<?> writeRequest(Flux<Object> input, TransportPayloadWriter writer, HttpClient.RequestSender requestSender) {
+        if (isNull(inputMappingType)) return requestSender.send(Flux.empty());
         return requestSender.send(input.map(data -> writer.write(typed(inputMappingType, data))));
     }
 
     private Flux<Object> handleWebSocket(ProcessingConfiguration configuration, WebsocketInbound inbound, WebsocketOutbound outbound) {
-        outbound.send(configuration.input.map(data -> configuration.writer.write(typed(inputMappingType, data))));
-        return inbound.aggregateFrames()
+        if (isNull(inputMappingType)) {
+            NettyOutbound nettyOutbound = outbound.send(Flux.empty());
+            if (isNull(outputMappingType)) {
+                return nettyOutbound.then().flux().thenMany(Flux.empty());
+            }
+            return nettyOutbound.then().flatMapMany(ignore -> inbound.aggregateFrames()
+                    .receive()
+                    .aggregate()
+                    .map(bytes -> configuration.reader.read(bytes, outputMappingType))
+                    .flux()
+                    .filter(payload -> !payload.isEmpty())
+                    .map(TransportPayload::getValue));
+        }
+
+        NettyOutbound nettyOutbound = outbound.send(configuration.input.map(data -> configuration.writer.write(typed(inputMappingType, data))));
+        if (isNull(outputMappingType)) return nettyOutbound.then().flux().thenMany(Flux.empty());
+        return nettyOutbound.then().flatMapMany(ignore -> inbound.aggregateFrames()
                 .receive()
                 .aggregate()
                 .map(bytes -> configuration.reader.read(bytes, outputMappingType))
                 .flux()
                 .filter(payload -> !payload.isEmpty())
-                .map(TransportPayload::getValue);
+                .map(TransportPayload::getValue));
     }
 
     @Builder

@@ -36,7 +36,7 @@ import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
-import static io.art.http.path.HttpPath.*;
+import static io.art.http.path.HttpServingUri.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import java.nio.file.*;
@@ -44,7 +44,7 @@ import java.nio.file.*;
 @Getter
 @Builder(toBuilder = true)
 public class HttpRouteConfiguration {
-    private HttpPath path;
+    private HttpServingUri path;
     private HttpRouteType type;
     private boolean deactivated;
     private DataFormat defaultDataFormat;

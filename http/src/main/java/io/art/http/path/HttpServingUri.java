@@ -1,38 +1,38 @@
 package io.art.http.path;
 
+import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.StringExtensions.*;
-import static io.art.http.path.HttpPath.Strategy.*;
 import java.util.function.*;
 
-public class HttpPath {
-    private Strategy strategy = AUTOMATIC;
+@Public
+public class HttpServingUri {
+    private Strategy strategy = Strategy.AUTOMATIC;
     private String manualRoute;
     private Function<ServiceMethodIdentifier, String> transformer;
 
-    public static HttpPath manual(String route) {
-        HttpPath path = new HttpPath();
-        path.strategy = MANUAL;
-        path.manualRoute = route;
+    public static HttpServingUri manual(String uri) {
+        HttpServingUri path = new HttpServingUri();
+        path.strategy = Strategy.MANUAL;
+        path.manualRoute = uri;
         return path;
     }
 
-    public static HttpPath byServiceMethod() {
-        HttpPath path = new HttpPath();
-        path.strategy = AUTOMATIC;
+    public static HttpServingUri byServiceMethod() {
+        HttpServingUri path = new HttpServingUri();
+        path.strategy = Strategy.AUTOMATIC;
         return path;
     }
 
-    public static HttpPath fromServiceMethod(Function<ServiceMethodIdentifier, String> transformer) {
-        HttpPath path = new HttpPath();
-        path.strategy = TRANSFORMED;
+    public static HttpServingUri fromServiceMethod(Function<ServiceMethodIdentifier, String> transformer) {
+        HttpServingUri path = new HttpServingUri();
+        path.strategy = Strategy.TRANSFORMED;
         path.transformer = transformer;
         return path;
     }
 
-    public String route(ServiceMethodIdentifier id) {
+    public String make(ServiceMethodIdentifier id) {
         switch (strategy) {
             case AUTOMATIC:
                 return SLASH + id.getServiceId().toLowerCase() + SLASH + id.getMethodId().toLowerCase();

@@ -19,7 +19,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.http.configuration.HttpRouteConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
-import static io.art.http.path.HttpPath.*;
+import static io.art.http.path.HttpServingUri.*;
 import static io.art.meta.Meta.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
