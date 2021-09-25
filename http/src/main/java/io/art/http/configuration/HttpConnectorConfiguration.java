@@ -19,9 +19,12 @@
 package io.art.http.configuration;
 
 import io.art.core.changes.*;
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.http.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
+import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -33,6 +36,7 @@ import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import java.time.*;
+import java.util.*;
 import java.util.function.*;
 
 @Getter
@@ -48,6 +52,8 @@ public class HttpConnectorConfiguration {
     private UnaryOperator<HttpClient> decorator;
     private DataFormat dataFormat;
     private String url;
+    private ImmutableMap<String, String> headers;
+    private ImmutableMap<String, Cookie> cookies;
     private Duration responseTimeout;
 
     public static HttpConnectorConfiguration connectorConfiguration(String connector) {
