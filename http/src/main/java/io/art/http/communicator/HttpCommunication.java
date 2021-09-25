@@ -100,23 +100,19 @@ public class HttpCommunication implements Communication {
         return connectorConfiguration.getConnector();
     }
 
-    static void decorateHttpCommunication(UnaryOperator<HttpCommunicationDecorator> decorator) {
-        HttpCommunication.decorator.set(decorator.apply(new HttpCommunicationDecorator()));
-    }
-
     private Function<Flux<Object>, Flux<Object>> communication() {
         TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getDataFormat());
         TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getDataFormat());
-        return input -> decoratedCommunication(reader, writer, input);
+        return input -> communicate(reader, writer, input);
     }
 
-    private Flux<Object> decoratedCommunication(TransportPayloadReader reader, TransportPayloadWriter writer, Flux<Object> input) {
+    private Flux<Object> communicate(TransportPayloadReader reader, TransportPayloadWriter writer, Flux<Object> input) {
         HttpCommunicationDecorator decorator;
         ProcessingConfiguration.ProcessingConfigurationBuilder builder = ProcessingConfiguration.builder()
                 .reader(reader)
                 .writer(writer)
                 .input(input);
-        return isNull(decorator = HttpCommunication.decorator.get()) ? decoratedCommunication(builder) : decoratedCommunication(builder, decorator);
+        return isNull(decorator = HttpCommunication.decorator.get()) ? simpleCommunication(builder) : decoratedCommunication(builder, decorator);
     }
 
     private Flux<Object> decoratedCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
@@ -153,7 +149,7 @@ public class HttpCommunication implements Communication {
         return processCommunication(builder.uri(uri).build());
     }
 
-    private Flux<Object> decoratedCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder) {
+    private Flux<Object> simpleCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder) {
         HttpRouteType route = extractRouteType(action.getId().getActionId(), GET);
         HttpClient client = this.client.get();
 
@@ -251,6 +247,10 @@ public class HttpCommunication implements Communication {
         final HttpRouteType route;
         final HttpClient client;
         final StringBuilder uri;
+    }
+
+    static void decorateHttpCommunication(UnaryOperator<HttpCommunicationDecorator> decorator) {
+        HttpCommunication.decorator.set(decorator.apply(new HttpCommunicationDecorator()));
     }
 }
 
