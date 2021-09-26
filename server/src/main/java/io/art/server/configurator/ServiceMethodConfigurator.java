@@ -11,9 +11,9 @@ import java.util.function.*;
 
 @Public
 public class ServiceMethodConfigurator {
-    private boolean logging = false;
+    private Boolean logging;
+    private Boolean deactivated;
     private boolean validating = true;
-    private boolean deactivated = false;
     private final List<UnaryOperator<Flux<Object>>> inputDecorators = linkedList();
     private final List<UnaryOperator<Flux<Object>>> outputDecorators = linkedList();
 

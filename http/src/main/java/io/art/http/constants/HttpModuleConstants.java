@@ -46,7 +46,7 @@ public interface HttpModuleConstants {
         String ROUTES_SECTION = "routes";
 
         String URL_KEY = "url";
-        String PATH_KEY = "path";
+        String URI_KEY = "uri";
         String METHOD_KEY = "method";
         String WS_AGGREGATE_FRAMES_KEY = "ws.aggregateFrames";
         String FILE_PATH_KEY = "file.path";

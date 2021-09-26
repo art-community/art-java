@@ -11,8 +11,8 @@ import java.util.function.*;
 
 @Public
 public class CommunicatorActionConfigurator {
-    private boolean logging = false;
-    private boolean deactivated = false;
+    private Boolean logging;
+    private Boolean deactivated;
     private final List<UnaryOperator<Flux<Object>>> inputDecorators = linkedList();
     private final List<UnaryOperator<Flux<Object>>> outputDecorators = linkedList();
 

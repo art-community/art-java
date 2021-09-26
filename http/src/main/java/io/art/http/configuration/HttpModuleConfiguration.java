@@ -127,7 +127,7 @@ public class HttpModuleConfiguration implements ModuleConfiguration {
         }
 
         private HttpConnectorConfiguration connector(NestedConfiguration nested, HttpConnectorConfiguration current) {
-            return connectorConfiguration(configuration.refresher, current, nested);
+            return httpConnectorConfiguration(configuration.refresher, current, nested);
         }
 
 

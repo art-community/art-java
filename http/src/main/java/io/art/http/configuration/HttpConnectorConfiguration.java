@@ -59,7 +59,7 @@ public class HttpConnectorConfiguration {
     private Duration responseTimeout;
     private HttpCommunicationUri uri;
 
-    public static HttpConnectorConfiguration connectorConfiguration(String connector) {
+    public static HttpConnectorConfiguration httpConnectorConfiguration(String connector) {
         HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
         configuration.connector = connector;
         configuration.verbose = false;
@@ -77,7 +77,7 @@ public class HttpConnectorConfiguration {
         return configuration;
     }
 
-    public static HttpConnectorConfiguration connectorConfiguration(HttpModuleRefresher refresher, HttpConnectorConfiguration current, ConfigurationSource source) {
+    public static HttpConnectorConfiguration httpConnectorConfiguration(HttpModuleRefresher refresher, HttpConnectorConfiguration current, ConfigurationSource source) {
         HttpConnectorConfiguration configuration = current.toBuilder().build();
         configuration.connector = source.getParent();
 
@@ -92,6 +92,7 @@ public class HttpConnectorConfiguration {
         configuration.responseTimeout = listener.emit(orElse(source.getDuration(RESPONSE_TIMEOUT_KEY), current.responseTimeout));
         configuration.wiretapLog = listener.emit(orElse(source.getBoolean(WIRETAP_LOG_KEY), current.wiretapLog));
         configuration.url = listener.emit(orElse(source.getString(URL_KEY), current.url));
+        apply(source.getString(URI_KEY), path -> configuration.uri = manual(path));
 
         return configuration;
     }

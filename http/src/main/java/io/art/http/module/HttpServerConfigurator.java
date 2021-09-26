@@ -76,7 +76,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             for (MetaMethod<?> method : extractHttpMethods(metaClass)) {
                 if (!method.isKnown()) continue;
                 configurationBuilder.type(extractRouteType(method.name()))
-                        .path(byServiceMethod())
+                        .uri(byServiceMethod())
                         .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.name()));
                 getServiceDecorator(metaClass).apply(configurationBuilder);
                 getMethodDecorator(metaClass, method).apply(configurationBuilder);
@@ -90,7 +90,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             if (!method.isKnown()) continue;
             if (methodHasRouteTypePrefix(method.name())) configurationBuilder.type(extractRouteType(method.name()));
             configurationBuilder
-                    .path(byServiceMethod())
+                    .uri(byServiceMethod())
                     .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.name()));
             getMethodDecorator(metaClass, method).apply(configurationBuilder);
             getServiceDecorator(metaClass).apply(configurationBuilder);

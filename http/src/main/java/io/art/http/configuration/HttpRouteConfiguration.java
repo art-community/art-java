@@ -44,7 +44,7 @@ import java.nio.file.*;
 @Getter
 @Builder(toBuilder = true)
 public class HttpRouteConfiguration {
-    private HttpServingUri path;
+    private HttpServingUri uri;
     private HttpRouteType type;
     private boolean deactivated;
     private DataFormat defaultDataFormat;
@@ -55,7 +55,7 @@ public class HttpRouteConfiguration {
 
     public static HttpRouteConfiguration routeConfiguration() {
         HttpRouteConfiguration configuration = HttpRouteConfiguration.builder().build();
-        configuration.path = manual(SLASH);
+        configuration.uri = manual(SLASH);
         configuration.deactivated = false;
         configuration.type = GET;
         configuration.defaultDataFormat = JSON;
@@ -91,9 +91,9 @@ public class HttpRouteConfiguration {
 
         if (isNotEmpty(serviceId) && isNotEmpty(methodId)) {
             configuration.serviceMethodId = serviceMethodId(serviceId, methodId);
-            configuration.path = byServiceMethod();
+            configuration.uri = byServiceMethod();
         }
-        apply(source.getString(PATH_KEY), path -> configuration.path = manual(path));
+        apply(source.getString(URI_KEY), path -> configuration.uri = manual(path));
 
         return configuration;
     }

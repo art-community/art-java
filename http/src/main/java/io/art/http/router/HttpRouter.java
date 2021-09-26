@@ -51,7 +51,7 @@ public class HttpRouter {
         for (HttpRouteConfiguration route : httpConfiguration.getRoutes().get()) {
             HttpRouteType httpMethodType = route.getType();
             ServiceMethodIdentifier serviceMethodId = route.getServiceMethodId();
-            StringBuilder path = new StringBuilder(route.getPath().make(serviceMethodId));
+            StringBuilder path = new StringBuilder(route.getUri().make(serviceMethodId));
             for (String parameter : route.getPathParameters()) {
                 path.append(SLASH).append(OPENING_BRACES).append(parameter).append(CLOSING_BRACES);
             }

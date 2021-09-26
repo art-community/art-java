@@ -74,7 +74,7 @@ public class HttpServerConfiguration {
     }
 
     public static HttpServerConfiguration httpServerConfiguration(HttpModuleRefresher refresher, HttpServerConfiguration current, ConfigurationSource source) {
-        HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
+        HttpServerConfiguration configuration = current.toBuilder().build();
 
         ChangesListener serverListener = refresher.serverListener();
 

@@ -33,7 +33,7 @@ public class HttpMessageBuilder {
                     .getRoutes()
                     .get()
                     .stream()
-                    .map(route -> route.getType() + SPACE + route.getPath().make(route.getServiceMethodId()) + " to " + route.getServiceMethodId() + " : " + methods.get(route.getServiceMethodId()).getInvoker())
+                    .map(route -> route.getType() + SPACE + route.getUri().make(route.getServiceMethodId()) + " to " + route.getServiceMethodId() + " : " + methods.get(route.getServiceMethodId()).getInvoker())
                     .collect(joining("\n\t\t")));
         }
         ImmutableMap<String, HttpConnectorConfiguration> connectors = configuration.getConnectors();

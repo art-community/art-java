@@ -21,7 +21,7 @@ package io.art.server.constants;
 public interface ServerConstants {
     interface ConfigurationKeys {
         String SERVER_SECTION = "server";
-        String SERVER_SERVICES_KEY = "services";
+        String SERVICES_SECTION = "services";
         String VALIDATING_KEY = "validating";
         String METHODS_KEY = "methods";
     }

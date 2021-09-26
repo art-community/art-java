@@ -26,6 +26,7 @@ import io.art.server.method.*;
 import io.art.server.refresher.*;
 import lombok.Builder;
 import lombok.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
@@ -56,23 +57,23 @@ public class ServerConfiguration {
 
     public boolean isLogging(ServiceMethodIdentifier identifier) {
         boolean hasMethod = getMethodConfiguration(identifier).isPresent();
-        boolean service = checkService(identifier, ServiceMethodsConfiguration::isLogging, false);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::getLogging, false);
         if (!hasMethod) return service;
-        return checkMethod(identifier, ServiceMethodConfiguration::isLogging, false);
+        return checkMethod(identifier, ServiceMethodConfiguration::getLogging, service);
     }
 
     public boolean isValidating(ServiceMethodIdentifier identifier) {
         boolean hasMethod = getMethodConfiguration(identifier).isPresent();
-        boolean service = checkService(identifier, ServiceMethodsConfiguration::isValidating, true);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::getValidating, true);
         if (!hasMethod) return service;
-        return checkMethod(identifier, ServiceMethodConfiguration::isValidating, true);
+        return checkMethod(identifier, ServiceMethodConfiguration::getValidating, service);
     }
 
     public boolean isDeactivated(ServiceMethodIdentifier identifier) {
         boolean hasMethod = getMethodConfiguration(identifier).isPresent();
-        boolean service = checkService(identifier, ServiceMethodsConfiguration::isDeactivated, false);
+        boolean service = checkService(identifier, ServiceMethodsConfiguration::getDeactivated, false);
         if (!hasMethod) return service;
-        return checkMethod(identifier, ServiceMethodConfiguration::isDeactivated, false);
+        return checkMethod(identifier, ServiceMethodConfiguration::getDeactivated, service);
     }
 
     private <T> T checkService(ServiceMethodIdentifier identifier, Function<ServiceMethodsConfiguration, T> mapper, T defaultValue) {
@@ -80,7 +81,7 @@ public class ServerConfiguration {
         if (isNull(serviceConfiguration)) {
             return defaultValue;
         }
-        return mapper.apply(serviceConfiguration);
+        return orElse(mapper.apply(serviceConfiguration), defaultValue);
     }
 
     private <T> T checkMethod(ServiceMethodIdentifier identifier, Function<ServiceMethodConfiguration, T> mapper, T defaultValue) {
@@ -92,7 +93,7 @@ public class ServerConfiguration {
         if (isNull(methodConfiguration)) {
             return defaultValue;
         }
-        return mapper.apply(methodConfiguration);
+        return orElse(mapper.apply(methodConfiguration), defaultValue);
     }
 
     private static ServiceMethodsConfiguration getService(ServerConfiguration currentConfiguration, ServerConfigurationBuilder builder, NestedConfiguration service) {
@@ -102,8 +103,8 @@ public class ServerConfiguration {
 
     public static ServerConfiguration serverConfiguration(ServerRefresher refresher, ServerConfiguration current, ConfigurationSource source) {
         ServerConfigurationBuilder builder = current.toBuilder();
-        builder.configurations = lazy(() -> merge(current.configurations.get(), ofNullable(source.getNested(SERVER_SECTION))
-                .map(server -> server.getNestedMap(SERVER_SERVICES_KEY, service -> getService(current, builder, service)))
+        builder.configurations = lazy(() -> merge(current.configurations.get(), ofNullable(source)
+                .map(server -> server.getNestedMap(SERVICES_SECTION, service -> getService(current, builder, service)))
                 .orElse(emptyImmutableMap())));
         refresher.produce();
         return builder.build();

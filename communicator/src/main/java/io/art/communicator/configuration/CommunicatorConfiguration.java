@@ -28,6 +28,7 @@ import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorActionsConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.property.LazyProperty.*;
@@ -57,16 +58,16 @@ public class CommunicatorConfiguration {
 
     public boolean isLogging(CommunicatorActionIdentifier identifier) {
         boolean hasAction = getActionConfiguration(identifier).isPresent();
-        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isLogging, false);
+        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::getLogging, false);
         if (!hasAction) return communicator;
-        return checkAction(identifier, CommunicatorActionConfiguration::isLogging, false);
+        return checkAction(identifier, CommunicatorActionConfiguration::getLogging, communicator);
     }
 
     public boolean isDeactivated(CommunicatorActionIdentifier identifier) {
         boolean hasAction = getActionConfiguration(identifier).isPresent();
-        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::isDeactivated, false);
+        boolean communicator = checkCommunicator(identifier, CommunicatorActionsConfiguration::getDeactivated, false);
         if (!hasAction) return communicator;
-        return checkAction(identifier, CommunicatorActionConfiguration::isDeactivated, false);
+        return checkAction(identifier, CommunicatorActionConfiguration::getDeactivated, communicator);
     }
 
 
@@ -75,7 +76,7 @@ public class CommunicatorConfiguration {
         if (isNull(actionsConfiguration)) {
             return defaultValue;
         }
-        return mapper.apply(actionsConfiguration);
+        return orElse(mapper.apply(actionsConfiguration), defaultValue);
     }
 
     private <T> T checkAction(CommunicatorActionIdentifier identifier, Function<CommunicatorActionConfiguration, T> mapper, T defaultValue) {
@@ -87,12 +88,12 @@ public class CommunicatorConfiguration {
         if (isNull(actionConfiguration)) {
             return defaultValue;
         }
-        return mapper.apply(actionConfiguration);
+        return orElse(mapper.apply(actionConfiguration), defaultValue);
     }
 
     public static CommunicatorConfiguration communicatorConfiguration(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
         CommunicatorConfigurationBuilder builder = current.toBuilder();
-        builder.configurations(lazy(() -> merge(current.configurations.get(), ofNullable(source.getNested(COMMUNICATOR_SECTION))
+        builder.configurations(lazy(() -> merge(current.configurations.get(), ofNullable(source)
                 .map(communicator -> communicator.getNestedMap(TARGETS_SECTION, actions -> getActions(current, builder, actions)))
                 .orElse(emptyImmutableMap()))));
         refresher.produce();

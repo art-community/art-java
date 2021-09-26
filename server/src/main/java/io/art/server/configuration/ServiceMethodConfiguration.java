@@ -34,15 +34,15 @@ import java.util.function.*;
 @Getter
 @Builder(toBuilder = true)
 public class ServiceMethodConfiguration {
-    private boolean deactivated;
-    private boolean logging;
-    private boolean validating;
+    private Boolean deactivated;
+    private Boolean logging;
+    private Boolean validating;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
     public static ServiceMethodConfiguration serviceMethodConfiguration(ServerRefresher refresher, ServiceMethodConfiguration current, ConfigurationSource source) {
         current = orElse(current, ServiceMethodConfiguration::defaults);
-        ServiceMethodConfiguration configuration = ServiceMethodConfiguration.builder().build();
+        ServiceMethodConfiguration configuration = current.toBuilder().build();
         ChangesListener deactivationListener = refresher.deactivationListener();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener validationListener = refresher.validationListener();

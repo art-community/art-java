@@ -9,12 +9,14 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;
+import io.art.http.path.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
 import static io.art.http.module.HttpModule.*;
+import static io.art.http.path.HttpCommunicationUri.byCommunicatorAction;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
@@ -28,7 +30,7 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
     }
 
     public HttpCommunicatorConfigurator connector(Class<? extends Connector> connectorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
-        HttpConnectorConfiguration configuration = configurator.apply(connectorConfiguration(asId(connectorClass)).toBuilder()).build();
+        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(asId(connectorClass)).toBuilder().uri(byCommunicatorAction())).build();
         connectors.put(asId(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> httpModule()
                 .configuration()

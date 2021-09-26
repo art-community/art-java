@@ -33,8 +33,8 @@ import java.util.function.*;
 @Getter
 @Builder(toBuilder = true)
 public class CommunicatorActionConfiguration {
-    private boolean logging;
-    private boolean deactivated;
+    private Boolean logging;
+    private Boolean deactivated;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> inputDecorators;
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
