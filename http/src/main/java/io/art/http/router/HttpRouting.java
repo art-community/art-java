@@ -12,6 +12,7 @@ import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
@@ -23,6 +24,7 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import java.util.function.*;
 
 class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
@@ -79,13 +81,12 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue)
                 .flux()
-                .doOnComplete(() -> emptyCompleter.emitEmpty(Sinks.EmitFailureHandler.FAIL_FAST));
+                .doOnComplete(() -> emptyCompleter.emitEmpty(FAIL_FAST));
 
         Flux<ByteBuf> output = serviceMethod
                 .serve(input)
-                .map(value -> writer.write(typed(outputMappingType, value)))
-                .switchIfEmpty(emptyCompleter.asMono());
+                .map(value -> writer.write(typed(outputMappingType, value)));
 
-        return localState.response().send(output).then();
+        return localState.response().send(output).then(cast(emptyCompleter.asMono()));
     }
 }

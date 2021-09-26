@@ -16,11 +16,30 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     api(project(":core"))
     api(project(":meta"))
     api(project(":transport"))
     api(project(":server"))
     api(project(":communicator"))
+
     implementation(project(":logging"))
+
+    testImplementation(project(":json"))
+    testImplementation(testFixtures(project(":meta")))
+}
+
+generator {
+    source("HttpTest") {
+        modulePackage("io.art.http.test")
+        jvm()
+        sourcesPattern {
+            include("src/test/**")
+        }
+        excludeClasses("**HttpTest**")
+    }
 }

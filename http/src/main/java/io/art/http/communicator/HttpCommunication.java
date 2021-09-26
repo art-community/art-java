@@ -28,11 +28,11 @@ import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.meta.model.*;
 import io.art.transport.payload.*;
+import io.netty.buffer.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
 import reactor.core.publisher.*;
-import reactor.netty.*;
 import reactor.netty.http.client.*;
 import reactor.netty.http.client.HttpClient.*;
 import reactor.netty.http.websocket.*;
@@ -203,6 +203,7 @@ public class HttpCommunication implements Communication {
                 return configuration
                         .client
                         .websocket()
+                        .uri(configuration.uri.toString())
                         .handle((inbound, outbound) -> handleWebSocket(configuration, inbound, outbound));
         }
 
@@ -226,28 +227,28 @@ public class HttpCommunication implements Communication {
 
     private Flux<Object> handleWebSocket(ProcessingConfiguration configuration, WebsocketInbound inbound, WebsocketOutbound outbound) {
         if (isNull(inputMappingType)) {
-            NettyOutbound nettyOutbound = outbound.send(Flux.empty());
-            if (isNull(outputMappingType)) {
-                return nettyOutbound.then().flux().thenMany(Flux.empty());
-            }
-            return nettyOutbound.then().flatMapMany(ignore -> inbound.aggregateFrames()
-                    .receive()
-                    .aggregate()
-                    .map(bytes -> configuration.reader.read(bytes, outputMappingType))
-                    .flux()
-                    .filter(payload -> !payload.isEmpty())
-                    .map(TransportPayload::getValue));
+            sendWebSocket(outbound, Flux.empty());
+            if (isNull(outputMappingType)) return Flux.empty();
+            return receiveWebSocket(configuration, inbound);
         }
 
-        NettyOutbound nettyOutbound = outbound.send(configuration.input.map(data -> configuration.writer.write(typed(inputMappingType, data))));
-        if (isNull(outputMappingType)) return nettyOutbound.then().flux().thenMany(Flux.empty());
-        return nettyOutbound.then().flatMapMany(ignore -> inbound.aggregateFrames()
+        sendWebSocket(outbound, configuration.input.map(data -> configuration.writer.write(typed(inputMappingType, data))));
+        if (isNull(outputMappingType)) return Flux.empty();
+        return receiveWebSocket(configuration, inbound);
+    }
+
+    private Flux<Object> receiveWebSocket(ProcessingConfiguration configuration, WebsocketInbound inbound) {
+        return inbound
+                .aggregateFrames()
                 .receive()
-                .aggregate()
+                .retain()
                 .map(bytes -> configuration.reader.read(bytes, outputMappingType))
-                .flux()
                 .filter(payload -> !payload.isEmpty())
-                .map(TransportPayload::getValue));
+                .map(TransportPayload::getValue);
+    }
+
+    private void sendWebSocket(WebsocketOutbound outbound, Flux<ByteBuf> input) {
+        outbound.send(input).then().subscribe();
     }
 
     @Builder

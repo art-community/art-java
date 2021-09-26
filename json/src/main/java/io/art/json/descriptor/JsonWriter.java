@@ -57,6 +57,23 @@ public class JsonWriter implements Writer {
         if (isNull(object)) return;
         MetaType<?> type = object.getType();
         try (JsonGenerator generator = jsonFactory.createGenerator(new OutputStreamWriter(outputStream, charset))) {
+            MetaTransformer<?> transformer = type.outputTransformer();
+            switch (type.externalKind()) {
+                case STRING:
+                case LONG:
+                case DOUBLE:
+                case FLOAT:
+                case INTEGER:
+                case BOOLEAN:
+                case CHARACTER:
+                case SHORT:
+                case BYTE:
+                    outputStream.write(transformer.toString(cast(object.getObject())).getBytes(charset));
+                    return;
+                case BINARY:
+                    outputStream.write(transformer.toByteArray(cast(object.getObject())));
+                    return;
+            }
             writeValue(generator, type, object.getObject());
         } catch (IOException throwable) {
             throw new JsonException(throwable);
