@@ -53,6 +53,7 @@ public abstract class MetaClass<T> {
     private final static Map<Class<?>, MetaClass<?>> mutableRegistry = map();
     private MetaProviderTemplate provider;
     private MetaCreatorTemplate creator;
+    private Boolean known;
 
     protected MetaClass(MetaType<T> definition) {
         this.definition = definition;
@@ -276,6 +277,30 @@ public abstract class MetaClass<T> {
 
     public String toString() {
         return definition.toString();
+    }
+
+    public boolean isKnown() {
+        if (nonNull(known)) return known;
+
+        known = true;
+
+        for (MetaField<?> field : fields.values()) {
+            if (!field.isKnown()) return known = false;
+        }
+
+        for (MetaMethod<?> method : methods) {
+            if (!method.isKnown()) return known = false;
+        }
+
+        for (MetaConstructor<T> constructor : constructors) {
+            if (!constructor.isKnown()) return known = false;
+        }
+
+        for (MetaClass<?> inner : classes.values()) {
+            if (!inner.isKnown()) return known = false;
+        }
+
+        return known = true;
     }
 
     static void clearClassMutableRegistry() {

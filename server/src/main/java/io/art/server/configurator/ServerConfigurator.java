@@ -73,6 +73,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
             MetaClass<?> serviceClass = classBasedConfiguration.serviceClass.get();
             Map<String, ServiceMethodConfiguration> methods = map();
             for (MetaMethod<?> method : serviceClass.methods()) {
+                if (!method.isKnown()) continue;
                 UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, method);
                 decorator = then(getServiceDecorator(serviceClass), decorator);
                 ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
@@ -90,11 +91,12 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
             String communicatorId = asId(serviceClass.definition().type());
             ServiceMethodsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) methods = existed.getMethods().toMutable();
-            MetaMethod<?> serviceMethod = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
+            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
+            if (!method.isKnown()) continue;
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
-            decorator = then(decorator, getMethodDecorator(serviceClass, serviceMethod));
+            decorator = then(decorator, getMethodDecorator(serviceClass, method));
             ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
-            methods.put(serviceMethod.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
+            methods.put(method.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             configurations.put(communicatorId, orElse(existed, ServiceMethodsConfiguration.defaults()).toBuilder()
                     .methods(immutableMapOf(methods))
                     .build());
@@ -112,6 +114,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
                 UnaryOperator<ServiceMethodConfigurator> decorator = getMethodDecorator(serviceClass, method);
                 decorator = then(getServiceDecorator(serviceClass), decorator);
                 MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
+                if (!method.isKnown()) continue;
                 ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
                 methods.put(serviceMethod.getId(), serviceMethod);
             }
@@ -123,6 +126,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
             decorator = then(decorator, getMethodDecorator(serviceClass, method));
             MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
+            if (!method.isKnown()) continue;
             ServiceMethod serviceMethod = createMethod(configurationProvider, methodConfiguration);
             methods.put(serviceMethod.getId(), serviceMethod);
         }

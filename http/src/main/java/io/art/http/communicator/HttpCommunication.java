@@ -42,8 +42,10 @@ import static io.art.core.property.Property.*;
 import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
+import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static io.art.transport.payload.TransportPayloadReader.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
+import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import static lombok.AccessLevel.*;
@@ -120,16 +122,18 @@ public class HttpCommunication implements Communication {
 
         builder.route(orElse(decorator.getRoute(), extractRouteType(action.getId().getActionId(), GET)));
         HttpClient client = orElse(decorator.getClient(), UnaryOperator.<HttpClient>identity()).apply(this.client.get());
-        builder.client(client);
 
-        HttpHeaders headers = new DefaultHttpHeaders();
+        HttpHeaders headers = new DefaultHttpHeaders()
+                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getDataFormat()))
+                .set(ACCEPT, toMimeType(connectorConfiguration.getDataFormat()));
+
         connectorConfiguration.getHeaders().forEach(headers::add);
-        client.headers(current -> current.add(orElse(decorator.getHeaders(), UnaryOperator.<HttpHeaders>identity()).apply(headers)));
+        client = client.headers(current -> current.add(orElse(decorator.getHeaders(), UnaryOperator.<HttpHeaders>identity()).apply(headers)));
 
         connectorConfiguration.getCookies().values().forEach(client::cookie);
         Map<String, Cookie> cookies = decorator.getCookies();
-        if (!cookies.isEmpty()) {
-            cookies.values().forEach(client::cookie);
+        for (Cookie cookie : cookies.values()) {
+            client = client.cookie(cookie);
         }
 
         StringBuilder uri = new StringBuilder(connectorConfiguration.getUri().make(action.getId()));
@@ -146,16 +150,23 @@ public class HttpCommunication implements Communication {
             uri.append(QEUSTION).append(parameterString);
         }
 
-        return processCommunication(builder.uri(uri).build());
+        return processCommunication(builder.client(client).uri(uri).build());
     }
 
     private Flux<Object> simpleCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder) {
         HttpRouteType route = extractRouteType(action.getId().getActionId(), GET);
         HttpClient client = this.client.get();
 
-        HttpHeaders headers = new DefaultHttpHeaders();
+        HttpHeaders headers = new DefaultHttpHeaders()
+                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getDataFormat()))
+                .set(ACCEPT, toMimeType(connectorConfiguration.getDataFormat()));
+
         connectorConfiguration.getHeaders().forEach(headers::add);
-        connectorConfiguration.getCookies().values().forEach(client::cookie);
+        client = client.headers(current -> current.add(headers));
+
+        for (Cookie cookie : connectorConfiguration.getCookies().values()) {
+            client = client.cookie(cookie);
+        }
 
         StringBuilder uri = new StringBuilder(connectorConfiguration.getUri().make(action.getId()));
         return processCommunication(builder.route(route).client(client).uri(uri).build());

@@ -12,7 +12,7 @@ import io.art.server.configurator.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
-import static io.art.core.collector.SetCollector.setCollector;
+import static io.art.core.collector.SetCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -74,6 +74,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = classBasedConfiguration.serviceClass.get();
             for (MetaMethod<?> method : extractHttpMethods(metaClass)) {
+                if (!method.isKnown()) continue;
                 configurationBuilder.type(extractRouteType(method.name()))
                         .path(byServiceMethod())
                         .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.name()));
@@ -86,9 +87,8 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
             MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(metaClass));
-            if (methodHasRouteTypePrefix(method.name())) {
-                configurationBuilder.type(extractRouteType(method.name()));
-            }
+            if (!method.isKnown()) continue;
+            if (methodHasRouteTypePrefix(method.name())) configurationBuilder.type(extractRouteType(method.name()));
             configurationBuilder
                     .path(byServiceMethod())
                     .serviceMethodId(serviceMethodId(asId(metaClass.definition().type()), method.name()));

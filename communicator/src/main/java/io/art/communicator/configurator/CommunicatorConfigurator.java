@@ -90,6 +90,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             MetaClass<? extends Communicator> communicatorClass = classBasedConfiguration.communicatorClass.get();
             Map<String, CommunicatorActionConfiguration> actions = map();
             for (MetaMethod<?> method : communicatorClass.methods()) {
+                if (!method.isKnown()) continue;
                 UnaryOperator<CommunicatorActionConfigurator> decorator = getActionDecorator(communicatorClass, method);
                 decorator = then(getCommunicatorDecorator(communicatorClass), decorator);
                 CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
@@ -108,6 +109,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) actions = existed.getActions().toMutable();
             MetaMethod<?> method = methodBasedConfiguration.actionMethod.apply(cast(communicatorClass));
+            if (!method.isKnown()) continue;
             UnaryOperator<CommunicatorActionConfigurator> decorator = getCommunicatorDecorator(communicatorClass);
             decorator = then(decorator, getActionDecorator(communicatorClass, method));
             CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());

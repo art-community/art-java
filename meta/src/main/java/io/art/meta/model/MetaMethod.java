@@ -26,6 +26,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 
@@ -35,6 +36,7 @@ public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
     private final MetaType<T> returnType;
+    private Boolean known;
 
     protected MetaMethod(String name, MetaType<?> returnType) {
         this.name = name;
@@ -73,5 +75,17 @@ public abstract class MetaMethod<T> {
                 .map(parameter -> parameter.type() + SPACE + parameter.name())
                 .collect(joining(COMMA));
         return format(METHOD_FORMAT, returnType, name, parameters);
+    }
+
+    public boolean isKnown() {
+        if (nonNull(known)) return known;
+
+        known = true;
+
+        if (!returnType.isKnown()) return known = false;
+
+        if (parameters.isEmpty()) return known = true;
+
+        return known = parameters.values().stream().allMatch(parameter -> parameter.type().isKnown());
     }
 }

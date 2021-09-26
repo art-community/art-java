@@ -21,15 +21,17 @@ package io.art.meta.model;
 import io.art.core.annotation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static java.util.Objects.*;
 
 @ToString
 @Generation
 @EqualsAndHashCode
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MetaField<T> {
     private final String name;
     private final MetaType<?> type;
     private final boolean inherited;
+    private Boolean known;
 
     public String name() {
         return name;
@@ -41,5 +43,11 @@ public class MetaField<T> {
 
     public MetaType<T> type() {
         return cast(type);
+    }
+
+    public boolean isKnown() {
+        if (nonNull(known)) return known;
+        known = true;
+        return known = type.isKnown();
     }
 }

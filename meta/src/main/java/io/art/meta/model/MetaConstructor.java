@@ -27,6 +27,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import java.util.*;
 
 @ToString
@@ -35,6 +36,7 @@ import java.util.*;
 public abstract class MetaConstructor<T> {
     private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
+    private Boolean known;
 
     protected MetaConstructor(MetaType<T> type) {
         this.type = type;
@@ -90,5 +92,15 @@ public abstract class MetaConstructor<T> {
         } catch (Throwable throwable) {
             throw new MetaException(format(INVOCATION_ERROR, toString(), throwable.getMessage()), throwable);
         }
+    }
+
+    public boolean isKnown() {
+        if (nonNull(known)) return known;
+
+        known = true;
+
+        if (parameters.isEmpty()) return known = true;
+
+        return known = parameters.values().stream().allMatch(parameter -> parameter.type().isKnown());
     }
 }

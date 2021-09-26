@@ -96,12 +96,42 @@ public class MetaType<T> {
     @EqualsAndHashCode.Exclude
     private final MetaClass<T> declaration = cast(metaModule().configuration().library().classes().get(type));
 
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Boolean known;
+
     private final static Map<CacheKey, MetaType<?>> cache = weakMap();
 
     private final Set<MetaTypeModifiers> modifiers = set();
 
     public ImmutableSet<MetaTypeModifiers> modifiers() {
         return immutableSetOf(modifiers);
+    }
+
+    public boolean isKnown() {
+        if (nonNull(known)) return known;
+
+        known = true;
+
+        if (isNull(internalKind)) return known = false;
+
+        if (internalKind == UNKNOWN) return known = false;
+
+        if (internalKind == ENTITY && (isNull(declaration()) || !declaration().isKnown())) {
+            return known = false;
+        }
+
+        if (nonNull(arrayComponentType) && !arrayComponentType.isKnown()) {
+            return known = false;
+        }
+
+        for (MetaType<?> parameter : parameters) {
+            if (!parameter.isKnown()) {
+                return known = false;
+            }
+        }
+
+        return known = true;
     }
 
     protected MetaType<T> beginComputation() {

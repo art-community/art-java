@@ -4,6 +4,7 @@ import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.model.*;
+import io.art.core.collection.*;
 import io.art.meta.*;
 import io.art.meta.model.*;
 import lombok.experimental.*;
@@ -11,9 +12,10 @@ import static io.art.communicator.constants.CommunicatorConstants.Errors.*;
 import static io.art.communicator.factory.CommunicatorActionFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.FunctionExtensions.*;
-import static io.art.meta.extensions.MetaClassExtensions.joinMethods;
+import static io.art.meta.extensions.MetaClassExtensions.*;
 import static java.text.MessageFormat.*;
 import static java.util.function.Function.*;
 import java.util.*;
@@ -41,12 +43,14 @@ public class CommunicatorProxyFactory {
         Function<CommunicatorAction, Object> noArguments = CommunicatorAction::communicate;
         BiFunction<CommunicatorAction, Object, Object> oneArgument = CommunicatorAction::communicate;
 
-        Map<MetaMethod<?>, CommunicatorAction> actions = proxyClass.methods()
+        ImmutableSet<MetaMethod<?>> methods = proxyClass.methods().stream().filter(MetaMethod::isKnown).collect(immutableSetCollector());
+
+        Map<MetaMethod<?>, CommunicatorAction> actions = methods
                 .stream()
                 .filter(method -> method.parameters().size() < 2)
                 .collect(mapCollector(identity(), provider));
 
-        if (actions.size() != proxyClass.methods().size()) {
+        if (actions.size() != methods.size()) {
             String invalidMethods = joinMethods(proxyClass, method -> !actions.containsKey(method));
             throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHODS, proxyClass.definition().type().getName(), invalidMethods));
         }
@@ -62,4 +66,5 @@ public class CommunicatorProxyFactory {
 
         return new CommunicatorProxy<>(cast(proxy), actions.values().stream().collect(immutableMapCollector(CommunicatorAction::getId, identity())));
     }
+
 }
