@@ -30,7 +30,7 @@ public class WsTest {
                 json(),
                 http(http -> http
                         .communicator(communicator -> communicator.connector(TestWsConnector.class, connector -> connector.verbose(true)))
-                        .server(server -> server.route(TestWsService.class).configure(s -> s.verbose(true))))
+                        .server(server -> server.route(TestWsService.class).configure(s -> s.verbose(true)).service(TestWsService.class, ws -> ws.logging())))
         );
     }
 

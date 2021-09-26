@@ -200,7 +200,6 @@ public class HttpCommunication implements Communication {
                 responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case WS:
-
                 return configuration
                         .client
                         .websocket()
