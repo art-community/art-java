@@ -27,6 +27,7 @@ import java.util.function.*;
 class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
     private final ServiceMethod serviceMethod;
     private final MetaType<?> inputType;
+    private final MetaType<?> outputType;
     private final HttpRouteConfiguration routeConfiguration;
     private final MimeType defaultMimeType;
     private final MetaType<?> inputMappingType;
@@ -50,6 +51,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         owner = serviceMethod.getInvoker().getOwner();
         delegate = serviceMethod.getInvoker().getDelegate();
         inputType = serviceMethod.getInputType();
+        outputType = serviceMethod.getOutputType();
     }
 
     @Override
@@ -71,7 +73,6 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
                 .inbound()
                 .aggregateFrames()
                 .receive()
-                .retain()
                 .map(data -> reader.read(data, inputMappingType))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue);

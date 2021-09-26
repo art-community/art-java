@@ -200,6 +200,7 @@ public class HttpCommunication implements Communication {
                 responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case WS:
+
                 return configuration
                         .client
                         .websocket()
@@ -241,7 +242,6 @@ public class HttpCommunication implements Communication {
         return inbound
                 .aggregateFrames()
                 .receive()
-                .retain()
                 .map(bytes -> configuration.reader.read(bytes, outputMappingType))
                 .filter(payload -> !payload.isEmpty())
                 .map(TransportPayload::getValue);
