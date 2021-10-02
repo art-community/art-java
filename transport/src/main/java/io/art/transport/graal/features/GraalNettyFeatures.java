@@ -4,10 +4,10 @@ import com.oracle.svm.core.*;
 import com.oracle.svm.core.option.*;
 import com.oracle.svm.core.os.*;
 import com.oracle.svm.hosted.FeatureImpl.*;
-import io.art.core.caster.*;
 import io.art.core.graal.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.GraalConstants.*;
 import static io.art.core.constants.StringConstants.*;
@@ -46,7 +46,7 @@ public class GraalNettyFeatures implements Feature {
         String libraryDirectory = new File(workingPath).getAbsolutePath();
         stream(NETTY_EPOLL_LIBRARY_REGEXPS).forEach(name -> extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory));
 
-        LocatableMultiOptionValue<String> current = Caster.cast(SubstrateOptions.CLibraryPath.getValue());
+        LocatableMultiOptionValue<String> current = cast(SubstrateOptions.CLibraryPath.getValue());
         current.valueUpdate(libraryDirectory);
 
         GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
