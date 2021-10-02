@@ -44,7 +44,7 @@ public class GraalNettyFeatures implements Feature {
 
         String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
         String libraryDirectory = new File(workingPath, NETTY_STATIC_LIBRARIES_RELATIVE_PATH).getAbsolutePath();
-        stream(NETTY_EPOLL_LIBRARY_NAMES).forEach(name -> extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory));
+        stream(NETTY_EPOLL_LIBRARY_REGEXPS).forEach(name -> extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory));
 
         LocatableMultiOptionValue<String> current = Caster.cast(SubstrateOptions.CLibraryPath.getValue());
         current.valueUpdate(libraryDirectory);
