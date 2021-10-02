@@ -1,6 +1,5 @@
 package io.art.transport.graal.features;
 
-import com.oracle.svm.core.os.*;
 import com.oracle.svm.hosted.FeatureImpl.*;
 import io.art.core.graal.*;
 import org.graalvm.nativeimage.*;
@@ -80,9 +79,8 @@ public class GraalNettyFeatures implements Feature {
 
     private void registerMacOsClasses() {
         try {
-            if (IsDefined.isDarwin()) {
-                registerForNativeUsage(NETTY_MAC_OS_CLASSES);
-            }
+            if (!Platform.includedIn(Platform.DARWIN.class)) return;
+            registerForNativeUsage(NETTY_MAC_OS_CLASSES);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
         }
