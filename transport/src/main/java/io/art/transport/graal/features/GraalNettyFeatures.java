@@ -34,7 +34,7 @@ public class GraalNettyFeatures implements Feature {
         }
 
         LocatableMultiOptionValue<String> current = cast(SubstrateOptions.CLibraryPath.getValue());
-        current.valueUpdate(libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).toFile());
+        current.valueUpdate(libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).toFile().getAbsolutePath());
     }
 
     @Override
