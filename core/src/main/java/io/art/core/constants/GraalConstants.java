@@ -24,5 +24,5 @@ public interface GraalConstants {
             "sun.net.dns.OptionsImpl"
     };
 
-    String GRAAL_WORKING_PATH_PROPERTY = "graal.working.path";
+    String GRAAL_WORKING_PATH_PROPERTY = "working.path";
 }
