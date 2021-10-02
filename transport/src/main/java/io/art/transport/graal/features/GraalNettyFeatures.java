@@ -22,6 +22,22 @@ import java.util.*;
 
 public class GraalNettyFeatures implements Feature {
     @Override
+    public void duringSetup(DuringSetupAccess access) {
+        String property = getProperty(NETTY_STATIC_LINK_PROPERTY);
+        if (!TRUE.toString().equalsIgnoreCase(property)) return;
+        if (!Platform.includedIn(Platform.LINUX.class)) return;
+
+        String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
+        File libraryDirectory = new File(workingPath);
+        for (String name : NETTY_EPOLL_LIBRARY_REGEXPS) {
+            extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory.getAbsolutePath());
+        }
+
+        LocatableMultiOptionValue<String> current = cast(SubstrateOptions.CLibraryPath.getValue());
+        current.valueUpdate(libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).toFile());
+    }
+
+    @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
         setProperty(MAX_UPDATE_ARRAY_SIZE_PROPERTY, DEFAULT_MAX_UPDATE_ARRAY_SIZE);
         setProperty(NETTY_MAX_ORDER_PROPERTY, DEFAULT_NETTY_MAX_ORDER);
@@ -37,18 +53,6 @@ public class GraalNettyFeatures implements Feature {
     }
 
     private void linkStatic(BeforeAnalysisAccessImpl access) {
-        String property = getProperty(NETTY_STATIC_LINK_PROPERTY);
-        if (!TRUE.toString().equalsIgnoreCase(property)) return;
-        if (!Platform.includedIn(Platform.LINUX.class)) return;
-
-        String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
-        File libraryDirectory = new File(workingPath);
-        for (String name : NETTY_EPOLL_LIBRARY_REGEXPS) {
-            extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory.getAbsolutePath());
-        }
-
-        LocatableMultiOptionValue<String> current = cast(SubstrateOptions.CLibraryPath.getValue());
-        current.valueUpdate(libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).toFile().getAbsolutePath());
 
         GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
                 .libraryNames(NETTY_EPOLL_LIBRARY_NAMES)
