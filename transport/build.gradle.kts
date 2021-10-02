@@ -28,21 +28,8 @@ dependencies {
             .exclude("org.slf4j")
 
 
-    fun useRemoteNetty() {
-        api("io.netty", "netty-all", nettyVersion)
-                .exclude("org.slf4j")
-    }
-
-    fun useLocalMuslNetty() {
-        api(file("libraries/netty-all-4.1.69.Final-musl.jar"))
-    }
-
-    project.findProperty("musl")?.let { musl ->
-        (musl as? String)
-                ?.takeIf { asString -> asString == "true" }
-                ?.apply { useLocalMuslNetty() }
-                ?: useRemoteNetty()
-    } ?: useRemoteNetty()
+    api("io.netty", "netty-all", nettyVersion)
+            .exclude("org.slf4j")
 
     api(project(":core"))
     api(project(":meta"))
