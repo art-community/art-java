@@ -6,7 +6,11 @@ import com.oracle.svm.core.os.*;
 import com.oracle.svm.hosted.FeatureImpl.*;
 import io.art.core.caster.*;
 import io.art.core.graal.*;
+import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.GraalConstants.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.JarExtensions.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
@@ -35,14 +39,16 @@ public class GraalNettyFeatures implements Feature {
     private void linkStatic(BeforeAnalysisAccessImpl access) {
         String property = getProperty(NETTY_STATIC_LINK_PROPERTY);
         if (!TRUE.toString().equalsIgnoreCase(property)) return;
+        if (!Platform.includedIn(Platform.LINUX.class)) return;
 
-        String libraryDirectory = new File("netty-static-linux-libraries").getAbsolutePath();
-        extractCurrentJarEntry(GraalNettyFeatures.class, "netty-static-linux-libraries", libraryDirectory);
+        String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
+        String libraryDirectory = new File(workingPath, NETTY_STATIC_LIBRARIES_RELATIVE_PATH).getAbsolutePath();
+        extractCurrentJarEntry(GraalNettyFeatures.class, NETTY_STATIC_LIBRARIES_RELATIVE_PATH + SLASH + PLUS, libraryDirectory);
 
         LocatableMultiOptionValue<String> current = Caster.cast(SubstrateOptions.CLibraryPath.getValue());
         current.valueUpdate(libraryDirectory);
 
-        GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
+        GRAALSTATICLIBRARYCONFIGURATION nettyLibrary = GraalStaticLibraryConfiguration.builder()
                 .libraryNames(NETTY_EPOLL_LIBRARY_NAMES)
                 .symbolPrefixes(NETTY_NATIVE_LIBRARY_PREFIXES)
                 .build();
