@@ -177,12 +177,10 @@ public interface TransportModuleConstants {
         };
 
         String[] NETTY_NATIVE_LIBRARY_PREFIXES = new String[]{
-                "netty_unix",
-                "netty_kqeue",
-                "netty_epoll"
+                "io_netty_"
         };
 
-        String NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
+        STRING NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
         String NETTY_EPOLL_LIBRARY_NAME = "netty_transport_native_epoll";
     }
 }
