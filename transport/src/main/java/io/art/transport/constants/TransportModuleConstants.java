@@ -328,6 +328,11 @@ public interface TransportModuleConstants {
                 "netty_transport_native_unix"
         };
 
+        String[] NETTY_EPOLL_LIBRARY_FILES = new String[]{
+                "libnetty_transport_native_epoll.a",
+                "libnetty_transport_native_unix.a"
+        };
+
         String[] NETTY_EPOLL_LIBRARY_REGEXPS = new String[]{
                 ".+libnetty_transport_native_epoll\\.a",
                 ".+libnetty_transport_native_unix\\.a"

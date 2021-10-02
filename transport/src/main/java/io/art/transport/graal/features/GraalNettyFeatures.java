@@ -43,8 +43,8 @@ public class GraalNettyFeatures implements Feature {
         for (String name : NETTY_EPOLL_LIBRARY_REGEXPS) {
             extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory.getAbsolutePath());
         }
-        for (String name : NETTY_EPOLL_LIBRARY_NAMES) {
-            access.getNativeLibraries().getLibraryPaths().add(name);
+        for (String name : NETTY_EPOLL_LIBRARY_FILES) {
+            access.getNativeLibraries().getLibraryPaths().add(libraryDirectory.toPath().resolve(name).toAbsolutePath().toString());
         }
 
         GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
