@@ -329,8 +329,8 @@ public interface TransportModuleConstants {
         };
 
         String[] NETTY_EPOLL_LIBRARY_REGEXPS = new String[]{
-                ".+netty_transport_native_epoll.+",
-                ".+netty_transport_native_unix.+"
+                "libnetty_transport_native_epoll.a",
+                "libnetty_transport_native_unix.a"
         };
 
         String NETTY_STATIC_LIBRARIES_RELATIVE_PATH = "netty-static-linux-libraries";
