@@ -1,13 +1,10 @@
 package io.art.transport.graal.features;
 
-import com.oracle.svm.core.*;
-import com.oracle.svm.core.option.*;
 import com.oracle.svm.core.os.*;
 import com.oracle.svm.hosted.FeatureImpl.*;
 import io.art.core.graal.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.GraalConstants.*;
 import static io.art.core.constants.StringConstants.*;
@@ -33,10 +30,10 @@ public class GraalNettyFeatures implements Feature {
             extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory.getAbsolutePath());
         }
 
-        LocatableMultiOptionValue<String> current = cast(SubstrateOptions.CLibraryPath.getValue());
-        current.valueUpdate(libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).toFile().getAbsolutePath());
-        out.println(SubstrateOptions.CLibraryPath.getValue().values());
-
+        for (String name : NETTY_EPOLL_LIBRARY_NAMES) {
+            DuringAnalysisAccessImpl setup = (DuringAnalysisAccessImpl) access;
+            setup.getNativeLibraries().getLibraryPaths().add(name);
+        }
     }
 
     @Override
@@ -51,7 +48,6 @@ public class GraalNettyFeatures implements Feature {
         registerEpoll();
         registerKqueue();
         registerMacOsClasses();
-        linkStatic((BeforeAnalysisAccessImpl) access);
     }
 
     private void linkStatic(BeforeAnalysisAccessImpl access) {
