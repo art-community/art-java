@@ -6,6 +6,7 @@ import com.oracle.svm.hosted.c.*;
 import lombok.experimental.*;
 import org.graalvm.nativeimage.hosted.*;
 import static com.oracle.svm.hosted.FeatureImpl.*;
+import static java.util.Arrays.*;
 import java.io.*;
 import java.lang.reflect.*;
 
@@ -56,7 +57,7 @@ public class GraalNativeRegistrator {
 
         NativeLibrarySupport.singleton().preregisterUninitializedBuiltinLibrary(configuration.getLibraryName());
         PlatformNativeLibrarySupport nativeLibrarySupport = PlatformNativeLibrarySupport.singleton();
-        configuration.getSymbolPrefixes().forEach(nativeLibrarySupport::addBuiltinPkgNativePrefix);
+        stream(configuration.getSymbolPrefixes()).forEach(nativeLibrarySupport::addBuiltinPkgNativePrefix);
 
         NativeLibraries nativeLibraries = access.getNativeLibraries();
         nativeLibraries.addStaticJniLibrary(configuration.getLibraryName());

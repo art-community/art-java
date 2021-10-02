@@ -5,7 +5,6 @@ import com.oracle.svm.hosted.FeatureImpl.*;
 import io.art.core.graal.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.core.checker.EmptinessChecker.*;
-import static io.art.core.factory.SetFactory.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
@@ -35,7 +34,7 @@ public class GraalNettyFeatures implements Feature {
         GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
                 .libraryName(NETTY_EPOLL_LIBRARY_NAME)
                 .libraryPath(Paths.get(property))
-                .symbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
+                .symbolPrefixes(NETTY_NATIVE_LIBRARY_PREFIXES)
                 .build();
         registerStaticNativeLibrary(access, nettyLibrary);
     }
