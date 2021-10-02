@@ -48,7 +48,7 @@ public class GraalNettyFeatures implements Feature {
         LocatableMultiOptionValue<String> current = Caster.cast(SubstrateOptions.CLibraryPath.getValue());
         current.valueUpdate(libraryDirectory);
 
-        GRAALSTATICLIBRARYCONFIGURATION nettyLibrary = GraalStaticLibraryConfiguration.builder()
+        GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
                 .libraryNames(NETTY_EPOLL_LIBRARY_NAMES)
                 .symbolPrefixes(NETTY_NATIVE_LIBRARY_PREFIXES)
                 .build();
