@@ -1,16 +1,15 @@
 package io.art.transport.graal.features;
 
-import com.oracle.svm.core.jdk.*;
 import com.oracle.svm.core.os.*;
 import com.oracle.svm.hosted.FeatureImpl.*;
-import com.oracle.svm.hosted.c.*;
+import io.art.core.graal.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
 import static java.lang.System.*;
-import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -31,17 +30,14 @@ public class GraalNettyFeatures implements Feature {
     }
 
     private void linkStatic(BeforeAnalysisAccessImpl access) {
-        String property = getProperty(NETTY_STATIC_PROPERTY);
+        String property = getProperty(NETTY_STATIC_LIBRARY_PROPERTY);
         if (isEmpty(property)) return;
-
-        File libraryPath = Paths.get(property).toFile();
-        if (!libraryPath.exists()) return;
-
-        NativeLibrarySupport.singleton().preregisterUninitializedBuiltinLibrary("netty_transport_native_epoll");
-        PlatformNativeLibrarySupport.singleton().addBuiltinPkgNativePrefix("io_netty_channel");
-        NativeLibraries nativeLibraries = access.getNativeLibraries();
-        nativeLibraries.addStaticJniLibrary("netty_transport_native_epoll");
-
+        GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
+                .libraryName(NETTY_EPOLL_LIBRARY_NAME)
+                .libraryPath(Paths.get(property))
+                .symbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
+                .build();
+        registerStaticNativeLibrary(access, nettyLibrary);
     }
 
     private void registerKqueue() {

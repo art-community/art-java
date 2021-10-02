@@ -176,6 +176,13 @@ public interface TransportModuleConstants {
                 "io.netty.resolver.dns.macos.DnsResolver"
         };
 
-        String NETTY_STATIC_PROPERTY = "nettyStaticLibrary";
+        String[] NETTY_NATIVE_LIBRARY_PREFIXES = new String[]{
+                "netty_unix",
+                "netty_kqeue",
+                "netty_epoll"
+        };
+
+        String NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
+        String NETTY_EPOLL_LIBRARY_NAME = "netty_transport_native_epoll";
     }
 }
