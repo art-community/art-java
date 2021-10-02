@@ -9,7 +9,6 @@ import static io.art.core.graal.GraalNativeRegistrator.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
 import static java.lang.System.*;
-import java.nio.file.*;
 import java.util.*;
 
 public class GraalNettyFeatures implements Feature {
@@ -32,8 +31,7 @@ public class GraalNettyFeatures implements Feature {
         String property = getProperty(NETTY_STATIC_LIBRARY_PROPERTY);
         if (isEmpty(property)) return;
         GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
-                .libraryName(NETTY_EPOLL_LIBRARY_NAME)
-                .libraryPath(Paths.get(property))
+                .libraryNames(NETTY_EPOLL_LIBRARY_NAMES)
                 .symbolPrefixes(NETTY_NATIVE_LIBRARY_PREFIXES)
                 .build();
         registerStaticNativeLibrary(access, nettyLibrary);

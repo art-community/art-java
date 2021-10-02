@@ -322,6 +322,10 @@ public interface TransportModuleConstants {
         };
 
         String NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
-        String NETTY_EPOLL_LIBRARY_NAME = "netty_transport_native_epoll";
+
+        String[] NETTY_EPOLL_LIBRARY_NAMES = new String[]{
+                "netty_transport_native_epoll",
+                "netty_transport_native_unix"
+        };
     }
 }

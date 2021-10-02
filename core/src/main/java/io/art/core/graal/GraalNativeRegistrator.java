@@ -2,12 +2,10 @@ package io.art.core.graal;
 
 import com.oracle.svm.core.jdk.*;
 import com.oracle.svm.core.jni.*;
-import com.oracle.svm.hosted.c.*;
 import lombok.experimental.*;
 import org.graalvm.nativeimage.hosted.*;
 import static com.oracle.svm.hosted.FeatureImpl.*;
 import static java.util.Arrays.*;
-import java.io.*;
 import java.lang.reflect.*;
 
 @UtilityClass
@@ -52,14 +50,8 @@ public class GraalNativeRegistrator {
     }
 
     public static void registerStaticNativeLibrary(BeforeAnalysisAccessImpl access, GraalStaticLibraryConfiguration configuration) {
-        File libraryPath = configuration.getLibraryPath().toFile();
-        if (!libraryPath.exists()) return;
-
-        NativeLibrarySupport.singleton().preregisterUninitializedBuiltinLibrary(configuration.getLibraryName());
-        PlatformNativeLibrarySupport nativeLibrarySupport = PlatformNativeLibrarySupport.singleton();
-        stream(configuration.getSymbolPrefixes()).forEach(nativeLibrarySupport::addBuiltinPkgNativePrefix);
-
-        NativeLibraries nativeLibraries = access.getNativeLibraries();
-        nativeLibraries.addStaticJniLibrary(configuration.getLibraryName());
+        stream(configuration.getLibraryNames()).forEach(NativeLibrarySupport.singleton()::preregisterUninitializedBuiltinLibrary);
+        stream(configuration.getSymbolPrefixes()).forEach(PlatformNativeLibrarySupport.singleton()::addBuiltinPkgNativePrefix);
+        stream(configuration.getLibraryNames()).forEach(access.getNativeLibraries()::addStaticJniLibrary);
     }
 }
