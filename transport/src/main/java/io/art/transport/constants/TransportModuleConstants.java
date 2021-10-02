@@ -180,7 +180,7 @@ public interface TransportModuleConstants {
                 "io_netty_"
         };
 
-        STRING NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
+        String NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
         String NETTY_EPOLL_LIBRARY_NAME = "netty_transport_native_epoll";
     }
 }
