@@ -184,6 +184,7 @@ public interface TransportModuleConstants {
                 "io_netty_channel_unix_FileDescriptor",
                 "io_netty_channel_unix_LimitsStaticallyReferencedJniMethods",
                 "io_netty_channel_unix_Socket",
+                "io_netty_channel_epoll_NativeStaticallyReferencedJniMethods",
         };
 
         String NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
