@@ -176,5 +176,6 @@ public interface TransportModuleConstants {
                 "io.netty.resolver.dns.macos.DnsResolver"
         };
 
+        String NETTY_STATIC_PROPERTY = "nettyStaticLibrary";
     }
 }
