@@ -45,7 +45,7 @@ public class GraalNettyFeatures implements Feature {
         }
         for (String name : NETTY_EPOLL_LIBRARY_FILES) {
             String path = libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).resolve(name).toAbsolutePath().toString();
-            access.getNativeLibraries().getLibraryPaths().add(PATH);
+            access.getNativeLibraries().getLibraryPaths().add(path);
         }
 
         GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
