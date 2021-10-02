@@ -177,7 +177,7 @@ public interface TransportModuleConstants {
         };
 
         String[] NETTY_NATIVE_LIBRARY_PREFIXES = new String[]{
-                "io_netty_channel_epoll_Native"
+                "io_netty_"
         };
 
         String NETTY_STATIC_LIBRARY_PROPERTY = "nettyStaticLibrary";
