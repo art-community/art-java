@@ -17,6 +17,7 @@ import static io.art.transport.constants.TransportModuleConstants.GraalConstants
 import static io.netty.util.internal.MacAddressUtil.*;
 import static java.lang.Boolean.*;
 import static java.lang.System.*;
+import static java.util.Arrays.*;
 import java.io.*;
 import java.util.*;
 
@@ -43,7 +44,7 @@ public class GraalNettyFeatures implements Feature {
 
         String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
         String libraryDirectory = new File(workingPath, NETTY_STATIC_LIBRARIES_RELATIVE_PATH).getAbsolutePath();
-        extractCurrentJarEntry(GraalNettyFeatures.class, NETTY_STATIC_LIBRARIES_RELATIVE_PATH + SLASH + PLUS, libraryDirectory);
+        stream(NETTY_EPOLL_LIBRARY_NAMES).forEach(name -> extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory));
 
         LocatableMultiOptionValue<String> current = Caster.cast(SubstrateOptions.CLibraryPath.getValue());
         current.valueUpdate(libraryDirectory);
