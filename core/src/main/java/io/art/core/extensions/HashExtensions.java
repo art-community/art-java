@@ -74,7 +74,7 @@ public class HashExtensions {
         return xx64(content, DEFAULT_XX64_HASH_SEED);
     }
 
-    public synchronized static int xx32(byte[] content) {
+    public static int xx32(byte[] content) {
         return xx32(content, DEFAULT_XX32_HASH_SEED);
     }
 }

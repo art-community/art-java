@@ -126,7 +126,7 @@ public class RsocketServer implements Server {
         RsocketSslConfiguration ssl = common.getSsl();
         if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
         ServerTransport<CloseableChannel> transport = TcpServerTransport.create(tcpDecorator.apply(server), tcp.getMaxFrameLength());
-        return createServer(TCP_SERVER_TYPE, common, transport);
+        return createServer(common, transport);
     }
 
     private CloseableChannel createWsServer() {
@@ -137,10 +137,10 @@ public class RsocketServer implements Server {
         RsocketSslConfiguration ssl = common.getSsl();
         if (nonNull(ssl)) createSslContext(ssl).ifPresent(server::secure);
         ServerTransport<CloseableChannel> transport = WebsocketServerTransport.create(wsDecorator.apply(server));
-        return createServer(WS_SERVER_TYPE, common, transport);
+        return createServer(common, transport);
     }
 
-    private CloseableChannel createServer(String type, RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
+    private CloseableChannel createServer(RsocketCommonServerConfiguration serverConfiguration, ServerTransport<CloseableChannel> transport) {
         int fragmentationMtu = serverConfiguration.getFragmentationMtu();
         RSocketServer server = RSocketServer
                 .create((payload, requester) -> createAcceptor(payload, serverConfiguration))

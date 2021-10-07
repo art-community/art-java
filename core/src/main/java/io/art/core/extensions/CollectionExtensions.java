@@ -139,19 +139,16 @@ public final class CollectionExtensions {
 
 
     public static <K, V> V putIfAbsent(Map<K, V> map, K key, Supplier<V> value) {
-        V current = map.get(key);
-        if (isNull(current)) {
-            current = value.get();
-            map.put(key, current);
-            return current;
-        }
-        return current;
+        return map.computeIfAbsent(key, ignore -> value.get());
     }
 
 
     public static <V> V putIfAbsent(Set<V> set, V value) {
         if (set.contains(value)) {
-            return set.stream().filter(value::equals).findFirst().orElseThrow(ImpossibleSituationException::new);
+            return set.stream()
+                    .filter(value::equals)
+                    .findFirst()
+                    .orElseThrow(ImpossibleSituationException::new);
         }
         set.add(value);
         return value;
