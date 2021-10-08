@@ -5,9 +5,15 @@ import io.art.core.reactive.BlockingLastSubscriber;
 import io.art.core.reactive.BlockingMonoSubscriber;
 import lombok.experimental.*;
 import org.reactivestreams.*;
+import reactor.core.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.ReactiveConstants.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
+import static reactor.core.publisher.Sinks.*;
+import javax.annotation.*;
+import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @UtilityClass
 public class ReactiveExtensions {
@@ -60,5 +66,43 @@ public class ReactiveExtensions {
         mono.subscribe(subscriber);
         T result = subscriber.blockingGet();
         return result == NULL_OBJECT ? null : result;
+    }
+
+    PUBLIC <T> Flux<T> compensate(Flux<T> current, Predicate<T> predicate, Function<T, Flux<T>> compensation) {
+        Many<T> splitter = many().unicast().onBackpressureBuffer();
+        AtomicBoolean condition = new AtomicBoolean(false);
+
+        current.subscribe(new CoreSubscriber<>() {
+            @Override
+            public void onSubscribe(@Nonnull Subscription subscription) {
+            }
+
+            @Override
+            public void onNext(T element) {
+                if (predicate.test(element)) {
+                    if (condition.compareAndSet(false, true)) {
+                        compensation.apply(element)
+                                .doOnNext(compensated -> splitter.emitNext(compensated, FAIL_FAST))
+                                .doOnError(error -> splitter.emitError(error, FAIL_FAST))
+                                .doOnComplete(() -> splitter.emitComplete(FAIL_FAST))
+                                .subscribe();
+                    }
+                    return;
+                }
+                splitter.emitNext(element, FAIL_FAST);
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                splitter.emitError(error, FAIL_FAST);
+            }
+
+            @Override
+            public void onComplete() {
+                if (!condition.get()) splitter.emitComplete(FAIL_FAST);
+            }
+        });
+
+        return splitter.asFlux();
     }
 }
