@@ -68,7 +68,7 @@ public class ReactiveExtensions {
         return result == NULL_OBJECT ? null : result;
     }
 
-    PUBLIC <T> Flux<T> compensate(Flux<T> current, Predicate<T> predicate, Function<T, Flux<T>> compensation) {
+    public <T> Flux<T> compensate(Flux<T> current, Predicate<T> predicate, Function<T, Flux<T>> compensation) {
         Many<T> splitter = many().unicast().onBackpressureBuffer();
         AtomicBoolean condition = new AtomicBoolean(false);
 
