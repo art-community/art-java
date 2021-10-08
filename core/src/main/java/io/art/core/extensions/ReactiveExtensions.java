@@ -105,4 +105,42 @@ public class ReactiveExtensions {
 
         return splitter.asFlux();
     }
+
+    public <T> Flux<T> compensateOnError(Flux<T> current, Predicate<Throwable> predicate, Function<Throwable, Flux<T>> compensation) {
+        Many<T> splitter = many().unicast().onBackpressureBuffer();
+        AtomicBoolean condition = new AtomicBoolean(false);
+
+        current.subscribe(new CoreSubscriber<>() {
+            @Override
+            public void onSubscribe(@Nonnull Subscription subscription) {
+            }
+
+            @Override
+            public void onNext(T element) {
+                splitter.emitNext(element, FAIL_FAST);
+            }
+
+            @Override
+            public void onError(Throwable error) {
+                if (predicate.test(error)) {
+                    if (condition.compareAndSet(false, true)) {
+                        compensation.apply(error)
+                                .doOnNext(compensated -> splitter.emitNext(compensated, FAIL_FAST))
+                                .doOnError(compensationError -> splitter.emitError(compensationError, FAIL_FAST))
+                                .doOnComplete(() -> splitter.emitComplete(FAIL_FAST))
+                                .subscribe();
+                    }
+                    return;
+                }
+                splitter.emitError(error, FAIL_FAST);
+            }
+
+            @Override
+            public void onComplete() {
+                if (!condition.get()) splitter.emitComplete(FAIL_FAST);
+            }
+        });
+
+        return splitter.asFlux();
+    }
 }
