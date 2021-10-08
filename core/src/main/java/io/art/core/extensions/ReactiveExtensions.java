@@ -94,7 +94,7 @@ public class ReactiveExtensions {
 
             @Override
             public void onError(Throwable error) {
-                splitter.emitError(error, FAIL_FAST);
+                if (!condition.get()) splitter.emitError(error, FAIL_FAST);
             }
 
             @Override
@@ -117,7 +117,7 @@ public class ReactiveExtensions {
 
             @Override
             public void onNext(T element) {
-                splitter.emitNext(element, FAIL_FAST);
+                if (!condition.get()) splitter.emitNext(element, FAIL_FAST);
             }
 
             @Override
