@@ -16,8 +16,8 @@ public class RsocketTestExecutionsRegistry {
         executions.clear();
     }
 
-    public static Map<String, Object> executions() {
-        assertTrue(waitCondition(() -> executions.size() == 16));
+    public static Map<String, Object> executions(int size) {
+        assertTrue(waitCondition(() -> executions.size() == size));
         return executions;
     }
 }

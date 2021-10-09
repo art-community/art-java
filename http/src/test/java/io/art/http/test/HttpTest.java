@@ -4,6 +4,7 @@ import io.art.http.test.communicator.*;
 import io.art.http.test.meta.*;
 import io.art.http.test.registry.*;
 import io.art.http.test.service.*;
+import io.art.meta.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
@@ -62,7 +63,7 @@ public class HttpTest {
         assertEquals("test", asMono(communicator.post15(Flux.just("test"))).block(), "post15");
         assertEquals("test", asFlux(communicator.post16(Flux.just("test"))).blockFirst(), "post16");
 
-        Map<String, Object> executions = executions();
+        Map<String, Object> executions = executions(Meta.declaration(TestHttp.class).methods().size());
         assertNotNull(executions.get("post1"), "post1");
         assertNotNull(executions.get("post2"), "post2");
         assertNotNull(executions.get("post3"), "post3");

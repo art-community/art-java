@@ -5,6 +5,7 @@ import io.art.http.test.communicator.TestWs.*;
 import io.art.http.test.meta.*;
 import io.art.http.test.registry.*;
 import io.art.http.test.service.*;
+import io.art.meta.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
@@ -15,6 +16,7 @@ import static io.art.http.Http.*;
 import static io.art.http.module.HttpActivator.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static io.art.json.module.JsonActivator.*;
+import static io.art.logging.module.LoggingActivator.logging;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,8 +31,8 @@ public class WsTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestWsConnector.class))
-                        .server(server -> server.route(TestWsService.class)))
+                        .communicator(communicator -> communicator.connector(TestWsConnector.class, connector -> connector.verbose(true)))
+                        .server(server -> server.route(TestWsService.class).configure(s -> s.verbose(true)).service(TestWsService.class, ws -> ws.logging())))
         );
     }
 
@@ -61,8 +63,9 @@ public class WsTest {
         assertEquals("test", communicator.ws14(Flux.just("test")), "ws14");
         assertEquals("test", asMono(communicator.ws15(Flux.just("test"))).block(), "ws15");
         assertEquals("test", asFlux(communicator.ws16(Flux.just("test"))).blockFirst(), "ws16");
+        communicator.wsEmptyFlux(Flux.empty());
 
-        Map<String, Object> executions = executions();
+        Map<String, Object> executions = executions(Meta.declaration(TestWs.class).methods().size());
         assertNotNull(executions.get("ws1"), "ws1");
         assertNotNull(executions.get("ws2"), "ws2");
         assertNotNull(executions.get("ws3"), "ws3");
@@ -79,5 +82,6 @@ public class WsTest {
         assertEquals("test", asFlux(executions.get("ws14")).blockFirst(), "ws14");
         assertEquals("test", asFlux(executions.get("ws15")).blockFirst(), "ws15");
         assertEquals("test", asFlux(executions.get("ws16")).blockFirst(), "ws16");
+        assertEquals("test", asFlux(executions.get("wsEmptyFlux")).blockFirst(), "done");
     }
 }

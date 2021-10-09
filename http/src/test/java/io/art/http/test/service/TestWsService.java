@@ -106,4 +106,14 @@ public class TestWsService implements TestWs {
         register("ws16", many.asFlux());
         return Flux.just("test");
     }
+
+    @Override
+    public void wsEmptyFlux(Flux<String> input) {
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        input.doOnComplete(() -> {
+            many.emitNext("done", FAIL_FAST);
+            many.emitComplete(FAIL_FAST);
+        }).subscribe();
+        register("wsEmptyFlux", many.asFlux());
+    }
 }

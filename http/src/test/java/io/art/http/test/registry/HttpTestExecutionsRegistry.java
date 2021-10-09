@@ -1,5 +1,7 @@
 package io.art.http.test.registry;
 
+import io.art.http.test.service.*;
+import io.art.meta.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.waiter.Waiter.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -16,8 +18,8 @@ public class HttpTestExecutionsRegistry {
         executions.clear();
     }
 
-    public static Map<String, Object> executions() {
-        assertTrue(waitCondition(() -> executions.size() == 16));
+    public static Map<String, Object> executions(int size) {
+        assertTrue(waitCondition(() -> executions.size() == size));
         return executions;
     }
 }

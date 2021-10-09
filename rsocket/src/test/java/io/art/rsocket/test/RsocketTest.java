@@ -1,5 +1,6 @@
 package io.art.rsocket.test;
 
+import io.art.meta.*;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
@@ -61,7 +62,7 @@ public class RsocketTest {
         assertEquals("test", asMono(communicator.m15(Flux.just("test"))).block(), "m15");
         assertEquals("test", asFlux(communicator.m16(Flux.just("test"))).blockFirst(), "m16");
 
-        Map<String, Object> executions = executions();
+        Map<String, Object> executions = executions(Meta.declaration(TestRsocket.class).methods().size());
         assertNotNull(executions.get("m1"), "m1");
         assertNotNull(executions.get("m2"), "m2");
         assertNotNull(executions.get("m3"), "m3");

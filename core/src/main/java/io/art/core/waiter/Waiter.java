@@ -41,7 +41,7 @@ public class Waiter {
         CountDownLatch latch = new CountDownLatch(1);
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
         scheduler.setMaximumPoolSize(1);
-        scheduler.scheduleAtFixedRate(() -> check(condition, latch), 0L, checkPeriod.toMillis(), MILLISECONDS);
+        scheduler.scheduleAtFixedRate(() -> check(scheduler, condition, latch), 0L, checkPeriod.toMillis(), MILLISECONDS);
         return handleException(ignored -> false).call(() -> latch.await(timeout.toMillis(), MILLISECONDS));
     }
 
@@ -50,7 +50,10 @@ public class Waiter {
         wrapExceptionCall(() -> latch.await(time.toMillis(), MILLISECONDS));
     }
 
-    private static void check(Supplier<Boolean> condition, CountDownLatch latch) {
-        if (condition.get()) latch.countDown();
+    private static void check(ScheduledThreadPoolExecutor scheduler, Supplier<Boolean> condition, CountDownLatch latch) {
+        if (condition.get()) {
+            scheduler.shutdownNow();
+            latch.countDown();
+        }
     }
 }
