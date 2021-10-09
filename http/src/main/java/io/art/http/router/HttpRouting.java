@@ -75,7 +75,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
 
         Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
 
-        FLUX<Object> input = (localState.initialized() ? localState.get().request() : request)
+        Flux<Object> input = (localState.initialized() ? localState.get().request() : request)
                 .receive()
                 .aggregate()
                 .map(data -> reader.read(data, inputMappingType))
