@@ -16,7 +16,6 @@ import static io.art.core.mime.MimeType.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.WsLocalState.*;
-import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
@@ -25,8 +24,6 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
@@ -69,99 +66,24 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.initialized() ? localState.get().outbound().send(output).then() : outbound.send(output).then();
-        }
-
-        if (inputType.internalKind() != FLUX) {
-            Flux<Object> input = (localState.initialized() ? localState.get().inbound() : inbound)
-                    .aggregateFrames()
-                    .receive()
-                    .map(data -> reader.read(data, inputMappingType))
-                    .filter(data -> !data.isEmpty())
-                    .map(TransportPayload::getValue);
-
-            Flux<ByteBuf> output = serviceMethod
-                    .serve(input)
-                    .map(value -> writer.write(typed(outputMappingType, value)));
-
             return localState.initialized()
                     ? localState.get().outbound().send(output).then()
                     : outbound.send(output).then();
         }
 
-        FluxInputHandler fluxInputHandler = new FluxInputHandler();
+        Flux<Object> input = (localState.initialized() ? localState.get().inbound() : inbound)
+                .aggregateFrames()
+                .receive()
+                .map(data -> reader.read(data, inputMappingType))
+                .filter(data -> !data.isEmpty())
+                .map(TransportPayload::getValue);
 
-        fluxInputHandler.subscribeOnInput(inbound, reader, localState);
-        fluxInputHandler.subscribeOnOutput(writer);
+        Flux<ByteBuf> output = serviceMethod
+                .serve(input)
+                .map(value -> writer.write(typed(outputMappingType, value)));
 
         return localState.initialized()
-                ? localState.get().outbound().send(fluxInputHandler.outputElements.asFlux()).then()
-                : outbound.send(fluxInputHandler.outputElements.asFlux()).then();
-    }
-
-    private class FluxInputHandler {
-        private final AtomicBoolean inputProduced = new AtomicBoolean(false);
-        private final AtomicBoolean inputComplete = new AtomicBoolean(false);
-        private final AtomicBoolean outputComplete = new AtomicBoolean(false);
-        private final AtomicBoolean done = new AtomicBoolean(false);
-        private final Sinks.Many<Object> inputElements = Sinks.many().unicast().onBackpressureBuffer();
-        private final Sinks.Many<ByteBuf> outputElements = Sinks.many().unicast().onBackpressureBuffer();
-
-        private void subscribeOnInput(WebsocketInbound inbound, TransportPayloadReader reader, LazyProperty<WsLocalState> localState) {
-            (localState.initialized() ? localState.get().inbound() : inbound)
-                    .aggregateFrames()
-                    .receive()
-                    .map(data -> reader.read(data, inputMappingType))
-                    .filter(data -> !data.isEmpty())
-                    .map(TransportPayload::getValue)
-                    .doOnNext(this::handleNextInput)
-                    .doOnError(error -> inputElements.emitError(error, FAIL_FAST))
-                    .doOnComplete(this::handleInputComplete)
-                    .subscribe();
-        }
-
-        private void subscribeOnOutput(TransportPayloadWriter writer) {
-            serviceMethod
-                    .serve(inputElements.asFlux())
-                    .map(value -> writer.write(typed(outputMappingType, value)))
-                    .doOnNext(element -> outputElements.emitNext(element, FAIL_FAST))
-                    .doOnError(error -> outputElements.emitError(error, FAIL_FAST))
-                    .doOnComplete(this::handleOutputComplete)
-                    .subscribe();
-        }
-
-        private void handleOutputComplete() {
-            if (done.get()) return;
-            outputComplete.compareAndSet(false, true);
-            if (inputProduced.get() || inputComplete.get()) {
-                if (done.compareAndSet(false, true)) {
-                    outputElements.emitComplete(FAIL_FAST);
-                }
-            }
-        }
-
-        private void handleInputComplete() {
-            inputElements.emitComplete(FAIL_FAST);
-
-            if (done.get()) return;
-            inputComplete.compareAndSet(false, true);
-            if (outputComplete.get()) {
-                if (done.compareAndSet(false, true)) {
-                    outputElements.emitComplete(FAIL_FAST);
-                }
-            }
-        }
-
-        private void handleNextInput(Object element) {
-            inputElements.emitNext(element, FAIL_FAST);
-
-            if (done.get()) return;
-            inputProduced.compareAndSet(false, true);
-            if (outputComplete.get()) {
-                if (done.compareAndSet(false, true)) {
-                    outputElements.emitComplete(FAIL_FAST);
-                }
-            }
-        }
+                ? localState.get().outbound().send(output).then()
+                : outbound.send(output).then();
     }
 }
