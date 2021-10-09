@@ -23,6 +23,7 @@ import io.art.scheduler.executor.deferred.*;
 import io.art.scheduler.test.counter.*;
 import io.art.scheduler.test.model.*;
 import org.junit.jupiter.api.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -41,6 +42,11 @@ public class SchedulerTest {
     @BeforeAll
     public static void setup() {
         initialize(scheduler());
+    }
+
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
     }
 
     @RepeatedTest(10)

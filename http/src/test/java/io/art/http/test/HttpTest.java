@@ -15,7 +15,6 @@ import static io.art.http.module.HttpActivator.*;
 import static io.art.http.test.communicator.TestHttp.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static io.art.json.module.JsonActivator.*;
-import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -27,7 +26,6 @@ public class HttpTest {
     public static void setup() {
         initialize(
                 meta(() -> new MetaHttpTest(new MetaMetaTest())),
-                logging(logging -> logging.configureDefault(defaultLogger -> defaultLogger.enabled(true))),
                 transport(),
                 json(),
                 http(http -> http

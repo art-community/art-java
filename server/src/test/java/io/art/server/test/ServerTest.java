@@ -7,6 +7,7 @@ import io.art.server.test.service.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -19,6 +20,11 @@ public class ServerTest {
     @BeforeAll
     public static void setup() {
         initialize(meta(MetaServerTest::new));
+    }
+
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
     }
 
     @Test

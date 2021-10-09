@@ -6,6 +6,7 @@ import io.art.meta.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
+import static io.art.core.context.Context.shutdown;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.json.module.JsonModule.*;
@@ -17,6 +18,11 @@ public class JsonTest {
     @BeforeAll
     public static void setup() {
         initialize(meta(MetaMetaTest::new), json());
+    }
+
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
     }
 
     @Test

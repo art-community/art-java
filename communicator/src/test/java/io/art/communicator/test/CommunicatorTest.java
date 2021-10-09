@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.communicator.test.registry.CommunicatorTestExecutionsRegistry.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -16,6 +17,11 @@ public class CommunicatorTest {
     @BeforeAll
     public static void setup() {
         initialize(meta(MetaCommunicatorTest::new));
+    }
+
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
     }
 
     @Test

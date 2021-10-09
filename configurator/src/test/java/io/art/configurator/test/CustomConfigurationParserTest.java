@@ -9,6 +9,7 @@ import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.configurator.custom.CustomConfigurationParser.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -20,6 +21,11 @@ public class CustomConfigurationParserTest {
     @BeforeAll
     public static void setup() {
         initialize(meta(MetaMetaTest::new));
+    }
+
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
     }
 
     @Test

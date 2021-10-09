@@ -6,6 +6,7 @@ import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;
@@ -31,6 +32,11 @@ public class RsocketTest {
                         .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
                         .server(server -> server.tcp().service(TestRsocketService.class)))
         );
+    }
+
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
     }
 
     @Test
