@@ -13,7 +13,6 @@ import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.http.module.HttpModule.*;
@@ -73,7 +72,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
             return localState.initialized() ? localState.get().response().send(output).then() : response.send(output).then();
         }
 
-        Sinks.One<ByteBuf> emptyCompleter = Sinks.one();
+        Sinks.One<Void> emptyCompleter = Sinks.one();
 
         Flux<Object> input = (localState.initialized() ? localState.get().request() : request)
                 .receive()
@@ -89,7 +88,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                 .map(value -> writer.write(typed(outputMappingType, value)));
 
         return localState.initialized()
-                ? localState.get().response().send(output).then(cast(emptyCompleter.asMono()))
-                : response.send(output).then(cast(emptyCompleter.asMono()));
+                ? localState.get().response().send(output).then(emptyCompleter.asMono())
+                : response.send(output).then(emptyCompleter.asMono());
     }
 }
