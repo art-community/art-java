@@ -226,7 +226,7 @@ public class ServiceMethod {
 
     private void subscribeEmptyBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
         input
-                .doOnError(error -> sink.eMITERROR(error, FAIL_FAST))
+                .doOnError(error -> sink.emitError(error, FAIL_FAST))
                 .doOnSubscribe(ignore -> callBlockingOutput(sink))
                 .subscribe();
     }
