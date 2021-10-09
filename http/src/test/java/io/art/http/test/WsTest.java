@@ -8,6 +8,7 @@ import io.art.http.test.service.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.http.Http.*;
@@ -20,6 +21,7 @@ import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
+@Tag("http")
 public class WsTest {
     @BeforeAll
     public static void setup() {
@@ -37,6 +39,7 @@ public class WsTest {
     @AfterAll
     public static void cleanup() {
         HttpTestExecutionsRegistry.clear();
+        shutdown();
     }
 
     @Test

@@ -23,6 +23,7 @@ import io.art.core.configuration.*;
 import io.art.core.exception.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -31,10 +32,12 @@ import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
+import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.property.DisposableProperty.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
@@ -55,6 +58,7 @@ public class Context {
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
     private final Service service;
+    private final List<DisposableProperty<Module<?, ?>>> loadedModules = copyOnWriteList();
 
     private Context(ContextConfiguration configuration) {
         this.configuration = configuration;
@@ -110,11 +114,15 @@ public class Context {
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
-        return new StatelessModuleProxy<>(cast(getModule(moduleId)));
+        DisposableProperty<Module<?, ?>> module = disposable(() -> INSTANCE.getModule(moduleId));
+        loadedModules.add(module);
+        return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
-        return new StatefulModuleProxy<>(cast(getModule(moduleId)));
+        DisposableProperty<Module<?, ?>> module = disposable(() -> INSTANCE.getModule(moduleId));
+        loadedModules.add(module);
+        return new StatefulModuleProxy<>(cast(module));
     }
 
     public Set<String> getModuleNames() {
@@ -215,10 +223,13 @@ public class Context {
 
     private void unload() {
         List<Module<?, ?>> modules = linkedListOf(this.modules.values());
+
         reverse(modules);
+
         for (Module<?, ?> module : modules) {
             module.shutdown(service);
         }
+
         apply(configuration.getOnShutdown(), Runnable::run);
         apply(configuration.getPrinter(), printer -> printer.accept(SHUTDOWN_MESSAGE));
 
@@ -226,6 +237,8 @@ public class Context {
             module.unload(service);
             this.modules.remove(module.getId());
         }
+
+        erase(loadedModules, DisposableProperty::dispose);
 
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;

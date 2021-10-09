@@ -162,6 +162,13 @@ public final class CollectionExtensions {
         }
     }
 
+    public static <T> void erase(List<T> list, Consumer<T> elementConsumer) {
+        for (T element : list) {
+            elementConsumer.accept(element);
+        }
+        list.clear();
+    }
+
     public static <K, V> ImmutableMap<K, V> merge(ImmutableMap<K, V> first, ImmutableMap<K, V> second) {
         if (isNull(first)) return second;
         if (isNull(second)) return first;
