@@ -19,31 +19,32 @@
 package io.art.http.state;
 
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.meta.model.*;
 import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
-    private final MetaLocalState<HttpLocalState> httpLocalState = new MetaLocalState<>();
-    private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
+    private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
+    private final MetaLocalState<LazyProperty<WsLocalState>> wsLocalState = new MetaLocalState<>();
 
-    public void httpState(MetaClass<?> owner, MetaMethod<?> method, HttpLocalState state) {
+    public void httpState(MetaClass<?> owner, MetaMethod<?> method, LazyProperty<HttpLocalState> state) {
         httpLocalState.set(owner, method, state);
     }
 
     public <C, M extends MetaClass<C>> HttpLocalState httpState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return httpLocalState.get(owner, method);
+        return httpLocalState.get(owner, method).get();
     }
 
     public <C, M extends MetaClass<C>> void clearHttpState(MetaClass<?> owner, MetaMethod<?> method) {
         httpLocalState.remove(owner, method);
     }
 
-    public void wsState(MetaClass<?> owner, MetaMethod<?> method, WsLocalState state) {
+    public void wsState(MetaClass<?> owner, MetaMethod<?> method, LazyProperty<WsLocalState> state) {
         wsLocalState.set(owner, method, state);
     }
 
     public <C, M extends MetaClass<C>> WsLocalState wsState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return wsLocalState.get(owner, method);
+        return wsLocalState.get(owner, method).get();
     }
 
     public <C, M extends MetaClass<C>> void clearWsState(MetaClass<?> owner, MetaMethod<?> method) {
