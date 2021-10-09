@@ -62,6 +62,10 @@ public class HttpTest {
         assertEquals("test", communicator.post14(Flux.just("test")), "post14");
         assertEquals("test", asMono(communicator.post15(Flux.just("test"))).block(), "post15");
         assertEquals("test", asFlux(communicator.post16(Flux.just("test"))).blockFirst(), "post16");
+        communicator.post17(Flux.empty());
+        assertEquals("test", communicator.post18(Flux.empty()), "post18");
+        assertEquals("test", asMono(communicator.post19(Flux.empty())).block(), "post19");
+        assertEquals("test", asFlux(communicator.post20(Flux.empty())).blockFirst(), "post20");
 
         Map<String, Object> executions = executions(Meta.declaration(TestHttp.class).methods().size());
         assertNotNull(executions.get("post1"), "post1");
@@ -80,5 +84,9 @@ public class HttpTest {
         assertEquals("test", asFlux(executions.get("post14")).blockFirst(), "post14");
         assertEquals("test", asFlux(executions.get("post15")).blockFirst(), "post15");
         assertEquals("test", asFlux(executions.get("post16")).blockFirst(), "post16");
+        assertNull(asFlux(executions.get("post17")).blockFirst(), "post17");
+        assertNull(asFlux(executions.get("post18")).blockFirst(), "post18");
+        assertNull(asFlux(executions.get("post19")).blockFirst(), "post19");
+        assertNull(asFlux(executions.get("post20")).blockFirst(), "post20");
     }
 }

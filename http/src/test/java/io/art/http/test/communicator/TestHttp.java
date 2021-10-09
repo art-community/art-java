@@ -36,6 +36,14 @@ public interface TestHttp extends Communicator {
 
     Flux<String> post16(Flux<String> input);
 
+    void post17(Flux<String> empty);
+
+    String post18(Flux<String> empty);
+
+    Mono<String> post19(Flux<String> empty);
+
+    Flux<String> post20(Flux<String> empty);
+
     interface TestHttpConnector extends Connector {
         TestHttp testHttp();
     }

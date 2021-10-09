@@ -235,6 +235,14 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaPost16Method post16Method = register(new MetaPost16Method());
 
+              private final MetaPost17Method post17Method = register(new MetaPost17Method());
+
+              private final MetaPost18Method post18Method = register(new MetaPost18Method());
+
+              private final MetaPost19Method post19Method = register(new MetaPost19Method());
+
+              private final MetaPost20Method post20Method = register(new MetaPost20Method());
+
               private final MetaTestHttpConnectorClass testHttpConnectorClass = register(new MetaTestHttpConnectorClass());
 
               private MetaTestHttpClass() {
@@ -303,6 +311,22 @@ public class MetaHttpTest extends MetaLibrary {
 
               public MetaPost16Method post16Method() {
                 return post16Method;
+              }
+
+              public MetaPost17Method post17Method() {
+                return post17Method;
+              }
+
+              public MetaPost18Method post18Method() {
+                return post18Method;
+              }
+
+              public MetaPost19Method post19Method() {
+                return post19Method;
+              }
+
+              public MetaPost20Method post20Method() {
+                return post20Method;
               }
 
               @Override
@@ -690,6 +714,108 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
+              public static final class MetaPost17Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost17Method() {
+                  super("post17",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object[] arguments) throws Throwable {
+                  instance.post17((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  return null;
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object argument) throws Throwable {
+                  instance.post17((reactor.core.publisher.Flux)(argument));
+                  return null;
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
+              public static final class MetaPost18Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost18Method() {
+                  super("post18",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.post18((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object argument) throws Throwable {
+                  return instance.post18((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
+              public static final class MetaPost19Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost19Method() {
+                  super("post19",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.post19((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object argument) throws Throwable {
+                  return instance.post19((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
+              public static final class MetaPost20Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost20Method() {
+                  super("post20",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.post20((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object argument) throws Throwable {
+                  return instance.post20((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
               public class MetaTestHttpProxy extends MetaProxy implements io.art.http.test.communicator.TestHttp {
                 private final Function<Object, Object> post1Invocation;
 
@@ -723,6 +849,14 @@ public class MetaHttpTest extends MetaLibrary {
 
                 private final Function<Object, Object> post16Invocation;
 
+                private final Function<Object, Object> post17Invocation;
+
+                private final Function<Object, Object> post18Invocation;
+
+                private final Function<Object, Object> post19Invocation;
+
+                private final Function<Object, Object> post20Invocation;
+
                 public MetaTestHttpProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   post1Invocation = invocations.get(post1Method);
@@ -741,6 +875,10 @@ public class MetaHttpTest extends MetaLibrary {
                   post14Invocation = invocations.get(post14Method);
                   post15Invocation = invocations.get(post15Method);
                   post16Invocation = invocations.get(post16Method);
+                  post17Invocation = invocations.get(post17Method);
+                  post18Invocation = invocations.get(post18Method);
+                  post19Invocation = invocations.get(post19Method);
+                  post20Invocation = invocations.get(post20Method);
                 }
 
                 @Override
@@ -827,6 +965,29 @@ public class MetaHttpTest extends MetaLibrary {
                 public reactor.core.publisher.Flux<java.lang.String> post16(
                     reactor.core.publisher.Flux<java.lang.String> input) {
                   return (reactor.core.publisher.Flux<java.lang.String>)(post16Invocation.apply(input));
+                }
+
+                @Override
+                public void post17(reactor.core.publisher.Flux<java.lang.String> empty) {
+                  post17Invocation.apply(empty);
+                }
+
+                @Override
+                public java.lang.String post18(
+                    reactor.core.publisher.Flux<java.lang.String> empty) {
+                  return (java.lang.String)(post18Invocation.apply(empty));
+                }
+
+                @Override
+                public reactor.core.publisher.Mono<java.lang.String> post19(
+                    reactor.core.publisher.Flux<java.lang.String> empty) {
+                  return (reactor.core.publisher.Mono<java.lang.String>)(post19Invocation.apply(empty));
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<java.lang.String> post20(
+                    reactor.core.publisher.Flux<java.lang.String> empty) {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(post20Invocation.apply(empty));
                 }
               }
 
@@ -1656,6 +1817,14 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaPost16Method post16Method = register(new MetaPost16Method());
 
+              private final MetaPost17Method post17Method = register(new MetaPost17Method());
+
+              private final MetaPost18Method post18Method = register(new MetaPost18Method());
+
+              private final MetaPost19Method post19Method = register(new MetaPost19Method());
+
+              private final MetaPost20Method post20Method = register(new MetaPost20Method());
+
               private MetaTestHttpServiceClass() {
                 super(metaType(io.art.http.test.service.TestHttpService.class));
               }
@@ -1726,6 +1895,22 @@ public class MetaHttpTest extends MetaLibrary {
 
               public MetaPost16Method post16Method() {
                 return post16Method;
+              }
+
+              public MetaPost17Method post17Method() {
+                return post17Method;
+              }
+
+              public MetaPost18Method post18Method() {
+                return post18Method;
+              }
+
+              public MetaPost19Method post19Method() {
+                return post19Method;
+              }
+
+              public MetaPost20Method post20Method() {
+                return post20Method;
               }
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestHttpService> {
@@ -2118,6 +2303,108 @@ public class MetaHttpTest extends MetaLibrary {
                 public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
                     ) {
                   return inputParameter;
+                }
+              }
+
+              public static final class MetaPost17Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost17Method() {
+                  super("post17",metaType(Void.class));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object[] arguments) throws Throwable {
+                  instance.post17((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  return null;
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object argument) throws Throwable {
+                  instance.post17((reactor.core.publisher.Flux)(argument));
+                  return null;
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
+              public static final class MetaPost18Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost18Method() {
+                  super("post18",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.post18((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object argument) throws Throwable {
+                  return instance.post18((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
+              public static final class MetaPost19Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost19Method() {
+                  super("post19",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.post19((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object argument) throws Throwable {
+                  return instance.post19((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
+                }
+              }
+
+              public static final class MetaPost20Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaPost20Method() {
+                  super("post20",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.post20((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestHttpService instance,
+                    Object argument) throws Throwable {
+                  return instance.post20((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter(
+                    ) {
+                  return emptyParameter;
                 }
               }
             }

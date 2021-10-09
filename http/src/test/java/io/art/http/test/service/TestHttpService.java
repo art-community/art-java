@@ -106,4 +106,35 @@ public class TestHttpService implements TestHttp {
         register("post16", many.asFlux());
         return Flux.just("test");
     }
+
+    @Override
+    public void post17(Flux<String> empty) {
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
+        register("post17", many.asFlux());
+    }
+
+    @Override
+    public String post18(Flux<String> empty) {
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
+        register("post18", many.asFlux());
+        return "test";
+    }
+
+    @Override
+    public Mono<String> post19(Flux<String> empty) {
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
+        register("post19", many.asFlux());
+        return Mono.just("test");
+    }
+
+    @Override
+    public Flux<String> post20(Flux<String> empty) {
+        Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
+        empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
+        register("post20", many.asFlux());
+        return Flux.just("test");
+    }
 }
