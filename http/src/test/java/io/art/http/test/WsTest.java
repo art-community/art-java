@@ -31,8 +31,8 @@ public class WsTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestWsConnector.class, connector -> connector.verbose(true)))
-                        .server(server -> server.route(TestWsService.class).configure(s -> s.verbose(true)).service(TestWsService.class, ws -> ws.logging())))
+                        .communicator(communicator -> communicator.connector(TestWsConnector.class))
+                        .server(server -> server.route(TestWsService.class)))
         );
     }
 
