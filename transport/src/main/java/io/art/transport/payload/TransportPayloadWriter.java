@@ -45,7 +45,7 @@ import java.util.function.*;
 public class TransportPayloadWriter {
     private final DataFormat dataFormat;
 
-    private final static Map<DataFormat, TransportPayloadWriter> cache = map(DataFormat.values().length);
+    private final static Map<DataFormat, TransportPayloadWriter> cache = concurrentMap(DataFormat.values().length);
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<TypedObject, ByteBuf> writer = writer(dataFormat);

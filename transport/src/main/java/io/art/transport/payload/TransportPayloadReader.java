@@ -42,7 +42,7 @@ import java.util.function.*;
 public class TransportPayloadReader {
     private final DataFormat dataFormat;
 
-    private final static Map<DataFormat, TransportPayloadReader> cache = map(DataFormat.values().length);
+    private final static Map<DataFormat, TransportPayloadReader> cache = concurrentMap(DataFormat.values().length);
 
     @Getter(lazy = true, value = PRIVATE)
     private final BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader = reader(dataFormat);
