@@ -325,7 +325,7 @@ public interface TransportModuleConstants {
                 "io_netty_channel_unix_Socket_shutdown",
         };
 
-        String NETTY_STATIC_LINK_PROPERTY = "netty.static";
+        String NETTY_STATIC_LINK_PROPERTY = "netty-static";
 
         String[] NETTY_EPOLL_LIBRARY_NAMES = new String[]{
                 "netty_transport_native_epoll",
