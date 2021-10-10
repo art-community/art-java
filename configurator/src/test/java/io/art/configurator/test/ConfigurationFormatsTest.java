@@ -23,6 +23,7 @@ public class ConfigurationFormatsTest {
                 .with("ARRAY_2_TEST", "value-2")
                 .with("ARRAY_3_TEST_0", "value-3")
                 .with("NESTED_INNER_VALUE", "value")
+                .with("NESTED_INNER_VALUE_ARRAY_0", "value")
                 .build();
 
         initialize(ContextConfiguration.builder()
@@ -35,6 +36,7 @@ public class ConfigurationFormatsTest {
         assertEquals("value-2", source.getNested("ARRAY").asArray().get(2).getString("TEST"));
         assertEquals("value-3", source.getNested("ARRAY").asArray().get(3).getStringArray("TEST").get(0));
         assertEquals("value", source.getNested("NESTED_INNER").getString("VALUE"));
+        assertEquals("value", source.getNested("NESTED_INNER").getNested("VALUE").getStringArray("ARRAY").get(0));
         shutdown();
     }
 
@@ -47,13 +49,15 @@ public class ConfigurationFormatsTest {
         setProperty("array.2.test", "value-2");
         setProperty("array.3.test.0", "value-3");
         setProperty("nested.inner.value", "value");
+        setProperty("nested.inner.value.array.0", "value");
         PropertiesConfigurationSource source = new PropertiesConfigurationSource(EMPTY_STRING, immutableMapOf(getProperties()));
         assertEquals("value", source.getString("key"));
         assertEquals("value-0", source.getNested("array").asArray().get(0).asString());
         assertEquals("value-1", source.getNested("array").asArray().get(1).asString());
         assertEquals("value-2", source.getNested("array").asArray().get(2).getString("test"));
-        assertEquals("value", source.getNested("nested.inner").getString("value"));
         assertEquals("value-3", source.getNested("array").asArray().get(3).getStringArray("test").get(0));
+        assertEquals("value", source.getNested("nested.inner").getString("value"));
+        assertEquals("value", source.getNested("nested.inner").getNested("value").getStringArray("array").get(0));
         shutdown();
     }
 
