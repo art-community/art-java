@@ -30,7 +30,7 @@ import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.handler.ExceptionHandler.*;
 import static java.lang.Integer.*;
@@ -53,15 +53,18 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
         if (isEmpty(section)) {
             return immutableSetOf(environment.keySet());
         }
-        return environment.keySet().stream().filter(key -> key.startsWith(section + UNDERSCORE)).collect(immutableSetCollector());
+        return environment.keySet()
+                .stream()
+                .filter(key -> key.equals(section) || key.startsWith(section + UNDERSCORE))
+                .collect(immutableSetCollector());
     }
 
     @Override
     public NestedConfiguration getNested(String path) {
-        String newSection = combine(section, path).replace(DOT, UNDERSCORE);
+        String newSection = combine(section, path).replaceAll(ESCAPED_DOT, UNDERSCORE);
         ImmutableSet<String> keys = getKeys();
         for (String key : keys) {
-            if (key.startsWith(newSection + UNDERSCORE)) {
+            if (key.startsWith(newSection)) {
                 return new EnvironmentConfigurationSource(newSection);
             }
         }
@@ -88,16 +91,16 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
 
     @Override
     public ImmutableArray<NestedConfiguration> asArray() {
-        List<NestedConfiguration> array = dynamicArray();
-        for (String key : environment.keySet()) {
-            if (isEmpty(section) || key.startsWith(section)) {
-                Integer index = nullIfException(() -> parseInt(key.substring(key.lastIndexOf(UNDERSCORE) + 1)));
-                if (nonNull(index)) {
-                    array.add(index, getNested(key));
-                }
+        ImmutableSet<String> keys = getKeys();
+        Map<Integer, NestedConfiguration> array = map();
+        for (String key : keys) {
+            String arrayPrefix = isEmpty(section) ? key : key.substring(key.indexOf(section) + section.length() + 1);
+            Integer index = nullIfException(() -> parseInt(arrayPrefix.contains(UNDERSCORE) ? arrayPrefix.substring(0, arrayPrefix.indexOf(UNDERSCORE)) : arrayPrefix));
+            if (nonNull(index) && index >= 0) {
+                array.put(index, new EnvironmentConfigurationSource(combine(section, index.toString()).replaceAll(ESCAPED_DOT, UNDERSCORE)));
             }
         }
-        return immutableArrayOf(array);
+        return array.keySet().stream().sorted().map(array::get).collect(immutableArrayCollector());
     }
 
     @Override

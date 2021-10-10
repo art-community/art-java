@@ -1,41 +1,75 @@
 package io.art.configurator.test;
 
 import io.art.configurator.source.*;
-import io.art.core.factory.*;
+import io.art.core.builder.*;
+import io.art.core.configuration.*;
+import io.art.core.source.*;
 import org.junit.jupiter.api.*;
+import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.initializer.Initializer.*;
+import static java.lang.System.*;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.*;
 
 public class ConfigurationFormatsTest {
-    @BeforeAll
-    public static void setup() {
-        initialize();
-    }
-
-    @AfterAll
-    public static void cleanup() {
-        shutdown();
-    }
-
-
     @Test
     public void testEnvironment() {
+        Map<String, String> environment = MapBuilder.mapBuilder("KEY", "value")
+                .with("ARRAY_0", "value-0")
+                .with("ARRAY_1", "value-1")
+                .with("ARRAY_2_TEST", "value-2")
+                .with("ARRAY_3_TEST_0", "value-3")
+                .with("NESTED_INNER_VALUE", "value")
+                .build();
+
+        initialize(ContextConfiguration.builder()
+                .environment(immutableMapOf(environment))
+                .build());
+        EnvironmentConfigurationSource source = new EnvironmentConfigurationSource(EMPTY_STRING);
+        assertEquals("value", source.getString("KEY"));
+        assertEquals("value-0", source.getNested("ARRAY").asArray().get(0).asString());
+        assertEquals("value-1", source.getNested("ARRAY").asArray().get(1).asString());
+        assertEquals("value-2", source.getNested("ARRAY").asArray().get(2).getString("TEST"));
+        assertEquals("value-3", source.getNested("ARRAY").asArray().get(3).getStringArray("TEST").get(0));
+        assertEquals("value", source.getNested("NESTED_INNER").getString("VALUE"));
+        shutdown();
     }
 
     @Test
     public void testProperties() {
-        System.setProperty("key", "value");
-        System.setProperty("array.0", "value-0");
-        System.setProperty("array.1", "value-1");
-        System.setProperty("nested.inner.value", "value");
-        PropertiesConfigurationSource source = new PropertiesConfigurationSource("", MapFactory.immutableMapOf(System.getProperties()));
-        System.out.println(source.getString("key"));
-        System.out.println(source.getStringArray("array"));
-        System.out.println(source.getNested("nested.inner.value").asString());
+        initialize();
+        setProperty("key", "value");
+        setProperty("array.0", "value-0");
+        setProperty("array.1", "value-1");
+        setProperty("array.2.test", "value-2");
+        setProperty("array.3.test.0", "value-3");
+        setProperty("nested.inner.value", "value");
+        PropertiesConfigurationSource source = new PropertiesConfigurationSource(EMPTY_STRING, immutableMapOf(getProperties()));
+        assertEquals("value", source.getString("key"));
+        assertEquals("value-0", source.getNested("array").asArray().get(0).asString());
+        assertEquals("value-1", source.getNested("array").asArray().get(1).asString());
+        assertEquals("value-2", source.getNested("array").asArray().get(2).getString("test"));
+        assertEquals("value", source.getNested("nested.inner").getString("value"));
+        assertEquals("value-3", source.getNested("array").asArray().get(3).getStringArray("test").get(0));
+        shutdown();
     }
 
     @Test
     public void testYaml() {
-
+        initialize();
+        ConfigurationSourceParameters parameters = ConfigurationSourceParameters.builder()
+                .type(RESOURCES_FILE)
+                .inputStream(() -> ConfigurationFormatsTest.class.getClassLoader().getResourceAsStream("test.yml"))
+                .build();
+        YamlConfigurationSource source = new YamlConfigurationSource(parameters);
+        assertEquals("value", source.getString("key"));
+        assertEquals("value-0", source.getNested("array").asArray().get(0).asString());
+        assertEquals("value-1", source.getNested("array").asArray().get(1).asString());
+        assertEquals("value-2", source.getNested("array").asArray().get(2).getString("test"));
+        assertEquals("value", source.getNested("nested.inner").getString("value"));
+        shutdown();
     }
 }

@@ -60,6 +60,7 @@ public interface StringConstants {
     String NEW_LINE = "\n";
     String LINE_DELIMITER = "\r\n";
     String ESCAPED_DOT = "\\.";
+    String ESCAPED_UNDERSCORE = "\\_";
     String IP_ADDRESS_REGEX = "^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
     Pattern IP_4_REGEX_PATTERN = compile(IP_ADDRESS_REGEX);
     String TABULATION = "\t";

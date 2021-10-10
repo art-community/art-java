@@ -1,0 +1,9 @@
+---
+key: value
+array:
+  - value-0
+  - value-1
+  - test: value-2
+nested:
+  inner:
+    value: value

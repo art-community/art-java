@@ -45,17 +45,8 @@ public class Initializer {
         initialize(defaults(), modules);
     }
 
-    public static void initialize(ContextConfiguration configuration, ModuleFactory<?>... modules) {
-        initialize.run(() -> initializeModules(configuration, modules));
-    }
-
     public static void initialize(ContextConfiguration configuration, ModuleActivator... modules) {
         initializeModules(configuration, modules);
-    }
-
-    private static void initializeModules(ContextConfiguration configuration, ModuleFactory<?>... modules) {
-        prepareInitialization(configuration);
-        processInitialization(stream(modules).map(ModuleFactory::get).collect(immutableSetCollector()));
     }
 
     private static void initializeModules(ContextConfiguration configuration, ModuleActivator... modules) {

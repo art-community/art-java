@@ -29,7 +29,7 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.handler.ExceptionHandler.*;
 import static java.lang.Integer.*;
@@ -52,7 +52,10 @@ public class PropertiesConfigurationSource implements NestedConfiguration {
         if (isEmpty(section)) {
             return immutableSetOf(properties.keySet());
         }
-        return properties.keySet().stream().filter(key -> key.startsWith(section)).collect(immutableSetCollector());
+        return properties.keySet()
+                .stream()
+                .filter(key -> key.equals(section) || key.startsWith(section + DOT))
+                .collect(immutableSetCollector());
     }
 
     @Override
@@ -87,14 +90,16 @@ public class PropertiesConfigurationSource implements NestedConfiguration {
 
     @Override
     public ImmutableArray<NestedConfiguration> asArray() {
-        List<NestedConfiguration> array = dynamicArray();
-        for (String key : getKeys()) {
-            Integer index = nullIfException(() -> parseInt(key.substring(key.lastIndexOf(DOT) + 1)));
-            if (nonNull(index)) {
-                array.add(index, new PropertiesConfigurationSource(key, properties));
+        ImmutableSet<String> keys = getKeys();
+        Map<Integer, NestedConfiguration> array = map();
+        for (String key : keys) {
+            String arrayPrefix = isEmpty(section) ? key : key.substring(key.indexOf(section) + section.length() + 1);
+            Integer index = nullIfException(() -> parseInt(arrayPrefix.contains(DOT) ? arrayPrefix.substring(0, arrayPrefix.indexOf(DOT)) : arrayPrefix));
+            if (nonNull(index) && index >= 0) {
+                array.put(index, new PropertiesConfigurationSource(combine(section, index.toString()), properties));
             }
         }
-        return immutableArrayOf(array);
+        return array.keySet().stream().sorted().map(array::get).collect(immutableArrayCollector());
     }
 
     @Override
