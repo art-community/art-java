@@ -23,11 +23,6 @@ import lombok.*;
 import reactor.netty.http.*;
 
 public interface HttpModuleConstants {
-    interface Errors {
-        String SPECIFICATION_NOT_FOUND = "Specification was not found for service method identifiers: {0}";
-        String CONFIGURATION_PARAMETER_NOT_EXISTS = "HTTP configuration parameter does not exists: ''{0}''";
-    }
-
     interface Warnings {
         String ROUTE_PATH_NOT_EXISTS = "Specified file route path does not exists: {0}";
     }
