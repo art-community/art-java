@@ -75,7 +75,8 @@ public class TestWsService implements TestWs {
 
     public void ws13(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
-        WsLocalState state = httpModule().state()
+        WsLocalState state = httpModule()
+                .state()
                 .wsState(TestWsService.class, MetaTestWsServiceClass::ws13Method)
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
@@ -88,7 +89,8 @@ public class TestWsService implements TestWs {
 
     public String ws14(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
-        WsLocalState state = httpModule().state()
+        WsLocalState state = httpModule()
+                .state()
                 .wsState(TestWsService.class, MetaTestWsServiceClass::ws14Method)
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
@@ -102,7 +104,8 @@ public class TestWsService implements TestWs {
 
     public Mono<String> ws15(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
-        WsLocalState state = httpModule().state()
+        WsLocalState state = httpModule()
+                .state()
                 .wsState(TestWsService.class, MetaTestWsServiceClass::ws15Method)
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
@@ -116,7 +119,10 @@ public class TestWsService implements TestWs {
 
     public Flux<String> ws16(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
-        WsLocalState state = httpModule().state().wsState(TestWsService.class, MetaTestWsServiceClass::ws16Method).disableAutoClosing();
+        WsLocalState state = httpModule()
+                .state()
+                .wsState(TestWsService.class, MetaTestWsServiceClass::ws16Method)
+                .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
                 .doOnNext(ignore -> state.close())
                 .doOnError(element -> many.emitError(element, FAIL_FAST))
@@ -138,7 +144,10 @@ public class TestWsService implements TestWs {
 
     @Override
     public Flux<String> wsEcho(Flux<String> input) {
-        WsLocalState state = httpModule().state().wsState(TestWsService.class, MetaTestWsServiceClass::wsEchoMethod).disableAutoClosing();
+        WsLocalState state = httpModule()
+                .state()
+                .wsState(TestWsService.class, MetaTestWsServiceClass::wsEchoMethod)
+                .disableAutoClosing();
         Sinks.Many<String> output = Sinks.many().unicast().onBackpressureBuffer();
         input.buffer(10)
                 .doOnNext(element -> element.forEach(output::tryEmitNext))
