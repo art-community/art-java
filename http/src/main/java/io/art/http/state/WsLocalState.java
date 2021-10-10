@@ -40,4 +40,9 @@ public class WsLocalState {
         autoClosing = false;
         return this;
     }
+
+    public WsLocalState enableAutoClosing() {
+        autoClosing = true;
+        return this;
+    }
 }
