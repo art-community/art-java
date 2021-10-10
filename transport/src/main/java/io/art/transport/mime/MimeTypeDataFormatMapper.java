@@ -36,6 +36,7 @@ public class MimeTypeDataFormatMapper {
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
         if (APPLICATION_OCTET_STREAM.equals(type)) return BYTES;
+        if (type.getType().equals(TEXT_CSS.getType())) return STRING;
         throw new UnsupportedMimeTypeException(type);
     }
 
@@ -45,6 +46,7 @@ public class MimeTypeDataFormatMapper {
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
         if (APPLICATION_OCTET_STREAM.equals(type)) return BYTES;
+        if (type.getType().equals(TEXT_CSS.getType())) return STRING;
         return fallback;
     }
 
@@ -58,6 +60,8 @@ public class MimeTypeDataFormatMapper {
                 return APPLICATION_YAML;
             case BYTES:
                 return APPLICATION_OCTET_STREAM;
+            case STRING:
+                return TEXT_PLAIN;
         }
         throw new IllegalArgumentException(DATA_FORMAT_IS_NULL);
     }
@@ -72,6 +76,8 @@ public class MimeTypeDataFormatMapper {
                 return APPLICATION_YAML.withParameter(PARAM_CHARSET, charset.name());
             case BYTES:
                 return APPLICATION_OCTET_STREAM.withParameter(PARAM_CHARSET, charset.name());
+            case STRING:
+                return TEXT_PLAIN.withParameter(PARAM_CHARSET, charset.name());
         }
         throw new IllegalArgumentException(DATA_FORMAT_IS_NULL);
     }

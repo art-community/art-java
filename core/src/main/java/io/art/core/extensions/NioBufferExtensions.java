@@ -43,6 +43,10 @@ public class NioBufferExtensions {
         return from(value.getBytes());
     }
 
+    public static ByteBuffer from(String value, Charset charset) {
+        return from(value.getBytes(charset));
+    }
+
     public static ByteBuffer from(byte[] array) {
         if (isEmpty(array)) {
             return allocate(0);

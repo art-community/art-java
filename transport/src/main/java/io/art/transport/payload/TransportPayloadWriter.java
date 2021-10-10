@@ -29,6 +29,7 @@ import io.netty.buffer.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.json.module.JsonModule.*;
@@ -86,8 +87,12 @@ public class TransportPayloadWriter {
                     return buffer;
                 };
             case BYTES:
-                return value -> createBuffer()
-                        .writeBytes(value.getType().outputTransformer().toByteArray(cast(value.getObject())));
+                return value -> createBuffer().writeBytes(value.getType()
+                        .outputTransformer()
+                        .toByteArray(cast(value.getObject())));
+            case STRING:
+                return value -> createBuffer().writeBytes(value.getType().outputTransformer().toString(cast(value.getObject()))
+                        .getBytes(context().configuration().getCharset()));
         }
         throw new ImpossibleSituationException();
     }

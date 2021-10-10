@@ -77,6 +77,7 @@ public interface TransportModuleConstants {
         JSON("json"),
         YAML("yaml"),
         MESSAGE_PACK("messagePack"),
+        STRING("STRING"),
         BYTES("bytes");
 
         private final String format;
@@ -86,6 +87,7 @@ public interface TransportModuleConstants {
             if (YAML.format.equalsIgnoreCase(format)) return YAML;
             if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;
             if (BYTES.format.equalsIgnoreCase(format)) return BYTES;
+            if (STRING.format.equalsIgnoreCase(format)) return STRING;
             return fallback;
         }
     }
