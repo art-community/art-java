@@ -21,7 +21,7 @@ import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
-PUBLIC class WsTest {
+public class WsTest {
     @BeforeAll
     public static void setup() {
         initialize(
