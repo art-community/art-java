@@ -65,9 +65,12 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     }
 
     public HttpServerConfigurator file(String uri, Path path, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
-        pathRoutes.add(builder -> decorator.apply(builder.type(PATH).uri(manual(uri)).pathConfiguration(HttpPathRouteConfiguration.builder()
-                .path(path)
-                .build())));
+        pathRoutes.add(builder -> decorator.apply(builder
+                .type(PATH)
+                .uri(manual(uri))
+                .pathConfiguration(HttpPathRouteConfiguration.builder()
+                        .path(path)
+                        .build())));
         return this;
     }
 
