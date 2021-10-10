@@ -143,7 +143,7 @@ public class TestWsService implements TestWs {
         input.buffer(10)
                 .doOnNext(element -> element.forEach(output::tryEmitNext))
                 .doOnNext(ignore -> state.close())
-                .doOnComplete(() -> output.tryEmitComplete())
+                .doOnComplete(output::tryEmitComplete)
                 .subscribe();
         return output.asFlux();
     }
