@@ -97,7 +97,7 @@ public class PropertiesConfigurationSource implements NestedConfiguration {
         return immutableArrayOf(array);
     }
 
-    @OVERRIDE
+    @Override
     public <T> ImmutableArray<T> asArray(Function<NestedConfiguration, T> mapper) {
         return asArray().stream().map(mapper).collect(immutableArrayCollector());
     }
