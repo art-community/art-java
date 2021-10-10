@@ -2,9 +2,11 @@ package io.art.http.test.service;
 
 import io.art.http.test.communicator.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
+@SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
 public class TestHttpService implements TestHttp {
     public void post1() {
         register("post1", new Object());

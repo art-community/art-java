@@ -4,10 +4,12 @@ import io.art.http.state.*;
 import io.art.http.test.communicator.*;
 import io.art.http.test.meta.MetaHttpTest.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaTestPackage.MetaServicePackage.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
+@SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
 public class TestWsService implements TestWs {
     public void ws1() {
         register("ws1", new Object());

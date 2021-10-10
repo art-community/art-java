@@ -2,9 +2,11 @@ package io.art.rsocket.test.service;
 
 import io.art.rsocket.test.communicator.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
+@SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
 public class TestRsocketService implements TestRsocket {
     public void m1() {
         register("m1", new Object());
