@@ -5,7 +5,6 @@ import io.art.http.test.communicator.TestWs.*;
 import io.art.http.test.meta.*;
 import io.art.http.test.registry.*;
 import io.art.http.test.service.*;
-import io.art.logging.module.*;
 import io.art.meta.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
@@ -29,12 +28,11 @@ public class WsTest {
     public static void setup() {
         initialize(
                 meta(() -> new MetaHttpTest(new MetaMetaTest())),
-                LoggingActivator.logging(),
                 transport(),
                 json(),
                 http(http -> http
                         .communicator(communicator -> communicator.connector(TestWsConnector.class))
-                        .server(server -> server.route(TestWsService.class).configure(c -> c.verbose(true)))
+                        .server(server -> server.route(TestWsService.class))
                 )
         );
     }

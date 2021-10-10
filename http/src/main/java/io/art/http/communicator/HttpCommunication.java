@@ -150,7 +150,7 @@ public class HttpCommunication implements Communication {
             uri.append(QEUSTION).append(parameterString);
         }
 
-        return processCommunication(builder.client(client).uri(uri).build());
+        return processCommunication(builder.client(client).uri(decorator.getUri().apply(uri.toString())).build());
     }
 
     private Flux<Object> simpleCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder) {
@@ -169,41 +169,41 @@ public class HttpCommunication implements Communication {
         }
 
         StringBuilder uri = new StringBuilder(connectorConfiguration.getUri().make(action.getId()));
-        return processCommunication(builder.route(route).client(client).uri(uri).build());
+        return processCommunication(builder.route(route).client(client).uri(uri.toString()).build());
     }
 
     private Flux<Object> processCommunication(ProcessingConfiguration configuration) {
         switch (configuration.route) {
             case GET:
-                ResponseReceiver<?> responseReceiver = configuration.client.get().uri(configuration.uri.toString());
+                ResponseReceiver<?> responseReceiver = configuration.client.get().uri(configuration.uri);
                 return readResponse(configuration.reader, responseReceiver);
             case OPTIONS:
-                responseReceiver = configuration.client.options().uri(configuration.uri.toString());
+                responseReceiver = configuration.client.options().uri(configuration.uri);
                 return readResponse(configuration.reader, responseReceiver);
             case HEAD:
-                responseReceiver = configuration.client.head().uri(configuration.uri.toString());
+                responseReceiver = configuration.client.head().uri(configuration.uri);
                 return readResponse(configuration.reader, responseReceiver);
             case POST:
-                RequestSender requestSender = configuration.client.post().uri(configuration.uri.toString());
+                RequestSender requestSender = configuration.client.post().uri(configuration.uri);
                 responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case PUT:
-                requestSender = configuration.client.put().uri(configuration.uri.toString());
+                requestSender = configuration.client.put().uri(configuration.uri);
                 responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case DELETE:
-                requestSender = configuration.client.delete().uri(configuration.uri.toString());
+                requestSender = configuration.client.delete().uri(configuration.uri);
                 responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case PATCH:
-                requestSender = configuration.client.patch().uri(configuration.uri.toString());
+                requestSender = configuration.client.patch().uri(configuration.uri);
                 responseReceiver = writeRequest(configuration.input, configuration.writer, requestSender);
                 return readResponse(configuration.reader, responseReceiver);
             case WS:
                 return configuration
                         .client
                         .websocket()
-                        .uri(configuration.uri.toString())
+                        .uri(configuration.uri)
                         .handle((inbound, outbound) -> handleWebSocket(configuration, inbound, outbound));
         }
 
@@ -257,7 +257,7 @@ public class HttpCommunication implements Communication {
         final Flux<Object> input;
         final HttpRouteType route;
         final HttpClient client;
-        final StringBuilder uri;
+        final String uri;
     }
 
     static void decorateHttpCommunication(UnaryOperator<HttpCommunicationDecorator> decorator) {

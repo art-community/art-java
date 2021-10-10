@@ -1,13 +1,12 @@
 package io.art.http.test.service;
 
-import io.art.http.test.communicator.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
 @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
-public class TestHttpService implements TestHttp {
+public class TestHttpService {
     public void post1() {
         register("post1", new Object());
     }
@@ -109,14 +108,12 @@ public class TestHttpService implements TestHttp {
         return Flux.just("test");
     }
 
-    @Override
     public void post17(Flux<String> empty) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
         register("post17", many.asFlux());
     }
 
-    @Override
     public String post18(Flux<String> empty) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
@@ -124,7 +121,6 @@ public class TestHttpService implements TestHttp {
         return "test";
     }
 
-    @Override
     public Mono<String> post19(Flux<String> empty) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();
@@ -132,7 +128,6 @@ public class TestHttpService implements TestHttp {
         return Mono.just("test");
     }
 
-    @Override
     public Flux<String> post20(Flux<String> empty) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         empty.doOnComplete(() -> many.emitComplete(FAIL_FAST)).subscribe();

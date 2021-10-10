@@ -19,6 +19,7 @@ public class HttpCommunicationDecorator {
     private HttpRouteType route;
     private UnaryOperator<HttpClient> client;
     private UnaryOperator<HttpHeaders> headers;
+    private UnaryOperator<String> uri = UnaryOperator.identity();
     private final Set<String> pathParameters = set();
     private final Map<String, String> queryParameters = map();
     private final Map<String, Cookie> cookies = map();
@@ -75,6 +76,11 @@ public class HttpCommunicationDecorator {
 
     public HttpCommunicationDecorator client(UnaryOperator<HttpClient> decorator) {
         this.client = decorator;
+        return this;
+    }
+
+    public HttpCommunicationDecorator uri(UnaryOperator<String> mapper) {
+        this.uri = mapper;
         return this;
     }
 }

@@ -76,7 +76,8 @@ public interface TransportModuleConstants {
     enum DataFormat {
         JSON("json"),
         YAML("yaml"),
-        MESSAGE_PACK("messagePack");
+        MESSAGE_PACK("messagePack"),
+        BYTES("bytes");
 
         private final String format;
 
@@ -84,6 +85,7 @@ public interface TransportModuleConstants {
             if (JSON.format.equalsIgnoreCase(format)) return JSON;
             if (YAML.format.equalsIgnoreCase(format)) return YAML;
             if (MESSAGE_PACK.format.equalsIgnoreCase(format)) return MESSAGE_PACK;
+            if (BYTES.format.equalsIgnoreCase(format)) return BYTES;
             return fallback;
         }
     }

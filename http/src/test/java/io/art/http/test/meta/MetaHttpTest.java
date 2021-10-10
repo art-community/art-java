@@ -243,6 +243,8 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaPost20Method post20Method = register(new MetaPost20Method());
 
+              private final MetaGetFileMethod getFileMethod = register(new MetaGetFileMethod());
+
               private final MetaTestHttpConnectorClass testHttpConnectorClass = register(new MetaTestHttpConnectorClass());
 
               private MetaTestHttpClass() {
@@ -327,6 +329,10 @@ public class MetaHttpTest extends MetaLibrary {
 
               public MetaPost20Method post20Method() {
                 return post20Method;
+              }
+
+              public MetaGetFileMethod getFileMethod() {
+                return getFileMethod;
               }
 
               @Override
@@ -816,6 +822,24 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
+              public static final class MetaGetFileMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+                private MetaGetFileMethod() {
+                  super("getFile",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.getFile();
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestHttp instance) throws
+                    Throwable {
+                  return instance.getFile();
+                }
+              }
+
               public class MetaTestHttpProxy extends MetaProxy implements io.art.http.test.communicator.TestHttp {
                 private final Function<Object, Object> post1Invocation;
 
@@ -857,6 +881,8 @@ public class MetaHttpTest extends MetaLibrary {
 
                 private final Function<Object, Object> post20Invocation;
 
+                private final Function<Object, Object> getFileInvocation;
+
                 public MetaTestHttpProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   post1Invocation = invocations.get(post1Method);
@@ -879,6 +905,7 @@ public class MetaHttpTest extends MetaLibrary {
                   post18Invocation = invocations.get(post18Method);
                   post19Invocation = invocations.get(post19Method);
                   post20Invocation = invocations.get(post20Method);
+                  getFileInvocation = invocations.get(getFileMethod);
                 }
 
                 @Override
@@ -988,6 +1015,11 @@ public class MetaHttpTest extends MetaLibrary {
                 public reactor.core.publisher.Flux<java.lang.String> post20(
                     reactor.core.publisher.Flux<java.lang.String> empty) {
                   return (reactor.core.publisher.Flux<java.lang.String>)(post20Invocation.apply(empty));
+                }
+
+                @Override
+                public java.lang.String getFile() {
+                  return (java.lang.String)(getFileInvocation.apply(null));
                 }
               }
 

@@ -22,6 +22,7 @@ import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
 import static io.art.http.path.HttpServingUri.*;
 import static io.art.meta.Meta.*;
 import static java.util.function.UnaryOperator.*;
+import java.nio.file.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -30,6 +31,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     private UnaryOperator<HttpServerConfigurationBuilder> configurator = identity();
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
+    private final List<UnaryOperator<HttpRouteConfigurationBuilder>> pathRoutes = linkedList();
 
     public HttpServerConfigurator configure(UnaryOperator<HttpServerConfigurationBuilder> configurator) {
         this.configurator = configurator;
@@ -55,6 +57,17 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     HttpServerConfigurator route(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
         method(serviceClass, serviceMethod);
         methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
+        return this;
+    }
+
+    public HttpServerConfigurator file(String uri, Path path) {
+        return file(uri, path, UnaryOperator.identity());
+    }
+
+    public HttpServerConfigurator file(String uri, Path path, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+        pathRoutes.add(builder -> decorator.apply(builder.type(PATH).uri(manual(uri)).pathConfiguration(HttpPathRouteConfiguration.builder()
+                .path(path)
+                .build())));
         return this;
     }
 
@@ -95,6 +108,9 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             getMethodDecorator(metaClass, method).apply(configurationBuilder);
             getServiceDecorator(metaClass).apply(configurationBuilder);
             routes.add(configurationBuilder.build());
+        }
+        for (UnaryOperator<HttpRouteConfigurationBuilder> pathRoute : pathRoutes) {
+            routes.add(pathRoute.apply(routeConfiguration().toBuilder()).build());
         }
         return routes.build();
     }
