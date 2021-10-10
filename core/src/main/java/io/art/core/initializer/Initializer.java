@@ -22,7 +22,6 @@ import io.art.core.collection.*;
 import io.art.core.configuration.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
-import io.art.core.singleton.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -31,7 +30,6 @@ import static io.art.core.collector.MapCollector.*;
 import static io.art.core.configuration.ContextConfiguration.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.MapFactory.*;
-import static io.art.core.singleton.SingletonAction.*;
 import static java.util.Arrays.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -39,8 +37,6 @@ import java.util.*;
 
 @UtilityClass
 public class Initializer {
-    private final static SingletonAction initialize = singletonAction();
-
     public static void initialize(ModuleActivator... modules) {
         initialize(defaults(), modules);
     }
