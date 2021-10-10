@@ -20,9 +20,7 @@ dependencies {
     api(project(":core"))
     api(project(":meta"))
 
-    val typesafeConfigVersion: String by project
     val jacksonVersion: String by project
-    api("com.typesafe", "config", typesafeConfigVersion)
     api("com.fasterxml.jackson.dataformat", "jackson-dataformat-yaml", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-core", jacksonVersion)
     api("com.fasterxml.jackson.core", "jackson-databind", jacksonVersion)

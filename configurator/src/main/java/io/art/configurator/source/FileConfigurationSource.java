@@ -26,6 +26,9 @@ import lombok.*;
 import lombok.experimental.Delegate;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.FileConfigurationExtensions.*;
 import static io.art.core.extensions.FileExtensions.*;
+import static io.art.core.factory.MapFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
+import java.util.*;
 
 public class FileConfigurationSource implements NestedConfiguration {
     @Getter
@@ -50,11 +53,10 @@ public class FileConfigurationSource implements NestedConfiguration {
                 .inputStream(file.getInputStream())
                 .build();
         switch (extension) {
-            case HOCON_EXTENSION:
-            case JSON_EXTENSION:
-            case CONF_EXTENSION:
             case PROPERTIES_EXTENSION:
-                return new TypesafeConfigurationSource(parameters);
+                Properties properties = new Properties();
+                ignoreException(() -> properties.load(file.getInputStream().get()));
+                return new PropertiesConfigurationSource(section, immutableMapOf(properties));
             case YAML_EXTENSION:
             case YML_EXTENSION:
                 return new YamlConfigurationSource(parameters);

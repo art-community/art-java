@@ -49,16 +49,10 @@ public interface ConfiguratorModuleConstants {
         String YAML_EXTENSION = "yaml";
         String YML_EXTENSION = "yml";
         String PROPERTIES_EXTENSION = "properties";
-        String JSON_EXTENSION = "json";
-        String CONF_EXTENSION = "conf";
-        String HOCON_EXTENSION = "hocon";
         ImmutableArray<String> FILE_CONFIGURATION_EXTENSIONS = immutableArrayOf(
                 YAML_EXTENSION,
                 YML_EXTENSION,
-                PROPERTIES_EXTENSION,
-                JSON_EXTENSION,
-                CONF_EXTENSION,
-                HOCON_EXTENSION
+                PROPERTIES_EXTENSION
         );
     }
 

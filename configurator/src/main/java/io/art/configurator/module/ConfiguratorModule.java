@@ -68,7 +68,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     public ConfiguratorModule loadSources(ImmutableSet<String> modules) {
         configure(configurator -> configurator
                 .from(new EnvironmentConfigurationSource(EMPTY_STRING))
-                .from(new PropertiesConfigurationSource())
+                .from(new PropertiesConfigurationSource(EMPTY_STRING, context().configuration().getProperties()))
         );
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         String resourceName = modules.contains(TESTS_MODULE_ID) ? TEST_CONFIGURATION_FILE : DEFAULT_MODULE_CONFIGURATION_FILE;

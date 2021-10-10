@@ -51,9 +51,9 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
     @Override
     public ImmutableSet<String> getKeys() {
         if (isEmpty(section)) {
-            return immutableSetOf(context().configuration().getEnvironment().keySet());
+            return immutableSetOf(environment.keySet());
         }
-        return environment.keySet().stream().filter(key -> key.startsWith(section)).collect(immutableSetCollector());
+        return environment.keySet().stream().filter(key -> key.startsWith(section + UNDERSCORE)).collect(immutableSetCollector());
     }
 
     @Override
@@ -61,7 +61,7 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
         String newSection = combine(section, path).replace(DOT, UNDERSCORE);
         ImmutableSet<String> keys = getKeys();
         for (String key : keys) {
-            if (key.toLowerCase(Locale.ROOT).startsWith(newSection.toLowerCase(Locale.ROOT))) {
+            if (key.startsWith(newSection + UNDERSCORE)) {
                 return new EnvironmentConfigurationSource(newSection);
             }
         }
@@ -70,7 +70,10 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
 
     @Override
     public String dump() {
-        return environment.entrySet().stream().map(entry -> entry.getKey() + EQUAL + entry.getValue()).collect(joining(NEW_LINE));
+        return environment.entrySet()
+                .stream()
+                .map(entry -> entry.getKey() + EQUAL + entry.getValue())
+                .collect(joining(NEW_LINE));
     }
 
     @Override
