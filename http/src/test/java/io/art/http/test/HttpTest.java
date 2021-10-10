@@ -8,6 +8,9 @@ import io.art.meta.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.constants.ProtocolConstants.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
@@ -35,8 +38,8 @@ public class HttpTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestHttpConnector.class))
-                        .server(server -> server.file("/file", testFile).route(TestHttpService.class))
+                        .communicator(communicator -> communicator.connector(TestHttpConnector.class, connector -> connector.url(HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 1234)))
+                        .server(server -> server.file("/file", testFile).route(TestHttpService.class).configure(serverConfigurator -> serverConfigurator.port(1234)))
                 )
         );
     }
