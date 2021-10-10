@@ -65,7 +65,7 @@ public class DisposableProperty<T> implements Supplier<T> {
 
 
     public boolean initialized() {
-        return initialized.get();
+        return value != UNINITIALIZED;
     }
 
     public boolean disposed() {
