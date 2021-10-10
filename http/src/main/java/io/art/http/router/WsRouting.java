@@ -1,7 +1,6 @@
 package io.art.http.router;
 
 import io.art.core.mime.*;
-import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.state.*;
 import io.art.meta.model.*;
@@ -13,7 +12,6 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.websocket.*;
 import static io.art.core.mime.MimeType.*;
-import static io.art.core.property.LazyProperty.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.WsLocalState.*;
 import static io.art.meta.model.TypedObject.*;
@@ -24,6 +22,7 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Mono.*;
 import java.util.function.*;
 
 class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
@@ -61,15 +60,17 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
-        LazyProperty<WsLocalState> localState = lazy(() -> wsLocalState(inbound, outbound, routeConfiguration));
+        WsLocalState localState = wsLocalState(inbound, outbound, routeConfiguration);
         state.wsState(owner, delegate, localState);
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.get().outbound().send(output).then(localState.get().closer().asMono());
+            return localState.outbound()
+                    .send(output)
+                    .then(localState.autoClosing() ? empty() : localState.closer().asMono());
         }
 
-        Flux<Object> input = (localState.initialized() ? localState.get().inbound() : inbound)
+        Flux<Object> input = localState.inbound()
                 .aggregateFrames()
                 .receive()
                 .map(data -> reader.read(data, inputMappingType))
@@ -80,6 +81,8 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
                 .serve(input)
                 .map(value -> writer.write(typed(outputMappingType, value)));
 
-        return localState.get().outbound().send(output).then(localState.get().closer().asMono());
+        return localState.outbound()
+                .send(output)
+                .then(localState.autoClosing() ? empty() : localState.closer().asMono());
     }
 }

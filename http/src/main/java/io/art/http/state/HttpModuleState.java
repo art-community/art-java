@@ -25,7 +25,7 @@ import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
     private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
-    private final MetaLocalState<LazyProperty<WsLocalState>> wsLocalState = new MetaLocalState<>();
+    private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
 
     public void httpState(MetaClass<?> owner, MetaMethod<?> method, LazyProperty<HttpLocalState> state) {
         httpLocalState.set(owner, method, state);
@@ -39,12 +39,12 @@ public class HttpModuleState implements ModuleState {
         httpLocalState.remove(owner, method);
     }
 
-    public void wsState(MetaClass<?> owner, MetaMethod<?> method, LazyProperty<WsLocalState> state) {
+    public void wsState(MetaClass<?> owner, MetaMethod<?> method, WsLocalState state) {
         wsLocalState.set(owner, method, state);
     }
 
     public <C, M extends MetaClass<C>> WsLocalState wsState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return wsLocalState.get(owner, method).get();
+        return wsLocalState.get(owner, method);
     }
 
     public <C, M extends MetaClass<C>> void clearWsState(MetaClass<?> owner, MetaMethod<?> method) {

@@ -17,6 +17,7 @@ public class WsLocalState {
     private final WebsocketOutbound outbound;
     private final HttpRouteConfiguration routeConfiguration;
     private final HttpHeaders requestHeaders;
+    private boolean autoClosing = true;
     private final Sinks.One<Void> closer = Sinks.one();
 
     private WsLocalState(WebsocketInbound inbound, WebsocketOutbound outbound, HttpRouteConfiguration routeConfiguration) {
@@ -30,7 +31,13 @@ public class WsLocalState {
         return new WsLocalState(inbound, outbound, routeConfiguration);
     }
 
-    public void close() {
-        closer.emitEmpty(FAIL_FAST);
+    public WsLocalState close() {
+        if (!autoClosing) closer.emitEmpty(FAIL_FAST);
+        return this;
+    }
+
+    public WsLocalState disableAutoClosing() {
+        autoClosing = false;
+        return this;
     }
 }
