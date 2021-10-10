@@ -72,9 +72,8 @@ public class HttpTest {
         assertEquals("test", communicator.post18(Flux.empty()), "post18");
         assertEquals("test", asMono(communicator.post19(Flux.empty())).block(), "post19");
         assertEquals("test", asFlux(communicator.post20(Flux.empty())).blockFirst(), "post20");
-        assertEquals("test", communicator.decorate(decorator -> decorator.uri(ignore -> "/file")).getFile());
 
-        Map<String, Object> executions = executions(Meta.declaration(TestHttp.class).methods().size() - 1);
+        Map<String, Object> executions = executions(Meta.declaration(TestHttpService.class).methods().size());
         assertNotNull(executions.get("post1"), "post1");
         assertNotNull(executions.get("post2"), "post2");
         assertNotNull(executions.get("post3"), "post3");
@@ -95,5 +94,7 @@ public class HttpTest {
         assertNull(asFlux(executions.get("post18")).blockFirst(), "post18");
         assertNull(asFlux(executions.get("post19")).blockFirst(), "post19");
         assertNull(asFlux(executions.get("post20")).blockFirst(), "post20");
+
+        assertEquals("test", communicator.decorate(decorator -> decorator.uri(ignore -> "/file")).getFile());
     }
 }
