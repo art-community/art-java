@@ -79,6 +79,11 @@ public class HttpCommunicationDecorator {
         return this;
     }
 
+    public HttpCommunicationDecorator uri(String uri) {
+        this.uri = ignore -> uri;
+        return this;
+    }
+
     public HttpCommunicationDecorator uri(UnaryOperator<String> mapper) {
         this.uri = mapper;
         return this;
