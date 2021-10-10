@@ -16,7 +16,7 @@ import java.util.function.*;
 @UtilityClass
 public class HttpCommunicationFactory {
     @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = Logging.logger(HttpCommunication.class);
+    private final static Logger logger = Logging.logger(HTTP_COMMUNICATOR_LOGGER);
 
     public static HttpCommunication createHttpCommunication(HttpConnectorConfiguration connectorConfiguration) {
         String connector = connectorConfiguration.getConnector();
