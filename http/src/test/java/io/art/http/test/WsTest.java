@@ -16,24 +16,22 @@ import static io.art.http.Http.*;
 import static io.art.http.module.HttpActivator.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static io.art.json.module.JsonActivator.*;
-import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
-@Tag("http")
-public class WsTest {
+PUBLIC class WsTest {
     @BeforeAll
     public static void setup() {
         initialize(
                 meta(() -> new MetaHttpTest(new MetaMetaTest())),
-                logging(),
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestWsConnector.class, connector -> connector.verbose(true)))
-                        .server(server -> server.route(TestWsService.class).configure(s -> s.verbose(true)).service(TestWsService.class, ws -> ws.logging())))
+                        .communicator(communicator -> communicator.connector(TestWsConnector.class))
+                        .server(server -> server.route(TestWsService.class))
+                )
         );
     }
 

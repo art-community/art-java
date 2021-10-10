@@ -21,7 +21,6 @@ import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
-@Tag("http")
 public class HttpTest {
     @BeforeAll
     public static void setup() {
