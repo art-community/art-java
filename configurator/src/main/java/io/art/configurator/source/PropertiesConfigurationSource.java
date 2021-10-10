@@ -93,8 +93,12 @@ public class PropertiesConfigurationSource implements NestedConfiguration {
         ImmutableSet<String> keys = getKeys();
         Map<Integer, NestedConfiguration> array = map();
         for (String key : keys) {
-            String arrayPrefix = isEmpty(section) ? key : key.substring(key.indexOf(section) + section.length() + 1);
-            Integer index = nullIfException(() -> parseInt(arrayPrefix.contains(DOT) ? arrayPrefix.substring(0, arrayPrefix.indexOf(DOT)) : arrayPrefix));
+            String arrayPrefix = isEmpty(section)
+                    ? key
+                    : key.substring(key.indexOf(section) + section.length() + 1);
+            Integer index = nullIfException(() -> parseInt(arrayPrefix.contains(DOT)
+                    ? arrayPrefix.substring(0, arrayPrefix.indexOf(DOT))
+                    : arrayPrefix));
             if (nonNull(index) && index >= 0) {
                 array.put(index, new PropertiesConfigurationSource(combine(section, index.toString()), properties));
             }
