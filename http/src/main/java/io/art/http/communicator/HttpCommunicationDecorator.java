@@ -2,6 +2,7 @@ package io.art.http.communicator;
 
 import io.art.core.annotation.*;
 import io.art.http.constants.HttpModuleConstants.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import lombok.*;
@@ -20,6 +21,8 @@ public class HttpCommunicationDecorator {
     private UnaryOperator<HttpClient> client;
     private UnaryOperator<HttpHeaders> headers;
     private UnaryOperator<String> uri = UnaryOperator.identity();
+    private DataFormat inputDataFormat;
+    private DataFormat outputDataFormat;
     private final Set<String> pathParameters = set();
     private final Map<String, String> queryParameters = map();
     private final Map<String, Cookie> cookies = map();
@@ -86,6 +89,16 @@ public class HttpCommunicationDecorator {
 
     public HttpCommunicationDecorator uri(UnaryOperator<String> mapper) {
         this.uri = mapper;
+        return this;
+    }
+
+    public HttpCommunicationDecorator input(DataFormat format) {
+        inputDataFormat = format;
+        return this;
+    }
+
+    public HttpCommunicationDecorator output(DataFormat format) {
+        outputDataFormat = format;
         return this;
     }
 }

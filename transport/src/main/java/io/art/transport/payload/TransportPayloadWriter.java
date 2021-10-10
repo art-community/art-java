@@ -27,6 +27,7 @@ import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.MapFactory.*;
@@ -84,6 +85,9 @@ public class TransportPayloadWriter {
                     getYamlWriter().write(value, buffer);
                     return buffer;
                 };
+            case BYTES:
+                return value -> createBuffer()
+                        .writeBytes(value.getType().outputTransformer().toByteArray(cast(value.getObject())));
         }
         throw new ImpossibleSituationException();
     }

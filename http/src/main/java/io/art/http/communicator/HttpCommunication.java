@@ -120,6 +120,9 @@ public class HttpCommunication implements Communication {
     private Flux<Object> decoratedCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
         HttpCommunication.decorator.remove();
 
+        apply(decorator.getInputDataFormat(), input -> builder.reader(transportPayloadReader(input)));
+        apply(decorator.getOutputDataFormat(), output -> builder.writer(transportPayloadWriter(output)));
+
         builder.route(orElse(decorator.getRoute(), extractRouteType(action.getId().getActionId(), GET)));
         HttpClient client = orElse(decorator.getClient(), UnaryOperator.<HttpClient>identity()).apply(this.client.get());
 
@@ -168,8 +171,7 @@ public class HttpCommunication implements Communication {
             client = client.cookie(cookie);
         }
 
-        StringBuilder uri = new StringBuilder(connectorConfiguration.getUri().make(action.getId()));
-        return processCommunication(builder.route(route).client(client).uri(uri.toString()).build());
+        return processCommunication(builder.route(route).client(client).uri(connectorConfiguration.getUri().make(action.getId())).build());
     }
 
     private Flux<Object> processCommunication(ProcessingConfiguration configuration) {

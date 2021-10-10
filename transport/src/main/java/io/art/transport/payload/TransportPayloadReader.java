@@ -19,6 +19,7 @@
 package io.art.transport.payload;
 
 import io.art.core.exception.*;
+import io.art.core.extensions.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
 import io.art.meta.model.*;
@@ -73,6 +74,10 @@ public class TransportPayloadReader {
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()
                         : new TransportPayload(buffer, lazy(() -> getYamlReader().read(type, buffer)));
+            case BYTES:
+                return (buffer, type) -> buffer.capacity() == 0
+                        ? emptyTransportPayload()
+                        : new TransportPayload(buffer, lazy(() -> type.inputTransformer().fromByteArray(NettyBufferExtensions.toByteArray(buffer))));
         }
         throw new ImpossibleSituationException();
     }

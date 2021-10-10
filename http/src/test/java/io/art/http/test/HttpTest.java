@@ -18,6 +18,7 @@ import static io.art.http.test.communicator.TestHttp.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.nio.file.*;
@@ -95,6 +96,6 @@ public class HttpTest {
         assertNull(asFlux(executions.get("post19")).blockFirst(), "post19");
         assertNull(asFlux(executions.get("post20")).blockFirst(), "post20");
 
-        assertEquals("test", communicator.decorate(decorator -> decorator.uri("/file")).getFile());
+        assertEquals("test", communicator.decorate(decorator -> decorator.input(BYTES).uri("/file")).getFile());
     }
 }
