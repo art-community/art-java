@@ -1077,7 +1077,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaWs16Method ws16Method = register(new MetaWs16Method());
 
-              private final MetaWsEmptyFluxMethod wsEmptyFluxMethod = register(new MetaWsEmptyFluxMethod());
+              private final MetaWs17Method ws17Method = register(new MetaWs17Method());
 
               private final MetaTestWsConnectorClass testWsConnectorClass = register(new MetaTestWsConnectorClass());
 
@@ -1149,8 +1149,8 @@ public class MetaHttpTest extends MetaLibrary {
                 return ws16Method;
               }
 
-              public MetaWsEmptyFluxMethod wsEmptyFluxMethod() {
-                return wsEmptyFluxMethod;
+              public MetaWs17Method ws17Method() {
+                return ws17Method;
               }
 
               @Override
@@ -1538,24 +1538,24 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaWsEmptyFluxMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
+              public static final class MetaWs17Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
-                private MetaWsEmptyFluxMethod() {
-                  super("wsEmptyFlux",metaType(Void.class));
+                private MetaWs17Method() {
+                  super("ws17",metaType(Void.class));
                 }
 
                 @Override
                 public Object invoke(io.art.http.test.communicator.TestWs instance,
                     Object[] arguments) throws Throwable {
-                  instance.wsEmptyFlux((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  instance.ws17((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.http.test.communicator.TestWs instance, Object argument)
                     throws Throwable {
-                  instance.wsEmptyFlux((reactor.core.publisher.Flux)(argument));
+                  instance.ws17((reactor.core.publisher.Flux)(argument));
                   return null;
                 }
 
@@ -1598,7 +1598,7 @@ public class MetaHttpTest extends MetaLibrary {
 
                 private final Function<Object, Object> ws16Invocation;
 
-                private final Function<Object, Object> wsEmptyFluxInvocation;
+                private final Function<Object, Object> ws17Invocation;
 
                 public MetaTestWsProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
@@ -1618,7 +1618,7 @@ public class MetaHttpTest extends MetaLibrary {
                   ws14Invocation = invocations.get(ws14Method);
                   ws15Invocation = invocations.get(ws15Method);
                   ws16Invocation = invocations.get(ws16Method);
-                  wsEmptyFluxInvocation = invocations.get(wsEmptyFluxMethod);
+                  ws17Invocation = invocations.get(ws17Method);
                 }
 
                 @Override
@@ -1706,8 +1706,8 @@ public class MetaHttpTest extends MetaLibrary {
                 }
 
                 @Override
-                public void wsEmptyFlux(reactor.core.publisher.Flux<java.lang.String> input) {
-                  wsEmptyFluxInvocation.apply(input);
+                public void ws17(reactor.core.publisher.Flux<java.lang.String> input) {
+                  ws17Invocation.apply(input);
                 }
               }
 
@@ -2444,7 +2444,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaWs16Method ws16Method = register(new MetaWs16Method());
 
-              private final MetaWsEmptyFluxMethod wsEmptyFluxMethod = register(new MetaWsEmptyFluxMethod());
+              private final MetaWs17Method ws17Method = register(new MetaWs17Method());
 
               private MetaTestWsServiceClass() {
                 super(metaType(io.art.http.test.service.TestWsService.class));
@@ -2518,8 +2518,8 @@ public class MetaHttpTest extends MetaLibrary {
                 return ws16Method;
               }
 
-              public MetaWsEmptyFluxMethod wsEmptyFluxMethod() {
-                return wsEmptyFluxMethod;
+              public MetaWs17Method ws17Method() {
+                return ws17Method;
               }
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestWsService> {
@@ -2915,24 +2915,24 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaWsEmptyFluxMethod extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
+              public static final class MetaWs17Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
-                private MetaWsEmptyFluxMethod() {
-                  super("wsEmptyFlux",metaType(Void.class));
+                private MetaWs17Method() {
+                  super("ws17",metaType(Void.class));
                 }
 
                 @Override
                 public Object invoke(io.art.http.test.service.TestWsService instance,
                     Object[] arguments) throws Throwable {
-                  instance.wsEmptyFlux((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                  instance.ws17((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public Object invoke(io.art.http.test.service.TestWsService instance,
                     Object argument) throws Throwable {
-                  instance.wsEmptyFlux((reactor.core.publisher.Flux)(argument));
+                  instance.ws17((reactor.core.publisher.Flux)(argument));
                   return null;
                 }
 

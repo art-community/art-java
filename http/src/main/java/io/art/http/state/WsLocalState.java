@@ -5,8 +5,9 @@ import io.art.http.configuration.*;
 import io.netty.handler.codec.http.*;
 import lombok.*;
 import lombok.experimental.*;
+import reactor.core.publisher.*;
 import reactor.netty.http.websocket.*;
-import static lombok.AccessLevel.*;
+import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
 @Getter
 @Public
@@ -16,6 +17,7 @@ public class WsLocalState {
     private final WebsocketOutbound outbound;
     private final HttpRouteConfiguration routeConfiguration;
     private final HttpHeaders requestHeaders;
+    private final Sinks.One<Void> closer = Sinks.one();
 
     private WsLocalState(WebsocketInbound inbound, WebsocketOutbound outbound, HttpRouteConfiguration routeConfiguration) {
         this.inbound = inbound;
@@ -26,5 +28,9 @@ public class WsLocalState {
 
     public static WsLocalState wsLocalState(WebsocketInbound inbound, WebsocketOutbound outbound, HttpRouteConfiguration routeConfiguration) {
         return new WsLocalState(inbound, outbound, routeConfiguration);
+    }
+
+    public void close() {
+        closer.emitEmpty(FAIL_FAST);
     }
 }

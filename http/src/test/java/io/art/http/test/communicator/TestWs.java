@@ -36,7 +36,7 @@ public interface TestWs extends Communicator {
 
     Flux<String> ws16(Flux<String> input);
 
-    void wsEmptyFlux(Flux<String> input);
+    void ws17(Flux<String> input);
 
     interface TestWsConnector extends Connector {
         TestWs testWs();

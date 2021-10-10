@@ -66,9 +66,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.initialized()
-                    ? localState.get().outbound().send(output).then()
-                    : outbound.send(output).then();
+            return localState.get().outbound().send(output).then(localState.get().closer().asMono());
         }
 
         Flux<Object> input = (localState.initialized() ? localState.get().inbound() : inbound)
@@ -82,8 +80,6 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
                 .serve(input)
                 .map(value -> writer.write(typed(outputMappingType, value)));
 
-        return localState.initialized()
-                ? localState.get().outbound().send(output).then()
-                : outbound.send(output).then();
+        return localState.get().outbound().send(output).then(localState.get().closer().asMono());
     }
 }
