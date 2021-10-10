@@ -95,6 +95,6 @@ public class HttpTest {
         assertNull(asFlux(executions.get("post19")).blockFirst(), "post19");
         assertNull(asFlux(executions.get("post20")).blockFirst(), "post20");
 
-        assertEquals("test", communicator.decorate(decorator -> decorator.uri(ignore -> "/file")).getFile());
+        assertEquals("test", communicator.decorate(decorator -> decorator.uri("/file")).getFile());
     }
 }
