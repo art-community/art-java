@@ -23,7 +23,7 @@ public class TransportModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator from(ConfigurationSource source) {
             if (source.has(TRANSPORT_COMMON_SECTION)) {
-                this.configuration.commonPoolConfiguration = TransportPoolConfiguration.from(source, configuration.getCommonPoolConfiguration());
+                this.configuration.commonPoolConfiguration = TransportPoolConfiguration.from(source.getNested(TRANSPORT_COMMON_SECTION), configuration.getCommonPoolConfiguration());
             }
             if (source.has(BUFFER_WRITE_SECTION)) {
                 NestedConfiguration buffer = source.getNested(BUFFER_WRITE_SECTION);
