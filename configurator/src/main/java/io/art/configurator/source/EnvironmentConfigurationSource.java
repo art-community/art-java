@@ -27,6 +27,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.combiner.SectionCombiner.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -52,14 +53,17 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
         if (isEmpty(section)) {
             return immutableSetOf(context().configuration().getEnvironment().keySet());
         }
-        return environment.keySet().stream().filter(key -> key.startsWith(section + DASH)).collect(immutableSetCollector());
+        return environment.keySet().stream().filter(key -> key.startsWith(section)).collect(immutableSetCollector());
     }
 
     @Override
     public NestedConfiguration getNested(String path) {
-        String newSection = path.replace(DOT, DASH);
-        if (getKeys().contains(newSection)) {
-            return new EnvironmentConfigurationSource(newSection);
+        String newSection = combine(section, path).replace(DOT, UNDERSCORE);
+        ImmutableSet<String> keys = getKeys();
+        for (String key : keys) {
+            if (key.toLowerCase(Locale.ROOT).startsWith(newSection.toLowerCase(Locale.ROOT))) {
+                return new EnvironmentConfigurationSource(newSection);
+            }
         }
         return null;
     }
@@ -84,7 +88,7 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
         List<NestedConfiguration> array = dynamicArray();
         for (String key : environment.keySet()) {
             if (isEmpty(section) || key.startsWith(section)) {
-                Integer index = nullIfException(() -> parseInt(key.substring(key.lastIndexOf(DASH) + 1)));
+                Integer index = nullIfException(() -> parseInt(key.substring(key.lastIndexOf(UNDERSCORE) + 1)));
                 if (nonNull(index)) {
                     array.add(index, getNested(key));
                 }

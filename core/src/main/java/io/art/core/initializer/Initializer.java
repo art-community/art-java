@@ -41,16 +41,12 @@ import java.util.*;
 public class Initializer {
     private final static SingletonAction initialize = singletonAction();
 
-    public static void initialize(ModuleFactory<?>... modules) {
+    public static void initialize(ModuleActivator... modules) {
         initialize(defaults(), modules);
     }
 
     public static void initialize(ContextConfiguration configuration, ModuleFactory<?>... modules) {
         initialize.run(() -> initializeModules(configuration, modules));
-    }
-
-    public static void initialize(ModuleActivator... modules) {
-        initialize(defaults(), modules);
     }
 
     public static void initialize(ContextConfiguration configuration, ModuleActivator... modules) {
