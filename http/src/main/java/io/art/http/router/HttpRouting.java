@@ -1,6 +1,7 @@
 package io.art.http.router;
 
 import io.art.core.mime.*;
+import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.state.*;
 import io.art.meta.model.*;
@@ -13,6 +14,7 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.server.*;
 import static io.art.core.mime.MimeType.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.HttpLocalState.*;
 import static io.art.meta.model.TypedObject.*;
@@ -62,17 +64,19 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
-        HttpLocalState localState = httpLocalState(request, response, routeConfiguration);
+        LazyProperty<HttpLocalState> localState = lazy(() -> httpLocalState(request, response, routeConfiguration));
         state.httpState(owner, delegate, localState);
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.response().send(output).then();
+            return localState.initialized()
+                    ? localState.get().response().send(output).then()
+                    : response.send(output).then();
         }
 
         Sinks.One<Void> emptyCompleter = Sinks.one();
 
-        Flux<Object> input = localState.request()
+        Flux<Object> input = (localState.initialized() ? localState.get().request() : request)
                 .receive()
                 .aggregate()
                 .map(data -> reader.read(data, inputMappingType))
@@ -85,6 +89,8 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                 .serve(input)
                 .map(value -> writer.write(typed(outputMappingType, value)));
 
-        return localState.response().send(output).then(emptyCompleter.asMono());
+        return localState.initialized()
+                ? localState.get().response().send(output).then(emptyCompleter.asMono())
+                : response.send(output).then(emptyCompleter.asMono());
     }
 }
