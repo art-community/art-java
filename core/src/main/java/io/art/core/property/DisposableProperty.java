@@ -13,7 +13,6 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static java.util.Objects.*;
 import java.util.*;
-import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
@@ -34,7 +33,6 @@ public class DisposableProperty<T> implements Supplier<T> {
     private T value = cast(UNINITIALIZED);
 
     private final Supplier<T> loader;
-    private final AtomicBoolean initialized = new AtomicBoolean();
     private volatile Queue<Consumer<T>> creationConsumers;
     private volatile List<Consumer<T>> initializationConsumers;
     private volatile List<Consumer<T>> disposeConsumers;
