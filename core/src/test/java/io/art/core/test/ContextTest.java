@@ -59,7 +59,7 @@ public class ContextTest {
     @Test
     public void testContextShutdown() {
         TestModule testModule = new TestModule();
-        initialize(() -> testModule);
+        initialize(ModuleActivator.module(TestModule.class, () -> testModule));
         shutdown();
         assertTrue(testModule.unloaded);
     }

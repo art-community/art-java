@@ -24,6 +24,7 @@ public class ConfigurationFormatsTest {
                 .with("ARRAY_3_TEST_0", "value-3")
                 .with("NESTED_INNER_VALUE", "value")
                 .with("NESTED_INNER_VALUE_ARRAY_0", "value")
+                .withAll(System.getenv())
                 .build();
 
         initialize(ContextConfiguration.builder()
