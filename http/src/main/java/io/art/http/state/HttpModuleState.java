@@ -19,20 +19,19 @@
 package io.art.http.state;
 
 import io.art.core.module.*;
-import io.art.core.property.*;
 import io.art.meta.model.*;
 import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
-    private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
+    private final MetaLocalState<HttpLocalState> httpLocalState = new MetaLocalState<>();
     private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
 
-    public void httpState(MetaClass<?> owner, MetaMethod<?> method, LazyProperty<HttpLocalState> state) {
+    public void httpState(MetaClass<?> owner, MetaMethod<?> method, HttpLocalState state) {
         httpLocalState.set(owner, method, state);
     }
 
     public <C, M extends MetaClass<C>> HttpLocalState httpState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return httpLocalState.get(owner, method).get();
+        return httpLocalState.get(owner, method);
     }
 
     public <C, M extends MetaClass<C>> void clearHttpState(MetaClass<?> owner, MetaMethod<?> method) {
