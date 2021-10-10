@@ -9,11 +9,14 @@ import static io.art.core.constants.GraalConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.JarExtensions.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
 import static java.lang.Boolean.*;
 import static java.lang.System.*;
+import static java.nio.file.Files.*;
 import java.io.*;
+import java.nio.file.*;
 import java.util.*;
 
 public class GraalNettyFeatures implements Feature {
@@ -39,6 +42,9 @@ public class GraalNettyFeatures implements Feature {
 
         String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
         File libraryDirectory = new File(workingPath);
+
+        ignoreException(() -> createDirectories(Paths.get(workingPath).resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH)));
+
         for (String name : NETTY_EPOLL_LIBRARY_REGEXPS) {
             extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory.getAbsolutePath());
         }
