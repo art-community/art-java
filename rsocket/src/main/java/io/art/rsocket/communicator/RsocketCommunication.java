@@ -47,7 +47,6 @@ import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import static reactor.core.publisher.Sinks.*;
 import java.util.function.*;
 
@@ -221,9 +220,7 @@ public class RsocketCommunication implements Communication {
     }
 
     private void subscribeMono(Flux<Object> input, Sinks.One<Object> emitter) {
-        input.doOnNext(element -> emitter.emitValue(element, FAIL_FAST))
-                .doOnError(error -> emitter.emitError(error, FAIL_FAST))
-                .subscribe();
+        input.subscribe(emitter::tryEmitValue, emitter::tryEmitError);
     }
 
     private CommunicationMode communicationMode() {

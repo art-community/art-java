@@ -30,7 +30,6 @@ import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import static reactor.core.publisher.Sinks.*;
 import java.util.*;
 import java.util.function.*;
@@ -280,9 +279,9 @@ public class ServiceMethod {
     private void emitEmptyOutput(Object element, Sinks.One<Object> sink) {
         try {
             invoker.invoke(element);
-            sink.emitEmpty(FAIL_FAST);
+            sink.tryEmitEmpty();
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
+            sink.tryEmitError(throwable);
         }
     }
 
@@ -290,14 +289,14 @@ public class ServiceMethod {
         try {
             Object output = invoker.invoke(element);
             if (isNull(output)) {
-                sink.emitComplete(FAIL_FAST);
+                sink.tryEmitComplete();
                 return;
             }
-            sink.emitNext(output, FAIL_FAST);
-            sink.emitComplete(FAIL_FAST);
+            sink.tryEmitNext(output);
+            sink.tryEmitComplete();
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
-            sink.emitComplete(FAIL_FAST);
+            sink.tryEmitError(throwable);
+            sink.tryEmitComplete();
         }
     }
 
@@ -305,17 +304,13 @@ public class ServiceMethod {
         try {
             Object output = invoker.invoke(element);
             if (isNull(output)) {
-                sink.emitComplete(FAIL_FAST);
+                sink.tryEmitComplete();
                 return;
             }
-            asFlux(output)
-                    .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
-                    .doOnNext(resultElement -> sink.emitNext(resultElement, FAIL_FAST))
-                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
-                    .subscribe();
+            asFlux(output).subscribe(sink::tryEmitNext, sink::tryEmitError, sink::tryEmitComplete);
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
-            sink.emitComplete(FAIL_FAST);
+            sink.tryEmitError(throwable);
+            sink.tryEmitComplete();
         }
     }
 
@@ -323,15 +318,12 @@ public class ServiceMethod {
         try {
             Object output = invoker.invoke(element);
             if (isNull(output)) {
-                sink.emitEmpty(FAIL_FAST);
+                sink.tryEmitEmpty();
                 return;
             }
-            asMono(output)
-                    .doOnSuccess(resultElement -> sink.emitValue(resultElement, FAIL_FAST))
-                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
-                    .subscribe();
+            asMono(output).subscribe(sink::tryEmitValue, sink::tryEmitError);
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
+            sink.tryEmitError(throwable);
         }
     }
 
@@ -339,9 +331,9 @@ public class ServiceMethod {
     private void callEmptyOutput(Sinks.One<Object> sink) {
         try {
             invoker.invoke();
-            sink.emitEmpty(FAIL_FAST);
+            sink.tryEmitEmpty();
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
+            sink.tryEmitError(throwable);
         }
     }
 
@@ -349,14 +341,14 @@ public class ServiceMethod {
         try {
             Object output = invoker.invoke();
             if (isNull(output)) {
-                sink.emitComplete(FAIL_FAST);
+                sink.tryEmitComplete();
                 return;
             }
-            sink.emitNext(output, FAIL_FAST);
-            sink.emitComplete(FAIL_FAST);
+            sink.tryEmitNext(output);
+            sink.tryEmitComplete();
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
-            sink.emitComplete(FAIL_FAST);
+            sink.tryEmitError(throwable);
+            sink.tryEmitComplete();
         }
     }
 
@@ -364,17 +356,13 @@ public class ServiceMethod {
         try {
             Object output = invoker.invoke();
             if (isNull(output)) {
-                sink.emitComplete(FAIL_FAST);
+                sink.tryEmitComplete();
                 return;
             }
-            asFlux(output)
-                    .doOnComplete(() -> sink.emitComplete(FAIL_FAST))
-                    .doOnNext(resultElement -> sink.emitNext(resultElement, FAIL_FAST))
-                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
-                    .subscribe();
+            asFlux(output).subscribe(sink::tryEmitNext, sink::tryEmitError, sink::tryEmitComplete);
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
-            sink.emitComplete(FAIL_FAST);
+            sink.tryEmitError(throwable);
+            sink.tryEmitComplete();
         }
     }
 
@@ -382,15 +370,15 @@ public class ServiceMethod {
         try {
             Object output = invoker.invoke();
             if (isNull(output)) {
-                sink.emitEmpty(FAIL_FAST);
+                sink.tryEmitEmpty();
                 return;
             }
             asMono(output)
-                    .doOnSuccess(resultElement -> sink.emitValue(resultElement, FAIL_FAST))
-                    .doOnError(exception -> sink.emitError(exception, FAIL_FAST))
+                    .doOnSuccess(sink::tryEmitValue)
+                    .doOnError(sink::tryEmitError)
                     .subscribe();
         } catch (Throwable throwable) {
-            sink.emitError(throwable, FAIL_FAST);
+            sink.tryEmitError(throwable);
         }
     }
 

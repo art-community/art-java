@@ -25,7 +25,6 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import java.util.function.*;
 
 class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, Publisher<Void>> {
@@ -83,7 +82,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue)
                 .flux()
-                .doOnComplete(() -> emptyCompleter.emitEmpty(FAIL_FAST));
+                .doOnComplete(emptyCompleter::tryEmitEmpty);
 
         Flux<ByteBuf> output = serviceMethod
                 .serve(input)

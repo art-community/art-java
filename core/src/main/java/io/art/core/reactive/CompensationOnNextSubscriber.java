@@ -5,7 +5,6 @@ import org.reactivestreams.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import static java.lang.Long.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 import static reactor.core.publisher.Sinks.*;
 import javax.annotation.*;
 import java.util.concurrent.atomic.*;
@@ -31,21 +30,19 @@ public class CompensationOnNextSubscriber<T> implements CoreSubscriber<T> {
         if (done.get()) return;
         if (predicate.test(element)) {
             if (compensating.compareAndSet(false, true)) {
-                compensation.apply(element)
-                        .doOnNext(compensated -> splitter.emitNext(compensated, FAIL_FAST))
-                        .doOnError(this::completeCompensationWithError)
-                        .doOnComplete(this::completeCompensation)
-                        .subscribe();
+                compensation
+                        .apply(element)
+                        .subscribe(splitter::tryEmitNext, this::completeCompensationWithError, this::completeCompensation);
             }
             return;
         }
-        splitter.emitNext(element, FAIL_FAST);
+        splitter.tryEmitNext(element);
     }
 
     @Override
     public void onError(Throwable error) {
         if (done.get()) return;
-        if (!compensating.get()) splitter.emitError(error, FAIL_FAST);
+        if (!compensating.get()) splitter.tryEmitError(error);
         onComplete();
     }
 
@@ -56,13 +53,13 @@ public class CompensationOnNextSubscriber<T> implements CoreSubscriber<T> {
         if (compensating.get()) {
             if (compensationCompleted.get()) {
                 if (done.compareAndSet(false, true)) {
-                    splitter.emitComplete(FAIL_FAST);
+                    splitter.tryEmitComplete();
                 }
             }
             return;
         }
         if (done.compareAndSet(false, true)) {
-            splitter.emitComplete(FAIL_FAST);
+            splitter.tryEmitComplete();
         }
     }
 
@@ -72,7 +69,7 @@ public class CompensationOnNextSubscriber<T> implements CoreSubscriber<T> {
 
     private void completeCompensationWithError(Throwable error) {
         if (done.get()) return;
-        splitter.emitError(error, FAIL_FAST);
+        splitter.tryEmitError(error);
         completeCompensation();
     }
 
@@ -81,7 +78,7 @@ public class CompensationOnNextSubscriber<T> implements CoreSubscriber<T> {
         compensationCompleted.compareAndSet(false, true);
         if (ownerCompleted.get()) {
             if (done.compareAndSet(false, true)) {
-                splitter.emitComplete(FAIL_FAST);
+                splitter.tryEmitComplete();
             }
         }
     }

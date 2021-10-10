@@ -7,7 +7,6 @@ import lombok.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.websocket.*;
-import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
 @Getter
 @Public
@@ -32,7 +31,7 @@ public class WsLocalState {
     }
 
     public WsLocalState close() {
-        if (!autoClosing) closer.emitEmpty(FAIL_FAST);
+        if (!autoClosing) closer.tryEmitEmpty();
         return this;
     }
 
