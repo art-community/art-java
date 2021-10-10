@@ -63,7 +63,7 @@ public class PropertiesConfigurationSource implements NestedConfiguration {
         String newSection = combine(section, path);
         ImmutableSet<String> keys = getKeys();
         for (String key : keys) {
-            if (key.startsWith(newSection)) {
+            if (key.equals(newSection) || key.startsWith(newSection + DOT)) {
                 return new PropertiesConfigurationSource(newSection, properties);
             }
         }

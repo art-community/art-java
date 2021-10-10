@@ -64,7 +64,7 @@ public class EnvironmentConfigurationSource implements NestedConfiguration {
         String newSection = combine(section, path).replaceAll(ESCAPED_DOT, UNDERSCORE);
         ImmutableSet<String> keys = getKeys();
         for (String key : keys) {
-            if (key.startsWith(newSection)) {
+            if (key.equals(newSection) || key.startsWith(newSection + UNDERSCORE)) {
                 return new EnvironmentConfigurationSource(newSection);
             }
         }
