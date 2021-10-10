@@ -135,4 +135,16 @@ public class TestWsService implements TestWs {
         }).subscribe();
         register("ws17", many.asFlux());
     }
+
+    @Override
+    public Flux<String> wsEcho(Flux<String> input) {
+        WsLocalState state = httpModule().state().wsState(TestWsService.class, MetaTestWsServiceClass::wsEchoMethod).disableAutoClosing();
+        Sinks.Many<String> output = Sinks.many().unicast().onBackpressureBuffer();
+        input.buffer(10)
+                .doOnNext(element -> element.forEach(output::tryEmitNext))
+                .doOnNext(ignore -> state.close())
+                .doOnComplete(() -> output.tryEmitComplete())
+                .subscribe();
+        return output.asFlux();
+    }
 }

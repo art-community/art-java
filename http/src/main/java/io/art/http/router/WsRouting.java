@@ -11,6 +11,7 @@ import lombok.*;
 import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.websocket.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.mime.MimeType.*;
 import static io.art.http.module.HttpModule.*;
 import static io.art.http.state.WsLocalState.*;
@@ -22,7 +23,6 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
-import static reactor.core.publisher.Mono.*;
 import java.util.function.*;
 
 class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publisher<Void>> {
@@ -54,6 +54,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
     }
 
     @Override
+    @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Publisher<Void> apply(WebsocketInbound inbound, WebsocketOutbound outbound) {
         DataFormat inputDataFormat = fromMimeType(parseMimeType(inbound.headers().get(CONTENT_TYPE), defaultMimeType));
         DataFormat outputDataFormat = fromMimeType(parseMimeType(inbound.headers().get(ACCEPT), defaultMimeType));
@@ -65,9 +66,12 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
-            return localState.outbound()
-                    .send(output)
-                    .then(localState.autoClosing() ? empty() : localState.closer().asMono());
+            if (localState.autoClosing()) {
+                return localState.outbound().send(output).then();
+            }
+
+            localState.outbound().send(output).then().subscribe();
+            return localState.closer().asMono();
         }
 
         Flux<Object> input = localState.inbound()
@@ -81,8 +85,11 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
                 .serve(input)
                 .map(value -> writer.write(typed(outputMappingType, value)));
 
-        return localState.outbound()
-                .send(output)
-                .then(localState.autoClosing() ? empty() : localState.closer().asMono());
+        if (localState.autoClosing()) {
+            return localState.outbound().send(output).then();
+        }
+
+        localState.outbound().send(output).then().subscribe();
+        return localState.closer().asMono();
     }
 }

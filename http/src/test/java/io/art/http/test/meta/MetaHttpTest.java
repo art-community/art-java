@@ -1079,6 +1079,8 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaWs17Method ws17Method = register(new MetaWs17Method());
 
+              private final MetaWsEchoMethod wsEchoMethod = register(new MetaWsEchoMethod());
+
               private final MetaTestWsConnectorClass testWsConnectorClass = register(new MetaTestWsConnectorClass());
 
               private MetaTestWsClass() {
@@ -1151,6 +1153,10 @@ public class MetaHttpTest extends MetaLibrary {
 
               public MetaWs17Method ws17Method() {
                 return ws17Method;
+              }
+
+              public MetaWsEchoMethod wsEchoMethod() {
+                return wsEchoMethod;
               }
 
               @Override
@@ -1565,6 +1571,31 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
+              public static final class MetaWsEchoMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaWsEchoMethod() {
+                  super("wsEcho",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestWs instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.wsEcho((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.communicator.TestWs instance, Object argument)
+                    throws Throwable {
+                  return instance.wsEcho((reactor.core.publisher.Flux)(argument));
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
               public class MetaTestWsProxy extends MetaProxy implements io.art.http.test.communicator.TestWs {
                 private final Function<Object, Object> ws1Invocation;
 
@@ -1600,6 +1631,8 @@ public class MetaHttpTest extends MetaLibrary {
 
                 private final Function<Object, Object> ws17Invocation;
 
+                private final Function<Object, Object> wsEchoInvocation;
+
                 public MetaTestWsProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   ws1Invocation = invocations.get(ws1Method);
@@ -1619,6 +1652,7 @@ public class MetaHttpTest extends MetaLibrary {
                   ws15Invocation = invocations.get(ws15Method);
                   ws16Invocation = invocations.get(ws16Method);
                   ws17Invocation = invocations.get(ws17Method);
+                  wsEchoInvocation = invocations.get(wsEchoMethod);
                 }
 
                 @Override
@@ -1708,6 +1742,12 @@ public class MetaHttpTest extends MetaLibrary {
                 @Override
                 public void ws17(reactor.core.publisher.Flux<java.lang.String> input) {
                   ws17Invocation.apply(input);
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<java.lang.String> wsEcho(
+                    reactor.core.publisher.Flux<java.lang.String> input) {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(wsEchoInvocation.apply(input));
                 }
               }
 
@@ -2446,6 +2486,8 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaWs17Method ws17Method = register(new MetaWs17Method());
 
+              private final MetaWsEchoMethod wsEchoMethod = register(new MetaWsEchoMethod());
+
               private MetaTestWsServiceClass() {
                 super(metaType(io.art.http.test.service.TestWsService.class));
               }
@@ -2520,6 +2562,10 @@ public class MetaHttpTest extends MetaLibrary {
 
               public MetaWs17Method ws17Method() {
                 return ws17Method;
+              }
+
+              public MetaWsEchoMethod wsEchoMethod() {
+                return wsEchoMethod;
               }
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestWsService> {
@@ -2934,6 +2980,31 @@ public class MetaHttpTest extends MetaLibrary {
                     Object argument) throws Throwable {
                   instance.ws17((reactor.core.publisher.Flux)(argument));
                   return null;
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
+                    ) {
+                  return inputParameter;
+                }
+              }
+
+              public static final class MetaWsEchoMethod extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
+                private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
+
+                private MetaWsEchoMethod() {
+                  super("wsEcho",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestWsService instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.wsEcho((reactor.core.publisher.Flux<java.lang.String>)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.http.test.service.TestWsService instance,
+                    Object argument) throws Throwable {
+                  return instance.wsEcho((reactor.core.publisher.Flux)(argument));
                 }
 
                 public MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter(
