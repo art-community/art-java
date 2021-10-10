@@ -24,6 +24,7 @@ import io.art.meta.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.EmptinessChecker.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
@@ -225,89 +226,54 @@ public class ServiceMethod {
 
 
     private void subscribeEmptyBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnSubscribe(ignore -> callBlockingOutput(sink))
-                .subscribe();
+        input.subscribe(emptyConsumer(), sink::tryEmitError, () -> callBlockingOutput(sink));
     }
 
     private void subscribeEmptyFlux(Flux<Object> input, Sinks.Many<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnSubscribe(ignore -> callFluxOutput(sink))
-                .subscribe();
+        input.subscribe(emptyConsumer(), sink::tryEmitError, () -> callFluxOutput(sink));
     }
 
     private void subscribeEmptyMono(Flux<Object> input, Sinks.One<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnSubscribe(ignore -> callMonoOutput(sink))
-                .subscribe();
+        input.subscribe(emptyConsumer(), sink::tryEmitError, () -> callMonoOutput(sink));
     }
 
     private void subscribeEmptyEmpty(Flux<Object> input, Sinks.One<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .doOnSubscribe(ignore -> callEmptyOutput(sink))
-                .subscribe();
+        input.subscribe(emptyConsumer(), sink::tryEmitError, () -> callEmptyOutput(sink));
     }
 
 
     private void subscribeBlockingBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitComplete(FAIL_FAST)))
-                .subscribe(element -> emitBlockingOutput(element, sink));
+        input.subscribe(element -> emitBlockingOutput(element, sink), sink::tryEmitError, sink::tryEmitComplete);
     }
 
     private void subscribeBlockingFlux(Flux<Object> input, Sinks.Many<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitComplete(FAIL_FAST)))
-                .subscribe(element -> emitFluxOutput(element, sink));
+        input.subscribe(element -> emitFluxOutput(element, sink), sink::tryEmitError, sink::tryEmitComplete);
+        ;
     }
 
     private void subscribeBlockingMono(Flux<Object> input, Sinks.One<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitEmpty(FAIL_FAST)))
-                .subscribe(element -> emitMonoOutput(element, sink));
+        input.subscribe(element -> emitMonoOutput(element, sink), sink::tryEmitError, sink::tryEmitEmpty);
     }
 
     private void subscribeBlockingEmpty(Flux<Object> input, Sinks.One<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitEmpty(FAIL_FAST)))
-                .subscribe(element -> emitEmptyOutput(element, sink));
+        input.subscribe(element -> emitEmptyOutput(element, sink), sink::tryEmitError, sink::tryEmitEmpty);
     }
 
 
     private void subscribeMonoBlocking(Flux<Object> input, Sinks.Many<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitComplete(FAIL_FAST)))
-                .subscribe(element -> emitBlockingOutput(Mono.just(element), sink));
+        input.subscribe(element -> emitBlockingOutput(Mono.just(element), sink), sink::tryEmitError, sink::tryEmitComplete);
     }
 
     private void subscribeMonoFlux(Flux<Object> input, Sinks.Many<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitComplete(FAIL_FAST)))
-                .subscribe(element -> emitFluxOutput(Mono.just(element), sink));
+        input.subscribe(element -> emitFluxOutput(Mono.just(element), sink), sink::tryEmitError, sink::tryEmitComplete);
     }
 
     private void subscribeMonoMono(Flux<Object> input, Sinks.One<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitEmpty(FAIL_FAST)))
-                .subscribe(element -> emitMonoOutput(Mono.just(element), sink));
+        input.subscribe(element -> emitMonoOutput(Mono.just(element), sink), sink::tryEmitError, sink::tryEmitEmpty);
     }
 
     private void subscribeMonoEmpty(Flux<Object> input, Sinks.One<Object> sink) {
-        input
-                .doOnError(error -> sink.emitError(error, FAIL_FAST))
-                .switchIfEmpty(flux(() -> sink.emitEmpty(FAIL_FAST)))
-                .subscribe(element -> emitEmptyOutput(Mono.just(element), sink));
+        input.subscribe(element -> emitEmptyOutput(Mono.just(element), sink), sink::tryEmitError, sink::tryEmitEmpty);
     }
 
 
