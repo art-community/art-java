@@ -106,29 +106,23 @@ public class RsocketCommunication implements Communication {
         TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getDataFormat());
         switch (communicationMode()) {
             case FIRE_AND_FORGET:
-                return fireAndForget(writer).andThen(output -> output
-                        .filter(payload -> !payload.isEmpty())
-                        .map(TransportPayload::getValue));
+                return fireAndForget(writer).andThen(this::extractOutput);
             case REQUEST_RESPONSE:
-                return requestResponse(reader, writer).andThen(output -> output
-                        .filter(payload -> !payload.isEmpty())
-                        .map(TransportPayload::getValue));
+                return requestResponse(reader, writer).andThen(this::extractOutput);
             case REQUEST_STREAM:
-                return requestStream(reader, writer).andThen(output -> output
-                        .filter(payload -> !payload.isEmpty())
-                        .map(TransportPayload::getValue));
+                return requestStream(reader, writer).andThen(this::extractOutput);
             case REQUEST_CHANNEL:
-                return requestChannel(reader, writer).andThen(output -> output
-                        .filter(payload -> !payload.isEmpty())
-                        .map(TransportPayload::getValue));
+                return requestChannel(reader, writer).andThen(this::extractOutput);
             case METADATA_PUSH:
-                return metaDataPush(writer).andThen(output -> output
-                        .filter(payload -> !payload.isEmpty())
-                        .map(TransportPayload::getValue));
+                return metaDataPush(writer).andThen(this::extractOutput);
         }
         throw new ImpossibleSituationException();
     }
 
+
+    private Flux<Object> extractOutput(Flux<TransportPayload> output) {
+        return output.filter(payload -> !payload.isEmpty()).map(TransportPayload::getValue);
+    }
 
     private Function<Flux<Object>, Flux<TransportPayload>> fireAndForget(TransportPayloadWriter writer) {
         RSocketClient client = this.client.get();
