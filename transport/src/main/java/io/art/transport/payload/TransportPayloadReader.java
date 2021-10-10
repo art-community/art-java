@@ -27,11 +27,11 @@ import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
-import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.MapFactory.*;
+import static io.art.core.builder.MapBuilder.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.payload.TransportPayload.*;
 import static io.art.yaml.module.YamlModule.*;
 import static lombok.AccessLevel.*;
@@ -42,7 +42,12 @@ import java.util.function.*;
 public class TransportPayloadReader {
     private final DataFormat dataFormat;
 
-    private final static Map<DataFormat, TransportPayloadReader> cache = concurrentMap(DataFormat.values().length);
+    private final static Map<DataFormat, TransportPayloadReader> cache = mapBuilder(JSON, new TransportPayloadReader(JSON))
+            .with(MESSAGE_PACK, new TransportPayloadReader(MESSAGE_PACK))
+            .with(YAML, new TransportPayloadReader(YAML))
+            .with(STRING, new TransportPayloadReader(STRING))
+            .with(BYTES, new TransportPayloadReader(BYTES))
+            .build();
 
     @Getter(lazy = true, value = PRIVATE)
     private final BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader = reader(dataFormat);
@@ -87,6 +92,6 @@ public class TransportPayloadReader {
     }
 
     public static TransportPayloadReader transportPayloadReader(DataFormat dataFormat) {
-        return putIfAbsent(cache, dataFormat, () -> new TransportPayloadReader(dataFormat));
+        return cache.get(dataFormat);
     }
 }

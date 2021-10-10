@@ -27,13 +27,13 @@ import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import lombok.*;
+import static io.art.core.builder.MapBuilder.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.MapFactory.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
+import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.module.TransportModule.*;
 import static io.art.yaml.module.YamlModule.*;
 import static io.netty.buffer.ByteBufAllocator.*;
@@ -45,7 +45,12 @@ import java.util.function.*;
 public class TransportPayloadWriter {
     private final DataFormat dataFormat;
 
-    private final static Map<DataFormat, TransportPayloadWriter> cache = concurrentMap(DataFormat.values().length);
+    private final static Map<DataFormat, TransportPayloadWriter> cache = mapBuilder(JSON, new TransportPayloadWriter(JSON))
+            .with(MESSAGE_PACK, new TransportPayloadWriter(MESSAGE_PACK))
+            .with(YAML, new TransportPayloadWriter(YAML))
+            .with(STRING, new TransportPayloadWriter(STRING))
+            .with(BYTES, new TransportPayloadWriter(BYTES))
+            .build();
 
     @Getter(lazy = true, value = PRIVATE)
     private final Function<TypedObject, ByteBuf> writer = writer(dataFormat);
@@ -116,6 +121,6 @@ public class TransportPayloadWriter {
     }
 
     public static TransportPayloadWriter transportPayloadWriter(DataFormat dataFormat) {
-        return putIfAbsent(cache, dataFormat, () -> new TransportPayloadWriter(dataFormat));
+        return cache.get(dataFormat);
     }
 }
