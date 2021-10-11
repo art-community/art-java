@@ -151,7 +151,7 @@ public abstract class MetaClass<T> {
 
         creator = MetaCreatorTemplate.builder()
                 .owner(this)
-                .propertyMap(constructablePropertyMap)
+                .propertyMap(immutableMapOf(constructablePropertyMap))
                 .propertyArray(constructableProperties.toArray(new MetaProperty[0]))
                 .noPropertiesConstructor(noPropertiesConstructor)
                 .localPropertiesConstructor(localPropertiesConstructor)

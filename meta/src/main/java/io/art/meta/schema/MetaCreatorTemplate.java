@@ -32,7 +32,7 @@ import java.util.function.*;
 @Builder
 public class MetaCreatorTemplate {
     private final MetaClass<?> owner;
-    private final Map<String, MetaProperty<?>> propertyMap;
+    private final ImmutableMap<String, MetaProperty<?>> propertyMap;
     private final MetaProperty<?>[] propertyArray;
     private final MetaConstructor<?> allPropertiesConstructor;
     private final MetaConstructor<?> localPropertiesConstructor;
@@ -62,7 +62,7 @@ public class MetaCreatorTemplate {
     }
 
     public ImmutableMap<String, MetaProperty<?>> properties() {
-        return immutableMapOf(propertyMap);
+        return propertyMap;
     }
 
     public MetaCreatorInstance instantiate() {
