@@ -21,7 +21,13 @@ public class DelegateConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type = DELEGATE;
     @Getter
     private final String section = EMPTY_STRING;
-    private final LazyProperty<String> path = lazy(() -> join(NEXT_ARROW, sources.stream().map(ConfigurationSource::getPath).collect(listCollector())));
+    private final LazyProperty<String> path;
+
+
+    public DelegateConfigurationSource(ImmutableArray<ConfigurationSource> sources) {
+        this.sources = sources;
+        path = lazy(() -> join(NEXT_ARROW, sources.stream().map(ConfigurationSource::getPath).collect(listCollector())));
+    }
 
     @Override
     public void refresh() {
