@@ -244,7 +244,7 @@ public class HttpCommunication implements Communication {
     }
 
     private void sendWebSocket(WebsocketOutbound outbound, Flux<ByteBuf> input) {
-        outbound.send(input.doOnComplete(outbound::sendClose)).then().subscribe();
+        outbound.send(input).then().subscribe();
     }
 
     @Builder
