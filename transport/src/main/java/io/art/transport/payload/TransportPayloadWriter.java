@@ -101,7 +101,7 @@ public class TransportPayloadWriter {
         int writeBufferInitialCapacity = configuration.getWriteBufferInitialCapacity();
         int writeBufferMaxCapacity = configuration.getWriteBufferMaxCapacity();
         switch (configuration.getWriteBufferType()) {
-            CASE DEFAULT:
+            case DEFAULT:
                 return DEFAULT.buffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
             case HEAP:
                 return DEFAULT.heapBuffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
