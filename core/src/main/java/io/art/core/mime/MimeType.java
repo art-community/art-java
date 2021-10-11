@@ -65,9 +65,6 @@ public class MimeType implements Comparable<MimeType> {
     }
 
     public static MimeType mimeType(String type, String subtype, Map<String, String> parameters) {
-        if (isEmpty(type)) throw new InvalidMimeTypeException(type, MIME_TYPE_MUST_NOT_BE_EMPTY);
-        if (isEmpty(subtype))
-            throw new InvalidMimeTypeException(subtype, MIME_SUBTYPE_MUST_NOT_BE_EMPTY);
         checkToken(type);
         checkToken(subtype);
         type = type.toLowerCase(ENGLISH);
@@ -85,15 +82,15 @@ public class MimeType implements Comparable<MimeType> {
         return new MimeType(type, subtype, map());
     }
 
-    public static MimeType parseMimeType(String value) {
+    public static MimeType parseMimeType(String value, MimeType fallback) {
         if (isEmpty(value)) {
-            throw new InvalidMimeTypeException(value, MIME_TYPE_MUST_NOT_BE_EMPTY);
+            return fallback;
         }
 
         int index = value.indexOf(SEMICOLON);
         String fullType = (index >= 0 ? value.substring(0, index) : value).trim();
         if (fullType.isEmpty()) {
-            throw new InvalidMimeTypeException(value, MIME_TYPE_MUST_NOT_BE_EMPTY);
+            return fallback;
         }
 
         if (WILDCARD.equals(fullType)) {
@@ -101,15 +98,15 @@ public class MimeType implements Comparable<MimeType> {
         }
         int subIndex = fullType.indexOf(SLASH);
         if (subIndex == -1) {
-            throw new InvalidMimeTypeException(value, MIME_DOES_NOT_CONTAIN_SLASH);
+            return fallback;
         }
         if (subIndex == fullType.length() - 1) {
-            throw new InvalidMimeTypeException(value, MIME_DOES_NOT_CONTAIN_SUBTYPE);
+            return fallback;
         }
         String type = fullType.substring(0, subIndex);
         String subtype = fullType.substring(subIndex + 1);
         if (WILDCARD.equals(type) && !WILDCARD.equals(subtype)) {
-            throw new InvalidMimeTypeException(value, WILDCARD_TYPE_IS_LEGAL_ONLY_FOR_ALL_MIME_TYPES);
+            return fallback;
         }
 
         Map<String, String> parameters = null;
@@ -143,14 +140,6 @@ public class MimeType implements Comparable<MimeType> {
         }
         while (index < value.length());
         return mimeType(type, subtype, parameters);
-    }
-
-    public static MimeType parseMimeType(String value, MimeType fallback) {
-        try {
-            return MimeType.parseMimeType(value);
-        } catch (Throwable throwable) {
-            return fallback;
-        }
     }
 
     private static void checkToken(String token) {
