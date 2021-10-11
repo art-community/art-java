@@ -1,12 +1,14 @@
 package io.art.configurator.source;
 
 import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.ConfigurationSourceType.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -19,8 +21,7 @@ public class DelegateConfigurationSource implements ConfigurationSource {
     private final ModuleConfigurationSourceType type = DELEGATE;
     @Getter
     private final String section = EMPTY_STRING;
-    @Getter(lazy = true)
-    private final String path = join(NEXT_ARROW, sources.stream().map(ConfigurationSource::getPath).collect(listCollector()));
+    private final LazyProperty<String> path = lazy(() -> join(NEXT_ARROW, sources.stream().map(ConfigurationSource::getPath).collect(listCollector())));
 
     @Override
     public void refresh() {
@@ -41,6 +42,11 @@ public class DelegateConfigurationSource implements ConfigurationSource {
     @Override
     public String dump() {
         return sources.stream().map(ConfigurationSource::dump).collect(joining(NEW_LINE));
+    }
+
+    @Override
+    public String getPath() {
+        return path.get();
     }
 
     @Override

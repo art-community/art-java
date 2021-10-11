@@ -18,8 +18,10 @@
 
 package io.art.scheduler.executor.deferred;
 
+import io.art.core.property.*;
 import lombok.*;
 import static io.art.core.constants.ThreadConstants.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.core.wrapper.FunctionWrapper.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Defaults.*;
 import java.time.*;
@@ -52,8 +54,7 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
     @Builder.Default
     private final Duration poolTerminationTimeout = DEFAULT_EXECUTOR_TERMINATION_TIMEOUT;
 
-    @Getter(lazy = true)
-    private final DeferredEventObserver observer = new DeferredEventObserver(this);
+    private final LazyProperty<DeferredEventObserver> observer = lazy(() -> new DeferredEventObserver(this));
 
     private final AtomicInteger counter = new AtomicInteger();
 
@@ -76,7 +77,7 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public <EventResultType> Future<? extends EventResultType> submit(Callable<? extends EventResultType> eventTask, LocalDateTime triggerTime, int order) {
-        return getObserver().addEvent(eventTask, triggerTime, order);
+        return observer.get().addEvent(eventTask, triggerTime, order);
     }
 
     @Override
@@ -86,6 +87,6 @@ public class DeferredExecutorImplementation implements DeferredExecutor {
 
     @Override
     public void shutdown() {
-        getObserver().shutdown();
+        observer.get().shutdown();
     }
 }

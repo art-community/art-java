@@ -18,18 +18,18 @@
 
 package io.art.scheduler.executor.deferred;
 
+import io.art.core.property.*;
 import io.art.logging.*;
 import io.art.logging.logger.*;
-import lombok.*;
 import static com.google.common.base.Throwables.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.Errors.*;
 import static java.text.MessageFormat.*;
 
 public class DefaultExceptionHandler implements ExceptionHandler {
-    @Getter(lazy = true)
-    private final static Logger logger = Logging.logger(DefaultExceptionHandler.class);
+    private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(DefaultExceptionHandler.class));
 
     @Override
     public void onException(Thread thread, Errors.ExceptionEvent event, Throwable throwable) {
@@ -38,6 +38,6 @@ public class DefaultExceptionHandler implements ExceptionHandler {
             System.err.println(message);
             return;
         }
-        getLogger().error(message);
+        logger.get().error(message);
     }
 }

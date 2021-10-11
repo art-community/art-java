@@ -20,6 +20,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.core.validation.*;
 import io.art.meta.constants.MetaConstants.*;
 import io.art.meta.transformer.*;
@@ -34,6 +35,7 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.ClassNames.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.ARRAY;
@@ -92,9 +94,8 @@ public class MetaType<T> {
     private MetaTransformer<T> outputTransformer;
 
     @ToString.Exclude
-    @Getter(lazy = true)
     @EqualsAndHashCode.Exclude
-    private final MetaClass<T> declaration = cast(metaModule().configuration().library().classes().get(type));
+    private final LazyProperty<MetaClass<T>> declaration = lazy(() -> cast(metaModule().configuration().library().classes().get(type)));
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -106,6 +107,10 @@ public class MetaType<T> {
 
     public ImmutableSet<MetaTypeModifiers> modifiers() {
         return immutableSetOf(modifiers);
+    }
+
+    public MetaClass<T> declaration() {
+        return declaration.get();
     }
 
     public boolean isKnown() {

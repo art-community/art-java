@@ -31,6 +31,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.util.Comparator.*;
 
 @Getter
@@ -38,8 +39,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<ModuleConfigurationSourceType, ConfigurationSource> sources = emptyImmutableMap();
     private ImmutableMap<CustomConfiguration, Property<?>> customConfigurations = emptyImmutableMap();
 
-    @Getter(lazy = true)
-    private final ConfigurationSource delegate = new DelegateConfigurationSource(orderedSources());
+    private final LazyProperty<ConfigurationSource> delegate = lazy(() -> new DelegateConfigurationSource(orderedSources()));
 
     public PropertiesConfigurationSource getProperties() {
         return cast(sources.get(PROPERTIES));
@@ -54,7 +54,7 @@ public class ConfiguratorModuleConfiguration implements ModuleConfiguration {
     }
 
     public ConfigurationSource getConfiguration() {
-        return getDelegate();
+        return delegate.get();
     }
 
     public <T> T getCustomConfiguration(CustomConfiguration modelClass) {
