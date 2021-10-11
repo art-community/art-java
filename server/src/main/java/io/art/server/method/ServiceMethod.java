@@ -247,7 +247,6 @@ public class ServiceMethod {
 
     private void subscribeBlockingFlux(Flux<Object> input, Sinks.Many<Object> sink) {
         input.subscribe(element -> emitFluxOutput(element, sink), sink::tryEmitError, sink::tryEmitComplete);
-        ;
     }
 
     private void subscribeBlockingMono(Flux<Object> input, Sinks.One<Object> sink) {
