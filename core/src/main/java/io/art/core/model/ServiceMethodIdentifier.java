@@ -20,23 +20,18 @@ package io.art.core.model;
 
 import lombok.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.core.factory.MapFactory.*;
-import java.util.*;
 
 @Value
 public class ServiceMethodIdentifier {
-    private static final Map<String, ServiceMethodIdentifier> CACHE = map();
-
     String serviceId;
     String methodId;
 
     public static ServiceMethodIdentifier serviceMethodId(String serviceId, String methodId) {
-        return putIfAbsent(CACHE, EMPTY_STRING + serviceId + methodId, () -> new ServiceMethodIdentifier(serviceId, methodId));
+        return new ServiceMethodIdentifier(serviceId, methodId);
     }
 
     @Override
     public String toString() {
-        return OPENING_BRACKET + serviceId + DOT  + methodId + CLOSING_BRACKET;
+        return OPENING_BRACKET + serviceId + DOT + methodId + CLOSING_BRACKET;
     }
 }
