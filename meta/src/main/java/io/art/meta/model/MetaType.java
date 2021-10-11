@@ -54,7 +54,6 @@ import java.util.function.*;
 @Generation
 @EqualsAndHashCode
 @Accessors(fluent = true)
-@Builder(toBuilder = true)
 public class MetaType<T> {
     @Getter
     private final Class<T> type;
@@ -95,11 +94,35 @@ public class MetaType<T> {
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private final LazyProperty<MetaClass<T>> declaration = lazy(() -> cast(metaModule().configuration().library().classes().get(type)));
+    private final LazyProperty<MetaClass<T>> declaration;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Boolean known;
+
+    @Builder(toBuilder = true)
+    public MetaType(Class<T> type,
+                    ImmutableArray<MetaType<?>> parameters,
+                    MetaType<?> arrayComponentType,
+                    MetaTypeInternalKind internalKind,
+                    MetaTypeExternalKind externalKind,
+                    Function<Integer, T> arrayFactory,
+                    Function<String, T> enumFactory,
+                    MetaTransformer<T> inputTransformer,
+                    MetaTransformer<T> outputTransformer,
+                    Boolean known) {
+        this.type = type;
+        this.parameters = parameters;
+        this.arrayComponentType = arrayComponentType;
+        this.internalKind = internalKind;
+        this.externalKind = externalKind;
+        this.arrayFactory = arrayFactory;
+        this.enumFactory = enumFactory;
+        this.inputTransformer = inputTransformer;
+        this.outputTransformer = outputTransformer;
+        this.declaration = lazy(() -> cast(metaModule().configuration().library().classes().get(type)));
+        this.known = known;
+    }
 
     private final static Map<CacheKey, MetaType<?>> cache = weakMap();
 
