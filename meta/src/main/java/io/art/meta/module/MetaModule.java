@@ -26,12 +26,11 @@ import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
-import static lombok.AccessLevel.*;
+import static io.art.core.property.LazyProperty.*;
 
 @Getter
 public class MetaModule implements StatelessModule<MetaModuleConfiguration, MetaModuleConfiguration.Configurator> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<MetaModuleConfiguration> metaModule = context().getStatelessModule(META_MODULE_ID);
+    private static final LazyProperty<StatelessModuleProxy<MetaModuleConfiguration>> metaModule = lazy(() -> context().getStatelessModule(META_MODULE_ID));
     private final String id = META_MODULE_ID;
     private final MetaModuleConfiguration configuration;
     private final MetaModuleConfiguration.Configurator configurator;
@@ -47,6 +46,6 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     }
 
     public static StatelessModuleProxy<MetaModuleConfiguration> metaModule() {
-        return getMetaModule();
+        return metaModule.get();
     }
 }

@@ -20,6 +20,7 @@ package io.art.transport.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.logging.*;
 import io.art.transport.configuration.*;
 import io.art.transport.configuration.TransportModuleConfiguration.*;
@@ -28,22 +29,21 @@ import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.transport.constants.TransportModuleConstants.Messages.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.pool.TransportPool.*;
-import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
 
 @Getter
 public class TransportModule implements StatelessModule<TransportModuleConfiguration, Configurator> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<TransportModuleConfiguration> transportModule = context().getStatelessModule(TRANSPORT_MODULE_ID);
+    private static final LazyProperty<StatelessModuleProxy<TransportModuleConfiguration>> transportModule = lazy(() -> context().getStatelessModule(TRANSPORT_MODULE_ID));
     private final String id = TRANSPORT_MODULE_ID;
     private final TransportModuleConfiguration configuration = new TransportModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
 
     public static StatelessModuleProxy<TransportModuleConfiguration> transportModule() {
-        return getTransportModule();
+        return transportModule.get();
     }
 
     @Override

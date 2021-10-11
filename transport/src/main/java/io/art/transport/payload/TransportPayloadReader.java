@@ -20,13 +20,13 @@ package io.art.transport.payload;
 
 import io.art.core.exception.*;
 import io.art.core.extensions.*;
+import io.art.core.property.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
 import io.art.meta.model.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
-import lombok.*;
 import static io.art.core.builder.MapBuilder.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.json.module.JsonModule.*;
@@ -34,13 +34,15 @@ import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.payload.TransportPayload.*;
 import static io.art.yaml.module.YamlModule.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor(access = PRIVATE)
 public class TransportPayloadReader {
-    private final DataFormat dataFormat;
+    private final LazyProperty<BiFunction<ByteBuf, MetaType<?>, TransportPayload>> reader;
+
+    private TransportPayloadReader(DataFormat dataFormat) {
+        reader = lazy(() -> reader(dataFormat));
+    }
 
     private final static Map<DataFormat, TransportPayloadReader> cache = mapBuilder(JSON, new TransportPayloadReader(JSON))
             .with(MESSAGE_PACK, new TransportPayloadReader(MESSAGE_PACK))
@@ -48,21 +50,12 @@ public class TransportPayloadReader {
             .with(STRING, new TransportPayloadReader(STRING))
             .with(BYTES, new TransportPayloadReader(BYTES))
             .build();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private final BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader = reader(dataFormat);
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final JsonReader jsonReader = jsonModule().configuration().getReader();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final MessagePackReader messagePackReader = messagePackModule().configuration().getReader();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final YamlReader yamlReader = yamlModule().configuration().getReader();
+    private static final LazyProperty<JsonReader> jsonReader = lazy(() -> jsonModule().configuration().getReader());
+    private static final LazyProperty<MessagePackReader> messagePackReader = lazy(() -> messagePackModule().configuration().getReader());
+    private static final LazyProperty<YamlReader> yamlReader = lazy(() -> yamlModule().configuration().getReader());
 
     public TransportPayload read(ByteBuf buffer, MetaType<?> type) {
-        return getReader().apply(buffer, type);
+        return reader.get().apply(buffer, type);
     }
 
     private static BiFunction<ByteBuf, MetaType<?>, TransportPayload> reader(DataFormat dataFormat) {
@@ -70,15 +63,15 @@ public class TransportPayloadReader {
             case JSON:
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()
-                        : new TransportPayload(buffer, lazy(() -> getJsonReader().read(type, buffer)));
+                        : new TransportPayload(buffer, lazy(() -> jsonReader.get().read(type, buffer)));
             case MESSAGE_PACK:
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()
-                        : new TransportPayload(buffer, lazy(() -> getMessagePackReader().read(type, buffer)));
+                        : new TransportPayload(buffer, lazy(() -> messagePackReader.get().read(type, buffer)));
             case YAML:
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()
-                        : new TransportPayload(buffer, lazy(() -> getYamlReader().read(type, buffer)));
+                        : new TransportPayload(buffer, lazy(() -> yamlReader.get().read(type, buffer)));
             case BYTES:
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()

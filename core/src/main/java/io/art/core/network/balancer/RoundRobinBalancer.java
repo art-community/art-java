@@ -18,10 +18,10 @@
 
 package io.art.core.network.balancer;
 
+import io.art.core.property.*;
 import lombok.*;
-
-import static io.art.core.factory.ListFactory.linkedList;
-import static io.art.core.factory.ListFactory.linkedListOf;
+import static io.art.core.factory.ListFactory.*;
+import static io.art.core.property.LazyProperty.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
 
@@ -30,14 +30,12 @@ public class RoundRobinBalancer<T> implements Balancer<T> {
     @Getter
     private List<T> endpoints = linkedList();
     private final AtomicInteger position = new AtomicInteger(0);
-    @Getter(lazy = true, value = AccessLevel.PRIVATE)
-    private final int listSize = endpoints.size();
+    private final LazyProperty<Integer> listSize = lazy(endpoints::size);
 
     @Override
     public T select() {
         return endpoints.get(getNextPosition());
     }
-
 
 
     @Override
@@ -49,7 +47,7 @@ public class RoundRobinBalancer<T> implements Balancer<T> {
         for (; ; ) {
             int current = position.get();
             int next = current + 1;
-            if (next >= getListSize()) {
+            if (next >= listSize.get()) {
                 next = 0;
             }
             if (position.compareAndSet(current, next))

@@ -1,6 +1,7 @@
 package io.art.rsocket.communicator;
 
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.logging.*;
 import io.art.logging.logger.*;
 import io.art.rsocket.configuration.*;
@@ -20,7 +21,6 @@ import io.rsocket.loadbalance.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
 import io.rsocket.util.*;
-import lombok.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
@@ -31,6 +31,7 @@ import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
@@ -44,7 +45,6 @@ import static io.rsocket.core.RSocketClient.*;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import java.io.*;
 import java.nio.*;
 import java.util.*;
@@ -52,8 +52,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class RsocketCommunicationFactory {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
+    private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(RSOCKET_COMMUNICATOR_LOGGER));
 
     public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
@@ -200,8 +199,8 @@ public class RsocketCommunicationFactory {
         Mono<RSocket> configured = socket.timeout(common.getTimeout());
         if (withLogging() && common.isVerbose()) {
             configured = configured
-                    .doOnSubscribe(subscription -> getLogger().info(format(RSOCKET_COMMUNICATOR_STARTED, common.getConnector(), toPrettyString(setupPayload))))
-                    .doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+                    .doOnSubscribe(subscription -> logger.get().info(format(RSOCKET_COMMUNICATOR_STARTED, common.getConnector(), toPrettyString(setupPayload))))
+                    .doOnError(throwable -> logger.get().error(throwable.getMessage(), throwable));
         }
         return from(configured);
     }

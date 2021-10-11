@@ -19,21 +19,21 @@
 package io.art.json.module;
 
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.json.configuration.*;
 import lombok.*;
-import static io.art.core.constants.ModuleIdentifiers.JSON_MODULE_ID;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
-import static lombok.AccessLevel.*;
+import static io.art.core.property.LazyProperty.*;
 
 @Getter
 public class JsonModule implements StatelessModule<JsonModuleConfiguration, JsonModuleConfiguration.Configurator> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<JsonModuleConfiguration> jsonModule = context().getStatelessModule(JSON_MODULE_ID);
+    private static final LazyProperty<StatelessModuleProxy<JsonModuleConfiguration>> jsonModule = lazy(() -> context().getStatelessModule(JSON_MODULE_ID));
     private final String id = JSON_MODULE_ID;
     private final JsonModuleConfiguration configuration = new JsonModuleConfiguration();
     private final JsonModuleConfiguration.Configurator configurator = new JsonModuleConfiguration.Configurator(configuration);
 
     public static StatelessModuleProxy<JsonModuleConfiguration> jsonModule() {
-        return getJsonModule();
+        return jsonModule.get();
     }
 }

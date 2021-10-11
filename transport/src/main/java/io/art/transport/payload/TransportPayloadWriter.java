@@ -19,6 +19,7 @@
 package io.art.transport.payload;
 
 import io.art.core.exception.*;
+import io.art.core.property.*;
 import io.art.json.descriptor.*;
 import io.art.message.pack.descriptor.*;
 import io.art.meta.model.*;
@@ -26,25 +27,31 @@ import io.art.transport.configuration.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
-import lombok.*;
 import static io.art.core.builder.MapBuilder.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.module.TransportModule.*;
 import static io.art.yaml.module.YamlModule.*;
 import static io.netty.buffer.ByteBufAllocator.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
-@RequiredArgsConstructor(access = PRIVATE)
 public class TransportPayloadWriter {
-    private final DataFormat dataFormat;
+    private final LazyProperty<Function<TypedObject, ByteBuf>> writer;
 
+    private TransportPayloadWriter(DataFormat dataFormat) {
+        writer = lazy(() -> writer(dataFormat));
+    }
+
+    private static final LazyProperty<TransportModuleConfiguration> configuration = lazy(() -> transportModule().configuration());
+    private static final LazyProperty<JsonWriter> jsonWriter = lazy(() -> jsonModule().configuration().getWriter());
+    private static final LazyProperty<MessagePackWriter> messagePackWriter = lazy(() -> messagePackModule().configuration().getWriter());
+    private static final LazyProperty<YamlWriter> yamlWriter = lazy(() -> yamlModule().configuration().getWriter());
     private final static Map<DataFormat, TransportPayloadWriter> cache = mapBuilder(JSON, new TransportPayloadWriter(JSON))
             .with(MESSAGE_PACK, new TransportPayloadWriter(MESSAGE_PACK))
             .with(YAML, new TransportPayloadWriter(YAML))
@@ -52,23 +59,9 @@ public class TransportPayloadWriter {
             .with(BYTES, new TransportPayloadWriter(BYTES))
             .build();
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<TypedObject, ByteBuf> writer = writer(dataFormat);
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final TransportModuleConfiguration configuration = transportModule().configuration();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final JsonWriter jsonWriter = jsonModule().configuration().getWriter();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final MessagePackWriter messagePackWriter = messagePackModule().configuration().getWriter();
-
-    @Getter(lazy = true, value = PRIVATE)
-    private static final YamlWriter yamlWriter = yamlModule().configuration().getWriter();
 
     public ByteBuf write(TypedObject value) {
-        return getWriter().apply(value);
+        return writer.get().apply(value);
     }
 
     private static Function<TypedObject, ByteBuf> writer(DataFormat dataFormat) {
@@ -76,19 +69,19 @@ public class TransportPayloadWriter {
             case JSON:
                 return value -> {
                     ByteBuf buffer = createBuffer();
-                    getJsonWriter().write(value, buffer);
+                    jsonWriter.get().write(value, buffer);
                     return buffer;
                 };
             case MESSAGE_PACK:
                 return value -> {
                     ByteBuf buffer = createBuffer();
-                    getMessagePackWriter().write(value, buffer);
+                    messagePackWriter.get().write(value, buffer);
                     return buffer;
                 };
             case YAML:
                 return value -> {
                     ByteBuf buffer = createBuffer();
-                    getYamlWriter().write(value, buffer);
+                    yamlWriter.get().write(value, buffer);
                     return buffer;
                 };
             case BYTES:
@@ -104,11 +97,11 @@ public class TransportPayloadWriter {
 
     private static ByteBuf createBuffer() {
         if (!withTransport()) return DEFAULT.ioBuffer();
-        TransportModuleConfiguration configuration = getConfiguration();
+        TransportModuleConfiguration configuration = TransportPayloadWriter.configuration.get();
         int writeBufferInitialCapacity = configuration.getWriteBufferInitialCapacity();
         int writeBufferMaxCapacity = configuration.getWriteBufferMaxCapacity();
         switch (configuration.getWriteBufferType()) {
-            case DEFAULT:
+            CASE DEFAULT:
                 return DEFAULT.buffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
             case HEAP:
                 return DEFAULT.heapBuffer(writeBufferInitialCapacity, writeBufferMaxCapacity);

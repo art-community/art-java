@@ -32,6 +32,7 @@ import io.rsocket.core.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.property.LazyProperty.lazy;
 import static io.art.core.property.Property.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
@@ -52,8 +53,7 @@ import static reactor.core.publisher.Sinks.*;
 import java.util.function.*;
 
 public class RsocketCommunication implements Communication {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = Logging.logger(RSOCKET_COMMUNICATOR_LOGGER);
+    private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(RSOCKET_COMMUNICATOR_LOGGER));
     private final RsocketCommonConnectorConfiguration connectorConfiguration;
     private final Property<RSocketClient> client;
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;
@@ -97,7 +97,7 @@ public class RsocketCommunication implements Communication {
     private void disposeClient(RSocketClient rsocket) {
         disposeRsocket(rsocket);
         if (withLogging() && connectorConfiguration.isVerbose()) {
-            getLogger().info(format(RSOCKET_COMMUNICATOR_STOPPED, connectorConfiguration.getConnector()));
+            logger.get().info(format(RSOCKET_COMMUNICATOR_STOPPED, connectorConfiguration.getConnector()));
         }
     }
 

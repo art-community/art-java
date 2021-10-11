@@ -20,6 +20,7 @@ package io.art.http.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.manager.*;
 import io.art.http.refresher.*;
@@ -28,17 +29,16 @@ import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.http.configuration.HttpModuleConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.message.HttpMessageBuilder.*;
 import static io.art.logging.Logging.*;
-import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Hooks.*;
 
 @Getter
 public class HttpModule implements StatefulModule<HttpModuleConfiguration, Configurator, HttpModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState> httpModule = context().getStatefulModule(HttpModule.class.getSimpleName());
+    private static final LazyProperty<StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState>> httpModule = lazy(() -> context().getStatefulModule(HttpModule.class.getSimpleName()));
     private final String id = HttpModule.class.getSimpleName();
     private final HttpModuleState state = new HttpModuleState();
     private final HttpModuleRefresher refresher = new HttpModuleRefresher();
@@ -47,7 +47,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     private final Configurator configurator = new Configurator(configuration);
 
     public static StatefulModuleProxy<HttpModuleConfiguration, HttpModuleState> httpModule() {
-        return getHttpModule();
+        return httpModule.get();
     }
 
     @Override

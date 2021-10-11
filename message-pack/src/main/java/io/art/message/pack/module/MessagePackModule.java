@@ -19,21 +19,21 @@
 package io.art.message.pack.module;
 
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.message.pack.configuration.*;
 import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
-import static lombok.AccessLevel.*;
+import static io.art.core.property.LazyProperty.*;
 
 @Getter
 public class MessagePackModule implements StatelessModule<MessagePackModuleConfiguration, MessagePackModuleConfiguration.Configurator> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<MessagePackModuleConfiguration> messagePackModule = context().getStatelessModule(MESSAGE_PACK_MODULE_ID);
+    private static final LazyProperty<StatelessModuleProxy<MessagePackModuleConfiguration>> messagePackModule = lazy(() -> context().getStatelessModule(MESSAGE_PACK_MODULE_ID));
     private final String id = MESSAGE_PACK_MODULE_ID;
     private final MessagePackModuleConfiguration configuration = new MessagePackModuleConfiguration();
     private final MessagePackModuleConfiguration.Configurator configurator = new MessagePackModuleConfiguration.Configurator(configuration);
 
     public static StatelessModuleProxy<MessagePackModuleConfiguration> messagePackModule() {
-        return getMessagePackModule();
+        return messagePackModule.get();
     }
 }

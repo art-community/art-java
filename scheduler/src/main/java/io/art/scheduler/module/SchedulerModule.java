@@ -20,15 +20,16 @@ package io.art.scheduler.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import lombok.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.scheduler.Scheduling.*;
 import static io.art.scheduler.constants.SchedulerModuleConstants.*;
 import static io.art.scheduler.factory.TaskFactory.*;
 import static io.art.scheduler.module.SchedulerModuleConfiguration.*;
 import static java.time.LocalDateTime.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import java.time.*;
 
 @Getter
@@ -36,11 +37,10 @@ public class SchedulerModule implements StatelessModule<SchedulerModuleConfigura
     private final String id = SchedulerModule.class.getSimpleName();
     private final SchedulerModuleConfiguration configuration = new SchedulerModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule = context().getStatelessModule(SchedulerModule.class.getSimpleName());
+    private static final LazyProperty<StatelessModuleProxy<SchedulerModuleConfiguration>> schedulerModule = lazy(() -> context().getStatelessModule(SchedulerModule.class.getSimpleName()));
 
     public static StatelessModuleProxy<SchedulerModuleConfiguration> schedulerModule() {
-        return getSchedulerModule();
+        return schedulerModule.get();
     }
 
     @Override

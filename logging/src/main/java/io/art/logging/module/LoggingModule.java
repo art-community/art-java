@@ -20,6 +20,7 @@ package io.art.logging.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.logging.*;
 import io.art.logging.configuration.*;
 import io.art.logging.manager.*;
@@ -28,16 +29,15 @@ import io.art.logging.state.*;
 import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.logging.netty.NettyLoggerFactory.*;
 import static io.netty.util.internal.logging.InternalLoggerFactory.*;
 import static java.util.logging.LogManager.*;
-import static lombok.AccessLevel.*;
 import static reactor.util.Loggers.*;
 
 @Getter
 public class LoggingModule implements StatefulModule<LoggingModuleConfiguration, LoggingModuleConfiguration.Configurator, LoggingModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule = context().getStatefulModule(LOGGING_MODULE_ID);
+    private static final LazyProperty<StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState>> loggingModule = lazy(() -> context().getStatefulModule(LOGGING_MODULE_ID));
     private final String id = LOGGING_MODULE_ID;
     private final LoggingModuleConfiguration configuration = new LoggingModuleConfiguration();
     private final LoggingModuleConfiguration.Configurator configurator = new LoggingModuleConfiguration.Configurator(configuration);
@@ -64,6 +64,6 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     }
 
     public static StatefulModuleProxy<LoggingModuleConfiguration, LoggingModuleState> loggingModule() {
-        return getLoggingModule();
+        return loggingModule.get();
     }
 }

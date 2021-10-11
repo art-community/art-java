@@ -24,8 +24,6 @@ import io.art.core.exception.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.http.constants.HttpModuleConstants.*;
-import io.art.logging.*;
-import io.art.logging.logger.*;
 import io.art.meta.model.*;
 import io.art.transport.payload.*;
 import io.netty.buffer.*;
@@ -48,13 +46,10 @@ import static io.art.transport.payload.TransportPayloadWriter.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
 public class HttpCommunication implements Communication {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = Logging.logger(HttpCommunication.class);
     private final HttpConnectorConfiguration connectorConfiguration;
     private final Property<HttpClient> client;
     private final Property<Function<Flux<Object>, Flux<Object>>> communication;

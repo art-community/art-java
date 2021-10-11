@@ -1,22 +1,21 @@
 package io.art.http.communicator;
 
+import io.art.core.property.*;
 import io.art.http.configuration.*;
 import io.art.logging.*;
 import io.art.logging.logger.*;
-import lombok.*;
 import lombok.experimental.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.module.HttpModule.*;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import java.util.function.*;
 
 @UtilityClass
 public class HttpCommunicationFactory {
-    @Getter(lazy = true, value = PRIVATE)
-    private final static Logger logger = Logging.logger(HTTP_COMMUNICATOR_LOGGER);
+    private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(HTTP_COMMUNICATOR_LOGGER));
 
     public static HttpCommunication createHttpCommunication(HttpConnectorConfiguration connectorConfiguration) {
         String connector = connectorConfiguration.getConnector();
@@ -35,8 +34,8 @@ public class HttpCommunicationFactory {
                 .baseUrl(connectorConfiguration.getUrl());
         if (withLogging() && connectorConfiguration.isVerbose()) {
             httpClient = httpClient
-                    .doOnConnected(ignore -> getLogger().info(format(HTTP_COMMUNICATOR_STARTED, connectorConfiguration.getConnector())))
-                    .doOnDisconnected(ignore -> getLogger().info(format(HTTP_COMMUNICATOR_STOPPED, connectorConfiguration.getConnector())));
+                    .doOnConnected(ignore -> logger.get().info(format(HTTP_COMMUNICATOR_STARTED, connectorConfiguration.getConnector())))
+                    .doOnDisconnected(ignore -> logger.get().info(format(HTTP_COMMUNICATOR_STOPPED, connectorConfiguration.getConnector())));
         }
         return connectorConfiguration.getDecorator().apply(httpClient);
     }

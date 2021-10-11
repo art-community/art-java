@@ -21,6 +21,7 @@ package io.art.rsocket.module;
 import io.art.core.collection.*;
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.communicator.ws.*;
@@ -31,17 +32,16 @@ import lombok.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.logging.Logging.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.message.RsocketMessageBuilder.*;
-import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Hooks.*;
 
 @Getter
 public class RsocketModule implements StatefulModule<RsocketModuleConfiguration, Configurator, RsocketModuleState> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule = context().getStatefulModule(RsocketModule.class.getSimpleName());
+    private static final LazyProperty<StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState>> rsocketModule = lazy(() -> context().getStatefulModule(RsocketModule.class.getSimpleName()));
     private final String id = RsocketModule.class.getSimpleName();
     private final RsocketModuleState state = new RsocketModuleState();
     private final RsocketModuleRefresher refresher = new RsocketModuleRefresher();
@@ -50,7 +50,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     private final Configurator configurator = new Configurator(configuration);
 
     public static StatefulModuleProxy<RsocketModuleConfiguration, RsocketModuleState> rsocketModule() {
-        return getRsocketModule();
+        return rsocketModule.get();
     }
 
     @Override

@@ -22,22 +22,16 @@ import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.validation.*;
-import io.art.logging.*;
-import io.art.logging.logger.*;
 import io.art.server.configuration.*;
-import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
 import static io.art.core.property.Property.*;
 import static io.art.core.validation.Validators.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
 
 public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = Logging.logger(ServiceLoggingDecorator.class);
     private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
     private final Property<Boolean> enabled;
     private final Property<Boolean> deactivated;

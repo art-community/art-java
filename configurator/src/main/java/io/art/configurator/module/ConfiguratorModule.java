@@ -26,6 +26,7 @@ import io.art.core.collection.*;
 import io.art.core.context.*;
 import io.art.core.file.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.configurator.constants.ConfiguratorModuleConstants.*;
@@ -37,9 +38,9 @@ import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.property.LazyProperty.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import java.io.*;
 import java.util.*;
 
@@ -48,8 +49,7 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     private final String id = CONFIGURATOR_MODULE_ID;
     private final ConfiguratorModuleConfiguration configuration = new ConfiguratorModuleConfiguration();
     private final Configurator configurator = new Configurator(configuration);
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule = context().getStatelessModule(CONFIGURATOR_MODULE_ID);
+    private static final LazyProperty<StatelessModuleProxy<ConfiguratorModuleConfiguration>> configuratorModule = lazy(() -> context().getStatelessModule(CONFIGURATOR_MODULE_ID));
 
     @Override
     public void beforeReload(Context.Service contextService) {
@@ -98,6 +98,6 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     }
 
     public static StatelessModuleProxy<ConfiguratorModuleConfiguration> configuratorModule() {
-        return getConfiguratorModule();
+        return configuratorModule.get();
     }
 }

@@ -23,17 +23,10 @@ import io.art.communicator.action.*;
 import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.http.server.*;
-import io.art.logging.*;
-import io.art.logging.logger.*;
-import lombok.*;
 import reactor.core.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static lombok.AccessLevel.*;
 
 public class HttpManager {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = Logging.logger(HttpManager.class);
-
     private final HttpModuleConfiguration configuration;
     private final HttpServer server;
 

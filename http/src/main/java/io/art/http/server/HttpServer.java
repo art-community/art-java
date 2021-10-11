@@ -31,18 +31,17 @@ import reactor.core.publisher.*;
 import reactor.netty.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.core.property.Property.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.manager.HttpManager.*;
 import static io.netty.handler.logging.LogLevel.*;
 import static java.text.MessageFormat.*;
-import static lombok.AccessLevel.*;
 import static reactor.netty.transport.logging.AdvancedByteBufFormat.*;
 
 @RequiredArgsConstructor
 public class HttpServer implements Server {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = Logging.logger(HTTP_SERVER_LOGGER);
+    private static final LazyProperty<Logger> logger = lazy(() -> Logging.logger(HTTP_SERVER_LOGGER));
 
     private final HttpModuleConfiguration configuration;
     private final Property<DisposableServer> server;
@@ -91,7 +90,7 @@ public class HttpServer implements Server {
         server = serverConfiguration.getDecorator().apply(server);
         Mono<? extends DisposableServer> bind = server.bind();
         if (withLogging()) {
-            bind = bind.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            bind = bind.doOnError(throwable -> logger.get().error(throwable.getMessage(), throwable));
         }
         return bind.block();
     }
@@ -109,7 +108,7 @@ public class HttpServer implements Server {
         if (withLogging() && serverConfiguration.isVerbose()) {
             this.closer = server
                     .onDispose()
-                    .doOnSuccess(ignore -> getLogger().info(format(HTTP_SERVER_STOPPED, host, EMPTY_STRING + port)));
+                    .doOnSuccess(ignore -> logger.get().info(format(HTTP_SERVER_STOPPED, host, EMPTY_STRING + port)));
         }
     }
 }

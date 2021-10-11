@@ -20,23 +20,23 @@ package io.art.tests.module;
 
 import io.art.core.context.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.tests.configuration.*;
 import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.tests.invoker.TestSuitInvoker.*;
-import static lombok.AccessLevel.*;
 
 @Getter
 public class TestsModule implements StatelessModule<TestsModuleConfiguration, TestsModuleConfiguration.Configurator> {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final StatelessModuleProxy<TestsModuleConfiguration> testsModule = context().getStatelessModule(TESTS_MODULE_ID);
+    private static final LazyProperty<StatelessModuleProxy<TestsModuleConfiguration>> testsModule = lazy(() -> context().getStatelessModule(TESTS_MODULE_ID));
     private final String id = TESTS_MODULE_ID;
     private final TestsModuleConfiguration configuration = new TestsModuleConfiguration();
     private final TestsModuleConfiguration.Configurator configurator = new TestsModuleConfiguration.Configurator(configuration);
 
     public static StatelessModuleProxy<TestsModuleConfiguration> testsModule() {
-        return getTestsModule();
+        return testsModule.get();
     }
 
     @Override

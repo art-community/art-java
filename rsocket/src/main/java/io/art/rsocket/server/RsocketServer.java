@@ -51,6 +51,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
+import static io.art.core.property.LazyProperty.lazy;
 import static io.art.core.property.Property.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.rsocket.configuration.server.RsocketCommonServerConfiguration.*;
@@ -68,8 +69,7 @@ import java.util.function.*;
 
 @RequiredArgsConstructor
 public class RsocketServer implements Server {
-    @Getter(lazy = true, value = PRIVATE)
-    private static final Logger logger = Logging.logger(RSOCKET_SERVER_LOGGER);
+    private static final LazyProperty<Logger> logger = lazy(() -> Logging.logger(RSOCKET_SERVER_LOGGER));
 
     private final RsocketModuleConfiguration configuration;
     private final Property<CloseableChannel> tcpChannel;
@@ -154,7 +154,7 @@ public class RsocketServer implements Server {
                 .payloadDecoder(serverConfiguration.getPayloadDecoder())
                 .bind(transport);
         if (withLogging()) {
-            bind = bind.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            bind = bind.doOnError(throwable -> logger.get().error(throwable.getMessage(), throwable));
         }
         return block(bind);
     }
@@ -203,14 +203,14 @@ public class RsocketServer implements Server {
     private Mono<RSocket> createAcceptor(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration) {
         Mono<RSocket> socket = Mono.create(emitter -> setupSocket(payload, serverConfiguration, emitter));
         if (withLogging()) {
-            return socket.doOnError(throwable -> getLogger().error(throwable.getMessage(), throwable));
+            return socket.doOnError(throwable -> logger.get().error(throwable.getMessage(), throwable));
         }
         return socket;
     }
 
     private void setupSocket(ConnectionSetupPayload payload, RsocketCommonServerConfiguration serverConfiguration, MonoSink<RSocket> emitter) {
         ExceptionRunnable createRsocket = () -> emitter.success(new ServingRsocket(payload, serviceMethods, serverConfiguration));
-        ignoreException(createRsocket, throwable -> withLogging(() -> getLogger().error(throwable)));
+        ignoreException(createRsocket, throwable -> withLogging(() -> logger.get().error(throwable)));
     }
 
     private void setupTcpCloser(CloseableChannel channel) {
@@ -218,7 +218,7 @@ public class RsocketServer implements Server {
         RsocketTcpServerConfiguration serverConfiguration = configuration.getTcpServer();
         if (withLogging() && serverConfiguration.isVerbose()) {
             String message = format(RSOCKET_SERVER_STOPPED, TCP_SERVER_TYPE, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
-            this.tcpCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
+            this.tcpCloser = channel.onClose().doOnSuccess(ignore -> logger.get().info(message));
         }
     }
 
@@ -227,7 +227,7 @@ public class RsocketServer implements Server {
         RsocketWsServerConfiguration serverConfiguration = configuration.getWsServer();
         if (withLogging() && serverConfiguration.isVerbose()) {
             String message = format(RSOCKET_SERVER_STOPPED, WS_SERVER_TYPE, serverConfiguration.getHost(), EMPTY_STRING + serverConfiguration.getPort());
-            this.wsCloser = channel.onClose().doOnSuccess(ignore -> getLogger().info(message));
+            this.wsCloser = channel.onClose().doOnSuccess(ignore -> logger.get().info(message));
         }
     }
 

@@ -22,6 +22,7 @@ import io.art.communicator.exception.*;
 import io.art.communicator.model.*;
 import io.art.core.managed.*;
 import io.art.core.model.*;
+import io.art.core.property.*;
 import io.art.meta.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -30,9 +31,9 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ReactiveConstants.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -61,11 +62,9 @@ public class CommunicatorAction implements Managed {
     @Getter
     private final MetaMethod<?> method;
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Supplier<Object> producer = selectProducer();
+    private final LazyProperty<Supplier<Object>> producer = lazy(this::selectProducer);
 
-    @Getter(lazy = true, value = PRIVATE)
-    private final Function<Object, Object> handler = selectHandler();
+    private final LazyProperty<Function<Object, Object>> handler = lazy(this::selectHandler);
 
     @Override
     public void initialize() {
@@ -78,11 +77,11 @@ public class CommunicatorAction implements Managed {
     }
 
     public <T> T communicate() {
-        return cast(getProducer().get());
+        return cast(producer.get().get());
     }
 
     public <T> T communicate(Object input) {
-        return cast(getHandler().apply(input));
+        return cast(handler.get().apply(input));
     }
 
     private Supplier<Object> selectProducer() {
