@@ -373,10 +373,7 @@ public class ServiceMethod {
                 sink.tryEmitEmpty();
                 return;
             }
-            asMono(output)
-                    .doOnSuccess(sink::tryEmitValue)
-                    .doOnError(sink::tryEmitError)
-                    .subscribe();
+            asMono(output).subscribe(sink::tryEmitValue, sink::tryEmitError);
         } catch (Throwable throwable) {
             sink.tryEmitError(throwable);
         }
