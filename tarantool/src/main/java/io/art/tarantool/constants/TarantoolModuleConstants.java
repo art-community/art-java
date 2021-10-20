@@ -34,6 +34,15 @@ public interface TarantoolModuleConstants {
 
     int DEFAULT_TARANTOOL_RETRIES = 3;
 
+    interface PROTOCOL_CONSTANTS {
+        int VERSION_LENGTH = 64;
+        int SALT_LENGTH = 44;
+        int GREETING_LENGTH = 128;
+        int IPROTO_REQUEST_TYPE = 0x00;
+        int IPROTO_SYNC = 0x01;
+        int IPROTO_SCHEMA_VERSION = 0x05;
+    }
+
     interface ConfigurationKeys {
         String TARANTOOL_SECTION = "tarantool";
         String TARANTOOL_LOGGING_KEY = "logging";
@@ -158,7 +167,6 @@ public interface TarantoolModuleConstants {
         OVERLAPS,
         NEIGHBOR
     }
-
 
     @Getter
     @AllArgsConstructor

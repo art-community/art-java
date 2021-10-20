@@ -12,6 +12,7 @@ import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.extensions.RandomExtensions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.PROTOCOL_CONSTANTS.*;
 import static io.art.transport.allocator.WriteBufferAllocator.*;
 import static io.art.transport.module.TransportModule.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -20,16 +21,10 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 
 public class TarantoolClient {
-    private static final int VERSION_LENGTH = 64;
-    private static final int SALT_LENGTH = 44;
-    private static final int GREETING_LENGTH = 128;
-    private static final int IPROTO_REQUEST_TYPE = 0x00;
-    private static final int IPROTO_SYNC = 0x01;
-    private static final int IPROTO_SCHEMA_VERSION = 0x05;
     private NettyInbound inbound;
     private NettyOutbound outbound;
     private volatile Disposable disposer;
-    private AtomicBoolean connected = new AtomicBoolean(false);
+    private final AtomicBoolean connected = new AtomicBoolean(false);
 
     public void connect() {
         disposer = TcpClient.create()
