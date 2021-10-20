@@ -45,9 +45,8 @@ public class TarantoolClient {
         if (connected.compareAndSet(false, true)) {
             this.inbound = inbound;
             this.outbound = outbound;
+            // тут где-то авторизация
         }
-
-        // тут где-то авторизация
     }
 
     @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
