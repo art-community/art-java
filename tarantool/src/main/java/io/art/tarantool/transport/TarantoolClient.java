@@ -52,9 +52,9 @@ public class TarantoolClient {
 
         int syncId = randomInt();
 
-        input.subscribe(buffer -> outbound.sendUsing(() -> buffer, (connection, inputBuffer) -> write(syncId, inputBuffer), ByteBuf::release)
+        outbound.send(input.map(buffer -> write(syncId, buffer)))
                 .then()
-                .subscribe());
+                .subscribe();
 
         return inbound.receive()
                 .aggregate()
