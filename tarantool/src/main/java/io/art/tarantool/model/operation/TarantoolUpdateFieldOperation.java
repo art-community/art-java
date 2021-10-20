@@ -18,17 +18,12 @@
 
 package io.art.tarantool.model.operation;
 
-import io.art.value.immutable.Value;
-import io.art.value.tuple.PlainTupleWriter.*;
-import lombok.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
+import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static io.art.value.immutable.Entity.*;
-import static io.art.value.tuple.PlainTupleWriter.*;
-import static java.util.Collections.*;
-import static java.util.Objects.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
+import static java.util.Collections.*;
 import java.util.*;
 
 @Getter
@@ -51,6 +46,7 @@ public class TarantoolUpdateFieldOperation {
     }
 
     private TarantoolUpdateFieldOperation(TarantoolOperator operator, int fieldNumber, String fieldName, Value value) {
+/*
         PlainTupleWriterResult result = writeTuple(entityBuilder().put(fieldName, value).build());
         if (isNull(result)) {
             valueOperation = emptyList();
@@ -63,6 +59,7 @@ public class TarantoolUpdateFieldOperation {
                 break;
         }
         valueOperation = fixedArrayOf(operator.getOperator(), fieldNumber, result.getTuple().get(0));
+*/
     }
 
     public static TarantoolUpdateFieldOperation addition(int fieldNumber, long value) {

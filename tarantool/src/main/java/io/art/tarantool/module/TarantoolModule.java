@@ -32,7 +32,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     }
 
     public static TarantoolInstance tarantoolInstance(String clusterId) {
-        return new TarantoolInstance(getCluster(clusterId));
+        return null;
     }
 
     private static Supplier<TarantoolCluster> getCluster(String clusterId) {

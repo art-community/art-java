@@ -1,7 +1,6 @@
 package io.art.tarantool.model.field;
 
 import io.art.tarantool.model.operation.*;
-import io.art.value.immutable.Value;
 import lombok.*;
 
 import static io.art.core.factory.ArrayFactory.fixedArrayOf;

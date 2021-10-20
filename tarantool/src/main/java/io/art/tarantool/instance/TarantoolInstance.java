@@ -1,43 +1,39 @@
 package io.art.tarantool.instance;
 
-import io.art.tarantool.configuration.space.TarantoolSpaceConfig;
-import io.art.tarantool.configuration.space.TarantoolSpaceFormat;
-import io.art.tarantool.configuration.space.TarantoolSpaceIndex;
-import io.art.tarantool.space.*;
-import io.art.tarantool.transaction.TarantoolTransactionManager;
-import io.art.tarantool.model.record.TarantoolRecord;
-import io.art.tarantool.model.mapping.TarantoolResponseMapping;
-import io.art.tarantool.module.connection.client.TarantoolCluster;
-import io.art.value.immutable.Value;
-import io.art.value.mapper.*;
-import lombok.Builder;
-import lombok.Getter;
-import io.art.logging.logger.Logger;
-
-import java.util.Set;
-import java.util.function.*;
-
-import static io.art.core.caster.Caster.cast;
-import static io.art.logging.module.LoggingModule.logger;
+import io.art.logging.logger.*;
+import io.art.tarantool.configuration.space.*;
+import io.art.tarantool.model.mapping.*;
+import io.art.tarantool.model.record.*;
+import io.art.tarantool.module.connection.client.*;
+import io.art.tarantool.transaction.*;
+import lombok.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static lombok.AccessLevel.PRIVATE;
+import static lombok.AccessLevel.*;
+import java.util.*;
+import java.util.function.*;
 
 public class TarantoolInstance {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolInstance.class);
+
+/*
     @Getter
     private final TarantoolTransactionManager transactionManager;
 
 
-    public TarantoolInstance(Supplier<TarantoolCluster> client){
+    public TarantoolInstance(Supplier<TarantoolCluster> client) {
         transactionManager = new TarantoolTransactionManager(client);
     }
 
-    public TarantoolRecord<Set<String>> listSpaces(){
+    public TarantoolRecord<Set<String>> listSpaces() {
         return cast(transactionManager.callRO(LIST_SPACES, TarantoolResponseMapping::toStringSet).synchronize());
     }
 
-    public TarantoolSpace<Value, Value> space(String space){
+*/
+/*
+    public TarantoolSpace<Value, Value> space(String space) {
         return cast(TarantoolSpaceImplementation.builder()
                 .space(space)
                 .transactionManager(transactionManager)
@@ -51,7 +47,7 @@ public class TarantoolInstance {
     public <T, K> TarantoolSpace<T, K> space(String space,
                                              Function<Value, T> toModelMapper,
                                              Function<T, Value> fromModelMapper,
-                                             Function<K, Value> keyMapper){
+                                             Function<K, Value> keyMapper) {
         return cast(TarantoolSpaceImplementation.builder()
                 .space(space)
                 .transactionManager(transactionManager)
@@ -60,44 +56,47 @@ public class TarantoolInstance {
                 .keyMapper(cast(keyMapper))
                 .build());
     }
+*//*
 
-    public void createSpace(String space, TarantoolSpaceConfig config){
+
+    public void createSpace(String space, TarantoolSpaceConfig config) {
         transactionManager.callRW(CREATE_SPACE, TarantoolResponseMapping::toEmpty, space, config.getConfig()).synchronize();
     }
 
-    public void formatSpace(String space, TarantoolSpaceFormat format){
+    public void formatSpace(String space, TarantoolSpaceFormat format) {
         transactionManager.callRW(FORMAT_SPACE, TarantoolResponseMapping::toEmpty, space, format.getFormat()).synchronize();
     }
 
-    public void createIndex(String space, String indexName, TarantoolSpaceIndex indexConfig){
+    public void createIndex(String space, String indexName, TarantoolSpaceIndex indexConfig) {
         transactionManager.callRW(CREATE_INDEX, TarantoolResponseMapping::toEmpty, space, indexName, indexConfig.getIndex()).synchronize();
     }
 
-    public void dropIndex(String space, String indexName){
+    public void dropIndex(String space, String indexName) {
         transactionManager.callRW(DROP_INDEX, TarantoolResponseMapping::toEmpty, space, indexName).synchronize();
     }
 
-    public void renameSpace(String space, String newName){
+    public void renameSpace(String space, String newName) {
         transactionManager.callRW(RENAME_SPACE, TarantoolResponseMapping::toEmpty, space, newName).synchronize();
     }
 
-    public void dropSpace(String space){
+    public void dropSpace(String space) {
         transactionManager.callRW(DROP_SPACE, TarantoolResponseMapping::toEmpty, space).synchronize();
     }
 
-    public void beginTransaction(){
+    public void beginTransaction() {
         transactionManager.begin();
     }
 
-    public void beginTransaction(Long bucketId){
+    public void beginTransaction(Long bucketId) {
         transactionManager.begin(bucketId);
     }
 
-    public void commitTransaction(){
+    public void commitTransaction() {
         transactionManager.commit();
     }
 
-    public void cancelTransaction(){
+    public void cancelTransaction() {
         transactionManager.cancel();
     }
+*/
 }

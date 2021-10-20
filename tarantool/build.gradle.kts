@@ -20,10 +20,13 @@
 dependencies {
     val tarantoolCartridgeConnectorVersion: String by project
 
-    implementation(project(":core"))
-    implementation(project(":meta"))
+    api(project(":core"))
+    api(project(":meta"))
+    api(project(":message-pack"))
+
     implementation(project(":logging"))
-    implementation(project(":storage"))
+    implementation(project(":transport"))
+    //implementation(project(":storage"))
 
 
     api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)

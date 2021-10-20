@@ -1,20 +1,18 @@
 package io.art.tarantool.module.connection.client.connector;
 
 import io.art.logging.logger.*;
-import io.tarantool.driver.StandaloneTarantoolClient;
-import io.tarantool.driver.TarantoolClientConfig;
-import io.tarantool.driver.TarantoolServerAddress;
-import io.tarantool.driver.auth.SimpleTarantoolCredentials;
-import io.tarantool.driver.exceptions.*;
-import lombok.*;
-import io.tarantool.driver.api.TarantoolClient;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
-import static io.art.logging.module.LoggingModule.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.TARANTOOL_CLIENT_CREATED;
+import io.tarantool.driver.*;
+import io.tarantool.driver.api.*;
+import io.tarantool.driver.auth.*;
+import io.tarantool.driver.exceptions.*;
+import lombok.*;
+import static io.art.logging.Logging.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.LoggingMessages.*;
 import static java.text.MessageFormat.*;
 import static lombok.AccessLevel.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ExceptionMessages.*;
 
 
 public class TarantoolConnector {
@@ -32,7 +30,7 @@ public class TarantoolConnector {
         TarantoolServerAddress address = new TarantoolServerAddress(config.getHost(), config.getPort());
 
         int retries = 0;
-        while (retries < config.getMaxConnectionRetries()){
+        while (retries < config.getMaxConnectionRetries()) {
             try {
                 TarantoolClient client = new StandaloneTarantoolClient(clientConfig, address);
                 getLogger().info(format(TARANTOOL_CLIENT_CREATED, instanceId, address.toString()));

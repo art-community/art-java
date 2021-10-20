@@ -29,15 +29,14 @@ import io.art.yaml.descriptor.*;
 import io.netty.buffer.*;
 import static io.art.core.builder.MapBuilder.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.json.module.JsonModule.*;
 import static io.art.message.pack.module.MessagePackModule.*;
+import static io.art.transport.allocator.WriteBufferAllocator.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.module.TransportModule.*;
 import static io.art.yaml.module.YamlModule.*;
-import static io.netty.buffer.ByteBufAllocator.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -68,49 +67,33 @@ public class TransportPayloadWriter {
         switch (dataFormat) {
             case JSON:
                 return value -> {
-                    ByteBuf buffer = createBuffer();
+                    ByteBuf buffer = allocateWriteBuffer(configuration.get());
                     jsonWriter.get().write(value, buffer);
                     return buffer;
                 };
             case MESSAGE_PACK:
                 return value -> {
-                    ByteBuf buffer = createBuffer();
+                    ByteBuf buffer = allocateWriteBuffer(configuration.get());
                     messagePackWriter.get().write(value, buffer);
                     return buffer;
                 };
             case YAML:
                 return value -> {
-                    ByteBuf buffer = createBuffer();
+                    ByteBuf buffer = allocateWriteBuffer(configuration.get());
                     yamlWriter.get().write(value, buffer);
                     return buffer;
                 };
             case BYTES:
-                return value -> createBuffer().writeBytes(value.getType()
-                        .outputTransformer()
-                        .toByteArray(cast(value.getObject())));
+                return value -> allocateWriteBuffer(configuration.get())
+                        .writeBytes(value.getType()
+                                .outputTransformer()
+                                .toByteArray(cast(value.getObject())));
             case STRING:
-                return value -> createBuffer().writeBytes(value.getType().outputTransformer().toString(cast(value.getObject()))
-                        .getBytes(context().configuration().getCharset()));
+                return value -> allocateWriteBuffer(configuration.get())
+                        .writeBytes(value.getType().outputTransformer().toString(cast(value.getObject()))
+                                .getBytes(context().configuration().getCharset()));
         }
         throw new ImpossibleSituationException();
-    }
-
-    private static ByteBuf createBuffer() {
-        if (!withTransport()) return DEFAULT.ioBuffer();
-        TransportModuleConfiguration configuration = TransportPayloadWriter.configuration.get();
-        int writeBufferInitialCapacity = configuration.getWriteBufferInitialCapacity();
-        int writeBufferMaxCapacity = configuration.getWriteBufferMaxCapacity();
-        switch (configuration.getWriteBufferType()) {
-            case DEFAULT:
-                return DEFAULT.buffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
-            case HEAP:
-                return DEFAULT.heapBuffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
-            case IO:
-                return DEFAULT.ioBuffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
-            case DIRECT:
-                return DEFAULT.directBuffer(writeBufferInitialCapacity, writeBufferMaxCapacity);
-        }
-        return DEFAULT.ioBuffer();
     }
 
     public static TransportPayloadWriter transportPayloadWriter(DataFormat dataFormat) {

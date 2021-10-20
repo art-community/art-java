@@ -7,8 +7,6 @@ import io.art.tarantool.model.operation.*;
 import io.art.tarantool.model.record.*;
 import io.art.tarantool.model.transaction.dependency.*;
 import io.art.tarantool.transaction.*;
-import io.art.value.immutable.Value;
-import io.art.value.mapper.*;
 import lombok.Builder;
 
 import java.util.*;
@@ -27,6 +25,7 @@ import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
 import static io.art.tarantool.model.mapping.TarantoolResponseMapping.*;
 
 public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> {
+/*
     private final TarantoolTransactionManager transactionManager;
     private final String space;
     private final Function<Optional<Value>, Optional<T>> toModelMapper;
@@ -289,4 +288,5 @@ public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> 
         }
     }
 
+*/
 }

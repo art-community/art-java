@@ -1,16 +1,7 @@
 package io.art.tarantool.space;
 
-import io.art.core.collection.*;
-import io.art.storage.space.*;
-import io.art.tarantool.model.operation.*;
-import io.art.tarantool.model.record.*;
-import io.art.tarantool.model.transaction.dependency.*;
-import io.art.tarantool.space.TarantoolSpaceImplementation.SelectRequest;
-import io.art.value.immutable.*;
-import java.util.*;
-import java.util.function.*;
-
-public interface TarantoolSpace<T, K> extends Space<T, K> {
+public interface TarantoolSpace<T, K> {
+/*
     void bucketIdGenerator(Function<T, Long> bucketIdGenerator);
 
     TarantoolRecord<T> get(K key);
@@ -61,4 +52,5 @@ public interface TarantoolSpace<T, K> extends Space<T, K> {
 
     void cancelTransaction();
 
+*/
 }
