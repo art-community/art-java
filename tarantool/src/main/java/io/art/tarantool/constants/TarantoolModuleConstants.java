@@ -18,8 +18,7 @@
 
 package io.art.tarantool.constants;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
 
 public interface TarantoolModuleConstants {
@@ -35,7 +34,7 @@ public interface TarantoolModuleConstants {
 
     int DEFAULT_TARANTOOL_RETRIES = 3;
 
-    interface ConfigurationKeys{
+    interface ConfigurationKeys {
         String TARANTOOL_SECTION = "tarantool";
         String TARANTOOL_LOGGING_KEY = "logging";
         String TARANTOOL_CLUSTERS_SECTION = "clusters";
@@ -104,7 +103,7 @@ public interface TarantoolModuleConstants {
         String TRANSACTION = "art.api.transaction";
     }
 
-    interface SelectOptions{
+    interface SelectOptions {
         String LIMIT = "limit";
         String OFFSET = "offset";
         String FILTER = "filter";
@@ -112,7 +111,7 @@ public interface TarantoolModuleConstants {
         String DISTINCT = "distinct";
     }
 
-    interface SelectFilters{
+    interface SelectFilters {
         String EQUALS = "art.core.stream.filters.equals";
         String NOT_EQUALS = "art.core.stream.filters.notEquals";
         String MORE = "art.core.stream.filters.more";
@@ -148,7 +147,7 @@ public interface TarantoolModuleConstants {
         RTREE
     }
 
-    enum TarantoolIndexIterator{
+    enum TarantoolIndexIterator {
         EQ,
         REQ,
         GT,
