@@ -5,7 +5,6 @@ import com.oracle.svm.core.jni.*;
 import lombok.experimental.*;
 import org.graalvm.nativeimage.hosted.*;
 import static com.oracle.svm.hosted.FeatureImpl.*;
-import static java.lang.reflect.Modifier.*;
 import static java.util.Arrays.*;
 import java.lang.reflect.*;
 
@@ -34,9 +33,7 @@ public class GraalNativeRegistrator {
             JNIRuntimeAccess.register(owner);
             RuntimeReflection.register(owner);
             for (final Method method : owner.getDeclaredMethods()) {
-                if (isNative(method.getModifiers())) {
-                    JNIRuntimeAccess.register(method);
-                }
+                JNIRuntimeAccess.register(method);
                 RuntimeReflection.register(method);
             }
             for (final Field field : owner.getDeclaredFields()) {
