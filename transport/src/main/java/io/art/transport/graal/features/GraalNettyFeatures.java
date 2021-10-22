@@ -40,8 +40,6 @@ public class GraalNettyFeatures implements Feature {
         if (!TRUE.toString().equalsIgnoreCase(property)) return;
         if (!Platform.includedIn(Platform.LINUX.class)) return;
 
-        out.println("link-static");
-
         String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
         File libraryDirectory = new File(workingPath);
 
