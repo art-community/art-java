@@ -70,7 +70,7 @@ public class HttpConnectorConfiguration {
         configuration.keepAlive = true;
         configuration.dataFormat = JSON;
         configuration.decorator = UnaryOperator.identity();
-        configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS;
+        configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + DEFAULT_HTTP_PORT;
         configuration.uri = manual(SLASH);
         configuration.headers = emptyImmutableMap();
         configuration.cookies = emptyImmutableMap();

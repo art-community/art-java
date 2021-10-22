@@ -103,7 +103,7 @@ public interface HttpModuleConstants {
     }
 
     interface Defaults {
-        int DEFAULT_PORT = 80;
+        int DEFAULT_PORT = 8080;
     }
 
     static HttpProtocol httpProtocol(String protocol, HttpProtocol fallback) {
