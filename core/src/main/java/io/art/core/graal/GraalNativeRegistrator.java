@@ -40,15 +40,11 @@ public class GraalNativeRegistrator {
                 RuntimeReflection.register(method);
             }
             for (final Field field : owner.getDeclaredFields()) {
-                if (isNative(field.getModifiers())) {
-                    JNIRuntimeAccess.register(field);
-                }
+                JNIRuntimeAccess.register(field);
                 RuntimeReflection.register(field);
             }
             for (final Constructor<?> constructor : owner.getDeclaredConstructors()) {
-                if (isNative(constructor.getModifiers())) {
-                    JNIRuntimeAccess.register(constructor);
-                }
+                JNIRuntimeAccess.register(constructor);
                 RuntimeReflection.register(constructor);
             }
         } catch (Throwable throwable) {
