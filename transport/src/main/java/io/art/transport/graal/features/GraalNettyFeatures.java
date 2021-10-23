@@ -2,7 +2,6 @@ package io.art.transport.graal.features;
 
 import com.oracle.svm.hosted.FeatureImpl.*;
 import io.art.core.graal.*;
-import org.graalvm.nativebridge.jni.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.core.checker.NullityChecker.*;
