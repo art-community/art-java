@@ -84,14 +84,14 @@ public class TransportPayloadWriter {
                     return buffer;
                 };
             case BYTES:
-                return value -> allocateWriteBuffer(configuration.get())
-                        .writeBytes(value.getType()
-                                .outputTransformer()
-                                .toByteArray(cast(value.getObject())));
+                return value -> allocateWriteBuffer(configuration.get()).writeBytes(value.getType()
+                        .outputTransformer()
+                        .toByteArray(cast(value.getObject())));
             case STRING:
-                return value -> allocateWriteBuffer(configuration.get())
-                        .writeBytes(value.getType().outputTransformer().toString(cast(value.getObject()))
-                                .getBytes(context().configuration().getCharset()));
+                return value -> allocateWriteBuffer(configuration.get()).writeBytes(value.getType()
+                        .outputTransformer()
+                        .toString(cast(value.getObject()))
+                        .getBytes(context().configuration().getCharset()));
         }
         throw new ImpossibleSituationException();
     }
