@@ -30,8 +30,10 @@ public class GraalNettyFeatures implements Feature {
         final String nettyMachineId = formatAddress(machineIdBytes);
         setProperty(NETTY_MACHINE_ID_PROPERTY, nettyMachineId);
         registerEpoll();
+/*
         registerKqueue();
         registerMacOsClasses();
+*/
         linkStatic((BeforeAnalysisAccessImpl) access);
     }
 
