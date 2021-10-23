@@ -1,22 +1,13 @@
 package io.art.transport.graal.features;
 
 import com.oracle.svm.hosted.FeatureImpl.*;
-import io.art.core.graal.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.GraalConstants.*;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.extensions.JarExtensions.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.transport.constants.TransportModuleConstants.GraalConstants.*;
 import static io.netty.util.internal.MacAddressUtil.*;
 import static java.lang.Boolean.*;
 import static java.lang.System.*;
-import static java.nio.file.Files.*;
-import java.io.*;
-import java.nio.file.*;
 import java.util.*;
 
 public class GraalNettyFeatures implements Feature {
@@ -40,25 +31,7 @@ public class GraalNettyFeatures implements Feature {
         if (!TRUE.toString().equalsIgnoreCase(property)) return;
         if (!Platform.includedIn(Platform.LINUX.class)) return;
 
-        String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
-        File libraryDirectory = new File(workingPath);
 
-        ignoreException(() -> createDirectories(Paths.get(workingPath).resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH)));
-
-        for (String name : NETTY_EPOLL_LIBRARY_REGEXPS) {
-            extractCurrentJarEntry(GraalNettyFeatures.class, name, libraryDirectory.getAbsolutePath());
-        }
-
-        access.getNativeLibraries()
-                .getLibraryPaths()
-                .add(libraryDirectory.toPath().resolve(NETTY_STATIC_LIBRARIES_RELATIVE_PATH).toAbsolutePath().toString());
-
-        GraalStaticLibraryConfiguration nettyLibrary = GraalStaticLibraryConfiguration.builder()
-                .libraryNames(NETTY_EPOLL_LIBRARY_NAMES)
-                .symbolPrefixes(NETTY_NATIVE_LIBRARY_PREFIXES)
-                .build();
-
-        registerStaticNativeLibrary(access, nettyLibrary);
     }
 
     private void registerKqueue() {
