@@ -33,18 +33,14 @@ public class GraalNativeRegistrator {
             JNIRuntimeAccess.register(owner);
             RuntimeReflection.register(owner);
             for (final Method method : owner.getDeclaredMethods()) {
-                System.out.println("owner: " + owner.getName() + " m: " + method.toString());
-                method.setAccessible(true);
                 JNIRuntimeAccess.register(method);
                 RuntimeReflection.register(method);
             }
             for (final Field field : owner.getDeclaredFields()) {
-                field.setAccessible(true);
                 JNIRuntimeAccess.register(field);
                 RuntimeReflection.register(field);
             }
             for (final Constructor<?> constructor : owner.getDeclaredConstructors()) {
-                constructor.setAccessible(true);
                 JNIRuntimeAccess.register(constructor);
                 RuntimeReflection.register(constructor);
             }
