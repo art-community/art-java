@@ -68,3 +68,4 @@ tarantoo/
 zookeeper/
 tarantool/lua
 .DS_Store
+local.properties
