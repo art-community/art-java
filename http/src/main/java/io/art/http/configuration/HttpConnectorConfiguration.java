@@ -35,6 +35,7 @@ import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
+import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.http.path.HttpCommunicationUri.*;
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
@@ -70,7 +71,7 @@ public class HttpConnectorConfiguration {
         configuration.keepAlive = true;
         configuration.dataFormat = JSON;
         configuration.decorator = UnaryOperator.identity();
-        configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + DEFAULT_HTTP_PORT;
+        configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + DEFAULT_PORT;
         configuration.uri = manual(SLASH);
         configuration.headers = emptyImmutableMap();
         configuration.cookies = emptyImmutableMap();
