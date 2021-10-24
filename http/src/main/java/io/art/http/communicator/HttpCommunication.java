@@ -148,7 +148,11 @@ public class HttpCommunication implements Communication {
             uri.append(QEUSTION).append(parameterString);
         }
 
-        return processCommunication(builder.client(client).uri(decorator.getUri().apply(uri.toString())).build());
+        return processCommunication(builder
+                .client(client)
+                .uri(decorator.getUri().apply(uri.toString()))
+                .wsAggregateFrames(connectorConfiguration.getWsAggregateFrames())
+                .build());
     }
 
     private Flux<Object> simpleCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder) {
@@ -169,6 +173,7 @@ public class HttpCommunication implements Communication {
         return processCommunication(builder.route(route)
                 .client(client)
                 .uri(connectorConfiguration.getUri().make(action.getId()))
+                .wsAggregateFrames(connectorConfiguration.getWsAggregateFrames())
                 .build());
     }
 
@@ -239,7 +244,7 @@ public class HttpCommunication implements Communication {
 
     private Flux<Object> receiveWebSocket(ProcessingConfiguration configuration, WebsocketInbound inbound) {
         return inbound
-                .aggregateFrames()
+                .aggregateFrames(configuration.wsAggregateFrames)
                 .receive()
                 .map(bytes -> configuration.reader.read(bytes, outputMappingType))
                 .filter(payload -> !payload.isEmpty())
@@ -258,6 +263,7 @@ public class HttpCommunication implements Communication {
         final HttpRouteType route;
         final HttpClient client;
         final String uri;
+        final int wsAggregateFrames;
     }
 
     static void decorateHttpCommunication(UnaryOperator<HttpCommunicationDecorator> decorator) {
