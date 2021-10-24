@@ -254,7 +254,7 @@ public class MetaType<T> {
 
     private static <T> MetaTypeBuilder<T> createTypeBuilder(Class<?> type) {
         MetaType<T> custom = cast(metaModule().configuration().getCustomTypes().get(type));
-        return let(cast(custom), MetaType<T>::toBuilder, MetaType.<T>builder());
+        return cast(let(custom, MetaType::toBuilder, MetaType.<T>builder()));
     }
 
     @EqualsAndHashCode
