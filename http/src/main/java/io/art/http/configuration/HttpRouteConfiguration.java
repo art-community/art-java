@@ -29,6 +29,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
@@ -58,6 +59,12 @@ public class HttpRouteConfiguration {
         configuration.type = GET;
         configuration.defaultDataFormat = JSON;
         configuration.pathParameters = emptyImmutableSet();
+        configuration.wsConfiguration = HttpWsRouteConfiguration.builder()
+                .aggregateFrames(DEFAULT_AGGREGATE_FRAMES)
+                .build();
+        configuration.pathConfiguration = HttpPathRouteConfiguration.builder()
+                .path(context().configuration().getWorkingDirectory())
+                .build();
         return configuration;
     }
 
