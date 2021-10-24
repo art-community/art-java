@@ -143,7 +143,7 @@ public abstract class MetaClass<T> {
                 .stream()
                 .collect(mapCollector(MetaProperty::name, identity()));
 
-        provider = new MetaProviderTemplate(gettablePropertyMap, gettableProperties.toArray(new MetaProperty[0]));
+        provider = new MetaProviderTemplate(immutableMapOf(gettablePropertyMap), gettableProperties.toArray(new MetaProperty[0]));
 
         Map<String, MetaProperty<?>> constructablePropertyMap = constructableProperties
                 .stream()

@@ -28,7 +28,7 @@ import java.util.*;
 
 @AllArgsConstructor
 public class MetaProviderTemplate {
-    private final Map<String, MetaProperty<?>> propertyMap;
+    private final ImmutableMap<String, MetaProperty<?>> propertyMap;
     private final MetaProperty<?>[] propertyArray;
 
     public MetaProviderInstance instantiate(Object model) {
@@ -36,7 +36,7 @@ public class MetaProviderTemplate {
     }
 
     public ImmutableMap<String, MetaProperty<?>> propertyMap() {
-        return immutableMapOf(propertyMap);
+        return propertyMap;
     }
 
     public ImmutableArray<MetaProperty<?>> propertyArray() {
