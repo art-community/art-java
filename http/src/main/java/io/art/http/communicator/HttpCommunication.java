@@ -166,7 +166,10 @@ public class HttpCommunication implements Communication {
             client = client.cookie(cookie);
         }
 
-        return processCommunication(builder.route(route).client(client).uri(connectorConfiguration.getUri().make(action.getId())).build());
+        return processCommunication(builder.route(route)
+                .client(client)
+                .uri(connectorConfiguration.getUri().make(action.getId()))
+                .build());
     }
 
     private Flux<Object> processCommunication(ProcessingConfiguration configuration) {
