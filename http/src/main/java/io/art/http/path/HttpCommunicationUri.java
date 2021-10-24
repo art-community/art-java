@@ -9,13 +9,13 @@ import java.util.function.*;
 @Public
 public class HttpCommunicationUri {
     private Strategy strategy = Strategy.AUTOMATIC;
-    private String manualRoute;
+    private String manualUri;
     private Function<CommunicatorActionIdentifier, String> transformer;
 
     public static HttpCommunicationUri manual(String uri) {
         HttpCommunicationUri path = new HttpCommunicationUri();
         path.strategy = Strategy.MANUAL;
-        path.manualRoute = uri;
+        path.manualUri = uri;
         return path;
     }
 
@@ -37,7 +37,7 @@ public class HttpCommunicationUri {
             case AUTOMATIC:
                 return SLASH + id.getCommunicatorId().toLowerCase() + SLASH + id.getActionId().toLowerCase();
             case MANUAL:
-                return manualRoute;
+                return manualUri;
             case TRANSFORMED:
                 return transformer.apply(id);
         }
