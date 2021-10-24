@@ -34,14 +34,14 @@ public class ProcessorArchitecture {
     Set<String> aliases;
 
     public boolean isKnown() {
-        return tryAsKnown().isPresent();
+        return maybeKnown().isPresent();
     }
 
     public KnownProcessorArchitecture asKnown() {
-        return tryAsKnown().orElseThrow(() -> new InternalRuntimeException(format(UNKNOWN_PROCESSOR_ARCHITECTURE, this)));
+        return maybeKnown().orElseThrow(() -> new InternalRuntimeException(format(UNKNOWN_PROCESSOR_ARCHITECTURE, this)));
     }
 
-    public Optional<KnownProcessorArchitecture> tryAsKnown() {
+    public Optional<KnownProcessorArchitecture> maybeKnown() {
         return stream(KnownProcessorArchitecture.values())
                 .filter((value -> value.getArchitecture().names().stream().anyMatch(names()::contains)))
                 .findFirst();
