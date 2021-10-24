@@ -77,7 +77,7 @@ public interface TransportModuleConstants {
         JSON("json"),
         YAML("yaml"),
         MESSAGE_PACK("messagePack"),
-        STRING("STRING"),
+        STRING("string"),
         BYTES("bytes");
 
         private final String format;
