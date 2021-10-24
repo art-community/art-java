@@ -104,6 +104,7 @@ public interface HttpModuleConstants {
 
     interface Defaults {
         int DEFAULT_PORT = 8080;
+        int DEFAULT_AGGREGATE_FRAMES = 65536;
     }
 
     static HttpProtocol httpProtocol(String protocol, HttpProtocol fallback) {

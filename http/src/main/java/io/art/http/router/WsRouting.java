@@ -75,7 +75,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         }
 
         Flux<Object> input = localState.inbound()
-                .aggregateFrames()
+                .aggregateFrames(routeConfiguration.getWsConfiguration().getAggregateFrames())
                 .receive()
                 .map(data -> reader.read(data, inputMappingType))
                 .filter(data -> !data.isEmpty())

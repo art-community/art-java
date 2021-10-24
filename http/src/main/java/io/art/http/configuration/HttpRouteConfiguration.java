@@ -34,6 +34,7 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
+import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.http.constants.HttpModuleConstants.*;
 import static io.art.http.constants.HttpModuleConstants.HttpRouteType.*;
 import static io.art.http.path.HttpServingUri.*;
@@ -77,7 +78,10 @@ public class HttpRouteConfiguration {
                         .build();
                 break;
             case WS:
-                Integer aggregateFrames = source.getInteger(WS_AGGREGATE_FRAMES_KEY);
+                Integer aggregateFrames = orElse(
+                        source.getInteger(WS_AGGREGATE_FRAMES_KEY),
+                        let(current.wsConfiguration, HttpWsRouteConfiguration::getAggregateFrames, DEFAULT_AGGREGATE_FRAMES)
+                );
                 HttpWsRouteConfigurationBuilder wsBuilder = HttpWsRouteConfiguration.builder();
                 apply(aggregateFrames, wsBuilder::aggregateFrames);
                 configuration.wsConfiguration = wsBuilder.build();
