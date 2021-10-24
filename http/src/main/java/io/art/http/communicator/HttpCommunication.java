@@ -22,6 +22,7 @@ import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.exception.*;
 import io.art.core.property.*;
+import io.art.http.communicator.HttpCommunication.ProcessingConfiguration.*;
 import io.art.http.configuration.*;
 import io.art.http.constants.HttpModuleConstants.*;
 import io.art.meta.model.*;
@@ -105,14 +106,14 @@ public class HttpCommunication implements Communication {
 
     private Flux<Object> communicate(TransportPayloadReader reader, TransportPayloadWriter writer, Flux<Object> input) {
         HttpCommunicationDecorator decorator;
-        ProcessingConfiguration.ProcessingConfigurationBuilder builder = ProcessingConfiguration.builder()
+        ProcessingConfigurationBuilder builder = ProcessingConfiguration.builder()
                 .reader(reader)
                 .writer(writer)
                 .input(input);
         return isNull(decorator = HttpCommunication.decorator.get()) ? simpleCommunication(builder) : decoratedCommunication(builder, decorator);
     }
 
-    private Flux<Object> decoratedCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
+    private Flux<Object> decoratedCommunication(ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
         HttpCommunication.decorator.remove();
 
         apply(decorator.getInputDataFormat(), input -> builder.reader(transportPayloadReader(input)));
