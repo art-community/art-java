@@ -59,6 +59,7 @@ public class HttpConnectorConfiguration {
     private ImmutableMap<String, Cookie> cookies;
     private Duration responseTimeout;
     private HttpCommunicationUri uri;
+    private int wsAggregateFrames;
 
     public static HttpConnectorConfiguration httpConnectorConfiguration(String connector) {
         HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
@@ -75,6 +76,7 @@ public class HttpConnectorConfiguration {
         configuration.uri = manual(SLASH);
         configuration.headers = emptyImmutableMap();
         configuration.cookies = emptyImmutableMap();
+        configuration.wsAggregateFrames = DEFAULT_AGGREGATE_FRAMES;
         return configuration;
     }
 
@@ -94,7 +96,7 @@ public class HttpConnectorConfiguration {
         configuration.wiretapLog = listener.emit(orElse(source.getBoolean(WIRETAP_LOG_KEY), current.wiretapLog));
         configuration.url = listener.emit(orElse(source.getString(URL_KEY), current.url));
         apply(source.getString(URI_KEY), path -> configuration.uri = manual(path));
-
+        configuration.wsAggregateFrames = orElse(source.getInteger(WS_AGGREGATE_FRAMES_KEY), orElse(current.wsAggregateFrames, DEFAULT_AGGREGATE_FRAMES));
         return configuration;
     }
 }

@@ -21,7 +21,6 @@ package io.art.http.configuration;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.source.*;
-import io.art.http.configuration.HttpWsRouteConfiguration.*;
 import io.art.http.path.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import lombok.Builder;
@@ -78,13 +77,13 @@ public class HttpRouteConfiguration {
                         .build();
                 break;
             case WS:
-                Integer aggregateFrames = orElse(
+                int aggregateFrames = orElse(
                         source.getInteger(WS_AGGREGATE_FRAMES_KEY),
                         let(current.wsConfiguration, HttpWsRouteConfiguration::getAggregateFrames, DEFAULT_AGGREGATE_FRAMES)
                 );
-                HttpWsRouteConfigurationBuilder wsBuilder = HttpWsRouteConfiguration.builder();
-                apply(aggregateFrames, wsBuilder::aggregateFrames);
-                configuration.wsConfiguration = wsBuilder.build();
+                configuration.wsConfiguration = HttpWsRouteConfiguration.builder()
+                        .aggregateFrames(aggregateFrames)
+                        .build();
                 break;
         }
         String serviceId = source.getString(SERVICE_ID_KEY);
