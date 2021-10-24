@@ -36,7 +36,7 @@ public class MimeTypeDataFormatMapper {
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
         if (APPLICATION_OCTET_STREAM.equals(type)) return BYTES;
-        if (type.getType().equals(TEXT_CSS.getType())) return STRING;
+        if (type.getType().equals(TEXT_PLAIN.getType())) return STRING;
         throw new UnsupportedMimeTypeException(type);
     }
 
@@ -46,7 +46,7 @@ public class MimeTypeDataFormatMapper {
         if (APPLICATION_YAML.equals(type)) return YAML;
         if (APPLICATION_YML.equals(type)) return YAML;
         if (APPLICATION_OCTET_STREAM.equals(type)) return BYTES;
-        if (type.getType().equals(TEXT_CSS.getType())) return STRING;
+        if (type.getType().equals(TEXT_PLAIN.getType())) return STRING;
         return fallback;
     }
 
