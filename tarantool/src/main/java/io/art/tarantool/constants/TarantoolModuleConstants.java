@@ -34,7 +34,7 @@ public interface TarantoolModuleConstants {
 
     int DEFAULT_TARANTOOL_RETRIES = 3;
 
-    interface PROTOCOL_CONSTANTS {
+    interface ProtocolConstants {
         int VERSION_LENGTH = 64;
         int SALT_LENGTH = 44;
         int GREETING_LENGTH = 128;

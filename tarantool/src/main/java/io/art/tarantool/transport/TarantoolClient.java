@@ -12,7 +12,7 @@ import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.extensions.RandomExtensions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.PROTOCOL_CONSTANTS.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.transport.allocator.WriteBufferAllocator.*;
 import static io.art.transport.module.TransportModule.*;
 import static org.msgpack.value.ValueFactory.*;
