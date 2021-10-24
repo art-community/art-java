@@ -46,7 +46,6 @@ import java.nio.file.*;
 public class HttpRouteConfiguration {
     private HttpServingUri uri;
     private HttpRouteType type;
-    private boolean deactivated;
     private DataFormat defaultDataFormat;
     private HttpWsRouteConfiguration wsConfiguration;
     private HttpPathRouteConfiguration pathConfiguration;
@@ -56,7 +55,6 @@ public class HttpRouteConfiguration {
     public static HttpRouteConfiguration routeConfiguration() {
         HttpRouteConfiguration configuration = HttpRouteConfiguration.builder().build();
         configuration.uri = manual(SLASH);
-        configuration.deactivated = false;
         configuration.type = GET;
         configuration.defaultDataFormat = JSON;
         configuration.pathParameters = emptyImmutableSet();
@@ -65,7 +63,6 @@ public class HttpRouteConfiguration {
 
     public static HttpRouteConfiguration routeConfiguration(HttpRouteConfiguration current, ConfigurationSource source) {
         HttpRouteConfiguration configuration = current.toBuilder().build();
-        configuration.deactivated = orElse(source.getBoolean(DEACTIVATED_KEY), configuration.deactivated);
         configuration.type = httpRouteType(source.getString(METHOD_KEY).toUpperCase(), configuration.type);
         configuration.defaultDataFormat = dataFormat(source.getString(DATA_FORMAT_KEY), current.defaultDataFormat);
         configuration.pathParameters = merge(immutableSetOf(source.getStringArray(PATH_PARAMETERS_KEY)), current.pathParameters);
