@@ -48,7 +48,7 @@ public class HttpMessageBuilder {
                 .getConnectors()
                 .communicators();
         if (!communicators.isEmpty()) {
-            message.append("\n\tCommunicator proxies:\n\t\t").append(communicators
+            message.append("\n\tCommunicators:\n\t\t").append(communicators
                     .stream()
                     .map(HttpMessageBuilder::buildCommunicatorMessage)
                     .collect(joining("\n\t\t")))
