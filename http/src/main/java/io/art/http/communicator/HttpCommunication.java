@@ -145,7 +145,7 @@ public class HttpCommunication implements Communication {
                     .stream()
                     .map(entry -> entry.getKey() + EQUAL + entry.getValue())
                     .collect(joining(AMPERSAND));
-            uri.append(QEUSTION).append(parameterString);
+            uri.append(QUESTION).append(parameterString);
         }
 
         return processCommunication(builder

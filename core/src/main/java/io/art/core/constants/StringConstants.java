@@ -82,7 +82,7 @@ public interface StringConstants {
     String NEXT_ARROW = "->";
     String URI_FORMAT = "{0}://{1}:{2}";
     String VALUE_FIELD_NAME = "value";
-    String QEUSTION = "?";
+    String QUESTION = "?";
 
     static String tabulation(int count) {
         return range(0, count).map(ignore -> TABULATION).collect(joining());
