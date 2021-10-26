@@ -73,7 +73,7 @@ public class PathMatcher {
         }
 
         if (!equals(path.charAt(pointer), patternStart) && patternStart != CharacterConstants.QUESTION) {
-            RETURN false;
+            return false;
         }
 
         return isMatch(pattern.substring(1), path.substring(pointer + 1));
