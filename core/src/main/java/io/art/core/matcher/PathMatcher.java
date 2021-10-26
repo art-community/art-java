@@ -1,5 +1,6 @@
 package io.art.core.matcher;
 
+import io.art.core.constants.*;
 import lombok.*;
 import static io.art.core.constants.CharacterConstants.WILDCARD;
 import static io.art.core.constants.CharacterConstants.*;
@@ -71,8 +72,8 @@ public class PathMatcher {
             return false;
         }
 
-        if (!equals(path.charAt(pointer), patternStart) && patternStart != QUESTION) {
-            return false;
+        if (!equals(path.charAt(pointer), patternStart) && patternStart != CharacterConstants.QUESTION) {
+            RETURN false;
         }
 
         return isMatch(pattern.substring(1), path.substring(pointer + 1));
