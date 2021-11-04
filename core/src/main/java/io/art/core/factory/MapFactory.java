@@ -2,11 +2,11 @@ package io.art.core.factory;
 
 import io.art.core.collection.*;
 import lombok.experimental.*;
+import org.jctools.maps.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 @UtilityClass
@@ -65,20 +65,22 @@ public class MapFactory {
 
 
     public static <K, V> Map<K, V> concurrentMap() {
-        return new ConcurrentHashMap<>();
+        return new NonBlockingHashMap<>();
     }
 
     public static <K, V> Map<K, V> concurrentMap(int initialCapacity) {
-        return new ConcurrentHashMap<>(initialCapacity);
+        return new NonBlockingHashMap<>(initialCapacity);
     }
 
     public static <K, V> Map<K, V> concurrentMapOf(K key, V value) {
-        return new ConcurrentHashMap<>(mapOf(key, value));
+        return concurrentMapOf(mapOf(key, value));
     }
 
     public static <K, V> Map<K, V> concurrentMapOf(Map<K, V> map) {
         if (isEmpty(map)) return concurrentMap();
-        return new ConcurrentHashMap<>(map);
+        Map<K, V> newMap = concurrentMap();
+        newMap.putAll(map);
+        return newMap;
     }
 
     public static <K, V> Map<K, V> concurrentMapOf(ImmutableMap<K, V> map) {

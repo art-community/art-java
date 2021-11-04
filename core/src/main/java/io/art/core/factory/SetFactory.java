@@ -2,6 +2,7 @@ package io.art.core.factory;
 
 import io.art.core.collection.*;
 import lombok.experimental.*;
+import org.jctools.maps.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.collection.ImmutableSet.*;
 import static java.util.Arrays.*;
@@ -158,17 +159,13 @@ public class SetFactory {
     }
 
     public static <T> Set<T> concurrentSet() {
-        return ConcurrentHashMap.newKeySet();
-    }
-
-    public static <T> Set<T> concurrentSet(int capacity) {
-        return ConcurrentHashMap.newKeySet(capacity);
+        return new NonBlockingHashSet<>();
     }
 
     public static <T> Set<T> concurrentSetOf(Collection<T> elements) {
-        ConcurrentHashMap.KeySetView<T, Boolean> set = ConcurrentHashMap.newKeySet();
-        set.addAll(elements);
-        return set;
+        Set<T> newSet = concurrentSet();
+        newSet.addAll(elements);
+        return newSet;
     }
 
 
