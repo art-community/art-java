@@ -12,7 +12,7 @@ public class GraalNettyLoggerFactory extends InternalLoggerFactory {
 
     @Override
     public InternalLogger newInstance(String name) {
-        return putIfAbsent(loggers, name, () -> new GraalNettyLogger(name));
+        return computeIfAbsent(loggers, name, () -> new GraalNettyLogger(name));
     }
 
     public void dispose() {

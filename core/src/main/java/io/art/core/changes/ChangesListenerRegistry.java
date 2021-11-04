@@ -40,7 +40,7 @@ public class ChangesListenerRegistry {
     }
 
     public ChangesListener listenerFor(String id) {
-        return putIfAbsent(listeners, id, ChangesListener::changesListener);
+        return computeIfAbsent(listeners, id, ChangesListener::changesListener);
     }
 
     public ChangesListenerRegistry produce() {

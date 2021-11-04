@@ -138,11 +138,11 @@ public final class CollectionExtensions {
     }
 
 
-    public static <K, V> V putIfAbsent(Map<K, V> map, K key, Supplier<V> value) {
+    public static <K, V> V computeIfAbsent(Map<K, V> map, K key, Supplier<V> value) {
         return map.computeIfAbsent(key, ignore -> value.get());
     }
 
-    public static <K, V> V checkOrPut(Map<K, V> map, K key, Supplier<V> value) {
+    public static <K, V> V putIfAbsent(Map<K, V> map, K key, Supplier<V> value) {
         V current = map.get(key);
         if (nonNull(current)) return current;
         map.put(key, current = value.get());
@@ -150,7 +150,7 @@ public final class CollectionExtensions {
     }
 
 
-    public static <V> V putIfAbsent(Set<V> set, V value) {
+    public static <V> V computeIfAbsent(Set<V> set, V value) {
         if (set.contains(value)) {
             return set.stream()
                     .filter(value::equals)

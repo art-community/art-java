@@ -10,6 +10,6 @@ public class SingletonsRegistry {
     private static final Map<Class<?>, ?> SINGLETONS_BY_CLASS = concurrentMap();
 
     public static <T> T singleton(Class<?> objectClass, Supplier<T> factory) {
-        return cast(putIfAbsent(SINGLETONS_BY_CLASS, objectClass, cast(factory)));
+        return cast(computeIfAbsent(SINGLETONS_BY_CLASS, objectClass, cast(factory)));
     }
 }

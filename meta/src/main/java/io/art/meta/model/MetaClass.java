@@ -65,15 +65,15 @@ public abstract class MetaClass<T> {
     }
 
     protected <F> MetaField<F> register(MetaField<F> field) {
-        return cast(putIfAbsent(fields, field.name(), () -> field));
+        return cast(computeIfAbsent(fields, field.name(), () -> field));
     }
 
     protected <M extends MetaMethod<?>> M register(M method) {
-        return cast(putIfAbsent(methods, method));
+        return cast(computeIfAbsent(methods, method));
     }
 
     protected <C extends MetaConstructor<T>> C register(C constructor) {
-        return cast(putIfAbsent(constructors, constructor));
+        return cast(computeIfAbsent(constructors, constructor));
     }
 
     protected <C extends MetaClass<?>> C register(C metaClass) {

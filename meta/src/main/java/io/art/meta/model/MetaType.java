@@ -228,7 +228,7 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaType(Class<?> type, MetaType<?>... parameters) {
-        return cast(putIfAbsent(cache, CacheKey.of(type, parameters), () -> MetaType.<T>createTypeBuilder(type)
+        return cast(computeIfAbsent(cache, CacheKey.of(type, parameters), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(immutableArrayOf(parameters))
                 .build()));
@@ -236,7 +236,7 @@ public class MetaType<T> {
 
 
     public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
-        return cast(putIfAbsent(cache, CacheKey.of(type), () -> MetaType.<T>createTypeBuilder(type)
+        return cast(computeIfAbsent(cache, CacheKey.of(type), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .enumFactory(enumFactory)
@@ -244,7 +244,7 @@ public class MetaType<T> {
     }
 
     public static <T> MetaType<T> metaArray(Class<?> type, Function<Integer, ?> arrayFactory, MetaType<?> arrayComponentType) {
-        return cast(putIfAbsent(cache, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>createTypeBuilder(type)
+        return cast(computeIfAbsent(cache, CacheKey.of(type, arrayComponentType), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
                 .arrayFactory(cast(arrayFactory))

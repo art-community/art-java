@@ -34,6 +34,6 @@ public class LoggingModuleState implements ModuleState {
     private final Map<String, Logger> loggers = concurrentMap();
 
     public Logger register(String name, LoggerConfiguration configuration) {
-        return putIfAbsent(loggers, name, () -> createLogger(name, configuration, manager));
+        return computeIfAbsent(loggers, name, () -> createLogger(name, configuration, manager));
     }
 }
