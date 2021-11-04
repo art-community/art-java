@@ -460,19 +460,19 @@ final class TargetNettyHttpContentDecompressor {
     private boolean strict;
 
     @Alias
-    protected ChannelHandlerContext ctx;
+    protected ChannelHandlerContext context;
 
     @Substitute
     protected EmbeddedChannel newContentDecoder(String contentEncoding) throws Exception {
-        boolean hasDisconnect = ctx.channel().metadata().hasDisconnect();
+        boolean hasDisconnect = context.channel().metadata().hasDisconnect();
 
         if (GZIP.contentEqualsIgnoreCase(contentEncoding) || X_GZIP.contentEqualsIgnoreCase(contentEncoding)) {
-            return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), newZlibDecoder(ZlibWrapper.GZIP));
+            return new EmbeddedChannel(context.channel().id(), hasDisconnect, context.channel().config(), newZlibDecoder(ZlibWrapper.GZIP));
         }
 
         if (DEFLATE.contentEqualsIgnoreCase(contentEncoding) || X_DEFLATE.contentEqualsIgnoreCase(contentEncoding)) {
             final ZlibWrapper wrapper = strict ? ZLIB : ZLIB_OR_NONE;
-            return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), newZlibDecoder(wrapper));
+            return new EmbeddedChannel(context.channel().id(), hasDisconnect, context.channel().config(), newZlibDecoder(wrapper));
         }
 
         return null;
@@ -487,8 +487,8 @@ final class TargetNettyDelegatingDecompressorFrameListener {
     boolean strict;
 
     @Substitute
-    protected EmbeddedChannel newContentDecompressor(ChannelHandlerContext ctx, CharSequence contentEncoding) throws Http2Exception {
-        boolean hasDisconnect = ctx.channel().metadata().hasDisconnect();
+    protected EmbeddedChannel newContentDecompressor(ChannelHandlerContext context, CharSequence contentEncoding) throws Http2Exception {
+        boolean hasDisconnect = context.channel().metadata().hasDisconnect();
 
         if (!GZIP.contentEqualsIgnoreCase(contentEncoding) && !X_GZIP.contentEqualsIgnoreCase(contentEncoding)) {
             if (!DEFLATE.contentEqualsIgnoreCase(contentEncoding) && !X_DEFLATE.contentEqualsIgnoreCase(contentEncoding)) {
@@ -496,11 +496,11 @@ final class TargetNettyDelegatingDecompressorFrameListener {
             }
             ZlibWrapper wrapper = this.strict ? ZLIB : ZLIB_OR_NONE;
             ChannelHandler[] handlers = {newZlibDecoder(wrapper)};
-            return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), handlers);
+            return new EmbeddedChannel(context.channel().id(), hasDisconnect, context.channel().config(), handlers);
         }
 
         ChannelHandler[] handlers = {newZlibDecoder(ZlibWrapper.GZIP)};
-        return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), handlers);
+        return new EmbeddedChannel(context.channel().id(), hasDisconnect, context.channel().config(), handlers);
 
     }
 }
