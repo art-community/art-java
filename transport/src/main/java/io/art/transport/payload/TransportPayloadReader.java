@@ -44,15 +44,15 @@ public class TransportPayloadReader {
         reader = lazy(() -> reader(dataFormat));
     }
 
+    private static final LazyProperty<JsonReader> jsonReader = lazy(() -> jsonModule().configuration().getReader());
+    private static final LazyProperty<MessagePackReader> messagePackReader = lazy(() -> messagePackModule().configuration().getReader());
+    private static final LazyProperty<YamlReader> yamlReader = lazy(() -> yamlModule().configuration().getReader());
     private final static Map<DataFormat, TransportPayloadReader> cache = mapBuilder(JSON, new TransportPayloadReader(JSON))
             .with(MESSAGE_PACK, new TransportPayloadReader(MESSAGE_PACK))
             .with(YAML, new TransportPayloadReader(YAML))
             .with(STRING, new TransportPayloadReader(STRING))
             .with(BYTES, new TransportPayloadReader(BYTES))
             .build();
-    private static final LazyProperty<JsonReader> jsonReader = lazy(() -> jsonModule().configuration().getReader());
-    private static final LazyProperty<MessagePackReader> messagePackReader = lazy(() -> messagePackModule().configuration().getReader());
-    private static final LazyProperty<YamlReader> yamlReader = lazy(() -> yamlModule().configuration().getReader());
 
     public TransportPayload read(ByteBuf buffer, MetaType<?> type) {
         return reader.get().apply(buffer, type);
