@@ -55,7 +55,7 @@ public class FileConfigurationSource implements NestedConfiguration {
         switch (extension) {
             case PROPERTIES_EXTENSION:
                 Properties properties = new Properties();
-                ignoreException(() -> properties.load(file.getInputStream().get()));
+                ignoreException(() -> properties.load(file.getInputStream().get()), System.err::println);
                 return new PropertiesConfigurationSource(section, immutableMapOf(properties));
             case YAML_EXTENSION:
             case YML_EXTENSION:
