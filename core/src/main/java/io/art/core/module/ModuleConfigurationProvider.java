@@ -18,6 +18,7 @@
 
 package io.art.core.module;
 
+@FunctionalInterface
 public interface ModuleConfigurationProvider<Configuration extends ModuleConfiguration> {
     Configuration getConfiguration();
 }

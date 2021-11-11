@@ -18,6 +18,7 @@
 
 package io.art.core.module;
 
+@FunctionalInterface
 public interface ModuleInitializer<Configuration extends ModuleConfiguration, Configurator extends ModuleConfigurator<Configuration, Configurator>, ModuleType extends Module<Configuration, Configurator>> {
     Configuration initialize(ModuleType module);
 }
