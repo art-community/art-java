@@ -19,13 +19,16 @@
 package io.art.core.source;
 
 import io.art.core.collection.*;
+import io.art.core.exception.*;
 import io.art.core.extensions.*;
 import io.art.core.parser.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
@@ -49,6 +52,13 @@ public interface ConfigurationSource {
 
     default boolean has(String path) {
         return nonNull(getNested(path));
+    }
+
+    default ConfigurationSource validate(String path) {
+        if (!has(path)) {
+            throw new ConfigurationPathException(format(CONFIGURATION_PATH_DOES_NOT_EXIST, path));
+        }
+        return this;
     }
 
     default void refresh() {
