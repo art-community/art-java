@@ -14,7 +14,7 @@
 		#define KOISHI_API
 	#endif
 #else
-	#if defined BUILDING_KOISHI && defined __GNUC__
+	#if defined BUILDING_KOISHI && (defined __GNUC__ || defined __LCC__)
 		#define KOISHI_API __attribute__((visibility("default")))
 	#else
 		#define KOISHI_API
@@ -26,8 +26,6 @@
  */
 #if defined __STDC_VERSION__ && __STDC_VERSION__ >= 201112L
 	#define KOISHI_NORETURN _Noreturn
-#elif defined __cplusplus && __cplusplus >= 201103L
-	#define KOISHI_NORETURN [[noreturn]]
 #elif defined __GNUC__ || defined __clang__
 	#define KOISHI_NORETURN __attribute__((__noreturn__))
 #else
@@ -90,7 +88,6 @@ enum koishi_state {
 	KOISHI_SUSPENDED,  /**< The coroutine is suspended and may be resumed with #koishi_resume. */
 	KOISHI_RUNNING,    /**< The coroutine is currently executing and may be yielded from with #koishi_yield. Only up to one coroutine may be running per thread at all times. */
 	KOISHI_DEAD,       /**< The coroutine has finished executing and may be recycled with #koishi_recycle or destroyed with #koishi_deinit. */
-	KOISHI_IDLE,       /**< The coroutine has resumed another coroutine and is waiting for it to yield. */
 };
 
 /**
@@ -98,22 +95,14 @@ enum koishi_state {
  *
  * This struct must be initialized with #koishi_init before use.
  */
-#ifdef BUILDING_KOISHI
 typedef struct koishi_coroutine koishi_coroutine_t;
 struct koishi_coroutine_pub {
-#else
-typedef struct koishi_coroutine {
-#endif
 	/**
 	 * @brief Private data reserved for the implementation. Don't mess with it.
 	 * @private
 	 */
 	void *_private[8];
-#ifdef BUILDING_KOISHI
 };
-#else
-} koishi_coroutine_t;
-#endif
 
 /**
  * @brief A coroutine entry point.
@@ -130,6 +119,9 @@ typedef struct koishi_coroutine {
  * @return Value to be returned from the corresponding #koishi_resume call.
  */
 typedef void *(*koishi_entrypoint_t)(void *data);
+
+KOISHI_API koishi_coroutine_t* koishi_create();
+KOISHI_API void koishi_destroy(koishi_coroutine_t* pointer);
 
 /**
  * @brief Initialize a #koishi_coroutine_t structure.
@@ -182,7 +174,7 @@ KOISHI_API void koishi_deinit(koishi_coroutine_t *co);
  * @brief Resume a suspended coroutine.
  *
  * Transfers control flow to the coroutine context, putting it into the
- * #KOISHI_RUNNING state. The calling context is put into the #KOISHI_IDLE
+ * #KOISHI_RUNNING state. The calling context is put into the #KOISHI_SUSPENDED
  * state.
  *
  * If the coroutine is resumed for the first time, \p arg will be passed
@@ -196,7 +188,7 @@ KOISHI_API void koishi_deinit(koishi_coroutine_t *co);
  *
  * @return Value returned from the coroutine once it yields or returns.
  */
-KOISHI_API void *koishi_resume(koishi_coroutine_t *co, void *arg);
+KOISHI_API void *koishi_resume(koishi_coroutine_t *co, void* arg);
 
 /**
  * @brief Suspend the currently running coroutine.
@@ -232,9 +224,10 @@ KOISHI_API KOISHI_NORETURN void koishi_die(void *arg);
  * again. If @p co is the currently running coroutine, then this is equivalent
  * to calling #koishi_die with @p arg as the argument.
  *
- * If @p co is in the #KOISHI_IDLE state, the coroutine it's waiting on would yield
- * to the caller of @p co, as if @p co called #koishi_yield(@p arg). This applies
- * to both explicit and implicit yields (e.g. by return from the entry point),
+ * If a coroutine would yield back to another coroutine that has been stopped by
+ * this function, it will instead yield to the stopped coroutine's caller, as if
+ * the stopped coroutine called #koishi_yield(@p arg). This applies both to
+ * explicit and implicit yields (e.g. by return from the entry point),
  * recursively.
  *
  * @param co The coroutine to stop.
@@ -245,10 +238,9 @@ KOISHI_API void koishi_kill(koishi_coroutine_t *co, void *arg);
 /**
  * @brief Query the state of a coroutine.
  *
- * @return One of the four possible states.
+ * @return One of the tree possible states.
  * 		- #KOISHI_SUSPENDED
  * 		- #KOISHI_RUNNING
- * 		- #KOISHI_IDLE
  * 		- #KOISHI_DEAD
  */
 KOISHI_API int koishi_state(koishi_coroutine_t *co);
@@ -258,9 +250,8 @@ KOISHI_API int koishi_state(koishi_coroutine_t *co);
  *
  * @return The coroutine currently running on this thread. This function may be
  * called from the thread's main context as well, in which case it returns a
- * pseudo-coroutine that represents that context. Attempting to yield from such
- * pseudo-coroutines leads to undefined behavior. Pseudo-coroutines are never
- * in the #KOISHI_SUSPENDED state.
+ * pseudo-coroutine that represents that context. Attempting to resume or yield
+ * from such pseudo-coroutines leads to undefined behavior.
  */
 KOISHI_API koishi_coroutine_t *koishi_active(void);
 
