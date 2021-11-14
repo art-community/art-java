@@ -5,6 +5,7 @@ import com.oracle.svm.core.jni.*;
 import com.oracle.svm.hosted.c.*;
 import lombok.experimental.*;
 import org.graalvm.nativeimage.hosted.*;
+import org.graalvm.nativeimage.hosted.Feature.*;
 import static com.oracle.svm.hosted.FeatureImpl.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.graal.GraalNativeLibraryConfiguration.Type.*;
@@ -52,10 +53,10 @@ public class GraalNativeRegistrator {
         }
     }
 
-    public static void registerNativeLibraries(BeforeAnalysisAccessImpl access, GraalNativeLibraryConfiguration... libraries) {
+    public static void registerNativeLibraries(BeforeAnalysisAccess access, GraalNativeLibraryConfiguration... libraries) {
         NativeLibrarySupport nativeLibrarySupport = NativeLibrarySupport.singleton();
         PlatformNativeLibrarySupport platformNativeLibrarySupport = PlatformNativeLibrarySupport.singleton();
-        NativeLibraries nativeLibraries = access.getNativeLibraries();
+        NativeLibraries nativeLibraries = ((BeforeAnalysisAccessImpl) access).getNativeLibraries();
         Collection<String> libraryPaths = nativeLibraries.getLibraryPaths();
         for (GraalNativeLibraryConfiguration library : libraries) {
             libraryPaths.add(library.getLocation().resolve().toString());

@@ -16,6 +16,10 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
+
 dependencies {
     val graalVersion: String by project
 

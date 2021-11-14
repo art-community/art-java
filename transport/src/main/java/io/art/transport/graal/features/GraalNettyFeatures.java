@@ -1,6 +1,5 @@
 package io.art.transport.graal.features;
 
-import com.oracle.svm.hosted.FeatureImpl.*;
 import io.art.core.graal.*;
 import io.art.core.graal.GraalNativeLibraryConfiguration.*;
 import org.graalvm.nativeimage.*;
@@ -27,10 +26,10 @@ public class GraalNettyFeatures implements Feature {
         registerEpoll();
         registerKqueue();
         registerMacOsClasses();
-        linkStatic((BeforeAnalysisAccessImpl) access);
+        linkStatic(access);
     }
 
-    private void linkStatic(BeforeAnalysisAccessImpl access) {
+    private void linkStatic(BeforeAnalysisAccess access) {
         String property = getProperty(NETTY_STATIC_LINK_PROPERTY);
         if (!TRUE.toString().equalsIgnoreCase(property)) return;
         if (!Platform.includedIn(Platform.LINUX.class)) return;
@@ -39,7 +38,10 @@ public class GraalNettyFeatures implements Feature {
                 .builtin(true)
                 .type(STATIC)
                 .builtinSymbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
-                .location(new GraalNativeLibraryJarLocation(NETTY_STATIC_LIBRARIES_RELATIVE_PATH, NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX))
+                .location(GraalNativeLibraryLocation.builder()
+                        .extractionDirectory(NETTY_STATIC_LIBRARIES_RELATIVE_PATH)
+                        .library(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
+                        .build())
                 .name(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_NAME)
                 .build();
 
@@ -47,7 +49,10 @@ public class GraalNettyFeatures implements Feature {
                 .builtin(true)
                 .type(STATIC)
                 .builtinSymbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
-                .location(new GraalNativeLibraryJarLocation(NETTY_STATIC_LIBRARIES_RELATIVE_PATH, NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_REGEX))
+                .location(GraalNativeLibraryLocation.builder()
+                        .extractionDirectory(NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_REGEX)
+                        .library(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
+                        .build())
                 .name(NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_NAME)
                 .build();
 
