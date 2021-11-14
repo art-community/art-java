@@ -41,10 +41,18 @@ public class Fibers {
     @CEntryPoint
     @CEntryPointOptions(prologue = FiberStartRoutinePrologue.class, publishAs = CEntryPointOptions.Publish.NotPublished, include = CEntryPointOptions.NotIncludedAutomatically.class)
     public static void runFiber(FiberStartData data) {
-        Fiber f = ObjectHandles.getGlobal().get(data.getFiberHandle());
+        ObjectHandle fiberHandle = data.getFiberHandle();
         UnmanagedMemory.free(data);
+
+        runner(fiberHandle);
+    }
+
+    public static void runner(ObjectHandle fiberHandle) {
+        Fiber f = ObjectHandles.getGlobal().get(fiberHandle);
+        ObjectHandles.getGlobal().destroy(fiberHandle);
         f.run();
     }
+
 
 
     @RawStructure

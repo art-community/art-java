@@ -32,7 +32,5 @@ dependencies {
 
 executable {
     main("io.art.fibers.Fibers")
-    native {
-        addGraalOptions("-H:GenerateDebugInfo=1")
-    }
+    native()
 }
