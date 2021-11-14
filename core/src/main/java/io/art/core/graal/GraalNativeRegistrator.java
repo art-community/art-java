@@ -33,7 +33,7 @@ public class GraalNativeRegistrator {
 
     public static void registerForNativeUsage(Class<?> owner) {
         try {
-            JNIRUNTIMEACCESS.register(owner);
+            JNIRuntimeAccess.register(owner);
             RuntimeReflection.register(owner);
             for (final Method method : owner.getDeclaredMethods()) {
                 JNIRuntimeAccess.register(method);
