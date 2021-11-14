@@ -30,7 +30,6 @@ public class Fibers {
 
     @CEntryPoint
     public static void runFiber(IsolateThread thread, ObjectHandle data) {
-        new Fiber();
         koishi_dump(1);
         koishi_yield(WordFactory.nullPointer());
         new Fiber();
