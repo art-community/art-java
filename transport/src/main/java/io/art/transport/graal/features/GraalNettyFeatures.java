@@ -40,7 +40,7 @@ public class GraalNettyFeatures implements Feature {
                 .builtinSymbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
                 .location(GraalNativeLibraryLocation.builder()
                         .extractionDirectory(NETTY_STATIC_LIBRARIES_RELATIVE_PATH)
-                        .library(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
+                        .resource(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
                         .build())
                 .name(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_NAME)
                 .build();
@@ -51,7 +51,7 @@ public class GraalNettyFeatures implements Feature {
                 .builtinSymbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
                 .location(GraalNativeLibraryLocation.builder()
                         .extractionDirectory(NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_REGEX)
-                        .library(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
+                        .resource(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
                         .build())
                 .name(NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_NAME)
                 .build();

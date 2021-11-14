@@ -23,9 +23,14 @@ plugins {
 dependencies {
     val graalVersion: String by project
 
-    api(project(":core"))
+    embedded(project(":core"))
     api(project(":meta"))
     implementation(project(":logging"))
 
     compileOnly("org.graalvm.nativeimage", "svm", graalVersion)
+}
+
+executable {
+    main("io.art.fibers.Fibers")
+    native()
 }

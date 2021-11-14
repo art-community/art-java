@@ -2,14 +2,10 @@ package io.art.core.graal;
 
 import io.art.core.collection.*;
 import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.GraalConstants.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.JarExtensions.*;
+import static io.art.core.graal.GraalConfiguration.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static java.lang.System.*;
 import static java.nio.file.Files.*;
-import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
@@ -31,23 +27,16 @@ public class GraalNativeLibraryConfiguration {
     public static class GraalNativeLibraryLocation {
         private final String extractionDirectory;
 
-        @Singular("library")
-        private final Set<String> libraryFilesRegex;
-
-        @Singular("include")
-        private final Set<String> includeFilesRegex;
+        @Singular("resource")
+        private final Set<String> resources;
 
         public Path resolve() {
-            String workingPath = orElse(getProperty(GRAAL_WORKING_PATH_PROPERTY), EMPTY_STRING);
-            File libraryDirectory = new File(workingPath);
-            ignoreException(() -> createDirectories(Paths.get(workingPath).resolve(extractionDirectory)));
-            for (String regex : libraryFilesRegex) {
-                extractCurrentJarEntry(GraalNativeLibraryConfiguration.class, regex, libraryDirectory.getAbsolutePath());
+            Path libraryDirectory = Paths.get(GRAAL_WORKING_PATH).resolve(extractionDirectory).toAbsolutePath();
+            ignoreException(() -> createDirectories(libraryDirectory));
+            for (String regex : resources) {
+                extractCurrentJarEntry(GraalNativeLibraryConfiguration.class, regex, libraryDirectory.toString());
             }
-            for (String regex : includeFilesRegex) {
-                extractCurrentJarEntry(GraalNativeLibraryConfiguration.class, regex, libraryDirectory.getAbsolutePath());
-            }
-            return libraryDirectory.toPath().resolve(extractionDirectory).toAbsolutePath();
+            return libraryDirectory;
         }
     }
 }

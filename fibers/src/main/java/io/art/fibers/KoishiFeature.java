@@ -1,20 +1,15 @@
 package io.art.fibers;
 
-import io.art.core.graal.*;
+import com.oracle.svm.core.annotate.*;
+import com.oracle.svm.hosted.*;
+import com.oracle.svm.hosted.c.*;
 import org.graalvm.nativeimage.hosted.*;
-import static io.art.core.graal.GraalNativeLibraryConfiguration.Type.*;
 
+@AutomaticFeature
 public class KoishiFeature implements Feature {
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
-        GraalNativeRegistrator.registerNativeLibraries(access, GraalNativeLibraryConfiguration.builder()
-                .name("koishi")
-                .type(STATIC)
-                .location(GraalNativeLibraryConfiguration.GraalNativeLibraryLocation.builder()
-                        .extractionDirectory("koishi-library")
-                        .include(".+koishi\\.h")
-                        .library(".+koishi\\.a")
-                        .build())
-                .build());
+        NativeLibraries nativeLibraries = ((FeatureImpl.BeforeAnalysisAccessImpl) access).getNativeLibraries();
+        nativeLibraries.addStaticNonJniLibrary("koishi");
     }
 }
