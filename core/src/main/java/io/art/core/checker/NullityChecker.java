@@ -18,8 +18,10 @@
 
 package io.art.core.checker;
 
+import io.art.core.collection.*;
 import lombok.experimental.*;
 import static java.util.Objects.*;
+import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
@@ -94,5 +96,19 @@ public class NullityChecker {
 
     public static <T, R> R let(T value, Function<T, R> action, R orElse) {
         return nonNull(value) ? action.apply(value) : orElse;
+    }
+
+    public <T> void forEach(Collection<T> value, Consumer<T> consumer) {
+        if (isNull(value)) return;
+        for (T element : value) {
+            consumer.accept(element);
+        }
+    }
+
+    public <T> void forEach(ImmutableCollection<T> value, Consumer<T> consumer) {
+        if (isNull(value)) return;
+        for (T element : value) {
+            consumer.accept(element);
+        }
     }
 }

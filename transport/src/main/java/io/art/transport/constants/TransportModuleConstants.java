@@ -329,15 +329,10 @@ public interface TransportModuleConstants {
 
         String NETTY_STATIC_LINK_PROPERTY = "netty-static";
 
-        String[] NETTY_EPOLL_LIBRARY_NAMES = new String[]{
-                "netty_transport_native_epoll",
-                "netty_transport_native_unix"
-        };
-
-        String[] NETTY_EPOLL_LIBRARY_REGEXPS = new String[]{
-                ".+libnetty_transport_native_epoll\\.a",
-                ".+libnetty_transport_native_unix\\.a"
-        };
+        String NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_NAME = "netty_transport_native_epoll";
+        String NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX = ".+libnetty_transport_native_epoll\\.a";
+        String NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_NAME = "netty_transport_native_unix";
+        String NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_REGEX = ".+libnetty_transport_native_unix\\.a";
 
         String NETTY_STATIC_LIBRARIES_RELATIVE_PATH = "netty-static-linux-libraries";
     }

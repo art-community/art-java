@@ -2,11 +2,14 @@ package io.art.core.graal;
 
 import com.oracle.svm.core.jdk.*;
 import com.oracle.svm.core.jni.*;
+import com.oracle.svm.hosted.c.*;
 import lombok.experimental.*;
 import org.graalvm.nativeimage.hosted.*;
 import static com.oracle.svm.hosted.FeatureImpl.*;
-import static java.util.Arrays.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.graal.GraalNativeLibraryConfiguration.Type.*;
 import java.lang.reflect.*;
+import java.util.*;
 
 @UtilityClass
 public class GraalNativeRegistrator {
@@ -30,7 +33,7 @@ public class GraalNativeRegistrator {
 
     public static void registerForNativeUsage(Class<?> owner) {
         try {
-            JNIRuntimeAccess.register(owner);
+            JNIRUNTIMEACCESS.register(owner);
             RuntimeReflection.register(owner);
             for (final Method method : owner.getDeclaredMethods()) {
                 JNIRuntimeAccess.register(method);
@@ -49,9 +52,27 @@ public class GraalNativeRegistrator {
         }
     }
 
-    public static void registerStaticNativeLibrary(BeforeAnalysisAccessImpl access, GraalStaticLibraryConfiguration configuration) {
-        stream(configuration.getLibraryNames()).forEach(NativeLibrarySupport.singleton()::preregisterUninitializedBuiltinLibrary);
-        stream(configuration.getSymbolPrefixes()).forEach(PlatformNativeLibrarySupport.singleton()::addBuiltinPkgNativePrefix);
-        stream(configuration.getLibraryNames()).forEach(access.getNativeLibraries()::addStaticJniLibrary);
+    public static void registerNativeLibraries(BeforeAnalysisAccessImpl access, GraalNativeLibraryConfiguration... libraries) {
+        NativeLibrarySupport nativeLibrarySupport = NativeLibrarySupport.singleton();
+        PlatformNativeLibrarySupport platformNativeLibrarySupport = PlatformNativeLibrarySupport.singleton();
+        NativeLibraries nativeLibraries = access.getNativeLibraries();
+        Collection<String> libraryPaths = nativeLibraries.getLibraryPaths();
+        for (GraalNativeLibraryConfiguration library : libraries) {
+            libraryPaths.add(library.getLocation().resolve().toString());
+            if (library.isBuiltin() && library.getType() == STATIC) {
+                nativeLibrarySupport.preregisterUninitializedBuiltinLibrary(library.getName());
+                forEach(library.getBuiltinSymbolPrefixes(), platformNativeLibrarySupport::addBuiltinPkgNativePrefix);
+                nativeLibraries.addStaticJniLibrary(library.getName());
+                continue;
+            }
+            switch (library.getType()) {
+                case DYNAMIC:
+                    nativeLibraries.addDynamicNonJniLibrary(library.getName());
+                    continue;
+                case STATIC:
+                    nativeLibraries.addStaticNonJniLibrary(library.getName());
+                    break;
+            }
+        }
     }
 }
