@@ -18,6 +18,7 @@
 
 rootProject.name = "art-java"
 include("core")
+include("fibers")
 include("logging")
 include("transport")
 include("launcher")
