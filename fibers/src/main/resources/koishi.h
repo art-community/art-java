@@ -118,7 +118,7 @@ struct koishi_coroutine_pub {
  *
  * @return Value to be returned from the corresponding #koishi_resume call.
  */
-typedef void *(*koishi_entrypoint_t)(void *data);
+typedef void *(*koishi_entrypoint_t)(void* thread, void *data);
 
 KOISHI_API koishi_coroutine_t* koishi_create();
 KOISHI_API void koishi_destroy(koishi_coroutine_t* pointer);
@@ -138,7 +138,7 @@ KOISHI_API void koishi_destroy(koishi_coroutine_t* pointer);
  * @param min_stack_size Minimum size of the stack. The actual size will be a multiple of the system page size and at least two pages big. If 0, the default size will be used (currently 65536).
  * @param entry_point Function that will be called when the coroutine is first resumed.
  */
-KOISHI_API void koishi_init(koishi_coroutine_t *co, size_t min_stack_size, koishi_entrypoint_t entry_point);
+KOISHI_API void koishi_init(koishi_coroutine_t *co, size_t min_stack_size, koishi_entrypoint_t entry_point, void* thread);
 
 /**
  * @brief Recycle a previously initialized coroutine.

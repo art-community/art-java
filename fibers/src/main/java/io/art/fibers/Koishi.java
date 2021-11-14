@@ -2,6 +2,7 @@ package io.art.fibers;
 
 import com.oracle.svm.core.c.*;
 import io.art.core.graal.*;
+import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.*;
 import org.graalvm.nativeimage.c.constant.*;
 import org.graalvm.nativeimage.c.function.*;
@@ -42,10 +43,10 @@ public class Koishi {
     public static native int koishi_util_page_size();
 
     @CFunction(value = "koishi_init")
-    public static native void koishi_init(koishi_coroutine_t co, int min_stack_size, WordBase entry_point);
+    public static native void koishi_init(koishi_coroutine_t co, int min_stack_size, koishi_entrypoint_t entry_point, IsolateThread thread);
 
     @CFunction(value = "koishi_resume")
-    public static native VoidPointer koishi_resume(koishi_coroutine_t co, Fibers.FiberStartData data);
+    public static native VoidPointer koishi_resume(koishi_coroutine_t co, CCharPointer data);
 
     @CFunction(value = "koishi_yield")
     public static native VoidPointer koishi_yield(VoidPointer arg);
@@ -74,5 +75,10 @@ public class Koishi {
     }
 
 
-    public static CEntryPointLiteral<CFunctionPointer> runFiber = CEntryPointLiteral.create(Fibers.class, "runFiber", Fibers.FiberStartData.class);
+    public interface koishi_entrypoint_t extends CFunctionPointer {
+        @InvokeCFunctionPointer
+        void invoke(IsolateThread thread, CCharPointer data);
+    }
+
+    public static CEntryPointLiteral<koishi_entrypoint_t> runFiber = CEntryPointLiteral.create(Fibers.class, "runFiber", IsolateThread.class, CCharPointer.class);
 }

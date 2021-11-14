@@ -1,13 +1,9 @@
 package io.art.fibers;
 
-import com.oracle.svm.core.c.function.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
-import org.graalvm.nativeimage.c.struct.*;
-import org.graalvm.word.*;
-import static com.oracle.svm.core.c.function.CEntryPointSetup.*;
+import org.graalvm.nativeimage.c.type.*;
 import static io.art.fibers.Koishi.*;
-import javax.swing.text.*;
 
 public class Fibers {
     public static void main(String[] args) {
@@ -17,57 +13,25 @@ public class Fibers {
 
         System.out.println(co.rawValue());
 
-        koishi_init(co, 128 * 1024, runFiber.getFunctionPointer());
+        koishi_init(co, 128 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
 
         System.out.println("Here we are!");
 
-        FiberStartData data = UnmanagedMemory.malloc(SizeOf.get(FiberStartData.class));
-        data.setFiberHandle(ObjectHandles.getGlobal().create(new Fiber()));
-        data.setIsolate(CurrentIsolate.getIsolate());
-
-        koishi_resume(co, data);
+        koishi_resume(co, CTypeConversion.toCString("test").get());
 
         System.out.println("Whooaaaa!!!");
 
         koishi_destroy(co);
     }
 
-    private static class FiberStartRoutinePrologue {
-        static void enter(FiberStartData data) {
-            CEntryPointActions.enterIsolate(data.getIsolate());
-        }
-    }
-
     @CEntryPoint
-    @CEntryPointOptions(prologue = FiberStartRoutinePrologue.class, publishAs = CEntryPointOptions.Publish.NotPublished, include = CEntryPointOptions.NotIncludedAutomatically.class)
-    public static void runFiber(FiberStartData data) {
-        ObjectHandle fiberHandle = data.getFiberHandle();
-        UnmanagedMemory.free(data);
-
-        runner(fiberHandle);
+    public static void runFiber(IsolateThread thread, CCharPointer data) {
     }
 
     public static void runner(ObjectHandle fiberHandle) {
         Fiber f = ObjectHandles.getGlobal().get(fiberHandle);
         ObjectHandles.getGlobal().destroy(fiberHandle);
         f.run();
-    }
-
-
-
-    @RawStructure
-    protected interface FiberStartData extends PointerBase {
-        @RawField
-        ObjectHandle getFiberHandle();
-
-        @RawField
-        void setFiberHandle(ObjectHandle handle);
-
-        @RawField
-        Isolate getIsolate();
-
-        @RawField
-        void setIsolate(Isolate vm);
     }
 
 
