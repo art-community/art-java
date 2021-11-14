@@ -75,6 +75,7 @@ extern "C" {
 #endif
 
 #include <stddef.h>
+#include <stdio.h>
 
 /**
  * @defgroup coroutine API for working with coroutines.
@@ -305,10 +306,10 @@ KOISHI_API size_t koishi_util_page_size(void);
  * size that is equal or greater than double the pace size.
  */
 KOISHI_API size_t koishi_util_real_stack_size(size_t min_size);
-
 /**
  * @}
  */
+KOISHI_API void koishi_dump(int index);
 
 #ifdef __cplusplus
 }

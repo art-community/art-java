@@ -2,7 +2,7 @@ package io.art.fibers;
 
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
-import org.graalvm.nativeimage.c.type.*;
+import org.graalvm.word.*;
 import static io.art.fibers.Koishi.*;
 
 public class Fibers {
@@ -13,19 +13,28 @@ public class Fibers {
 
         System.out.println(co.rawValue());
 
-        koishi_init(co, 128 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
+        koishi_init(co, 1024 * 1024 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
 
         System.out.println("Here we are!");
 
-        koishi_resume(co, CTypeConversion.toCString("test").get());
+        koishi_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
 
-        System.out.println("Whooaaaa!!!");
+        System.out.println("Whooaaaa 1!!!");
+
+        koishi_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
+
+        System.out.println("Whooaaaa 2!!!");
 
         koishi_destroy(co);
     }
 
     @CEntryPoint
-    public static void runFiber(IsolateThread thread, CCharPointer data) {
+    public static void runFiber(IsolateThread thread, ObjectHandle data) {
+        new Fiber();
+        koishi_dump(1);
+        koishi_yield(WordFactory.nullPointer());
+        new Fiber();
+        koishi_dump(2);
     }
 
     public static void runner(ObjectHandle fiberHandle) {

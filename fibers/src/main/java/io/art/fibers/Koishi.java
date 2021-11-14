@@ -46,7 +46,7 @@ public class Koishi {
     public static native void koishi_init(koishi_coroutine_t co, int min_stack_size, koishi_entrypoint_t entry_point, IsolateThread thread);
 
     @CFunction(value = "koishi_resume")
-    public static native VoidPointer koishi_resume(koishi_coroutine_t co, CCharPointer data);
+    public static native VoidPointer koishi_resume(koishi_coroutine_t co, ObjectHandle data);
 
     @CFunction(value = "koishi_yield")
     public static native VoidPointer koishi_yield(VoidPointer arg);
@@ -75,10 +75,13 @@ public class Koishi {
     }
 
 
+    @CFunction("koishi_dump")
+    protected static native void koishi_dump(int index);
+
     public interface koishi_entrypoint_t extends CFunctionPointer {
         @InvokeCFunctionPointer
-        void invoke(IsolateThread thread, CCharPointer data);
+        void invoke(IsolateThread thread, ObjectHandle data);
     }
 
-    public static CEntryPointLiteral<koishi_entrypoint_t> runFiber = CEntryPointLiteral.create(Fibers.class, "runFiber", IsolateThread.class, CCharPointer.class);
+    public static CEntryPointLiteral<koishi_entrypoint_t> runFiber = CEntryPointLiteral.create(Fibers.class, "runFiber", IsolateThread.class, ObjectHandle.class);
 }
