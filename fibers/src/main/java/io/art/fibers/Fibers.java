@@ -32,14 +32,9 @@ public class Fibers {
     public static void runFiber(IsolateThread thread, ObjectHandle data) {
         koishi_dump(1);
         koishi_yield(WordFactory.nullPointer());
-        new Fiber();
-        koishi_dump(2);
-    }
-
-    public static void runner(ObjectHandle fiberHandle) {
-        Fiber f = ObjectHandles.getGlobal().get(fiberHandle);
-        ObjectHandles.getGlobal().destroy(fiberHandle);
+        Fiber f = ObjectHandles.getGlobal().get(data);
         f.run();
+        koishi_dump(2);
     }
 
 
