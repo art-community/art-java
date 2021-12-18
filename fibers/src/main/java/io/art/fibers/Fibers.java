@@ -14,15 +14,11 @@ public class Fibers {
         System.out.println("Graal page size: " + SubstrateOptions.getPageSize());
         System.out.println("Koishi page size: " + koishi_util_page_size());
 
-        StackOverflowCheck stackOverflowCheck = StackOverflowCheck.singleton();
-
         koishi_coroutine_t co = koishi_create();
         System.out.println("[koishi]: created");
 
         int min_stack_size = 1024 * 1024;
-        stackOverflowCheck.updateStackOverflowBoundary();
-
-        StackOverflowCheckImpl.stackBoundaryTL.set(WordFactory.unsigned(min_stack_size + stackOverflowCheck.yellowAndRedZoneSize()));
+        StackOverflowCheckImpl.stackBoundaryTL.set(WordFactory.unsigned(min_stack_size + StackOverflowCheck.singleton().yellowAndRedZoneSize()));
         koishi_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
         System.out.println("[koishi]: inited");
 
