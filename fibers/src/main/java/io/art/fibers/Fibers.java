@@ -19,6 +19,8 @@ public class Fibers {
         System.out.println("[koishi]: created");
 
         int min_stack_size = 1024 * 1024 + stackOverflowCheck.yellowAndRedZoneSize();
+
+        stackOverflowCheck.makeYellowZoneAvailable();
         koishi_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
         System.out.println("[koishi]: inited");
 
@@ -31,6 +33,7 @@ public class Fibers {
         System.out.println("[koishi]: after 2 resume");
 
         koishi_destroy(co);
+        stackOverflowCheck.protectYellowZone();
     }
 
     @CEntryPoint
