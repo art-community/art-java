@@ -25,4 +25,5 @@ public interface GraalConstants {
     };
 
     String GRAAL_WORKING_PATH_PROPERTY = "working-path";
+    String GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX = "-library";
 }

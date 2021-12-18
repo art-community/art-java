@@ -23,11 +23,15 @@ import static io.art.core.constants.StringConstants.*;
 public interface RegExps {
     String NUMBER_REGEXP = "[+-]?[0-9]+";
 
-    static  String nativeHeaderRegexp(String name) {
+    static String nativeHeaderRegexp(String name) {
         return name + ESCAPED_DOT + "h";
     }
 
     static String nativeUnixStaticLibraryRegex(String name) {
         return "lib" + name + ESCAPED_DOT + "a";
+    }
+
+    static String nativeWindowsStaticLibraryRegex(String name) {
+        return name + ESCAPED_DOT + "lib";
     }
 }

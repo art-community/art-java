@@ -19,9 +19,9 @@
 package io.art.core.determiner;
 
 import lombok.experimental.*;
-import static java.lang.System.*;
 import static io.art.core.constants.SystemNamePatterns.*;
 import static io.art.core.constants.SystemProperties.*;
+import static java.lang.System.*;
 
 @UtilityClass
 public final class SystemDeterminer {

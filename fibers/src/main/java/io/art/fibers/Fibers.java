@@ -5,11 +5,11 @@ import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
 import org.graalvm.word.*;
 import static com.oracle.svm.core.graal.snippets.StackOverflowCheckImpl.*;
-import static io.art.fibers.NativeCoroutine.*;
+import static io.art.fibers.graal.GraalCoroutine.*;
 
 public class Fibers {
     public static void main(String[] args) {
-        coroutine_coroutine_t co = coroutine_create();
+        coroutine_t co = coroutine_create();
         int min_stack_size = 1024 * 1024;
         stackBoundaryTL.set(WordFactory.unsigned(min_stack_size + StackOverflowCheck.singleton().yellowAndRedZoneSize()));
 
