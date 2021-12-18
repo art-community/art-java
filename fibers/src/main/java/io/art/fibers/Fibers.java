@@ -15,6 +15,11 @@ public class Fibers {
         System.out.println("input");
         suspend();
         System.out.println("suspended");
+        test2();
         System.out.println("exit");
+    }
+
+    public static void test2() {
+        System.out.println("input 2");
     }
 }
