@@ -24,6 +24,35 @@ public class GraalCoroutine {
         private final List<String> libraryPaths = directive.getLibraryPaths();
     }
 
+    @CEnum(value = "coroutine_state", addEnumKeyword = true)
+    public enum coroutine_state {
+        SUSPENDED,
+        RUNNING,
+        DEAD
+    }
+
+    @CStruct(addStructKeyword = true, value = "coroutine", isIncomplete = true)
+    public interface coroutine extends PointerBase {
+
+    }
+
+    @CPointerTo(coroutine.class)
+    @CTypedef(name = "coroutine_t")
+    public interface coroutine_t extends PointerBase {
+    }
+
+    public interface coroutine_entrypoint_t extends CFunctionPointer {
+        @InvokeCFunctionPointer
+        void invoke(IsolateThread thread, ObjectHandle data);
+    }
+
+    public static final CEntryPointLiteral<coroutine_entrypoint_t> invokeFiber = CEntryPointLiteral.create(
+            GraalCoroutineService.class,
+            FIBER_INVOKE_METHOD_NAME,
+            IsolateThread.class,
+            ObjectHandle.class
+    );
+
     @CFunction(value = "coroutine_init")
     public static native void coroutine_init(coroutine_t coroutine, int minimalStackSize, coroutine_entrypoint_t entryPoint, IsolateThread thread);
 
@@ -56,34 +85,4 @@ public class GraalCoroutine {
 
     @CFunction(value = "coroutine_active")
     public static native coroutine_t coroutine_active();
-
-    @CEnum(value = "coroutine_state", addEnumKeyword = true)
-    public enum coroutine_state {
-        SUSPENDED,
-        RUNNING,
-        DEAD
-    }
-
-    @CStruct(addStructKeyword = true, value = "coroutine", isIncomplete = true)
-    public interface coroutine extends PointerBase {
-
-    }
-
-    @CPointerTo(coroutine.class)
-    @CTypedef(name = "coroutine_t")
-    public interface coroutine_t extends PointerBase {
-    }
-
-    public interface coroutine_entrypoint_t extends CFunctionPointer {
-        @InvokeCFunctionPointer
-        void invoke(IsolateThread thread, ObjectHandle data);
-    }
-
-
-    public static final CEntryPointLiteral<coroutine_entrypoint_t> invokeFiber = CEntryPointLiteral.create(
-            GraalCoroutineService.class,
-            FIBER_INVOKE_METHOD_NAME,
-            IsolateThread.class,
-            ObjectHandle.class
-    );
 }
