@@ -2,7 +2,6 @@ package io.art.fibers.graal;
 
 import com.oracle.svm.core.c.*;
 import io.art.core.graal.*;
-import io.art.fibers.*;
 import lombok.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.*;
@@ -53,11 +52,4 @@ public class GraalCoroutine {
         @InvokeCFunctionPointer
         void invoke(IsolateThread thread, ObjectHandle data);
     }
-
-    public static CEntryPointLiteral<coroutine_entrypoint_t> runFiber = CEntryPointLiteral.create(
-            Fibers.class,
-            "runFiber",
-            IsolateThread.class,
-            ObjectHandle.class
-    );
 }
