@@ -34,6 +34,6 @@ executable {
     main("io.art.fibers.Fibers")
     native {
         addGraalOptions("-H:GenerateDebugInfo=1")
-        addGraalOptions("-H:StackSize=1048576")
+        addGraalOptions("-Xss=1048576")
     }
 }
