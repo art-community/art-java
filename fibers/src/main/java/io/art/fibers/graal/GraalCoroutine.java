@@ -52,4 +52,12 @@ public class GraalCoroutine {
         @InvokeCFunctionPointer
         void invoke(IsolateThread thread, ObjectHandle data);
     }
+
+
+    public static final CEntryPointLiteral<coroutine_entrypoint_t> invokeFiber = CEntryPointLiteral.create(
+            GraalCoroutineService.class,
+            FIBER_INVOKE_METHOD_NAME,
+            IsolateThread.class,
+            ObjectHandle.class
+    );
 }

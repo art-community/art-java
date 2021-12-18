@@ -8,19 +8,11 @@ import org.graalvm.nativeimage.c.function.*;
 import org.graalvm.word.*;
 import static com.oracle.svm.core.graal.snippets.StackOverflowCheckImpl.*;
 import static io.art.fibers.constants.FiberConstants.Defaults.*;
-import static io.art.fibers.constants.FiberConstants.GraalConstants.*;
 import static io.art.fibers.graal.GraalCoroutine.*;
 
 @UtilityClass
 public class GraalCoroutineService {
     private final ThreadLocal<Fiber> current = new ThreadLocal<>();
-
-    public static final CEntryPointLiteral<coroutine_entrypoint_t> invokeFiber = CEntryPointLiteral.create(
-            GraalCoroutineService.class,
-            FIBER_INVOKE_METHOD_NAME,
-            IsolateThread.class,
-            ObjectHandle.class
-    );
 
     public static void initializeCoroutine(Runnable entryPoint) {
         coroutine_t coroutine = coroutine_create();
