@@ -1,5 +1,6 @@
 package io.art.fibers.graal;
 
+import com.oracle.svm.core.stack.*;
 import lombok.*;
 import lombok.experimental.*;
 import org.graalvm.nativeimage.*;
@@ -15,7 +16,7 @@ public class GraalCoroutineService {
 
     public static void initializeCoroutine(Runnable entryPoint) {
         coroutine_t coroutine = coroutine_create();
-        stackBoundaryTL.set(WordFactory.unsigned(DEFAULT_FIBER_STACK_SIZE + singleton().yellowAndRedZoneSize()));
+        stackBoundaryTL.set(WordFactory.unsigned(DEFAULT_FIBER_STACK_SIZE + StackOverflowCheck.singleton().yellowAndRedZoneSize()));
         coroutine_init(coroutine, DEFAULT_FIBER_STACK_SIZE, invokeFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
         Fiber fiber = new Fiber(entryPoint, coroutine, Fiber.State.RESUMED);
         current.set(fiber);
@@ -40,7 +41,7 @@ public class GraalCoroutineService {
     public static void destroyCoroutine() {
         coroutine_deinit(current.get().coroutine);
         coroutine_destroy(current.get().coroutine);
-        singleton().updateStackOverflowBoundary();
+        StackOverflowCheck.singleton().updateStackOverflowBoundary();
     }
 
     @CEntryPoint
