@@ -9,7 +9,7 @@ public class Fibers {
     public static void main(String[] args) {
         koishi_coroutine_t co = koishi_create();
 
-        koishi_init(co, 1024 * 1024 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
+        koishi_init(co, 2 * 1024 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
 
         koishi_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
 
