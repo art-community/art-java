@@ -9,6 +9,7 @@ public class Fibers {
         suspend();
         System.out.println("after exit");
         destroyFiber();
+        System.out.println("normal work");
     }
 
     public static void test1() {
