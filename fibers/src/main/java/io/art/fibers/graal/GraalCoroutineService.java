@@ -15,7 +15,7 @@ import static io.art.fibers.graal.GraalCoroutine.*;
 public class GraalCoroutineService {
     private final ThreadLocal<Fiber> current = new ThreadLocal<>();
 
-    private static final CEntryPointLiteral<coroutine_entrypoint_t> invokeFiber = CEntryPointLiteral.create(
+    public static final CEntryPointLiteral<coroutine_entrypoint_t> invokeFiber = CEntryPointLiteral.create(
             GraalCoroutineService.class,
             FIBER_INVOKE_METHOD_NAME,
             IsolateThread.class,
