@@ -6,7 +6,7 @@ import com.oracle.svm.hosted.c.*;
 import org.graalvm.nativeimage.hosted.*;
 
 @AutomaticFeature
-public class KoishiFeature implements Feature {
+public class CoroutineFeature implements Feature {
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
         NativeLibraries nativeLibraries = ((FeatureImpl.BeforeAnalysisAccessImpl) access).getNativeLibraries();

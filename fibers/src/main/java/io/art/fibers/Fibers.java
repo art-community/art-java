@@ -5,37 +5,37 @@ import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
 import org.graalvm.word.*;
 import static com.oracle.svm.core.graal.snippets.StackOverflowCheckImpl.*;
-import static io.art.fibers.Koishi.*;
+import static io.art.fibers.NativeCoroutine.*;
 
 public class Fibers {
     public static void main(String[] args) {
-        koishi_coroutine_t co = koishi_create();
+        coroutine_coroutine_t co = coroutine_create();
         int min_stack_size = 1024 * 1024;
         stackBoundaryTL.set(WordFactory.unsigned(min_stack_size + StackOverflowCheck.singleton().yellowAndRedZoneSize()));
 
-        koishi_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
-        System.out.println("[koishi]: inited");
+        coroutine_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
+        System.out.println("[coroutine]: inited");
 
-        System.out.println("[koishi]: before 1 resume");
-        koishi_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
-        System.out.println("[koishi]: after 1 resume");
+        System.out.println("[coroutine]: before 1 resume");
+        coroutine_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
+        System.out.println("[coroutine]: after 1 resume");
 
-        System.out.println("[koishi]: before 2 resume");
-        koishi_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
-        System.out.println("[koishi]: after 2 resume");
+        System.out.println("[coroutine]: before 2 resume");
+        coroutine_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
+        System.out.println("[coroutine]: after 2 resume");
 
-        koishi_destroy(co);
+        coroutine_destroy(co);
     }
 
     @CEntryPoint
     public static void runFiber(IsolateThread thread, ObjectHandle data) {
-        System.out.println("[koishi]: runFiber 1 resume");
+        System.out.println("[coroutine]: runFiber 1 resume");
         Fiber fiber = ObjectHandles.getGlobal().get(data);
         fiber.run();
 
-        System.out.println("[koishi]: runFiber yield");
-        koishi_yield(WordFactory.nullPointer());
-        System.out.println("[koishi]: runFiber after yield");
+        System.out.println("[coroutine]: runFiber yield");
+        coroutine_yield(WordFactory.nullPointer());
+        System.out.println("[coroutine]: runFiber after yield");
 
         fiber.run();
     }
