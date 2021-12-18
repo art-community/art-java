@@ -2,6 +2,7 @@ package io.art.fibers;
 
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
+import org.graalvm.word.*;
 import static io.art.fibers.Koishi.*;
 
 public class Fibers {
@@ -19,6 +20,7 @@ public class Fibers {
     public static void runFiber(IsolateThread thread, ObjectHandle data) {
         Fiber f = ObjectHandles.getGlobal().get(data);
         f.run();
+        koishi_yield(WordFactory.nullPointer());
     }
 
 
