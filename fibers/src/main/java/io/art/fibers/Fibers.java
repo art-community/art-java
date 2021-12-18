@@ -18,7 +18,7 @@ public class Fibers {
         System.out.println("[koishi]: created");
 
         int min_stack_size = 1024 * 1024;
-        System.out.println("Current stackBoundaryTL:" + stackBoundaryTL.get());
+        System.out.println("Current stackBoundaryTL:" + stackBoundaryTL.get().rawValue());
         stackBoundaryTL.set(WordFactory.unsigned(min_stack_size + StackOverflowCheck.singleton().yellowAndRedZoneSize()));
 
         koishi_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
