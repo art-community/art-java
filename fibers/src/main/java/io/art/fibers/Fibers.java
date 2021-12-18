@@ -1,5 +1,6 @@
 package io.art.fibers;
 
+import com.oracle.svm.core.*;
 import com.oracle.svm.core.stack.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
@@ -8,12 +9,18 @@ import static io.art.fibers.Koishi.*;
 
 public class Fibers {
     public static void main(String[] args) {
-        StackOverflowCheck.singleton().disableStackOverflowChecksForFatalError();
+        System.out.println("Graal Stack size: " + SubstrateOptions.StackSize.getValue());
+        System.out.println("Graal page size: " + SubstrateOptions.getPageSize());
+        System.out.println("Koishi page size: " + koishi_util_page_size());
+
+        StackOverflowCheck stackOverflowCheck = StackOverflowCheck.singleton();
+        stackOverflowCheck.disableStackOverflowChecksForFatalError();
 
         koishi_coroutine_t co = koishi_create();
         System.out.println("[koishi]: created");
 
-        koishi_init(co, 2 * 1024 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
+        int min_stack_size = 2 * 1024 * 1024 + stackOverflowCheck.yellowAndRedZoneSize();
+        koishi_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
         System.out.println("[koishi]: inited");
 
         System.out.println("[koishi]: before 1 resume");
