@@ -1,6 +1,7 @@
 package io.art.fibers;
 
 import com.oracle.svm.core.*;
+import com.oracle.svm.core.stack.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
 import org.graalvm.word.*;
@@ -17,7 +18,7 @@ public class Fibers {
         System.out.println("[koishi]: created");
 
         int min_stack_size = 1024 * 1024;
-        stackBoundaryTL.set(stackBoundaryTL.get().add(min_stack_size));
+        stackBoundaryTL.set(WordFactory.unsigned(min_stack_size + StackOverflowCheck.singleton().yellowAndRedZoneSize()));
 
         koishi_init(co, min_stack_size, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
         System.out.println("[koishi]: inited");
