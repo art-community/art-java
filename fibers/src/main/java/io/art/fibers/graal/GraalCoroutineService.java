@@ -27,9 +27,11 @@ public class GraalCoroutineService {
         Fiber fiber = current.get();
         switch (fiber.state) {
             case SUSPENDED:
+                fiber.state = Fiber.State.RESUMED;
                 coroutine_resume(fiber.coroutine, WordFactory.nullPointer());
                 break;
             case RESUMED:
+                fiber.state = Fiber.State.SUSPENDED;
                 coroutine_yield(WordFactory.nullPointer());
                 break;
         }
