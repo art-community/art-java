@@ -1,5 +1,6 @@
 package io.art.fibers;
 
+import com.oracle.svm.core.stack.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.function.*;
 import org.graalvm.word.*;
@@ -10,6 +11,7 @@ public class Fibers {
         koishi_coroutine_t co = koishi_create();
 
         koishi_init(co, 2 * 1024 * 1024, runFiber.getFunctionPointer(), CurrentIsolate.getCurrentThread());
+        StackOverflowCheck.singleton().disableStackOverflowChecksForFatalError();
 
         koishi_resume(co, ObjectHandles.getGlobal().create(new Fiber()));
 
