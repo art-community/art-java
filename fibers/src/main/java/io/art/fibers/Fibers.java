@@ -5,7 +5,7 @@ import static io.art.fibers.service.FiberService.*;
 public class Fibers {
     public static void main(String[] args) {
         createFiber(Fibers::test1);
-        System.out.println("suspend");
+        System.out.println("suspended");
         suspend();
         System.out.println("after exit");
         destroyFiber();
@@ -14,7 +14,7 @@ public class Fibers {
     public static void test1() {
         System.out.println("input");
         suspend();
-        System.out.println("suspended");
+        System.out.println("resumed");
         test2();
         System.out.println("exit");
     }
