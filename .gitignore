@@ -69,3 +69,8 @@ zookeeper/
 tarantool/lua
 .DS_Store
 local.properties
+*.a
+CMakeCache.txt
+cmake_install.cmake
+*.cbp
+CMakeFiles/
