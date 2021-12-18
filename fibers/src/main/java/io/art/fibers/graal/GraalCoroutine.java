@@ -5,6 +5,7 @@ import io.art.core.graal.*;
 import lombok.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.c.*;
+import org.graalvm.nativeimage.c.constant.*;
 import org.graalvm.nativeimage.c.function.*;
 import org.graalvm.nativeimage.c.struct.*;
 import org.graalvm.nativeimage.c.type.*;
@@ -40,6 +41,28 @@ public class GraalCoroutine {
 
     @CFunction(value = "coroutine_deinit")
     public static native void coroutine_deinit(coroutine_t coroutine);
+
+    @CFunction(value = "coroutine_recycle")
+    public static native void coroutine_recycle(coroutine_t coroutine, coroutine_entrypoint_t entryPoint);
+
+    @CFunction(value = "coroutine_die")
+    public static native void coroutine_die(VoidPointer output);
+
+    @CFunction(value = "coroutine_kill")
+    public static native void coroutine_kill(coroutine_t coroutine, VoidPointer output);
+
+    @CFunction(value = "coroutine_state")
+    public static native coroutine_state coroutine_state(coroutine_t coroutine);
+
+    @CFunction(value = "coroutine_active")
+    public static native coroutine_t coroutine_active();
+
+    @CEnum(value = "coroutine_state", addEnumKeyword = true)
+    public enum coroutine_state {
+        SUSPENDED,
+        RUNNING,
+        DEAD
+    }
 
     @CStruct(addStructKeyword = true, value = "coroutine", isIncomplete = true)
     public interface coroutine extends PointerBase {
