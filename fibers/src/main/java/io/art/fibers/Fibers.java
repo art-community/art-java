@@ -1,23 +1,26 @@
 package io.art.fibers;
 
 import static io.art.fibers.service.FiberService.*;
+import java.time.*;
 
 public class Fibers {
+    private static boolean done = false;
+    private static LocalDateTime start = LocalDateTime.now();
+
     public static void main(String[] args) {
         createFiber(Fibers::test1);
-        System.out.println("suspended");
-        suspend();
-        System.out.println("after exit");
-        destroyFiber();
-        System.out.println("normal work");
+        while (!done) {
+            if (LocalDateTime.now().isAfter(start.plusSeconds(300))) {
+                done = true;
+            }
+            suspend();
+        }
     }
 
     public static void test1() {
-        System.out.println("input");
-        suspend();
-        System.out.println("resumed");
-        test2();
-        System.out.println("exit");
+        while (!done) {
+            suspend();
+        }
     }
 
     public static void test2() {
