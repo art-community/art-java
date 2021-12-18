@@ -25,6 +25,7 @@ public class GraalCoroutineService {
 
     public static void suspendCoroutine() {
         Fiber fiber = current.get();
+        Thread.yield();
         switch (fiber.state) {
             case SUSPENDED:
                 fiber.state = Fiber.State.RESUMED;
