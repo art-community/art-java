@@ -38,6 +38,9 @@ public class GraalCoroutine {
     @CFunction(value = "coroutine_destroy")
     public static native void coroutine_destroy(coroutine_t coroutine);
 
+    @CFunction(value = "coroutine_deinit")
+    public static native void coroutine_deinit(coroutine_t coroutine);
+
     @CStruct(addStructKeyword = true, value = "coroutine", isIncomplete = true)
     public interface coroutine extends PointerBase {
 

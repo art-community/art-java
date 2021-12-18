@@ -39,6 +39,7 @@ public class GraalCoroutineService {
 
 
     public static void destroyCoroutine() {
+        coroutine_deinit(current.get().coroutine);
         coroutine_destroy(current.get().coroutine);
     }
 
