@@ -11,9 +11,10 @@ public class Fibers {
     private static final AtomicInteger counter = new AtomicInteger();
 
     public static void main(String[] args) {
-        long begin = System.nanoTime();
 
         createFiber(Fibers::cofunc);
+
+        long begin = System.nanoTime();
 
         while (counter.get() < iterations) {
             coroutine_resume(GraalCoroutineService.current.get().coroutine, WordFactory.nullPointer());
