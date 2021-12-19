@@ -18,7 +18,7 @@ public class Fibers {
 
         long end = System.nanoTime();
 
-        int num_switches = iterations * 3;
+        int num_switches = iterations * 2;
         double time_ns = end - begin;
         double time_s = time_ns * 1e-9;
         double switches_per_second = num_switches / time_s;
