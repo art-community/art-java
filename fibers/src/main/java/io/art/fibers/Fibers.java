@@ -17,6 +17,7 @@ public class Fibers {
         long begin = System.nanoTime();
 
         while (counter.get() < iterations) {
+            System.out.println("resume");
             coroutine_resume(GraalCoroutineService.current.get().coroutine, WordFactory.nullPointer());
         }
 
@@ -36,6 +37,7 @@ public class Fibers {
 
     static void cofunc() {
         while (counter.incrementAndGet() < iterations) {
+            System.out.println("yield");
             coroutine_yield(WordFactory.nullPointer());
         }
     }
