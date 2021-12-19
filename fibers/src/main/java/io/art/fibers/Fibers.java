@@ -14,7 +14,7 @@ public class Fibers {
         createFiber(Fibers::fiber);
 
         while (!done) {
-
+            suspend();
         }
 
         long end = System.nanoTime();
@@ -34,9 +34,6 @@ public class Fibers {
     static void fiber() {
         cofunc1();
         cofunc2();
-        while (!done) {
-            suspend();
-        }
     }
 
     static void cofunc1() {
