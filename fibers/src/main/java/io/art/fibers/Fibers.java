@@ -1,5 +1,8 @@
 package io.art.fibers;
 
+import io.art.fibers.graal.*;
+import org.graalvm.word.*;
+import static io.art.fibers.graal.GraalCoroutine.*;
 import static io.art.fibers.service.FiberService.*;
 import java.util.concurrent.atomic.*;
 
@@ -13,7 +16,7 @@ public class Fibers {
         createFiber(Fibers::cofunc);
 
         while (counter.get() < iterations) {
-            suspend();
+            coroutine_resume(GraalCoroutineService.current.get().coroutine, WordFactory.nullPointer());
         }
 
         long end = System.nanoTime();
@@ -32,7 +35,7 @@ public class Fibers {
 
     static void cofunc() {
         while (counter.incrementAndGet() < iterations) {
-            suspend();
+            coroutine_yield(WordFactory.nullPointer());
         }
     }
 }

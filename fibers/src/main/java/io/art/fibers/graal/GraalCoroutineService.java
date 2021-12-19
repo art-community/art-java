@@ -12,7 +12,7 @@ import static io.art.fibers.graal.GraalCoroutine.*;
 
 @UtilityClass
 public class GraalCoroutineService {
-    private final ThreadLocal<Fiber> current = new ThreadLocal<>();
+    public final ThreadLocal<Fiber> current = new ThreadLocal<>();
 
     public static void initializeCoroutine(Runnable entryPoint) {
         coroutine_t coroutine = coroutine_create();
@@ -52,9 +52,9 @@ public class GraalCoroutineService {
     }
 
     @AllArgsConstructor
-    private static class Fiber {
+    public static class Fiber {
         final Runnable main;
-        final coroutine_t coroutine;
+        public final coroutine_t coroutine;
         State state;
 
         enum State {
