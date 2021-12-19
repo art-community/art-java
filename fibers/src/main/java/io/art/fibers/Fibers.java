@@ -6,11 +6,16 @@ import java.util.concurrent.atomic.*;
 public class Fibers {
     private final static int iterations = 5000000;
     private static final AtomicInteger counter = new AtomicInteger();
+    private static volatile boolean done = false;
 
     public static void main(String[] args) {
         long begin = System.nanoTime();
 
-        createFiber(Fibers::cofunc1);
+        createFiber(Fibers::fiber);
+
+        while (!done) {
+
+        }
 
         long end = System.nanoTime();
 
@@ -26,16 +31,25 @@ public class Fibers {
         destroyFiber();
     }
 
-    static void cofunc1() {
+    static void fiber() {
+        cofunc1();
         cofunc2();
+        while (!done) {
+            suspend();
+        }
+    }
+
+    static void cofunc1() {
         while (counter.get() < iterations) {
             suspend();
         }
+        done = true;
     }
 
     static void cofunc2() {
         while (counter.incrementAndGet() < iterations) {
             suspend();
         }
+        done = true;
     }
 }
