@@ -1,6 +1,7 @@
 package io.art.transport.pool;
 
 import io.art.transport.configuration.*;
+import lombok.experimental.*;
 import reactor.netty.http.*;
 import reactor.netty.resources.*;
 import reactor.netty.tcp.*;
@@ -8,16 +9,16 @@ import reactor.netty.udp.*;
 import static java.util.Objects.*;
 import static reactor.netty.resources.ConnectionProvider.*;
 
+@UtilityClass
 public class TransportPool {
-    private final ConnectionProvider provider;
-    private final LoopResources loopResources;
-
-    public TransportPool(TransportPoolConfiguration configuration) {
+    private static LoopResources createLoopResources(TransportPoolConfiguration configuration) {
         String loopResourcesPrefix = configuration.getLoopResourcesPrefix();
         int workersCount = configuration.getWorkersCount();
         int selectorsCount = configuration.getSelectorsCount();
-        this.loopResources = LoopResources.create(loopResourcesPrefix, selectorsCount, workersCount, true);
+        return LoopResources.create(loopResourcesPrefix, selectorsCount, workersCount, true);
+    }
 
+    private static ConnectionProvider createConnectionProvider(TransportPoolConfiguration configuration) {
         ConnectionProvider.Builder builder = ConnectionProvider.builder(configuration.getConnectionProviderName());
         if (configuration.isDisposeInactive()) {
             builder.disposeInactivePoolsInBackground(configuration.getDisposeInterval(), configuration.getPoolInactivity());
@@ -46,21 +47,19 @@ public class TransportPool {
         if (configuration.getPendingAcquireMaxCount() > 0) {
             builder.pendingAcquireMaxCount(configuration.getPendingAcquireMaxCount());
         }
-        builder
+        return builder
                 .pendingAcquireTimeout(configuration.getPendingAcquireTimeout())
-                .maxConnections(configuration.getMaxConnections());
-        this.provider = builder.build();
+                .maxConnections(configuration.getMaxConnections())
+                .build();
     }
 
     public static void configureCommonTransportPool(TransportPoolConfiguration configuration) {
-        TransportPool transportPool = new TransportPool(configuration);
+        TcpResources.set(createConnectionProvider(configuration));
+        TcpResources.set(createLoopResources(configuration));
 
-        TcpResources.set(transportPool.provider);
-        TcpResources.set(transportPool.loopResources);
+        UdpResources.set(createLoopResources(configuration));
 
-        UdpResources.set(transportPool.loopResources);
-
-        HttpResources.set(transportPool.provider);
-        HttpResources.set(transportPool.loopResources);
+        HttpResources.set(createConnectionProvider(configuration));
+        HttpResources.set(createLoopResources(configuration));
     }
 }
