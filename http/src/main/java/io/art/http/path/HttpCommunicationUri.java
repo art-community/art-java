@@ -35,7 +35,7 @@ public class HttpCommunicationUri {
     public String make(CommunicatorActionIdentifier id) {
         switch (strategy) {
             case AUTOMATIC:
-                return SLASH + id.getCommunicatorId().toLowerCase() + SLASH + id.getActionId().toLowerCase();
+                return SLASH + id.getCommunicatorId() + SLASH + id.getActionId();
             case MANUAL:
                 return manualUri;
             case TRANSFORMED:
