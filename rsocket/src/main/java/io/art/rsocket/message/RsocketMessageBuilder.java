@@ -36,9 +36,9 @@ public class RsocketMessageBuilder {
         }
         if (hasWsServer) {
             message.append(format(RSOCKET_WS_SERVER_MESSAGE_PART,
-                    isNull(configuration.getTcpServer().getSsl()) ? WS_SCHEME : WSS_SCHEME,
-                    configuration.getTcpServer().getHost(),
-                    EMPTY_STRING + configuration.getTcpServer().getPort()));
+                    isNull(configuration.getWsServer().getSsl()) ? WS_SCHEME : WSS_SCHEME,
+                    configuration.getWsServer().getHost(),
+                    EMPTY_STRING + configuration.getWsServer().getPort()));
         }
         if (!tcpConnectors.isEmpty()) {
             String connectorsString = tcpConnectors.entrySet()

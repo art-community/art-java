@@ -57,7 +57,6 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.enableTcpServer = serverConfigurator.enableTcp();
         initial.enableWsServer = serverConfigurator.enableWs();
         initial.tcpServer = serverConfigurator.configure(initial.tcpServer);
-        initial.tcpServer = serverConfigurator.configure(initial.tcpServer);
         initial.wsServer = serverConfigurator.configure(initial.wsServer);
         initial.server = serverConfigurator.configureServer(lazy(() -> rsocketModule().configuration().getServer()), initial.server);
 
