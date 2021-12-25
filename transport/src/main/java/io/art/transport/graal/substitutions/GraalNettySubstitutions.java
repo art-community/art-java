@@ -460,19 +460,19 @@ final class TargetNettyHttpContentDecompressor {
     private boolean strict;
 
     @Alias
-    protected ChannelHandlerContext context;
+    protected ChannelHandlerContext ctx;
 
     @Substitute
     protected EmbeddedChannel newContentDecoder(String contentEncoding) throws Exception {
-        boolean hasDisconnect = context.channel().metadata().hasDisconnect();
+        boolean hasDisconnect = ctx.channel().metadata().hasDisconnect();
 
         if (GZIP.contentEqualsIgnoreCase(contentEncoding) || X_GZIP.contentEqualsIgnoreCase(contentEncoding)) {
-            return new EmbeddedChannel(context.channel().id(), hasDisconnect, context.channel().config(), newZlibDecoder(ZlibWrapper.GZIP));
+            return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), newZlibDecoder(ZlibWrapper.GZIP));
         }
 
         if (DEFLATE.contentEqualsIgnoreCase(contentEncoding) || X_DEFLATE.contentEqualsIgnoreCase(contentEncoding)) {
             final ZlibWrapper wrapper = strict ? ZLIB : ZLIB_OR_NONE;
-            return new EmbeddedChannel(context.channel().id(), hasDisconnect, context.channel().config(), newZlibDecoder(wrapper));
+            return new EmbeddedChannel(ctx.channel().id(), hasDisconnect, ctx.channel().config(), newZlibDecoder(wrapper));
         }
 
         return null;
