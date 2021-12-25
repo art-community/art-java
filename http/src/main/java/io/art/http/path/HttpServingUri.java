@@ -35,7 +35,7 @@ public class HttpServingUri {
     public String make(ServiceMethodIdentifier id) {
         switch (strategy) {
             case AUTOMATIC:
-                return SLASH + id.getServiceId().toLowerCase() + SLASH + id.getMethodId().toLowerCase();
+                return SLASH + id.getServiceId() + SLASH + id.getMethodId();
             case MANUAL:
                 return manualUri;
             case TRANSFORMED:
