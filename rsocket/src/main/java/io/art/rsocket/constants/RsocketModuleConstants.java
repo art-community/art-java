@@ -114,7 +114,7 @@ public interface RsocketModuleConstants {
         int DEFAULT_RETRY_MAX = 100;
         int DEFAULT_RETRY_MAX_IN_ROW = 10;
         int DEFAULT_PORT = 9000;
-        Duration DEFAULT_TIMEOUT = ofSeconds(10);
+        Duration DEFAULT_TIMEOUT = ofSeconds(30);
         Duration DEFAULT_RESUME_SESSION_DURATION = ofHours(1);
         Duration DEFAULT_RESUME_STREAM_TIMEOUT = ofSeconds(10);
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = ofSeconds(20);

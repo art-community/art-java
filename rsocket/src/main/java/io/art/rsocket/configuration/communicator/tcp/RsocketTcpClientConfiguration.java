@@ -54,7 +54,7 @@ public class RsocketTcpClientConfiguration {
         configuration.transportDecorator = identity();
         configuration.connector = connector;
         configuration.port = DEFAULT_PORT;
-        configuration.host = LOCALHOST;
+        configuration.host = LOCALHOST_IP_ADDRESS;
         return configuration;
     }
 

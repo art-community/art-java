@@ -185,13 +185,12 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
 
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
         boolean deactivated = communicatorConfiguration.isDeactivated(id);
-        boolean logging = withLogging() && communicatorConfiguration.isLogging(id);
 
         if (deactivated) {
             builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
         }
 
-        if (logging) {
+        if (withLogging()) {
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
         }
 
@@ -208,7 +207,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
         }
 
-        if (logging) {
+        if (withLogging()) {
             builder.outputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, OUTPUT));
         }
 
