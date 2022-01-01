@@ -18,11 +18,13 @@
 
 package io.art.core.validation;
 
+import lombok.*;
 import static io.art.core.constants.ValidationConstants.ValidationErrorPatterns.*;
 import static io.art.core.constants.ValidationConstants.ValidationExpressionTypes.*;
 import static java.text.MessageFormat.*;
 import java.util.function.*;
 
+@Getter
 public class NotEqualsValidationExpression extends ValidationExpression<Object> {
     private final Object other;
 

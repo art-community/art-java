@@ -1,5 +1,6 @@
 package io.art.core.builder;
 
+import io.art.core.factory.*;
 import lombok.*;
 import lombok.experimental.Delegate;
 import static lombok.AccessLevel.*;
@@ -8,14 +9,14 @@ import java.util.*;
 @NoArgsConstructor(access = PRIVATE)
 public class MapBuilder<K, V> implements Map<K, V> {
     @Delegate
-    private LinkedHashMap<K, V> map = new LinkedHashMap<>();
+    private Map<K, V> map = MapFactory.map();
 
-    public MapBuilder(Map<K, V> map) {
-        this.map = new LinkedHashMap<>(map);
+    private MapBuilder(Map<K, V> map) {
+        this.map = MapFactory.mapOf(map);
     }
 
-    public MapBuilder(int size) {
-        this.map = new LinkedHashMap<>(size);
+    private MapBuilder(int size) {
+        this.map = MapFactory.mapOf(size);
     }
 
     public MapBuilder<K, V> with(K key, V value) {

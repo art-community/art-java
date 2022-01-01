@@ -59,7 +59,7 @@ public class ContextConfiguration {
     @Builder.Default
     private final Locale locale = getDefault(FORMAT);
     @Builder.Default
-    private final ZoneId zoneId = systemDefault();
+    private final ZoneId zone = systemDefault();
     @Builder.Default
     private final String jar = ofNullable(Context.class.getProtectionDomain())
             .map(ProtectionDomain::getCodeSource)

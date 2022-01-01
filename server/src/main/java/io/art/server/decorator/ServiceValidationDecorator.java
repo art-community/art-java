@@ -32,7 +32,7 @@ import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
 
 public class ServiceValidationDecorator implements UnaryOperator<Flux<Object>> {
-    private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> REQUEST_IS_NULL));
+    private final static ValidationException NULL_EXCEPTION = new ValidationException(notNull(expression -> INPUT_IS_NULL));
     private final Property<Boolean> enabled;
     private final Property<Boolean> deactivated;
 
