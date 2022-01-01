@@ -47,7 +47,7 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
     }
 
     @Override
-    public void launch(Context.Service contextService) {
+    public void launch(ContextService contextService) {
         if (!withLogging()) {
             useCustomLoggers(EmptyReactorLogger::new);
         }

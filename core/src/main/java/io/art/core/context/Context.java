@@ -38,6 +38,7 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.property.DisposableProperty.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Runtime.*;
 import static java.text.MessageFormat.*;
@@ -57,12 +58,12 @@ public class Context {
     private final CountDownLatch terminatorSignal = new CountDownLatch(1);
     private final Map<String, Module<?, ?>> modules = map();
     private final ContextConfiguration configuration;
-    private final Service service;
+    private final ContextService service;
     private final List<DisposableProperty<Module<?, ?>>> loadedModules = copyOnWriteList();
 
     private Context(ContextConfiguration configuration) {
         this.configuration = configuration;
-        this.service = new Context.Service();
+        this.service = new ContextService(configuration, lazy(() -> immutableMapOf(modules)));
     }
 
     public static void prepareInitialization(ContextConfiguration configuration) {
@@ -244,27 +245,4 @@ public class Context {
         INSTANCE = null;
     }
 
-
-    public class Service {
-        public void print(String message) {
-            configuration.getPrinter().accept(message);
-        }
-
-        public void reload() {
-            for (Map.Entry<String, Module<?, ?>> entry : modules.entrySet()) {
-                Module<?, ?> module = entry.getValue();
-                apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_START_MESSAGE, module.getId())));
-                module.beforeReload(service);
-            }
-            apply(configuration.getBeforeReload(), Runnable::run);
-
-            for (Module<?, ?> module : modules.values()) {
-                apply(configuration.getReload(), reload -> reload.accept(module));
-
-                module.afterReload(service);
-                apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_END_MESSAGE, module.getId())));
-            }
-            apply(configuration.getAfterReload(), Runnable::run);
-        }
-    }
 }

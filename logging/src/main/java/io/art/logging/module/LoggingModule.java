@@ -45,7 +45,7 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     private final LoggingModuleState state = new LoggingModuleState(manager);
 
     @Override
-    public void launch(Context.Service contextService) {
+    public void launch(ContextService contextService) {
         getLogManager().reset();
         setDefaultFactory(defaultNettyLoggerFactory());
         graalNettyLoggerFactory().dispose();
@@ -54,12 +54,12 @@ public class LoggingModule implements StatefulModule<LoggingModuleConfiguration,
     }
 
     @Override
-    public void afterReload(Context.Service contextService) {
+    public void afterReload(ContextService contextService) {
         getLogManager().reset();
     }
 
     @Override
-    public void unload(Context.Service contextService) {
+    public void unload(ContextService contextService) {
         manager.deactivate();
     }
 

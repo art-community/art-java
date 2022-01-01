@@ -54,7 +54,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void launch(Context.Service contextService) {
+    public void launch(ContextService contextService) {
         onErrorDropped(emptyConsumer());
         boolean hasTcpServer = configuration.isEnableTcpServer();
         boolean hasWsServer = configuration.isEnableWsServer();
@@ -70,7 +70,7 @@ public class RsocketModule implements StatefulModule<RsocketModuleConfiguration,
     }
 
     @Override
-    public void shutdown(Context.Service contextService) {
+    public void shutdown(ContextService contextService) {
         if (configuration.isEnableTcpServer() || configuration.isEnableWsServer()) {
             manager.disposeServers();
         }

@@ -40,7 +40,7 @@ public class TestsModule implements StatelessModule<TestsModuleConfiguration, Te
     }
 
     @Override
-    public void launch(Context.Service contextService) {
+    public void launch(ContextService contextService) {
         for (TestSuitConfiguration suit : configuration.getSuits().get().values()) {
             invokeTestSuit(suit);
         }

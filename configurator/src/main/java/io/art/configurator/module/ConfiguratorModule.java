@@ -52,12 +52,12 @@ public class ConfiguratorModule implements StatelessModule<ConfiguratorModuleCon
     private static final LazyProperty<StatelessModuleProxy<ConfiguratorModuleConfiguration>> configuratorModule = lazy(() -> context().getStatelessModule(CONFIGURATOR_MODULE_ID));
 
     @Override
-    public void beforeReload(Context.Service contextService) {
+    public void beforeReload(ContextService contextService) {
         orderedSources().forEach(ConfigurationSource::refresh);
     }
 
     @Override
-    public void launch(Context.Service contextService) {
+    public void launch(ContextService contextService) {
         contextService.print(format(CONFIGURED_BY_MESSAGE, configuration.getConfiguration().getPath()));
     }
 

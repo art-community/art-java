@@ -51,7 +51,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     }
 
     @Override
-    public void launch(Context.Service contextService) {
+    public void launch(ContextService contextService) {
         onErrorDropped(emptyConsumer());
         if (configuration.isEnableServer()) {
             manager.initializeServer();
@@ -63,7 +63,7 @@ public class HttpModule implements StatefulModule<HttpModuleConfiguration, Confi
     }
 
     @Override
-    public void shutdown(Context.Service contextService) {
+    public void shutdown(ContextService contextService) {
         if (configuration.isEnableServer()) {
             manager.disposeServer();
         }

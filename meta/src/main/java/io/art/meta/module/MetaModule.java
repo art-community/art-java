@@ -41,7 +41,7 @@ public class MetaModule implements StatelessModule<MetaModuleConfiguration, Meta
     }
 
     @Override
-    public void load(Context.Service contextService) {
+    public void load(ContextService contextService) {
         configuration.library().compute(configuration);
     }
 
