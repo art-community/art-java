@@ -59,10 +59,44 @@ public class TarantoolClient {
     }
 
     private void receive(NettyOutbound outbound, ByteBuf bytes) {
-        Logging.logger().info("Received: " + NettyBufferExtensions.toString(bytes));
         if (authenticated.compareAndSet(false, true)) {
             outbound.send(Flux.just(write(randomPositiveInt(), IPROTO_AUTH, createAuthenticationRequest(bytes, configuration.getUsername(), configuration.getPassword())))).then().subscribe();
             connector.tryEmitValue(this);
+            return;
+        }
+
+        while (bytes.isReadable()) {
+            readInput(bytes);
+        }
+    }
+
+    private void readInput(ByteBuf bytes) {
+        ByteBuf sizeBuffer = bytes.readBytes(MINIMAL_HEADER_SIZE);
+        int size = 0;
+        try (ByteBufInputStream in = new ByteBufInputStream(sizeBuffer)) {
+            MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(in);
+            size = unpacker.unpackInt();
+        } catch (IOException ioException) {
+            ioException.printStackTrace();
+        }
+        sizeBuffer.release();
+        if (size > 0) {
+            if (bytes.readableBytes() < size) {
+                return;
+            }
+            ByteBuf bodyBuf = bytes.readBytes(size);
+            try (ByteBufInputStream in = new ByteBufInputStream(bodyBuf)) {
+                MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(in);
+                Map<Value, Value> header = unpacker.unpackValue().asMapValue().map();
+                Logging.logger().info("sync: " + header.get(newInteger(IPROTO_SYNC)));
+                Logging.logger().info("code: " + header.get(newInteger(IPROTO_CODE)));
+                while (unpacker.hasNext()) {
+                    Logging.logger().info("response: " + unpacker.unpackValue().toJson());
+                }
+            } catch (IOException ioException) {
+                ioException.printStackTrace();
+            }
+            bodyBuf.release();
         }
     }
 
@@ -80,7 +114,7 @@ public class TarantoolClient {
         MessageBufferPacker packer = MessagePack.newDefaultBufferPacker();
         try {
             Map<IntegerValue, IntegerValue> header = new HashMap<>();
-            header.put(newInteger(IPROTO_REQUEST_TYPE), newInteger(typeId));
+            header.put(newInteger(IPROTO_CODE), newInteger(typeId));
             header.put(newInteger(IPROTO_SYNC), newInteger(syncId));
             packer.packValue(newMap(header));
             packer.packValue(body);
@@ -92,8 +126,6 @@ public class TarantoolClient {
             packer.packLong(outputSize);
             buffer.writeBytes(packer.toByteArray());
             packer.close();
-            System.out.println(header);
-            System.out.println(body);
             return buffer.writeBytes(output);
         } catch (IOException ioException) {
             throw new TarantoolModuleException(ioException.getMessage());

@@ -39,6 +39,7 @@ public class TarantoolTest {
         new TarantoolClient(configuration).connect().subscribe(client -> {
             Map<IntegerValue, Value> body = new HashMap<>();
             body.put(newInteger(IPROTO_FUNCTION_NAME), newString("art.test"));
+            body.put(newInteger(IPROTO_TUPLE), newArray(newInteger(1), newInteger(2)));
             client.send(Mono.just(newMap(body)));
         });
         block();

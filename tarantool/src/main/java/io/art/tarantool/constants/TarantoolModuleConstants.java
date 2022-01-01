@@ -39,7 +39,7 @@ public interface TarantoolModuleConstants {
         int SALT_LENGTH = 44;
         int GREETING_LENGTH = 128;
         int MINIMAL_HEADER_SIZE = 5;
-        int IPROTO_REQUEST_TYPE = 0x00;
+        int IPROTO_CODE = 0x00;
         int IPROTO_SYNC = 0x01;
         int IPROTO_CALL = 0x0a;
         int IPROTO_SCHEMA_VERSION = 0x05;
@@ -48,6 +48,7 @@ public interface TarantoolModuleConstants {
         int IPROTO_TUPLE = 0x21;
         int IPROTO_FUNCTION_NAME = 0x22;
         int IPROTO_AUTH = 0x07;
+        int IPROTO_NOT_OK = 0x8000;
     }
 
     interface AuthenticationMechanism {
