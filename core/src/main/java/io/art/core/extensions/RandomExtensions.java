@@ -29,6 +29,10 @@ public class RandomExtensions {
         return RANDOM.nextInt();
     }
 
+    public static int randomPositiveInt() {
+        return Math.abs(RANDOM.nextInt());
+    }
+
     public static long randomLong() {
         return RANDOM.nextLong();
     }

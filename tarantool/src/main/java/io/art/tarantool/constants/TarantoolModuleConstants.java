@@ -38,9 +38,20 @@ public interface TarantoolModuleConstants {
         int VERSION_LENGTH = 64;
         int SALT_LENGTH = 44;
         int GREETING_LENGTH = 128;
+        int MINIMAL_HEADER_SIZE = 5;
         int IPROTO_REQUEST_TYPE = 0x00;
         int IPROTO_SYNC = 0x01;
+        int IPROTO_CALL = 0x0a;
         int IPROTO_SCHEMA_VERSION = 0x05;
+        int IPROTO_USER_NAME = 0x23;
+        int IPROTO_AUTH_DATA = 0x21;
+        int IPROTO_TUPLE = 0x21;
+        int IPROTO_FUNCTION_NAME = 0x22;
+        int IPROTO_AUTH = 0x07;
+    }
+
+    interface AuthenticationMechanism {
+        String CHAP_SHA1 = "chap-sha1";
     }
 
     interface ConfigurationKeys {

@@ -18,6 +18,13 @@
 
 package io.art.core.constants;
 
+import io.art.core.exception.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.handler.ExceptionHandler.*;
+import java.security.*;
+
 public interface AlgorithmConstants {
     String MD5 = "MD5";
+
+    MessageDigest SHA1_DIGEST = cast(wrapException(InternalRuntimeException::new).call(() -> MessageDigest.getInstance("SHA-1")));
 }
