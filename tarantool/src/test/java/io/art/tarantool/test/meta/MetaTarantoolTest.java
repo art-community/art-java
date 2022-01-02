@@ -9,8 +9,12 @@ import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
 import io.art.meta.model.MetaField;
 import io.art.meta.model.MetaLibrary;
+import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
+import io.art.meta.model.MetaProxy;
+import java.util.Map;
+import java.util.function.Function;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaTarantoolTest extends MetaLibrary {
@@ -58,14 +62,132 @@ public class MetaTarantoolTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
+          private final MetaTestStorageClass testStorageClass = register(new MetaTestStorageClass());
+
           private final MetaModelPackage modelPackage = register(new MetaModelPackage());
 
           private MetaTestPackage() {
             super("test");
           }
 
+          public MetaTestStorageClass testStorageClass() {
+            return testStorageClass;
+          }
+
           public MetaModelPackage modelPackage() {
             return modelPackage;
+          }
+
+          public static final class MetaTestStorageClass extends MetaClass<io.art.tarantool.test.TestStorage> {
+            private final MetaTestSpaceMethod testSpaceMethod = register(new MetaTestSpaceMethod());
+
+            private final MetaTestSpaceClass testSpaceClass = register(new MetaTestSpaceClass());
+
+            private MetaTestStorageClass() {
+              super(metaType(io.art.tarantool.test.TestStorage.class));
+            }
+
+            public MetaTestSpaceMethod testSpaceMethod() {
+              return testSpaceMethod;
+            }
+
+            @Override
+            public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+              return new MetaTestStorageProxy(invocations);
+            }
+
+            public MetaTestSpaceClass testSpaceClass() {
+              return testSpaceClass;
+            }
+
+            public static final class MetaTestSpaceMethod extends InstanceMetaMethod<io.art.tarantool.test.TestStorage, io.art.tarantool.test.TestStorage.TestSpace> {
+              private MetaTestSpaceMethod() {
+                super("testSpace",metaType(io.art.tarantool.test.TestStorage.TestSpace.class));
+              }
+
+              @Override
+              public Object invoke(io.art.tarantool.test.TestStorage instance, Object[] arguments)
+                  throws Throwable {
+                return instance.testSpace();
+              }
+
+              @Override
+              public Object invoke(io.art.tarantool.test.TestStorage instance) throws Throwable {
+                return instance.testSpace();
+              }
+            }
+
+            public class MetaTestStorageProxy extends MetaProxy implements io.art.tarantool.test.TestStorage {
+              private final Function<Object, Object> testSpaceInvocation;
+
+              public MetaTestStorageProxy(
+                  Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                super(invocations);
+                testSpaceInvocation = invocations.get(testSpaceMethod);
+              }
+
+              @Override
+              public io.art.tarantool.test.TestStorage.TestSpace testSpace() {
+                return (io.art.tarantool.test.TestStorage.TestSpace)(testSpaceInvocation.apply(null));
+              }
+            }
+
+            public static final class MetaTestSpaceClass extends MetaClass<io.art.tarantool.test.TestStorage.TestSpace> {
+              private final MetaTryRequestMethod tryRequestMethod = register(new MetaTryRequestMethod());
+
+              private MetaTestSpaceClass() {
+                super(metaType(io.art.tarantool.test.TestStorage.TestSpace.class));
+              }
+
+              public MetaTryRequestMethod tryRequestMethod() {
+                return tryRequestMethod;
+              }
+
+              @Override
+              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                return new MetaTestSpaceProxy(invocations);
+              }
+
+              public static final class MetaTryRequestMethod extends InstanceMetaMethod<io.art.tarantool.test.TestStorage.TestSpace, io.art.tarantool.test.model.TestRequest> {
+                private final MetaParameter<io.art.tarantool.test.model.TestRequest> requestParameter = register(new MetaParameter<>(0, "request",metaType(io.art.tarantool.test.model.TestRequest.class)));
+
+                private MetaTryRequestMethod() {
+                  super("tryRequest",metaType(io.art.tarantool.test.model.TestRequest.class));
+                }
+
+                @Override
+                public Object invoke(io.art.tarantool.test.TestStorage.TestSpace instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.tryRequest((io.art.tarantool.test.model.TestRequest)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.tarantool.test.TestStorage.TestSpace instance,
+                    Object argument) throws Throwable {
+                  return instance.tryRequest((io.art.tarantool.test.model.TestRequest)(argument));
+                }
+
+                public MetaParameter<io.art.tarantool.test.model.TestRequest> requestParameter() {
+                  return requestParameter;
+                }
+              }
+
+              public class MetaTestSpaceProxy extends MetaProxy implements io.art.tarantool.test.TestStorage.TestSpace {
+                private final Function<Object, Object> tryRequestInvocation;
+
+                public MetaTestSpaceProxy(
+                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                  super(invocations);
+                  tryRequestInvocation = invocations.get(tryRequestMethod);
+                }
+
+                @Override
+                public io.art.tarantool.test.model.TestRequest tryRequest(
+                    io.art.tarantool.test.model.TestRequest request) {
+                  return (io.art.tarantool.test.model.TestRequest)(tryRequestInvocation.apply(request));
+                }
+              }
+            }
           }
 
           public static final class MetaModelPackage extends MetaPackage {

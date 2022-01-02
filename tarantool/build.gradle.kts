@@ -29,6 +29,7 @@ dependencies {
 
     implementation(project(":logging"))
     implementation(project(":transport"))
+    implementation(project(":communicator"))
     //implementation(project(":storage"))
 
 

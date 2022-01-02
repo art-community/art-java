@@ -54,14 +54,15 @@ public class TarantoolClient {
     }
 
     @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
-    public Mono<Value> send(Mono<Value> input) {
+    public Flux<Value> send(Flux<Value> input) {
         int id = nextId();
         One<Value> receiver = one();
         receivers.put(id, receiver);
-        outbound.send(input.map(value -> writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), value)))
-                .then()
-                .subscribe();
-        return receiver.asMono();
+        Flux<ByteBuf> request = input
+                .map(value -> writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), value))
+                .switchIfEmpty(Flux.just(writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), newMap(emptyMap()))));
+        outbound.send(request).then().subscribe();
+        return receiver.asMono().flux();
     }
 
     private void onAuthenticate(boolean authenticated, String error) {
