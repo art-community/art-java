@@ -82,11 +82,6 @@ public class TarantoolClient {
             if (isNull(receiver)) return;
             Value body = response.getBody();
             if (response.isError()) {
-                if (nonNull(body) && body.isMapValue()) {
-                    Value errorData = body.asMapValue().map().get(newInteger(IPROTO_BODY_ERROR));
-                    receiver.tryEmitError(new TarantoolModuleException(let(errorData, Value::toJson)));
-                    return;
-                }
                 receiver.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
                 return;
             }

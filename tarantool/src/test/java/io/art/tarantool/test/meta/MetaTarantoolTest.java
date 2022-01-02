@@ -6,6 +6,7 @@ import static io.art.meta.model.MetaType.metaType;
 
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
+import io.art.meta.model.MetaConstructor;
 import io.art.meta.model.MetaField;
 import io.art.meta.model.MetaLibrary;
 import io.art.meta.model.MetaMethod;
@@ -239,6 +240,8 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             public static final class MetaTestRequestClass extends MetaClass<io.art.tarantool.test.model.TestRequest> {
+              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
+
               private final MetaField<Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
 
               private final MetaField<java.lang.String> dataField = register(new MetaField<>("data",metaType(java.lang.String.class),false));
@@ -251,6 +254,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private MetaTestRequestClass() {
                 super(metaType(io.art.tarantool.test.model.TestRequest.class));
+              }
+
+              public MetaConstructorConstructor constructor() {
+                return constructor;
               }
 
               public MetaField<Integer> idField() {
@@ -271,6 +278,30 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaTestRequestBuilderClass testRequestBuilderClass() {
                 return testRequestBuilderClass;
+              }
+
+              public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.TestRequest> {
+                private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+
+                private final MetaParameter<java.lang.String> dataParameter = register(new MetaParameter<>(1, "data",metaType(java.lang.String.class)));
+
+                private MetaConstructorConstructor() {
+                  super(metaType(io.art.tarantool.test.model.TestRequest.class));
+                }
+
+                @Override
+                public io.art.tarantool.test.model.TestRequest invoke(Object[] arguments) throws
+                    Throwable {
+                  return new io.art.tarantool.test.model.TestRequest((int)(arguments[0]),(java.lang.String)(arguments[1]));
+                }
+
+                public MetaParameter<Integer> idParameter() {
+                  return idParameter;
+                }
+
+                public MetaParameter<java.lang.String> dataParameter() {
+                  return dataParameter;
+                }
               }
 
               public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestRequest, Integer> {
