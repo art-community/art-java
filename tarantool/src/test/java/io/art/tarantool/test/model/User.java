@@ -6,7 +6,7 @@ import lombok.*;
 @ToString
 @Builder
 @AllArgsConstructor
-public class TestRequest {
+public class User {
     private final int id;
-    private final String data;
+    private final String name;
 }
