@@ -1,4 +1,4 @@
-package io.art.tarantool.transport;
+package io.art.tarantool.client;
 
 import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
@@ -6,7 +6,6 @@ import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.transport.*;
 import io.netty.buffer.*;
-import io.netty.util.collection.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import reactor.core.*;
@@ -15,6 +14,7 @@ import reactor.netty.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
@@ -38,7 +38,7 @@ public class TarantoolClient {
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
-    private final IntObjectMap<Sinks.One<Value>> receivers = new IntObjectHashMap<>(RECEIVERS_INITIAL_SIZE);
+    private final List<Sinks.One<Value>> receivers = dynamicArray(RECEIVERS_INITIAL_SIZE);
 
     private final static Logger logger = logger(TarantoolClient.class);
 
@@ -58,7 +58,7 @@ public class TarantoolClient {
     public Flux<Value> send(Flux<Value> input) {
         int id = nextId();
         One<Value> receiver = one();
-        receivers.put(id, receiver);
+        receivers.add(id, receiver);
         Flux<ByteBuf> request = input
                 .map(value -> writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), value))
                 .switchIfEmpty(Flux.just(writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), newMap(emptyMap()))));
