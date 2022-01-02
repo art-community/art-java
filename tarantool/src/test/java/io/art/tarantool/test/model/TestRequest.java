@@ -4,7 +4,8 @@ import lombok.*;
 
 @Getter
 @ToString
-@AllArgsConstructor
+@Builder
 public class TestRequest {
+    private final int id;
     private final String data;
 }

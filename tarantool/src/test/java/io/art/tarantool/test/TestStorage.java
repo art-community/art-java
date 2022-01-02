@@ -7,6 +7,8 @@ public interface TestStorage extends Connector {
     TestSpace testSpace();
 
     interface TestSpace extends Communicator {
-        TestRequest tryRequest(TestRequest request);
+        TestRequest saveRequest(TestRequest request);
+
+        TestRequest getRequest(int id);
     }
 }

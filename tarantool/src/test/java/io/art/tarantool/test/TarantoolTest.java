@@ -2,6 +2,7 @@ package io.art.tarantool.test;
 
 import io.art.meta.module.*;
 import io.art.tarantool.communication.*;
+import io.art.tarantool.test.TestStorage.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
@@ -26,7 +27,10 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-        System.out.println(preconfiguredCommunicatorProxy(TestStorage.TestSpace.class, TarantoolCommunication::new).getCommunicator().tryRequest(new TestRequest("test")));
+        TestSpace communicator = preconfiguredCommunicatorProxy(TestSpace.class, TarantoolCommunication::new).getCommunicator();
+        TestRequest result = communicator.saveRequest(TestRequest.builder().data("test").build());
+        System.out.println(result);
+        System.out.println(communicator.getRequest(result.getId()));
         block();
     }
 }

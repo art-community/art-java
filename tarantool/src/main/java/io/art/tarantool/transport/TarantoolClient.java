@@ -39,14 +39,12 @@ public class TarantoolClient {
 
     private final static Logger logger = logger(TarantoolClient.class);
 
-    @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Mono<TarantoolClient> connect() {
-        disposer = TcpClient.create()
+        Mono<? extends Connection> connection = TcpClient.create()
                 .host(configuration.getHost())
                 .port(configuration.getPort())
-                .connect()
-                .subscribe(this::setup);
-        return connector.asMono();
+                .connect();
+        return connector.asMono().doOnSubscribe(subscription -> disposer = connection.subscribe(this::setup));
     }
 
     public void dispose() {
