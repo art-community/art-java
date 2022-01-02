@@ -15,7 +15,7 @@ public class TarantoolRequestIdState {
         return authenticationId;
     }
 
-    public static int decrementId() {
-        return id.decrementAndGet();
+    public static void decrementId() {
+        id.decrementAndGet();
     }
 }

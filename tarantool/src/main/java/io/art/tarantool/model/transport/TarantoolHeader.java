@@ -1,4 +1,4 @@
-package io.art.tarantool.model;
+package io.art.tarantool.model.transport;
 
 import lombok.*;
 

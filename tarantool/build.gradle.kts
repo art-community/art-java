@@ -16,6 +16,9 @@
  * limitations under the License.
  */
 
+plugins {
+    id("art-internal-jvm")
+}
 
 dependencies {
     val tarantoolCartridgeConnectorVersion: String by project
@@ -30,4 +33,16 @@ dependencies {
 
 
     api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)
+}
+
+
+generator {
+    source("TarantoolTest") {
+        modulePackage("io.art.tarantool.test")
+        jvm()
+        sourcesPattern {
+            include("src/test/**")
+        }
+        excludeClasses("**TarantoolTest**")
+    }
 }

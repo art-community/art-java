@@ -42,7 +42,6 @@ public interface TarantoolModuleConstants {
         int IPROTO_CODE = 0x00;
         int IPROTO_SYNC = 0x01;
         int IPROTO_CALL = 0x0a;
-        int IPROTO_SCHEMA_VERSION = 0x05;
         int IPROTO_USER_NAME = 0x23;
         int IPROTO_AUTH_DATA = 0x21;
         int IPROTO_TUPLE = 0x21;
@@ -50,6 +49,8 @@ public interface TarantoolModuleConstants {
         int IPROTO_AUTH = 0x07;
         int IPROTO_OK = 0x00;
         int IPROTO_NOT_OK = 0x8000;
+        int IPROTO_BODY_DATA = 0x30;
+        int IPROTO_BODY_ERROR = 0x31;
     }
 
     interface AuthenticationMechanism {

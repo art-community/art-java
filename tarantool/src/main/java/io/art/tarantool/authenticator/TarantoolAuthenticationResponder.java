@@ -1,6 +1,6 @@
 package io.art.tarantool.authenticator;
 
-import io.art.tarantool.model.*;
+import io.art.tarantool.model.transport.*;
 import io.netty.buffer.*;
 import io.netty.channel.*;
 import lombok.*;

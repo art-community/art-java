@@ -11,15 +11,15 @@ import java.util.*;
 @UtilityClass
 public class TarantoolRequestContentFactory {
     public static Value authenticationRequest(String username, byte[] password) {
-        Map<IntegerValue, Value> request = map();
+        Map<IntegerValue, Value> request = map(2);
         request.put(newInteger(IPROTO_USER_NAME), newString(username));
         request.put(newInteger(IPROTO_AUTH_DATA), newArray(newString(CHAP_SHA1), newBinary(password)));
         return newMap(request);
     }
 
-    public static Value functionRequest(String name, List<Value> arguments) {
+    public static Value callRequest(String function, Value... arguments) {
         Map<IntegerValue, Value> body = map(2);
-        body.put(newInteger(IPROTO_FUNCTION_NAME), newString(name));
+        body.put(newInteger(IPROTO_FUNCTION_NAME), newString(function));
         body.put(newInteger(IPROTO_TUPLE), newArray(arguments));
         return newMap(body);
     }

@@ -4,7 +4,7 @@ import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
-import io.art.tarantool.model.*;
+import io.art.tarantool.model.transport.*;
 import io.netty.buffer.*;
 import io.netty.util.collection.*;
 import lombok.*;
@@ -21,22 +21,25 @@ import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.state.TarantoolRequestIdState.*;
 import static java.util.Objects.*;
+import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Sinks.*;
+import java.util.*;
 import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class TarantoolClient {
-    private NettyInbound inbound;
-    private NettyOutbound outbound;
+    private final TarantoolInstanceConfiguration configuration;
+
+    private volatile NettyOutbound outbound;
     private volatile Disposable disposer;
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
-    private final TarantoolInstanceConfiguration configuration;
     private final IntObjectMap<Sinks.One<Value>> receivers = new IntObjectHashMap<>(128);
 
     private final static Logger logger = logger(TarantoolClient.class);
 
+    @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Mono<TarantoolClient> connect() {
         disposer = TcpClient.create()
                 .host(configuration.getHost())
@@ -77,30 +80,38 @@ public class TarantoolClient {
             TarantoolResponse response = readTarantoolResponse(bytes);
             Sinks.One<Value> receiver = receivers.remove(response.getHeader().getSyncId());
             decrementId();
-            if (isNull(receiver)) {
-                return;
-            }
+            if (isNull(receiver)) return;
+            Value body = response.getBody();
             if (response.isError()) {
-                receiver.tryEmitError(new TarantoolModuleException(let(response.getBody(), Value::toJson)));
+                if (nonNull(body) && body.isMapValue()) {
+                    Value errorData = body.asMapValue().map().get(newInteger(IPROTO_BODY_ERROR));
+                    receiver.tryEmitError(new TarantoolModuleException(let(errorData, Value::toJson)));
+                    return;
+                }
+                receiver.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
                 return;
             }
-            if (isNull(response.getBody())) {
+            if (isNull(body) || !body.isMapValue()) {
                 receiver.tryEmitEmpty();
                 return;
             }
-            receiver.tryEmitValue(response.getBody());
+            Map<Value, Value> mapValue = body.asMapValue().map();
+            Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
+            if (isNull(bodyData)) {
+                receiver.tryEmitEmpty();
+                return;
+            }
+            receiver.tryEmitValue(bodyData.asArrayValue().get(0));
         }
     }
 
     private void setup(Connection connection) {
         if (connected.compareAndSet(false, true)) {
-            this.inbound = connection.inbound();
             this.outbound = connection.outbound();
             connection
                     .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
                     .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
-            inbound.receive().doOnError(logger::error).doOnNext(this::receive).subscribe();
+            connection.inbound().receive().doOnError(logger::error).doOnNext(this::receive).subscribe();
         }
     }
-
 }
