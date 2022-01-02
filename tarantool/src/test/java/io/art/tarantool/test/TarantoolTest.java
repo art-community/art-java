@@ -27,10 +27,10 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-        UserSpace space = preconfiguredCommunicatorProxy(UserSpace.class, TarantoolCommunication::new).getCommunicator();
-        User result = space.saveUser(User.builder().name("test").build());
-        System.out.println(result);
-        System.out.println(space.getUser(result.getId()));
-        block();
+//        UserSpace space = preconfiguredCommunicatorProxy(UserSpace.class, TarantoolCommunication::new).getCommunicator();
+//        User result = space.saveUser(User.builder().name("test").build());
+//        System.out.println(result);
+//        System.out.println(space.getUser(result.getId()));
+//        block();
     }
 }
