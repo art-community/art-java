@@ -28,7 +28,7 @@ public interface TarantoolModuleConstants {
     int DEFAULT_TARANTOOL_REQUEST_TIMEOUT = 2 * 1000;
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 128;
-    int REQUEST_STEP = 10;
+    int REQUEST_STEP = 8;
     String DEFAULT_TARANTOOL_HOST = "localhost";
     String DEFAULT_TARANTOOL_USERNAME = "guest";
     String DEFAULT_TARANTOOL_PASSWORD = "";
