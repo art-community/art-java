@@ -28,12 +28,12 @@ public class TarantoolResponseReader {
                 try (ByteBufInputStream inputStream = new ByteBufInputStream(bodyBuffer)) {
                     MessageUnpacker unpacker = newDefaultUnpacker(inputStream);
                     Map<Value, Value> header = unpacker.unpackValue().asMapValue().map();
-                    long syncId = header.get(newInteger(IPROTO_SYNC)).asIntegerValue().asLong();
+                    int syncId = header.get(newInteger(IPROTO_SYNC)).asIntegerValue().asInt();
                     long code = header.get(newInteger(IPROTO_CODE)).asIntegerValue().asLong();
                     TarantoolHeader tarantoolHeader = new TarantoolHeader(syncId, code);
                     response = unpacker.hasNext()
-                            ? new TarantoolResponse(tarantoolHeader, code == IPROTO_OK, unpacker.unpackValue())
-                            : new TarantoolResponse(tarantoolHeader, code == IPROTO_OK);
+                            ? new TarantoolResponse(tarantoolHeader, code != IPROTO_OK, unpacker.unpackValue())
+                            : new TarantoolResponse(tarantoolHeader, code != IPROTO_OK);
                 }
                 bodyBuffer.release();
                 return response;

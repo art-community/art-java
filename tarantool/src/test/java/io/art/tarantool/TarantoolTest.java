@@ -1,18 +1,17 @@
 package io.art.tarantool;
 
+import io.art.logging.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.transport.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
-import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
+import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
-import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 public class TarantoolTest {
@@ -36,12 +35,10 @@ public class TarantoolTest {
                 .password("password")
                 .connectionTimeout(30)
                 .build();
-        new TarantoolClient(configuration).connect().subscribe(client -> {
-            Map<IntegerValue, Value> body = new HashMap<>();
-            body.put(newInteger(IPROTO_FUNCTION_NAME), newString("art.test"));
-            body.put(newInteger(IPROTO_TUPLE), newArray(newInteger(1), newInteger(2)));
-            client.send(Mono.just(newMap(body)));
-        });
+        new TarantoolClient(configuration)
+                .connect()
+                .flatMap(client -> client.send(Mono.just(functionRequest("art.test", Collections.emptyList()))))
+                .subscribe(response -> Logging.logger().info(response.toJson()), Logging.logger()::error);
         block();
     }
 }
