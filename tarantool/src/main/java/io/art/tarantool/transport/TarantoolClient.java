@@ -17,6 +17,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.state.TarantoolRequestIdState.*;
@@ -32,19 +33,21 @@ public class TarantoolClient {
 
     private volatile NettyOutbound outbound;
     private volatile Disposable disposer;
+    private volatile Mono<? extends Connection> connection;
+
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
-    private final IntObjectMap<Sinks.One<Value>> receivers = new IntObjectHashMap<>(128);
+    private final IntObjectMap<Sinks.One<Value>> receivers = new IntObjectHashMap<>(RECEIVERS_INITIAL_SIZE);
 
     private final static Logger logger = logger(TarantoolClient.class);
 
     public Mono<TarantoolClient> connect() {
-        Mono<? extends Connection> connection = TcpClient.create()
+        connection = TcpClient.create()
                 .host(configuration.getHost())
                 .port(configuration.getPort())
                 .connect();
-        return connector.asMono().doOnSubscribe(subscription -> disposer = connection.subscribe(this::setup));
+        return connector.asMono().doOnSubscribe(subscription -> subscribe());
     }
 
     public void dispose() {
@@ -99,13 +102,17 @@ public class TarantoolClient {
         }
     }
 
-    private void setup(Connection connection) {
+    private void subscribe() {
         if (connected.compareAndSet(false, true)) {
-            this.outbound = connection.outbound();
-            connection
-                    .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
-                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
-            connection.inbound().receive().doOnError(logger::error).doOnNext(this::receive).subscribe();
+            apply(connection, mono -> disposer = mono.subscribe(this::setup));
         }
+    }
+
+    private void setup(Connection connection) {
+        this.outbound = connection.outbound();
+        connection
+                .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
+                .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
+        connection.inbound().receive().doOnError(logger::error).doOnNext(this::receive).subscribe();
     }
 }

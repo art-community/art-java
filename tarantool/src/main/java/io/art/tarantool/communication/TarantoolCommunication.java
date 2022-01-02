@@ -20,12 +20,11 @@ public class TarantoolCommunication implements Communication {
             .password("password")
             .connectionTimeout(30)
             .build());
-    private Mono<TarantoolClient> connectedClient = Mono.never();
+    private final Mono<TarantoolClient> connectedClient = client.connect();
 
     @Override
     public void initialize(CommunicatorAction action) {
         this.action = action;
-        connectedClient = client.connect();
     }
 
     @Override

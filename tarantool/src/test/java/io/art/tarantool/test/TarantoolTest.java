@@ -27,10 +27,10 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-        TestSpace communicator = preconfiguredCommunicatorProxy(TestSpace.class, TarantoolCommunication::new).getCommunicator();
-        TestRequest result = communicator.saveRequest(TestRequest.builder().data("test").build());
+        TestSpace space = preconfiguredCommunicatorProxy(TestSpace.class, TarantoolCommunication::new).getCommunicator();
+        TestRequest result = space.saveRequest(TestRequest.builder().data("test").build());
         System.out.println(result);
-        System.out.println(communicator.getRequest(result.getId()));
+        System.out.println(space.getRequest(result.getId()));
         block();
     }
 }
