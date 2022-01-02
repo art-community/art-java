@@ -1,18 +1,33 @@
 package io.art.tarantool.authenticator;
 
 import io.netty.buffer.*;
-import lombok.experimental.*;
+import io.netty.channel.*;
+import lombok.*;
+import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import static io.art.core.constants.AlgorithmConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.AuthenticationMechanism.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
+import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
+import static io.art.tarantool.state.TarantoolRequestIdState.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
-@UtilityClass
-public class TarantoolAuthenticator {
-    public static Value createAuthenticationRequest(ByteBuf input, String username, String password) {
+@RequiredArgsConstructor
+public class TarantoolAuthenticationRequester extends SimpleChannelInboundHandler<ByteBuf> {
+    private final String username;
+    private final String password;
+
+    @Override
+    protected void channelRead0(ChannelHandlerContext context, ByteBuf input) {
+        if (input.readableBytes() < GREETING_LENGTH) return;
+        Value request = createAuthenticationRequest(input, username, password);
+        context.channel().writeAndFlush(writeTarantoolRequest(authenticationId(), IPROTO_AUTH, request));
+        context.pipeline().remove(this);
+    }
+
+    private static Value createAuthenticationRequest(ByteBuf input, String username, String password) {
         byte[] array = new byte[VERSION_LENGTH];
         input.readBytes(array);
         array = new byte[SALT_LENGTH];

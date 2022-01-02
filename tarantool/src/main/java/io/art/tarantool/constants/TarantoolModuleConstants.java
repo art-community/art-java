@@ -48,6 +48,7 @@ public interface TarantoolModuleConstants {
         int IPROTO_TUPLE = 0x21;
         int IPROTO_FUNCTION_NAME = 0x22;
         int IPROTO_AUTH = 0x07;
+        int IPROTO_OK = 0x00;
         int IPROTO_NOT_OK = 0x8000;
     }
 
