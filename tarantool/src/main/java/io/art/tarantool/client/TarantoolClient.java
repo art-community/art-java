@@ -84,30 +84,28 @@ public class TarantoolClient {
     }
 
     private void receive(ByteBuf bytes) {
-        if (authenticated.get()) {
-            TarantoolResponse response = readTarantoolResponse(bytes);
-            Many<Value> receiver = receivers.remove(response.getHeader().getSyncId());
-            decrementId();
-            if (isNull(receiver)) return;
-            Value body = response.getBody();
-            if (response.isError()) {
-                receiver.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
-                receiver.tryEmitComplete();
-                return;
-            }
-            if (isNull(body) || !body.isMapValue()) {
-                receiver.tryEmitComplete();
-                return;
-            }
-            Map<Value, Value> mapValue = body.asMapValue().map();
-            Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
-            if (isNull(bodyData) || !bodyData.isArrayValue() || bodyData.asArrayValue().size() == 0) {
-                receiver.tryEmitComplete();
-                return;
-            }
-            receiver.tryEmitNext(bodyData.asArrayValue().get(0));
+        TarantoolResponse response = readTarantoolResponse(bytes);
+        Many<Value> receiver = receivers.remove(response.getHeader().getSyncId());
+        decrementId();
+        if (isNull(receiver)) return;
+        Value body = response.getBody();
+        if (response.isError()) {
+            receiver.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
             receiver.tryEmitComplete();
+            return;
         }
+        if (isNull(body) || !body.isMapValue()) {
+            receiver.tryEmitComplete();
+            return;
+        }
+        Map<Value, Value> mapValue = body.asMapValue().map();
+        Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
+        if (isNull(bodyData) || !bodyData.isArrayValue() || bodyData.asArrayValue().size() == 0) {
+            receiver.tryEmitComplete();
+            return;
+        }
+        receiver.tryEmitNext(bodyData.asArrayValue().get(0));
+        receiver.tryEmitComplete();
     }
 
     private void subscribe() {
@@ -120,7 +118,14 @@ public class TarantoolClient {
         connection
                 .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
                 .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
-        connection.inbound().receive().doOnError(logger::error).doOnNext(this::receive).subscribe();
-        connection.outbound().send(sender.asFlux().doOnError(logger::error)).then().subscribe();
+        connection.inbound()
+                .receive()
+                .doOnError(logger::error).filter(ignore -> authenticated.get())
+                .doOnNext(this::receive)
+                .subscribe();
+        connection.outbound()
+                .send(sender.asFlux().doOnError(logger::error))
+                .then()
+                .subscribe();
     }
 }
