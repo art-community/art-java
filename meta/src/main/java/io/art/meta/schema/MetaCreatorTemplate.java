@@ -35,6 +35,7 @@ public class MetaCreatorTemplate {
     private final MetaConstructor<?> allPropertiesConstructor;
     private final MetaConstructor<?> localPropertiesConstructor;
     private final MetaConstructor<?> noPropertiesConstructor;
+    private int localPropertiesCount;
 
     public MetaConstructor<?> allPropertiesConstructor() {
         return allPropertiesConstructor;
@@ -56,6 +57,9 @@ public class MetaCreatorTemplate {
         if (!isValid()) {
             throw exceptionFactory.apply(format(CLASS_CREATOR_INVALID, owner.definition().type()));
         }
+        if (nonNull(localPropertiesConstructor)) {
+            localPropertiesCount = localPropertiesConstructor.parameters().size();
+        }
         return this;
     }
 
@@ -73,8 +77,9 @@ public class MetaCreatorTemplate {
 
     @NoArgsConstructor(access = PRIVATE)
     public class MetaCreatorInstance {
-        private int filledFields;
         private final Object[] values = new Object[propertyArray.size()];
+        private boolean useNoPropertiesConstructor = true;
+        private boolean useLocalPropertiesConstructor = true;
 
         public ImmutableMap<String, MetaProperty<?>> propertyMap() {
             return MetaCreatorTemplate.this.propertyMap();
@@ -85,16 +90,18 @@ public class MetaCreatorTemplate {
         }
 
         public MetaCreatorInstance putValue(MetaProperty<?> property, Object value) {
-            values[property.index()] = value;
-            filledFields++;
+            useNoPropertiesConstructor = false;
+            int index = property.index();
+            if (index > localPropertiesCount) useLocalPropertiesConstructor = false;
+            values[index] = value;
             return this;
         }
 
         public Object create() {
-            if (filledFields == 0) {
+            if (useNoPropertiesConstructor) {
                 return noPropertiesConstructor.invokeCatched();
             }
-            if (filledFields <= localPropertiesConstructor.parameters().size()) {
+            if (useLocalPropertiesConstructor) {
                 return localPropertiesConstructor.invokeCatched(values);
             }
             return allPropertiesConstructor.invokeCatched(values);
