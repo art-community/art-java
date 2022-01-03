@@ -120,7 +120,8 @@ public class TarantoolClient {
                 .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
         connection.inbound()
                 .receive()
-                .doOnError(logger::error).filter(ignore -> authenticated.get())
+                .doOnError(logger::error)
+                .filter(ignore -> authenticated.get())
                 .doOnNext(this::receive)
                 .subscribe();
         connection.outbound()
