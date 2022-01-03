@@ -24,7 +24,7 @@ public class TarantoolReceiverRegistry {
             return receiver;
         }
 
-        localPool = new LocalPool(pools.incrementAndGet() * localPoolSize, localPoolSize);
+        localPool = new LocalPool(pools.incrementAndGet() * localPoolSize + 1, localPoolSize);
         this.pool.set(localPool);
         int id = localPool.next();
         TarantoolReceiver receiver = new TarantoolReceiver(id, many().unicast().onBackpressureBuffer());

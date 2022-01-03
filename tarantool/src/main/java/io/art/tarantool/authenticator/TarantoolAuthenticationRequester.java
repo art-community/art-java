@@ -9,7 +9,6 @@ import static io.art.core.constants.AlgorithmConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
-import static io.art.tarantool.state.TarantoolRequestIdState.*;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -21,7 +20,7 @@ public class TarantoolAuthenticationRequester extends SimpleChannelInboundHandle
     protected void channelRead0(ChannelHandlerContext context, ByteBuf input) {
         if (input.readableBytes() < GREETING_LENGTH) return;
         Value request = createAuthenticationRequest(input, username, password);
-        context.channel().writeAndFlush(writeTarantoolRequest(new TarantoolHeader(authenticationId(), IPROTO_AUTH), request));
+        context.channel().writeAndFlush(writeTarantoolRequest(new TarantoolHeader(0, IPROTO_AUTH), request));
         context.pipeline().remove(this);
     }
 

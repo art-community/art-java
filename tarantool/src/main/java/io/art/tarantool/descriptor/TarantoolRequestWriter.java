@@ -6,6 +6,7 @@ import io.netty.buffer.*;
 import lombok.experimental.*;
 import org.msgpack.core.*;
 import org.msgpack.value.*;
+import static io.art.core.factory.MapFactory.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.transport.allocator.WriteBufferAllocator.*;
 import static io.art.transport.module.TransportModule.*;
@@ -19,7 +20,7 @@ public class TarantoolRequestWriter {
     public static ByteBuf writeTarantoolRequest(TarantoolHeader header, Value body) {
         MessageBufferPacker packer = newDefaultBufferPacker();
         try {
-            Map<IntegerValue, IntegerValue> headerMap = new HashMap<>();
+            Map<IntegerValue, IntegerValue> headerMap = map(2);
             headerMap.put(newInteger(IPROTO_CODE), newInteger(header.getCode()));
             headerMap.put(newInteger(IPROTO_SYNC), newInteger(header.getSyncId()));
             packer.packValue(newMap(headerMap));
