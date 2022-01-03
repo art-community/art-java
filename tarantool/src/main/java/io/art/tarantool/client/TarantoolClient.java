@@ -15,7 +15,6 @@ import reactor.core.publisher.*;
 import reactor.netty.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
@@ -61,14 +60,17 @@ public class TarantoolClient {
         return receiver.getSink().asFlux();
     }
 
-    @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Flux<Value> call(String name, Flux<Value> arguments) {
         TarantoolReceiver receiver = receivers.allocate();
+        subscribeInput(name, arguments, receiver);
+        return receiver.getSink().asFlux();
+    }
+
+    private void subscribeInput(String name, Flux<Value> arguments, TarantoolReceiver receiver) {
         arguments
                 .doOnNext(argument -> emitCall(receiver.getId(), callRequest(name, argument)))
                 .doOnError(logger::error)
                 .subscribe();
-        return receiver.getSink().asFlux();
     }
 
     private void emitCall(int id, Value body) {
