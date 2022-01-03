@@ -4,6 +4,7 @@ import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.property.*;
 import io.art.message.pack.descriptor.*;
+import io.art.meta.model.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import reactor.core.publisher.*;
@@ -41,14 +42,16 @@ public class TarantoolCommunication implements Communication {
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
-        if (isNull(action.getInputType())) {
-            return (input, client) -> client
-                    .call(action.getId().getActionId(), Flux.empty())
-                    .map(output -> reader.read(action.getOutputType(), output));
+        MetaType<?> outputType = action.getOutputType();
+        MetaType<?> inputType = action.getInputType();
+        String actionId = action.getId().getActionId();
+
+        if (isNull(inputType)) {
+            return (input, client) -> client.call(actionId, Flux.empty()).map(output -> reader.read(outputType, output));
         }
 
         return (input, client) -> client
-                .call(action.getId().getActionId(), input.map(value -> writer.write(action.getInputType(), value)))
-                .map(output -> reader.read(action.getOutputType(), output));
+                .call(actionId, input.map(value -> writer.write(inputType, value)))
+                .map(output -> reader.read(outputType, output));
     }
 }
