@@ -21,15 +21,12 @@ package io.art.meta.schema;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import lombok.*;
-import static io.art.core.factory.ArrayFactory.*;
-import static io.art.core.factory.MapFactory.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 
 @AllArgsConstructor
 public class MetaProviderTemplate {
     private final ImmutableMap<String, MetaProperty<?>> propertyMap;
-    private final MetaProperty<?>[] propertyArray;
+    private final ImmutableArray<MetaProperty<?>> propertyArray;
 
     public MetaProviderInstance instantiate(Object model) {
         return new MetaProviderInstance(model);
@@ -40,7 +37,7 @@ public class MetaProviderTemplate {
     }
 
     public ImmutableArray<MetaProperty<?>> propertyArray() {
-        return immutableArrayOf(propertyArray);
+        return propertyArray;
     }
 
     @AllArgsConstructor(access = PRIVATE)
@@ -51,8 +48,12 @@ public class MetaProviderTemplate {
             return property.getter().invokeCatched(model);
         }
 
-        public ImmutableMap<String, MetaProperty<?>> properties() {
+        public ImmutableMap<String, MetaProperty<?>> propertyMap() {
             return MetaProviderTemplate.this.propertyMap();
+        }
+
+        public ImmutableArray<MetaProperty<?>> propertyArray() {
+            return MetaProviderTemplate.this.propertyArray();
         }
     }
 }

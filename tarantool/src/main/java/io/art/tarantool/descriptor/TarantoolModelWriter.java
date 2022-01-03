@@ -1,68 +1,19 @@
-/*
- * ART
- *
- * Copyright 2019-2022 ART
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package io.art.tarantool.descriptor;
 
-package io.art.message.pack.descriptor;
-
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.message.pack.exception.MessagePackException;
-import io.art.meta.descriptor.Writer;
 import io.art.meta.model.*;
-import io.art.meta.schema.MetaProviderTemplate.*;
+import io.art.meta.schema.*;
 import io.art.meta.transformer.*;
-import io.netty.buffer.*;
-import org.msgpack.core.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.factory.ArrayFactory.*;
-import static java.nio.channels.Channels.*;
 import static java.util.Objects.*;
-import static org.msgpack.core.MessagePack.*;
 import static org.msgpack.value.ValueFactory.*;
-import java.io.*;
-import java.nio.*;
-import java.nio.charset.*;
 import java.util.*;
 
-@Public
-public class MessagePackWriter implements Writer {
-    @Override
-    public void write(TypedObject model, ByteBuffer buffer) {
-        write(model, buffer, MessagePackException::new);
-    }
-
-    @Override
-    public void write(TypedObject model, ByteBuf buffer) {
-        write(model, buffer, MessagePackException::new);
-    }
-
-    @Override
-    public void write(TypedObject object, OutputStream outputStream, Charset charset) {
-        if (isNull(object)) return;
-        try (MessagePacker packer = newDefaultPacker(newChannel(outputStream))) {
-            packer.packValue(write(object.getType(), object.getObject()));
-        } catch (Throwable throwable) {
-            throw new MessagePackException(throwable);
-        }
-    }
-
+public class TarantoolModelWriter {
     public org.msgpack.value.Value write(MetaType<?> type, Object value) {
         if (isNull(value)) return null;
         MetaTransformer<?> transformer = type.outputTransformer();
@@ -114,16 +65,19 @@ public class MessagePackWriter implements Writer {
         return newArray(values);
     }
 
-    private org.msgpack.value.MapValue writeEntity(MetaType<?> type, Object value) {
-        MapBuilder mapBuilder = newMapBuilder();
-        MetaProviderInstance provider = type.declaration().provider().instantiate(value);
-        ImmutableMap<String, MetaProperty<?>> properties = provider.propertyMap();
-        for (MetaProperty<?> property : properties.values()) {
+    private org.msgpack.value.ArrayValue writeEntity(MetaType<?> type, Object value) {
+        MetaProviderTemplate.MetaProviderInstance provider = type.declaration().provider().instantiate(value);
+        ImmutableArray<MetaProperty<?>> properties = provider.propertyArray();
+        List<org.msgpack.value.Value> values = dynamicArray(properties.size());
+        for (MetaProperty<?> property : properties) {
             Object propertyValue = provider.getValue(property);
-            if (isNull(propertyValue)) continue;
-            mapBuilder.put(newString(property.name()), write(property.type(), propertyValue));
+            if (isNull(propertyValue)) {
+                values.add(newNil());
+                continue;
+            }
+            values.add(write(property.type(), propertyValue));
         }
-        return mapBuilder.build();
+        return newArray(values);
     }
 
     private org.msgpack.value.MapValue writeMap(MetaType<?> keyType, MetaType<?> valueType, Map<?, ?> value) {

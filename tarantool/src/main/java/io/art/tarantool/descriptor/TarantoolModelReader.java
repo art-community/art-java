@@ -1,31 +1,10 @@
-/*
- * ART
- *
- * Copyright 2019-2022 ART
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package io.art.tarantool.descriptor;
 
-package io.art.message.pack.descriptor;
-
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.message.pack.exception.MessagePackException;
-import io.art.meta.descriptor.Reader;
+import io.art.message.pack.exception.*;
 import io.art.meta.model.*;
-import io.art.meta.schema.MetaCreatorTemplate.*;
+import io.art.meta.schema.*;
 import io.art.meta.transformer.*;
-import org.msgpack.core.*;
 import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -37,32 +16,9 @@ import static io.art.message.pack.constants.MessagePackConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeExternalKind.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
-import static org.msgpack.core.MessagePack.*;
-import java.io.*;
-import java.nio.*;
 import java.util.*;
 
-
-@Public
-public class MessagePackReader implements Reader {
-    @Override
-    public <T> T read(MetaType<T> type, InputStream inputStream) {
-        try (MessageUnpacker unpacker = newDefaultUnpacker(inputStream)) {
-            return read(type, unpacker.unpackValue());
-        } catch (Throwable throwable) {
-            throw new MessagePackException(throwable);
-        }
-    }
-
-    @Override
-    public <T> T read(MetaType<T> type, ByteBuffer nioBuffer) {
-        try (MessageUnpacker unpacker = newDefaultUnpacker(nioBuffer)) {
-            return read(type, unpacker.unpackValue());
-        } catch (Throwable throwable) {
-            throw new MessagePackException(throwable);
-        }
-    }
-
+public class TarantoolModelReader {
     public <T> T read(MetaType<T> type, org.msgpack.value.Value value) {
         if (isNull(value) || value.isNilValue()) return null;
         MetaTransformer<T> transformer = type.inputTransformer();
@@ -93,18 +49,18 @@ public class MessagePackReader implements Reader {
             case BINARY:
                 return transformer.fromByteArray(value.asBinaryValue().asByteArray());
             case ARRAY:
-                if (type.externalKind() != ARRAY && type.externalKind() != LAZY_ARRAY) {
-                    throw new MessagePackException(format(MESSAGE_PACK_ARRAY_EXCEPTION, value, type));
+                if (type.externalKind() == ARRAY || type.externalKind() == LAZY_ARRAY) {
+                    return transformer.fromLazyArray(readArray(orElse(type.arrayComponentType(), () -> type.parameters().get(0)), value.asArrayValue()));
                 }
-                return transformer.fromLazyArray(readArray(orElse(type.arrayComponentType(), () -> type.parameters().get(0)), value.asArrayValue()));
+                if (type.externalKind() == ENTITY) {
+                    return readEntity(type, value.asArrayValue());
+                }
+                throw new MessagePackException(format(MESSAGE_PACK_ARRAY_EXCEPTION, value, type));
             case MAP:
                 if (type.externalKind() == MAP || type.externalKind() == LAZY_MAP) {
                     return transformer.fromLazyMap(readMap(type.parameters().get(0), type.parameters().get(1), value.asMapValue()));
                 }
-                if (type.externalKind() != ENTITY) {
-                    throw new MessagePackException(format(MESSAGE_PACK_MAP_EXCEPTION, value, type));
-                }
-                return readEntity(type, value.asMapValue());
+                throw new MessagePackException(format(MESSAGE_PACK_MAP_EXCEPTION, value, type));
         }
         throw new MessagePackException(format(VALUE_TYPE_NOT_SUPPORTED, value.getValueType()));
     }
@@ -123,16 +79,14 @@ public class MessagePackReader implements Reader {
         return cast(immutableLazyMap(mapping.keySet(), key -> read(valueType, mapping.get(key))));
     }
 
-    private <T> T readEntity(MetaType<T> type, MapValue map) {
-        if (isNull(map) || map.isNilValue()) return null;
-        MetaCreatorInstance creator = type.declaration().creator().validate(MessagePackException::new).instantiate();
-        ImmutableMap<String, MetaProperty<?>> properties = creator.propertyMap();
-        for (Map.Entry<org.msgpack.value.Value, org.msgpack.value.Value> entry : map.entrySet()) {
-            org.msgpack.value.Value key = entry.getKey();
-            if (isNull(key) || !key.isStringValue()) continue;
-            org.msgpack.value.Value value = entry.getValue();
+    private <T> T readEntity(MetaType<T> type, ArrayValue values) {
+        if (isNull(values) || values.isNilValue()) return null;
+        MetaCreatorTemplate.MetaCreatorInstance creator = type.declaration().creator().validate(MessagePackException::new).instantiate();
+        ImmutableArray<MetaProperty<?>> properties = creator.propertyArray();
+        for (int index = 0; index < values.size(); index++) {
+            Value value = values.get(index);
             if (isNull(value) || value.isNilValue()) continue;
-            MetaProperty<?> property = properties.get(key.asStringValue().toString());
+            MetaProperty<?> property = properties.get(index);
             creator.putValue(property, read(property.type(), value));
         }
         return cast(creator.create());

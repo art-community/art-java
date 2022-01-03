@@ -3,18 +3,18 @@ package io.art.tarantool.communication;
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.property.*;
-import io.art.message.pack.descriptor.*;
 import io.art.meta.model.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
+import io.art.tarantool.descriptor.*;
 import reactor.core.publisher.*;
 import static io.art.core.property.LazyProperty.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
 public class TarantoolCommunication implements Communication {
-    private final MessagePackWriter writer = new MessagePackWriter();
-    private final MessagePackReader reader = new MessagePackReader();
+    private final TarantoolModelWriter writer = new TarantoolModelWriter();
+    private final TarantoolModelReader reader = new TarantoolModelReader();
     private CommunicatorAction action;
     private final TarantoolClient client = new TarantoolClient(TarantoolInstanceConfiguration.builder()
             .host("localhost")

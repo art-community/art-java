@@ -30,6 +30,7 @@ import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
@@ -143,7 +144,7 @@ public abstract class MetaClass<T> {
                 .stream()
                 .collect(mapCollector(MetaProperty::name, identity()));
 
-        provider = new MetaProviderTemplate(immutableMapOf(gettablePropertyMap), gettableProperties.toArray(new MetaProperty[0]));
+        provider = new MetaProviderTemplate(immutableMapOf(gettablePropertyMap), immutableArrayOf(gettableProperties));
 
         Map<String, MetaProperty<?>> constructablePropertyMap = constructableProperties
                 .stream()
@@ -152,7 +153,7 @@ public abstract class MetaClass<T> {
         creator = MetaCreatorTemplate.builder()
                 .owner(this)
                 .propertyMap(immutableMapOf(constructablePropertyMap))
-                .propertyArray(constructableProperties.toArray(new MetaProperty[0]))
+                .propertyArray(immutableArrayOf(constructableProperties))
                 .noPropertiesConstructor(noPropertiesConstructor)
                 .localPropertiesConstructor(localPropertiesConstructor)
                 .allPropertiesConstructor(allPropertiesConstructor)

@@ -126,7 +126,7 @@ public class JsonWriter implements Writer {
 
     private static void writeFields(JsonGenerator generator, MetaType<?> type, Object value) throws IOException {
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
-        for (MetaProperty<?> property : provider.properties().values()) {
+        for (MetaProperty<?> property : provider.propertyMap().values()) {
             Object field = provider.getValue(property);
             if (isNull(field)) continue;
             writeField(generator, property.name(), property.type(), field);

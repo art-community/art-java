@@ -94,7 +94,7 @@ public class JsonReader implements Reader {
         JsonToken currentToken = parser.nextToken();
         MetaClass<?> declaration = type.declaration();
         MetaCreatorInstance creator = declaration.creator().validate(JsonException::new).instantiate();
-        ImmutableMap<String, MetaProperty<?>> properties = creator.properties();
+        ImmutableMap<String, MetaProperty<?>> properties = creator.propertyMap();
         do {
             if (currentToken == END_OBJECT) {
                 return creator.create();

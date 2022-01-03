@@ -23,7 +23,7 @@ public class CustomConfigurationParser {
 
     public <T> T parse(MetaClass<T> metaClass, ConfigurationSource source) {
         MetaCreatorInstance creator = metaClass.creator().validate(MetaException::new).instantiate();
-        for (MetaProperty<?> property : creator.properties().values()) {
+        for (MetaProperty<?> property : creator.propertyMap().values()) {
             apply(source.getNested(property.name()), nested -> creator.putValue(property, parseValue(nested, property.type())));
         }
         return cast(creator.create());
@@ -71,7 +71,7 @@ public class CustomConfigurationParser {
 
     private Object parseEntity(NestedConfiguration configuration, MetaClass<?> entityType) {
         MetaCreatorInstance creator = entityType.creator().validate(MetaException::new).instantiate();
-        for (MetaProperty<?> property : creator.properties().values()) {
+        for (MetaProperty<?> property : creator.propertyMap().values()) {
             apply(configuration.getNested(property.name()), nested -> creator.putValue(property, parseValue(nested, property.type())));
         }
         return creator.create();
