@@ -28,7 +28,7 @@ public interface TarantoolModuleConstants {
     int DEFAULT_TARANTOOL_REQUEST_TIMEOUT = 2 * 1000;
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 128;
-    int REQUEST_STEP = 8;
+    int REQUEST_ID_STEP = 8;
     String DEFAULT_TARANTOOL_HOST = "localhost";
     String DEFAULT_TARANTOOL_USERNAME = "guest";
     String DEFAULT_TARANTOOL_PASSWORD = "";
@@ -42,7 +42,7 @@ public interface TarantoolModuleConstants {
         int SALT_LENGTH = 44;
         int GREETING_LENGTH = 128;
         int MINIMAL_HEADER_SIZE = 5;
-        int AUTHENTICATION_LENGHT = 20;
+        int AUTHENTICATION_LENHGT = 20;
 
         int IPROTO_CODE = 0x00;
         int IPROTO_SYNC = 0x01;

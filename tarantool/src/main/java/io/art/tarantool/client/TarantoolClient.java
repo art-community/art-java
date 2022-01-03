@@ -5,8 +5,8 @@ import io.art.tarantool.authenticator.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.transport.*;
+import io.art.tarantool.registry.*;
 import io.netty.buffer.*;
-import io.netty.util.collection.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -18,11 +18,9 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
-import static io.art.tarantool.state.TarantoolRequestIdState.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Sinks.*;
@@ -39,8 +37,8 @@ public class TarantoolClient {
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
-    private final IntObjectMap<Many<Value>> receivers = new IntObjectHashMap<>(RECEIVERS_INITIAL_SIZE);
     private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
+    private final TarantoolReceiverRegistry receivers = new TarantoolReceiverRegistry(1024);
 
     private final static Logger logger = logger(TarantoolClient.class);
 
@@ -58,14 +56,12 @@ public class TarantoolClient {
 
     @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Flux<Value> call(String name, Flux<Value> arguments) {
-        int id = nextId();
-        Many<Value> receiver = many().unicast().onBackpressureBuffer();
-        receivers.put(id, receiver);
+        TarantoolReceiver receiver = receivers.allocate();
         arguments
-                .doOnNext(argument -> emitCall(id, callRequest(name, argument)))
+                .doOnNext(argument -> emitCall(receiver.getId(), callRequest(name, argument)))
                 .doOnError(logger::error)
                 .subscribe();
-        return receiver.asFlux();
+        return receiver.getSink().asFlux();
     }
 
     private void emitCall(int id, Value body) {
@@ -86,8 +82,7 @@ public class TarantoolClient {
 
     private void receive(ByteBuf bytes) {
         TarantoolResponse response = readTarantoolResponse(bytes);
-        Many<Value> receiver = receivers.remove(response.getHeader().getSyncId());
-        decrementId();
+        Many<Value> receiver = receivers.free(response.getHeader().getSyncId()).getSink();
         if (isNull(receiver)) return;
         Value body = response.getBody();
         if (response.isError()) {
