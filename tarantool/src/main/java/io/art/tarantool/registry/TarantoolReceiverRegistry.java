@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.*;
 public class TarantoolReceiverRegistry {
     private final int localPoolSize;
     private final IntObjectMap<TarantoolReceiver> receivers = new IntObjectHashMap<>(RECEIVERS_INITIAL_SIZE);
-    private final AtomicInteger pools = new AtomicInteger(1);
+    private final AtomicInteger pools = new AtomicInteger();
     private final ThreadLocal<LocalPool> pool = new ThreadLocal<>();
 
     public TarantoolReceiver allocate() {
@@ -24,7 +24,7 @@ public class TarantoolReceiverRegistry {
             return receiver;
         }
 
-        localPool = new LocalPool(pools.incrementAndGet() * localPoolSize, localPoolSize);
+        localPool = new LocalPool(pools.incrementAndGet() * localPoolSize + 1, localPoolSize);
         this.pool.set(localPool);
         int id = localPool.next();
         TarantoolReceiver receiver = new TarantoolReceiver(id, many().unicast().onBackpressureBuffer());
