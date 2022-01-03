@@ -12,11 +12,11 @@ public class TarantoolRequestIdState {
         return id.addAndGet(REQUEST_STEP);
     }
 
-    public static int authenticationId() {
-        return authenticationId;
-    }
-
     public static void decrementId() {
         id.addAndGet(-REQUEST_STEP);
+    }
+
+    public static int authenticationId() {
+        return authenticationId;
     }
 }
