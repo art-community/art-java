@@ -1,5 +1,6 @@
 package io.art.tarantool.test;
 
+import io.art.logging.*;
 import io.art.tarantool.communication.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
@@ -26,9 +27,13 @@ public class TarantoolTest {
     @Test
     public void test() {
         UserStorage.UserSpace space = preconfiguredCommunicatorProxy(UserStorage.UserSpace.class, TarantoolCommunication::new).getCommunicator();
-        space.saveUser(User.builder().id(1).name("test 1").build());
-        space.saveUser(User.builder().id(2).name("test 2").build());
-        space.saveUser(User.builder().id(3).name("test 3").build());
-        System.out.println(space.getAllUsers());
+        space.saveUser(User.builder().id(4).name("test 4").address(new User.Address(123)).build());
+        User user = space.getUser(4);
+        space.saveUser(user.toBuilder().address(user.getAddress().toBuilder().house(12).build()).build());
+
+        Logging.logger().info("test: ");
+        space.findTestUsers().subscribe(value -> Logging.logger().info(value.toString()));
+        Logging.logger().info("all: ");
+        space.getAllUsers().forEach(value -> Logging.logger().info(value.toString()));
     }
 }

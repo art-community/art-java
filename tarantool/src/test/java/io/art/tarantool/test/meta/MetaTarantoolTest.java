@@ -92,7 +92,8 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             @Override
-            public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+            public MetaProxy proxy(
+                Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
               return new MetaUserStorageProxy(invocations);
             }
 
@@ -106,22 +107,23 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               @Override
-              public Object invoke(io.art.tarantool.test.UserStorage instance, Object[] arguments)
-                  throws Throwable {
+              public java.lang.Object invoke(io.art.tarantool.test.UserStorage instance,
+                  java.lang.Object[] arguments) throws Throwable {
                 return instance.testSpace();
               }
 
               @Override
-              public Object invoke(io.art.tarantool.test.UserStorage instance) throws Throwable {
+              public java.lang.Object invoke(io.art.tarantool.test.UserStorage instance) throws
+                  Throwable {
                 return instance.testSpace();
               }
             }
 
             public class MetaUserStorageProxy extends MetaProxy implements io.art.tarantool.test.UserStorage {
-              private final Function<Object, Object> testSpaceInvocation;
+              private final Function<java.lang.Object, java.lang.Object> testSpaceInvocation;
 
               public MetaUserStorageProxy(
-                  Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                  Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                 super(invocations);
                 testSpaceInvocation = invocations.get(testSpaceMethod);
               }
@@ -140,6 +142,8 @@ public class MetaTarantoolTest extends MetaLibrary {
               private final MetaDeleteUserMethod deleteUserMethod = register(new MetaDeleteUserMethod());
 
               private final MetaGetAllUsersMethod getAllUsersMethod = register(new MetaGetAllUsersMethod());
+
+              private final MetaFindTestUsersMethod findTestUsersMethod = register(new MetaFindTestUsersMethod());
 
               private MetaUserSpaceClass() {
                 super(metaType(io.art.tarantool.test.UserStorage.UserSpace.class));
@@ -161,8 +165,13 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return getAllUsersMethod;
               }
 
+              public MetaFindTestUsersMethod findTestUsersMethod() {
+                return findTestUsersMethod;
+              }
+
               @Override
-              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+              public MetaProxy proxy(
+                  Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                 return new MetaUserSpaceProxy(invocations);
               }
 
@@ -174,14 +183,14 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object[] arguments) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.saveUser((io.art.tarantool.test.model.User)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object argument) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object argument) throws Throwable {
                   return instance.saveUser((io.art.tarantool.test.model.User)(argument));
                 }
 
@@ -198,14 +207,14 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object[] arguments) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.getUser((int)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object argument) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object argument) throws Throwable {
                   return instance.getUser((int)(argument));
                 }
 
@@ -222,14 +231,14 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object[] arguments) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.deleteUser((int)(arguments[0]));
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object argument) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object argument) throws Throwable {
                   return instance.deleteUser((int)(argument));
                 }
 
@@ -238,40 +247,61 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaGetAllUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, java.util.List<io.art.tarantool.test.model.User>> {
+              public static final class MetaGetAllUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, java.util.stream.Stream<io.art.tarantool.test.model.User>> {
                 private MetaGetAllUsersMethod() {
-                  super("getAllUsers",metaType(java.util.List.class,metaType(io.art.tarantool.test.model.User.class)));
+                  super("getAllUsers",metaType(java.util.stream.Stream.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
-                    Object[] arguments) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.getAllUsers();
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance) throws
-                    Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance)
+                    throws Throwable {
                   return instance.getAllUsers();
                 }
               }
 
+              public static final class MetaFindTestUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
+                private MetaFindTestUsersMethod() {
+                  super("findTestUsers",metaType(reactor.core.publisher.Flux.class,metaType(io.art.tarantool.test.model.User.class)));
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.findTestUsers();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance)
+                    throws Throwable {
+                  return instance.findTestUsers();
+                }
+              }
+
               public class MetaUserSpaceProxy extends MetaProxy implements io.art.tarantool.test.UserStorage.UserSpace {
-                private final Function<Object, Object> saveUserInvocation;
+                private final Function<java.lang.Object, java.lang.Object> saveUserInvocation;
 
-                private final Function<Object, Object> getUserInvocation;
+                private final Function<java.lang.Object, java.lang.Object> getUserInvocation;
 
-                private final Function<Object, Object> deleteUserInvocation;
+                private final Function<java.lang.Object, java.lang.Object> deleteUserInvocation;
 
-                private final Function<Object, Object> getAllUsersInvocation;
+                private final Function<java.lang.Object, java.lang.Object> getAllUsersInvocation;
+
+                private final Function<java.lang.Object, java.lang.Object> findTestUsersInvocation;
 
                 public MetaUserSpaceProxy(
-                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                    Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                   super(invocations);
                   saveUserInvocation = invocations.get(saveUserMethod);
                   getUserInvocation = invocations.get(getUserMethod);
                   deleteUserInvocation = invocations.get(deleteUserMethod);
                   getAllUsersInvocation = invocations.get(getAllUsersMethod);
+                  findTestUsersInvocation = invocations.get(findTestUsersMethod);
                 }
 
                 @Override
@@ -291,8 +321,14 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public java.util.List<io.art.tarantool.test.model.User> getAllUsers() {
-                  return (java.util.List<io.art.tarantool.test.model.User>)(getAllUsersInvocation.apply(null));
+                public java.util.stream.Stream<io.art.tarantool.test.model.User> getAllUsers() {
+                  return (java.util.stream.Stream<io.art.tarantool.test.model.User>)(getAllUsersInvocation.apply(null));
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<io.art.tarantool.test.model.User> findTestUsers(
+                    ) {
+                  return (reactor.core.publisher.Flux<io.art.tarantool.test.model.User>)(findTestUsersInvocation.apply(null));
                 }
               }
             }
@@ -316,11 +352,19 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
 
+              private final MetaField<io.art.tarantool.test.model.User.Address> addressField = register(new MetaField<>("address",metaType(io.art.tarantool.test.model.User.Address.class),false));
+
+              private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
+
               private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod());
 
               private final MetaGetNameMethod getNameMethod = register(new MetaGetNameMethod());
 
+              private final MetaGetAddressMethod getAddressMethod = register(new MetaGetAddressMethod());
+
               private final MetaUserBuilderClass userBuilderClass = register(new MetaUserBuilderClass());
+
+              private final MetaAddressClass addressClass = register(new MetaAddressClass());
 
               private MetaUserClass() {
                 super(metaType(io.art.tarantool.test.model.User.class));
@@ -338,6 +382,14 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return nameField;
               }
 
+              public MetaField<io.art.tarantool.test.model.User.Address> addressField() {
+                return addressField;
+              }
+
+              public MetaToBuilderMethod toBuilderMethod() {
+                return toBuilderMethod;
+              }
+
               public MetaGetIdMethod getIdMethod() {
                 return getIdMethod;
               }
@@ -346,8 +398,16 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return getNameMethod;
               }
 
+              public MetaGetAddressMethod getAddressMethod() {
+                return getAddressMethod;
+              }
+
               public MetaUserBuilderClass userBuilderClass() {
                 return userBuilderClass;
+              }
+
+              public MetaAddressClass addressClass() {
+                return addressClass;
               }
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.User> {
@@ -355,14 +415,16 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(1, "name",metaType(java.lang.String.class)));
 
+                private final MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter = register(new MetaParameter<>(2, "address",metaType(io.art.tarantool.test.model.User.Address.class)));
+
                 private MetaConstructorConstructor() {
                   super(metaType(io.art.tarantool.test.model.User.class));
                 }
 
                 @Override
-                public io.art.tarantool.test.model.User invoke(Object[] arguments) throws
+                public io.art.tarantool.test.model.User invoke(java.lang.Object[] arguments) throws
                     Throwable {
-                  return new io.art.tarantool.test.model.User((int)(arguments[0]),(java.lang.String)(arguments[1]));
+                  return new io.art.tarantool.test.model.User((int)(arguments[0]),(java.lang.String)(arguments[1]),(io.art.tarantool.test.model.User.Address)(arguments[2]));
                 }
 
                 public MetaParameter<Integer> idParameter() {
@@ -372,6 +434,28 @@ public class MetaTarantoolTest extends MetaLibrary {
                 public MetaParameter<java.lang.String> nameParameter() {
                   return nameParameter;
                 }
+
+                public MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter() {
+                  return addressParameter;
+                }
+              }
+
+              public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, io.art.tarantool.test.model.User.UserBuilder> {
+                private MetaToBuilderMethod() {
+                  super("toBuilder",metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.toBuilder();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                    Throwable {
+                  return instance.toBuilder();
+                }
               }
 
               public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, Integer> {
@@ -380,13 +464,14 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.model.User instance, Object[] arguments)
-                    throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.getId();
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.model.User instance) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                    Throwable {
                   return instance.getId();
                 }
               }
@@ -397,14 +482,33 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.model.User instance, Object[] arguments)
-                    throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                    java.lang.Object[] arguments) throws Throwable {
                   return instance.getName();
                 }
 
                 @Override
-                public Object invoke(io.art.tarantool.test.model.User instance) throws Throwable {
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                    Throwable {
                   return instance.getName();
+                }
+              }
+
+              public static final class MetaGetAddressMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, io.art.tarantool.test.model.User.Address> {
+                private MetaGetAddressMethod() {
+                  super("getAddress",metaType(io.art.tarantool.test.model.User.Address.class));
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.getAddress();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                    Throwable {
+                  return instance.getAddress();
                 }
               }
 
@@ -413,9 +517,13 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
 
+                private final MetaField<io.art.tarantool.test.model.User.Address> addressField = register(new MetaField<>("address",metaType(io.art.tarantool.test.model.User.Address.class),false));
+
                 private final MetaIdMethod idMethod = register(new MetaIdMethod());
 
                 private final MetaNameMethod nameMethod = register(new MetaNameMethod());
+
+                private final MetaAddressMethod addressMethod = register(new MetaAddressMethod());
 
                 private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
 
@@ -431,12 +539,20 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return nameField;
                 }
 
+                public MetaField<io.art.tarantool.test.model.User.Address> addressField() {
+                  return addressField;
+                }
+
                 public MetaIdMethod idMethod() {
                   return idMethod;
                 }
 
                 public MetaNameMethod nameMethod() {
                   return nameMethod;
+                }
+
+                public MetaAddressMethod addressMethod() {
+                  return addressMethod;
                 }
 
                 public MetaBuildMethod buildMethod() {
@@ -451,14 +567,16 @@ public class MetaTarantoolTest extends MetaLibrary {
                   }
 
                   @Override
-                  public Object invoke(io.art.tarantool.test.model.User.UserBuilder instance,
-                      Object[] arguments) throws Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
                     return instance.id((int)(arguments[0]));
                   }
 
                   @Override
-                  public Object invoke(io.art.tarantool.test.model.User.UserBuilder instance,
-                      Object argument) throws Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object argument) throws Throwable {
                     return instance.id((int)(argument));
                   }
 
@@ -475,19 +593,48 @@ public class MetaTarantoolTest extends MetaLibrary {
                   }
 
                   @Override
-                  public Object invoke(io.art.tarantool.test.model.User.UserBuilder instance,
-                      Object[] arguments) throws Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
                     return instance.name((java.lang.String)(arguments[0]));
                   }
 
                   @Override
-                  public Object invoke(io.art.tarantool.test.model.User.UserBuilder instance,
-                      Object argument) throws Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object argument) throws Throwable {
                     return instance.name((java.lang.String)(argument));
                   }
 
                   public MetaParameter<java.lang.String> nameParameter() {
                     return nameParameter;
+                  }
+                }
+
+                public static final class MetaAddressMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.UserBuilder, io.art.tarantool.test.model.User.UserBuilder> {
+                  private final MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter = register(new MetaParameter<>(0, "address",metaType(io.art.tarantool.test.model.User.Address.class)));
+
+                  private MetaAddressMethod() {
+                    super("address",metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.address((io.art.tarantool.test.model.User.Address)(arguments[0]));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object argument) throws Throwable {
+                    return instance.address((io.art.tarantool.test.model.User.Address)(argument));
+                  }
+
+                  public MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter(
+                      ) {
+                    return addressParameter;
                   }
                 }
 
@@ -497,15 +644,182 @@ public class MetaTarantoolTest extends MetaLibrary {
                   }
 
                   @Override
-                  public Object invoke(io.art.tarantool.test.model.User.UserBuilder instance,
-                      Object[] arguments) throws Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
                     return instance.build();
                   }
 
                   @Override
-                  public Object invoke(io.art.tarantool.test.model.User.UserBuilder instance) throws
-                      Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.User.UserBuilder instance) throws Throwable {
                     return instance.build();
+                  }
+                }
+              }
+
+              public static final class MetaAddressClass extends MetaClass<io.art.tarantool.test.model.User.Address> {
+                private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
+
+                private final MetaField<Integer> houseField = register(new MetaField<>("house",metaType(int.class),false));
+
+                private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
+
+                private final MetaGetHouseMethod getHouseMethod = register(new MetaGetHouseMethod());
+
+                private final MetaAddressBuilderClass addressBuilderClass = register(new MetaAddressBuilderClass());
+
+                private MetaAddressClass() {
+                  super(metaType(io.art.tarantool.test.model.User.Address.class));
+                }
+
+                public MetaConstructorConstructor constructor() {
+                  return constructor;
+                }
+
+                public MetaField<Integer> houseField() {
+                  return houseField;
+                }
+
+                public MetaToBuilderMethod toBuilderMethod() {
+                  return toBuilderMethod;
+                }
+
+                public MetaGetHouseMethod getHouseMethod() {
+                  return getHouseMethod;
+                }
+
+                public MetaAddressBuilderClass addressBuilderClass() {
+                  return addressBuilderClass;
+                }
+
+                public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.User.Address> {
+                  private final MetaParameter<Integer> houseParameter = register(new MetaParameter<>(0, "house",metaType(int.class)));
+
+                  private MetaConstructorConstructor() {
+                    super(metaType(io.art.tarantool.test.model.User.Address.class));
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.User.Address invoke(
+                      java.lang.Object[] arguments) throws Throwable {
+                    return new io.art.tarantool.test.model.User.Address((int)(arguments[0]));
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.User.Address invoke(java.lang.Object argument)
+                      throws Throwable {
+                    return new io.art.tarantool.test.model.User.Address((int)(argument));
+                  }
+
+                  public MetaParameter<Integer> houseParameter() {
+                    return houseParameter;
+                  }
+                }
+
+                public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address, io.art.tarantool.test.model.User.Address.AddressBuilder> {
+                  private MetaToBuilderMethod() {
+                    super("toBuilder",metaType(io.art.tarantool.test.model.User.Address.AddressBuilder.class));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.toBuilder();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance)
+                      throws Throwable {
+                    return instance.toBuilder();
+                  }
+                }
+
+                public static final class MetaGetHouseMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address, Integer> {
+                  private MetaGetHouseMethod() {
+                    super("getHouse",metaType(int.class));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.getHouse();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance)
+                      throws Throwable {
+                    return instance.getHouse();
+                  }
+                }
+
+                public static final class MetaAddressBuilderClass extends MetaClass<io.art.tarantool.test.model.User.Address.AddressBuilder> {
+                  private final MetaField<Integer> houseField = register(new MetaField<>("house",metaType(int.class),false));
+
+                  private final MetaHouseMethod houseMethod = register(new MetaHouseMethod());
+
+                  private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
+
+                  private MetaAddressBuilderClass() {
+                    super(metaType(io.art.tarantool.test.model.User.Address.AddressBuilder.class));
+                  }
+
+                  public MetaField<Integer> houseField() {
+                    return houseField;
+                  }
+
+                  public MetaHouseMethod houseMethod() {
+                    return houseMethod;
+                  }
+
+                  public MetaBuildMethod buildMethod() {
+                    return buildMethod;
+                  }
+
+                  public static final class MetaHouseMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address.AddressBuilder, io.art.tarantool.test.model.User.Address.AddressBuilder> {
+                    private final MetaParameter<Integer> houseParameter = register(new MetaParameter<>(0, "house",metaType(int.class)));
+
+                    private MetaHouseMethod() {
+                      super("house",metaType(io.art.tarantool.test.model.User.Address.AddressBuilder.class));
+                    }
+
+                    @Override
+                    public java.lang.Object invoke(
+                        io.art.tarantool.test.model.User.Address.AddressBuilder instance,
+                        java.lang.Object[] arguments) throws Throwable {
+                      return instance.house((int)(arguments[0]));
+                    }
+
+                    @Override
+                    public java.lang.Object invoke(
+                        io.art.tarantool.test.model.User.Address.AddressBuilder instance,
+                        java.lang.Object argument) throws Throwable {
+                      return instance.house((int)(argument));
+                    }
+
+                    public MetaParameter<Integer> houseParameter() {
+                      return houseParameter;
+                    }
+                  }
+
+                  public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address.AddressBuilder, io.art.tarantool.test.model.User.Address> {
+                    private MetaBuildMethod() {
+                      super("build",metaType(io.art.tarantool.test.model.User.Address.class));
+                    }
+
+                    @Override
+                    public java.lang.Object invoke(
+                        io.art.tarantool.test.model.User.Address.AddressBuilder instance,
+                        java.lang.Object[] arguments) throws Throwable {
+                      return instance.build();
+                    }
+
+                    @Override
+                    public java.lang.Object invoke(
+                        io.art.tarantool.test.model.User.Address.AddressBuilder instance) throws
+                        Throwable {
+                      return instance.build();
+                    }
                   }
                 }
               }
