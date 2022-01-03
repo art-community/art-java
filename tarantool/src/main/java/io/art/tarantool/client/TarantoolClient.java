@@ -18,6 +18,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
@@ -38,7 +39,7 @@ public class TarantoolClient {
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
     private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
-    private final TarantoolReceiverRegistry receivers = new TarantoolReceiverRegistry(1024);
+    private final TarantoolReceiverRegistry receivers = new TarantoolReceiverRegistry(RECEIVERS_POOL_MAXIMUM);
 
     private final static Logger logger = logger(TarantoolClient.class);
 
@@ -82,27 +83,28 @@ public class TarantoolClient {
 
     private void receive(ByteBuf bytes) {
         TarantoolResponse response = readTarantoolResponse(bytes);
-        Many<Value> receiver = receivers.free(response.getHeader().getSyncId()).getSink();
+        TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId());
         if (isNull(receiver)) return;
+        Many<Value> sink = receiver.getSink();
         Value body = response.getBody();
         if (response.isError()) {
-            receiver.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
-            receiver.tryEmitComplete();
+            sink.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
+            sink.tryEmitComplete();
             return;
         }
         if (isNull(body) || !body.isMapValue()) {
-            receiver.tryEmitComplete();
+            sink.tryEmitComplete();
             return;
         }
         Map<Value, Value> mapValue = body.asMapValue().map();
         Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
         ArrayValue bodyValues;
         if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() == 0) {
-            receiver.tryEmitComplete();
+            sink.tryEmitComplete();
             return;
         }
-        receiver.tryEmitNext(bodyValues.get(0));
-        receiver.tryEmitComplete();
+        sink.tryEmitNext(bodyValues.get(0));
+        sink.tryEmitComplete();
     }
 
     private void subscribe() {

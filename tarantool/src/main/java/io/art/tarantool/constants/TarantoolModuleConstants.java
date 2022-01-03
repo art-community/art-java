@@ -19,6 +19,7 @@
 package io.art.tarantool.constants;
 
 import lombok.*;
+import static java.lang.Integer.*;
 
 
 public interface TarantoolModuleConstants {
@@ -27,7 +28,8 @@ public interface TarantoolModuleConstants {
     int DEFAULT_TARANTOOL_READ_TIMEOUT = 1000;
     int DEFAULT_TARANTOOL_REQUEST_TIMEOUT = 2 * 1000;
     int DEFAULT_TARANTOOL_PORT = 3301;
-    int RECEIVERS_INITIAL_SIZE = 128;
+    int RECEIVERS_INITIAL_SIZE = 8129;
+    int RECEIVERS_POOL_MAXIMUM = MAX_VALUE / 128;
     int REQUEST_ID_STEP = 8;
     String DEFAULT_TARANTOOL_HOST = "localhost";
     String DEFAULT_TARANTOOL_USERNAME = "guest";
