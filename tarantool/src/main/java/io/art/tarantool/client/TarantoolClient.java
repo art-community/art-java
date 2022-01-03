@@ -9,6 +9,7 @@ import io.netty.buffer.*;
 import io.netty.util.collection.*;
 import lombok.*;
 import org.msgpack.value.Value;
+import org.msgpack.value.*;
 import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
@@ -100,11 +101,12 @@ public class TarantoolClient {
         }
         Map<Value, Value> mapValue = body.asMapValue().map();
         Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
-        if (isNull(bodyData) || !bodyData.isArrayValue() || bodyData.asArrayValue().size() == 0) {
+        ArrayValue bodyValues;
+        if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() == 0) {
             receiver.tryEmitComplete();
             return;
         }
-        receiver.tryEmitNext(bodyData.asArrayValue().get(0));
+        receiver.tryEmitNext(bodyValues.get(0));
         receiver.tryEmitComplete();
     }
 
