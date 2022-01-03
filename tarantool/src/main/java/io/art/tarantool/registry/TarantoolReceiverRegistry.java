@@ -10,10 +10,10 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class TarantoolReceiverRegistry {
+    private final int localPoolSize;
     private final IntObjectMap<TarantoolReceiver> receivers = new IntObjectHashMap<>(RECEIVERS_INITIAL_SIZE);
     private final AtomicInteger pools = new AtomicInteger();
     private final ThreadLocal<LocalPool> pool = new ThreadLocal<>();
-    private final int localPoolSize;
 
     public TarantoolReceiver allocate() {
         LocalPool localPool = pool.get();
