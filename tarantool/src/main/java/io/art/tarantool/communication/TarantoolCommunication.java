@@ -59,7 +59,6 @@ public class TarantoolCommunication implements Communication {
         MetaType<?> outputType = action.getOutputType();
 
         if (isNull(inputMappingType)) {
-
             if (outputType.internalKind() == FLUX) {
                 return (input, client) -> client
                         .call(actionId)
