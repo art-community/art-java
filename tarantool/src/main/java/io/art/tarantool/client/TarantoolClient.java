@@ -55,6 +55,12 @@ public class TarantoolClient {
         apply(disposer, Disposable::dispose);
     }
 
+    public Flux<Value> call(String name) {
+        TarantoolReceiver receiver = receivers.allocate();
+        emitCall(receiver.getId(), callRequest(name));
+        return receiver.getSink().asFlux();
+    }
+
     @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Flux<Value> call(String name, Flux<Value> arguments) {
         TarantoolReceiver receiver = receivers.allocate();

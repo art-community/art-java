@@ -26,8 +26,9 @@ public class TarantoolTest {
     @Test
     public void test() {
         UserStorage.UserSpace space = preconfiguredCommunicatorProxy(UserStorage.UserSpace.class, TarantoolCommunication::new).getCommunicator();
-        User result = space.saveUser(User.builder().name("test").build());
-        System.out.println(result);
-        System.out.println(space.getUser(result.getId()));
+        space.saveUser(User.builder().id(1).name("test 1").build());
+        space.saveUser(User.builder().id(2).name("test 2").build());
+        space.saveUser(User.builder().id(3).name("test 3").build());
+        System.out.println(space.getAllUsers());
     }
 }

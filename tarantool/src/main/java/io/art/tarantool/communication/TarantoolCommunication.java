@@ -47,7 +47,7 @@ public class TarantoolCommunication implements Communication {
         String actionId = action.getId().getActionId();
 
         if (isNull(inputType)) {
-            return (input, client) -> client.call(actionId, Flux.empty()).map(output -> reader.read(outputType, output));
+            return (input, client) -> client.call(actionId).map(output -> reader.read(outputType, output));
         }
 
         return (input, client) -> client

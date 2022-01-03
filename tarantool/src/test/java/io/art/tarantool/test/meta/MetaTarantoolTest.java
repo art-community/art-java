@@ -137,6 +137,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaGetUserMethod getUserMethod = register(new MetaGetUserMethod());
 
+              private final MetaDeleteUserMethod deleteUserMethod = register(new MetaDeleteUserMethod());
+
+              private final MetaGetAllUsersMethod getAllUsersMethod = register(new MetaGetAllUsersMethod());
+
               private MetaUserSpaceClass() {
                 super(metaType(io.art.tarantool.test.UserStorage.UserSpace.class));
               }
@@ -147,6 +151,14 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaGetUserMethod getUserMethod() {
                 return getUserMethod;
+              }
+
+              public MetaDeleteUserMethod deleteUserMethod() {
+                return deleteUserMethod;
+              }
+
+              public MetaGetAllUsersMethod getAllUsersMethod() {
+                return getAllUsersMethod;
               }
 
               @Override
@@ -202,16 +214,64 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
+              public static final class MetaDeleteUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, io.art.tarantool.test.model.User> {
+                private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+
+                private MetaDeleteUserMethod() {
+                  super("deleteUser",metaType(io.art.tarantool.test.model.User.class));
+                }
+
+                @Override
+                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.deleteUser((int)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    Object argument) throws Throwable {
+                  return instance.deleteUser((int)(argument));
+                }
+
+                public MetaParameter<Integer> idParameter() {
+                  return idParameter;
+                }
+              }
+
+              public static final class MetaGetAllUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, java.util.List<io.art.tarantool.test.model.User>> {
+                private MetaGetAllUsersMethod() {
+                  super("getAllUsers",metaType(java.util.List.class,metaType(io.art.tarantool.test.model.User.class)));
+                }
+
+                @Override
+                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.getAllUsers();
+                }
+
+                @Override
+                public Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance) throws
+                    Throwable {
+                  return instance.getAllUsers();
+                }
+              }
+
               public class MetaUserSpaceProxy extends MetaProxy implements io.art.tarantool.test.UserStorage.UserSpace {
                 private final Function<Object, Object> saveUserInvocation;
 
                 private final Function<Object, Object> getUserInvocation;
+
+                private final Function<Object, Object> deleteUserInvocation;
+
+                private final Function<Object, Object> getAllUsersInvocation;
 
                 public MetaUserSpaceProxy(
                     Map<MetaMethod<?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   saveUserInvocation = invocations.get(saveUserMethod);
                   getUserInvocation = invocations.get(getUserMethod);
+                  deleteUserInvocation = invocations.get(deleteUserMethod);
+                  getAllUsersInvocation = invocations.get(getAllUsersMethod);
                 }
 
                 @Override
@@ -223,6 +283,16 @@ public class MetaTarantoolTest extends MetaLibrary {
                 @Override
                 public io.art.tarantool.test.model.User getUser(int id) {
                   return (io.art.tarantool.test.model.User)(getUserInvocation.apply(id));
+                }
+
+                @Override
+                public io.art.tarantool.test.model.User deleteUser(int id) {
+                  return (io.art.tarantool.test.model.User)(deleteUserInvocation.apply(id));
+                }
+
+                @Override
+                public java.util.List<io.art.tarantool.test.model.User> getAllUsers() {
+                  return (java.util.List<io.art.tarantool.test.model.User>)(getAllUsersInvocation.apply(null));
                 }
               }
             }
