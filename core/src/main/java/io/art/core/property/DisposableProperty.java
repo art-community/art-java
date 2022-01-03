@@ -93,7 +93,7 @@ public class DisposableProperty<T> implements Supplier<T> {
         if (localValue == UNINITIALIZED) {
             localValue = cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
             if (localValue == UNINITIALIZED) {
-                T loaded = orThrow(loader.get(), new InternalRuntimeException(MANAGED_VALUE_IS_NULL));
+                T loaded = orThrow(loader.get(), new InternalRuntimeException(PROPERTY_VALUE_IS_NULL));
                 localValue = UNSAFE.compareAndSwapObject(this, VALUE_OFFSET, UNINITIALIZED, loaded)
                         ? loaded
                         : cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
