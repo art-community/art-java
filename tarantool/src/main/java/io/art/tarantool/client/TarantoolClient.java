@@ -6,6 +6,7 @@ import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.transport.*;
 import io.netty.buffer.*;
+import io.netty.util.collection.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import reactor.core.*;
@@ -14,7 +15,6 @@ import reactor.netty.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
-import static io.art.core.factory.ArrayFactory.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
@@ -38,7 +38,7 @@ public class TarantoolClient {
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
-    private final List<Sinks.Many<Value>> receivers = dynamicArray(RECEIVERS_INITIAL_SIZE);
+    private final IntObjectMap<Many<Value>> receivers = new IntObjectHashMap<>(RECEIVERS_INITIAL_SIZE);
     private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
 
     private final static Logger logger = logger(TarantoolClient.class);
@@ -59,7 +59,7 @@ public class TarantoolClient {
     public Flux<Value> call(String name, Flux<Value> arguments) {
         int id = nextId();
         Many<Value> receiver = many().unicast().onBackpressureBuffer();
-        receivers.add(id, receiver);
+        receivers.put(id, receiver);
         arguments
                 .doOnNext(argument -> emitCall(id, callRequest(name, argument)))
                 .doOnError(logger::error)
@@ -92,6 +92,7 @@ public class TarantoolClient {
             Value body = response.getBody();
             if (response.isError()) {
                 receiver.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
+                receiver.tryEmitComplete();
                 return;
             }
             if (isNull(body) || !body.isMapValue()) {
@@ -100,11 +101,12 @@ public class TarantoolClient {
             }
             Map<Value, Value> mapValue = body.asMapValue().map();
             Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
-            if (isNull(bodyData) || bodyData.isArrayValue() || bodyData.asArrayValue().size() == 0) {
+            if (isNull(bodyData) || !bodyData.isArrayValue() || bodyData.asArrayValue().size() == 0) {
                 receiver.tryEmitComplete();
                 return;
             }
             receiver.tryEmitNext(bodyData.asArrayValue().get(0));
+            receiver.tryEmitComplete();
         }
     }
 

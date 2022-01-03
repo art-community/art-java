@@ -30,6 +30,5 @@ public class TarantoolTest {
         User result = space.saveUser(User.builder().name("test").build());
         System.out.println(result);
         System.out.println(space.getUser(result.getId()));
-        block();
     }
 }
