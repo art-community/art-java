@@ -20,6 +20,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConsta
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
+import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
 import static io.art.tarantool.state.TarantoolRequestIdState.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -31,14 +32,14 @@ import java.util.concurrent.atomic.*;
 public class TarantoolClient {
     private final TarantoolInstanceConfiguration configuration;
 
-    private volatile NettyOutbound outbound;
     private volatile Disposable disposer;
     private volatile Mono<? extends Connection> connection;
 
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
-    private final List<Sinks.One<Value>> receivers = dynamicArray(RECEIVERS_INITIAL_SIZE);
+    private final List<Sinks.Many<Value>> receivers = dynamicArray(RECEIVERS_INITIAL_SIZE);
+    private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
 
     private final static Logger logger = logger(TarantoolClient.class);
 
@@ -55,15 +56,20 @@ public class TarantoolClient {
     }
 
     @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
-    public Flux<Value> send(Flux<Value> input) {
+    public Flux<Value> call(String name, Flux<Value> arguments) {
         int id = nextId();
-        One<Value> receiver = one();
+        Many<Value> receiver = many().unicast().onBackpressureBuffer();
         receivers.add(id, receiver);
-        Flux<ByteBuf> request = input
-                .map(value -> writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), value))
-                .switchIfEmpty(Flux.just(writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), newMap(emptyMap()))));
-        outbound.send(request).then().subscribe();
-        return receiver.asMono().flux();
+        arguments
+                .doOnNext(argument -> emitCall(id, callRequest(name, argument)))
+                .doOnError(logger::error)
+                .subscribe();
+        return receiver.asFlux();
+    }
+
+    private void emitCall(int id, Value body) {
+        ByteBuf tarantoolRequest = writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), body);
+        sender.tryEmitNext(tarantoolRequest);
     }
 
     private void onAuthenticate(boolean authenticated, String error) {
@@ -80,7 +86,7 @@ public class TarantoolClient {
     private void receive(ByteBuf bytes) {
         if (authenticated.get()) {
             TarantoolResponse response = readTarantoolResponse(bytes);
-            Sinks.One<Value> receiver = receivers.remove(response.getHeader().getSyncId());
+            Many<Value> receiver = receivers.remove(response.getHeader().getSyncId());
             decrementId();
             if (isNull(receiver)) return;
             Value body = response.getBody();
@@ -89,16 +95,16 @@ public class TarantoolClient {
                 return;
             }
             if (isNull(body) || !body.isMapValue()) {
-                receiver.tryEmitEmpty();
+                receiver.tryEmitComplete();
                 return;
             }
             Map<Value, Value> mapValue = body.asMapValue().map();
             Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
-            if (isNull(bodyData)) {
-                receiver.tryEmitEmpty();
+            if (isNull(bodyData) || bodyData.isArrayValue() || bodyData.asArrayValue().size() == 0) {
+                receiver.tryEmitComplete();
                 return;
             }
-            receiver.tryEmitValue(bodyData.asArrayValue().get(0));
+            receiver.tryEmitNext(bodyData.asArrayValue().get(0));
         }
     }
 
@@ -109,10 +115,10 @@ public class TarantoolClient {
     }
 
     private void setup(Connection connection) {
-        this.outbound = connection.outbound();
         connection
                 .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
                 .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
         connection.inbound().receive().doOnError(logger::error).doOnNext(this::receive).subscribe();
+        connection.outbound().send(sender.asFlux().doOnError(logger::error)).then().subscribe();
     }
 }

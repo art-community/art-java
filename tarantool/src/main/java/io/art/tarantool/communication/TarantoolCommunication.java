@@ -6,7 +6,6 @@ import io.art.message.pack.descriptor.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import reactor.core.publisher.*;
-import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
 import static java.util.Objects.*;
 
 public class TarantoolCommunication implements Communication {
@@ -34,15 +33,17 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public Flux<Object> communicate(Flux<Object> input) {
-        return connectedClient.flatMapMany(client -> isNull(action.getInputType())
+        return connectedClient.flatMapMany(client -> call(input, client));
 
-                ? client
-                .send(Flux.just(callRequest(action.getId().getActionId())))
-                .map(output -> reader.read(action.getOutputType(), output))
+    }
 
-                : client
-                .send(input.map(element -> callRequest(action.getId().getActionId(), writer.write(action.getInputType(), element))))
-                .map(output -> reader.read(action.getOutputType(), output)));
+    private Flux<Object> call(Flux<Object> input, TarantoolClient client) {
+        if (isNull(action.getInputType())) {
+            return client.call(action.getId().getActionId(), Flux.empty()).map(output -> reader.read(action.getOutputType(), output));
+        }
 
+        return client
+                .call(action.getId().getActionId(), input.map(value -> writer.write(action.getInputType(), value)))
+                .map(output -> reader.read(action.getOutputType(), output));
     }
 }
