@@ -175,11 +175,11 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return new MetaUserSpaceProxy(invocations);
               }
 
-              public static final class MetaSaveUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, io.art.tarantool.test.model.User> {
+              public static final class MetaSaveUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Mono<io.art.tarantool.test.model.User>> {
                 private final MetaParameter<io.art.tarantool.test.model.User> requestParameter = register(new MetaParameter<>(0, "request",metaType(io.art.tarantool.test.model.User.class)));
 
                 private MetaSaveUserMethod() {
-                  super("saveUser",metaType(io.art.tarantool.test.model.User.class));
+                  super("saveUser",metaType(reactor.core.publisher.Mono.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
@@ -199,11 +199,11 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaGetUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, io.art.tarantool.test.model.User> {
+              public static final class MetaGetUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
                 private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                 private MetaGetUserMethod() {
-                  super("getUser",metaType(io.art.tarantool.test.model.User.class));
+                  super("getUser",metaType(reactor.core.publisher.Flux.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
@@ -305,14 +305,15 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public io.art.tarantool.test.model.User saveUser(
+                public reactor.core.publisher.Mono<io.art.tarantool.test.model.User> saveUser(
                     io.art.tarantool.test.model.User request) {
-                  return (io.art.tarantool.test.model.User)(saveUserInvocation.apply(request));
+                  return (reactor.core.publisher.Mono<io.art.tarantool.test.model.User>)(saveUserInvocation.apply(request));
                 }
 
                 @Override
-                public io.art.tarantool.test.model.User getUser(int id) {
-                  return (io.art.tarantool.test.model.User)(getUserInvocation.apply(id));
+                public reactor.core.publisher.Flux<io.art.tarantool.test.model.User> getUser(
+                    int id) {
+                  return (reactor.core.publisher.Flux<io.art.tarantool.test.model.User>)(getUserInvocation.apply(id));
                 }
 
                 @Override

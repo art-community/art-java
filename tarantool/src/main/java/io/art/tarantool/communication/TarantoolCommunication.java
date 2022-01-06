@@ -17,7 +17,7 @@ import java.util.function.*;
 public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
     private final TarantoolModelReader reader = new TarantoolModelReader();
-    private CommunicatorAction action;
+    private String actionId;
     private final TarantoolClient client = new TarantoolClient(TarantoolInstanceConfiguration.builder()
             .host("localhost")
             .port(3301)
@@ -32,7 +32,7 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public void initialize(CommunicatorAction action) {
-        this.action = action;
+        this.actionId = action.getId().getActionId();
         inputMappingType = action.getInputType();
         if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
             inputMappingType = inputMappingType.parameters().get(0);
@@ -55,20 +55,18 @@ public class TarantoolCommunication implements Communication {
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
-        String actionId = action.getId().getActionId();
-
         if (isNull(inputMappingType)) {
             return (input, client) -> cast(client.call(actionId).map(element -> reader.read(outputMappingType, element)).flux());
         }
 
         return (input, client) -> {
             Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
-            subscribeInput(actionId, input, client, emitter);
+            subscribeInput(input, client, emitter);
             return emitter.asFlux();
         };
     }
 
-    private void subscribeInput(String actionId, Flux<Object> input, TarantoolClient client, Sinks.Many<Object> emitter) {
+    private void subscribeInput(Flux<Object> input, TarantoolClient client, Sinks.Many<Object> emitter) {
         input
                 .doOnNext(element -> client.call(actionId, Mono.just(writer.write(inputMappingType, element)))
                         .doOnNext(value -> emitOutput(emitter, value))
