@@ -5,7 +5,6 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.tarantool.module.refresher.*;
 import lombok.*;
-
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;

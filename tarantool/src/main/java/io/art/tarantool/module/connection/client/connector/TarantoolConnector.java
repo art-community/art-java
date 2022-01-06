@@ -19,7 +19,7 @@ public class TarantoolConnector {
     @Getter(lazy = true, value = PRIVATE)
     private static final Logger logger = logger(TarantoolConnector.class);
 
-    public static TarantoolClient connect(String instanceId, TarantoolInstanceConfiguration config) {
+    public static TarantoolClient connect(String instanceId, TarantoolConnectorConfiguration config) {
         TarantoolClientConfig clientConfig = new TarantoolClientConfig();
         clientConfig.setConnections(config.getConnections());
         clientConfig.setConnectTimeout(config.getConnectionTimeout());

@@ -5,7 +5,6 @@ import io.art.tarantool.communication.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
-import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;

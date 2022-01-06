@@ -21,17 +21,14 @@ plugins {
 }
 
 dependencies {
-    val tarantoolCartridgeConnectorVersion: String by project
-
     api(project(":core"))
     api(project(":meta"))
     api(project(":message-pack"))
+    api(project(":transport"))
+    api(project(":communicator"))
+    api(project(":storage"))
 
     implementation(project(":logging"))
-    implementation(project(":transport"))
-    implementation(project(":communicator"))
-
-    api("io.tarantool", "cartridge-driver", tarantoolCartridgeConnectorVersion)
 }
 
 

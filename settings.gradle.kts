@@ -34,8 +34,7 @@ include("meta")
 include("http")
 include("tests")
 include("tarantool")
-//include("storage")
-//include("tests")
+include("storage")
 //include("metrics")
 
 pluginManagement {

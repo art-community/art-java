@@ -2,16 +2,28 @@ package io.art.core.normalizer;
 
 import lombok.experimental.*;
 import static io.art.core.constants.CharacterConstants.*;
-import static io.art.core.constants.TransportConstants.*;
+import static io.art.core.constants.KnownClassNameSuffixes.*;
 import static io.art.core.factory.SetFactory.*;
 import static java.lang.Character.*;
 import static java.util.Arrays.*;
+import java.util.*;
 
 @UtilityClass
 public class ClassIdentifierNormalizer {
     public String asId(Class<?> owner) {
+        return asId(owner, DASH);
+    }
+
+    public String asId(Class<?> owner, char delimiter) {
         String id = owner.getSimpleName();
-        for (String suffix : setOf(CONNECTOR_CLASS_SUFFIX, SERVICE_CLASS_SUFFIX, COMMUNICATOR_CLASS_SUFFIX)) {
+        Set<String> knownSuffixes = setOf(
+                CONNECTOR_CLASS_SUFFIX,
+                SERVICE_CLASS_SUFFIX,
+                COMMUNICATOR_CLASS_SUFFIX,
+                SPACE_CLASS_SUFFIX,
+                STORAGE_CLASS_SUFFIX
+        );
+        for (String suffix : knownSuffixes) {
             id = removeSuffix(id, suffix);
         }
         char[] normalized = new char[id.length() * 2];
@@ -21,14 +33,14 @@ public class ClassIdentifierNormalizer {
         for (int index = 1; index < current.length; index++) {
             char character = current[index];
             if (isUpperCase(character) || isDigit(character)) {
-                normalized[count] = DASH;
+                normalized[count] = delimiter;
                 normalized[count + 1] = toLowerCase(character);
                 count += 2;
                 continue;
             }
 
             if (character == UNDERSCORE) {
-                normalized[count] = DASH;
+                normalized[count] = delimiter;
                 count++;
                 continue;
             }

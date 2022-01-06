@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class TarantoolClient {
-    private final TarantoolInstanceConfiguration configuration;
+    private final TarantoolConnectorConfiguration configuration;
 
     private volatile Disposable disposer;
     private volatile Mono<? extends Connection> connection;
@@ -55,12 +55,20 @@ public class TarantoolClient {
     }
 
     public Mono<Value> call(String name) {
+        return connector.asMono().flatMap(client -> client.executeCall(name));
+    }
+
+    public Mono<Value> call(String name, Mono<Value> input) {
+        return connector.asMono().flatMap(client -> client.executeCall(name, input));
+    }
+
+    private Mono<Value> executeCall(String name) {
         TarantoolReceiver receiver = receivers.allocate();
         emitCall(receiver.getId(), callRequest(name));
         return receiver.getSink().asMono();
     }
 
-    public Mono<Value> call(String name, Mono<Value> argument) {
+    private Mono<Value> executeCall(String name, Mono<Value> argument) {
         TarantoolReceiver receiver = receivers.allocate();
         subscribeInput(name, argument, receiver);
         return receiver.getSink().asMono();

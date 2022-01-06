@@ -91,6 +91,8 @@ public interface MetaConstants {
         VALIDATABLE,
         COMMUNICATOR,
         CONNECTOR,
+        SPACE,
+        STORAGE,
         ARRAY,
         PARAMETRIZED,
         TESTS
@@ -130,6 +132,8 @@ public interface MetaConstants {
     interface ClassNames {
         String COMMUNICATOR_NAME = "io.art.communicator.Communicator";
         String CONNECTOR_NAME = "io.art.communicator.Connector";
+        String STORAGE_NAME = "io.art.storage.Storage";
+        String SPACE_NAME = "io.art.storage.Space";
         String TESTS_NAME = "io.art.tests.Tests";
     }
 

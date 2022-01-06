@@ -14,7 +14,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationK
 
 @EqualsAndHashCode
 public class TarantoolClusterConfiguration {
-    public Map<String, TarantoolInstanceConfiguration> instances = map();
+    public Map<String, TarantoolConnectorConfiguration> instances = map();
     public BalancerMethod balancerMethod = BalancerMethod.ROUND_ROBIN;
 
     public static TarantoolClusterConfiguration from(ConfigurationSource source, TarantoolModuleRefresher refresher) {
@@ -23,7 +23,7 @@ public class TarantoolClusterConfiguration {
         ConfigurationSource instancesConfiguration = source.getNested(TARANTOOL_INSTANCES_SECTION);
         configuration.instances = instancesConfiguration.getKeys()
                         .stream()
-                        .collect(toImmutableMap(key -> key, key -> TarantoolInstanceConfiguration.from(instancesConfiguration.getNested(key))));
+                        .collect(toImmutableMap(key -> key, key -> TarantoolConnectorConfiguration.from(instancesConfiguration.getNested(key))));
 
         configuration.instances.forEach((key, value) ->
                 refresher.clientListeners().listenerFor(source.getParent() + COLON + key).emit(value));

@@ -8,7 +8,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 
 @Getter
 @Builder
-public class TarantoolInstanceConfiguration {
+public class TarantoolConnectorConfiguration {
     private String host;
     private int port;
     private String username;
@@ -22,8 +22,8 @@ public class TarantoolInstanceConfiguration {
     private int maxConnectionRetries;
 
 
-    public static TarantoolInstanceConfiguration from(ConfigurationSource source) {
-        TarantoolInstanceConfiguration configuration = TarantoolInstanceConfiguration.builder().build();
+    public static TarantoolConnectorConfiguration from(ConfigurationSource source) {
+        TarantoolConnectorConfiguration configuration = TarantoolConnectorConfiguration.builder().build();
         configuration.host = orElse(source.getString(TARANTOOL_INSTANCE_HOST_KEY), DEFAULT_TARANTOOL_HOST);
         configuration.port = orElse(source.getInteger(TARANTOOL_INSTANCE_PORT_KEY), DEFAULT_TARANTOOL_PORT);
         configuration.username = orElse(source.getString(TARANTOOL_INSTANCE_USERNAME_KEY), DEFAULT_TARANTOOL_USERNAME);

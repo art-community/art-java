@@ -39,6 +39,7 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.ClassNames.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.ARRAY;
+import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.SPACE;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
 import static io.art.meta.model.MetaTypeKindComputer.*;
 import static io.art.meta.model.TransformersComputer.*;
@@ -183,6 +184,14 @@ public class MetaType<T> {
 
         if (isAssignableFrom(type, CONNECTOR_NAME)) {
             modifiers.add(CONNECTOR);
+        }
+
+        if (isAssignableFrom(type, SPACE_NAME)) {
+            modifiers.add(SPACE);
+        }
+
+        if (isAssignableFrom(type, STORAGE_NAME)) {
+            modifiers.add(STORAGE);
         }
 
         if (isAssignableFrom(type, TESTS_NAME)) {
