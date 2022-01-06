@@ -29,6 +29,7 @@ public class HttpCommunicationFactory {
                 .compress(connectorConfiguration.isCompress())
                 .wiretap(withLogging() && (connectorConfiguration.isWiretapLog() || connectorConfiguration.isVerbose()))
                 .followRedirect(connectorConfiguration.isFollowRedirect())
+                .responseTimeout(connectorConfiguration.getResponseTimeout())
                 .disableRetry(!connectorConfiguration.isRetry())
                 .keepAlive(connectorConfiguration.isKeepAlive())
                 .baseUrl(connectorConfiguration.getUrl());

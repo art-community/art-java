@@ -41,7 +41,7 @@ public class TarantoolCluster {
     }
 
     private void getAllClients(TarantoolClusterConfiguration configuration){
-        Map<String, TarantoolConnectorConfiguration> instanceConfigs = configuration.instances;
+        Map<String, TarantoolClientConfiguration> instanceConfigs = configuration.instances;
         readOnlyClients =
                 instanceConfigs.keySet().stream()
                         .filter(id -> instanceConfigs.get(id).isReadable())

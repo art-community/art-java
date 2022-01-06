@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class TarantoolClient {
-    private final TarantoolConnectorConfiguration configuration;
+    private final TarantoolClientConfiguration configuration;
 
     private volatile Disposable disposer;
     private volatile Mono<? extends Connection> connection;
