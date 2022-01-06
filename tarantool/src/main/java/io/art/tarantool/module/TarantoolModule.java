@@ -1,9 +1,9 @@
 package io.art.tarantool.module;
 
 import io.art.core.module.*;
+import io.art.tarantool.cluster.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.instance.*;
-import io.art.tarantool.module.connection.client.*;
 import io.art.tarantool.module.refresher.*;
 import io.art.tarantool.module.state.*;
 import lombok.*;
@@ -35,7 +35,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return null;
     }
 
-    private static Supplier<TarantoolCluster> getCluster(String clusterId) {
-        return tarantoolModule().state().getCluster(clusterId);
+    private static Supplier<TarantoolConnector> getCluster(String clusterId) {
+        return tarantoolModule().state().getConnector(clusterId);
     }
 }

@@ -20,13 +20,14 @@ package io.art.tarantool.constants;
 
 import lombok.*;
 import static java.lang.Integer.*;
+import static java.time.Duration.*;
+import java.time.*;
 
 
 public interface TarantoolModuleConstants {
-    int DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = 3 * 1000;
     int DEFAULT_TARANTOOL_CONNECTIONS_NUMBER = 1;
-    int DEFAULT_TARANTOOL_READ_TIMEOUT = 1000;
-    int DEFAULT_TARANTOOL_REQUEST_TIMEOUT = 2 * 1000;
+    Duration DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = ofSeconds(5);
+    Duration DEFAULT_TARANTOOL_READ_TIMEOUT = ofSeconds(15);
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 8129;
     int RECEIVERS_POOL_MAXIMUM = MAX_VALUE / 128;

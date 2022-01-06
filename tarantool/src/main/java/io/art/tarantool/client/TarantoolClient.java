@@ -21,6 +21,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
+import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Sinks.*;
@@ -46,7 +47,9 @@ public class TarantoolClient {
         connection = TcpClient.create()
                 .host(configuration.getHost())
                 .port(configuration.getPort())
+                .option(CONNECT_TIMEOUT_MILLIS, (int) configuration.getConnectionTimeout().toMillis())
                 .connect();
+
         return connector.asMono().doOnSubscribe(subscription -> subscribe());
     }
 

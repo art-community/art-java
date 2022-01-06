@@ -5,6 +5,7 @@ import io.art.communicator.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
 import io.art.tarantool.client.*;
+import io.art.tarantool.cluster.*;
 import io.art.tarantool.descriptor.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -19,14 +20,14 @@ public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
     private final TarantoolModelReader reader = new TarantoolModelReader();
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
-    private final Property<TarantoolClient> client;
+    private final Property<TarantoolConnector> connector;
 
     private String function;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
 
-    public TarantoolCommunication(Supplier<TarantoolClient> client) {
-        this.client = property(client, this::disposeClient);
+    public TarantoolCommunication(Supplier<TarantoolConnector> connector) {
+        this.connector = property(connector);
     }
 
     @Override
@@ -45,12 +46,12 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public void dispose() {
-        client.dispose();
+        connector.dispose();
     }
 
     @Override
     public Flux<Object> communicate(Flux<Object> input) {
-        return caller.get().apply(input, client.get());
+        return caller.get().apply(input, connector.get().selectWritableClient());
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
