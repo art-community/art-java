@@ -20,7 +20,6 @@ package io.art.meta.model;
 
 import io.art.core.collection.*;
 import io.art.core.exception.*;
-import io.art.meta.registry.*;
 import io.art.meta.transformer.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
@@ -82,6 +81,9 @@ public class TransformersComputer {
             case MONO:
                 MetaTransformer<?> parameterTransformer = computeInputTransformer(parameters.get(0));
                 return monoTransformer(parameterTransformer);
+            case FLUX:
+                parameterTransformer = computeInputTransformer(parameters.get(0));
+                return fluxTransformer(parameterTransformer);
             case LAZY:
                 parameterTransformer = computeInputTransformer(parameters.get(0));
                 return lazyTransformer(parameterTransformer);
@@ -105,6 +107,9 @@ public class TransformersComputer {
             case MONO:
                 MetaTransformer<?> parameterTransformer = computeOutputTransformer(parameters.get(0));
                 return monoTransformer(parameterTransformer);
+            case FLUX:
+                parameterTransformer = computeOutputTransformer(parameters.get(0));
+                return fluxTransformer(parameterTransformer);
             case LAZY:
                 parameterTransformer = computeOutputTransformer(parameters.get(0));
                 return lazyTransformer(parameterTransformer);
@@ -190,8 +195,6 @@ public class TransformersComputer {
                 return MAP_TRANSFORMER;
             case IMMUTABLE_MAP:
                 return IMMUTABLE_MAP_TRANSFORMER;
-            case FLUX:
-                return FLUX_TRANSFORMER;
             case ENUM:
                 return enumTransformer(cast(type.enumFactory()));
             case INPUT_STREAM:

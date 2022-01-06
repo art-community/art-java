@@ -8,5 +8,5 @@ import reactor.core.publisher.*;
 @AllArgsConstructor
 public class TarantoolReceiver {
     private final int id;
-    private final Sinks.Many<Value> sink;
+    private final Sinks.One<Value> sink;
 }

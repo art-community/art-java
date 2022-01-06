@@ -76,7 +76,15 @@ public interface MetaConstants {
         BYTE,
         BINARY,
         ENTITY,
-        UNKNOWN
+        UNKNOWN;
+
+        public boolean isArray() {
+            return this == ARRAY || this == LAZY_ARRAY;
+        }
+
+        public boolean isMap() {
+            return this == MAP || this == LAZY_MAP;
+        }
     }
 
     enum MetaTypeModifiers {

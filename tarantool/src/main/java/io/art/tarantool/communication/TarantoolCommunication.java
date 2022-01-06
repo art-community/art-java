@@ -8,10 +8,10 @@ import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.descriptor.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
-import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
 
 public class TarantoolCommunication implements Communication {
@@ -56,28 +56,35 @@ public class TarantoolCommunication implements Communication {
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
         String actionId = action.getId().getActionId();
-        MetaType<?> outputType = action.getOutputType();
 
         if (isNull(inputMappingType)) {
-            if (outputType.internalKind() == FLUX) {
-                return (input, client) -> client
-                        .call(actionId)
-                        .flatMap(output -> fromIterable(output.asArrayValue()).map(element -> reader.read(outputMappingType, element)));
-            }
-
-            return (input, client) -> client
-                    .call(actionId)
-                    .map(output -> reader.read(outputMappingType, output));
+            return (input, client) -> cast(client.call(actionId).map(element -> reader.read(outputMappingType, element)).flux());
         }
 
-        if (outputType.internalKind() == FLUX) {
-            return (input, client) -> client
-                    .call(actionId, input.map(value -> writer.write(inputMappingType, value)))
-                    .flatMap(output -> fromIterable(output.asArrayValue()).map(element -> reader.read(outputMappingType, element)));
-        }
+        return (input, client) -> {
+            Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
+            subscribeInput(actionId, input, client, emitter);
+            return emitter.asFlux();
+        };
+    }
 
-        return (input, client) -> client
-                .call(actionId, input.map(value -> writer.write(inputMappingType, value)))
-                .map(output -> reader.read(outputMappingType, output));
+    private void subscribeInput(String actionId, Flux<Object> input, TarantoolClient client, Sinks.Many<Object> emitter) {
+        input
+                .doOnNext(element -> client.call(actionId, Mono.just(writer.write(inputMappingType, element)))
+                        .doOnNext(value -> emitOutput(emitter, value))
+                        .doOnError(error -> emitError(emitter, error))
+                        .subscribe())
+                .doOnError(error -> emitError(emitter, error))
+                .subscribe();
+    }
+
+    private void emitError(Sinks.Many<Object> emitter, Throwable error) {
+        emitter.tryEmitError(error);
+        emitter.tryEmitComplete();
+    }
+
+    private void emitOutput(Sinks.Many<Object> emitter, org.msgpack.value.Value value) {
+        emitter.tryEmitNext(reader.read(outputMappingType, value));
+        emitter.tryEmitComplete();
     }
 }

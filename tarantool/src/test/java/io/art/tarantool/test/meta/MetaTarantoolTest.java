@@ -265,9 +265,9 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaFindTestUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
+              public static final class MetaFindTestUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>> {
                 private MetaFindTestUsersMethod() {
-                  super("findTestUsers",metaType(reactor.core.publisher.Flux.class,metaType(io.art.tarantool.test.model.User.class)));
+                  super("findTestUsers",metaType(reactor.core.publisher.Flux.class,metaType(java.util.List.class,metaType(io.art.tarantool.test.model.User.class))));
                 }
 
                 @Override
@@ -326,9 +326,9 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public reactor.core.publisher.Flux<io.art.tarantool.test.model.User> findTestUsers(
+                public reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>> findTestUsers(
                     ) {
-                  return (reactor.core.publisher.Flux<io.art.tarantool.test.model.User>)(findTestUsersInvocation.apply(null));
+                  return (reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>)(findTestUsersInvocation.apply(null));
                 }
               }
             }

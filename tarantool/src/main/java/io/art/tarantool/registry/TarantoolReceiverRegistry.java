@@ -19,7 +19,7 @@ public class TarantoolReceiverRegistry {
         LocalPool localPool = pool.get();
         if (nonNull(localPool)) {
             int id = localPool.next();
-            TarantoolReceiver receiver = new TarantoolReceiver(id, many().unicast().onBackpressureBuffer());
+            TarantoolReceiver receiver = new TarantoolReceiver(id, one());
             receivers.put(id, receiver);
             return receiver;
         }
@@ -27,7 +27,7 @@ public class TarantoolReceiverRegistry {
         localPool = new LocalPool(pools.incrementAndGet() * localPoolSize + 1, localPoolSize);
         this.pool.set(localPool);
         int id = localPool.next();
-        TarantoolReceiver receiver = new TarantoolReceiver(id, many().unicast().onBackpressureBuffer());
+        TarantoolReceiver receiver = new TarantoolReceiver(id, one());
         receivers.put(id, receiver);
         return receiver;
     }

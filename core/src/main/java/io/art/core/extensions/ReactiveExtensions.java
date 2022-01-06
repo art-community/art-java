@@ -9,6 +9,7 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.ReactiveConstants.*;
+import static java.util.Objects.*;
 import java.util.function.*;
 
 @UtilityClass
@@ -78,5 +79,9 @@ public class ReactiveExtensions {
 
     public <T> Flux<T> compensateOnError(Flux<T> current, Function<Throwable, Flux<T>> compensation) {
         return compensateOnError(current, ignore -> true, compensation);
+    }
+
+    public static <T> Flux<T> justOrEmpty(T data) {
+        return nonNull(data) ? Flux.just(data) : Flux.empty();
     }
 }

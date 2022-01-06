@@ -54,19 +54,19 @@ public class TarantoolClient {
         apply(disposer, Disposable::dispose);
     }
 
-    public Flux<Value> call(String name) {
+    public Mono<Value> call(String name) {
         TarantoolReceiver receiver = receivers.allocate();
         emitCall(receiver.getId(), callRequest(name));
-        return receiver.getSink().asFlux();
+        return receiver.getSink().asMono();
     }
 
-    public Flux<Value> call(String name, Flux<Value> arguments) {
+    public Mono<Value> call(String name, Mono<Value> argument) {
         TarantoolReceiver receiver = receivers.allocate();
-        subscribeInput(name, arguments, receiver);
-        return receiver.getSink().asFlux();
+        subscribeInput(name, argument, receiver);
+        return receiver.getSink().asMono();
     }
 
-    private void subscribeInput(String name, Flux<Value> arguments, TarantoolReceiver receiver) {
+    private void subscribeInput(String name, Mono<Value> arguments, TarantoolReceiver receiver) {
         arguments
                 .doOnNext(argument -> emitCall(receiver.getId(), callRequest(name, argument)))
                 .doOnError(logger::error)
@@ -93,26 +93,24 @@ public class TarantoolClient {
         TarantoolResponse response = readTarantoolResponse(bytes);
         TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId());
         if (isNull(receiver)) return;
-        Many<Value> sink = receiver.getSink();
+        One<Value> sink = receiver.getSink();
         Value body = response.getBody();
         if (response.isError()) {
             sink.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
-            sink.tryEmitComplete();
             return;
         }
         if (isNull(body) || !body.isMapValue()) {
-            sink.tryEmitComplete();
+            sink.tryEmitEmpty();
             return;
         }
         Map<Value, Value> mapValue = body.asMapValue().map();
         Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
         ArrayValue bodyValues;
-        if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() == 0) {
-            sink.tryEmitComplete();
+        if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() != 1) {
+            sink.tryEmitEmpty();
             return;
         }
-        sink.tryEmitNext(bodyValues.get(0));
-        sink.tryEmitComplete();
+        sink.tryEmitValue(bodyValues.get(0));
     }
 
     private void subscribe() {

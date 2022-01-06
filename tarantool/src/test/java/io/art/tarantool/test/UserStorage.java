@@ -18,6 +18,6 @@ public interface UserStorage extends Connector {
 
         Stream<User> getAllUsers();
 
-        Flux<User> findTestUsers();
+        Flux<List<User>> findTestUsers();
     }
 }
