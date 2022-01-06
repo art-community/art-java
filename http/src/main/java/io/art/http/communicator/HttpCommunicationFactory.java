@@ -7,6 +7,7 @@ import io.art.logging.logger.*;
 import lombok.experimental.*;
 import reactor.netty.http.client.*;
 import static io.art.core.checker.ModuleChecker.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.http.constants.HttpModuleConstants.Messages.*;
 import static io.art.http.module.HttpModule.*;
@@ -29,10 +30,10 @@ public class HttpCommunicationFactory {
                 .compress(connectorConfiguration.isCompress())
                 .wiretap(withLogging() && (connectorConfiguration.isWiretapLog() || connectorConfiguration.isVerbose()))
                 .followRedirect(connectorConfiguration.isFollowRedirect())
-                .responseTimeout(connectorConfiguration.getResponseTimeout())
                 .disableRetry(!connectorConfiguration.isRetry())
                 .keepAlive(connectorConfiguration.isKeepAlive())
                 .baseUrl(connectorConfiguration.getUrl());
+        apply(connectorConfiguration.getResponseTimeout(), httpClient::responseTimeout);
         if (withLogging() && connectorConfiguration.isVerbose()) {
             httpClient = httpClient
                     .doOnConnected(ignore -> logger.get().info(format(HTTP_COMMUNICATOR_STARTED, connectorConfiguration.getConnector())))
