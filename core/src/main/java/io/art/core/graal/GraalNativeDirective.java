@@ -35,11 +35,11 @@ public class GraalNativeDirective {
         GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder().extractionDirectory(extractionDirectory).resource(nativeHeaderRegexp(headerName));
 
         if (isUnix() || isMac()) {
-            locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryName));
+            locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryName + GRAAL_UNIX_LIBRARY_POSTFIX));
         }
 
         if (isWindows()) {
-            locationBuilder.resource(nativeWindowsStaticLibraryRegex(libraryName));
+            locationBuilder.resource(nativeWindowsStaticLibraryRegex(libraryName + GRAAL_WINDOWS_LIBRARY_POSTFIX));
         }
 
         Path location = locationBuilder.build().resolve();
