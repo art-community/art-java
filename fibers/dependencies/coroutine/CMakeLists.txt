@@ -10,7 +10,7 @@ list(FILTER SRCS EXCLUDE REGEX "${CONTEXT_ASM_DIR}/*")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} cmake/modules)
 
-include(TargetArch)
+include(cmake/modules/TargetArch.cmake)
 target_architecture(COMPILER_TARGET_ARCH)
 
 if (UNIX)
@@ -71,8 +71,10 @@ if (UNIX)
             message(FATAL_ERROR "Unsupported Linux-platform architecture: ${COMPILER_TARGET_ARCH}. Unable to chose context sources")
         endif ()
     endif ()
+    add_definitions(-DCOROUTINE_THREAD_LOCAL=_Thread_local)
 elseif (WIN32)
     add_definitions(-DCOROUTINE_HAVE_WIN32API)
+    add_definitions(-DCOROUTINE_THREAD_LOCAL="__declspec(thread)")
     if (MINGW)
         enable_language(ASM)
         if (${COMPILER_TARGET_ARCH} STREQUAL "x86_64")
@@ -92,13 +94,13 @@ elseif (WIN32)
         enable_language(ASM_MASM)
         if (${COMPILER_TARGET_ARCH} STREQUAL "x86_64")
             list(APPEND CONTEXT_ASM_SRCS
-                    ${CONTEXT_ASM_DIR}/jump_x86_64_ms_pe_masm.asm
-                    ${CONTEXT_ASM_DIR}/make_x86_64_ms_pe_masm.asm
+                    ${CONTEXT_ASM_DIR}/jump_x86_64_ms_pe_masm.s
+                    ${CONTEXT_ASM_DIR}/make_x86_64_ms_pe_masm.s
                     )
         elseif (${COMPILER_TARGET_ARCH} STREQUAL "i386")
             list(APPEND CONTEXT_ASM_SRCS
-                    ${CONTEXT_ASM_DIR}/jump_i386_ms_pe_masm.asm
-                    ${CONTEXT_ASM_DIR}/make_i386_ms_pe_masm.asm
+                    ${CONTEXT_ASM_DIR}/jump_i386_ms_pe_masm.s
+                    ${CONTEXT_ASM_DIR}/make_i386_ms_pe_masm.s
                     )
         else ()
             message(FATAL_ERROR "Unsupported WIN-platform architecture: ${COMPILER_TARGET_ARCH}. Unable to chose context sources")
@@ -109,7 +111,6 @@ else ()
 endif ()
 list(APPEND SRCS ${CONTEXT_ASM_SRCS})
 
-add_definitions(-DCOROUTINE_THREAD_LOCAL=_Thread_local)
 add_definitions(-DBUILDING_COROUTINE)
 
 include_directories(include)

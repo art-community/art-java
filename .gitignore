@@ -75,3 +75,5 @@ cmake_install.cmake
 *.cbp
 CMakeFiles/
 Makefile
+CMakeSettings.json
+.vs
