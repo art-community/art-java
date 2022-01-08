@@ -82,82 +82,124 @@
 ;  |       FCTX        |        DATA        |                                       |
 ;  ----------------------------------------------------------------------------------
 
-; standard C library function
-EXTERN  _exit:PROC
 .code
 
-; generate function table entry in .pdata and unwind information in
-make_fcontext PROC BOOST_CONTEXT_EXPORT FRAME
-    ; .xdata for a function's structured exception handling unwind behavior
+jump_fcontext PROC FRAME BOOST_CONTEXT_EXPORT 
     .endprolog
 
-    ; first arg of make_fcontext() == top of context-stack
-    mov  rax, rcx
+    ; prepare stack
+    lea rsp, [rsp-0118h]
 
-    ; shift address in RAX to lower 16 byte boundary
-    ; == pointer to fcontext_t and address of context stack
-    and  rax, -16
-
-    ; reserve space for context-data on context-stack
-    ; on context-function entry: (RSP -0x8) % 16 == 0
-    sub  rax, 0150h
-
-    ; third arg of make_fcontext() == address of context-function
-    ; stored in RBX
-    mov  [rax+0100h], r8
-
-    ; first arg of make_fcontext() == top of context-stack
-    ; save top address of context stack as 'base'
-    mov  [rax+0c8h], rcx
-    ; second arg of make_fcontext() == size of context-stack
-    ; negate stack size for LEA instruction (== substraction)
-    neg  rdx
-    ; compute bottom address of context stack (limit)
-    lea  rcx, [rcx+rdx]
-    ; save bottom address of context stack as 'limit'
-    mov  [rax+0c0h], rcx
-    ; save address of context stack limit as 'dealloction stack'
-    mov  [rax+0b8h], rcx
-	; set fiber-storage to zero
-	xor  rcx, rcx
-    mov  [rax+0b0h], rcx
-
-	; save MMX control- and status-word
-    stmxcsr  [rax+0a0h]
+IFNDEF BOOST_USE_TSX
+    ; save XMM storage
+    movaps  [rsp], xmm6
+    movaps  [rsp+010h], xmm7
+    movaps  [rsp+020h], xmm8
+    movaps  [rsp+030h], xmm9
+    movaps  [rsp+040h], xmm10
+    movaps  [rsp+050h], xmm11
+    movaps  [rsp+060h], xmm12
+    movaps  [rsp+070h], xmm13
+    movaps  [rsp+080h], xmm14
+    movaps  [rsp+090h], xmm15
+    ; save MMX control- and status-word
+    stmxcsr  [rsp+0a0h]
     ; save x87 control-word
-    fnstcw  [rax+0a4h]
+    fnstcw  [rsp+0a4h]
+ENDIF
 
-    ; compute address of transport_t
-    lea rcx, [rax+0140h]
-    ; store address of transport_t in hidden field
-    mov [rax+0110h], rcx
+    ; load NT_TIB
+    mov  r10,  gs:[030h]
+    ; save fiber local storage
+    mov  rax, [r10+020h]
+    mov  [rsp+0b0h], rax
+    ; save current deallocation stack
+    mov  rax, [r10+01478h]
+    mov  [rsp+0b8h], rax
+    ; save current stack limit
+    mov  rax, [r10+010h]
+    mov  [rsp+0c0h], rax
+    ; save current stack base
+    mov  rax,  [r10+08h]
+    mov  [rsp+0c8h], rax
 
-    ; compute abs address of label trampoline
-    lea  rcx, trampoline
-    ; save address of trampoline as return-address for context-function
-    ; will be entered after calling jump_fcontext() first time
-    mov  [rax+0118h], rcx
+    mov [rsp+0d0h], r12  ; save R12
+    mov [rsp+0d8h], r13  ; save R13
+    mov [rsp+0e0h], r14  ; save R14
+    mov [rsp+0e8h], r15  ; save R15
+    mov [rsp+0f0h], rdi  ; save RDI
+    mov [rsp+0f8h], rsi  ; save RSI
+    mov [rsp+0100h], rbx  ; save RBX
+    mov [rsp+0108h], rbp  ; save RBP
 
-    ; compute abs address of label finish
-    lea  rcx, finish
-    ; save address of finish as return-address for context-function in RBP
-    ; will be entered after context-function returns 
-    mov  [rax+0108h], rcx
+    mov [rsp+0110h], rcx  ; save hidden address of transport_t
 
-    ret ; return pointer to context-data
+    ; preserve RSP (pointing to context-data) in R9
+    mov  r9, rsp
 
-trampoline:
-    ; store return address on stack
-    ; fix stack alignment
-    push rbp
-    ; jump to context-function
-    jmp rbx
+    ; restore RSP (pointing to context-data) from RDX
+    mov  rsp, rdx
 
-finish:
-    ; exit code is zero
-    xor  rcx, rcx
-    ; exit application
-    call  _exit
-    hlt
-make_fcontext ENDP
+IFNDEF BOOST_USE_TSX
+    ; restore XMM storage
+    movaps  xmm6, [rsp]
+    movaps  xmm7, [rsp+010h]
+    movaps  xmm8, [rsp+020h]
+    movaps  xmm9, [rsp+030h]
+    movaps  xmm10, [rsp+040h]
+    movaps  xmm11, [rsp+050h]
+    movaps  xmm12, [rsp+060h]
+    movaps  xmm13, [rsp+070h]
+    movaps  xmm14, [rsp+080h]
+    movaps  xmm15, [rsp+090h]
+    ; restore MMX control- and status-word
+    ldmxcsr  [rsp+0a0h]
+    ; save x87 control-word
+    fldcw   [rsp+0a4h]
+ENDIF
+
+    ; load NT_TIB
+    mov  r10,  gs:[030h]
+    ; restore fiber local storage
+    mov  rax, [rsp+0b0h]
+    mov  [r10+020h], rax
+    ; restore current deallocation stack
+    mov  rax, [rsp+0b8h]
+    mov  [r10+01478h], rax
+    ; restore current stack limit
+    mov  rax, [rsp+0c0h]
+    mov  [r10+010h], rax
+    ; restore current stack base
+    mov  rax, [rsp+0c8h]
+    mov  [r10+08h], rax
+
+    mov r12, [rsp+0d0h]  ; restore R12
+    mov r13, [rsp+0d8h]  ; restore R13
+    mov r14, [rsp+0e0h]  ; restore R14
+    mov r15, [rsp+0e8h]  ; restore R15
+    mov rdi, [rsp+0f0h]  ; restore RDI
+    mov rsi, [rsp+0f8h]  ; restore RSI
+    mov rbx, [rsp+0100h]  ; restore RBX
+    mov rbp, [rsp+0108h]  ; restore RBP
+
+    mov rax, [rsp+0110h] ; restore hidden address of transport_t
+
+    ; prepare stack
+    lea rsp, [rsp+0118h]
+
+    ; load return-address
+    pop  r10
+
+    ; transport_t returned in RAX
+    ; return parent fcontext_t
+    mov  [rax], r9
+    ; return data
+    mov  [rax+08h], r8
+
+    ; transport_t as 1.arg of context-function
+    mov  rcx,  rax
+
+    ; indirect jump to context
+    jmp  r10
+jump_fcontext ENDP
 END

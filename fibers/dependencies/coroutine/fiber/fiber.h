@@ -29,8 +29,16 @@ static void coroutine_fiber_recycle(coroutine_fiber_t* fiber);
 
 static void coroutine_fiber_swap(coroutine_fiber_t* from, coroutine_fiber_t* to);
 
-static COROUTINE_THREAD_LOCAL coroutine_type co_main;
-static COROUTINE_THREAD_LOCAL coroutine_type* co_current;
+#if defined(_MSC_VER)
+
+__declspec(thread) static coroutine_type co_main;
+__declspec(thread) static coroutine_type* co_current;
+
+#else
+static _Thread_local coroutine_type co_main;
+static _Thread_local coroutine_type* co_current;
+
+#endif
 
 static void coroutine_swap_coroutine(coroutine_type* from, coroutine_type* to, int state) {
     from->state = state;
