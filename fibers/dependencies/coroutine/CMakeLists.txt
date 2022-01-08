@@ -14,6 +14,7 @@ include(cmake/modules/TargetArch.cmake)
 target_architecture(COMPILER_TARGET_ARCH)
 
 if (UNIX)
+    list(APPEND SRCS ${COROUTINE_PATH}/fcontext/fcontext.c ${COROUTINE_PATH}/fcontext/fcontext.hpp)
     enable_language(ASM)
     add_definitions(-DCOROUTINE_HAVE_MMAP)
     add_definitions(-DCOROUTINE_MAP_ANONYMOUS=MAP_ANONYMOUS)
@@ -75,6 +76,7 @@ elseif (WIN32)
     add_definitions(-DCOROUTINE_HAVE_WIN32API)
     if (MINGW)
         enable_language(ASM)
+        list(APPEND SRCS ${COROUTINE_PATH}/fcontext/fcontext.c ${COROUTINE_PATH}/fcontext/fcontext.hpp)
         if (${COMPILER_TARGET_ARCH} STREQUAL "x86_64")
             list(APPEND CONTEXT_ASM_SRCS
                     ${CONTEXT_ASM_DIR}/jump_x86_64_ms_pe_clang_gas.S
@@ -89,20 +91,7 @@ elseif (WIN32)
             message(FATAL_ERROR "Unsupported WIN-platform architecture: ${COMPILER_TARGET_ARCH}. Unable to chose context sources")
         endif ()
     else ()
-        enable_language(ASM_MASM)
-        if (${COMPILER_TARGET_ARCH} STREQUAL "x86_64")
-            list(APPEND CONTEXT_ASM_SRCS
-                    ${CONTEXT_ASM_DIR}/jump_x86_64_ms_pe_masm.asm
-                    ${CONTEXT_ASM_DIR}/make_x86_64_ms_pe_masm.asm
-                    )
-        elseif (${COMPILER_TARGET_ARCH} STREQUAL "i386")
-            list(APPEND CONTEXT_ASM_SRCS
-                    ${CONTEXT_ASM_DIR}/jump_i386_ms_pe_masm.asm
-                    ${CONTEXT_ASM_DIR}/make_i386_ms_pe_masm.asm
-                    )
-        else ()
-            message(FATAL_ERROR "Unsupported WIN-platform architecture: ${COMPILER_TARGET_ARCH}. Unable to chose context sources")
-        endif ()
+        list(APPEND SRCS ${COROUTINE_PATH}/win32/win32fiber.c)
     endif ()
 else ()
     message(FATAL_ERROR "Unsupported platform. Unable to chose context sources")
@@ -118,8 +107,6 @@ list(APPEND SRCS
         ${COROUTINE_PATH}/fiber/fiber.h
         ${COROUTINE_PATH}/stack/stack_alloc.c
         ${COROUTINE_PATH}/stack/stack_alloc.h
-        ${COROUTINE_PATH}/fcontext/fcontext.c
-        ${COROUTINE_PATH}/fcontext/fcontext.hpp
         )
 
 add_library(coroutine STATIC)
