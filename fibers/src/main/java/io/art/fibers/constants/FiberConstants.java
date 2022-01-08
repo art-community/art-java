@@ -1,8 +1,19 @@
 package io.art.fibers.constants;
 
+import static io.art.core.determiner.SystemDeterminer.*;
+
 public interface FiberConstants {
     interface GraalConstants {
-        String COROUTINE_LIBRARY_NAME = "coroutine";
+        static String coroutineLibraryName() {
+            if (isWindows()) {
+                return "coroutine-windows";
+            }
+            if (isMac()) {
+                return "coroutine-osx";
+            }
+            return "coroutine-linux";
+        }
+
         String FIBER_INVOKE_METHOD_NAME = "invoke";
     }
 

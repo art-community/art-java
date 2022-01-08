@@ -18,7 +18,7 @@ import java.util.*;
 public class GraalCoroutine {
     @Getter
     public static final class Directives implements CContext.Directives {
-        private final GraalNativeDirective directive = singleLibrary(COROUTINE_LIBRARY_NAME).build();
+        private final GraalNativeDirective directive = singleLibrary(coroutineLibraryName()).build();
         private final List<String> headerFiles = directive.getHeaders();
         private final List<String> libraries = directive.getLibraries();
         private final List<String> libraryPaths = directive.getLibraryPaths();
