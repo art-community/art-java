@@ -1,6 +1,7 @@
 package io.art.core.graal;
 
 import lombok.*;
+import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.GraalConstants.*;
 import static io.art.core.constants.NativeConstants.*;
 import static io.art.core.constants.RegExps.*;
@@ -23,32 +24,31 @@ public class GraalNativeDirective {
     @Singular("library")
     private final List<String> libraries;
 
-    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String libraryName) {
-        return singleLibrary(libraryName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX, libraryName, libraryName);
-    }
+    @Builder(builderMethodName = "singleLibrary")
+    public static class SingleLibrary {
+        private final String customExtractionDirectory;
+        private final String libraryFileName;
+        private final String headerFileName;
 
-    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String libraryName, String headerName) {
-        return singleLibrary(libraryName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX, libraryName, headerName);
-    }
+        public GraalNativeDirectiveBuilder directive() {
+            GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder()
+                    .extractionDirectory(ifEmpty(customExtractionDirectory, libraryFileName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX))
+                    .resource(nativeHeaderRegexp(headerFileName));
 
-    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String extractionDirectory, String libraryName, String headerName) {
-        GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder()
-                .extractionDirectory(extractionDirectory)
-                .resource(nativeHeaderRegexp(headerName));
+            if (isUnix() || isMac()) {
+                locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryFileName));
+            }
 
-        if (isUnix() || isMac()) {
-            locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryName));
+            if (isWindows()) {
+                locationBuilder.resource(nativeWindowsStaticLibraryRegex(libraryFileName));
+            }
+
+            Path location = locationBuilder.build().resolve();
+
+            return GraalNativeDirective.builder()
+                    .libraryPath(location.toAbsolutePath().toString())
+                    .header(DOUBLE_QUOTES + location.toAbsolutePath().resolve(headerFileName + HEADER_FILE_EXTENSION) + DOUBLE_QUOTES)
+                    .library(libraryFileName);
         }
-
-        if (isWindows()) {
-            locationBuilder.resource(nativeWindowsStaticLibraryRegex(libraryName));
-        }
-
-        Path location = locationBuilder.build().resolve();
-
-        return GraalNativeDirective.builder()
-                .libraryPath(location.toAbsolutePath().toString())
-                .header(DOUBLE_QUOTES + location.toAbsolutePath().resolve(headerName + HEADER_FILE_EXTENSION) + DOUBLE_QUOTES)
-                .library(libraryName);
     }
 }
