@@ -1,29 +1,5 @@
 package io.art.tarantool.space;
 
-import io.art.core.collection.*;
-import io.art.tarantool.model.field.*;
-import io.art.tarantool.model.mapping.*;
-import io.art.tarantool.model.operation.*;
-import io.art.tarantool.model.record.*;
-import io.art.tarantool.model.transaction.dependency.*;
-import io.art.tarantool.transaction.*;
-import lombok.Builder;
-
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
-
-import static io.art.core.caster.Caster.*;
-import static io.art.core.collection.ImmutableArray.*;
-import static io.art.core.constants.EmptyFunctions.*;
-import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.MapFactory.map;
-import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.*;
-import static io.art.tarantool.model.mapping.TarantoolRequestMapping.*;
-import static io.art.tarantool.model.mapping.TarantoolResponseMapping.*;
-
 public class TarantoolSpaceImplementation<T, K> implements TarantoolSpace<T, K> {
 /*
     private final TarantoolTransactionManager transactionManager;

@@ -1,9 +1,9 @@
 package io.art.tarantool.module;
 
 import io.art.core.module.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.cluster.*;
 import io.art.tarantool.configuration.*;
-import io.art.tarantool.instance.*;
 import io.art.tarantool.module.refresher.*;
 import io.art.tarantool.module.state.*;
 import lombok.*;
@@ -21,17 +21,17 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     private final TarantoolModuleRefresher refresher = new TarantoolModuleRefresher();
     private final TarantoolModuleConfiguration configuration = new TarantoolModuleConfiguration(refresher);
     private final Configurator configurator = new Configurator(configuration);
-    private final TarantoolModuleState state = new TarantoolModuleState(refresher.consumer());
+    private final TarantoolModuleState state = new TarantoolModuleState();
 
     public static StatefulModuleProxy<TarantoolModuleConfiguration, TarantoolModuleState> tarantoolModule() {
         return getTarantoolModule();
     }
 
-    public static TarantoolInstance tarantoolInstance() {
+    public static TarantoolClient tarantoolInstance() {
         return tarantoolInstance(DEFAULT_TARANTOOL_CLUSTER_NAME);
     }
 
-    public static TarantoolInstance tarantoolInstance(String clusterId) {
+    public static TarantoolClient tarantoolInstance(String clusterId) {
         return null;
     }
 
