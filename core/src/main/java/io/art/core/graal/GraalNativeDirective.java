@@ -25,7 +25,7 @@ public class GraalNativeDirective {
     private final List<String> libraries;
 
     @Builder(builderMethodName = "singleLibrary")
-    public static class SingleLibrary {
+    public static class GraalSingleLibrary {
         private final String customExtractionDirectory;
         private final String libraryFileName;
         private final String headerFileName;
