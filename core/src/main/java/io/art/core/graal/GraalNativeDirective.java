@@ -24,15 +24,19 @@ public class GraalNativeDirective {
     private final List<String> libraries;
 
     public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String libraryName) {
-        return singleLibrary(libraryName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX, libraryName, libraryName);
+        return singleLibrary(Paths.get(libraryName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX), libraryName, libraryName);
     }
 
-    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String extractionDirectory, String libraryName) {
-        return singleLibrary(extractionDirectory, libraryName, libraryName);
+    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(Path extractionDirectory, String libraryName) {
+        return singleLibrary(extractionDirectory, LIBRARYNAME, libraryName);
     }
 
-    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String extractionDirectory, String libraryName, String headerName) {
-        GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder().extractionDirectory(extractionDirectory).resource(nativeHeaderRegexp(headerName));
+    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String libraryName, String headerName) {
+        return singleLibrary(Paths.get(libraryName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX), libraryName, headerName);
+    }
+
+    public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(Path extractionDirectory, String libraryName, String headerName) {
+        GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder().extractionDirectory(extractionDirectory.toAbsolutePath().toString()).resource(nativeHeaderRegexp(headerName));
 
         if (isUnix() || isMac()) {
             locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryName));
