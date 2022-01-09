@@ -15,5 +15,6 @@ public interface CompilerSuppressingWarnings {
     String DEPRECATION = "deprecation";
     String RESULT_IGNORED = "ResultOfMethodCallIgnored";
     String FINAL_FIELD = "FieldMayBeFinal";
+    String SUN_API = "sunapi";
     String CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE = "CallingSubscribeInNonBlockingScope";
 }

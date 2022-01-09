@@ -16,6 +16,7 @@ import java.util.*;
 import java.util.function.*;
 
 @RequiredArgsConstructor
+@SuppressWarnings(SUN_API)
 public class DisposableProperty<T> implements Supplier<T> {
     private static final Object UNINITIALIZED = new Object();
     private static final sun.misc.Unsafe UNSAFE = UnsafeAccess.UNSAFE;
