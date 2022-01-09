@@ -28,7 +28,7 @@ public class GraalNativeDirective {
     }
 
     public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(Path extractionDirectory, String libraryName) {
-        return singleLibrary(extractionDirectory, LIBRARYNAME, libraryName);
+        return singleLibrary(extractionDirectory, libraryName, libraryName);
     }
 
     public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(String libraryName, String headerName) {
