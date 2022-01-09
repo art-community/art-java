@@ -36,7 +36,7 @@ public class GraalNativeDirective {
     }
 
     public static GraalNativeDirective.GraalNativeDirectiveBuilder singleLibrary(Path extractionDirectory, String libraryName, String headerName) {
-        GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder().extractionDirectory(extractionDirectory.toAbsolutePath().toString()).resource(nativeHeaderRegexp(headerName));
+        GraalNativeLibraryLocationBuilder locationBuilder = GraalNativeLibraryLocation.builder().extractionDirectory(extractionDirectory.toString()).resource(nativeHeaderRegexp(headerName));
 
         if (isUnix() || isMac()) {
             locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryName));
