@@ -87,20 +87,20 @@ public class RsocketCommunicationFactory {
         return configureSocket(common, createTcpClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
     }
 
-    private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpConnectorConfiguration group) {
+    private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpConnectorConfiguration connectorConfiguration) {
         List<LoadbalanceTarget> targets = linkedList();
-        for (RsocketTcpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
+        for (RsocketTcpClientConfiguration clientConfiguration : connectorConfiguration.getClientConfigurations()) {
             TcpClient client = clientConfiguration.getClientDecorator().apply(TcpClient.create()
                     .host(clientConfiguration.getHost())
                     .port(clientConfiguration.getPort()));
-            UnaryOperator<TcpClient> groupClientDecorator = group.getClientDecorator();
-            UnaryOperator<TcpClientTransport> transportDecorator = group.getTransportDecorator();
-            TcpClientTransport transport = transportDecorator.apply(TcpClientTransport.create(groupClientDecorator.apply(client), clientConfiguration.getMaxFrameLength()));
+            UnaryOperator<TcpClient> clientDecorator = connectorConfiguration.getClientDecorator();
+            UnaryOperator<TcpClientTransport> transportDecorator = connectorConfiguration.getTransportDecorator();
+            TcpClientTransport transport = transportDecorator.apply(TcpClientTransport.create(clientDecorator.apply(client), clientConfiguration.getMaxFrameLength()));
             String key = clientConfiguration.getConnector() + COLON + clientConfiguration.getHost() + COLON + clientConfiguration.getPort();
             targets.add(LoadbalanceTarget.from(key, transport));
         }
         return LoadbalanceRSocketClient.builder(Flux.just(targets))
-                .loadbalanceStrategy(group.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
+                .loadbalanceStrategy(connectorConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
                 .connector(connector)
                 .build();
     }
@@ -135,20 +135,20 @@ public class RsocketCommunicationFactory {
         return configureSocket(common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
     }
 
-    private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsConnectorConfiguration group) {
+    private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsConnectorConfiguration connectorConfiguration) {
         List<LoadbalanceTarget> targets = linkedList();
-        for (RsocketWsClientConfiguration clientConfiguration : group.getClientConfigurations()) {
+        for (RsocketWsClientConfiguration clientConfiguration : connectorConfiguration.getClientConfigurations()) {
             HttpClient client = clientConfiguration.getClientDecorator().apply(HttpClient.create()
                     .host(clientConfiguration.getHost())
                     .port(clientConfiguration.getPort()));
-            UnaryOperator<WebsocketClientTransport> transportDecorator = group.getTransportDecorator();
-            UnaryOperator<HttpClient> groupClientDecorator = group.getClientDecorator();
-            WebsocketClientTransport transport = transportDecorator.apply(WebsocketClientTransport.create(groupClientDecorator.apply(client), clientConfiguration.getPath()));
+            UnaryOperator<WebsocketClientTransport> transportDecorator = connectorConfiguration.getTransportDecorator();
+            UnaryOperator<HttpClient> clientDecorator = connectorConfiguration.getClientDecorator();
+            WebsocketClientTransport transport = transportDecorator.apply(WebsocketClientTransport.create(clientDecorator.apply(client), clientConfiguration.getPath()));
             String key = clientConfiguration.getConnector() + COLON + clientConfiguration.getHost() + COLON + clientConfiguration.getPort();
             targets.add(LoadbalanceTarget.from(key, transport));
         }
         return LoadbalanceRSocketClient.builder(Flux.just(targets))
-                .loadbalanceStrategy(group.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
+                .loadbalanceStrategy(connectorConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
                 .connector(connector)
                 .build();
     }
