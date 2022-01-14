@@ -4,6 +4,7 @@ import io.art.core.annotation.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.constants.*;
 import io.rsocket.transport.netty.client.*;
+import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
@@ -15,18 +16,14 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
+@RequiredArgsConstructor
 public class RsocketWsConnectorConfigurator {
     private final String connector;
-    private final Set<RsocketWsClientConfiguration> clients;
+    private final Set<RsocketWsClientConfiguration> clients = set();
     private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = identity();
     private RsocketModuleConstants.BalancerMethod balancer = ROUND_ROBIN;
     private UnaryOperator<HttpClient> clientDecorator = identity();
     private UnaryOperator<WebsocketClientTransport> transportDecorator = identity();
-
-    public RsocketWsConnectorConfigurator(String connector) {
-        this.connector = connector;
-        this.clients = setOf(wsClientConfiguration(connector));
-    }
 
     public RsocketWsConnectorConfigurator roundRobin() {
         balancer = ROUND_ROBIN;

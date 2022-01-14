@@ -17,8 +17,10 @@ import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
 import static io.art.transport.module.TransportActivator.*;
+import static java.util.function.UnaryOperator.identity;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
+import java.util.function.*;
 
 public class RsocketTest {
     @BeforeAll
@@ -28,7 +30,7 @@ public class RsocketTest {
                 transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class))
+                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, tcp -> tcp.client(identity())))
                         .server(server -> server.tcp().service(TestRsocketService.class)))
         );
     }
