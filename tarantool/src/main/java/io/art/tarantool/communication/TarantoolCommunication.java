@@ -5,7 +5,7 @@ import io.art.communicator.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
 import io.art.tarantool.client.*;
-import io.art.tarantool.cluster.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -51,7 +51,7 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public Flux<Object> communicate(Flux<Object> input) {
-        return caller.get().apply(input, connector.get().selectWritableClient());
+        return caller.get().apply(input, connector.get().mutable());
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {

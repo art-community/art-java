@@ -14,7 +14,7 @@ import static java.util.Objects.*;
 @RequiredArgsConstructor
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final TarantoolModuleRefresher refresher;
-    public ImmutableMap<String, TarantoolClusterConfiguration> clusters;
+    public ImmutableMap<String, TarantoolConnectorConfiguration> clusters;
     public boolean logging = false;
 
     @RequiredArgsConstructor
@@ -28,14 +28,14 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
 
 
             configuration.clusters = tarantoolSection.getNestedMap(TARANTOOL_CLUSTERS_SECTION, clusterConfig ->
-                    TarantoolClusterConfiguration.from(clusterConfig, configuration.refresher));
+                    TarantoolConnectorConfiguration.from(clusterConfig, configuration.refresher));
             configuration.logging = orElse(tarantoolSection.getBoolean(TARANTOOL_LOGGING_KEY), configuration.logging);
 
 
             configuration.refresher.clusterListeners().update(configuration.clusters.keySet());
             configuration.refresher.clientListeners().update(
                     configuration.clusters.keySet().stream()
-                            .flatMap(clusterId -> configuration.clusters.get(clusterId).instances.keySet().stream()
+                            .flatMap(clusterId -> configuration.clusters.get(clusterId).clients.keySet().stream()
                                     .map(tarantoolInstanceConfiguration -> clusterId + COLON + tarantoolInstanceConfiguration))
                             .collect(setCollector())
             );

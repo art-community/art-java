@@ -9,6 +9,8 @@ public interface Balancer<T> {
 
     void endpoints(Collection<T> endpoints);
 
+    void addEndpoint(T endpoint);
+
     enum BalancerMethod {
         ROUND_ROBIN
     }

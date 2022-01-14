@@ -79,7 +79,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
                 ServiceMethodConfigurator configurator = decorator.apply(new ServiceMethodConfigurator());
                 methods.put(method.name(), configurator.configure(ServiceMethodConfiguration.defaults()));
             }
-            configurations.put(asId(serviceClass.definition().type()), ServiceMethodsConfiguration.defaults()
+            configurations.put(idByDash(serviceClass.definition().type()), ServiceMethodsConfiguration.defaults()
                     .toBuilder()
                     .methods(immutableMapOf(methods))
                     .build());
@@ -88,7 +88,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             MetaClass<?> serviceClass = methodBasedConfiguration.serviceClass.get();
             Map<String, ServiceMethodConfiguration> methods = map();
-            String communicatorId = asId(serviceClass.definition().type());
+            String communicatorId = idByDash(serviceClass.definition().type());
             ServiceMethodsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) methods = existed.getMethods().toMutable();
             MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
@@ -157,7 +157,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         MetaMethod<?> serviceMethod = methodConfiguration.serviceMethod;
         MetaClass<?> serviceClass = methodConfiguration.serviceClass;
         MetaType<?> inputType = orNull(() -> immutableArrayOf(serviceMethod.parameters().values()).get(0).type(), isNotEmpty(serviceMethod.parameters()));
-        ServiceMethodIdentifier id = serviceMethodId(asId(serviceClass.definition().type()), serviceMethod.name());
+        ServiceMethodIdentifier id = serviceMethodId(idByDash(serviceClass.definition().type()), serviceMethod.name());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(serviceMethod.returnType())

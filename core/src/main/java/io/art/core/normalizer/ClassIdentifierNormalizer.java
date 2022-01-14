@@ -10,8 +10,12 @@ import java.util.*;
 
 @UtilityClass
 public class ClassIdentifierNormalizer {
-    public String asId(Class<?> owner) {
+    public String idByDash(Class<?> owner) {
         return asId(owner, DASH);
+    }
+
+    public String idByDot(Class<?> owner) {
+        return asId(owner, DOT);
     }
 
     public String asId(Class<?> owner, char delimiter) {

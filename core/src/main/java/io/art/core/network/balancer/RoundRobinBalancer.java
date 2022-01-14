@@ -36,7 +36,7 @@ public class RoundRobinBalancer<T> implements Balancer<T> {
 
     @Override
     public T select() {
-        return endpoints.get(getNextPosition());
+        return endpoints.get(next());
     }
 
     @Override
@@ -44,7 +44,12 @@ public class RoundRobinBalancer<T> implements Balancer<T> {
         this.endpoints = linkedListOf(endpoints);
     }
 
-    private int getNextPosition() {
+    @Override
+    public void addEndpoint(T endpoint) {
+        endpoints.add(endpoint);
+    }
+
+    private int next() {
         for (; ; ) {
             int current = position.get();
             int next = current + 1;

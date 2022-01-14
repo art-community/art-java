@@ -2,8 +2,8 @@ package io.art.tarantool.module;
 
 import io.art.core.module.*;
 import io.art.tarantool.client.*;
-import io.art.tarantool.cluster.*;
 import io.art.tarantool.configuration.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.module.refresher.*;
 import io.art.tarantool.module.state.*;
 import lombok.*;

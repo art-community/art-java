@@ -22,7 +22,7 @@ import static java.util.Objects.*;
 @UtilityClass
 public class CommunicatorActionFactory {
     public CommunicatorAction communicatorAction(MetaClass<?> owner, MetaMethod<?> method, Communication communication) {
-        return communicatorAction(communicatorActionId(asId(owner.definition().type()), method.name()), method, communication);
+        return communicatorAction(communicatorActionId(idByDash(owner.definition().type()), method.name()), method, communication);
     }
 
     public CommunicatorAction communicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {
@@ -38,7 +38,7 @@ public class CommunicatorActionFactory {
     }
 
     public CommunicatorAction preconfiguredCommunicatorAction(MetaClass<?> owner, MetaMethod<?> method, Communication communication) {
-        return preconfiguredCommunicatorAction(communicatorActionId(asId(owner.definition().type()), method.name()), method, communication);
+        return preconfiguredCommunicatorAction(communicatorActionId(idByDash(owner.definition().type()), method.name()), method, communication);
     }
 
     public CommunicatorAction preconfiguredCommunicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {

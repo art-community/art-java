@@ -33,9 +33,9 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
     }
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
-        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(asId(connectorClass)));
+        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(idByDash(connectorClass)));
         RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
-        tcpConnectors.put(asId(connectorClass), configuration);
+        tcpConnectors.put(idByDash(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
                 .configuration()
                 .getCommunicator()
@@ -48,9 +48,9 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
     }
 
     public RsocketCommunicatorConfigurator ws(Class<? extends Connector> connectorClass, UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
-        RsocketWsConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(asId(connectorClass)));
+        RsocketWsConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(idByDash(connectorClass)));
         RsocketWsConnectorConfiguration configuration = connectorConfigurator.configure();
-        wsConnectors.put(asId(connectorClass), configuration);
+        wsConnectors.put(idByDash(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
                 .configuration()
                 .getCommunicator()

@@ -9,7 +9,6 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;
-import io.art.http.path.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -30,8 +29,8 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
     }
 
     public HttpCommunicatorConfigurator connector(Class<? extends Connector> connectorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
-        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(asId(connectorClass)).toBuilder().uri(byCommunicatorAction())).build();
-        connectors.put(asId(connectorClass), configuration);
+        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(idByDash(connectorClass)).toBuilder().uri(byCommunicatorAction())).build();
+        connectors.put(idByDash(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> httpModule()
                 .configuration()
                 .getCommunicator()

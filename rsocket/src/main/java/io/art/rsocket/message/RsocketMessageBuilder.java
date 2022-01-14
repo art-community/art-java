@@ -94,7 +94,7 @@ public class RsocketMessageBuilder {
 
     private static String buildCommunicatorMessage(CommunicatorProxy<? extends Communicator> communicator) {
         String interfaceName = format(RSOCKET_COMMUNICATOR_MESSAGE_PART,
-                asId(communicator.getCommunicator().getClass().getInterfaces()[0]),
+                idByDash(communicator.getCommunicator().getClass().getInterfaces()[0]),
                 communicator.getCommunicator().getClass().getInterfaces()[0].getSimpleName());
         String actionsString = communicator
                 .getActions()

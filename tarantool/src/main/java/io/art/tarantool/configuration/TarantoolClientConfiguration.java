@@ -14,8 +14,7 @@ public class TarantoolClientConfiguration {
     private int port;
     private String username;
     private String password;
-    private boolean readable;
-    private boolean writeable;
+    private boolean immutable;
     private Duration connectionTimeout;
 
 
@@ -25,8 +24,7 @@ public class TarantoolClientConfiguration {
         configuration.port = orElse(source.getInteger(TARANTOOL_INSTANCE_PORT_KEY), DEFAULT_TARANTOOL_PORT);
         configuration.username = orElse(source.getString(TARANTOOL_INSTANCE_USERNAME_KEY), DEFAULT_TARANTOOL_USERNAME);
         configuration.password = orElse(source.getString(TARANTOOL_INSTANCE_PASSWORD_KEY), DEFAULT_TARANTOOL_PASSWORD);
-        configuration.readable = orElse(source.getBoolean(TARANTOOL_INSTANCE_READABLE_KEY), true);
-        configuration.writeable = orElse(source.getBoolean(TARANTOOL_INSTANCE_WRITEABLE_KEY), true);
+        configuration.immutable = orElse(source.getBoolean(TARANTOOL_INSTANCE_IMMUTABLE_KEY), true);
         configuration.connectionTimeout = orElse(source.getDuration(TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY), DEFAULT_TARANTOOL_CONNECTION_TIMEOUT);
         return configuration;
     }

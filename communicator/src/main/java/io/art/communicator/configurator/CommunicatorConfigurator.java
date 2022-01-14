@@ -96,7 +96,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
                 CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
                 actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
             }
-            configurations.put(asId(communicatorClass.definition().type()), CommunicatorActionsConfiguration.defaults()
+            configurations.put(idByDash(communicatorClass.definition().type()), CommunicatorActionsConfiguration.defaults()
                     .toBuilder()
                     .actions(immutableMapOf(actions))
                     .build());
@@ -105,7 +105,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             MetaClass<? extends Communicator> communicatorClass = methodBasedConfiguration.communicatorClass.get();
             Map<String, CommunicatorActionConfiguration> actions = map();
-            String communicatorId = asId(communicatorClass.definition().type());
+            String communicatorId = idByDash(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) actions = existed.getActions().toMutable();
             MetaMethod<?> method = methodBasedConfiguration.actionMethod.apply(cast(communicatorClass));
@@ -175,7 +175,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
         ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
         MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
-        CommunicatorActionIdentifier id = communicatorActionId(asId(communicatorClass.definition().type()), actionConfiguration.method.name());
+        CommunicatorActionIdentifier id = communicatorActionId(idByDash(communicatorClass.definition().type()), actionConfiguration.method.name());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())

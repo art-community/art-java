@@ -3,7 +3,7 @@ package io.art.tarantool.module.state;
 
 import io.art.core.module.*;
 import io.art.tarantool.client.*;
-import io.art.tarantool.cluster.*;
+import io.art.tarantool.connector.*;
 import java.util.function.*;
 
 public class TarantoolModuleState implements ModuleState {

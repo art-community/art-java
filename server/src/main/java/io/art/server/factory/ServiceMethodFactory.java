@@ -29,7 +29,7 @@ public class ServiceMethodFactory {
     }
 
     public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<?> method) {
-        return ServiceMethodIdentifier.serviceMethodId(asId(owner.definition().type()), method.name());
+        return ServiceMethodIdentifier.serviceMethodId(idByDash(owner.definition().type()), method.name());
     }
 
     public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {

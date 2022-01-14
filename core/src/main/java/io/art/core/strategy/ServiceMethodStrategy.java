@@ -21,7 +21,7 @@ public class ServiceMethodStrategy {
     }
 
     public static ServiceMethodStrategy manual(Class<?> byClass) {
-        return manual(asId(byClass));
+        return manual(idByDash(byClass));
     }
 
     public static ServiceMethodStrategy byCommunicator() {
