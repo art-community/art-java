@@ -110,49 +110,25 @@ public class RsocketMessageBuilder {
 
     private String addTcpConnector(Map.Entry<String, RsocketTcpConnectorConfiguration> entry) {
         StringBuilder message = new StringBuilder(entry.getKey()).append(SPACE + DASH + SPACE);
-        RsocketTcpClientGroupConfiguration groupConfiguration = entry.getValue().getGroupConfiguration();
-        if (nonNull(groupConfiguration)) {
-            ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations = groupConfiguration.getClientConfigurations();
-            if (!clientConfigurations.isEmpty()) {
-                for (RsocketTcpClientConfiguration clientConfiguration : clientConfigurations) {
-                    message.append(format(URI_FORMAT,
-                            isNull(entry.getValue().getCommonConfiguration().getSsl()) ? TCP_SCHEME : TCPS_SCHEME,
-                            clientConfiguration.getHost(),
-                            EMPTY_STRING + clientConfiguration.getPort()));
-                }
-                return message.toString();
-            }
+        ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations = entry.getValue().getClientConfigurations();
+        for (RsocketTcpClientConfiguration clientConfiguration : clientConfigurations) {
+            message.append(format(URI_FORMAT,
+                    isNull(entry.getValue().getCommonConfiguration().getSsl()) ? TCP_SCHEME : TCPS_SCHEME,
+                    clientConfiguration.getHost(),
+                    EMPTY_STRING + clientConfiguration.getPort()));
         }
-        RsocketTcpClientConfiguration clientConfiguration = entry.getValue().getSingleConfiguration();
-        return message
-                .append(format(URI_FORMAT,
-                        isNull(entry.getValue().getCommonConfiguration().getSsl()) ? TCP_SCHEME : TCPS_SCHEME,
-                        clientConfiguration.getHost(),
-                        EMPTY_STRING + clientConfiguration.getPort()))
-                .toString();
+        return message.toString();
     }
 
     private String addWsConnector(Map.Entry<String, RsocketWsConnectorConfiguration> entry) {
         StringBuilder message = new StringBuilder(entry.getKey()).append(SPACE + DASH + SPACE);
-        RsocketWsClientGroupConfiguration groupConfiguration = entry.getValue().getGroupConfiguration();
-        if (nonNull(groupConfiguration)) {
-            ImmutableSet<RsocketWsClientConfiguration> clientConfigurations = groupConfiguration.getClientConfigurations();
-            if (!clientConfigurations.isEmpty()) {
-                for (RsocketWsClientConfiguration clientConfiguration : clientConfigurations) {
-                    message.append(format(URI_FORMAT,
-                            isNull(entry.getValue().getCommonConfiguration().getSsl()) ? WS_SCHEME : WSS_SCHEME,
-                            clientConfiguration.getHost(),
-                            EMPTY_STRING + clientConfiguration.getPort()));
-                }
-                return message.toString();
-            }
+        ImmutableSet<RsocketWsClientConfiguration> clientConfigurations = entry.getValue().getClientConfigurations();
+        for (RsocketWsClientConfiguration clientConfiguration : clientConfigurations) {
+            message.append(format(URI_FORMAT,
+                    isNull(entry.getValue().getCommonConfiguration().getSsl()) ? WS_SCHEME : WSS_SCHEME,
+                    clientConfiguration.getHost(),
+                    EMPTY_STRING + clientConfiguration.getPort()));
         }
-        RsocketWsClientConfiguration clientConfiguration = entry.getValue().getSingleConfiguration();
-        return message
-                .append(format(URI_FORMAT,
-                        isNull(entry.getValue().getCommonConfiguration().getSsl()) ? WS_SCHEME : WSS_SCHEME,
-                        clientConfiguration.getHost(),
-                        EMPTY_STRING + clientConfiguration.getPort()))
-                .toString();
+        return message.toString();
     }
 }

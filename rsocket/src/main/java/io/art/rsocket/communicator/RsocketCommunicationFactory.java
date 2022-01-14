@@ -1,5 +1,6 @@
 package io.art.rsocket.communicator;
 
+import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.logging.*;
@@ -77,14 +78,16 @@ public class RsocketCommunicationFactory {
                 .nioBuffer();
         Payload payload = DefaultPayload.create(payloadData);
         RSocketConnector connector = createConnector(common, payload);
-        RsocketTcpClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
-        if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
-            return createTcpBalancer(connector, group);
+        if (connectorConfiguration.getClientConfigurations().size() > 1) {
+            return createTcpBalancer(connector, connectorConfiguration);
         }
-        return configureSocket(common, createTcpClient(common, connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+        if (connectorConfiguration.getClientConfigurations().isEmpty()) {
+            throw new ImpossibleSituationException();
+        }
+        return configureSocket(common, createTcpClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
     }
 
-    private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpClientGroupConfiguration group) {
+    private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpConnectorConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
         for (RsocketTcpClientConfiguration clientConfiguration : group.getClientConfigurations()) {
             TcpClient client = clientConfiguration.getClientDecorator().apply(TcpClient.create()
@@ -123,14 +126,16 @@ public class RsocketCommunicationFactory {
                 .nioBuffer();
         Payload payload = create(payloadData);
         RSocketConnector connector = createConnector(common, payload);
-        RsocketWsClientGroupConfiguration group = connectorConfiguration.getGroupConfiguration();
-        if (nonNull(group) && isNotEmpty(group.getClientConfigurations())) {
-            return createWsBalancer(connector, group);
+        if (connectorConfiguration.getClientConfigurations().size() > 1) {
+            return createWsBalancer(connector, connectorConfiguration);
         }
-        return configureSocket(common, createWsClient(common, connectorConfiguration.getSingleConfiguration(), connector), setupPayload);
+        if (connectorConfiguration.getClientConfigurations().isEmpty()) {
+            throw new ImpossibleSituationException();
+        }
+        return configureSocket(common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
     }
 
-    private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsClientGroupConfiguration group) {
+    private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsConnectorConfiguration group) {
         List<LoadbalanceTarget> targets = linkedList();
         for (RsocketWsClientConfiguration clientConfiguration : group.getClientConfigurations()) {
             HttpClient client = clientConfiguration.getClientDecorator().apply(HttpClient.create()

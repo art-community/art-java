@@ -1,54 +1,66 @@
 package io.art.rsocket.configuration.communicator.tcp;
 
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.rsocket.configuration.communicator.common.*;
+import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
+import io.rsocket.transport.netty.client.*;
+import lombok.Builder;
 import lombok.*;
+import reactor.netty.tcp.*;
+import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableSet.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpClientConfiguration.*;
-import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpClientGroupConfiguration.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
+import static java.util.function.UnaryOperator.*;
+import java.util.function.*;
 
 @Getter
 @Builder(toBuilder = true)
 public class RsocketTcpConnectorConfiguration {
     private RsocketCommonConnectorConfiguration commonConfiguration;
-    private RsocketTcpClientGroupConfiguration groupConfiguration;
-    private RsocketTcpClientConfiguration singleConfiguration;
+    private ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations;
+    private BalancerMethod balancer;
+    private UnaryOperator<TcpClient> clientDecorator;
+    private UnaryOperator<TcpClientTransport> transportDecorator;
 
     public static RsocketTcpConnectorConfiguration tcpConnectorConfiguration(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
         RsocketTcpConnectorConfiguration currentConfiguration = orElse(current, tcpConnectorConfiguration(source.getParent()));
 
         RsocketTcpConnectorConfiguration configuration = RsocketTcpConnectorConfiguration.builder().build();
         configuration.commonConfiguration = commonConnectorConfiguration(refresher, currentConfiguration.commonConfiguration, source);
+        configuration.clientDecorator = current.clientDecorator;
+        configuration.transportDecorator = current.transportDecorator;
+        configuration.balancer = rsocketBalancer(source.getString(BALANCER_KEY), current.balancer);
 
-        RsocketTcpClientGroupConfiguration groupConfiguration = source.getNested(GROUP_SECTION, nested -> groupConfiguration(refresher, currentConfiguration, nested));
-        RsocketTcpClientGroupConfiguration defaultGroup = tcpClientGroupConfiguration(currentConfiguration.commonConfiguration.getConnector());
-        configuration.groupConfiguration = orElse(groupConfiguration, orElse(currentConfiguration.groupConfiguration, defaultGroup));
+        ImmutableSet<RsocketTcpClientConfiguration> clientConfigurations = immutableSetOf(source.getNestedArray(
+                CLIENTS_SECTION,
+                nested -> clientConfiguration(refresher, current, nested)
+        ));
 
-        RsocketTcpClientConfiguration singleConfiguration = source.getNested(SINGLE_SECTION, nested -> singleConfiguration(refresher, currentConfiguration, nested));
-        RsocketTcpClientConfiguration defaultSingle = tcpClientConfiguration(currentConfiguration.commonConfiguration.getConnector());
-        configuration.singleConfiguration = orElse(singleConfiguration, orElse(currentConfiguration.singleConfiguration, defaultSingle));
-
+        configuration.clientConfigurations = merge(current.clientConfigurations, clientConfigurations);
         return configuration;
     }
 
     public static RsocketTcpConnectorConfiguration tcpConnectorConfiguration(String connector) {
         return builder()
                 .commonConfiguration(commonConnectorConfiguration(connector))
+                .balancer(ROUND_ROBIN)
+                .clientConfigurations(emptyImmutableSet())
+                .clientDecorator(identity())
+                .transportDecorator(identity())
                 .build();
     }
 
-    private static RsocketTcpClientConfiguration singleConfiguration(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
-        RsocketTcpClientConfiguration tcpClientConfiguration = tcpClientConfiguration(current.commonConfiguration.getConnector());
-        RsocketTcpClientConfiguration clientConfiguration = orElse(current.singleConfiguration, tcpClientConfiguration);
-        return tcpClientConfiguration(refresher, clientConfiguration, source);
-    }
 
-    private static RsocketTcpClientGroupConfiguration groupConfiguration(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, ConfigurationSource source) {
-        RsocketTcpClientGroupConfiguration tcpClientGroupConfiguration = tcpClientGroupConfiguration(current.commonConfiguration.getConnector());
-        RsocketTcpClientGroupConfiguration groupConfiguration = orElse(current.groupConfiguration, tcpClientGroupConfiguration);
-        return tcpClientGroupConfiguration(refresher, groupConfiguration, source);
+    private static RsocketTcpClientConfiguration clientConfiguration(RsocketModuleRefresher refresher, RsocketTcpConnectorConfiguration current, NestedConfiguration nested) {
+        RsocketTcpClientConfiguration defaults = tcpClientConfiguration(current.commonConfiguration.getConnector());
+        return tcpClientConfiguration(refresher, defaults, nested);
     }
 }

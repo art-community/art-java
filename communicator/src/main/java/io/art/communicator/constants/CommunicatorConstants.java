@@ -36,7 +36,7 @@ public interface CommunicatorConstants {
     interface ConfigurationKeys {
         String CONNECTORS_SECTION = "connectors";
         String COMMUNICATOR_SECTION = "communicator";
-        String TARGETS_SECTION = "targets";
+        String CLIENTS_SECTION = "clients";
         String ACTIONS_SECTION = "actions";
     }
 }

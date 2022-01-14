@@ -2,34 +2,54 @@ package io.art.rsocket.module;
 
 import io.art.core.annotation.*;
 import io.art.rsocket.configuration.communicator.ws.*;
-import lombok.*;
-import static io.art.core.checker.NullityChecker.*;
+import io.art.rsocket.constants.*;
+import io.rsocket.transport.netty.client.*;
+import reactor.netty.http.client.*;
+import static io.art.core.factory.SetFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
-import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientGroupConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
+import static java.util.function.UnaryOperator.*;
+import java.util.*;
 import java.util.function.*;
 
 @Public
-@RequiredArgsConstructor
 public class RsocketWsConnectorConfigurator {
     private final String connector;
-    private RsocketWsClientGroupConfiguration group;
-    private RsocketWsClientConfiguration single;
-    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = UnaryOperator.identity();
+    private final Set<RsocketWsClientConfiguration> clients;
+    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = identity();
+    private RsocketModuleConstants.BalancerMethod balancer = ROUND_ROBIN;
+    private UnaryOperator<HttpClient> clientDecorator = identity();
+    private UnaryOperator<WebsocketClientTransport> transportDecorator = identity();
 
-    public RsocketWsConnectorConfigurator roundRobin(UnaryOperator<RsocketWsClientGroupConfigurator> configurator) {
-        group = configurator.apply(new RsocketWsClientGroupConfigurator(connector, ROUND_ROBIN)).configure();
+    public RsocketWsConnectorConfigurator(String connector) {
+        this.connector = connector;
+        this.clients = setOf(wsClientConfiguration(connector));
+    }
+
+    public RsocketWsConnectorConfigurator roundRobin() {
+        balancer = ROUND_ROBIN;
         return this;
     }
 
-    public RsocketWsConnectorConfigurator weighted(UnaryOperator<RsocketWsClientGroupConfigurator> configurator) {
-        group = configurator.apply(new RsocketWsClientGroupConfigurator(connector, WEIGHTED)).configure();
+    public RsocketWsConnectorConfigurator weighted() {
+        balancer = WEIGHTED;
         return this;
     }
 
-    public RsocketWsConnectorConfigurator single(UnaryOperator<RsocketWsClientConfigurationBuilder> configurator) {
-        single = configurator.apply(wsClientConfiguration(connector).toBuilder()).build();
+    public RsocketWsConnectorConfigurator decorateClient(UnaryOperator<HttpClient> decorator) {
+        clientDecorator = decorator;
+        return this;
+    }
+
+    public RsocketWsConnectorConfigurator decorateTransport(UnaryOperator<WebsocketClientTransport> decorator) {
+        transportDecorator = decorator;
+        return this;
+    }
+
+    public RsocketWsConnectorConfigurator client(UnaryOperator<RsocketWsClientConfigurationBuilder> configurator) {
+        clients.add(configurator.apply(RsocketWsClientConfiguration.wsClientConfiguration(connector).toBuilder()).build());
         return this;
     }
 
@@ -39,10 +59,13 @@ public class RsocketWsConnectorConfigurator {
     }
 
     RsocketWsConnectorConfiguration configure() {
-        return RsocketWsConnectorConfiguration.builder()
+        return wsConnectorConfiguration(connector)
+                .toBuilder()
                 .commonConfiguration(commonConfigurator.apply(commonConnectorConfiguration(connector).toBuilder()).build())
-                .groupConfiguration(orElse(group, wsClientGroupConfiguration(connector)))
-                .singleConfiguration(orElse(single, wsClientConfiguration(connector)))
+                .balancer(balancer)
+                .clientConfigurations(immutableSetOf(clients))
+                .transportDecorator(transportDecorator)
+                .clientDecorator(clientDecorator)
                 .build();
     }
 }

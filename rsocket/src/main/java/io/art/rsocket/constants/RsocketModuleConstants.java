@@ -82,8 +82,6 @@ public interface RsocketModuleConstants {
         String RETRY_SECTION = "retry";
         String RECONNECT_SECTION = "reconnect";
         String KEEP_ALIVE_SECTION = "keepAlive";
-        String GROUP_SECTION = "group";
-        String SINGLE_SECTION = "single";
         String BALANCER_KEY = "balancer";
 
         String WS_PATH_KEY = "ws.path";

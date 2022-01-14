@@ -94,7 +94,7 @@ public class CommunicatorConfiguration {
     public static CommunicatorConfiguration communicatorConfiguration(CommunicatorRefresher refresher, CommunicatorConfiguration current, ConfigurationSource source) {
         CommunicatorConfigurationBuilder builder = current.toBuilder();
         builder.configurations(lazy(() -> merge(current.configurations.get(), ofNullable(source)
-                .map(communicator -> communicator.getNestedMap(TARGETS_SECTION, actions -> getActions(current, builder, actions)))
+                .map(communicator -> communicator.getNestedMap(CLIENTS_SECTION, actions -> getActions(current, builder, actions)))
                 .orElse(emptyImmutableMap()))));
         refresher.produce();
         return builder.build();
