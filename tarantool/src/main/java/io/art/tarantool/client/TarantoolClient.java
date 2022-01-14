@@ -33,7 +33,6 @@ public class TarantoolClient {
     private final TarantoolClientConfiguration configuration;
 
     private volatile Disposable disposer;
-    private volatile Mono<? extends Connection> connection;
 
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
@@ -43,26 +42,16 @@ public class TarantoolClient {
 
     private final static Logger logger = logger(TarantoolClient.class);
 
-    public Mono<TarantoolClient> connect() {
-        connection = TcpClient.create()
-                .host(configuration.getHost())
-                .port(configuration.getPort())
-                .option(CONNECT_TIMEOUT_MILLIS, (int) configuration.getConnectionTimeout().toMillis())
-                .connect();
+    public Mono<Value> call(String name) {
+        return connector.asMono().flatMap(client -> client.executeCall(name)).doOnSubscribe(ignore -> connect());
+    }
 
-        return connector.asMono().doOnSubscribe(subscription -> subscribe());
+    public Mono<Value> call(String name, Mono<Value> input) {
+        return connector.asMono().flatMap(client -> client.executeCall(name, input)).doOnSubscribe(ignore -> connect());
     }
 
     public void dispose() {
         apply(disposer, Disposable::dispose);
-    }
-
-    public Mono<Value> call(String name) {
-        return connector.asMono().flatMap(client -> client.executeCall(name));
-    }
-
-    public Mono<Value> call(String name, Mono<Value> input) {
-        return connector.asMono().flatMap(client -> client.executeCall(name, input));
     }
 
     private Mono<Value> executeCall(String name) {
@@ -124,9 +113,14 @@ public class TarantoolClient {
         sink.tryEmitValue(bodyValues.get(0));
     }
 
-    private void subscribe() {
+    private void connect() {
         if (connected.compareAndSet(false, true)) {
-            apply(connection, mono -> disposer = mono.subscribe(this::setup));
+            disposer = TcpClient.create()
+                    .host(configuration.getHost())
+                    .port(configuration.getPort())
+                    .option(CONNECT_TIMEOUT_MILLIS, (int) configuration.getConnectionTimeout().toMillis())
+                    .connect()
+                    .subscribe(this::setup);
         }
     }
 
