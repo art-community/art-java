@@ -20,14 +20,16 @@ public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
     private final TarantoolModelReader reader = new TarantoolModelReader();
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
+    private final Supplier<TarantoolClient> client;
     private final Property<TarantoolConnector> connector;
 
     private String function;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
 
-    public TarantoolCommunication(Supplier<TarantoolConnector> connector) {
+    public TarantoolCommunication(Supplier<TarantoolConnector> connector, boolean immutable) {
         this.connector = property(connector);
+        this.client = immutable ? () -> connector.get().immutable() : () -> connector.get().mutable();
     }
 
     @Override
@@ -51,7 +53,7 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public Flux<Object> communicate(Flux<Object> input) {
-        return caller.get().apply(input, connector.get().mutable());
+        return caller.get().apply(input, client.get());
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
