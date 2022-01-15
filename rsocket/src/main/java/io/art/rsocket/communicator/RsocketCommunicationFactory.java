@@ -132,9 +132,7 @@ public class RsocketCommunicationFactory {
         if (connectorConfiguration.getClientConfigurations().isEmpty()) {
             throw new RsocketException(CLIENTS_EMPTY);
         }
-        RETURN configureSocket
-        (common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload)
-        ;
+        return configureSocket(common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
     }
 
     private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsConnectorConfiguration connectorConfiguration) {
