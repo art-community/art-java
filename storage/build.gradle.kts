@@ -18,8 +18,5 @@
 
 
 dependencies {
-    implementation(project(":core"))
-    implementation(project(":meta"))
-    implementation(project(":logging"))
-
+    api(project(":communicator"))
 }

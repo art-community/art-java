@@ -1,18 +1,31 @@
 package io.art.storage;
 
+import io.art.communicator.*;
 import io.art.core.annotation.*;
 
 @Public
-public interface Space<T, K> {
-    T get(K key);
+public interface Space extends Communicator {
+    default <T, K> T get(K key) {
+        return null;
+    }
 
-    T insert(T data);
+    default <T, K> T insert(T data) {
+        return null;
+    }
 
-    T put(T data);
+    default <T, K> T put(T data) {
+        return null;
+    }
 
-    T delete(K key);
+    default <T, K> T delete(K key) {
+        return null;
+    }
 
-    void truncate();
+    default void truncate() {
 
-    Long count();
+    }
+
+    default Long count() {
+        return null;
+    }
 }
