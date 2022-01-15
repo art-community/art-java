@@ -1,5 +1,6 @@
 package io.art.tarantool.client;
 
+import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
 import io.art.tarantool.configuration.*;
@@ -14,7 +15,9 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
 import reactor.netty.tcp.*;
+import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
@@ -30,9 +33,9 @@ import java.util.concurrent.atomic.*;
 
 @RequiredArgsConstructor
 public class TarantoolClient {
-    private final TarantoolClientConfiguration configuration;
+    private final static LazyProperty<Logger> logger = lazy(() -> logger(TARANTOOL_LOGGER));
 
-    private volatile Disposable disposer;
+    private final TarantoolClientConfiguration configuration;
 
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connected = new AtomicBoolean(false);
@@ -40,7 +43,7 @@ public class TarantoolClient {
     private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
     private final TarantoolReceiverRegistry receivers = new TarantoolReceiverRegistry(RECEIVERS_POOL_MAXIMUM);
 
-    private final static Logger logger = logger(TarantoolClient.class);
+    private volatile Disposable disposer;
 
     public Mono<Value> call(String name) {
         return connector.asMono().flatMap(client -> client.executeCall(name)).doOnSubscribe(ignore -> connect());
@@ -69,7 +72,7 @@ public class TarantoolClient {
     private void subscribeInput(String name, Mono<Value> arguments, TarantoolReceiver receiver) {
         arguments
                 .doOnNext(argument -> emitCall(receiver.getId(), callRequest(name, argument)))
-                .doOnError(logger::error)
+                .doOnError(error -> withLogging(() -> logger.get().error(error)))
                 .subscribe();
     }
 
@@ -130,12 +133,12 @@ public class TarantoolClient {
                 .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
         connection.inbound()
                 .receive()
-                .doOnError(logger::error)
+                .doOnError(error -> withLogging(() -> logger.get().error(error)))
                 .filter(ignore -> authenticated.get())
                 .doOnNext(this::receive)
                 .subscribe();
         connection.outbound()
-                .send(sender.asFlux().doOnError(logger::error))
+                .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
                 .then()
                 .subscribe();
     }

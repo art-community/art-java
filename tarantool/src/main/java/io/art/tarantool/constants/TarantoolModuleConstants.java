@@ -36,7 +36,7 @@ public interface TarantoolModuleConstants {
     String DEFAULT_TARANTOOL_USERNAME = "guest";
     String DEFAULT_TARANTOOL_PASSWORD = "";
     String DEFAULT_TARANTOOL_CLUSTER_NAME = "default";
-
+    String TARANTOOL_LOGGER = "tarantool";
 
     int DEFAULT_TARANTOOL_RETRIES = 3;
 
