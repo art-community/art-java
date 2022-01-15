@@ -8,9 +8,9 @@ import java.util.*;
 import java.util.stream.*;
 
 public interface UserStorage extends Storage {
-    UserSpace testSpace();
+    UsersSpace testSpace();
 
-    interface UserSpace extends TarantoolSpace<UserSpace> {
+    interface UsersSpace extends TarantoolSpace<UsersSpace> {
         Mono<User> save(User request);
 
         Flux<User> get(int id);

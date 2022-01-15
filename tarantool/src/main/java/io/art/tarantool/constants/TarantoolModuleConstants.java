@@ -26,7 +26,7 @@ import java.time.*;
 
 public interface TarantoolModuleConstants {
     int DEFAULT_TARANTOOL_CONNECTIONS_NUMBER = 1;
-    Duration DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = ofSeconds(5);
+    Duration DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = ofSeconds(30);
     Duration DEFAULT_TARANTOOL_READ_TIMEOUT = ofSeconds(15);
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 8129;

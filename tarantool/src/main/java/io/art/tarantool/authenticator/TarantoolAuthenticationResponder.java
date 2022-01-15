@@ -16,6 +16,7 @@ public class TarantoolAuthenticationResponder extends SimpleChannelInboundHandle
     @Override
     protected void channelRead0(ChannelHandlerContext context, ByteBuf input) {
         TarantoolResponse tarantoolResponse = readTarantoolResponse(input);
+        System.out.println(tarantoolResponse);
         listener.accept(!tarantoolResponse.isError(), let(tarantoolResponse.getBody(), Value::toJson));
         context.pipeline().remove(this);
     }

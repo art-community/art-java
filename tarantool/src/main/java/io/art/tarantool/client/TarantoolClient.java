@@ -38,6 +38,7 @@ public class TarantoolClient {
     private final TarantoolClientConfiguration configuration;
 
     private final Sinks.One<TarantoolClient> connector = one();
+    private final AtomicBoolean connecting = new AtomicBoolean(false);
     private final AtomicBoolean connected = new AtomicBoolean(false);
     private final AtomicBoolean authenticated = new AtomicBoolean(false);
     private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
@@ -117,7 +118,7 @@ public class TarantoolClient {
     }
 
     private void connect() {
-        if (connected.compareAndSet(false, true)) {
+        if (connecting.compareAndSet(false, true)) {
             disposer = TcpClient.create()
                     .host(configuration.getHost())
                     .port(configuration.getPort())
@@ -128,18 +129,20 @@ public class TarantoolClient {
     }
 
     private void setup(Connection connection) {
-        connection
-                .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
-                .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
-        connection.inbound()
-                .receive()
-                .doOnError(error -> withLogging(() -> logger.get().error(error)))
-                .filter(ignore -> authenticated.get())
-                .doOnNext(this::receive)
-                .subscribe();
-        connection.outbound()
-                .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
-                .then()
-                .subscribe();
+        if (connected.compareAndSet(false, true)) {
+            connection.markPersistent(true);
+            connection
+                    .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
+                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
+            connection.inbound()
+                    .receive()
+                    .doOnError(error -> withLogging(() -> logger.get().error(error)))
+                    .doOnNext(this::receive)
+                    .subscribe();
+            connection.outbound()
+                    .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
+                    .then()
+                    .subscribe();
+        }
     }
 }

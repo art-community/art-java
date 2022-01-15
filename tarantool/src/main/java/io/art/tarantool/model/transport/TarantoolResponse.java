@@ -4,6 +4,7 @@ import lombok.*;
 import org.msgpack.value.Value;
 
 @Getter
+@ToString
 public class TarantoolResponse {
     private final TarantoolHeader header;
     private final boolean error;

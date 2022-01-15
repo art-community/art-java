@@ -16,7 +16,12 @@ import static io.art.transport.module.TransportActivator.*;
 public class TarantoolTest {
     @BeforeAll
     public static void setup() {
-        initialize(logging(), meta(MetaTarantoolTest::new), transport(), tarantool(tarantool -> tarantool.storage(UserStorage.class, storage -> storage.client(client -> client.username("username").password("password")))));
+        initialize(logging(),
+                meta(MetaTarantoolTest::new),
+                transport(),
+                tarantool(tarantool -> tarantool
+                        .storage(UserStorage.class, storage -> storage.client(client -> client.username("test").password("test"))))
+        );
     }
 
     @AfterAll
@@ -26,7 +31,7 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-        UserSpace space = tarantoolStorage(UserStorage.class).testSpace();
+        UsersSpace space = tarantoolStorage(UserStorage.class).testSpace();
         space.save(User.builder().id(4).name("test 4").address(new User.Address(123)).build());
         User user = space.get(4).blockFirst();
         space.save(user.toBuilder().address(user.getAddress().toBuilder().house(12).build()).build());
