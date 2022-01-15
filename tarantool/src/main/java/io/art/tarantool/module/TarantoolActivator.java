@@ -21,10 +21,16 @@ package io.art.tarantool.module;
 import io.art.core.module.*;
 import lombok.experimental.*;
 import static io.art.core.module.ModuleActivator.*;
+import static java.util.function.UnaryOperator.*;
+import java.util.function.*;
 
 @UtilityClass
 public class TarantoolActivator {
     public ModuleActivator tarantool() {
-        return module(TarantoolModule.class, TarantoolModule::new);
+        return tarantool(identity());
+    }
+
+    public static ModuleActivator tarantool(UnaryOperator<TarantoolInitializer> initializer) {
+        return module(TarantoolModule.class, TarantoolModule::new, () -> initializer.apply(new TarantoolInitializer()));
     }
 }

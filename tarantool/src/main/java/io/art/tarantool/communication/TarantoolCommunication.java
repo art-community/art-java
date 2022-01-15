@@ -10,6 +10,7 @@ import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.property.Property.*;
@@ -28,11 +29,15 @@ public class TarantoolCommunication implements Communication {
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
 
-    public TarantoolCommunication(Supplier<TarantoolConnector> connector, TarantoolModuleConfiguration moduleConfiguration, boolean immutable) {
+    private final static ThreadLocal<TarantoolSpaceDecorator> decorator = new ThreadLocal<>();
+
+    public TarantoolCommunication(Supplier<TarantoolConnector> connector, TarantoolModuleConfiguration moduleConfiguration) {
         this.connector = property(connector);
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
-        this.client = immutable ? () -> connector.get().immutable() : () -> connector.get().mutable();
+        this.client = () -> let(decorator.get(), TarantoolSpaceDecorator::isImmutable, false)
+                ? connector.get().immutable()
+                : connector.get().mutable();
     }
 
     @Override
@@ -93,5 +98,9 @@ public class TarantoolCommunication implements Communication {
 
     private void disposeClient(TarantoolClient client) {
         client.dispose();
+    }
+
+    static void decorateTarantoolSpace(UnaryOperator<TarantoolSpaceDecorator> decorator) {
+        TarantoolCommunication.decorator.set(decorator.apply(new TarantoolSpaceDecorator()));
     }
 }

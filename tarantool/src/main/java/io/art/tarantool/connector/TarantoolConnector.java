@@ -3,17 +3,13 @@ package io.art.tarantool.connector;
 import io.art.core.network.balancer.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
-import lombok.*;
 
 
 public class TarantoolConnector {
-    @Getter
-    private final String id;
     private final Balancer<TarantoolClient> immutable;
     private final Balancer<TarantoolClient> mutable;
 
-    public TarantoolConnector(String id, TarantoolConnectorConfiguration configuration) {
-        this.id = id;
+    public TarantoolConnector(TarantoolConnectorConfiguration configuration) {
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
         initializeClients(configuration);
@@ -28,7 +24,7 @@ public class TarantoolConnector {
     }
 
     private void initializeClients(TarantoolConnectorConfiguration configuration) {
-        for (TarantoolClientConfiguration client : configuration.getClients().values()) {
+        for (TarantoolClientConfiguration client : configuration.getClients()) {
             if (client.isImmutable()) {
                 immutable.addEndpoint(new TarantoolClient(client));
                 continue;

@@ -1,17 +1,18 @@
 package io.art.tarantool.module;
 
+import io.art.core.collection.*;
+import io.art.core.context.*;
 import io.art.core.module.*;
-import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
-import io.art.tarantool.connector.*;
+import io.art.tarantool.manager.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.state.*;
 import lombok.*;
+import static io.art.core.constants.EmptyFunctions.*;
 import static io.art.core.context.Context.*;
 import static io.art.tarantool.configuration.TarantoolModuleConfiguration.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static lombok.AccessLevel.*;
-import java.util.function.*;
+import static reactor.core.publisher.Hooks.*;
 
 @Getter
 public class TarantoolModule implements StatefulModule<TarantoolModuleConfiguration, Configurator, TarantoolModuleState> {
@@ -20,6 +21,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     private final String id = TarantoolModule.class.getSimpleName();
     private final TarantoolModuleRefresher refresher = new TarantoolModuleRefresher();
     private final TarantoolModuleConfiguration configuration = new TarantoolModuleConfiguration(refresher);
+    private final TarantoolManager manager = new TarantoolManager(configuration);
     private final Configurator configurator = new Configurator(configuration);
     private final TarantoolModuleState state = new TarantoolModuleState();
 
@@ -27,15 +29,19 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         return getTarantoolModule();
     }
 
-    public static TarantoolClient tarantoolInstance() {
-        return tarantoolInstance(DEFAULT_TARANTOOL_CLUSTER_NAME);
+    @Override
+    public void launch(ContextService contextService) {
+        onErrorDropped(emptyConsumer());
+        ImmutableMap<String, TarantoolConnectorConfiguration> connectors = configuration.getConnectors();
+        if (!connectors.isEmpty()) {
+            manager.initializeCommunicators();
+        }
     }
 
-    public static TarantoolClient tarantoolInstance(String clusterId) {
-        return null;
-    }
-
-    private static Supplier<TarantoolConnector> getCluster(String clusterId) {
-        return tarantoolModule().state().getConnector(clusterId);
+    @Override
+    public void shutdown(ContextService contextService) {
+        if (!configuration.getConnectors().isEmpty()) {
+            manager.disposeCommunicators();
+        }
     }
 }

@@ -3,12 +3,13 @@ package io.art.tarantool.configuration;
 import io.art.core.source.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.constants.NetworkConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import java.time.*;
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 public class TarantoolClientConfiguration {
     private String host;
     private int port;
@@ -17,6 +18,18 @@ public class TarantoolClientConfiguration {
     private boolean immutable;
     private Duration connectionTimeout;
     private boolean logging;
+
+    public static TarantoolClientConfiguration tarantoolClientConfiguration() {
+        TarantoolClientConfiguration configuration = TarantoolClientConfiguration.builder().build();
+        configuration.host = LOCALHOST_IP_ADDRESS;
+        configuration.port = DEFAULT_TARANTOOL_PORT;
+        configuration.username = DEFAULT_TARANTOOL_USERNAME;
+        configuration.password = DEFAULT_TARANTOOL_PASSWORD;
+        configuration.immutable = false;
+        configuration.connectionTimeout = DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
+        configuration.logging = false;
+        return configuration;
+    }
 
     public static TarantoolClientConfiguration tarantoolClientConfiguration(ConfigurationSource source) {
         TarantoolClientConfiguration configuration = TarantoolClientConfiguration.builder().build();

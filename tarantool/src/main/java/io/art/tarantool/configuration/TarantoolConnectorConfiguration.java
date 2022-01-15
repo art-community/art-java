@@ -1,31 +1,34 @@
 package io.art.tarantool.configuration;
 
+import io.art.core.collection.*;
 import io.art.core.source.*;
 import io.art.tarantool.refresher.*;
+import lombok.Builder;
 import lombok.*;
-import static com.google.common.collect.ImmutableMap.*;
-import static io.art.core.checker.NullityChecker.orElse;
-import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.MapFactory.*;
-import static io.art.tarantool.configuration.TarantoolClientConfiguration.*;
+import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.collection.ImmutableSet.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
-import java.util.*;
 
 @Getter
+@Builder(toBuilder = true)
 public class TarantoolConnectorConfiguration {
-    private Map<String, TarantoolClientConfiguration> clients = map();
+    private String connector;
+    private ImmutableSet<TarantoolClientConfiguration> clients;
     private boolean logging;
 
+    public static TarantoolConnectorConfiguration tarantoolConnectorConfiguration(String connector) {
+        TarantoolConnectorConfiguration configuration = TarantoolConnectorConfiguration.builder().build();
+        configuration.connector = connector;
+        configuration.clients = emptyImmutableSet();
+        configuration.logging = false;
+        return configuration;
+    }
+
     public static TarantoolConnectorConfiguration tarantoolConnectorConfiguration(ConfigurationSource source, TarantoolModuleRefresher refresher) {
-        TarantoolConnectorConfiguration configuration = new TarantoolConnectorConfiguration();
+        TarantoolConnectorConfiguration configuration = TarantoolConnectorConfiguration.builder().build();
 
-        ConfigurationSource instancesConfiguration = source.getNested(TARANTOOL_INSTANCES_SECTION);
 
-        configuration.clients = instancesConfiguration.getKeys()
-                .stream()
-                .collect(toImmutableMap(key -> key, key -> tarantoolClientConfiguration(instancesConfiguration.getNested(key))));
-
-        configuration.clients.forEach((key, value) -> refresher.clientListeners().listenerFor(source.getParent() + COLON + key).emit(value));
+        configuration.clients = source.getNestedArray(TARANTOOL_INSTANCES_SECTION, TarantoolClientConfiguration::tarantoolClientConfiguration).asSet();
         configuration.logging = orElse(source.getBoolean(TARANTOOL_LOGGING_KEY), false);
 
         refresher.clusterListeners().listenerFor(source.getParent()).emit(configuration);
