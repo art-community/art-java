@@ -3,6 +3,7 @@ package io.art.tarantool.configuration;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
+import io.art.tarantool.descriptor.*;
 import io.art.tarantool.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -12,11 +13,14 @@ import static io.art.tarantool.configuration.TarantoolConnectorConfiguration.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 
+@Getter
 @RequiredArgsConstructor
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final TarantoolModuleRefresher refresher;
-    public ImmutableMap<String, TarantoolConnectorConfiguration> connectors;
-    public boolean logging = false;
+    private ImmutableMap<String, TarantoolConnectorConfiguration> connectors;
+    private boolean logging = false;
+    private final TarantoolModelWriter writer = new TarantoolModelWriter();
+    private final TarantoolModelReader reader = new TarantoolModelReader();
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<TarantoolModuleConfiguration, Configurator> {

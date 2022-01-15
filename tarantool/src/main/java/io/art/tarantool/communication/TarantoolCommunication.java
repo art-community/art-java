@@ -5,6 +5,7 @@ import io.art.communicator.model.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
 import io.art.tarantool.client.*;
+import io.art.tarantool.configuration.*;
 import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
 import reactor.core.publisher.*;
@@ -17,18 +18,20 @@ import static java.util.Objects.*;
 import java.util.function.*;
 
 public class TarantoolCommunication implements Communication {
-    private final TarantoolModelWriter writer = new TarantoolModelWriter();
-    private final TarantoolModelReader reader = new TarantoolModelReader();
-    private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
+    private final TarantoolModelWriter writer;
+    private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
     private final Property<TarantoolConnector> connector;
+    private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
     private String function;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
 
-    public TarantoolCommunication(Supplier<TarantoolConnector> connector, boolean immutable) {
+    public TarantoolCommunication(Supplier<TarantoolConnector> connector, TarantoolModuleConfiguration moduleConfiguration, boolean immutable) {
         this.connector = property(connector);
+        this.writer = moduleConfiguration.getWriter();
+        this.reader = moduleConfiguration.getReader();
         this.client = immutable ? () -> connector.get().immutable() : () -> connector.get().mutable();
     }
 
