@@ -3,7 +3,7 @@ package io.art.tarantool.configuration;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
-import io.art.tarantool.module.refresher.*;
+import io.art.tarantool.refresher.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collector.SetCollector.*;

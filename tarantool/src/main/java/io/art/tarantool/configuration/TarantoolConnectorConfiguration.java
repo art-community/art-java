@@ -1,7 +1,7 @@
 package io.art.tarantool.configuration;
 
 import io.art.core.source.*;
-import io.art.tarantool.module.refresher.*;
+import io.art.tarantool.refresher.*;
 import lombok.*;
 import static com.google.common.collect.ImmutableMap.*;
 import static io.art.core.constants.StringConstants.*;

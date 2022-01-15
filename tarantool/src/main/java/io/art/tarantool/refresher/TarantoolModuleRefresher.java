@@ -1,4 +1,4 @@
-package io.art.tarantool.module.refresher;
+package io.art.tarantool.refresher;
 
 import io.art.core.changes.*;
 import io.art.core.module.*;

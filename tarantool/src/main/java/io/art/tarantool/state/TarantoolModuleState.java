@@ -1,4 +1,4 @@
-package io.art.tarantool.module.state;
+package io.art.tarantool.state;
 
 
 import io.art.core.module.*;
