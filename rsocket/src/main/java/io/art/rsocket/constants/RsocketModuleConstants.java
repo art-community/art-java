@@ -32,6 +32,7 @@ public interface RsocketModuleConstants {
 
     interface Errors {
         String SERVICE_METHOD_NOT_FOUND = "Service method was not found for service method identifiers: {0}";
+        String CLIENTS_EMPTY = "RSocket communicator hasn't registered clients";
     }
 
     interface LoggingMessages {

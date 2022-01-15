@@ -1,6 +1,5 @@
 package io.art.rsocket.communicator;
 
-import io.art.core.exception.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.logging.*;
@@ -36,6 +35,7 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.module.RsocketModule.*;
@@ -82,7 +82,7 @@ public class RsocketCommunicationFactory {
             return createTcpBalancer(connector, connectorConfiguration);
         }
         if (connectorConfiguration.getClientConfigurations().isEmpty()) {
-            throw new ImpossibleSituationException();
+            throw new RsocketException(CLIENTS_EMPTY);
         }
         return configureSocket(common, createTcpClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
     }
@@ -130,9 +130,11 @@ public class RsocketCommunicationFactory {
             return createWsBalancer(connector, connectorConfiguration);
         }
         if (connectorConfiguration.getClientConfigurations().isEmpty()) {
-            throw new ImpossibleSituationException();
+            throw new RsocketException(CLIENTS_EMPTY);
         }
-        return configureSocket(common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
+        RETURN configureSocket
+        (common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload)
+        ;
     }
 
     private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsConnectorConfiguration connectorConfiguration) {
