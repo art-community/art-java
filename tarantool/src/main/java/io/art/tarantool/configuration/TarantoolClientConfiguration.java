@@ -16,7 +16,7 @@ public class TarantoolClientConfiguration {
     private String password;
     private boolean immutable;
     private Duration connectionTimeout;
-
+    private boolean logging;
 
     public static TarantoolClientConfiguration tarantoolClientConfiguration(ConfigurationSource source) {
         TarantoolClientConfiguration configuration = TarantoolClientConfiguration.builder().build();
@@ -26,6 +26,7 @@ public class TarantoolClientConfiguration {
         configuration.password = orElse(source.getString(TARANTOOL_INSTANCE_PASSWORD_KEY), DEFAULT_TARANTOOL_PASSWORD);
         configuration.immutable = orElse(source.getBoolean(TARANTOOL_INSTANCE_IMMUTABLE_KEY), true);
         configuration.connectionTimeout = orElse(source.getDuration(TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY), DEFAULT_TARANTOOL_CONNECTION_TIMEOUT);
+        configuration.logging = orElse(source.getBoolean(TARANTOOL_LOGGING_KEY), false);
         return configuration;
     }
 }

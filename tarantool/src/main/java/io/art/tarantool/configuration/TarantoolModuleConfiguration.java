@@ -18,9 +18,9 @@ import static java.util.Objects.*;
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final TarantoolModuleRefresher refresher;
     private ImmutableMap<String, TarantoolConnectorConfiguration> connectors;
-    private boolean logging = false;
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
     private final TarantoolModelReader reader = new TarantoolModelReader();
+    private boolean logging;
 
     @RequiredArgsConstructor
     public static class Configurator implements ModuleConfigurator<TarantoolModuleConfiguration, Configurator> {
