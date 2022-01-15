@@ -18,7 +18,7 @@ public class TarantoolClientConfiguration {
     private Duration connectionTimeout;
 
 
-    public static TarantoolClientConfiguration from(ConfigurationSource source) {
+    public static TarantoolClientConfiguration tarantoolClientConfiguration(ConfigurationSource source) {
         TarantoolClientConfiguration configuration = TarantoolClientConfiguration.builder().build();
         configuration.host = orElse(source.getString(TARANTOOL_INSTANCE_HOST_KEY), DEFAULT_TARANTOOL_HOST);
         configuration.port = orElse(source.getInteger(TARANTOOL_INSTANCE_PORT_KEY), DEFAULT_TARANTOOL_PORT);
