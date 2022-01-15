@@ -135,38 +135,38 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             public static final class MetaUserSpaceClass extends MetaClass<io.art.tarantool.test.UserStorage.UserSpace> {
-              private final MetaSaveUserMethod saveUserMethod = register(new MetaSaveUserMethod());
+              private final MetaSaveMethod saveMethod = register(new MetaSaveMethod());
 
-              private final MetaGetUserMethod getUserMethod = register(new MetaGetUserMethod());
+              private final MetaGetMethod getMethod = register(new MetaGetMethod());
 
-              private final MetaDeleteUserMethod deleteUserMethod = register(new MetaDeleteUserMethod());
+              private final MetaDeleteMethod deleteMethod = register(new MetaDeleteMethod());
 
-              private final MetaGetAllUsersMethod getAllUsersMethod = register(new MetaGetAllUsersMethod());
+              private final MetaGetAllMethod getAllMethod = register(new MetaGetAllMethod());
 
-              private final MetaFindTestUsersMethod findTestUsersMethod = register(new MetaFindTestUsersMethod());
+              private final MetaFindTestMethod findTestMethod = register(new MetaFindTestMethod());
 
               private MetaUserSpaceClass() {
                 super(metaType(io.art.tarantool.test.UserStorage.UserSpace.class));
               }
 
-              public MetaSaveUserMethod saveUserMethod() {
-                return saveUserMethod;
+              public MetaSaveMethod saveMethod() {
+                return saveMethod;
               }
 
-              public MetaGetUserMethod getUserMethod() {
-                return getUserMethod;
+              public MetaGetMethod getMethod() {
+                return getMethod;
               }
 
-              public MetaDeleteUserMethod deleteUserMethod() {
-                return deleteUserMethod;
+              public MetaDeleteMethod deleteMethod() {
+                return deleteMethod;
               }
 
-              public MetaGetAllUsersMethod getAllUsersMethod() {
-                return getAllUsersMethod;
+              public MetaGetAllMethod getAllMethod() {
+                return getAllMethod;
               }
 
-              public MetaFindTestUsersMethod findTestUsersMethod() {
-                return findTestUsersMethod;
+              public MetaFindTestMethod findTestMethod() {
+                return findTestMethod;
               }
 
               @Override
@@ -175,23 +175,23 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return new MetaUserSpaceProxy(invocations);
               }
 
-              public static final class MetaSaveUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Mono<io.art.tarantool.test.model.User>> {
+              public static final class MetaSaveMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Mono<io.art.tarantool.test.model.User>> {
                 private final MetaParameter<io.art.tarantool.test.model.User> requestParameter = register(new MetaParameter<>(0, "request",metaType(io.art.tarantool.test.model.User.class)));
 
-                private MetaSaveUserMethod() {
-                  super("saveUser",metaType(reactor.core.publisher.Mono.class,metaType(io.art.tarantool.test.model.User.class)));
+                private MetaSaveMethod() {
+                  super("save",metaType(reactor.core.publisher.Mono.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.saveUser((io.art.tarantool.test.model.User)(arguments[0]));
+                  return instance.save((io.art.tarantool.test.model.User)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object argument) throws Throwable {
-                  return instance.saveUser((io.art.tarantool.test.model.User)(argument));
+                  return instance.save((io.art.tarantool.test.model.User)(argument));
                 }
 
                 public MetaParameter<io.art.tarantool.test.model.User> requestParameter() {
@@ -199,23 +199,23 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaGetUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
+              public static final class MetaGetMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
                 private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
-                private MetaGetUserMethod() {
-                  super("getUser",metaType(reactor.core.publisher.Flux.class,metaType(io.art.tarantool.test.model.User.class)));
+                private MetaGetMethod() {
+                  super("get",metaType(reactor.core.publisher.Flux.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.getUser((int)(arguments[0]));
+                  return instance.get((int)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object argument) throws Throwable {
-                  return instance.getUser((int)(argument));
+                  return instance.get((int)(argument));
                 }
 
                 public MetaParameter<Integer> idParameter() {
@@ -223,23 +223,23 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaDeleteUserMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, io.art.tarantool.test.model.User> {
+              public static final class MetaDeleteMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, io.art.tarantool.test.model.User> {
                 private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
-                private MetaDeleteUserMethod() {
-                  super("deleteUser",metaType(io.art.tarantool.test.model.User.class));
+                private MetaDeleteMethod() {
+                  super("delete",metaType(io.art.tarantool.test.model.User.class));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.deleteUser((int)(arguments[0]));
+                  return instance.delete((int)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object argument) throws Throwable {
-                  return instance.deleteUser((int)(argument));
+                  return instance.delete((int)(argument));
                 }
 
                 public MetaParameter<Integer> idParameter() {
@@ -247,89 +247,88 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaGetAllUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, java.util.stream.Stream<io.art.tarantool.test.model.User>> {
-                private MetaGetAllUsersMethod() {
-                  super("getAllUsers",metaType(java.util.stream.Stream.class,metaType(io.art.tarantool.test.model.User.class)));
+              public static final class MetaGetAllMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, java.util.stream.Stream<io.art.tarantool.test.model.User>> {
+                private MetaGetAllMethod() {
+                  super("getAll",metaType(java.util.stream.Stream.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.getAllUsers();
+                  return instance.getAll();
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance)
                     throws Throwable {
-                  return instance.getAllUsers();
+                  return instance.getAll();
                 }
               }
 
-              public static final class MetaFindTestUsersMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>> {
-                private MetaFindTestUsersMethod() {
-                  super("findTestUsers",metaType(reactor.core.publisher.Flux.class,metaType(java.util.List.class,metaType(io.art.tarantool.test.model.User.class))));
+              public static final class MetaFindTestMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UserSpace, reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>> {
+                private MetaFindTestMethod() {
+                  super("findTest",metaType(reactor.core.publisher.Flux.class,metaType(java.util.List.class,metaType(io.art.tarantool.test.model.User.class))));
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.findTestUsers();
+                  return instance.findTest();
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.UserStorage.UserSpace instance)
                     throws Throwable {
-                  return instance.findTestUsers();
+                  return instance.findTest();
                 }
               }
 
               public class MetaUserSpaceProxy extends MetaProxy implements io.art.tarantool.test.UserStorage.UserSpace {
-                private final Function<java.lang.Object, java.lang.Object> saveUserInvocation;
+                private final Function<java.lang.Object, java.lang.Object> saveInvocation;
 
-                private final Function<java.lang.Object, java.lang.Object> getUserInvocation;
+                private final Function<java.lang.Object, java.lang.Object> getInvocation;
 
-                private final Function<java.lang.Object, java.lang.Object> deleteUserInvocation;
+                private final Function<java.lang.Object, java.lang.Object> deleteInvocation;
 
-                private final Function<java.lang.Object, java.lang.Object> getAllUsersInvocation;
+                private final Function<java.lang.Object, java.lang.Object> getAllInvocation;
 
-                private final Function<java.lang.Object, java.lang.Object> findTestUsersInvocation;
+                private final Function<java.lang.Object, java.lang.Object> findTestInvocation;
 
                 public MetaUserSpaceProxy(
                     Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                   super(invocations);
-                  saveUserInvocation = invocations.get(saveUserMethod);
-                  getUserInvocation = invocations.get(getUserMethod);
-                  deleteUserInvocation = invocations.get(deleteUserMethod);
-                  getAllUsersInvocation = invocations.get(getAllUsersMethod);
-                  findTestUsersInvocation = invocations.get(findTestUsersMethod);
+                  saveInvocation = invocations.get(saveMethod);
+                  getInvocation = invocations.get(getMethod);
+                  deleteInvocation = invocations.get(deleteMethod);
+                  getAllInvocation = invocations.get(getAllMethod);
+                  findTestInvocation = invocations.get(findTestMethod);
                 }
 
                 @Override
-                public reactor.core.publisher.Mono<io.art.tarantool.test.model.User> saveUser(
+                public reactor.core.publisher.Mono<io.art.tarantool.test.model.User> save(
                     io.art.tarantool.test.model.User request) {
-                  return (reactor.core.publisher.Mono<io.art.tarantool.test.model.User>)(saveUserInvocation.apply(request));
+                  return (reactor.core.publisher.Mono<io.art.tarantool.test.model.User>)(saveInvocation.apply(request));
                 }
 
                 @Override
-                public reactor.core.publisher.Flux<io.art.tarantool.test.model.User> getUser(
-                    int id) {
-                  return (reactor.core.publisher.Flux<io.art.tarantool.test.model.User>)(getUserInvocation.apply(id));
+                public reactor.core.publisher.Flux<io.art.tarantool.test.model.User> get(int id) {
+                  return (reactor.core.publisher.Flux<io.art.tarantool.test.model.User>)(getInvocation.apply(id));
                 }
 
                 @Override
-                public io.art.tarantool.test.model.User deleteUser(int id) {
-                  return (io.art.tarantool.test.model.User)(deleteUserInvocation.apply(id));
+                public io.art.tarantool.test.model.User delete(int id) {
+                  return (io.art.tarantool.test.model.User)(deleteInvocation.apply(id));
                 }
 
                 @Override
-                public java.util.stream.Stream<io.art.tarantool.test.model.User> getAllUsers() {
-                  return (java.util.stream.Stream<io.art.tarantool.test.model.User>)(getAllUsersInvocation.apply(null));
+                public java.util.stream.Stream<io.art.tarantool.test.model.User> getAll() {
+                  return (java.util.stream.Stream<io.art.tarantool.test.model.User>)(getAllInvocation.apply(null));
                 }
 
                 @Override
-                public reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>> findTestUsers(
+                public reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>> findTest(
                     ) {
-                  return (reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>)(findTestUsersInvocation.apply(null));
+                  return (reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>)(findTestInvocation.apply(null));
                 }
               }
             }

@@ -36,10 +36,10 @@ public class TarantoolAuthenticationRequester extends SimpleChannelInboundHandle
         byte[] auth = SHA1_DIGEST.digest(password.getBytes());
         byte[] auth2 = SHA1_DIGEST.digest(auth);
         byte[] salt = Base64.getDecoder().decode(serverAuthData);
-        SHA1_DIGEST.update(salt, 0, AUTHENTICATION_LENHGT);
+        SHA1_DIGEST.update(salt, 0, SCRAMBLE_SIZE);
         SHA1_DIGEST.update(auth2);
         byte[] scramble = SHA1_DIGEST.digest();
-        for (int i = 0; i < AUTHENTICATION_LENHGT; i++) {
+        for (int i = 0; i < SCRAMBLE_SIZE; i++) {
             auth[i] ^= scramble[i];
         }
         return auth;

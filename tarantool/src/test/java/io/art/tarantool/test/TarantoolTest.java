@@ -16,7 +16,7 @@ import static io.art.transport.module.TransportActivator.*;
 public class TarantoolTest {
     @BeforeAll
     public static void setup() {
-        initialize(logging(), meta(MetaTarantoolTest::new), transport(), tarantool(tarantool -> tarantool.storage(UserStorage.class)));
+        initialize(logging(), meta(MetaTarantoolTest::new), transport(), tarantool(tarantool -> tarantool.storage(UserStorage.class, storage -> storage.client(client -> client.username("username").password("password")))));
     }
 
     @AfterAll
@@ -27,13 +27,13 @@ public class TarantoolTest {
     @Test
     public void test() {
         UserSpace space = tarantoolStorage(UserStorage.class).testSpace();
-        space.saveUser(User.builder().id(4).name("test 4").address(new User.Address(123)).build());
-        User user = space.getUser(4).blockFirst();
-        space.saveUser(user.toBuilder().address(user.getAddress().toBuilder().house(12).build()).build());
+        space.save(User.builder().id(4).name("test 4").address(new User.Address(123)).build());
+        User user = space.get(4).blockFirst();
+        space.save(user.toBuilder().address(user.getAddress().toBuilder().house(12).build()).build());
 
         Logging.logger().info("test: ");
-        space.findTestUsers().subscribe(value -> Logging.logger().info(value.toString()));
+        space.findTest().subscribe(value -> Logging.logger().info(value.toString()));
         Logging.logger().info("all: ");
-        space.getAllUsers().forEach(value -> Logging.logger().info(value.toString()));
+        space.getAll().forEach(value -> Logging.logger().info(value.toString()));
     }
 }

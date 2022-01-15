@@ -11,14 +11,14 @@ public interface UserStorage extends Storage {
     UserSpace testSpace();
 
     interface UserSpace extends TarantoolSpace<UserSpace> {
-        Mono<User> saveUser(User request);
+        Mono<User> save(User request);
 
-        Flux<User> getUser(int id);
+        Flux<User> get(int id);
 
-        User deleteUser(int id);
+        User delete(int id);
 
-        Stream<User> getAllUsers();
+        Stream<User> getAll();
 
-        Flux<List<User>> findTestUsers();
+        Flux<List<User>> findTest();
     }
 }

@@ -51,6 +51,13 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         private final TarantoolModuleConfiguration configuration;
 
         @Override
+        public Configurator initialize(TarantoolModuleConfiguration configuration) {
+            this.configuration.communicator = configuration.getCommunicator();
+            this.configuration.connectors = configuration.getConnectors();
+            return this;
+        }
+
+        @Override
         public Configurator from(ConfigurationSource source) {
             ConfigurationSource tarantoolSection = source.getNested(TARANTOOL_SECTION);
             if (isNull(tarantoolSection)) return this;

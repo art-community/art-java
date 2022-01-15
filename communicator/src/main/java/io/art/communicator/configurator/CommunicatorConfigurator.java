@@ -45,7 +45,6 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     private final List<MethodBasedConfiguration> methodBased = linkedList();
     private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
 
-
     public C communicator(Class<? extends Communicator> communicatorClass,
                           UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
@@ -60,6 +59,9 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return cast(this);
     }
 
+    protected String classToId(Class<?> inputClass) {
+        return idByDash(inputClass);
+    }
 
     protected void registerConnector(Class<? extends Connector> connectorClass,
                                      Function<Class<? extends Communicator>, ? extends Communicator> communicator,
@@ -96,7 +98,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
                 CommunicatorActionConfigurator configurator = decorator.apply(new CommunicatorActionConfigurator());
                 actions.put(method.name(), configurator.configure(CommunicatorActionConfiguration.defaults()));
             }
-            configurations.put(idByDash(communicatorClass.definition().type()), CommunicatorActionsConfiguration.defaults()
+            configurations.put(classToId(communicatorClass.definition().type()), CommunicatorActionsConfiguration.defaults()
                     .toBuilder()
                     .actions(immutableMapOf(actions))
                     .build());
@@ -105,7 +107,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             MetaClass<? extends Communicator> communicatorClass = methodBasedConfiguration.communicatorClass.get();
             Map<String, CommunicatorActionConfiguration> actions = map();
-            String communicatorId = idByDash(communicatorClass.definition().type());
+            String communicatorId = classToId(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) actions = existed.getActions().toMutable();
             MetaMethod<?> method = methodBasedConfiguration.actionMethod.apply(cast(communicatorClass));
@@ -175,7 +177,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
         ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
         MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
-        CommunicatorActionIdentifier id = communicatorActionId(idByDash(communicatorClass.definition().type()), actionConfiguration.method.name());
+        CommunicatorActionIdentifier id = communicatorActionId(classToId(communicatorClass.definition().type()), actionConfiguration.method.name());
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())

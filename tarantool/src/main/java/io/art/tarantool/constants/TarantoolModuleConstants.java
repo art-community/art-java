@@ -45,7 +45,7 @@ public interface TarantoolModuleConstants {
         int SALT_LENGTH = 44;
         int GREETING_LENGTH = 128;
         int MINIMAL_HEADER_SIZE = 5;
-        int AUTHENTICATION_LENHGT = 20;
+        int SCRAMBLE_SIZE = 20;
 
         int IPROTO_CODE = 0x00;
         int IPROTO_SYNC = 0x01;

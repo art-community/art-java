@@ -41,6 +41,11 @@ public class TarantoolConfigurator extends CommunicatorConfigurator<TarantoolCon
         return this;
     }
 
+    @Override
+    protected String classToId(Class<?> inputClass) {
+        return idByDot(inputClass);
+    }
+
     ImmutableMap<String, TarantoolConnectorConfiguration> configure() {
         return immutableMapOf(connectors);
     }
