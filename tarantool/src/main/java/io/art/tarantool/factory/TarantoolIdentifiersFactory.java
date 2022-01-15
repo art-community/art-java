@@ -11,7 +11,7 @@ public class TarantoolIdentifiersFactory {
         return idByDot(storage.definition().type());
     }
 
-    public static String spaceId(MetaClass<? extends Space<?, ?>> space) {
+    public static String spaceId(MetaClass<? extends Space> space) {
         return idByDot(space.definition().type());
     }
 }
