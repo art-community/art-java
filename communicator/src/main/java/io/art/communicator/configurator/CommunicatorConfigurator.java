@@ -186,11 +186,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         NullityChecker.apply(inputType, builder::inputType);
 
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
-        boolean deactivated = communicatorConfiguration.isDeactivated(id);
-
-        if (deactivated) {
-            builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
-        }
+        builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
 
         if (withLogging()) {
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
@@ -205,9 +201,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             }
         }
 
-        if (deactivated) {
-            builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
-        }
+        builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
 
         if (withLogging()) {
             builder.outputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, OUTPUT));

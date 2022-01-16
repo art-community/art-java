@@ -165,19 +165,13 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         NullityChecker.apply(inputType, builder::inputType);
 
         ServerConfiguration serverConfiguration = configurationProvider.get();
-        boolean deactivated = serverConfiguration.isDeactivated(id);
-        boolean validating = serverConfiguration.isValidating(id);
-        boolean logging = withLogging() && serverConfiguration.isLogging(id);
+        builder.inputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
 
-        if (deactivated) {
-            builder.inputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
-        }
-
-        if (logging) {
+        if (withLogging()) {
             builder.inputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, INPUT));
         }
 
-        if (validating && nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
+        if (nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
             builder.inputDecorator(new ServiceValidationDecorator(id, serverConfiguration));
         }
 
@@ -190,11 +184,9 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
             }
         }
 
-        if (deactivated) {
-            builder.outputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
-        }
+        builder.outputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
 
-        if (logging) {
+        if (withLogging()) {
             builder.outputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, OUTPUT));
         }
 
