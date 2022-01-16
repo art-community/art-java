@@ -56,7 +56,10 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public void dispose() {
-        connector.dispose();
+        if (connector.initialized()) {
+            connector.get().dispose();
+            connector.dispose();
+        }
     }
 
     @Override
@@ -94,10 +97,6 @@ public class TarantoolCommunication implements Communication {
     private void emitOutput(Sinks.Many<Object> emitter, org.msgpack.value.Value value) {
         emitter.tryEmitNext(reader.read(outputMappingType, value));
         emitter.tryEmitComplete();
-    }
-
-    private void disposeClient(TarantoolClient client) {
-        client.dispose();
     }
 
     static void decorateTarantoolSpace(UnaryOperator<TarantoolSpaceDecorator> decorator) {

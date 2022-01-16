@@ -32,4 +32,9 @@ public class TarantoolConnector {
             mutable.addEndpoint(new TarantoolClient(client));
         }
     }
+
+    public void dispose() {
+        immutable.endpoints().forEach(TarantoolClient::dispose);
+        mutable.endpoints().forEach(TarantoolClient::dispose);
+    }
 }
