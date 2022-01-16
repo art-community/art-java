@@ -31,7 +31,7 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-        UsersSpace space = tarantoolStorage(UserStorage.class).testSpace();
+        UsersSpace space = tarantoolStorage(UserStorage.class).testSpace().mutable().immutable();
         space.save(User.builder().id(4).name("test 4").address(new User.Address(123)).build());
         User user = space.get(4).blockFirst();
         space.save(user.toBuilder().address(user.getAddress().toBuilder().house(12).build()).build());
