@@ -12,4 +12,12 @@ public interface TarantoolSpace<C extends TarantoolSpace<C>> extends Space {
         decorateTarantoolSpace(decorator);
         return cast(this);
     }
+
+    default TarantoolSpace<C> immutable() {
+        return decorate(TarantoolSpaceDecorator::immutable);
+    }
+
+    default TarantoolSpace<C> mutable() {
+        return decorate(TarantoolSpaceDecorator::mutable);
+    }
 }
