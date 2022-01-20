@@ -21,7 +21,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class RuntimeMetaType {
-    private final static Map<Type, MetaType<?>> cache = map();
+    private final static Map<Type, MetaType<?>> cache = concurrentMap();
 
     public static <T> MetaType<T> defineMetaType() {
         TypeReference<T> typeReference = new TypeReference<T>() {

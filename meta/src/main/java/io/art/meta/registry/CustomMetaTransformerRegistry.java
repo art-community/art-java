@@ -11,7 +11,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CustomMetaTransformerRegistry {
     private final ImmutableMap<Class<?>, CustomTransformers> registry;
-    private final Map<Class<?>, CustomTransformers> cache = map();
+    private final Map<Class<?>, CustomTransformers> cache = concurrentMap();
 
     public CustomTransformers get(Class<?> type) {
         CustomTransformers cached = cache.get(type);

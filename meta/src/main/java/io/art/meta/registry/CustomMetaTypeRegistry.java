@@ -11,7 +11,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CustomMetaTypeRegistry {
     private final ImmutableMap<Class<?>, MetaType<?>> registry;
-    private final Map<Class<?>, MetaType<?>> cache = map();
+    private final Map<Class<?>, MetaType<?>> cache = concurrentMap();
 
     public MetaType<?> get(Class<?> type) {
         MetaType<?> cached = cache.get(type);
