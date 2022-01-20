@@ -16,7 +16,9 @@ public class CustomMetaTransformerRegistry {
     public CustomTransformers get(Class<?> type) {
         CustomTransformers cached = cache.get(type);
         if (nonNull(cached)) return cached;
-        cache.put(type, cached = searchByClass(registry.toMutable(), type));
+        cached = searchByClass(registry.toMutable(), type);
+        if (isNull(cached)) return cached;
+        cache.put(type, cached);
         return cached;
     }
 }
