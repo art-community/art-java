@@ -68,6 +68,10 @@ public class Activator {
     @Getter
     private String[] arguments;
 
+    @Setter
+    @Getter
+    private boolean silent;
+
     public ImmutableMap<String, ModuleActivator> activators() {
         return immutableMapOf(activators);
     }

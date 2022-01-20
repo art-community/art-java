@@ -22,7 +22,6 @@ import io.art.configurator.module.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
-import io.art.core.exception.*;
 import io.art.core.module.Module;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -42,7 +41,6 @@ import static io.art.core.factory.SetFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.launcher.LauncherConstants.*;
-import static io.art.launcher.LauncherConstants.Errors.*;
 import static java.util.Objects.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -71,7 +69,7 @@ public class Launcher {
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
 
         ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
-        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
+        Consumer<String> printer = !activator.silent() && activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
@@ -113,7 +111,7 @@ public class Launcher {
         ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
-        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
+        Consumer<String> printer = !activator.silent() && activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
