@@ -69,7 +69,7 @@ public class Launcher {
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
 
         ConfiguratorModule configuratorModule = cast(configuratorActivator.getFactory().get());
-        Consumer<String> printer = !activator.silent() && activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
+        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
 
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
@@ -111,7 +111,7 @@ public class Launcher {
         ImmutableMap<String, ModuleActivator> activators = activator.activators();
 
         LazyProperty<Logger> logger = lazy(() -> Logging.logger(LAUNCHER_LOGGER));
-        Consumer<String> printer = !activator.silent() && activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
+        Consumer<String> printer = activators.containsKey(LOGGING_MODULE_ID) ? message -> logger.get().info(message) : emptyConsumer();
         ContextConfiguration.ContextConfigurationBuilder contextConfiguration = ContextConfiguration.builder()
                 .arguments(immutableArrayOf(activator.arguments()))
                 .onUnload(activator.onUnload())
