@@ -1,12 +1,12 @@
 package io.art.core.graal;
 
+import com.oracle.svm.core.*;
 import lombok.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.constants.GraalConstants.*;
 import static io.art.core.constants.NativeConstants.*;
 import static io.art.core.constants.RegExps.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.determiner.SystemDeterminer.*;
 import java.nio.file.*;
 
 @Builder(builderMethodName = "singleLibrary")
@@ -20,11 +20,11 @@ public class GraalSingleLibrary {
                 .extractionDirectory(ifEmpty(customExtractionDirectory, libraryFileName + GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX))
                 .resource(nativeHeaderRegexp(headerFileName));
 
-        if (isUnix() || isMac()) {
+        if (OS.LINUX.isCurrent() || OS.DARWIN.isCurrent()) {
             locationBuilder.resource(nativeUnixStaticLibraryRegex(libraryFileName));
         }
 
-        if (isWindows()) {
+        if (OS.WINDOWS.isCurrent()) {
             locationBuilder.resource(nativeWindowsStaticLibraryRegex(libraryFileName));
         }
 
