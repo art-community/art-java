@@ -1,7 +1,6 @@
 package io.art.transport.graal.features;
 
 import io.art.core.graal.*;
-import io.art.core.graal.GraalNativeLibraryConfiguration.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
 import static io.art.core.factory.SetFactory.*;
@@ -37,7 +36,7 @@ public class GraalNettyFeatures implements Feature {
         GraalNativeLibraryConfiguration epoll = GraalNativeLibraryConfiguration.builder()
                 .builtin(true)
                 .type(STATIC)
-                .builtinSymbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
+                .builtinSymbolPrefixes(setOf(NETTY_NATIVE_LIBRARY_PREFIXES))
                 .location(GraalNativeLibraryLocation.builder()
                         .extractionDirectory(NETTY_STATIC_LIBRARIES_RELATIVE_PATH)
                         .resource(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
@@ -48,7 +47,7 @@ public class GraalNettyFeatures implements Feature {
         GraalNativeLibraryConfiguration unix = GraalNativeLibraryConfiguration.builder()
                 .builtin(true)
                 .type(STATIC)
-                .builtinSymbolPrefixes(immutableSetOf(NETTY_NATIVE_LIBRARY_PREFIXES))
+                .builtinSymbolPrefixes(setOf(NETTY_NATIVE_LIBRARY_PREFIXES))
                 .location(GraalNativeLibraryLocation.builder()
                         .extractionDirectory(NETTY_TRANSPORT_NATIVE_UNIX_LIBRARY_REGEX)
                         .resource(NETTY_TRANSPORT_NATIVE_EPOLL_LIBRARY_REGEX)
