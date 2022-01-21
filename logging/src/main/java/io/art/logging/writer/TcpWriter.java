@@ -32,7 +32,6 @@ import static io.art.logging.constants.LoggingModuleConstants.*;
 import static java.net.InetSocketAddress.*;
 import static java.net.StandardSocketOptions.*;
 import static java.nio.channels.SocketChannel.*;
-import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
 import java.text.*;
@@ -84,7 +83,7 @@ public class TcpWriter implements LoggerWriter {
             manager.register(channel);
         } catch (Throwable throwable) {
             apply(channel, this::closeChannel);
-            throw new LoggingModuleException(throwable);
+            throw new LoggingException(throwable);
         }
     }
 }

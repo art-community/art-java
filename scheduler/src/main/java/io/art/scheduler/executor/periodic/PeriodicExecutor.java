@@ -46,7 +46,7 @@ public class PeriodicExecutor {
 
     public void execute(PeriodicRunnableTask task) {
         if (!active.get()) {
-            throw new SchedulerModuleException(SCHEDULER_TERMINATED);
+            throw new SchedulerException(SCHEDULER_TERMINATED);
         }
         Future<?> deferred = cast(executingTasks.get(task.getDelegate().getId()));
         if (nonNull(deferred)) return;

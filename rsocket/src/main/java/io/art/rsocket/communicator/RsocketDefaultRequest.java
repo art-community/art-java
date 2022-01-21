@@ -1,4 +1,4 @@
-package io.art.http.communicator;
+package io.art.rsocket.communicator;
 
 import io.art.core.annotation.*;
 import io.art.meta.model.*;
@@ -19,44 +19,45 @@ import java.nio.file.*;
 @Public
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class HttpDefaultRequest {
+public class RsocketDefaultRequest {
     private final byte[] input;
+    private final DataFormat dataFormat;
 
-    public static HttpDefaultRequest json(Object value) {
+    public static RsocketDefaultRequest json(Object value) {
         return create(value, JSON);
     }
 
-    public static HttpDefaultRequest yaml(Object value) {
+    public static RsocketDefaultRequest yaml(Object value) {
         return create(value, YAML);
     }
 
-    public static HttpDefaultRequest messagePack(Object value) {
+    public static RsocketDefaultRequest messagePack(Object value) {
         return create(value, MESSAGE_PACK);
     }
 
-    public static HttpDefaultRequest string(String value) {
+    public static RsocketDefaultRequest string(String value) {
         return create(value, STRING);
     }
 
-    public static HttpDefaultRequest bytes(byte[] value) {
+    public static RsocketDefaultRequest bytes(byte[] value) {
         return create(value, BYTES);
     }
 
-    public static HttpDefaultRequest buffer(ByteBuf value) {
+    public static RsocketDefaultRequest buffer(ByteBuf value) {
         return create(toByteArray(value), BYTES);
     }
 
-    public static HttpDefaultRequest file(File file) {
+    public static RsocketDefaultRequest file(File file) {
         return create(readFileBytes(file.toPath()), BYTES);
     }
 
-    public static HttpDefaultRequest path(Path path) {
+    public static RsocketDefaultRequest path(Path path) {
         return create(readFileBytes(path), BYTES);
     }
 
-    private static HttpDefaultRequest create(Object value, DataFormat dataFormat) {
+    private static RsocketDefaultRequest create(Object value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
         byte[] bytes = toByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
-        return new HttpDefaultRequest(bytes);
+        return new RsocketDefaultRequest(bytes, dataFormat);
     }
 }

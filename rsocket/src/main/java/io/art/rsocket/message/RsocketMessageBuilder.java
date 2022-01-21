@@ -14,7 +14,7 @@ import lombok.experimental.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;

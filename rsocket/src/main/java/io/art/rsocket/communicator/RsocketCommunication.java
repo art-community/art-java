@@ -37,7 +37,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.CommunicationMode.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
 import static io.art.rsocket.manager.RsocketManager.*;
 import static io.art.rsocket.reader.RsocketPayloadReader.*;
 import static io.art.transport.payload.TransportPayload.*;
@@ -64,6 +64,12 @@ public class RsocketCommunication implements Communication {
                 .connectorConsumers()
                 .consumerFor(connector.getConnector()));
         communication = property(this::communication).listenProperties(this.client);
+    }
+
+    public RsocketCommunication(Supplier<RSocketClient> client, RsocketCommonConnectorConfiguration connector) {
+        this.connectorConfiguration = connector;
+        this.client = property(client, this::disposeClient);
+        communication = property(this::communication);
     }
 
     @Override

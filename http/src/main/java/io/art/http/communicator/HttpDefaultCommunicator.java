@@ -1,5 +1,7 @@
 package io.art.http.communicator;
 
+import io.art.communicator.action.*;
+import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.mime.*;
 import io.art.core.property.*;
@@ -10,6 +12,7 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
@@ -26,6 +29,7 @@ public class HttpDefaultCommunicator {
     private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
     private final HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final static LazyProperty<MetaHttpExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(HttpExecutionCommunicator.class));
+    private volatile CommunicatorProxy<HttpExecutionCommunicator> proxy;
 
     public HttpDefaultCommunicator retry(boolean value) {
         connector.retry(value);
@@ -166,19 +170,23 @@ public class HttpDefaultCommunicator {
     }
 
     public HttpDefaultResponse execute() {
-        return new HttpDefaultResponse(createCommunicator().execute(Flux.empty()));
+        return new HttpDefaultResponse(this, createCommunicator().execute(Flux.empty()));
     }
 
     public HttpDefaultResponse execute(HttpDefaultRequest body) {
-        return new HttpDefaultResponse(createCommunicator().execute(body.getInput()));
+        return new HttpDefaultResponse(this, createCommunicator().execute(Flux.just(body.getInput())));
     }
 
     public HttpDefaultResponse execute(HttpReactiveRequest body) {
-        return new HttpDefaultResponse(createCommunicator().execute(body.getInput()));
+        return new HttpDefaultResponse(this, createCommunicator().execute(body.getInput()));
+    }
+
+    public void dispose() {
+        apply(proxy, notNull -> notNull.getActions().values().forEach(CommunicatorAction::dispose));
     }
 
     private HttpExecutionCommunicator createCommunicator() {
-        return communicatorProxy(communicatorClass.get(), () -> createDefaultHttpCommunication(connector.build()))
+        return (proxy = communicatorProxy(communicatorClass.get(), () -> createDefaultHttpCommunication(connector.build())))
                 .getCommunicator()
                 .decorate(ignore -> decorator)
                 .input(BYTES)

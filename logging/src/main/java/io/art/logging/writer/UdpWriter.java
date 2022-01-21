@@ -82,7 +82,7 @@ public class UdpWriter implements LoggerWriter {
             manager.register(channel);
         } catch (Throwable throwable) {
             apply(channel, this::closeChannel);
-            throw new LoggingModuleException(throwable);
+            throw new LoggingException(throwable);
         }
     }
 }

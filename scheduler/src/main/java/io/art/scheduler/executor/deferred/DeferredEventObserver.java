@@ -72,7 +72,7 @@ class DeferredEventObserver {
 
     <EventResultType> Future<? extends EventResultType> addEvent(Callable<? extends EventResultType> action, LocalDateTime triggerTime, int order) {
         if (!accepting.get()) {
-            throw new SchedulerModuleException(SCHEDULER_TERMINATED);
+            throw new SchedulerException(SCHEDULER_TERMINATED);
         }
 
         Callable<? extends EventResultType> wrapper = () -> call(action);
@@ -192,7 +192,7 @@ class DeferredEventObserver {
                 threadFactory,
                 (runnable, executor) -> this.executor
                         .getExceptionHandler()
-                        .onException(currentThread(), TASK_EXECUTION, new SchedulerModuleException(REJECTED_EXCEPTION))
+                        .onException(currentThread(), TASK_EXECUTION, new SchedulerException(REJECTED_EXCEPTION))
         );
     }
 
@@ -213,11 +213,11 @@ class DeferredEventObserver {
                     fallbackPool.shutdown();
 
                     if (!pendingPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
-                        exceptionHandler.onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+                        exceptionHandler.onException(currentThread(), POOL_SHUTDOWN, new SchedulerException(AWAIT_TERMINATION_EXCEPTION));
                     }
 
                     if (!fallbackPool.awaitTermination(executor.getPoolTerminationTimeout().getSeconds(), SECONDS)) {
-                        exceptionHandler.onException(currentThread(), POOL_SHUTDOWN, new SchedulerModuleException(AWAIT_TERMINATION_EXCEPTION));
+                        exceptionHandler.onException(currentThread(), POOL_SHUTDOWN, new SchedulerException(AWAIT_TERMINATION_EXCEPTION));
                     }
 
                     pendingQueues.clear();

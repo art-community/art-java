@@ -1,9 +1,9 @@
-package io.art.http.communicator;
+package io.art.rsocket.communicator;
 
 import io.art.core.annotation.*;
 import io.art.core.extensions.*;
-import io.art.http.exception.*;
-import io.art.transport.constants.*;
+import io.art.rsocket.exception.*;
+import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.netty.buffer.*;
 import lombok.*;
@@ -11,9 +11,8 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.http.constants.HttpModuleConstants.Errors.*;
 import static io.art.meta.Meta.*;
-import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
 import static io.art.transport.payload.TransportPayloadReader.*;
 import static java.nio.file.Files.*;
 import static java.text.MessageFormat.*;
@@ -23,35 +22,29 @@ import java.nio.file.*;
 
 @Public
 @Getter(value = PACKAGE)
-public class HttpDefaultResponse {
-    private final HttpDefaultCommunicator communicator;
+public class RsocketDefaultResponse {
+    private final RsocketDefaultCommunicator communicator;
     private final Flux<byte[]> output;
-    private final HttpReactiveResponse reactive;
+    private final RsocketReactiveResponse reactive;
+    private final DataFormat dataFormat;
 
-    HttpDefaultResponse(HttpDefaultCommunicator communicator, Flux<byte[]> output) {
+    RsocketDefaultResponse(RsocketDefaultCommunicator communicator, Flux<byte[]> output, DataFormat dataFormat) {
         this.communicator = communicator;
         this.output = output;
-        reactive = new HttpReactiveResponse(output);
+        this.dataFormat = dataFormat;
+        reactive = new RsocketReactiveResponse(communicator, output, dataFormat);
     }
 
-    public <T> T json(Class<T> type) {
-        return parse(blockFirst(output), JSON, type);
-    }
-
-    public <T> T yaml(Class<T> type) {
-        return parse(blockFirst(output), JSON, type);
-    }
-
-    public <T> T messagePack(Class<T> type) {
-        return parse(blockFirst(output), JSON, type);
+    public <T> T parse(Class<T> type) {
+        return parse(blockFirst(output), type);
     }
 
     public String string() {
-        return parse(blockFirst(output), STRING, String.class);
+        return parse(blockFirst(output), String.class);
     }
 
     public byte[] bytes() {
-        return parse(blockFirst(output), BYTES, byte[].class);
+        return parse(blockFirst(output), byte[].class);
     }
 
     public ByteBuf buffer() {
@@ -60,7 +53,7 @@ public class HttpDefaultResponse {
 
     public Path download(Path path) {
         if (path.toFile().isDirectory()) {
-            throw new HttpException(format(WRITING_FILE_TO_DIRECTORY, path));
+            throw new RsocketException(format(WRITING_FILE_TO_DIRECTORY, path));
         }
         try {
             if (nonNull(path.getParent())) {
@@ -68,12 +61,12 @@ public class HttpDefaultResponse {
             }
             writeFile(path, bytes());
         } catch (Throwable throwable) {
-            throw new HttpException(throwable);
+            throw new RsocketException(throwable);
         }
         return path;
     }
 
-    public HttpReactiveResponse reactive() {
+    public RsocketReactiveResponse reactive() {
         return reactive;
     }
 
@@ -81,7 +74,7 @@ public class HttpDefaultResponse {
         communicator.dispose();
     }
 
-    private static <T> T parse(byte[] bytes, TransportModuleConstants.DataFormat dataFormat, Class<T> type) {
+    private <T> T parse(byte[] bytes, Class<T> type) {
         TransportPayloadReader reader = transportPayloadReader(dataFormat);
         return cast(reader.read(NettyBufferExtensions.from(bytes), definition(type)).getValue());
     }

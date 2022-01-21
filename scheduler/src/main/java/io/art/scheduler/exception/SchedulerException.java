@@ -16,14 +16,14 @@
  * limitations under the License.
  */
 
-package io.art.logging.exception;
+package io.art.scheduler.exception;
 
-public class LoggingModuleException extends RuntimeException {
-    public LoggingModuleException(String message) {
+public class SchedulerException extends RuntimeException {
+    public SchedulerException(String message) {
         super(message);
     }
 
-    public LoggingModuleException(Throwable throwable) {
-        super(throwable);
+    public SchedulerException(Throwable throwable) {
+        super(throwable.getMessage(), throwable);
     }
 }

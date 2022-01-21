@@ -26,7 +26,7 @@ import io.rsocket.*;
 import io.rsocket.plugins.*;
 import static io.art.core.property.Property.*;
 import static io.art.logging.Logging.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
 
 public class RsocketServerLoggingInterceptor implements RSocketInterceptor {
     private final Logger logger;

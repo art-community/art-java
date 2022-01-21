@@ -36,7 +36,7 @@ import static io.art.meta.Meta.*;
 import static io.art.meta.model.TypedObject.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.BalancerMethod.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Errors.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.transport.extensions.TransportExtensions.*;
@@ -55,24 +55,44 @@ import java.util.function.*;
 public class RsocketCommunicationFactory {
     private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(RSOCKET_COMMUNICATOR_LOGGER));
 
-    public static RsocketCommunication createTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    public static RsocketCommunication createConfiguredTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
         RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
-        Supplier<RSocketClient> client = () -> createTcpClient(moduleConfiguration.getTcpConnectors().get(connector), identifier);
+        Supplier<RSocketClient> client = () -> configureTcpClient(identifier, connector, moduleConfiguration);
         return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
-    public static RsocketCommunication createWsCommunication(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    public static RsocketCommunication createConfiguredWsCommunication(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
         RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
-        Supplier<RSocketClient> client = () -> createWsClient(moduleConfiguration.getWsConnectors().get(connector), identifier);
+        Supplier<RSocketClient> client = () -> configureWsClient(identifier, connector, moduleConfiguration);
         return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
+    public static RsocketCommunication createDefaultTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, RsocketSetupPayload setupPayload) {
+        Supplier<RSocketClient> client = () -> createTcpClient(connectorConfiguration, setupPayload);
+        return new RsocketCommunication(client, connectorConfiguration.getCommonConfiguration());
+    }
 
-    private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    public static RsocketCommunication createDefaultWsCommunication(RsocketWsConnectorConfiguration connectorConfiguration, RsocketSetupPayload setupPayload) {
+        Supplier<RSocketClient> client = () -> createWsClient(connectorConfiguration, setupPayload);
+        return new RsocketCommunication(client, connectorConfiguration.getCommonConfiguration());
+    }
+
+    public static RsocketSetupPayload createSetupPayload(RsocketCommonConnectorConfiguration common, ServiceMethodIdentifier targetServiceMethod) {
+        RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
+                .dataFormat(common.getDataFormat())
+                .metadataFormat(common.getMetaDataFormat());
+        if (nonNull(targetServiceMethod)) {
+            payloadBuilder
+                    .serviceId(targetServiceMethod.getServiceId())
+                    .methodId(targetServiceMethod.getMethodId());
+        }
+        return payloadBuilder.build();
+    }
+
+    private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, RsocketSetupPayload setupPayload) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
-        RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
         ByteBuffer payloadData = transportPayloadWriter(common.getDataFormat())
                 .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
                 .nioBuffer();
@@ -84,7 +104,8 @@ public class RsocketCommunicationFactory {
         if (connectorConfiguration.getClientConfigurations().isEmpty()) {
             throw new RsocketException(CLIENTS_EMPTY);
         }
-        return configureSocket(common, createTcpClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
+        RsocketTcpClientConfiguration firstClient = connectorConfiguration.getClientConfigurations().asArray().get(0);
+        return configureSocket(common, createTcpClient(common, firstClient, connector), setupPayload);
     }
 
     private static LoadbalanceRSocketClient createTcpBalancer(RSocketConnector connector, RsocketTcpConnectorConfiguration connectorConfiguration) {
@@ -118,9 +139,8 @@ public class RsocketCommunicationFactory {
         return connector.connect(transportDecorator.apply(TcpClientTransport.create(client, clientConfiguration.getMaxFrameLength())));
     }
 
-    private static RSocketClient createWsClient(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    private static RSocketClient createWsClient(RsocketWsConnectorConfiguration connectorConfiguration, RsocketSetupPayload setupPayload) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
-        RsocketSetupPayload setupPayload = createSetupPayload(common, identifier);
         ByteBuffer payloadData = transportPayloadWriter(common.getDataFormat())
                 .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
                 .nioBuffer();
@@ -132,7 +152,8 @@ public class RsocketCommunicationFactory {
         if (connectorConfiguration.getClientConfigurations().isEmpty()) {
             throw new RsocketException(CLIENTS_EMPTY);
         }
-        return configureSocket(common, createWsClient(common, connectorConfiguration.getClientConfigurations().asArray().get(0), connector), setupPayload);
+        RsocketWsClientConfiguration firstClient = connectorConfiguration.getClientConfigurations().asArray().get(0);
+        return configureSocket(common, createWsClient(common, firstClient, connector), setupPayload);
     }
 
     private static LoadbalanceRSocketClient createWsBalancer(RSocketConnector connector, RsocketWsConnectorConfiguration connectorConfiguration) {
@@ -151,6 +172,16 @@ public class RsocketCommunicationFactory {
                 .loadbalanceStrategy(connectorConfiguration.getBalancer() == ROUND_ROBIN ? new RoundRobinLoadbalanceStrategy() : WeightedLoadbalanceStrategy.builder().build())
                 .connector(connector)
                 .build();
+    }
+
+    private static RSocketClient configureWsClient(CommunicatorActionIdentifier identifier, String connector, RsocketModuleConfiguration moduleConfiguration) {
+        RsocketWsConnectorConfiguration configuration = moduleConfiguration.getWsConnectors().get(connector);
+        return createWsClient(configuration, createSetupPayload(configuration.getCommonConfiguration(), identifier));
+    }
+
+    private static RSocketClient configureTcpClient(CommunicatorActionIdentifier identifier, String connector, RsocketModuleConfiguration moduleConfiguration) {
+        RsocketWsConnectorConfiguration configuration = moduleConfiguration.getWsConnectors().get(connector);
+        return createTcpClient(moduleConfiguration.getTcpConnectors().get(connector), createSetupPayload(configuration.getCommonConfiguration(), identifier));
     }
 
     private static Mono<RSocket> createWsClient(RsocketCommonConnectorConfiguration connectorConfiguration,
@@ -189,15 +220,7 @@ public class RsocketCommunicationFactory {
 
     private static RsocketSetupPayload createSetupPayload(RsocketCommonConnectorConfiguration common, CommunicatorActionIdentifier identifier) {
         ServiceMethodIdentifier targetServiceMethod = common.getService().id(identifier);
-        RsocketSetupPayloadBuilder payloadBuilder = RsocketSetupPayload.builder()
-                .dataFormat(common.getDataFormat())
-                .metadataFormat(common.getMetaDataFormat());
-        if (nonNull(targetServiceMethod)) {
-            payloadBuilder
-                    .serviceId(targetServiceMethod.getServiceId())
-                    .methodId(targetServiceMethod.getMethodId());
-        }
-        return payloadBuilder.build();
+        return createSetupPayload(common, targetServiceMethod);
     }
 
     private static RSocketClient configureSocket(RsocketCommonConnectorConfiguration common, Mono<RSocket> socket, RsocketSetupPayload setupPayload) {
@@ -216,6 +239,7 @@ public class RsocketCommunicationFactory {
                 .dataMimeType(toMimeType(commonConfiguration.getDataFormat()).toString())
                 .metadataMimeType(toMimeType(commonConfiguration.getMetaDataFormat()).toString())
                 .fragment(commonConfiguration.getFragment())
+                .maxInboundPayloadSize(commonConfiguration.getMaxInboundPayloadSize())
                 .interceptors(registry -> configureInterceptors(commonConfiguration, registry));
         apply(commonConfiguration.getKeepAlive(), keepAlive -> connector.keepAlive(keepAlive.getInterval(), keepAlive.getMaxLifeTime()));
         apply(commonConfiguration.getResume(), resume -> connector.resume(resume.toResume()));

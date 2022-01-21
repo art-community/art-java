@@ -42,7 +42,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
                 .getPortals()
                 .getCommunicator(portalClass, communicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createTcpCommunication(configuration, identifier);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createConfiguredTcpCommunication(configuration, identifier);
         registerPortal(portalClass, communicatorFunction, communicationFunction);
         return this;
     }
@@ -57,7 +57,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
                 .getPortals()
                 .getCommunicator(portalClass, communicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createWsCommunication(configuration, identifier);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createConfiguredWsCommunication(configuration, identifier);
         registerPortal(portalClass, communicatorFunction, communicationFunction);
         return this;
     }

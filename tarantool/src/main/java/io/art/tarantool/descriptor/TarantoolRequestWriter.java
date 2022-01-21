@@ -35,7 +35,7 @@ public class TarantoolRequestWriter {
             packer.close();
             return buffer.writeBytes(output);
         } catch (IOException ioException) {
-            throw new TarantoolModuleException(ioException);
+            throw new TarantoolException(ioException);
         }
     }
 }

@@ -33,9 +33,10 @@ public interface RsocketModuleConstants {
     interface Errors {
         String SERVICE_METHOD_NOT_FOUND = "Service method was not found for service method identifiers: {0}";
         String CLIENTS_EMPTY = "RSocket communicator hasn't registered clients";
+        String WRITING_FILE_TO_DIRECTORY = "Paths {0} is directory. We can't write response to directory. Change path to file location";
     }
 
-    interface LoggingMessages {
+    interface Messages {
         String RSOCKET_LOGGER = "rsocket";
         String RSOCKET_COMMUNICATOR_LOGGER = "rsocket-communicator";
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
@@ -119,6 +120,7 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_KEEP_ALIVE_INTERVAL = ofSeconds(20);
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = ofSeconds(90);
         String DEFAULT_WS_PATH = SLASH;
+        String DEFAULT_CONNECTOR_ID = "default";
     }
 
     @Getter

@@ -35,7 +35,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.logging.Logging.*;
 import static io.art.rsocket.configuration.RsocketModuleConfiguration.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
 import static io.art.rsocket.message.RsocketMessageBuilder.*;
 import static reactor.core.publisher.Hooks.*;
 

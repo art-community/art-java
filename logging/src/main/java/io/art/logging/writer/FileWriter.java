@@ -61,7 +61,7 @@ public class FileWriter implements LoggerWriter {
         File directory = fileConfiguration.getDirectory().toFile();
         if (!directory.exists()) {
             if (!directory.mkdirs()) {
-                throw new LoggingModuleException(MessageFormat.format(UNABLE_TO_CREATE_LOG_DIRECTORY, directory.toString()));
+                throw new LoggingException(MessageFormat.format(UNABLE_TO_CREATE_LOG_DIRECTORY, directory.toString()));
             }
         }
 
@@ -154,7 +154,7 @@ public class FileWriter implements LoggerWriter {
             return stream;
         } catch (Throwable throwable) {
             apply(stream, this::closeFileStream);
-            throw new LoggingModuleException(throwable);
+            throw new LoggingException(throwable);
         }
     }
 

@@ -89,7 +89,7 @@ public class TarantoolClient {
         }
 
         if (connected.compareAndSet(true, false)) {
-            connector.tryEmitError(new TarantoolModuleException(error));
+            connector.tryEmitError(new TarantoolException(error));
         }
     }
 
@@ -100,7 +100,7 @@ public class TarantoolClient {
         One<Value> sink = receiver.getSink();
         Value body = response.getBody();
         if (response.isError()) {
-            sink.tryEmitError(new TarantoolModuleException(let(body, Value::toJson)));
+            sink.tryEmitError(new TarantoolException(let(body, Value::toJson)));
             return;
         }
         if (isNull(body) || !body.isMapValue()) {

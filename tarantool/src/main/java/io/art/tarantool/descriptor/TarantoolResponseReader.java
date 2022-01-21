@@ -38,9 +38,9 @@ public class TarantoolResponseReader {
                 bodyBuffer.release();
                 return response;
             }
-            throw new TarantoolModuleException("");
+            throw new TarantoolException("");
         } catch (Throwable throwable) {
-            throw new TarantoolModuleException(throwable);
+            throw new TarantoolException(throwable);
         }
     }
 }

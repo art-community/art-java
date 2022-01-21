@@ -9,7 +9,7 @@ import org.reactivestreams.*;
 import reactor.core.publisher.*;
 import reactor.util.annotation.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.rsocket.constants.RsocketModuleConstants.LoggingMessages.*;
+import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
 import static java.text.MessageFormat.*;
 import static reactor.core.publisher.Flux.*;
 
