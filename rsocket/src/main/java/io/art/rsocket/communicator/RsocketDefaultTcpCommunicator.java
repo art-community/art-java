@@ -2,10 +2,11 @@ package io.art.rsocket.communicator;
 
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
+import io.art.core.annotation.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
-import io.art.core.strategy.*;
 import io.art.meta.*;
+import io.art.meta.model.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -18,6 +19,7 @@ import io.rsocket.transport.netty.client.*;
 import reactor.core.publisher.*;
 import reactor.netty.tcp.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
@@ -26,11 +28,13 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
+import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpClientConfiguration.*;
 import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 import java.util.function.*;
 
+@Public
 public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator {
     private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final RsocketTcpConnectorConfigurationBuilder tcpConnector = tcpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
@@ -73,11 +77,6 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         return this;
     }
 
-    public RsocketDefaultTcpCommunicator service(Class<?> value) {
-        commonConnector.service(ServiceMethodStrategy.manual(value));
-        return this;
-    }
-
     public RsocketDefaultTcpCommunicator timeout(Duration value) {
         commonConnector.timeout(value);
         return this;
@@ -90,6 +89,11 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
 
     public RsocketDefaultTcpCommunicator target(Class<?> serviceId, String methodId) {
         serviceMethodId = serviceMethodId(idByDash(serviceId), methodId);
+        return this;
+    }
+
+    public <T extends MetaClass<?>> RsocketDefaultTcpCommunicator target(Class<?> serviceIdMarker, Function<T, MetaMethod<?>> methodId) {
+        serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId.apply(cast(Meta.declaration(serviceIdMarker))).name());
         return this;
     }
 
@@ -124,7 +128,7 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
     }
 
     public RsocketDefaultTcpCommunicator client(String host, int port) {
-        RsocketTcpClientConfiguration clientConfiguration = RsocketTcpClientConfiguration.builder()
+        RsocketTcpClientConfiguration clientConfiguration = tcpClientConfiguration(DEFAULT_CONNECTOR_ID).toBuilder()
                 .host(host)
                 .port(port)
                 .connector(DEFAULT_CONNECTOR_ID)
@@ -134,9 +138,9 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
     }
 
 
-    public void fireAndForget(DataFormat dataFormat) {
+    public void fireAndForget() {
         RsocketTcpConnectorConfiguration configuration = tcpConnector
-                .commonConfiguration(commonConnector.dataFormat(dataFormat).build())
+                .commonConfiguration(commonConnector.build())
                 .build();
         createCommunicator(configuration).fireAndForget(Mono.empty());
     }

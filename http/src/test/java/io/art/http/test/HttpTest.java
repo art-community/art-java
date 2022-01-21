@@ -33,13 +33,16 @@ public class HttpTest {
     @BeforeAll
     public static void setup() {
         writeFile(testFile, "test");
+        String url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 1234;
         initialize(
                 meta(() -> new MetaHttpTest(new MetaMetaTest())),
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestHttpConnector.class, connector -> connector.url(HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 1234)))
-                        .server(server -> server.file("/file", testFile).route(TestHttpService.class).configure(serverConfigurator -> serverConfigurator.port(1234)))
+                        .communicator(communicator -> communicator.connector(TestHttpConnector.class, connector -> connector.url(url)))
+                        .server(server -> server.file("/file", testFile)
+                                .route(TestHttpService.class)
+                                .configure(serverConfigurator -> serverConfigurator.port(1234)))
                 )
         );
     }

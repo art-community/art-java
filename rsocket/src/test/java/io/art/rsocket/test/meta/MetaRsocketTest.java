@@ -12,6 +12,7 @@ import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
+import io.art.meta.model.StaticMetaMethod;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -61,6 +62,8 @@ public class MetaRsocketTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
+          private final MetaRsocketDefaultTestClass rsocketDefaultTestClass = register(new MetaRsocketDefaultTestClass());
+
           private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
 
           private final MetaServicePackage servicePackage = register(new MetaServicePackage());
@@ -69,12 +72,119 @@ public class MetaRsocketTest extends MetaLibrary {
             super("test");
           }
 
+          public MetaRsocketDefaultTestClass rsocketDefaultTestClass() {
+            return rsocketDefaultTestClass;
+          }
+
           public MetaCommunicatorPackage communicatorPackage() {
             return communicatorPackage;
           }
 
           public MetaServicePackage servicePackage() {
             return servicePackage;
+          }
+
+          public static final class MetaRsocketDefaultTestClass extends MetaClass<io.art.rsocket.test.RsocketDefaultTest> {
+            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
+
+            private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
+
+            private final MetaCleanupMethod cleanupMethod = register(new MetaCleanupMethod());
+
+            private final MetaTestDefaultRsocketMethod testDefaultRsocketMethod = register(new MetaTestDefaultRsocketMethod());
+
+            private MetaRsocketDefaultTestClass() {
+              super(metaType(io.art.rsocket.test.RsocketDefaultTest.class));
+            }
+
+            public MetaConstructorConstructor constructor() {
+              return constructor;
+            }
+
+            public MetaSetupMethod setupMethod() {
+              return setupMethod;
+            }
+
+            public MetaCleanupMethod cleanupMethod() {
+              return cleanupMethod;
+            }
+
+            public MetaTestDefaultRsocketMethod testDefaultRsocketMethod() {
+              return testDefaultRsocketMethod;
+            }
+
+            public static final class MetaConstructorConstructor extends MetaConstructor<io.art.rsocket.test.RsocketDefaultTest> {
+              private MetaConstructorConstructor() {
+                super(metaType(io.art.rsocket.test.RsocketDefaultTest.class));
+              }
+
+              @Override
+              public io.art.rsocket.test.RsocketDefaultTest invoke(Object[] arguments) throws
+                  Throwable {
+                return new io.art.rsocket.test.RsocketDefaultTest();
+              }
+
+              @Override
+              public io.art.rsocket.test.RsocketDefaultTest invoke() throws Throwable {
+                return new io.art.rsocket.test.RsocketDefaultTest();
+              }
+            }
+
+            public static final class MetaSetupMethod extends StaticMetaMethod<Void> {
+              private MetaSetupMethod() {
+                super("setup",metaType(Void.class));
+              }
+
+              @Override
+              public Object invoke(Object[] arguments) throws Throwable {
+                io.art.rsocket.test.RsocketDefaultTest.setup();
+                return null;
+              }
+
+              @Override
+              public Object invoke() throws Throwable {
+                io.art.rsocket.test.RsocketDefaultTest.setup();
+                return null;
+              }
+            }
+
+            public static final class MetaCleanupMethod extends StaticMetaMethod<Void> {
+              private MetaCleanupMethod() {
+                super("cleanup",metaType(Void.class));
+              }
+
+              @Override
+              public Object invoke(Object[] arguments) throws Throwable {
+                io.art.rsocket.test.RsocketDefaultTest.cleanup();
+                return null;
+              }
+
+              @Override
+              public Object invoke() throws Throwable {
+                io.art.rsocket.test.RsocketDefaultTest.cleanup();
+                return null;
+              }
+            }
+
+            public static final class MetaTestDefaultRsocketMethod extends InstanceMetaMethod<io.art.rsocket.test.RsocketDefaultTest, Void> {
+              private MetaTestDefaultRsocketMethod() {
+                super("testDefaultRsocket",metaType(Void.class));
+              }
+
+              @Override
+              public Object invoke(io.art.rsocket.test.RsocketDefaultTest instance,
+                  Object[] arguments) throws Throwable {
+                instance.testDefaultRsocket();
+                return null;
+              }
+
+              @Override
+              public Object invoke(io.art.rsocket.test.RsocketDefaultTest instance) throws
+                  Throwable {
+                instance.testDefaultRsocket();
+                return null;
+              }
+            }
           }
 
           public static final class MetaCommunicatorPackage extends MetaPackage {

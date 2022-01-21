@@ -63,7 +63,7 @@ public class MetaHttpTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaHttpDefaultCommunicatorTestClass httpDefaultCommunicatorTestClass = register(new MetaHttpDefaultCommunicatorTestClass());
+          private final MetaHttpDefaultTestClass httpDefaultTestClass = register(new MetaHttpDefaultTestClass());
 
           private final MetaWsTestClass wsTestClass = register(new MetaWsTestClass());
 
@@ -75,8 +75,8 @@ public class MetaHttpTest extends MetaLibrary {
             super("test");
           }
 
-          public MetaHttpDefaultCommunicatorTestClass httpDefaultCommunicatorTestClass() {
-            return httpDefaultCommunicatorTestClass;
+          public MetaHttpDefaultTestClass httpDefaultTestClass() {
+            return httpDefaultTestClass;
           }
 
           public MetaWsTestClass wsTestClass() {
@@ -91,29 +91,27 @@ public class MetaHttpTest extends MetaLibrary {
             return servicePackage;
           }
 
-          public static final class MetaHttpDefaultCommunicatorTestClass extends MetaClass<io.art.http.test.HttpDefaultCommunicatorTest> {
+          public static final class MetaHttpDefaultTestClass extends MetaClass<io.art.http.test.HttpDefaultTest> {
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
-            private final MetaField<java.lang.String> downloadFileNameField = register(new MetaField<>("downloadFileName",metaType(java.lang.String.class),false));
+            private final MetaField<java.nio.file.Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false));
 
             private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
 
             private final MetaCleanupMethod cleanupMethod = register(new MetaCleanupMethod());
 
-            private final MetaTestHttpDefaultCommunicatorWithSlashMethod testHttpDefaultCommunicatorWithSlashMethod = register(new MetaTestHttpDefaultCommunicatorWithSlashMethod());
+            private final MetaTestHttpDefaultCommunicatorMethod testHttpDefaultCommunicatorMethod = register(new MetaTestHttpDefaultCommunicatorMethod());
 
-            private final MetaTestHttpDefaultCommunicatorWithoutSlashMethod testHttpDefaultCommunicatorWithoutSlashMethod = register(new MetaTestHttpDefaultCommunicatorWithoutSlashMethod());
-
-            private MetaHttpDefaultCommunicatorTestClass() {
-              super(metaType(io.art.http.test.HttpDefaultCommunicatorTest.class));
+            private MetaHttpDefaultTestClass() {
+              super(metaType(io.art.http.test.HttpDefaultTest.class));
             }
 
             public MetaConstructorConstructor constructor() {
               return constructor;
             }
 
-            public MetaField<java.lang.String> downloadFileNameField() {
-              return downloadFileNameField;
+            public MetaField<java.nio.file.Path> testFileField() {
+              return testFileField;
             }
 
             public MetaSetupMethod setupMethod() {
@@ -124,30 +122,23 @@ public class MetaHttpTest extends MetaLibrary {
               return cleanupMethod;
             }
 
-            public MetaTestHttpDefaultCommunicatorWithSlashMethod testHttpDefaultCommunicatorWithSlashMethod(
-                ) {
-              return testHttpDefaultCommunicatorWithSlashMethod;
+            public MetaTestHttpDefaultCommunicatorMethod testHttpDefaultCommunicatorMethod() {
+              return testHttpDefaultCommunicatorMethod;
             }
 
-            public MetaTestHttpDefaultCommunicatorWithoutSlashMethod testHttpDefaultCommunicatorWithoutSlashMethod(
-                ) {
-              return testHttpDefaultCommunicatorWithoutSlashMethod;
-            }
-
-            public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.HttpDefaultCommunicatorTest> {
+            public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.HttpDefaultTest> {
               private MetaConstructorConstructor() {
-                super(metaType(io.art.http.test.HttpDefaultCommunicatorTest.class));
+                super(metaType(io.art.http.test.HttpDefaultTest.class));
               }
 
               @Override
-              public io.art.http.test.HttpDefaultCommunicatorTest invoke(Object[] arguments) throws
-                  Throwable {
-                return new io.art.http.test.HttpDefaultCommunicatorTest();
+              public io.art.http.test.HttpDefaultTest invoke(Object[] arguments) throws Throwable {
+                return new io.art.http.test.HttpDefaultTest();
               }
 
               @Override
-              public io.art.http.test.HttpDefaultCommunicatorTest invoke() throws Throwable {
-                return new io.art.http.test.HttpDefaultCommunicatorTest();
+              public io.art.http.test.HttpDefaultTest invoke() throws Throwable {
+                return new io.art.http.test.HttpDefaultTest();
               }
             }
 
@@ -158,13 +149,13 @@ public class MetaHttpTest extends MetaLibrary {
 
               @Override
               public Object invoke(Object[] arguments) throws Throwable {
-                io.art.http.test.HttpDefaultCommunicatorTest.setup();
+                io.art.http.test.HttpDefaultTest.setup();
                 return null;
               }
 
               @Override
               public Object invoke() throws Throwable {
-                io.art.http.test.HttpDefaultCommunicatorTest.setup();
+                io.art.http.test.HttpDefaultTest.setup();
                 return null;
               }
             }
@@ -176,53 +167,32 @@ public class MetaHttpTest extends MetaLibrary {
 
               @Override
               public Object invoke(Object[] arguments) throws Throwable {
-                io.art.http.test.HttpDefaultCommunicatorTest.cleanup();
+                io.art.http.test.HttpDefaultTest.cleanup();
                 return null;
               }
 
               @Override
               public Object invoke() throws Throwable {
-                io.art.http.test.HttpDefaultCommunicatorTest.cleanup();
+                io.art.http.test.HttpDefaultTest.cleanup();
                 return null;
               }
             }
 
-            public static final class MetaTestHttpDefaultCommunicatorWithSlashMethod extends InstanceMetaMethod<io.art.http.test.HttpDefaultCommunicatorTest, Void> {
-              private MetaTestHttpDefaultCommunicatorWithSlashMethod() {
-                super("testHttpDefaultCommunicatorWithSlash",metaType(Void.class));
+            public static final class MetaTestHttpDefaultCommunicatorMethod extends InstanceMetaMethod<io.art.http.test.HttpDefaultTest, Void> {
+              private MetaTestHttpDefaultCommunicatorMethod() {
+                super("testHttpDefaultCommunicator",metaType(Void.class));
               }
 
               @Override
-              public Object invoke(io.art.http.test.HttpDefaultCommunicatorTest instance,
-                  Object[] arguments) throws Throwable {
-                instance.testHttpDefaultCommunicatorWithSlash();
+              public Object invoke(io.art.http.test.HttpDefaultTest instance, Object[] arguments)
+                  throws Throwable {
+                instance.testHttpDefaultCommunicator();
                 return null;
               }
 
               @Override
-              public Object invoke(io.art.http.test.HttpDefaultCommunicatorTest instance) throws
-                  Throwable {
-                instance.testHttpDefaultCommunicatorWithSlash();
-                return null;
-              }
-            }
-
-            public static final class MetaTestHttpDefaultCommunicatorWithoutSlashMethod extends InstanceMetaMethod<io.art.http.test.HttpDefaultCommunicatorTest, Void> {
-              private MetaTestHttpDefaultCommunicatorWithoutSlashMethod() {
-                super("testHttpDefaultCommunicatorWithoutSlash",metaType(Void.class));
-              }
-
-              @Override
-              public Object invoke(io.art.http.test.HttpDefaultCommunicatorTest instance,
-                  Object[] arguments) throws Throwable {
-                instance.testHttpDefaultCommunicatorWithoutSlash();
-                return null;
-              }
-
-              @Override
-              public Object invoke(io.art.http.test.HttpDefaultCommunicatorTest instance) throws
-                  Throwable {
-                instance.testHttpDefaultCommunicatorWithoutSlash();
+              public Object invoke(io.art.http.test.HttpDefaultTest instance) throws Throwable {
+                instance.testHttpDefaultCommunicator();
                 return null;
               }
             }

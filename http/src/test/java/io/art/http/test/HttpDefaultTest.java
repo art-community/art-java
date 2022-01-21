@@ -3,8 +3,12 @@ package io.art.http.test;
 import io.art.http.*;
 import io.art.http.meta.*;
 import io.art.http.test.meta.*;
+import io.art.http.test.registry.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
+import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.constants.ProtocolConstants.*;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.initializer.Initializer.*;
@@ -15,42 +19,35 @@ import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.nio.file.*;
 
-public class HttpDefaultCommunicatorTest {
-    private final static String downloadFileName = "example.html";
+public class HttpDefaultTest {
+    private static final Path testFile = Paths.get("test.txt");
 
     @BeforeAll
     public static void setup() {
+        writeFile(testFile, "test");
         initialize(
                 meta(() -> new MetaHttpTest(new MetaMetaTest(new MetaHttp()))),
                 transport(),
                 json(),
-                http()
+                http(http -> http.server(server -> server.file("/file", testFile).configure(serverConfigurator -> serverConfigurator.port(1234))))
         );
     }
 
     @AfterAll
     public static void cleanup() {
-        recursiveDelete(downloadFileName);
+        recursiveDelete(testFile.toFile());
         shutdown();
     }
 
     @Test
-    public void testHttpDefaultCommunicatorWithSlash() {
-        Path downloaded = Paths.get(downloadFileName);
+    public void testHttpDefaultCommunicator() {
+        Path downloaded = Paths.get("downloaded.txt");
+        String url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 1234;
         Http.http()
-                .get("https://example.com/")
+                .get(url + "/file")
                 .execute()
                 .download(downloaded);
-        assertTrue(downloaded.toFile().exists() && readFile(downloaded).contains("Example Domain"));
-    }
-
-    @Test
-    public void testHttpDefaultCommunicatorWithoutSlash() {
-        Path downloaded = Paths.get(downloadFileName);
-        Http.http()
-                .get("https://example.com")
-                .execute()
-                .download(downloaded);
-        assertTrue(downloaded.toFile().exists() && readFile(downloaded).contains("Example Domain"));
+        assertTrue(downloaded.toFile().exists());
+        assertEquals(readFile(downloaded), "test");
     }
 }

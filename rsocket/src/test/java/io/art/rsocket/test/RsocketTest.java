@@ -17,7 +17,7 @@ import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
 import static io.art.transport.module.TransportActivator.*;
-import static java.util.function.UnaryOperator.identity;
+import static java.util.function.UnaryOperator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 

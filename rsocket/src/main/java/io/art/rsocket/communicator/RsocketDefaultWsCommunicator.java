@@ -2,6 +2,7 @@ package io.art.rsocket.communicator;
 
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
+import io.art.core.annotation.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.strategy.*;
@@ -26,11 +27,13 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
 import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import java.time.*;
 import java.util.function.*;
 
+@Public
 public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator {
     private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final RsocketWsConnectorConfigurationBuilder wsConnector = wsConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
@@ -124,7 +127,7 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
     }
 
     public RsocketDefaultWsCommunicator client(String host, int port, String path) {
-        RsocketWsClientConfiguration clientConfiguration = RsocketWsClientConfiguration.builder()
+        RsocketWsClientConfiguration clientConfiguration = wsClientConfiguration(DEFAULT_CONNECTOR_ID).toBuilder()
                 .host(host)
                 .port(port)
                 .path(path)

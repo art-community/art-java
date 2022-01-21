@@ -180,7 +180,7 @@ public class RsocketCommunicationFactory {
     }
 
     private static RSocketClient configureTcpClient(CommunicatorActionIdentifier identifier, String connector, RsocketModuleConfiguration moduleConfiguration) {
-        RsocketWsConnectorConfiguration configuration = moduleConfiguration.getWsConnectors().get(connector);
+        RsocketTcpConnectorConfiguration configuration = moduleConfiguration.getTcpConnectors().get(connector);
         return createTcpClient(moduleConfiguration.getTcpConnectors().get(connector), createSetupPayload(configuration.getCommonConfiguration(), identifier));
     }
 
