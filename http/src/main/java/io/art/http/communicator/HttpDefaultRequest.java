@@ -1,6 +1,6 @@
 package io.art.http.communicator;
 
-import io.art.core.extensions.*;
+import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
@@ -14,9 +14,9 @@ import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
 import static lombok.AccessLevel.*;
 import java.io.*;
-import java.nio.*;
 import java.nio.file.*;
 
+@Public
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
 public class HttpDefaultRequest {
@@ -46,16 +46,12 @@ public class HttpDefaultRequest {
         return create(toByteArray(value), BYTES);
     }
 
-    public static HttpDefaultRequest buffer(ByteBuffer value) {
-        return create(NioBufferExtensions.toByteArray(value), BYTES);
-    }
-
     public static HttpDefaultRequest file(File file) {
-        return create(readFile(file.toPath()), BYTES);
+        return create(readFileBytes(file.toPath()), BYTES);
     }
 
     public static HttpDefaultRequest path(Path path) {
-        return create(readFile(path), BYTES);
+        return create(readFileBytes(path), BYTES);
     }
 
     private static HttpDefaultRequest create(Object value, DataFormat dataFormat) {

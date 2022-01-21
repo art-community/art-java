@@ -1,5 +1,6 @@
 package io.art.http.communicator;
 
+import io.art.core.annotation.*;
 import io.art.core.extensions.*;
 import io.art.http.exception.*;
 import io.art.transport.constants.*;
@@ -16,13 +17,20 @@ import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.art.transport.payload.TransportPayloadReader.*;
 import static java.nio.file.Files.*;
 import static java.text.MessageFormat.*;
+import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
 import java.nio.file.*;
 
+@Public
 @Getter(value = PACKAGE)
-@RequiredArgsConstructor(access = PACKAGE)
 public class HttpDefaultResponse {
     private final Flux<byte[]> output;
+    private final HttpReactiveResponse reactive;
+
+    HttpDefaultResponse(Flux<byte[]> output) {
+        this.output = output;
+        reactive = new HttpReactiveResponse(output);
+    }
 
     public <T> T json(Class<T> type) {
         return parse(blockFirst(output), JSON, type);
@@ -53,12 +61,18 @@ public class HttpDefaultResponse {
             throw new HttpException(format(WRITING_FILE_TO_DIRECTORY, path));
         }
         try {
-            createDirectories(path.getParent());
+            if (nonNull(path.getParent())) {
+                createDirectories(path.getParent());
+            }
             writeFile(path, bytes());
         } catch (Throwable throwable) {
             throw new HttpException(throwable);
         }
         return path;
+    }
+
+    public HttpReactiveResponse reactive() {
+        return reactive;
     }
 
     private static <T> T parse(byte[] bytes, TransportModuleConstants.DataFormat dataFormat, Class<T> type) {

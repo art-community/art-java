@@ -273,7 +273,7 @@ public class HttpCommunication implements Communication {
     }
 
     static void decorateHttpCommunication(UnaryOperator<HttpCommunicationDecorator> decorator) {
-        HttpCommunication.decorator.set(decorator.apply(new HttpCommunicationDecorator()));
+        HttpCommunication.decorator.set(decorator.apply(orElse(HttpCommunication.decorator.get(), new HttpCommunicationDecorator())));
     }
 }
 
