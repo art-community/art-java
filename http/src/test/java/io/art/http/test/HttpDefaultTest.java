@@ -3,7 +3,6 @@ package io.art.http.test;
 import io.art.http.*;
 import io.art.http.meta.*;
 import io.art.http.test.meta.*;
-import io.art.http.test.registry.*;
 import io.art.meta.test.meta.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -21,6 +20,7 @@ import java.nio.file.*;
 
 public class HttpDefaultTest {
     private static final Path testFile = Paths.get("test.txt");
+    private static final Path downloadedFile = Paths.get("downloaded.txt");
 
     @BeforeAll
     public static void setup() {
@@ -36,18 +36,18 @@ public class HttpDefaultTest {
     @AfterAll
     public static void cleanup() {
         recursiveDelete(testFile.toFile());
+        recursiveDelete(downloadedFile.toFile());
         shutdown();
     }
 
     @Test
     public void testHttpDefaultCommunicator() {
-        Path downloaded = Paths.get("downloaded.txt");
         String url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 1234;
         Http.http()
                 .get(url + "/file")
                 .execute()
-                .download(downloaded);
-        assertTrue(downloaded.toFile().exists());
-        assertEquals(readFile(downloaded), "test");
+                .download(downloadedFile);
+        assertTrue(downloadedFile.toFile().exists());
+        assertEquals(readFile(downloadedFile), "test");
     }
 }
