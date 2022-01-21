@@ -19,7 +19,10 @@
 package io.art.http.module;
 
 import io.art.core.module.*;
+import io.art.http.meta.*;
+import io.art.meta.module.*;
 import lombok.experimental.*;
+import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.module.ModuleActivator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
@@ -31,6 +34,7 @@ public class HttpActivator {
     }
 
     public ModuleActivator http(UnaryOperator<HttpInitializer> initializer) {
-        return module(HttpModule.class, HttpModule::new, () -> initializer.apply(new HttpInitializer()));
+        return module(HttpModule.class, HttpModule::new, () -> initializer.apply(new HttpInitializer()))
+                .<MetaInitializer>decorator(META_MODULE_ID, meta -> meta.registerLibrary(MetaHttp::new));
     }
 }

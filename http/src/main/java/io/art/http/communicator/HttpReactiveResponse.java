@@ -17,11 +17,11 @@ import static lombok.AccessLevel.*;
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
 public class HttpReactiveResponse {
+    private final Flux<byte[]> output;
+
     public <T> Flux<T> json(Class<T> type) {
         return output.map(element -> parse(element, JSON, type));
     }
-
-    private final Flux<byte[]> output;
 
     public <T> Flux<T> yaml(Class<T> type) {
         return output.map(element -> parse(element, YAML, type));

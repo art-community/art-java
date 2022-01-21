@@ -6,7 +6,6 @@ import io.art.core.annotation.*;
 import io.art.core.mime.*;
 import io.art.core.property.*;
 import io.art.http.meta.MetaHttp.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaPortalPackage.MetaHttpDefaultPortalClass.*;
-import io.art.meta.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.core.publisher.*;
@@ -19,6 +18,7 @@ import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.http.portal.HttpDefaultPortal.*;
+import static io.art.meta.Meta.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import java.time.*;
@@ -28,7 +28,7 @@ import java.util.function.*;
 public class HttpDefaultCommunicator {
     private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
     private final HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
-    private final static LazyProperty<MetaHttpExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(HttpExecutionCommunicator.class));
+    private final static LazyProperty<MetaHttpExecutionCommunicatorClass> communicatorClass = lazy(() -> declaration(HttpExecutionCommunicator.class));
     private volatile CommunicatorProxy<HttpExecutionCommunicator> proxy;
 
     public HttpDefaultCommunicator retry(boolean value) {
