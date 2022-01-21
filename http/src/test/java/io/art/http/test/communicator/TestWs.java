@@ -40,7 +40,7 @@ public interface TestWs extends Communicator {
 
     Flux<String> wsEcho(Flux<String> input);
 
-    interface TestWsConnector extends Connector {
+    interface TestWsConnector extends Portal {
         TestWs testWs();
     }
 }

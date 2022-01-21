@@ -2,6 +2,7 @@ package io.art.rsocket.test;
 
 import io.art.meta.*;
 import io.art.meta.test.meta.*;
+import io.art.rsocket.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
@@ -12,7 +13,6 @@ import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
-import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
@@ -20,7 +20,6 @@ import static io.art.transport.module.TransportActivator.*;
 import static java.util.function.UnaryOperator.identity;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
-import java.util.function.*;
 
 public class RsocketTest {
     @BeforeAll
@@ -42,7 +41,7 @@ public class RsocketTest {
 
     @Test
     public void testRsocket() {
-        TestRsocketConnector connector = rsocketConnector(TestRsocketConnector.class);
+        TestRsocketConnector connector = Rsocket.rsocket(TestRsocketConnector.class);
         TestRsocket communicator = connector.testRsocket();
 
         communicator.m1();

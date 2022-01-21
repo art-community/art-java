@@ -24,41 +24,41 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
     private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private final Map<String, RsocketWsConnectorConfiguration> wsConnectors = map();
 
-    public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass) {
-        return tcp(connectorClass, cast(identity()));
+    public RsocketCommunicatorConfigurator tcp(Class<? extends Portal> portalClass) {
+        return tcp(portalClass, cast(identity()));
     }
 
-    public RsocketCommunicatorConfigurator ws(Class<? extends Connector> connectorClass) {
-        return ws(connectorClass, identity());
+    public RsocketCommunicatorConfigurator ws(Class<? extends Portal> portalClass) {
+        return ws(portalClass, identity());
     }
 
-    public RsocketCommunicatorConfigurator tcp(Class<? extends Connector> connectorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
-        RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(idByDash(connectorClass)));
-        RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
-        tcpConnectors.put(idByDash(connectorClass), configuration);
+    public RsocketCommunicatorConfigurator tcp(Class<? extends Portal> portalClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
+        RsocketTcpConnectorConfigurator portalConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(idByDash(portalClass)));
+        RsocketTcpConnectorConfiguration configuration = portalConfigurator.configure();
+        tcpConnectors.put(idByDash(portalClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
                 .configuration()
                 .getCommunicator()
-                .getConnectors()
-                .getCommunicator(connectorClass, communicator)
+                .getPortals()
+                .getCommunicator(portalClass, communicator)
                 .getCommunicator();
         Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createTcpCommunication(configuration, identifier);
-        registerConnector(connectorClass, communicatorFunction, communicationFunction);
+        registerPortal(portalClass, communicatorFunction, communicationFunction);
         return this;
     }
 
-    public RsocketCommunicatorConfigurator ws(Class<? extends Connector> connectorClass, UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
-        RsocketWsConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(idByDash(connectorClass)));
-        RsocketWsConnectorConfiguration configuration = connectorConfigurator.configure();
-        wsConnectors.put(idByDash(connectorClass), configuration);
+    public RsocketCommunicatorConfigurator ws(Class<? extends Portal> portalClass, UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
+        RsocketWsConnectorConfigurator portalConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(idByDash(portalClass)));
+        RsocketWsConnectorConfiguration configuration = portalConfigurator.configure();
+        wsConnectors.put(idByDash(portalClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> rsocketModule()
                 .configuration()
                 .getCommunicator()
-                .getConnectors()
-                .getCommunicator(connectorClass, communicator)
+                .getPortals()
+                .getCommunicator(portalClass, communicator)
                 .getCommunicator();
         Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createWsCommunication(configuration, identifier);
-        registerConnector(connectorClass, communicatorFunction, communicationFunction);
+        registerPortal(portalClass, communicatorFunction, communicationFunction);
         return this;
     }
 

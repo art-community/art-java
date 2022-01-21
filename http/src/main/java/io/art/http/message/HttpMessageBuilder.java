@@ -45,7 +45,7 @@ public class HttpMessageBuilder {
                     .collect(Collectors.joining("\n\t\t")));
         }
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
-                .getConnectors()
+                .getPortals()
                 .communicators();
         if (!communicators.isEmpty()) {
             message.append("\n\tCommunicators:\n\t\t").append(communicators

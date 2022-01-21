@@ -19,6 +19,7 @@
 package io.art.rsocket.benchmark;
 
 import io.art.meta.test.meta.*;
+import io.art.rsocket.*;
 import io.art.rsocket.test.communicator.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.service.*;
@@ -30,7 +31,6 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.core.strategy.ServiceMethodStrategy.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
-import static io.art.rsocket.Rsocket.*;
 import static io.art.rsocket.module.RsocketActivator.*;
 import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.transport.module.TransportActivator.*;
@@ -61,7 +61,7 @@ public class RsocketBenchmark {
                             )
                             .server(server -> server.tcp().service(BenchmarkRsocketService.class)))
             );
-            TestRsocketConnector connector = rsocketConnector(TestRsocketConnector.class);
+            TestRsocketConnector connector = Rsocket.rsocket(TestRsocketConnector.class);
             communicator = connector.testRsocket();
             m13 = Sinks.many().unicast().onBackpressureBuffer();
             communicator.m13(m13.asFlux());

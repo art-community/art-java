@@ -1,5 +1,6 @@
 package io.art.http.test;
 
+import io.art.http.*;
 import io.art.http.test.communicator.*;
 import io.art.http.test.communicator.TestWs.*;
 import io.art.http.test.meta.*;
@@ -16,7 +17,6 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.http.Http.*;
 import static io.art.http.module.HttpActivator.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static io.art.json.module.JsonActivator.*;
@@ -48,7 +48,7 @@ public class WsTest {
 
     @Test
     public void testWs() {
-        TestWsConnector connector = httpConnector(TestWsConnector.class);
+        TestWsConnector connector = Http.http(TestWsConnector.class);
         TestWs communicator = connector.testWs();
 
         communicator.ws1();

@@ -33,11 +33,11 @@ public class TarantoolConfigurator extends CommunicatorConfigurator<TarantoolCon
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = spaceCommunicator -> tarantoolModule()
                 .configuration()
                 .getCommunicator()
-                .getConnectors()
+                .getPortals()
                 .getCommunicator(storageClass, spaceCommunicator)
                 .getCommunicator();
         Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createTarantoolCommunication(configuration);
-        registerConnector(storageClass, communicatorFunction, communicationFunction);
+        registerPortal(storageClass, communicatorFunction, communicationFunction);
         return this;
     }
 

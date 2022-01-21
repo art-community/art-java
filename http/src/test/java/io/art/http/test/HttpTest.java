@@ -1,5 +1,6 @@
 package io.art.http.test;
 
+import io.art.http.*;
 import io.art.http.test.communicator.*;
 import io.art.http.test.meta.*;
 import io.art.http.test.registry.*;
@@ -15,7 +16,6 @@ import static io.art.core.context.Context.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.http.Http.*;
 import static io.art.http.module.HttpActivator.*;
 import static io.art.http.test.communicator.TestHttp.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
@@ -53,7 +53,7 @@ public class HttpTest {
 
     @Test
     public void testHttp() {
-        TestHttpConnector connector = httpConnector(TestHttpConnector.class);
+        TestHttpConnector connector = Http.http(TestHttpConnector.class);
         TestHttp communicator = connector.testHttp();
 
         communicator.post1();

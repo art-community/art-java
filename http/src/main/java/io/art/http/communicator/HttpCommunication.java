@@ -59,6 +59,12 @@ public class HttpCommunication implements Communication {
 
     private final static ThreadLocal<HttpCommunicationDecorator> decorator = new ThreadLocal<>();
 
+    public HttpCommunication(Supplier<HttpClient> client, HttpConnectorConfiguration connector) {
+        this.connectorConfiguration = connector;
+        this.client = property(client);
+        communication = property(this::communication);
+    }
+
     public HttpCommunication(Supplier<HttpClient> client, HttpModuleConfiguration module, HttpConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
         this.client = property(client).listenConsumer(() -> module.getConsumer()

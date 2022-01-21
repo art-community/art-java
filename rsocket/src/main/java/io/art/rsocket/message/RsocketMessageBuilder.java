@@ -80,7 +80,7 @@ public class RsocketMessageBuilder {
             message.append(format(RSOCKET_SERVICES_MESSAGE_PART, methodsAsString));
         }
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
-                .getConnectors()
+                .getPortals()
                 .communicators();
         if (!communicators.isEmpty()) {
             String communicatorsString = communicators

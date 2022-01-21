@@ -10,7 +10,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeModifiers.*;
-import static io.art.meta.extensions.MetaClassExtensions.joinMethods;
+import static io.art.meta.extensions.MetaClassExtensions.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.function.Function.*;
@@ -18,17 +18,17 @@ import java.util.*;
 import java.util.function.*;
 
 @UtilityClass
-public class ConnectorProxyFactory {
-    public static <T extends Connector> T createConnectorProxy(MetaClass<T> connectorClass, Function<Class<? extends Communicator>, ? extends Communicator> provider) {
-        Map<MetaMethod<?>, MetaClass<?>> proxies = connectorClass.methods()
+public class PortalProxyFactory {
+    public static <T extends Portal> T createPortalProxy(MetaClass<T> portalClass, Function<Class<? extends Communicator>, ? extends Communicator> provider) {
+        Map<MetaMethod<?>, MetaClass<?>> proxies = portalClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() == 0)
                 .filter(method -> nonNull(method.returnType().declaration()) && method.returnType().modifiers().contains(COMMUNICATOR))
                 .collect(mapCollector(identity(), method -> method.returnType().declaration()));
 
-        if (proxies.size() != connectorClass.methods().size()) {
-            String invalidMethods = joinMethods(connectorClass, method -> !proxies.containsKey(method));
-            throw new CommunicatorException(format(CONNECTOR_HAS_INVALID_METHODS, connectorClass.definition().type(), invalidMethods));
+        if (proxies.size() != portalClass.methods().size()) {
+            String invalidMethods = joinMethods(portalClass, method -> !proxies.containsKey(method));
+            throw new CommunicatorException(format(GATEWAY_HAS_INVALID_METHODS, portalClass.definition().type(), invalidMethods));
         }
 
         LazyProperty<Map<String, ? extends Communicator>> cache = lazy(() -> proxies
@@ -41,6 +41,6 @@ public class ConnectorProxyFactory {
                 .stream()
                 .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> cache.get().get(entry.getKey().name())));
 
-        return cast(connectorClass.proxy(cast(invocations)));
+        return cast(portalClass.proxy(cast(invocations)));
     }
 }

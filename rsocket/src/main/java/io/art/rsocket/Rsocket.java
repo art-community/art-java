@@ -11,8 +11,8 @@ import java.util.function.*;
 @Public
 @UtilityClass
 public class Rsocket {
-    public static <T extends Connector> T rsocketConnector(Class<T> connectorClass) {
-        return rsocketModule().configuration().getCommunicator().getConnectors().getConnector(connectorClass);
+    public static <T extends Portal> T rsocket(Class<T> gatewayClass) {
+        return rsocketModule().configuration().getCommunicator().getPortals().getPortal(gatewayClass);
     }
 
     public <C, M extends MetaClass<C>> RsocketLocalState rsocketState(Class<C> owner, Function<M, MetaMethod<?>> method) {

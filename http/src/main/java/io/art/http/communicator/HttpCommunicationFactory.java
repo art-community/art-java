@@ -18,11 +18,15 @@ import java.util.function.*;
 public class HttpCommunicationFactory {
     private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(HTTP_COMMUNICATOR_LOGGER));
 
-    public static HttpCommunication createHttpCommunication(HttpConnectorConfiguration connectorConfiguration) {
+    public static HttpCommunication createConfiguredHttpCommunication(HttpConnectorConfiguration connectorConfiguration) {
         String connector = connectorConfiguration.getConnector();
         HttpModuleConfiguration moduleConfiguration = httpModule().configuration();
         Supplier<HttpClient> client = () -> createClient(moduleConfiguration.getConnectors().get(connector));
         return new HttpCommunication(client, moduleConfiguration, connectorConfiguration);
+    }
+
+    public static HttpCommunication createDefaultHttpCommunication(HttpConnectorConfiguration connectorConfiguration) {
+        return new HttpCommunication(() -> createClient(connectorConfiguration), connectorConfiguration);
     }
 
     private static HttpClient createClient(HttpConnectorConfiguration connectorConfiguration) {

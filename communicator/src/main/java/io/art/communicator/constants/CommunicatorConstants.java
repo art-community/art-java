@@ -20,8 +20,8 @@ package io.art.communicator.constants;
 
 public interface CommunicatorConstants {
     interface Errors {
-        String COMMUNICATOR_HAS_INVALID_METHODS = "Communicator interface {0} should not contain methods with more than one parameter:\n[{1}]";
-        String CONNECTOR_HAS_INVALID_METHODS = "Connector interface {0} should not contain methods that returning not Communicator implementations:\n[{1}]";
+        String COMMUNICATOR_HAS_INVALID_METHODS = "Communicator interface {0} shouldn't contains methods with more than one parameter:\n[{1}]";
+        String GATEWAY_HAS_INVALID_METHODS = "Gateway interface {0} should contains methods only with return type '? extends Communicator':\n[{1}]";
     }
 
     interface LoggingMessages {

@@ -47,7 +47,7 @@ public interface TestHttp extends HttpCommunicator<TestHttp> {
 
     String getFile();
 
-    interface TestHttpConnector extends Connector {
+    interface TestHttpConnector extends Portal {
         TestHttp testHttp();
     }
 }

@@ -7,7 +7,7 @@ import io.art.communicator.configuration.*;
 import io.art.communicator.decorator.*;
 import io.art.communicator.model.*;
 import io.art.communicator.registry.*;
-import io.art.communicator.registry.ConnectorRegistry.*;
+import io.art.communicator.registry.PortalRegistry.*;
 import io.art.core.annotation.*;
 import io.art.core.checker.*;
 import io.art.core.collection.*;
@@ -18,7 +18,7 @@ import io.art.meta.model.*;
 import lombok.Builder;
 import lombok.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.communicator.factory.ConnectorProxyFactory.*;
+import static io.art.communicator.factory.PortalProxyFactory.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.ModuleChecker.*;
@@ -43,7 +43,7 @@ import java.util.function.*;
 public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurator<C>> {
     private final List<ClassBasedConfiguration> classBased = linkedList();
     private final List<MethodBasedConfiguration> methodBased = linkedList();
-    private final Map<Class<? extends Connector>, ConnectorConfiguration> connectors = map();
+    private final Map<Class<? extends Portal>, PortalConfiguration> portals = map();
 
     public C communicator(Class<? extends Communicator> communicatorClass,
                           UnaryOperator<CommunicatorActionConfigurator> decorator) {
@@ -63,27 +63,27 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return idByDash(inputClass);
     }
 
-    protected void registerConnector(Class<? extends Connector> connectorClass,
-                                     Function<Class<? extends Communicator>, ? extends Communicator> communicator,
-                                     Function<CommunicatorActionIdentifier, ? extends Communication> communication) {
-        LazyProperty<? extends Connector> connector = lazy(() -> createConnectorProxy(declaration(connectorClass), communicator));
-        ConnectorConfiguration connectorConfiguration = new ConnectorConfiguration(connector, communication);
-        connectors.put(connectorClass, connectorConfiguration);
+    protected void registerPortal(Class<? extends Portal> portalClass,
+                                  Function<Class<? extends Communicator>, ? extends Communicator> communicator,
+                                  Function<CommunicatorActionIdentifier, ? extends Communication> communication) {
+        LazyProperty<? extends Portal> portal = lazy(() -> createPortalProxy(declaration(portalClass), communicator));
+        PortalConfiguration portalConfiguration = new PortalConfiguration(portal, communication);
+        portals.put(portalClass, portalConfiguration);
     }
 
     protected CommunicatorConfiguration configure(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
         return current.toBuilder()
                 .configurations(lazy(this::createConfigurations))
-                .connectors(new ConnectorRegistry(createConnectors(configurationProvider)))
+                .portals(new PortalRegistry(createPortals(configurationProvider)))
                 .build();
     }
 
 
-    private LazyProperty<ImmutableMap<Class<? extends Connector>, ConnectorContainer>> createConnectors(LazyProperty<CommunicatorConfiguration> configurationProvider) {
-        return lazy(() -> connectors
+    private LazyProperty<ImmutableMap<Class<? extends Portal>, PortalContainer>> createPortals(LazyProperty<CommunicatorConfiguration> configurationProvider) {
+        return lazy(() -> portals
                 .entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createConnector(configurationProvider, entry.getKey(), entry.getValue()))));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> createPortal(configurationProvider, entry.getKey(), entry.getValue()))));
     }
 
     private ImmutableMap<String, CommunicatorActionsConfiguration> createConfigurations() {
@@ -124,29 +124,29 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return immutableMapOf(configurations);
     }
 
-    private ConnectorContainer createConnector(LazyProperty<CommunicatorConfiguration> configurationProvider,
-                                               Class<? extends Connector> connectorClass,
-                                               ConnectorConfiguration connectorConfiguration) {
+    private PortalContainer createPortal(LazyProperty<CommunicatorConfiguration> configurationProvider,
+                                         Class<? extends Portal> portalClass,
+                                         PortalConfiguration portalConfiguration) {
         ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> communicators = createProxies(
                 configurationProvider,
-                connectorClass,
-                connectorConfiguration
+                portalClass,
+                portalConfiguration
         );
-        return new ConnectorContainer(communicators, connectorConfiguration.connector.get());
+        return new PortalContainer(communicators, portalConfiguration.portal.get());
     }
 
     private ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> createProxies(LazyProperty<CommunicatorConfiguration> configurationProvider,
-                                                                                                                 Class<? extends Connector> connectorClass,
-                                                                                                                 ConnectorConfiguration connectorConfiguration) {
+                                                                                                                 Class<? extends Portal> portalClass,
+                                                                                                                 PortalConfiguration portalConfiguration) {
         Map<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = map();
-        ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(connectorClass).methods());
+        ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(portalClass).methods());
         for (MetaMethod<? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
             Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(configurationProvider, ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
                     .decorator(then(getCommunicatorDecorator(communicatorClass), getActionDecorator(communicatorClass, method)))
                     .method(actionMethod)
-                    .connectorConfiguration(connectorConfiguration)
+                    .portalConfiguration(portalConfiguration)
                     .build());
             CommunicatorProxy<? extends Communicator> communicator = createCommunicatorProxy(communicatorClass, actions);
             proxies.put(communicatorClass.definition().type(), cast(communicator));
@@ -182,7 +182,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
                 .method(actionConfiguration.method)
-                .communication(actionConfiguration.connectorConfiguration.communication.apply(id));
+                .communication(actionConfiguration.portalConfiguration.communication.apply(id));
         NullityChecker.apply(inputType, builder::inputType);
 
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
@@ -236,12 +236,12 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         final MetaClass<? extends Communicator> communicatorClass;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
         final MetaMethod<?> method;
-        final ConnectorConfiguration connectorConfiguration;
+        final PortalConfiguration portalConfiguration;
     }
 
     @RequiredArgsConstructor
-    private static class ConnectorConfiguration {
-        final LazyProperty<? extends Connector> connector;
+    private static class PortalConfiguration {
+        final LazyProperty<? extends Portal> portal;
         final Function<CommunicatorActionIdentifier, ? extends Communication> communication;
     }
 }

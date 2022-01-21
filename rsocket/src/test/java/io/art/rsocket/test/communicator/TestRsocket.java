@@ -36,7 +36,7 @@ public interface TestRsocket extends Communicator {
 
     Flux<String> m16(Flux<String> input);
 
-    interface TestRsocketConnector extends Connector {
+    interface TestRsocketConnector extends Portal {
         TestRsocket testRsocket();
     }
 }

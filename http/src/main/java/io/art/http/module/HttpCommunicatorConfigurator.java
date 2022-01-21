@@ -15,7 +15,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
 import static io.art.http.module.HttpModule.*;
-import static io.art.http.path.HttpCommunicationUri.byCommunicatorAction;
+import static io.art.http.path.HttpCommunicationUri.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
 import java.util.function.*;
@@ -24,21 +24,21 @@ import java.util.function.*;
 public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpCommunicatorConfigurator> {
     private final Map<String, HttpConnectorConfiguration> connectors = map();
 
-    public HttpCommunicatorConfigurator connector(Class<? extends Connector> connectorClass) {
+    public HttpCommunicatorConfigurator connector(Class<? extends Portal> connectorClass) {
         return connector(connectorClass, cast(identity()));
     }
 
-    public HttpCommunicatorConfigurator connector(Class<? extends Connector> connectorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+    public HttpCommunicatorConfigurator connector(Class<? extends Portal> connectorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
         HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(idByDash(connectorClass)).toBuilder().uri(byCommunicatorAction())).build();
         connectors.put(idByDash(connectorClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> httpModule()
                 .configuration()
                 .getCommunicator()
-                .getConnectors()
+                .getPortals()
                 .getCommunicator(connectorClass, communicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createHttpCommunication(configuration);
-        registerConnector(connectorClass, communicatorFunction, communicationFunction);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createConfiguredHttpCommunication(configuration);
+        registerPortal(connectorClass, communicatorFunction, communicationFunction);
         return this;
     }
 
