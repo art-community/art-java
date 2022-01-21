@@ -104,8 +104,8 @@ public class HttpCommunication implements Communication {
     }
 
     private Function<Flux<Object>, Flux<Object>> communication() {
-        TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getDataFormat());
-        TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getDataFormat());
+        TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getInputDataFormat());
+        TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getOutputDataFormat());
         return input -> communicate(reader, writer, input);
     }
 
@@ -128,8 +128,8 @@ public class HttpCommunication implements Communication {
         HttpClient client = orElse(decorator.getClient(), UnaryOperator.<HttpClient>identity()).apply(this.client.get());
 
         HttpHeaders headers = new DefaultHttpHeaders()
-                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getDataFormat()))
-                .set(ACCEPT, toMimeType(connectorConfiguration.getDataFormat()));
+                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getOutputDataFormat()))
+                .set(ACCEPT, toMimeType(connectorConfiguration.getInputDataFormat()));
 
         connectorConfiguration.getHeaders().forEach(headers::add);
         client = client.headers(current -> current.add(orElse(decorator.getHeaders(), UnaryOperator.<HttpHeaders>identity()).apply(headers)));
@@ -166,8 +166,8 @@ public class HttpCommunication implements Communication {
         HttpClient client = this.client.get();
 
         HttpHeaders headers = new DefaultHttpHeaders()
-                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getDataFormat()))
-                .set(ACCEPT, toMimeType(connectorConfiguration.getDataFormat()));
+                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getOutputDataFormat()))
+                .set(ACCEPT, toMimeType(connectorConfiguration.getInputDataFormat()));
 
         connectorConfiguration.getHeaders().forEach(headers::add);
         client = client.headers(current -> current.add(headers));

@@ -59,6 +59,8 @@ public interface TransportModuleConstants {
 
         String SSL_SECTION = "ssl";
         String DATA_FORMAT_KEY = "dataFormat";
+        String INPUT_DATA_FORMAT_KEY = "inputDataFormat";
+        String OUTPUT_DATA_FORMAT_KEY = "outputDataFormat";
         String META_DATA_FORMAT_KEY = "metaDataFormat";
         String SERVICE_ID_KEY = "serviceId";
         String METHOD_ID_KEY = "methodId";

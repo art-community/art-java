@@ -44,11 +44,7 @@ public class CommunicatorActionFactory {
     public CommunicatorAction preconfiguredCommunicatorAction(CommunicatorActionIdentifier id, MetaMethod<?> method, Communication communication) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         CommunicatorConfiguration configuration = communicatorConfiguration(new CommunicatorRefresher());
-        CommunicatorActionBuilder builder = CommunicatorAction.builder()
-                .id(id)
-                .outputType(method.returnType())
-                .communication(communication)
-                .inputDecorator(new CommunicatorDeactivationDecorator(id, configuration));
+        CommunicatorActionBuilder builder = CommunicatorAction.builder().id(id).outputType(method.returnType()).communication(communication);
         if (withLogging()) {
             builder
                     .inputDecorator(new CommunicatorLoggingDecorator(id, configuration, INPUT))

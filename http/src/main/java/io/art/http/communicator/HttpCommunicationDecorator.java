@@ -101,4 +101,9 @@ public class HttpCommunicationDecorator {
         outputDataFormat = format;
         return this;
     }
+
+    public HttpCommunicationDecorator cookie(String name, Cookie cookie) {
+        cookies.put(name, cookie);
+        return this;
+    }
 }

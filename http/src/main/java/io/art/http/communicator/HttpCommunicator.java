@@ -4,6 +4,7 @@ import io.art.communicator.*;
 import io.art.core.annotation.*;
 import io.art.transport.constants.*;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.netty.http.client.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.http.communicator.HttpCommunication.*;
@@ -16,31 +17,31 @@ public interface HttpCommunicator<C extends HttpCommunicator<C>> extends Communi
         return cast(this);
     }
 
-    default C get() {
+    default C useGet() {
         return decorate(HttpCommunicationDecorator::get);
     }
 
-    default C post() {
+    default C usePost() {
         return decorate(HttpCommunicationDecorator::post);
     }
 
-    default C put() {
+    default C usePut() {
         return decorate(HttpCommunicationDecorator::put);
     }
 
-    default C patch() {
+    default C usePatch() {
         return decorate(HttpCommunicationDecorator::patch);
     }
 
-    default C options() {
+    default C useOptions() {
         return decorate(HttpCommunicationDecorator::options);
     }
 
-    default C head() {
+    default C useHead() {
         return decorate(HttpCommunicationDecorator::head);
     }
 
-    default C ws() {
+    default C useWs() {
         return decorate(HttpCommunicationDecorator::ws);
     }
 
@@ -74,5 +75,9 @@ public interface HttpCommunicator<C extends HttpCommunicator<C>> extends Communi
 
     default C output(TransportModuleConstants.DataFormat format) {
         return decorate(decorator -> decorator.output(format));
+    }
+
+    default C cookie(String name, Cookie cookie) {
+        return decorate(decorator -> decorator.cookie(name, cookie));
     }
 }

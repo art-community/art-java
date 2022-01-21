@@ -53,7 +53,8 @@ public class HttpConnectorConfiguration {
     private boolean wiretapLog;
     private boolean followRedirect;
     private UnaryOperator<HttpClient> decorator;
-    private DataFormat dataFormat;
+    private DataFormat inputDataFormat;
+    private DataFormat outputDataFormat;
     private String url;
     private ImmutableMap<String, String> headers;
     private ImmutableMap<String, Cookie> cookies;
@@ -70,7 +71,8 @@ public class HttpConnectorConfiguration {
         configuration.followRedirect = true;
         configuration.retry = true;
         configuration.keepAlive = true;
-        configuration.dataFormat = JSON;
+        configuration.inputDataFormat = JSON;
+        configuration.outputDataFormat = JSON;
         configuration.decorator = UnaryOperator.identity();
         configuration.url = HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + DEFAULT_PORT;
         configuration.uri = manual(SLASH);
@@ -88,7 +90,8 @@ public class HttpConnectorConfiguration {
 
         configuration.verbose = listener.emit(orElse(source.getBoolean(VERBOSE_KEY), current.verbose));
         configuration.compress = listener.emit(orElse(source.getBoolean(COMPRESS_KEY), current.compress));
-        configuration.dataFormat = listener.emit(dataFormat(source.getString(DATA_FORMAT_KEY), current.dataFormat));
+        configuration.inputDataFormat = listener.emit(dataFormat(source.getString(OUTPUT_DATA_FORMAT_KEY), current.inputDataFormat));
+        configuration.outputDataFormat = listener.emit(dataFormat(source.getString(OUTPUT_DATA_FORMAT_KEY), current.outputDataFormat));
         configuration.keepAlive = listener.emit(orElse(source.getBoolean(KEEP_ALIVE_KEY), current.keepAlive));
         configuration.retry = listener.emit(orElse(source.getBoolean(RETRY_KEY), current.retry));
         configuration.followRedirect = listener.emit(orElse(source.getBoolean(FOLLOW_REDIRECT_KEY), current.followRedirect));

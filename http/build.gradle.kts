@@ -42,4 +42,12 @@ generator {
         }
         excludeClasses("**HttpTest**")
     }
+    source("Http") {
+        modulePackage("io.art.http")
+        jvm()
+        sourcesPattern {
+            include("src/main/**")
+        }
+        includeClasses("**portal**")
+    }
 }

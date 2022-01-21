@@ -36,6 +36,10 @@ public interface HttpModuleConstants {
         String HTTP_COMMUNICATOR_STOPPED = "HTTP communicator connector stopped: {0}";
     }
 
+    interface Errors {
+        String WRITING_FILE_TO_DIRECTORY = "Paths {0} is directory. We can't write response to directory. Change path to file location";
+    }
+
     interface ConfigurationKeys {
         String HTTP_SECTION = "http";
         String ROUTES_SECTION = "routes";
@@ -105,6 +109,7 @@ public interface HttpModuleConstants {
     interface Defaults {
         int DEFAULT_PORT = 8080;
         int DEFAULT_AGGREGATE_FRAMES = 65536;
+        String DEFAULT_CONNECTOR_ID = "default";
     }
 
     static HttpProtocol httpProtocol(String protocol, HttpProtocol fallback) {

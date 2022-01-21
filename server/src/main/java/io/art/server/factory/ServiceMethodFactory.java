@@ -51,8 +51,7 @@ public class ServiceMethodFactory {
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())
-                .invoker(new MetaMethodInvoker(owner, method))
-                .inputDecorator(new ServiceDeactivationDecorator(id, configuration));
+                .invoker(new MetaMethodInvoker(owner, method));
 
         if (validatable) {
             builder.inputDecorator(new ServiceValidationDecorator(id, configuration));
@@ -61,7 +60,6 @@ public class ServiceMethodFactory {
         if (withLogging()) {
             builder.inputDecorator(new ServiceLoggingDecorator(id, configuration, INPUT));
         }
-        builder.outputDecorator(new ServiceDeactivationDecorator(id, configuration));
 
         if (withLogging()) {
             builder.outputDecorator(new ServiceLoggingDecorator(id, configuration, OUTPUT));
@@ -70,6 +68,7 @@ public class ServiceMethodFactory {
         if (nonNull(inputType)) {
             return builder.inputType(inputType).build();
         }
+
         return builder.build();
     }
 }
