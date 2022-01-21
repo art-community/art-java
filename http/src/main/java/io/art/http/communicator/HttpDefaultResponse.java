@@ -39,11 +39,11 @@ public class HttpDefaultResponse {
     }
 
     public <T> T yaml(Class<T> type) {
-        return parse(blockFirst(output), JSON, type);
+        return parse(blockFirst(output), YAML, type);
     }
 
     public <T> T messagePack(Class<T> type) {
-        return parse(blockFirst(output), JSON, type);
+        return parse(blockFirst(output), MESSAGE_PACK, type);
     }
 
     public String string() {

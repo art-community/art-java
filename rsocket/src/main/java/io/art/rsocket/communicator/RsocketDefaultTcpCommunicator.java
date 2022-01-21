@@ -87,8 +87,8 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         return this;
     }
 
-    public RsocketDefaultTcpCommunicator target(Class<?> serviceId, String methodId) {
-        serviceMethodId = serviceMethodId(idByDash(serviceId), methodId);
+    public RsocketDefaultTcpCommunicator target(Class<?> serviceIdMarker, String methodId) {
+        serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId);
         return this;
     }
 

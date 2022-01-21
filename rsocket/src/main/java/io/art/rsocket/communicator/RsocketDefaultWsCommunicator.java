@@ -7,6 +7,7 @@ import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.strategy.*;
 import io.art.meta.*;
+import io.art.meta.model.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
@@ -19,6 +20,7 @@ import io.rsocket.transport.netty.client.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
@@ -91,8 +93,13 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
         return this;
     }
 
-    public RsocketDefaultWsCommunicator target(Class<?> serviceId, String methodId) {
-        serviceMethodId = serviceMethodId(idByDash(serviceId), methodId);
+    public RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, String methodId) {
+        serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId);
+        return this;
+    }
+
+    public <T extends MetaClass<?>> RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, Function<T, MetaMethod<?>> methodId) {
+        serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId.apply(cast(Meta.declaration(serviceIdMarker))).name());
         return this;
     }
 
