@@ -21,7 +21,6 @@ package io.art.transport.module;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
-import io.art.logging.*;
 import io.art.transport.configuration.*;
 import io.art.transport.configuration.TransportModuleConfiguration.*;
 import io.art.transport.reactor.*;
@@ -30,8 +29,6 @@ import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.transport.constants.TransportModuleConstants.Messages.*;
-import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.pool.TransportPool.*;
 import static reactor.util.Loggers.*;
 
@@ -52,6 +49,5 @@ public class TransportModule implements StatelessModule<TransportModuleConfigura
             useCustomLoggers(EmptyReactorLogger::new);
         }
         configureCommonTransportPool(configuration.getCommonPoolConfiguration());
-        withLogging(() -> Logging.logger(TRANSPORT_LOGGER).info(TRANSPORT_CONFIGURING_MESSAGE));
     }
 }

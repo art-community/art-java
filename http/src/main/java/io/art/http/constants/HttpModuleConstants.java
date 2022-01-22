@@ -31,11 +31,11 @@ public interface HttpModuleConstants {
         String HTTP_LOGGER = "http";
         String HTTP_COMMUNICATOR_LOGGER = "http-communicator";
         String HTTP_SERVER_LOGGER = "http-server";
-        String HTTP_SERVER_STOPPED = "HTTP server stopped - {0}:{1}";
-        String HTTP_COMMUNICATOR_STARTED = "HTTP communicator connector started: {0}";
-        String HTTP_COMMUNICATOR_STOPPED = "HTTP communicator connector stopped: {0}";
+        String HTTP_SERVER_STOPPED = "HTTP server has been stopped - {0}:{1}";
+        String HTTP_COMMUNICATOR_STARTED = "HTTP communicator connector has been started: {0}";
+        String HTTP_COMMUNICATOR_STOPPED = "HTTP communicator connector has been stopped: {0}";
 
-        String HTTP_LAUNCHED_MESSAGE_PART = "HTTP module launched\n\t";
+        String HTTP_LAUNCHED_MESSAGE_PART = "HTTP module has been launched\n\t";
         String HTTP_SERVER_MESSAGE_PART = "Server - {0}://{1}:{2}\n\t";
         String HTTP_SERVICES_MESSAGE_PART = "Services:\n\t\t{0}\n\t";
         String HTTP_SERVICE_MESSAGE_PART = "[service = {0}] {1}";

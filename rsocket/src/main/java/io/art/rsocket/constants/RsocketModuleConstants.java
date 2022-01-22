@@ -40,10 +40,10 @@ public interface RsocketModuleConstants {
         String RSOCKET_LOGGER = "rsocket";
         String RSOCKET_COMMUNICATOR_LOGGER = "rsocket-communicator";
         String RSOCKET_SERVER_LOGGER = "rsocket-server";
-        String RSOCKET_SERVER_STOPPED = "RSocket {0} server stopped - {1}:{2}";
+        String RSOCKET_SERVER_STOPPED = "RSocket {0} server has been stopped - {1}:{2}";
 
-        String RSOCKET_COMMUNICATOR_STARTED = "RSocket communicator connector started: {0}\nSetup payload:\n{1}";
-        String RSOCKET_COMMUNICATOR_STOPPED = "RSocket communicator connector stopped: {0}";
+        String RSOCKET_COMMUNICATOR_STARTED = "RSocket communicator connector has been started: {0}\nSetup payload:\n{1}";
+        String RSOCKET_COMMUNICATOR_STOPPED = "RSocket communicator connector has been stopped: {0}";
 
         String FIRE_AND_FORGET_REQUEST_LOG = "RSocket executing fireAndForget()\nData:\n{0}\nMetadata:\n{1}";
         String FIRE_AND_FORGET_RESPONSE_LOG = "RSocket fireAndForget() completed";
@@ -65,7 +65,7 @@ public interface RsocketModuleConstants {
         String REQUEST_CHANNEL_RESPONSE_LOG = "RSocket requestChannel() processed\nData:\n{0}\nMetadata:\n{1}";
         String REQUEST_CHANNEL_EXCEPTION_LOG = "RSocket requestChannel() failed\nException:\n{0}";
 
-        String RSOCKET_LAUNCHED_MESSAGE_PART = "RSocket module launched\n\t";
+        String RSOCKET_LAUNCHED_MESSAGE_PART = "RSocket module has been launched\n\t";
         String RSOCKET_TCP_SERVER_MESSAGE_PART = "TCP Server - {0}://{1}:{2}\n\t";
         String RSOCKET_WS_SERVER_MESSAGE_PART = "WS Server - {0}://{1}:{2}\n\t";
         String RSOCKET_SERVICES_MESSAGE_PART = "Services:\n\t\t{0}\n\t";

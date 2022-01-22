@@ -30,10 +30,6 @@ public interface TransportModuleConstants {
         int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
     }
 
-    interface Messages {
-        String TRANSPORT_CONFIGURING_MESSAGE = "Common transport resources configured by transport module";
-    }
-
     interface ConfigurationKeys {
         String TRANSPORT_COMMON_SECTION = "transport.common";
         String PENDING_ACQUIRE_TIMEOUT_KEY = "pendingAcquireTimeout";
