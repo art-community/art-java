@@ -75,11 +75,11 @@ public class TransportPayloadReader {
             case BYTES:
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()
-                        : new TransportPayload(buffer, lazy(() -> type.inputTransformer().fromByteArray(NettyBufferExtensions.toByteArray(buffer))));
+                        : new TransportPayload(buffer, lazy(() -> type.inputTransformer().fromByteArray(NettyBufferExtensions.releaseToByteArray(buffer))));
             case STRING:
                 return (buffer, type) -> buffer.capacity() == 0
                         ? emptyTransportPayload()
-                        : new TransportPayload(buffer, lazy(() -> type.inputTransformer().fromString(NettyBufferExtensions.toString(buffer))));
+                        : new TransportPayload(buffer, lazy(() -> type.inputTransformer().fromString(NettyBufferExtensions.releaseToString(buffer))));
         }
         throw new ImpossibleSituationException();
     }

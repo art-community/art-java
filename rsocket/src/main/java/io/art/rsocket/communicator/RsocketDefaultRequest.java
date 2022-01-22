@@ -44,7 +44,7 @@ public class RsocketDefaultRequest {
     }
 
     public static RsocketDefaultRequest buffer(ByteBuf value) {
-        return create(toByteArray(value), BYTES);
+        return create(releaseToByteArray(value), BYTES);
     }
 
     public static RsocketDefaultRequest file(File file) {
@@ -57,7 +57,7 @@ public class RsocketDefaultRequest {
 
     private static RsocketDefaultRequest create(Object value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
-        byte[] bytes = toByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
+        byte[] bytes = releaseToByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
         return new RsocketDefaultRequest(bytes, dataFormat);
     }
 }

@@ -54,10 +54,6 @@ public class NettyBufferExtensions {
         return buffer;
     }
 
-    public static ByteBuf from(ByteBuffer buffer) {
-        return toNettyBuffer(buffer);
-    }
-
     public static byte[] toByteArray(ByteBuf buffer) {
         if (isEmpty(buffer)) {
             return EMPTY_BYTES;
@@ -66,6 +62,21 @@ public class NettyBufferExtensions {
         buffer.readBytes(bytes);
         buffer.resetReaderIndex();
         return bytes;
+    }
+
+    public static byte[] releaseToByteArray(ByteBuf buffer) {
+        if (isEmpty(buffer)) {
+            return EMPTY_BYTES;
+        }
+        byte[] bytes = new byte[buffer.readableBytes()];
+        buffer.readBytes(bytes);
+        buffer.resetReaderIndex();
+        buffer.release();
+        return bytes;
+    }
+
+    public static ByteBuf from(ByteBuffer buffer) {
+        return toNettyBuffer(buffer);
     }
 
     public static ByteBuffer toNioBuffer(ByteBuf buffer) {
@@ -79,7 +90,15 @@ public class NettyBufferExtensions {
         return new String(toByteArray(buffer), context().configuration().getCharset());
     }
 
+    public static String releaseToString(ByteBuf buffer) {
+        return new String(releaseToByteArray(buffer), context().configuration().getCharset());
+    }
+
     public static String toString(ByteBuf buffer, Charset charset) {
         return new String(toByteArray(buffer), charset);
+    }
+
+    public static String releaseToString(ByteBuf buffer, Charset charset) {
+        return new String(releaseToByteArray(buffer), charset);
     }
 }

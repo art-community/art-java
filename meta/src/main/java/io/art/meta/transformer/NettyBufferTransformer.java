@@ -28,7 +28,7 @@ public class NettyBufferTransformer implements MetaTransformer<ByteBuf> {
 
     @Override
     public byte[] toByteArray(ByteBuf value) {
-        return NettyBufferExtensions.toByteArray(value);
+        return NettyBufferExtensions.releaseToByteArray(value);
     }
 
     @Override

@@ -39,18 +39,18 @@ public class RsocketMonoRequest {
 
     public static RsocketMonoRequest string(Mono<String> value) {
         TransportPayloadWriter writer = transportPayloadWriter(STRING);
-        Mono<byte[]> input = value.map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
+        Mono<byte[]> input = value.map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
         return new RsocketMonoRequest(input, STRING);
     }
 
     public static RsocketMonoRequest bytes(Mono<byte[]> value) {
         TransportPayloadWriter writer = transportPayloadWriter(BYTES);
-        Mono<byte[]> input = value.map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
+        Mono<byte[]> input = value.map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
         return new RsocketMonoRequest(input, BYTES);
     }
 
     public static RsocketMonoRequest buffer(Mono<ByteBuf> value) {
-        return create(value.map(NettyBufferExtensions::toByteArray), BYTES);
+        return create(value.map(NettyBufferExtensions::releaseToByteArray), BYTES);
     }
 
     public static RsocketMonoRequest file(Mono<File> file) {
@@ -63,7 +63,7 @@ public class RsocketMonoRequest {
 
     private static RsocketMonoRequest create(Mono<Object> value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
-        Mono<byte[]> input = value.map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
+        Mono<byte[]> input = value.map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
         return new RsocketMonoRequest(input, dataFormat);
     }
 }

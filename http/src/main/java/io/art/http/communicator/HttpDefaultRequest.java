@@ -43,7 +43,7 @@ public class HttpDefaultRequest {
     }
 
     public static HttpDefaultRequest buffer(ByteBuf value) {
-        return create(toByteArray(value), BYTES);
+        return create(releaseToByteArray(value), BYTES);
     }
 
     public static HttpDefaultRequest file(File file) {
@@ -56,7 +56,7 @@ public class HttpDefaultRequest {
 
     private static HttpDefaultRequest create(Object value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
-        byte[] bytes = toByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
+        byte[] bytes = releaseToByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
         return new HttpDefaultRequest(bytes);
     }
 }

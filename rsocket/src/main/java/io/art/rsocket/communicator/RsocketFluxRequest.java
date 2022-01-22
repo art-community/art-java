@@ -38,18 +38,18 @@ public class RsocketFluxRequest {
 
     public static RsocketFluxRequest string(Flux<String> value) {
         TransportPayloadWriter writer = transportPayloadWriter(STRING);
-        Flux<byte[]> input = value.map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
+        Flux<byte[]> input = value.map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
         return new RsocketFluxRequest(input, STRING);
     }
 
     public static RsocketFluxRequest bytes(Flux<byte[]> value) {
         TransportPayloadWriter writer = transportPayloadWriter(BYTES);
-        Flux<byte[]> input = value.map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
+        Flux<byte[]> input = value.map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
         return new RsocketFluxRequest(input, BYTES);
     }
 
     public static RsocketFluxRequest buffer(Flux<ByteBuf> value) {
-        return create(value.map(NettyBufferExtensions::toByteArray), BYTES);
+        return create(value.map(NettyBufferExtensions::releaseToByteArray), BYTES);
     }
 
     public static RsocketFluxRequest file(Flux<File> files) {
@@ -62,7 +62,7 @@ public class RsocketFluxRequest {
 
     private static RsocketFluxRequest create(Flux<Object> value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
-        Flux<byte[]> input = value.map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
+        Flux<byte[]> input = value.map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element))));
         return new RsocketFluxRequest(input, dataFormat);
     }
 }

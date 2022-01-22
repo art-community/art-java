@@ -39,16 +39,16 @@ public class HttpReactiveRequest {
 
     public static HttpReactiveRequest string(Publisher<String> value) {
         TransportPayloadWriter writer = transportPayloadWriter(STRING);
-        return new HttpReactiveRequest(from(value).map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
+        return new HttpReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
     }
 
     public static HttpReactiveRequest bytes(Publisher<byte[]> value) {
         TransportPayloadWriter writer = transportPayloadWriter(BYTES);
-        return new HttpReactiveRequest(from(value).map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
+        return new HttpReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
     }
 
     public static HttpReactiveRequest buffer(Publisher<ByteBuf> value) {
-        return create(from(value).map(NettyBufferExtensions::toByteArray), BYTES);
+        return create(from(value).map(NettyBufferExtensions::releaseToByteArray), BYTES);
     }
 
     public static HttpReactiveRequest file(Publisher<File> files) {
@@ -61,6 +61,6 @@ public class HttpReactiveRequest {
 
     private static HttpReactiveRequest create(Publisher<Object> value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
-        return new HttpReactiveRequest(from(value).map(element -> toByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
+        return new HttpReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
     }
 }
