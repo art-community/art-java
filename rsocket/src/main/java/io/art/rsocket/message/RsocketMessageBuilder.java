@@ -4,17 +4,16 @@ import io.art.communicator.*;
 import io.art.communicator.model.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.meta.model.*;
 import io.art.rsocket.configuration.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.server.method.*;
-import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Messages.*;
+import static io.art.rsocket.message.RsocketServiceMethodsMessageBuilder.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
@@ -55,30 +54,7 @@ public class RsocketMessageBuilder {
             message.append(format(RSOCKET_WS_CONNECTORS_MESSAGE_PART, connectorsString));
         }
         ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer().getMethods().get();
-        if (!methods.isEmpty()) {
-            @AllArgsConstructor
-            @EqualsAndHashCode
-            class ServiceKey {
-                final MetaType<?> type;
-                final String id;
-            }
-
-            Map<ServiceKey, List<ServiceMethod>> serviceMethods = methods
-                    .values()
-                    .stream()
-                    .collect(groupingBy(entry -> new ServiceKey(entry.getInvoker().getOwner().definition(), entry.getId().getServiceId())));
-            String methodsAsString = serviceMethods
-                    .entrySet()
-                    .stream()
-                    .map(entry -> format(RSOCKET_SERVICE_MESSAGE_PART, entry.getKey().id, entry.getKey().type)
-                            + newLineTabulation(3)
-                            + entry.getValue()
-                            .stream()
-                            .map(method -> format(RSOCKET_SERVICE_METHOD_MESSAGE_PART, method.getId().getMethodId(), method.getInvoker().getDelegate()))
-                            .collect(joining(newLineTabulation(3))))
-                    .collect(joining(newLineTabulation(2)));
-            message.append(format(RSOCKET_SERVICES_MESSAGE_PART, methodsAsString));
-        }
+        if (!methods.isEmpty()) message.append(buildServiceMethodsMessage(methods));
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
                 .getPortals()
                 .communicators();

@@ -37,17 +37,11 @@ public interface HttpModuleConstants {
 
         String HTTP_LAUNCHED_MESSAGE_PART = "HTTP module has been launched\n\t";
         String HTTP_SERVER_MESSAGE_PART = "Server - {0}://{1}:{2}\n\t";
-        String HTTP_SERVICES_MESSAGE_PART = "Services:\n\t\t{0}\n\t";
-        String HTTP_SERVICE_MESSAGE_PART = "[service = {0}] {1}";
-        String HTTP_SERVICE_METHOD_MESSAGE_PART = "[method = {0}] {1}";
-        String HTTP_CONNECTORS_MESSAGE_PART = "Connectors:\n\t\t{0}\n\t";
-        String HTTP_COMMUNICATORS_MESSAGE_PART = "Communicators:\n\t\t{0}";
-        String HTTP_COMMUNICATOR_MESSAGE_PART = "[communicator = {0}] {1}";
-        String HTTP_COMMUNICATOR_ACTION_MESSAGE_PART = "[connector = {0}, action = {1}] {2}";
-        String HTTP_CONNECTOR_URL_PART = "url = {0}, ";
-        String HTTP_CONNECTOR_URI_PART = "uri = {0}";
-        String HTTP_CONNECTOR_URI_TRANSFORMED = "custom";
-        String HTTP_CONNECTOR_URI_BY_ACTION = "based on communicator";
+        String HTTP_ROUTES_MESSAGE_PART = "Routes:\n\t\t{0}\n\t";
+        String HTTP_ROUTE_METHOD_MESSAGE_PART = "{0} {1}\n\t\t\t[service = {2}, method = {3}] {4} '{'{5}'}'";
+        String HTTP_CONNECTORS_PART = "Connectors:\n\t\t{0}\n\t";
+        String HTTP_COMMUNICATORS_MESSAGE_PART = "Communications:\n\t\t{0}";
+        String HTTP_COMMUNICATOR_ACTION_MESSAGE_PART = "{0} {1}\n\t\t\t[connector = {2}, communicator = {3}, action = {4}] {5} '{'{6}'}'";
     }
 
     interface Errors {

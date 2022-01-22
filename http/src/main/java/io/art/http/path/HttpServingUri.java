@@ -49,5 +49,4 @@ public class HttpServingUri {
         MANUAL,
         TRANSFORMED
     }
-
 }

@@ -18,6 +18,7 @@
 
 package io.art.communicator.action;
 
+import io.art.communicator.*;
 import io.art.communicator.exception.*;
 import io.art.communicator.model.*;
 import io.art.core.managed.*;
@@ -58,6 +59,9 @@ public class CommunicatorAction implements Managed {
 
     @Getter
     private final Communication communication;
+
+    @Getter
+    private final MetaClass<? extends Communicator> owner;
 
     @Getter
     private final MetaMethod<?> method;

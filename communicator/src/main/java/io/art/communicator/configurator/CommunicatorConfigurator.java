@@ -181,6 +181,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(id)
                 .outputType(actionConfiguration.method.returnType())
+                .owner(communicatorClass)
                 .method(actionConfiguration.method)
                 .communication(actionConfiguration.portalConfiguration.communication.apply(id));
         NullityChecker.apply(inputType, builder::inputType);
