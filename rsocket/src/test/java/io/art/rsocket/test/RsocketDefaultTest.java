@@ -4,6 +4,7 @@ import io.art.meta.test.meta.*;
 import io.art.rsocket.*;
 import io.art.rsocket.test.meta.*;
 import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaServicePackage.*;
+import io.art.rsocket.test.registry.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -20,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class RsocketDefaultTest {
     @BeforeAll
     public static void setup() {
+        RsocketTestExecutionsRegistry.clear();
         initialize(
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 transport(),
