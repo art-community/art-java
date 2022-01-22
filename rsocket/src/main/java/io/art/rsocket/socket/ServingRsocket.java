@@ -67,7 +67,7 @@ public class ServingRsocket implements RSocket {
 
     public ServingRsocket(ConnectionSetupPayload payload, ImmutableMap<ServiceMethodIdentifier, ServiceMethod> serviceMethods, RsocketCommonServerConfiguration serverConfiguration) {
         this.serviceMethods = serviceMethods;
-        DataFormat dataFormat = fromMimeType(parseMimeType(payload.dataMimeType(), toMimeType(serverConfiguration.getDefaultDataFormat())), serverConfiguration.getDefaultDataFormat());
+        DataFormat dataFormat = fromMimeTypes(parseMimeTypes(payload.dataMimeType(), toMimeType(serverConfiguration.getDefaultDataFormat())), serverConfiguration.getDefaultDataFormat());
         TransportPayload setupPayloadData = transportPayloadReader(dataFormat).read(payload.sliceData(), payloadType);
         if (!setupPayloadData.isEmpty()) {
             RsocketSetupPayload setupPayloadDataValue = (RsocketSetupPayload) setupPayloadData.getValue();

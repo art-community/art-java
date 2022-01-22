@@ -56,8 +56,8 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
     @Override
     @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
     public Publisher<Void> apply(WebsocketInbound inbound, WebsocketOutbound outbound) {
-        DataFormat inputDataFormat = fromMimeType(parseMimeType(inbound.headers().get(CONTENT_TYPE), defaultMimeType));
-        DataFormat outputDataFormat = fromMimeType(parseMimeType(inbound.headers().get(ACCEPT), defaultMimeType));
+        DataFormat inputDataFormat = fromMimeTypes(parseMimeTypes(inbound.headers().get(CONTENT_TYPE), defaultMimeType));
+        DataFormat outputDataFormat = fromMimeTypes(parseMimeTypes(inbound.headers().get(ACCEPT), defaultMimeType));
         TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 

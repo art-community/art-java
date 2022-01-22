@@ -58,8 +58,8 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
     @Override
     public Publisher<Void> apply(HttpServerRequest request, HttpServerResponse response) {
         HttpHeaders headers = request.requestHeaders();
-        DataFormat inputDataFormat = fromMimeType(parseMimeType(headers.get(CONTENT_TYPE), defaultMimeType));
-        DataFormat outputDataFormat = fromMimeType(parseMimeType(headers.get(ACCEPT), defaultMimeType));
+        DataFormat inputDataFormat = fromMimeTypes(parseMimeTypes(headers.get(CONTENT_TYPE), defaultMimeType));
+        DataFormat outputDataFormat = fromMimeTypes(parseMimeTypes(headers.get(ACCEPT), defaultMimeType));
         TransportPayloadReader reader = transportPayloadReader(inputDataFormat);
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 

@@ -26,10 +26,36 @@ import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.MimeTypeConstants.*;
 import static io.art.core.mime.MimeTypes.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import static java.util.stream.Collectors.*;
 import java.nio.charset.*;
+import java.util.*;
 
 @UtilityClass
 public class MimeTypeDataFormatMapper {
+    public static DataFormat fromMimeTypes(List<MimeType> types) {
+        for (MimeType type : types) {
+            if (APPLICATION_JSON.equals(type)) return JSON;
+            if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
+            if (APPLICATION_YAML.equals(type)) return YAML;
+            if (APPLICATION_YML.equals(type)) return YAML;
+            if (APPLICATION_OCTET_STREAM.equals(type)) return BYTES;
+            if (type.getType().equals(TEXT_PLAIN.getType())) return STRING;
+        }
+        throw new UnsupportedMimeTypeException(types.stream().map(MimeType::toString).collect(joining()));
+    }
+
+    public static DataFormat fromMimeTypes(List<MimeType> types, DataFormat fallback) {
+        for (MimeType type : types) {
+            if (APPLICATION_JSON.equals(type)) return JSON;
+            if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;
+            if (APPLICATION_YAML.equals(type)) return YAML;
+            if (APPLICATION_YML.equals(type)) return YAML;
+            if (APPLICATION_OCTET_STREAM.equals(type)) return BYTES;
+            if (type.getType().equals(TEXT_PLAIN.getType())) return STRING;
+        }
+        return fallback;
+    }
+
     public static DataFormat fromMimeType(MimeType type) {
         if (APPLICATION_JSON.equals(type)) return JSON;
         if (APPLICATION_MESSAGE_PACK.equals(type)) return MESSAGE_PACK;

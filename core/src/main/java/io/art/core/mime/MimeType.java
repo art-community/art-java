@@ -27,18 +27,22 @@ import static io.art.core.constants.CharacterConstants.SEMICOLON;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.MimeTypeConstants.*;
+import static io.art.core.constants.StringConstants.COMMA;
 import static io.art.core.constants.StringConstants.EQUAL;
 import static io.art.core.constants.StringConstants.PLUS;
 import static io.art.core.constants.StringConstants.SLASH;
 import static io.art.core.constants.StringConstants.WILDCARD;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.extensions.StringExtensions.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static java.lang.Float.*;
 import static java.lang.String.*;
 import static java.nio.charset.Charset.*;
 import static java.text.MessageFormat.format;
 import static java.util.Collections.*;
+import static java.util.Comparator.*;
 import static java.util.Locale.*;
 import static java.util.Objects.*;
 import static lombok.AccessLevel.*;
@@ -80,6 +84,21 @@ public class MimeType implements Comparable<MimeType> {
             return new MimeType(type, subtype, map);
         }
         return new MimeType(type, subtype, map());
+    }
+
+
+    public static List<MimeType> parseMimeTypes(String header, MimeType fallback) {
+        List<MimeType> parsed = linkedList();
+        if (isEmpty(header)) return linkedListOf(fallback);
+        for (String mime : header.split(COMMA)) {
+            ignoreException(() -> parsed.add(parseMimeType(mime, fallback)));
+        }
+        if (parsed.isEmpty()) {
+            return linkedListOf(parseMimeType(header, fallback));
+        }
+        Comparator<MimeType> comparing = comparing(mime -> let(mime.parameters.get(MIME_TYPE_Q_PARAMETER), Double::parseDouble, 0.));
+        parsed.sort(comparing.reversed());
+        return parsed;
     }
 
     public static MimeType parseMimeType(String value, MimeType fallback) {

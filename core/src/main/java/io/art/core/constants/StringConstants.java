@@ -83,6 +83,7 @@ public interface StringConstants {
     String URI_FORMAT = "{0}://{1}:{2}";
     String VALUE_FIELD_NAME = "value";
     String QUESTION = "?";
+    String MIME_TYPE_Q_PARAMETER = "q";
 
     static String tabulation(int count) {
         return range(0, count).map(ignore -> TABULATION).collect(joining());

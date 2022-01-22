@@ -24,4 +24,8 @@ public class UnsupportedMimeTypeException extends RuntimeException {
     public UnsupportedMimeTypeException(MimeType type) {
         super(type.toString());
     }
+
+    public UnsupportedMimeTypeException(String message) {
+        super(message);
+    }
 }
