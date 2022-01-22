@@ -32,6 +32,7 @@ public class RsocketDefaultTest {
 
     @AfterAll
     public static void cleanup() {
+        RsocketTestExecutionsRegistry.clear();
         shutdown();
     }
 
