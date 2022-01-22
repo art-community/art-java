@@ -32,16 +32,27 @@ import static io.art.rsocket.configuration.communicator.common.RsocketCommonConn
 import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
 import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import java.time.*;
 import java.util.function.*;
 
 @Public
 public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator {
-    private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
-    private final RsocketWsConnectorConfigurationBuilder wsConnector = wsConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketExecutionCommunicator.class));
-    private volatile CommunicatorProxy<RsocketExecutionCommunicator> proxy;
+    private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
+    private RsocketWsConnectorConfigurationBuilder wsConnector = wsConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private ServiceMethodIdentifier serviceMethodId;
+
+    private CommunicatorProxy<RsocketExecutionCommunicator> proxy;
+
+    public RsocketDefaultWsCommunicator from(String connectorId) {
+        return from(rsocketModule().configuration().getWsConnectors().get(connectorId));
+    }
+
+    public RsocketDefaultWsCommunicator from(RsocketWsConnectorConfiguration from) {
+        wsConnector = from.toBuilder();
+        return this;
+    }
 
     public RsocketDefaultWsCommunicator verbose(boolean value) {
         commonConnector.verbose(value);
@@ -146,89 +157,70 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
 
 
     public void fireAndForget(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(dataFormat).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
         createCommunicator(configuration).fireAndForget(Mono.empty());
     }
 
     public void fireAndForget(RsocketDefaultRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         createCommunicator(configuration).fireAndForget(Mono.just(request.getInput()));
     }
 
     public void fireAndForget(RsocketMonoRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         createCommunicator(configuration).fireAndForget(request.getInput());
     }
 
 
     public RsocketDefaultResponse requestResponse(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(dataFormat).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
         return new RsocketDefaultResponse(this, createCommunicator(configuration).requestResponse(Mono.empty()).flux(), dataFormat);
     }
 
     public RsocketDefaultResponse requestResponse(RsocketDefaultRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         return new RsocketDefaultResponse(this, createCommunicator(configuration).requestResponse(Mono.just(request.getInput())).flux(), request.getDataFormat());
     }
 
     public RsocketDefaultResponse requestResponse(RsocketMonoRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         return new RsocketDefaultResponse(this, createCommunicator(configuration).requestResponse(request.getInput()).flux(), request.getDataFormat());
     }
 
 
     public RsocketReactiveResponse requestStream(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(dataFormat).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
         return new RsocketReactiveResponse(this, createCommunicator(configuration).requestStream(Mono.empty()), dataFormat);
     }
 
     public RsocketReactiveResponse requestStream(RsocketDefaultRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         return new RsocketReactiveResponse(this, createCommunicator(configuration).requestStream(Mono.just(request.getInput())), request.getDataFormat());
     }
 
     public RsocketReactiveResponse requestStream(RsocketMonoRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         return new RsocketReactiveResponse(this, createCommunicator(configuration).requestStream(request.getInput()), request.getDataFormat());
     }
 
 
     public RsocketReactiveResponse requestChannel(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(dataFormat).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
         return new RsocketReactiveResponse(this, createCommunicator(configuration).requestChannel(Flux.empty()), dataFormat);
     }
 
     public RsocketReactiveResponse requestChannel(RsocketFluxRequest request) {
-        RsocketWsConnectorConfiguration configuration = wsConnector
-                .commonConfiguration(commonConnector.dataFormat(request.getDataFormat()).build())
-                .build();
+        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
         return new RsocketReactiveResponse(this, createCommunicator(configuration).requestChannel(request.getInput()), request.getDataFormat());
     }
-
 
     @Override
     public void dispose() {
         apply(proxy, proxy -> proxy.getActions().values().forEach(CommunicatorAction::dispose));
+    }
+
+    private RsocketWsConnectorConfiguration createConfiguration(DataFormat dataFormat) {
+        return wsConnector.commonConfiguration(commonConnector.dataFormat(dataFormat).build()).build();
     }
 
     private RsocketExecutionCommunicator createCommunicator(RsocketWsConnectorConfiguration connector) {

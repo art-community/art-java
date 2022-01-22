@@ -5,6 +5,7 @@ import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.mime.*;
 import io.art.core.property.*;
+import io.art.http.configuration.*;
 import io.art.http.meta.MetaHttp.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaPortalPackage.MetaHttpDefaultPortalClass.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -17,6 +18,7 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
+import static io.art.http.module.HttpModule.*;
 import static io.art.http.portal.HttpDefaultPortal.*;
 import static io.art.meta.Meta.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
@@ -27,9 +29,18 @@ import java.util.function.*;
 @Public
 public class HttpDefaultCommunicator {
     private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
-    private final HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
+    private HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final static LazyProperty<MetaHttpExecutionCommunicatorClass> communicatorClass = lazy(() -> declaration(HttpExecutionCommunicator.class));
     private volatile CommunicatorProxy<HttpExecutionCommunicator> proxy;
+
+    public HttpDefaultCommunicator from(String connectorId) {
+        return from(httpModule().configuration().getConnectors().get(connectorId));
+    }
+
+    public HttpDefaultCommunicator from(HttpConnectorConfiguration from) {
+        connector = from.toBuilder();
+        return this;
+    }
 
     public HttpDefaultCommunicator retry(boolean value) {
         connector.retry(value);
