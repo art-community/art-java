@@ -9,6 +9,7 @@ import static io.art.core.constants.AlgorithmConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
+import java.security.*;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -33,12 +34,13 @@ public class TarantoolAuthenticationRequester extends SimpleChannelInboundHandle
     }
 
     private static byte[] createPassword(byte[] serverAuthData, String password) {
-        byte[] auth = SHA1_DIGEST.digest(password.getBytes());
-        byte[] auth2 = SHA1_DIGEST.digest(auth);
+        MessageDigest digest = sha1();
+        byte[] auth = digest.digest(password.getBytes());
+        byte[] auth2 = digest.digest(auth);
         byte[] salt = Base64.getDecoder().decode(serverAuthData);
-        SHA1_DIGEST.update(salt, 0, SCRAMBLE_SIZE);
-        SHA1_DIGEST.update(auth2);
-        byte[] scramble = SHA1_DIGEST.digest();
+        digest.update(salt, 0, SCRAMBLE_SIZE);
+        digest.update(auth2);
+        byte[] scramble = digest.digest();
         for (int i = 0; i < SCRAMBLE_SIZE; i++) {
             auth[i] ^= scramble[i];
         }
