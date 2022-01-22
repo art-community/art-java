@@ -51,7 +51,7 @@ public interface HttpModuleConstants {
     }
 
     interface Errors {
-        String WRITING_FILE_TO_DIRECTORY = "Paths {0} is a directory. We can't write a response to directory. Change the path to a file location";
+        String WRITING_FILE_TO_DIRECTORY = "Paths {0} is a directory. We can't write a response to a directory. Change the path to a file location";
     }
 
     interface ConfigurationKeys {
