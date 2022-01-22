@@ -85,13 +85,21 @@ public class HttpMessageBuilder {
                 .stream()
                 .map(action -> format(HTTP_COMMUNICATOR_ACTION_MESSAGE_PART,
                         extractRouteType(action.getValue().getMethod().name(), GET),
-                        getConnector(connectors, action.getValue()).getUrl() + SLASH + getConnector(connectors, action.getValue()).getUri().make(action.getKey()),
+                        buildActionUrl(connectors, action),
                         action.getValue().getCommunication(),
                         action.getValue().getId().getCommunicatorId(),
                         action.getValue().getId().getActionId(),
                         action.getValue().getOwner().definition(),
                         action.getValue().getMethod()))
                 .collect(joining(newLineTabulation(2)));
+    }
+
+    private static String buildActionUrl(ImmutableMap<String, HttpConnectorConfiguration> connectors, Map.Entry<CommunicatorActionIdentifier, CommunicatorAction> action) {
+        String uri = getConnector(connectors, action.getValue()).getUri().make(action.getKey());
+        if (uri.startsWith(SLASH)) {
+            return getConnector(connectors, action.getValue()).getUrl() + uri;
+        }
+        return getConnector(connectors, action.getValue()).getUrl() + SLASH + uri;
     }
 
     private static HttpConnectorConfiguration getConnector(ImmutableMap<String, HttpConnectorConfiguration> connectors, CommunicatorAction action) {
