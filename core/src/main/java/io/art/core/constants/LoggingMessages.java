@@ -22,6 +22,6 @@ public interface LoggingMessages {
     String WELCOME_MESSAGE = "Welcome to ART!";
     String LAUNCHED_MESSAGE = "Modules have been launched!";
     String SHUTDOWN_MESSAGE = "Bye, bye!";
-    String MODULE_RELOADING_START_MESSAGE = "Module: ''{0}'' reloading...";
-    String MODULE_RELOADING_END_MESSAGE = "Module: ''{0}'' reloaded";
+    String MODULE_RELOADING_START_MESSAGE = "Module: ''{0}'' are being reloaded";
+    String MODULE_RELOADING_END_MESSAGE = "Module: ''{0}'' have been reloaded";
 }
