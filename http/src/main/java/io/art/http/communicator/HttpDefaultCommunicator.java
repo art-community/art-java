@@ -28,10 +28,11 @@ import java.util.function.*;
 
 @Public
 public class HttpDefaultCommunicator {
-    private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
-    private HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final static LazyProperty<MetaHttpExecutionCommunicatorClass> communicatorClass = lazy(() -> declaration(HttpExecutionCommunicator.class));
-    private volatile CommunicatorProxy<HttpExecutionCommunicator> proxy;
+    private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
+
+    private HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
+    private CommunicatorProxy<HttpExecutionCommunicator> proxy;
 
     public HttpDefaultCommunicator from(String connectorId) {
         return from(httpModule().configuration().getConnectors().get(connectorId));
