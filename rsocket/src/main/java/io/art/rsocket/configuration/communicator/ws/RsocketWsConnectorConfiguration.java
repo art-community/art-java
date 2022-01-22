@@ -6,12 +6,10 @@ import io.art.rsocket.configuration.communicator.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
 import io.rsocket.transport.netty.client.*;
-import lombok.Builder;
 import lombok.*;
 import reactor.netty.http.client.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.collection.ImmutableSet.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
@@ -52,7 +50,7 @@ public class RsocketWsConnectorConfiguration {
         return builder()
                 .commonConfiguration(commonConnectorConfiguration(connector))
                 .balancer(ROUND_ROBIN)
-                .clientConfigurations(emptyImmutableSet())
+                .clientConfigurations(immutableSetOf(wsClientConfiguration(connector)))
                 .clientDecorator(identity())
                 .transportDecorator(identity())
                 .build();

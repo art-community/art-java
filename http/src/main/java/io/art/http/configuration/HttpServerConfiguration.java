@@ -56,6 +56,7 @@ public class HttpServerConfiguration {
     private Duration idleTimeout;
     private HttpProtocol protocol;
     private String host;
+    private HttpSslConfiguration ssl;
 
     public static HttpServerConfiguration httpServerConfiguration() {
         HttpServerConfiguration configuration = HttpServerConfiguration.builder().build();
@@ -89,7 +90,7 @@ public class HttpServerConfiguration {
         configuration.idleTimeout = serverListener.emit(orElse(source.getDuration(IDLE_TIMEOUT_KEY), current.idleTimeout));
         configuration.protocol = serverListener.emit(httpProtocol(source.getString(PROTOCOL_KEY), current.protocol));
         configuration.routes = lazy(() -> merge(source.getNestedArray(ROUTES_SECTION, HttpServerConfiguration::routeConfiguration), current.routes.get()));
-
+        configuration.ssl = serverListener.emit(orElse(source.getNested(SSL_SECTION, HttpSslConfiguration::httpSsl), current.ssl));
         return configuration;
     }
 

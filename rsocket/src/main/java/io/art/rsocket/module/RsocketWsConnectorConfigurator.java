@@ -19,11 +19,20 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class RsocketWsConnectorConfigurator {
     private final String connector;
-    private final Set<RsocketWsClientConfiguration> clients = set();
-    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator = identity();
-    private RsocketModuleConstants.BalancerMethod balancer = ROUND_ROBIN;
-    private UnaryOperator<HttpClient> clientDecorator = identity();
-    private UnaryOperator<WebsocketClientTransport> transportDecorator = identity();
+    private final Set<RsocketWsClientConfiguration> clients;
+    private UnaryOperator<RsocketCommonConnectorConfigurationBuilder> commonConfigurator;
+    private RsocketModuleConstants.BalancerMethod balancer;
+    private UnaryOperator<HttpClient> clientDecorator;
+    private UnaryOperator<WebsocketClientTransport> transportDecorator;
+
+    public RsocketWsConnectorConfigurator(String connector) {
+        this.connector = connector;
+        clients = setOf(wsClientConfiguration(connector));
+        commonConfigurator = identity();
+        balancer = ROUND_ROBIN;
+        clientDecorator = identity();
+        transportDecorator = identity();
+    }
 
     public RsocketWsConnectorConfigurator roundRobin() {
         balancer = ROUND_ROBIN;

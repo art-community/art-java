@@ -34,10 +34,24 @@ public interface HttpModuleConstants {
         String HTTP_SERVER_STOPPED = "HTTP server stopped - {0}:{1}";
         String HTTP_COMMUNICATOR_STARTED = "HTTP communicator connector started: {0}";
         String HTTP_COMMUNICATOR_STOPPED = "HTTP communicator connector stopped: {0}";
+
+        String HTTP_LAUNCHED_MESSAGE_PART = "HTTP module launched\n\t";
+        String HTTP_SERVER_MESSAGE_PART = "Server - {0}://{1}:{2}\n\t";
+        String HTTP_SERVICES_MESSAGE_PART = "Services:\n\t\t{0}\n\t";
+        String HTTP_SERVICE_MESSAGE_PART = "[service = {0}] {1}";
+        String HTTP_SERVICE_METHOD_MESSAGE_PART = "[method = {0}] {1}";
+        String HTTP_CONNECTORS_MESSAGE_PART = "Connectors:\n\t\t{0}\n\t";
+        String HTTP_COMMUNICATORS_MESSAGE_PART = "Communicators:\n\t\t{0}";
+        String HTTP_COMMUNICATOR_MESSAGE_PART = "[communicator = {0}] {1}";
+        String HTTP_COMMUNICATOR_ACTION_MESSAGE_PART = "[connector = {0}, action = {1}] {2}";
+        String HTTP_CONNECTOR_URL_PART = "url = {0}, ";
+        String HTTP_CONNECTOR_URI_PART = "uri = {0}";
+        String HTTP_CONNECTOR_URI_TRANSFORMED = "custom";
+        String HTTP_CONNECTOR_URI_BY_ACTION = "based on communicator";
     }
 
     interface Errors {
-        String WRITING_FILE_TO_DIRECTORY = "Paths {0} is directory. We can't write response to directory. Change path to file location";
+        String WRITING_FILE_TO_DIRECTORY = "Paths {0} is a directory. We can't write a response to directory. Change the path to a file location";
     }
 
     interface ConfigurationKeys {

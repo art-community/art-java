@@ -34,6 +34,7 @@ import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.http.configuration.HttpSslConfiguration.httpSsl;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.http.path.HttpCommunicationUri.*;
@@ -61,6 +62,7 @@ public class HttpConnectorConfiguration {
     private Duration responseTimeout;
     private HttpCommunicationUri uri;
     private int wsAggregateFrames;
+    private HttpSslConfiguration ssl;
 
     public static HttpConnectorConfiguration httpConnectorConfiguration(String connector) {
         HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
@@ -100,6 +102,7 @@ public class HttpConnectorConfiguration {
         configuration.url = listener.emit(orElse(source.getString(URL_KEY), current.url));
         apply(source.getString(URI_KEY), path -> configuration.uri = manual(path));
         configuration.wsAggregateFrames = orElse(source.getInteger(WS_AGGREGATE_FRAMES_KEY), orElse(current.wsAggregateFrames, DEFAULT_AGGREGATE_FRAMES));
+        configuration.ssl = listener.emit(orElse(source.getNested(SSL_SECTION, section -> httpSsl(section, current.ssl)), current.ssl));
         return configuration;
     }
 }

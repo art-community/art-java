@@ -3,10 +3,14 @@ package io.art.http.path;
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
 import io.art.core.model.*;
+import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
 import java.util.function.*;
 
 @Public
+@Getter
+@Accessors(fluent = true)
 public class HttpCommunicationUri {
     private Strategy strategy = Strategy.AUTOMATIC;
     private String manualUri;
@@ -44,7 +48,7 @@ public class HttpCommunicationUri {
         throw new ImpossibleSituationException();
     }
 
-    enum Strategy {
+    public enum Strategy {
         AUTOMATIC,
         MANUAL,
         TRANSFORMED

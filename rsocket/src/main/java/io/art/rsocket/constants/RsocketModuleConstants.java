@@ -75,7 +75,7 @@ public interface RsocketModuleConstants {
         String RSOCKET_WS_CONNECTORS_MESSAGE_PART = "WS Connectors:\n\t\t{0}\n\t";
         String RSOCKET_COMMUNICATORS_MESSAGE_PART = "Communicators:\n\t\t{0}";
         String RSOCKET_COMMUNICATOR_MESSAGE_PART = "[communicator = {0}] {1}";
-        String RSOCKET_COMMUNICATOR_ACTION_MESSAGE_PART = "[connector = {0}, action={1}] {2}";
+        String RSOCKET_COMMUNICATOR_ACTION_MESSAGE_PART = "[connector = {0}, action = {1}] {2}";
     }
 
     interface ConfigurationKeys {
