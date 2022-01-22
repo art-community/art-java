@@ -3,7 +3,7 @@ package io.art.rsocket.test;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.*;
 import io.art.rsocket.test.meta.*;
-import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaCommunicatorPackage.*;
+import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaServicePackage.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -38,7 +38,7 @@ public class RsocketDefaultTest {
         Rsocket.rsocket()
                 .tcp()
                 .client(LOCALHOST, DEFAULT_PORT)
-                .target(TestRsocketService.class, MetaTestRsocketClass::m1Method)
+                .target(TestRsocketService.class, MetaTestRsocketServiceClass::m1Method)
                 .fireAndForget();
         assertNotNull(executions(1).get("m1"));
     }
