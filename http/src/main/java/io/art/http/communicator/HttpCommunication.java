@@ -110,21 +110,21 @@ public class HttpCommunication implements Communication {
     }
 
     private Flux<Object> communicate(TransportPayloadReader reader, TransportPayloadWriter writer, Flux<Object> input) {
-        HttpCommunicationDecorator decorator;
+        UnaryOperator<HttpCommunicationDecorator> communicationDecorator = connectorConfiguration.getCommunicationDecorator();
         ProcessingConfiguration.ProcessingConfigurationBuilder builder = ProcessingConfiguration.builder()
                 .reader(reader)
                 .writer(writer)
                 .input(input);
-        return isNull(decorator = HttpCommunication.decorator.get()) ? simpleCommunication(builder) : decoratedCommunication(builder, decorator);
+        return communication(builder, communicationDecorator.apply(orElse(HttpCommunication.decorator.get(), HttpCommunicationDecorator::new)));
     }
 
-    private Flux<Object> decoratedCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
+    private Flux<Object> communication(ProcessingConfiguration.ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
         HttpCommunication.decorator.remove();
 
         apply(decorator.getInputDataFormat(), input -> builder.reader(transportPayloadReader(input)));
         apply(decorator.getOutputDataFormat(), output -> builder.writer(transportPayloadWriter(output)));
 
-        builder.route(orElse(decorator.getRoute(), extractRouteType(action.getId().getActionId(), GET)));
+        builder.route(orElse(decorator.getRoute(), extractRouteType(action.getMethod())));
         HttpClient client = orElse(decorator.getClient(), UnaryOperator.<HttpClient>identity()).apply(this.client.get());
 
         HttpHeaders headers = new DefaultHttpHeaders()
@@ -157,28 +157,6 @@ public class HttpCommunication implements Communication {
         return processCommunication(builder
                 .client(client)
                 .uri(decorator.getUri().apply(uri.toString()))
-                .wsAggregateFrames(connectorConfiguration.getWsAggregateFrames())
-                .build());
-    }
-
-    private Flux<Object> simpleCommunication(ProcessingConfiguration.ProcessingConfigurationBuilder builder) {
-        HttpRouteType route = extractRouteType(action.getId().getActionId(), GET);
-        HttpClient client = this.client.get();
-
-        HttpHeaders headers = new DefaultHttpHeaders()
-                .set(CONTENT_TYPE, toMimeType(connectorConfiguration.getOutputDataFormat()))
-                .set(ACCEPT, toMimeType(connectorConfiguration.getInputDataFormat()));
-
-        connectorConfiguration.getHeaders().forEach(headers::add);
-        client = client.headers(current -> current.add(headers));
-
-        for (Cookie cookie : connectorConfiguration.getCookies().values()) {
-            client = client.cookie(cookie);
-        }
-
-        return processCommunication(builder.route(route)
-                .client(client)
-                .uri(connectorConfiguration.getUri().make(action.getId()))
                 .wsAggregateFrames(connectorConfiguration.getWsAggregateFrames())
                 .build());
     }

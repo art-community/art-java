@@ -91,7 +91,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             MetaClass<?> metaClass = classBasedConfiguration.serviceClass.get();
             for (MetaMethod<?> method : extractHttpMethods(metaClass)) {
                 if (!method.isKnown()) continue;
-                configurationBuilder.type(extractRouteType(method.name()))
+                configurationBuilder.type(extractRouteType(method))
                         .uri(byServiceMethod())
                         .serviceMethodId(serviceMethodId(idByDash(metaClass.definition().type()), method.name()));
                 getServiceDecorator(metaClass).apply(configurationBuilder);
@@ -104,8 +104,8 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
             MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(metaClass));
             if (!method.isKnown()) continue;
-            if (methodHasRouteTypePrefix(method.name())) configurationBuilder.type(extractRouteType(method.name()));
             configurationBuilder
+                    .type(extractRouteType(method))
                     .uri(byServiceMethod())
                     .serviceMethodId(serviceMethodId(idByDash(metaClass.definition().type()), method.name()));
             getMethodDecorator(metaClass, method).apply(configurationBuilder);
@@ -122,7 +122,6 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return serviceClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() < 2)
-                .filter(method -> methodHasRouteTypePrefix(method.name()))
                 .collect(setCollector());
     }
 

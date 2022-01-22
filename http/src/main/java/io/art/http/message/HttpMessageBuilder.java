@@ -84,7 +84,7 @@ public class HttpMessageBuilder {
                 .entrySet()
                 .stream()
                 .map(action -> format(HTTP_COMMUNICATOR_ACTION_MESSAGE_PART,
-                        extractRouteType(action.getValue().getMethod().name(), GET),
+                        extractRouteType(action.getValue().getMethod()),
                         buildActionUrl(connectors, action),
                         action.getValue().getCommunication(),
                         action.getValue().getId().getCommunicatorId(),

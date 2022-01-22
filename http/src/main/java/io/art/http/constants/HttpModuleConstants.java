@@ -18,7 +18,7 @@
 
 package io.art.http.constants;
 
-import io.art.core.exception.*;
+import io.art.meta.model.*;
 import lombok.*;
 import reactor.netty.http.*;
 
@@ -92,25 +92,11 @@ public interface HttpModuleConstants {
             return fallback;
         }
 
-        public static boolean methodHasRouteTypePrefix(String methodName) {
+        public static HttpRouteType extractRouteType(MetaMethod<?> method) {
             for (HttpRouteType value : values()) {
-                if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return true;
+                if (value != PATH && method.name().toLowerCase().startsWith(value.type)) return value;
             }
-            return false;
-        }
-
-        public static HttpRouteType extractRouteType(String methodName) {
-            for (HttpRouteType value : values()) {
-                if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return value;
-            }
-            throw new ImpossibleSituationException();
-        }
-
-        public static HttpRouteType extractRouteType(String methodName, HttpRouteType fallback) {
-            for (HttpRouteType value : values()) {
-                if (value != PATH && methodName.toLowerCase().startsWith(value.type)) return value;
-            }
-            return fallback;
+            return method.parameters().isEmpty() ? GET : POST;
         }
     }
 

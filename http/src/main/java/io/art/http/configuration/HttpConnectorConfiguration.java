@@ -21,6 +21,7 @@ package io.art.http.configuration;
 import io.art.core.changes.*;
 import io.art.core.collection.*;
 import io.art.core.source.*;
+import io.art.http.communicator.*;
 import io.art.http.path.*;
 import io.art.http.refresher.*;
 import io.art.transport.constants.TransportModuleConstants.*;
@@ -34,7 +35,7 @@ import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.constants.ProtocolConstants.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.http.configuration.HttpSslConfiguration.httpSsl;
+import static io.art.http.configuration.HttpSslConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.ConfigurationKeys.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
 import static io.art.http.path.HttpCommunicationUri.*;
@@ -63,6 +64,7 @@ public class HttpConnectorConfiguration {
     private HttpCommunicationUri uri;
     private int wsAggregateFrames;
     private HttpSslConfiguration ssl;
+    private UnaryOperator<HttpCommunicationDecorator> communicationDecorator;
 
     public static HttpConnectorConfiguration httpConnectorConfiguration(String connector) {
         HttpConnectorConfiguration configuration = HttpConnectorConfiguration.builder().build();
@@ -81,6 +83,7 @@ public class HttpConnectorConfiguration {
         configuration.headers = emptyImmutableMap();
         configuration.cookies = emptyImmutableMap();
         configuration.wsAggregateFrames = DEFAULT_AGGREGATE_FRAMES;
+        configuration.communicationDecorator = UnaryOperator.identity();
         return configuration;
     }
 
