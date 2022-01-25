@@ -9,8 +9,8 @@ import java.util.function.*;
 
 @UtilityClass
 public class TarantoolCommunicationFactory {
-    public static TarantoolCommunication createTarantoolCommunication(TarantoolConnectorConfiguration connectorConfiguration) {
-        String connector = connectorConfiguration.getConnector();
+    public static TarantoolCommunication createTarantoolCommunication(TarantoolStorageConfiguration connectorConfiguration) {
+        String connector = connectorConfiguration.getStorage();
         TarantoolModuleConfiguration moduleConfiguration = tarantoolModule().configuration();
         Supplier<TarantoolConnector> client = () -> new TarantoolConnector(moduleConfiguration.getConnectors().get(connector));
         return new TarantoolCommunication(client, moduleConfiguration);

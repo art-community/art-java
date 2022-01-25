@@ -33,14 +33,14 @@ import java.util.function.*;
 
 @Public
 public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleConfiguration, TarantoolModuleConfiguration.Configurator, TarantoolModule> {
-    private final TarantoolConfigurator configurator = new TarantoolConfigurator();
+    private final TarantoolCommunicatorConfigurator communicatorConfigurator = new TarantoolCommunicatorConfigurator();
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass) {
         return storage(storageClass, identity());
     }
 
-    public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolConnectorConfigurator> configurator) {
-        this.configurator.storage(storageClass, configurator);
+    public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
+        this.communicatorConfigurator.storage(storageClass, configurator);
         return this;
     }
 
@@ -48,15 +48,15 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.connectors = configurator.connectors();
-        initial.communicator = configurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
+        initial.connectors = communicatorConfigurator.connectors();
+        initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
 
         return initial;
     }
 
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
-        private ImmutableMap<String, TarantoolConnectorConfiguration> connectors = super.getConnectors();
+        private ImmutableMap<String, TarantoolStorageConfiguration> connectors = super.getConnectors();
         private CommunicatorConfiguration communicator = super.getCommunicator();
 
         public Initial(TarantoolModuleRefresher refresher) {

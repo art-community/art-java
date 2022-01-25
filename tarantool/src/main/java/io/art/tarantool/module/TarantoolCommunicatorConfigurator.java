@@ -19,17 +19,17 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
-public class TarantoolConfigurator extends CommunicatorConfigurator<TarantoolConfigurator> {
-    private final Map<String, TarantoolConnectorConfiguration> connectors = map();
+public class TarantoolCommunicatorConfigurator extends CommunicatorConfigurator<TarantoolCommunicatorConfigurator> {
+    private final Map<String, TarantoolStorageConfiguration> storages = map();
 
-    public TarantoolConfigurator storage(Class<? extends Storage> storageClass) {
+    public TarantoolCommunicatorConfigurator storage(Class<? extends Storage> storageClass) {
         return storage(storageClass, identity());
     }
 
-    public TarantoolConfigurator storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolConnectorConfigurator> configurator) {
-        TarantoolConnectorConfigurator connectorConfigurator = configurator.apply(new TarantoolConnectorConfigurator(idByDash(storageClass)));
-        TarantoolConnectorConfiguration configuration = connectorConfigurator.configure();
-        connectors.put(idByDash(storageClass), configuration);
+    public TarantoolCommunicatorConfigurator storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
+        TarantoolStorageConfigurator connectorConfigurator = configurator.apply(new TarantoolStorageConfigurator(idByDash(storageClass)));
+        TarantoolStorageConfiguration configuration = connectorConfigurator.configure();
+        storages.put(idByDash(storageClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = spaceCommunicator -> tarantoolModule()
                 .configuration()
                 .getCommunicator()
@@ -46,8 +46,8 @@ public class TarantoolConfigurator extends CommunicatorConfigurator<TarantoolCon
         return idByDot(inputClass);
     }
 
-    ImmutableMap<String, TarantoolConnectorConfiguration> connectors() {
-        return immutableMapOf(connectors);
+    ImmutableMap<String, TarantoolStorageConfiguration> connectors() {
+        return immutableMapOf(storages);
     }
 
     CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {

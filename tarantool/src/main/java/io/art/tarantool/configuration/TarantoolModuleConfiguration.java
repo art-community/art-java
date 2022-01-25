@@ -14,7 +14,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.tarantool.configuration.TarantoolConnectorConfiguration.*;
+import static io.art.tarantool.configuration.TarantoolStorageConfiguration.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
 import static java.util.Optional.*;
@@ -25,7 +25,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final CommunicatorRefresher communicatorRefresher;
 
     @Getter
-    private ImmutableMap<String, TarantoolConnectorConfiguration> connectors;
+    private ImmutableMap<String, TarantoolStorageConfiguration> connectors;
 
     @Getter
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
@@ -64,7 +64,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
 
             configuration.connectors = tarantoolSection.getNestedMap(
                     TARANTOOL_CLUSTERS_SECTION,
-                    clusterConfig -> tarantoolConnectorConfiguration(clusterConfig, configuration.refresher)
+                    clusterConfig -> tarantoolStorageConfiguration(clusterConfig, configuration.refresher)
             );
 
             configuration.logging = orElse(tarantoolSection.getBoolean(TARANTOOL_LOGGING_KEY), configuration.logging);

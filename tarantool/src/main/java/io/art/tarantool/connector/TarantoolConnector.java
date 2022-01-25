@@ -9,7 +9,7 @@ public class TarantoolConnector {
     private final Balancer<TarantoolClient> immutable;
     private final Balancer<TarantoolClient> mutable;
 
-    public TarantoolConnector(TarantoolConnectorConfiguration configuration) {
+    public TarantoolConnector(TarantoolStorageConfiguration configuration) {
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
         initializeClients(configuration);
@@ -23,7 +23,7 @@ public class TarantoolConnector {
         return mutable.select();
     }
 
-    private void initializeClients(TarantoolConnectorConfiguration configuration) {
+    private void initializeClients(TarantoolStorageConfiguration configuration) {
         for (TarantoolClientConfiguration client : configuration.getClients()) {
             if (client.isImmutable()) {
                 immutable.addEndpoint(new TarantoolClient(client));

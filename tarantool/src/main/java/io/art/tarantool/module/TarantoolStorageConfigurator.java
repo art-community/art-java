@@ -5,33 +5,33 @@ import io.art.tarantool.configuration.*;
 import lombok.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.tarantool.configuration.TarantoolClientConfiguration.*;
-import static io.art.tarantool.configuration.TarantoolConnectorConfiguration.*;
+import static io.art.tarantool.configuration.TarantoolStorageConfiguration.*;
 import java.util.*;
 import java.util.function.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolConnectorConfigurator {
+public class TarantoolStorageConfigurator {
     private final String connector;
     private final Set<TarantoolClientConfiguration> clients = set();
     private boolean logging = false;
 
-    public TarantoolConnectorConfigurator client(UnaryOperator<TarantoolClientConfigurationBuilder> configurator) {
+    public TarantoolStorageConfigurator client(UnaryOperator<TarantoolClientConfigurationBuilder> configurator) {
         clients.add(configurator.apply(tarantoolClientConfiguration().toBuilder()).build());
         return this;
     }
 
-    public TarantoolConnectorConfigurator logging() {
+    public TarantoolStorageConfigurator logging() {
         return logging(true);
     }
 
-    public TarantoolConnectorConfigurator logging(boolean logging) {
+    public TarantoolStorageConfigurator logging(boolean logging) {
         this.logging = logging;
         return this;
     }
 
-    TarantoolConnectorConfiguration configure() {
-        return tarantoolConnectorConfiguration(connector)
+    TarantoolStorageConfiguration configure() {
+        return tarantoolStorageConfiguration(connector)
                 .toBuilder()
                 .clients(immutableSetOf(clients))
                 .logging(logging)

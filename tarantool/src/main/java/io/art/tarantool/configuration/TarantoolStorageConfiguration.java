@@ -11,21 +11,21 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationK
 
 @Getter
 @Builder(toBuilder = true)
-public class TarantoolConnectorConfiguration {
-    private String connector;
+public class TarantoolStorageConfiguration {
+    private String storage;
     private ImmutableSet<TarantoolClientConfiguration> clients;
     private boolean logging;
 
-    public static TarantoolConnectorConfiguration tarantoolConnectorConfiguration(String connector) {
-        TarantoolConnectorConfiguration configuration = TarantoolConnectorConfiguration.builder().build();
-        configuration.connector = connector;
+    public static TarantoolStorageConfiguration tarantoolStorageConfiguration(String storage) {
+        TarantoolStorageConfiguration configuration = TarantoolStorageConfiguration.builder().build();
+        configuration.storage = storage;
         configuration.clients = emptyImmutableSet();
         configuration.logging = false;
         return configuration;
     }
 
-    public static TarantoolConnectorConfiguration tarantoolConnectorConfiguration(ConfigurationSource source, TarantoolModuleRefresher refresher) {
-        TarantoolConnectorConfiguration configuration = TarantoolConnectorConfiguration.builder().build();
+    public static TarantoolStorageConfiguration tarantoolStorageConfiguration(ConfigurationSource source, TarantoolModuleRefresher refresher) {
+        TarantoolStorageConfiguration configuration = TarantoolStorageConfiguration.builder().build();
 
 
         configuration.clients = source.getNestedArray(TARANTOOL_INSTANCES_SECTION, TarantoolClientConfiguration::tarantoolClientConfiguration).asSet();
