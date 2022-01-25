@@ -38,12 +38,12 @@ import java.util.function.*;
 
 @Public
 public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator {
-    private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketExecutionCommunicator.class));
+    private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketBuiltinCommunicator.class));
     private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private RsocketWsConnectorConfigurationBuilder wsConnector = wsConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private ServiceMethodIdentifier serviceMethodId;
 
-    private CommunicatorProxy<RsocketExecutionCommunicator> proxy;
+    private CommunicatorProxy<RsocketBuiltinCommunicator> proxy;
 
     public RsocketDefaultWsCommunicator from(String connectorId) {
         return from(rsocketModule().configuration().getWsConnectors().get(connectorId));
@@ -223,7 +223,7 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
         return wsConnector.commonConfiguration(commonConnector.dataFormat(dataFormat).build()).build();
     }
 
-    private RsocketExecutionCommunicator createCommunicator(RsocketWsConnectorConfiguration connector) {
+    private RsocketBuiltinCommunicator createCommunicator(RsocketWsConnectorConfiguration connector) {
         return (proxy = communicatorProxy(communicatorClass.get(), () -> createCommunication(connector))).getCommunicator();
     }
 

@@ -4,7 +4,7 @@ import io.art.communicator.*;
 import reactor.core.publisher.*;
 
 public interface RsocketDefaultPortal extends Portal {
-    interface RsocketExecutionCommunicator extends Communicator {
+    interface RsocketBuiltinCommunicator extends Communicator {
         void fireAndForget(Mono<byte[]> input);
 
         Mono<byte[]> requestResponse(Mono<byte[]> input);

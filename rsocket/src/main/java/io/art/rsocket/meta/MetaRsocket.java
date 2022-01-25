@@ -13,6 +13,7 @@ import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
+import io.art.rsocket.portal.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -504,7 +505,7 @@ public class MetaRsocket extends MetaLibrary {
               }
             }
 
-            public static final class MetaRsocketExecutionCommunicatorClass extends MetaClass<io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator> {
+            public static final class MetaRsocketExecutionCommunicatorClass extends MetaClass<RsocketDefaultPortal.RsocketBuiltinCommunicator> {
               private final MetaFireAndForgetMethod fireAndForgetMethod = register(new MetaFireAndForgetMethod());
 
               private final MetaRequestResponseMethod requestResponseMethod = register(new MetaRequestResponseMethod());
@@ -514,7 +515,7 @@ public class MetaRsocket extends MetaLibrary {
               private final MetaRequestChannelMethod requestChannelMethod = register(new MetaRequestChannelMethod());
 
               private MetaRsocketExecutionCommunicatorClass() {
-                super(metaType(io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator.class));
+                super(metaType(RsocketDefaultPortal.RsocketBuiltinCommunicator.class));
               }
 
               public MetaFireAndForgetMethod fireAndForgetMethod() {
@@ -539,7 +540,7 @@ public class MetaRsocket extends MetaLibrary {
                 return new MetaRsocketExecutionCommunicatorProxy(invocations);
               }
 
-              public static final class MetaFireAndForgetMethod extends InstanceMetaMethod<io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator, Void> {
+              public static final class MetaFireAndForgetMethod extends InstanceMetaMethod<RsocketDefaultPortal.RsocketBuiltinCommunicator, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
                 private MetaFireAndForgetMethod() {
@@ -548,7 +549,7 @@ public class MetaRsocket extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   instance.fireAndForget((reactor.core.publisher.Mono<byte[]>)(arguments[0]));
                   return null;
@@ -556,7 +557,7 @@ public class MetaRsocket extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   instance.fireAndForget((reactor.core.publisher.Mono)(argument));
                   return null;
@@ -567,7 +568,7 @@ public class MetaRsocket extends MetaLibrary {
                 }
               }
 
-              public static final class MetaRequestResponseMethod extends InstanceMetaMethod<io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator, reactor.core.publisher.Mono<byte[]>> {
+              public static final class MetaRequestResponseMethod extends InstanceMetaMethod<RsocketDefaultPortal.RsocketBuiltinCommunicator, reactor.core.publisher.Mono<byte[]>> {
                 private final MetaParameter<reactor.core.publisher.Mono<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
                 private MetaRequestResponseMethod() {
@@ -576,14 +577,14 @@ public class MetaRsocket extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.requestResponse((reactor.core.publisher.Mono<byte[]>)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   return instance.requestResponse((reactor.core.publisher.Mono)(argument));
                 }
@@ -593,7 +594,7 @@ public class MetaRsocket extends MetaLibrary {
                 }
               }
 
-              public static final class MetaRequestStreamMethod extends InstanceMetaMethod<io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator, reactor.core.publisher.Flux<byte[]>> {
+              public static final class MetaRequestStreamMethod extends InstanceMetaMethod<RsocketDefaultPortal.RsocketBuiltinCommunicator, reactor.core.publisher.Flux<byte[]>> {
                 private final MetaParameter<reactor.core.publisher.Mono<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
                 private MetaRequestStreamMethod() {
@@ -602,14 +603,14 @@ public class MetaRsocket extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.requestStream((reactor.core.publisher.Mono<byte[]>)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   return instance.requestStream((reactor.core.publisher.Mono)(argument));
                 }
@@ -619,7 +620,7 @@ public class MetaRsocket extends MetaLibrary {
                 }
               }
 
-              public static final class MetaRequestChannelMethod extends InstanceMetaMethod<io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator, reactor.core.publisher.Flux<byte[]>> {
+              public static final class MetaRequestChannelMethod extends InstanceMetaMethod<RsocketDefaultPortal.RsocketBuiltinCommunicator, reactor.core.publisher.Flux<byte[]>> {
                 private final MetaParameter<reactor.core.publisher.Flux<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
                 private MetaRequestChannelMethod() {
@@ -628,14 +629,14 @@ public class MetaRsocket extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.requestChannel((reactor.core.publisher.Flux<byte[]>)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator instance,
+                    RsocketDefaultPortal.RsocketBuiltinCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   return instance.requestChannel((reactor.core.publisher.Flux)(argument));
                 }
@@ -645,7 +646,7 @@ public class MetaRsocket extends MetaLibrary {
                 }
               }
 
-              public class MetaRsocketExecutionCommunicatorProxy extends MetaProxy implements io.art.rsocket.portal.RsocketDefaultPortal.RsocketExecutionCommunicator {
+              public class MetaRsocketExecutionCommunicatorProxy extends MetaProxy implements RsocketDefaultPortal.RsocketBuiltinCommunicator {
                 private final Function<java.lang.Object, java.lang.Object> fireAndForgetInvocation;
 
                 private final Function<java.lang.Object, java.lang.Object> requestResponseInvocation;

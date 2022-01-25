@@ -1,9 +1,9 @@
 package io.art.http.meta;
 
 import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.http.portal.*;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaLibrary;
@@ -93,11 +93,11 @@ public class MetaHttp extends MetaLibrary {
               }
             }
 
-            public static final class MetaHttpExecutionCommunicatorClass extends MetaClass<io.art.http.portal.HttpDefaultPortal.HttpExecutionCommunicator> {
+            public static final class MetaHttpExecutionCommunicatorClass extends MetaClass<HttpDefaultPortal.HttpBuiltinCommunicator> {
               private final MetaExecuteMethod executeMethod = register(new MetaExecuteMethod());
 
               private MetaHttpExecutionCommunicatorClass() {
-                super(metaType(io.art.http.portal.HttpDefaultPortal.HttpExecutionCommunicator.class));
+                super(metaType(HttpDefaultPortal.HttpBuiltinCommunicator.class));
               }
 
               public MetaExecuteMethod executeMethod() {
@@ -109,7 +109,7 @@ public class MetaHttp extends MetaLibrary {
                 return new MetaHttpExecutionCommunicatorProxy(invocations);
               }
 
-              public static final class MetaExecuteMethod extends InstanceMetaMethod<io.art.http.portal.HttpDefaultPortal.HttpExecutionCommunicator, reactor.core.publisher.Flux<byte[]>> {
+              public static final class MetaExecuteMethod extends InstanceMetaMethod<HttpDefaultPortal.HttpBuiltinCommunicator, reactor.core.publisher.Flux<byte[]>> {
                 private final MetaParameter<reactor.core.publisher.Flux<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
                 private MetaExecuteMethod() {
@@ -118,14 +118,14 @@ public class MetaHttp extends MetaLibrary {
 
                 @Override
                 public Object invoke(
-                    io.art.http.portal.HttpDefaultPortal.HttpExecutionCommunicator instance,
+                    HttpDefaultPortal.HttpBuiltinCommunicator instance,
                     Object[] arguments) throws Throwable {
                   return instance.execute((reactor.core.publisher.Flux<byte[]>)(arguments[0]));
                 }
 
                 @Override
                 public Object invoke(
-                    io.art.http.portal.HttpDefaultPortal.HttpExecutionCommunicator instance,
+                    HttpDefaultPortal.HttpBuiltinCommunicator instance,
                     Object argument) throws Throwable {
                   return instance.execute((reactor.core.publisher.Flux)(argument));
                 }
@@ -135,7 +135,7 @@ public class MetaHttp extends MetaLibrary {
                 }
               }
 
-              public class MetaHttpExecutionCommunicatorProxy extends MetaProxy implements io.art.http.portal.HttpDefaultPortal.HttpExecutionCommunicator {
+              public class MetaHttpExecutionCommunicatorProxy extends MetaProxy implements HttpDefaultPortal.HttpBuiltinCommunicator {
                 private final Function<Object, Object> executeInvocation;
 
                 public MetaHttpExecutionCommunicatorProxy(

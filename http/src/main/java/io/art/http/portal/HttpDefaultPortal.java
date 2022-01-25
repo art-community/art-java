@@ -5,7 +5,7 @@ import io.art.http.communicator.*;
 import reactor.core.publisher.*;
 
 public interface HttpDefaultPortal extends Portal {
-    interface HttpExecutionCommunicator extends HttpCommunicator<HttpExecutionCommunicator> {
+    interface HttpBuiltinCommunicator extends HttpCommunicator<HttpBuiltinCommunicator> {
         Flux<byte[]> execute(Flux<byte[]> input);
     }
 }

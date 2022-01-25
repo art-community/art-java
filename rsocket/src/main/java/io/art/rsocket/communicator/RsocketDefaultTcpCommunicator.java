@@ -37,13 +37,13 @@ import java.util.function.*;
 
 @Public
 public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator {
-    private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketExecutionCommunicator.class));
+    private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketBuiltinCommunicator.class));
     private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private RsocketTcpConnectorConfigurationBuilder tcpConnector = tcpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
 
     private ServiceMethodIdentifier serviceMethodId;
 
-    private CommunicatorProxy<RsocketExecutionCommunicator> proxy;
+    private CommunicatorProxy<RsocketBuiltinCommunicator> proxy;
 
     public RsocketDefaultTcpCommunicator from(String connectorId) {
         return from(rsocketModule().configuration().getTcpConnectors().get(connectorId));
@@ -220,7 +220,7 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         return tcpConnector.commonConfiguration(commonConnector.dataFormat(dataFormat).build()).build();
     }
 
-    private RsocketExecutionCommunicator createCommunicator(RsocketTcpConnectorConfiguration connector) {
+    private RsocketBuiltinCommunicator createCommunicator(RsocketTcpConnectorConfiguration connector) {
         return (proxy = communicatorProxy(communicatorClass.get(), () -> createCommunication(connector))).getCommunicator();
     }
 
