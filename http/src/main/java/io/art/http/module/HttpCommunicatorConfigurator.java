@@ -42,7 +42,7 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
         return this;
     }
 
-    ImmutableMap<String, HttpConnectorConfiguration> configure() {
+    ImmutableMap<String, HttpConnectorConfiguration> connectors() {
         return immutableMapOf(connectors);
     }
 

@@ -60,8 +60,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.wsServer = serverConfigurator.configure(initial.wsServer);
         initial.server = serverConfigurator.configureServer(lazy(() -> rsocketModule().configuration().getServer()), initial.server);
 
-        initial.tcpConnectors = communicatorConfigurator.configureTcp();
-        initial.wsConnectors = communicatorConfigurator.configureWs();
+        initial.tcpConnectors = communicatorConfigurator.tcpConnectors();
+        initial.wsConnectors = communicatorConfigurator.wsConnectors();
         initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> rsocketModule().configuration().getCommunicator()), initial.communicator);
 
         return initial;

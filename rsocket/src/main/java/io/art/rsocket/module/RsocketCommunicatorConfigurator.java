@@ -62,11 +62,11 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
         return this;
     }
 
-    ImmutableMap<String, RsocketTcpConnectorConfiguration> configureTcp() {
+    ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors() {
         return immutableMapOf(tcpConnectors);
     }
 
-    ImmutableMap<String, RsocketWsConnectorConfiguration> configureWs() {
+    ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors() {
         return immutableMapOf(wsConnectors);
     }
 

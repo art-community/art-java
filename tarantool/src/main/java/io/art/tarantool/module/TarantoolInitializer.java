@@ -48,7 +48,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.connectors = configurator.configure();
+        initial.connectors = configurator.connectors();
         initial.communicator = configurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
 
         return initial;
