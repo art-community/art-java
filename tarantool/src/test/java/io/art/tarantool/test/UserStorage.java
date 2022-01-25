@@ -1,7 +1,7 @@
 package io.art.tarantool.test;
 
 import io.art.storage.*;
-import io.art.tarantool.communication.*;
+import io.art.tarantool.sapce.*;
 import io.art.tarantool.test.model.*;
 import reactor.core.publisher.*;
 import java.util.*;

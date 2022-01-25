@@ -188,30 +188,20 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
 
         CommunicatorConfiguration communicatorConfiguration = configurationProvider.get();
         builder.inputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
+        builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
 
         if (withLogging()) {
             builder.inputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, INPUT));
+            builder.outputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, OUTPUT));
         }
 
         CommunicatorActionsConfiguration actionsConfiguration = communicatorConfiguration.getConfigurations().get().get(id.getCommunicatorId());
         if (nonNull(actionsConfiguration)) {
             actionsConfiguration.getInputDecorators().forEach(builder::inputDecorator);
-            CommunicatorActionConfiguration communicatorActionConfiguration = actionsConfiguration.getActions().get(id.getActionId());
-            if (nonNull(communicatorActionConfiguration)) {
-                communicatorActionConfiguration.getInputDecorators().forEach(builder::inputDecorator);
-            }
-        }
-
-        builder.outputDecorator(new CommunicatorDeactivationDecorator(id, communicatorConfiguration));
-
-        if (withLogging()) {
-            builder.outputDecorator(new CommunicatorLoggingDecorator(id, communicatorConfiguration, OUTPUT));
-        }
-
-        if (nonNull(actionsConfiguration)) {
             actionsConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             CommunicatorActionConfiguration communicatorActionConfiguration = actionsConfiguration.getActions().get(id.getActionId());
             if (nonNull(communicatorActionConfiguration)) {
+                communicatorActionConfiguration.getInputDecorators().forEach(builder::inputDecorator);
                 communicatorActionConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             }
         }

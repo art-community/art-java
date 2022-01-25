@@ -166,9 +166,11 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
 
         ServerConfiguration serverConfiguration = configurationProvider.get();
         builder.inputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
+        builder.outputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
 
         if (withLogging()) {
             builder.inputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, INPUT));
+            builder.outputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, OUTPUT));
         }
 
         if (nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE)) {
@@ -178,22 +180,10 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         ServiceMethodsConfiguration serviceConfiguration = serverConfiguration.getConfigurations().get().get(id.getServiceId());
         if (nonNull(serviceConfiguration)) {
             serviceConfiguration.getInputDecorators().forEach(builder::inputDecorator);
-            ServiceMethodConfiguration serviceMethodConfiguration = serviceConfiguration.getMethods().get(id.getMethodId());
-            if (nonNull(serviceMethodConfiguration)) {
-                serviceMethodConfiguration.getInputDecorators().forEach(builder::inputDecorator);
-            }
-        }
-
-        builder.outputDecorator(new ServiceDeactivationDecorator(id, serverConfiguration));
-
-        if (withLogging()) {
-            builder.outputDecorator(new ServiceLoggingDecorator(id, serverConfiguration, OUTPUT));
-        }
-
-        if (nonNull(serviceConfiguration)) {
             serviceConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             ServiceMethodConfiguration serviceMethodConfiguration = serviceConfiguration.getMethods().get(id.getMethodId());
             if (nonNull(serviceMethodConfiguration)) {
+                serviceMethodConfiguration.getInputDecorators().forEach(builder::inputDecorator);
                 serviceMethodConfiguration.getOutputDecorators().forEach(builder::outputDecorator);
             }
         }

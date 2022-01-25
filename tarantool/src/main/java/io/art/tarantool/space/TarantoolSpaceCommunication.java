@@ -1,4 +1,4 @@
-package io.art.tarantool.communication;
+package io.art.tarantool.space;
 
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
@@ -10,7 +10,7 @@ import io.art.tarantool.descriptor.*;
 import io.art.tarantool.storage.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.checker.NullityChecker.let;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.property.Property.*;
@@ -18,7 +18,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
-public class TarantoolCommunication implements Communication {
+public class TarantoolSpaceCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
@@ -31,7 +31,7 @@ public class TarantoolCommunication implements Communication {
 
     private final static ThreadLocal<TarantoolSpaceDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolCommunication(Supplier<TarantoolStorage> storage, TarantoolModuleConfiguration moduleConfiguration) {
+    public TarantoolSpaceCommunication(Supplier<TarantoolStorage> storage, TarantoolModuleConfiguration moduleConfiguration) {
         this.storage = property(storage);
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
@@ -100,6 +100,6 @@ public class TarantoolCommunication implements Communication {
     }
 
     static void decorateTarantoolSpace(UnaryOperator<TarantoolSpaceDecorator> decorator) {
-        TarantoolCommunication.decorator.set(decorator.apply(new TarantoolSpaceDecorator()));
+        TarantoolSpaceCommunication.decorator.set(decorator.apply(new TarantoolSpaceDecorator()));
     }
 }

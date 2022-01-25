@@ -39,7 +39,6 @@ public class CommunicatorActionConfiguration {
     private final ImmutableArray<UnaryOperator<Flux<Object>>> outputDecorators;
 
     public static CommunicatorActionConfiguration communicatorActionConfiguration(CommunicatorRefresher refresher, CommunicatorActionConfiguration current, ConfigurationSource source) {
-        CommunicatorActionConfiguration currentConfiguration = orElse(current, CommunicatorActionConfiguration::defaults);
         CommunicatorActionConfiguration configuration = CommunicatorActionConfiguration.builder().build();
         ChangesListener loggingListener = refresher.loggingListener();
         ChangesListener deactivationListener = refresher.deactivationListener();

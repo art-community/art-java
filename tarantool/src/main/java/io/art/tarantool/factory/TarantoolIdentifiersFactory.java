@@ -2,7 +2,7 @@ package io.art.tarantool.factory;
 
 import io.art.meta.model.*;
 import io.art.storage.*;
-import io.art.tarantool.communication.*;
+import io.art.tarantool.sapce.*;
 import lombok.experimental.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 
