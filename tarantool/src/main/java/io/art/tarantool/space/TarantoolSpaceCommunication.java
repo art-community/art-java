@@ -10,7 +10,7 @@ import io.art.tarantool.descriptor.*;
 import io.art.tarantool.storage.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.let;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.core.property.Property.*;
