@@ -6,8 +6,8 @@ import io.art.core.property.*;
 import io.art.meta.model.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
-import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
+import io.art.tarantool.storage.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -22,7 +22,7 @@ public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
-    private final Property<TarantoolConnector> connector;
+    private final Property<TarantoolStorage> storage;
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
     private String function;
@@ -31,13 +31,13 @@ public class TarantoolCommunication implements Communication {
 
     private final static ThreadLocal<TarantoolSpaceDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolCommunication(Supplier<TarantoolConnector> connector, TarantoolModuleConfiguration moduleConfiguration) {
-        this.connector = property(connector);
+    public TarantoolCommunication(Supplier<TarantoolStorage> storage, TarantoolModuleConfiguration moduleConfiguration) {
+        this.storage = property(storage);
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
         this.client = () -> let(decorator.get(), TarantoolSpaceDecorator::isImmutable, false)
-                ? connector.get().immutable()
-                : connector.get().mutable();
+                ? storage.get().immutable()
+                : storage.get().mutable();
     }
 
     @Override
@@ -56,9 +56,9 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public void dispose() {
-        if (connector.initialized()) {
-            connector.get().dispose();
-            connector.dispose();
+        if (storage.initialized()) {
+            storage.get().dispose();
+            storage.dispose();
         }
     }
 

@@ -32,7 +32,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     @Override
     public void launch(ContextService contextService) {
         onErrorDropped(emptyConsumer());
-        ImmutableMap<String, TarantoolStorageConfiguration> connectors = configuration.getConnectors();
+        ImmutableMap<String, TarantoolStorageConfiguration> connectors = configuration.getStorages();
         if (!connectors.isEmpty()) {
             manager.initializeCommunicators();
         }
@@ -40,7 +40,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
 
     @Override
     public void shutdown(ContextService contextService) {
-        if (!configuration.getConnectors().isEmpty()) {
+        if (!configuration.getStorages().isEmpty()) {
             manager.disposeCommunicators();
         }
     }

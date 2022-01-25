@@ -25,7 +25,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final CommunicatorRefresher communicatorRefresher;
 
     @Getter
-    private ImmutableMap<String, TarantoolStorageConfiguration> connectors;
+    private ImmutableMap<String, TarantoolStorageConfiguration> storages;
 
     @Getter
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
@@ -43,7 +43,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         this.refresher = refresher;
         communicatorRefresher = new CommunicatorRefresher();
         communicator = communicatorConfiguration(communicatorRefresher);
-        connectors = emptyImmutableMap();
+        storages = emptyImmutableMap();
     }
 
     @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator initialize(TarantoolModuleConfiguration configuration) {
             this.configuration.communicator = configuration.getCommunicator();
-            this.configuration.connectors = configuration.getConnectors();
+            this.configuration.storages = configuration.getStorages();
             return this;
         }
 
@@ -62,19 +62,19 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             ConfigurationSource tarantoolSection = source.getNested(TARANTOOL_SECTION);
             if (isNull(tarantoolSection)) return this;
 
-            configuration.connectors = tarantoolSection.getNestedMap(
+            configuration.storages = tarantoolSection.getNestedMap(
                     TARANTOOL_CLUSTERS_SECTION,
                     clusterConfig -> tarantoolStorageConfiguration(clusterConfig, configuration.refresher)
             );
 
             configuration.logging = orElse(tarantoolSection.getBoolean(TARANTOOL_LOGGING_KEY), configuration.logging);
 
-            configuration.refresher.clusterListeners().update(configuration.connectors.keySet());
+            configuration.refresher.clusterListeners().update(configuration.storages.keySet());
 
             configuration.refresher.clientListeners().update(
-                    configuration.connectors.keySet()
+                    configuration.storages.keySet()
                             .stream()
-                            .flatMap(connector -> configuration.connectors.get(connector)
+                            .flatMap(connector -> configuration.storages.get(connector)
                                     .getClients()
                                     .stream()
                                     .map(tarantoolInstanceConfiguration -> connector + COLON + tarantoolInstanceConfiguration))

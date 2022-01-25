@@ -1,15 +1,15 @@
-package io.art.tarantool.connector;
+package io.art.tarantool.storage;
 
 import io.art.core.network.balancer.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 
 
-public class TarantoolConnector {
+public class TarantoolStorage {
     private final Balancer<TarantoolClient> immutable;
     private final Balancer<TarantoolClient> mutable;
 
-    public TarantoolConnector(TarantoolStorageConfiguration configuration) {
+    public TarantoolStorage(TarantoolStorageConfiguration configuration) {
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
         initializeClients(configuration);

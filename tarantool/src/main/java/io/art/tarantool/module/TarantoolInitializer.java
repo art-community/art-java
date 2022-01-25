@@ -56,7 +56,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
-        private ImmutableMap<String, TarantoolStorageConfiguration> connectors = super.getConnectors();
+        private ImmutableMap<String, TarantoolStorageConfiguration> connectors = super.getStorages();
         private CommunicatorConfiguration communicator = super.getCommunicator();
 
         public Initial(TarantoolModuleRefresher refresher) {

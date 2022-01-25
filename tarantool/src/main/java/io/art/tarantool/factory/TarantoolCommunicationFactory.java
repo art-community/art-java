@@ -2,17 +2,19 @@ package io.art.tarantool.factory;
 
 import io.art.tarantool.communication.*;
 import io.art.tarantool.configuration.*;
-import io.art.tarantool.connector.*;
+import io.art.tarantool.storage.*;
 import lombok.experimental.*;
 import static io.art.tarantool.module.TarantoolModule.*;
-import java.util.function.*;
 
 @UtilityClass
 public class TarantoolCommunicationFactory {
-    public static TarantoolCommunication createTarantoolCommunication(TarantoolStorageConfiguration connectorConfiguration) {
-        String connector = connectorConfiguration.getStorage();
+    public static TarantoolCommunication createConfiguredTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
+        String storage = storageConfiguration.getStorage();
         TarantoolModuleConfiguration moduleConfiguration = tarantoolModule().configuration();
-        Supplier<TarantoolConnector> client = () -> new TarantoolConnector(moduleConfiguration.getConnectors().get(connector));
-        return new TarantoolCommunication(client, moduleConfiguration);
+        return new TarantoolCommunication(() -> new TarantoolStorage(moduleConfiguration.getStorages().get(storage)), moduleConfiguration);
+    }
+
+    public static TarantoolCommunication createDefaultTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
+        return new TarantoolCommunication(() -> new TarantoolStorage(storageConfiguration), tarantoolModule().configuration());
     }
 }
