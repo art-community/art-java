@@ -11,61 +11,73 @@ import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
 @SuppressWarnings(CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE)
 public class TestWsService implements TestWs {
+    @Override
     public void ws1() {
         register("ws1", new Object());
     }
 
+    @Override
     public String ws2() {
         register("ws2", new Object());
         return "test";
     }
 
+    @Override
     public Mono<String> ws3() {
         register("ws3", new Object());
         return Mono.just("test");
     }
 
+    @Override
     public Flux<String> ws4() {
         register("ws4", new Object());
         return Flux.just("test");
     }
 
 
+    @Override
     public void ws5(String input) {
         register("ws5", input);
     }
 
+    @Override
     public String ws6(String input) {
         register("ws6", input);
         return "test";
     }
 
+    @Override
     public Mono<String> ws7(String input) {
         register("ws7", input);
         return Mono.just("test");
     }
 
+    @Override
     public Flux<String> ws8(String input) {
         register("ws8", input);
         return Flux.just("test");
     }
 
+    @Override
     public void ws9(Mono<String> input) {
         register("ws9", input);
     }
 
+    @Override
     public String ws10(Mono<String> input) {
         input.subscribe();
         register("ws10", input);
         return "test";
     }
 
+    @Override
     public Mono<String> ws11(Mono<String> input) {
         input.subscribe();
         register("ws11", input);
         return Mono.just("test");
     }
 
+    @Override
     public Flux<String> ws12(Mono<String> input) {
         input.subscribe();
         register("ws12", input);
@@ -73,6 +85,7 @@ public class TestWsService implements TestWs {
     }
 
 
+    @Override
     public void ws13(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
@@ -87,6 +100,7 @@ public class TestWsService implements TestWs {
         register("ws13", many.asFlux());
     }
 
+    @Override
     public String ws14(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
@@ -102,6 +116,7 @@ public class TestWsService implements TestWs {
         return "test";
     }
 
+    @Override
     public Mono<String> ws15(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
@@ -117,6 +132,7 @@ public class TestWsService implements TestWs {
         return Mono.just("test");
     }
 
+    @Override
     public Flux<String> ws16(Flux<String> input) {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
