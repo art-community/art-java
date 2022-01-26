@@ -24,21 +24,21 @@ import java.util.function.*;
 public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpCommunicatorConfigurator> {
     private final Map<String, HttpConnectorConfiguration> connectors = map();
 
-    public HttpCommunicatorConfigurator connector(Class<? extends Portal> connectorClass) {
-        return connector(connectorClass, cast(identity()));
+    public HttpCommunicatorConfigurator portal(Class<? extends Portal> portalClass) {
+        return portal(portalClass, cast(identity()));
     }
 
-    public HttpCommunicatorConfigurator connector(Class<? extends Portal> connectorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
-        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(idByDash(connectorClass)).toBuilder().uri(byCommunicatorAction())).build();
-        connectors.put(idByDash(connectorClass), configuration);
+    public HttpCommunicatorConfigurator portal(Class<? extends Portal> portalClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(idByDash(portalClass)).toBuilder().uri(byCommunicatorAction())).build();
+        connectors.put(idByDash(portalClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> httpModule()
                 .configuration()
                 .getCommunicator()
                 .getPortals()
-                .getCommunicator(connectorClass, communicator)
+                .getCommunicator(portalClass, communicator)
                 .getCommunicator();
         Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createConfiguredHttpCommunication(configuration);
-        registerPortal(connectorClass, communicatorFunction, communicationFunction);
+        registerPortal(portalClass, communicatorFunction, communicationFunction);
         return this;
     }
 

@@ -39,7 +39,7 @@ public class HttpTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestHttpConnector.class, connector -> connector.url(url)))
+                        .communicator(communicator -> communicator.portal(TestHttpConnector.class, connector -> connector.url(url)))
                         .server(server -> server.file("/file", testFile)
                                 .route(TestHttpService.class)
                                 .configure(serverConfigurator -> serverConfigurator.port(1234)))

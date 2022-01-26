@@ -34,7 +34,7 @@ public class WsTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.connector(TestWsConnector.class, connector -> connector.url(HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 5678)))
+                        .communicator(communicator -> communicator.portal(TestWsConnector.class, connector -> connector.url(HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 5678)))
                         .server(server -> server.route(TestWsService.class).configure(serverConfigurator -> serverConfigurator.port(5678)))
                 )
         );
