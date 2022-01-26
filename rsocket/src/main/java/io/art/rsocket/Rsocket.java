@@ -12,8 +12,8 @@ import java.util.function.*;
 @Public
 @UtilityClass
 public class Rsocket {
-    public static <T extends Portal> T rsocket(Class<T> gatewayClass) {
-        return rsocketModule().configuration().getCommunicator().getPortals().getPortal(gatewayClass);
+    public static <T extends Portal> T rsocket(Class<T> portalClass) {
+        return rsocketModule().configuration().getCommunicator().getPortals().getPortal(portalClass);
     }
 
     public static RsocketDefaultCommunicator rsocket() {
