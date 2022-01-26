@@ -41,7 +41,7 @@ public class HttpTest {
                 http(http -> http
                         .communicator(communicator -> communicator.portal(TestHttpConnector.class, connector -> connector.url(url)))
                         .server(server -> server.file("/file", testFile)
-                                .route(TestHttpService.class)
+                                .routes(TestHttpService.class)
                                 .configure(serverConfigurator -> serverConfigurator.port(1234)))
                 )
         );

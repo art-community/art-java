@@ -55,6 +55,7 @@ public class MimeType implements Comparable<MimeType> {
     private final String type;
     private final String subtype;
     private final Map<String, String> parameters;
+    private final static Comparator<MimeType> MIME_TYPE_COMPARATOR = comparing(mime -> let(mime.parameters.get(MIME_TYPE_Q_PARAMETER), Double::parseDouble, 0.));
 
     public static MimeType mimeType(String type) {
         return mimeType(type, WILDCARD);
@@ -96,8 +97,7 @@ public class MimeType implements Comparable<MimeType> {
         if (parsed.isEmpty()) {
             return linkedListOf(parseMimeType(header, fallback));
         }
-        Comparator<MimeType> comparing = comparing(mime -> let(mime.parameters.get(MIME_TYPE_Q_PARAMETER), Double::parseDouble, 0.));
-        parsed.sort(comparing.reversed());
+        parsed.sort(MIME_TYPE_COMPARATOR.reversed());
         return parsed;
     }
 

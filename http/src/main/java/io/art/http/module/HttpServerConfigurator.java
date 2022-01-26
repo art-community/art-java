@@ -38,11 +38,11 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    public HttpServerConfigurator route(Class<?> serviceClass) {
-        return route(serviceClass, UnaryOperator.identity());
+    public HttpServerConfigurator routes(Class<?> serviceClass) {
+        return routes(serviceClass, UnaryOperator.identity());
     }
 
-    public HttpServerConfigurator route(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+    public HttpServerConfigurator routes(Class<?> serviceClass, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
         service(serviceClass);
         classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
         return this;
