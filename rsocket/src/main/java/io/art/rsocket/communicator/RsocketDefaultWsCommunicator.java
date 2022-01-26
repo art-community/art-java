@@ -3,6 +3,7 @@ package io.art.rsocket.communicator;
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
+import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.core.property.*;
 import io.art.core.strategy.*;
@@ -21,18 +22,19 @@ import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.core.property.Property.*;
 import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import static io.art.rsocket.configuration.communicator.common.RsocketCommonConnectorConfiguration.*;
 import static io.art.rsocket.configuration.communicator.ws.RsocketWsClientConfiguration.*;
 import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.module.RsocketModule.*;
+import static java.util.Objects.*;
 import java.time.*;
 import java.util.function.*;
 
@@ -40,194 +42,235 @@ import java.util.function.*;
 public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator {
     private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketBuiltinCommunicator.class));
     private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
-    private RsocketWsConnectorConfigurationBuilder wsConnector = wsConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
+    private final Property<CommunicatorProxy<RsocketBuiltinCommunicator>> proxy = property(this::createCommunicator);
+    private RsocketWsConnectorConfiguration currentWsConnector;
+    private RsocketWsConnectorConfigurationBuilder wsConnectorBuilder = wsConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private ServiceMethodIdentifier serviceMethodId;
-
-    private CommunicatorProxy<RsocketBuiltinCommunicator> proxy;
 
     public RsocketDefaultWsCommunicator from(String connectorId) {
         return from(rsocketModule().configuration().getWsConnectors().get(connectorId));
     }
 
     public RsocketDefaultWsCommunicator from(RsocketWsConnectorConfiguration from) {
-        wsConnector = from.toBuilder();
+        refreshCommunicator();
+        wsConnectorBuilder = from.toBuilder();
         return this;
     }
 
     public RsocketDefaultWsCommunicator verbose(boolean value) {
+        refreshCommunicator();
         commonConnector.verbose(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator fragment(int value) {
+        refreshCommunicator();
         commonConnector.fragment(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator keepAlive(RsocketKeepAliveConfiguration value) {
+        refreshCommunicator();
         commonConnector.keepAlive(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator resume(RsocketResumeConfiguration value) {
+        refreshCommunicator();
         commonConnector.resume(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator retry(RsocketRetryConfiguration value) {
+        refreshCommunicator();
         commonConnector.retry(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator payloadDecoderMode(PayloadDecoderMode value) {
+        refreshCommunicator();
         commonConnector.payloadDecoderMode(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator maxInboundPayloadSize(int value) {
+        refreshCommunicator();
         commonConnector.maxInboundPayloadSize(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator service(Class<?> value) {
+        refreshCommunicator();
         commonConnector.service(ServiceMethodStrategy.manual(value));
         return this;
     }
 
     public RsocketDefaultWsCommunicator timeout(Duration value) {
+        refreshCommunicator();
         commonConnector.timeout(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator target(String serviceId, String methodId) {
+        refreshCommunicator();
         serviceMethodId = serviceMethodId(serviceId, methodId);
         return this;
     }
 
     public RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, String methodId) {
+        refreshCommunicator();
         serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId);
         return this;
     }
 
     public <T extends MetaClass<?>> RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, Function<T, MetaMethod<?>> methodId) {
+        refreshCommunicator();
         serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId.apply(cast(Meta.declaration(serviceIdMarker))).name());
         return this;
     }
 
     public RsocketDefaultWsCommunicator interceptors(UnaryOperator<InterceptorRegistry> interceptors) {
+        refreshCommunicator();
         commonConnector.interceptors(interceptors);
         return this;
     }
 
     public RsocketDefaultWsCommunicator connectorDecorator(UnaryOperator<RSocketConnector> decorator) {
+        refreshCommunicator();
         commonConnector.decorator(decorator);
         return this;
     }
 
     public RsocketDefaultWsCommunicator ssl(RsocketSslConfiguration ssl) {
+        refreshCommunicator();
         commonConnector.ssl(ssl);
         return this;
     }
 
     public RsocketDefaultWsCommunicator balancer(BalancerMethod value) {
-        wsConnector.balancer(value);
+        refreshCommunicator();
+        wsConnectorBuilder.balancer(value);
         return this;
     }
 
     public RsocketDefaultWsCommunicator clientDecorator(UnaryOperator<HttpClient> clientDecorator) {
-        wsConnector.clientDecorator(clientDecorator);
+        refreshCommunicator();
+        wsConnectorBuilder.clientDecorator(clientDecorator);
         return this;
     }
 
     public RsocketDefaultWsCommunicator transportDecorator(UnaryOperator<WebsocketClientTransport> transportDecorator) {
-        wsConnector.transportDecorator(transportDecorator);
+        refreshCommunicator();
+        wsConnectorBuilder.transportDecorator(transportDecorator);
         return this;
     }
 
     public RsocketDefaultWsCommunicator client(String host, int port, String path) {
+        refreshCommunicator();
         RsocketWsClientConfiguration clientConfiguration = wsClientConfiguration(DEFAULT_CONNECTOR_ID).toBuilder()
                 .host(host)
                 .port(port)
                 .path(path)
                 .connector(DEFAULT_CONNECTOR_ID)
                 .build();
-        wsConnector.clientConfigurations(immutableSetOf(addToSet(wsConnector.build().getClientConfigurations().toMutable(), clientConfiguration)));
+        ImmutableSet<RsocketWsClientConfiguration> clients = immutableSetOf(addToSet(wsConnectorBuilder.build().getClientConfigurations().toMutable(), clientConfiguration));
+        wsConnectorBuilder.clientConfigurations(clients);
         return this;
     }
 
 
     public void fireAndForget(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
-        createCommunicator(configuration).fireAndForget(Mono.empty());
+        refreshCommunicator(dataFormat);
+        proxy.get().getCommunicator().fireAndForget(Mono.empty());
     }
 
     public void fireAndForget(RsocketDefaultRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        createCommunicator(configuration).fireAndForget(Mono.just(request.getInput()));
+        refreshCommunicator(request.getDataFormat());
+        proxy.get().getCommunicator().fireAndForget(Mono.just(request.getInput()));
     }
 
     public void fireAndForget(RsocketMonoRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        createCommunicator(configuration).fireAndForget(request.getInput());
+        refreshCommunicator(request.getDataFormat());
+        proxy.get().getCommunicator().fireAndForget(request.getInput());
     }
 
 
     public RsocketDefaultResponse requestResponse(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
-        return new RsocketDefaultResponse(this, createCommunicator(configuration).requestResponse(Mono.empty()).flux(), dataFormat);
+        refreshCommunicator(dataFormat);
+        return new RsocketDefaultResponse(this, proxy.get().getCommunicator().requestResponse(Mono.empty()).flux(), dataFormat);
     }
 
     public RsocketDefaultResponse requestResponse(RsocketDefaultRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        return new RsocketDefaultResponse(this, createCommunicator(configuration).requestResponse(Mono.just(request.getInput())).flux(), request.getDataFormat());
+        refreshCommunicator(request.getDataFormat());
+        return new RsocketDefaultResponse(this, proxy.get().getCommunicator().requestResponse(Mono.just(request.getInput())).flux(), request.getDataFormat());
     }
 
     public RsocketDefaultResponse requestResponse(RsocketMonoRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        return new RsocketDefaultResponse(this, createCommunicator(configuration).requestResponse(request.getInput()).flux(), request.getDataFormat());
+        refreshCommunicator(request.getDataFormat());
+        return new RsocketDefaultResponse(this, proxy.get().getCommunicator().requestResponse(request.getInput()).flux(), request.getDataFormat());
     }
 
 
     public RsocketReactiveResponse requestStream(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
-        return new RsocketReactiveResponse(this, createCommunicator(configuration).requestStream(Mono.empty()), dataFormat);
+        refreshCommunicator(dataFormat);
+        return new RsocketReactiveResponse(this, proxy.get().getCommunicator().requestStream(Mono.empty()), dataFormat);
     }
 
     public RsocketReactiveResponse requestStream(RsocketDefaultRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        return new RsocketReactiveResponse(this, createCommunicator(configuration).requestStream(Mono.just(request.getInput())), request.getDataFormat());
+        refreshCommunicator(request.getDataFormat());
+        return new RsocketReactiveResponse(this, proxy.get().getCommunicator().requestStream(Mono.just(request.getInput())), request.getDataFormat());
     }
 
     public RsocketReactiveResponse requestStream(RsocketMonoRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        return new RsocketReactiveResponse(this, createCommunicator(configuration).requestStream(request.getInput()), request.getDataFormat());
+        refreshCommunicator(request.getDataFormat());
+        return new RsocketReactiveResponse(this, proxy.get().getCommunicator().requestStream(request.getInput()), request.getDataFormat());
     }
 
 
     public RsocketReactiveResponse requestChannel(DataFormat dataFormat) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(dataFormat);
-        return new RsocketReactiveResponse(this, createCommunicator(configuration).requestChannel(Flux.empty()), dataFormat);
+        refreshCommunicator(dataFormat);
+        Flux<byte[]> output = proxy.get().getCommunicator().requestChannel(Flux.empty());
+        return new RsocketReactiveResponse(this, output, dataFormat);
     }
 
     public RsocketReactiveResponse requestChannel(RsocketFluxRequest request) {
-        RsocketWsConnectorConfiguration configuration = createConfiguration(request.getDataFormat());
-        return new RsocketReactiveResponse(this, createCommunicator(configuration).requestChannel(request.getInput()), request.getDataFormat());
+        refreshCommunicator(request.getDataFormat());
+        Flux<byte[]> output = proxy.get().getCommunicator().requestChannel(request.getInput());
+        return new RsocketReactiveResponse(this, output, request.getDataFormat());
     }
 
     @Override
     public void dispose() {
-        apply(proxy, proxy -> proxy.getActions().values().forEach(CommunicatorAction::dispose));
+        if (proxy.initialized()) {
+            proxy.get().getActions().values().forEach(CommunicatorAction::dispose);
+        }
     }
 
-    private RsocketWsConnectorConfiguration createConfiguration(DataFormat dataFormat) {
-        return wsConnector.commonConfiguration(commonConnector.dataFormat(dataFormat).build()).build();
+    private CommunicatorProxy<RsocketBuiltinCommunicator> createCommunicator() {
+        return communicatorProxy(communicatorClass.get(), this::createCommunication);
     }
 
-    private RsocketBuiltinCommunicator createCommunicator(RsocketWsConnectorConfiguration connector) {
-        return (proxy = communicatorProxy(communicatorClass.get(), () -> createCommunication(connector))).getCommunicator();
+    private RsocketCommunication createCommunication() {
+        return createDefaultWsCommunication(currentWsConnector, createSetupPayload(currentWsConnector.getCommonConfiguration(), serviceMethodId));
     }
 
-    private RsocketCommunication createCommunication(RsocketWsConnectorConfiguration connector) {
-        return createDefaultWsCommunication(connector, createSetupPayload(connector.getCommonConfiguration(), serviceMethodId));
+    private void refreshCommunicator() {
+        if (proxy.initialized()) {
+            dispose();
+            proxy.dispose();
+        }
+    }
+
+    private void refreshCommunicator(DataFormat dataFormat) {
+        if (isNull(currentWsConnector)) {
+            currentWsConnector = wsConnectorBuilder.commonConfiguration(commonConnector.dataFormat(dataFormat).build()).build();
+            return;
+        }
+
+        if (proxy.initialized() && currentWsConnector.getCommonConfiguration().getDataFormat() != dataFormat) {
+            currentWsConnector = wsConnectorBuilder.commonConfiguration(commonConnector.dataFormat(dataFormat).build()).build();
+            dispose();
+            proxy.dispose();
+        }
     }
 }

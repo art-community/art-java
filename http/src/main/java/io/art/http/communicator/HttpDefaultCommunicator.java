@@ -12,9 +12,9 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.core.property.Property.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
@@ -30,50 +30,57 @@ import java.util.function.*;
 public class HttpDefaultCommunicator {
     private final static LazyProperty<MetaHttpExecutionCommunicatorClass> communicatorClass = lazy(() -> declaration(HttpBuiltinCommunicator.class));
     private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
-
+    private final Property<CommunicatorProxy<HttpBuiltinCommunicator>> proxy = property(this::createCommunicator);
     private HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
-    private CommunicatorProxy<HttpBuiltinCommunicator> proxy;
 
     public HttpDefaultCommunicator from(String connectorId) {
         return from(httpModule().configuration().getConnectors().get(connectorId));
     }
 
     public HttpDefaultCommunicator from(HttpConnectorConfiguration from) {
+        refreshCommunicator();
         connector = from.toBuilder();
         return this;
     }
 
     public HttpDefaultCommunicator retry(boolean value) {
+        refreshCommunicator();
         connector.retry(value);
         return this;
     }
 
     public HttpDefaultCommunicator keepAlive(boolean value) {
+        refreshCommunicator();
         connector.keepAlive(value);
         return this;
     }
 
     public HttpDefaultCommunicator verbose(boolean value) {
+        refreshCommunicator();
         connector.verbose(value);
         return this;
     }
 
     public HttpDefaultCommunicator compress(boolean value) {
+        refreshCommunicator();
         connector.compress(value);
         return this;
     }
 
     public HttpDefaultCommunicator wiretapLog(boolean value) {
+        refreshCommunicator();
         connector.wiretapLog(value);
         return this;
     }
 
     public HttpDefaultCommunicator followRedirect(boolean value) {
+        refreshCommunicator();
         connector.followRedirect(value);
         return this;
     }
 
     public HttpDefaultCommunicator url(String url) {
+        refreshCommunicator();
         String urlWithoutSchema = url.substring(url.indexOf(SCHEME_DELIMITER) + SCHEME_DELIMITER.length());
         int lastSlashIndex = urlWithoutSchema.lastIndexOf(SLASH);
 
@@ -95,11 +102,13 @@ public class HttpDefaultCommunicator {
     }
 
     public HttpDefaultCommunicator responseTimeout(Duration value) {
+        refreshCommunicator();
         connector.responseTimeout(value);
         return this;
     }
 
     public HttpDefaultCommunicator wsAggregateFrames(int value) {
+        refreshCommunicator();
         connector.wsAggregateFrames(value);
         return this;
     }
@@ -182,26 +191,36 @@ public class HttpDefaultCommunicator {
     }
 
     public HttpDefaultResponse execute() {
-        return new HttpDefaultResponse(this, createCommunicator().execute(Flux.empty()));
+        Flux<byte[]> output = proxy.get().getCommunicator().decorate(ignore -> decorator).execute(Flux.empty());
+        return new HttpDefaultResponse(this, output);
     }
 
     public HttpDefaultResponse execute(HttpDefaultRequest body) {
-        return new HttpDefaultResponse(this, createCommunicator().execute(Flux.just(body.getInput())));
+        Flux<byte[]> output = proxy.get().getCommunicator().decorate(ignore -> decorator).execute(Flux.just(body.getInput()));
+        return new HttpDefaultResponse(this, output);
     }
 
     public HttpDefaultResponse execute(HttpReactiveRequest body) {
-        return new HttpDefaultResponse(this, createCommunicator().execute(body.getInput()));
+        Flux<byte[]> output = proxy.get().getCommunicator().decorate(ignore -> decorator).execute(body.getInput());
+        return new HttpDefaultResponse(this, output);
     }
 
     public void dispose() {
-        apply(proxy, notNull -> notNull.getActions().values().forEach(CommunicatorAction::dispose));
+        if (proxy.initialized()) {
+            proxy.get().getActions().values().forEach(CommunicatorAction::dispose);
+        }
     }
 
-    private HttpBuiltinCommunicator createCommunicator() {
-        return (proxy = communicatorProxy(communicatorClass.get(), () -> createDefaultHttpCommunication(connector.build())))
-                .getCommunicator()
-                .decorate(ignore -> decorator)
-                .input(BYTES)
-                .output(BYTES);
+    private CommunicatorProxy<HttpBuiltinCommunicator> createCommunicator() {
+        CommunicatorProxy<HttpBuiltinCommunicator> proxy = communicatorProxy(communicatorClass.get(), () -> createDefaultHttpCommunication(connector.build()));
+        proxy.getCommunicator().input(BYTES).output(BYTES);
+        return proxy;
+    }
+
+    private void refreshCommunicator() {
+        if (proxy.initialized()) {
+            dispose();
+            proxy.dispose();
+        }
     }
 }
