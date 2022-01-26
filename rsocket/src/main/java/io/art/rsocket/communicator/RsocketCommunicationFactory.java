@@ -13,6 +13,7 @@ import io.art.rsocket.exception.*;
 import io.art.rsocket.interceptor.*;
 import io.art.rsocket.model.*;
 import io.art.rsocket.model.RsocketSetupPayload.*;
+import io.art.transport.payload.*;
 import io.netty.handler.ssl.*;
 import io.rsocket.*;
 import io.rsocket.core.*;
@@ -30,6 +31,7 @@ import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.extensions.NettyBufferExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.Meta.*;
@@ -42,7 +44,7 @@ import static io.art.rsocket.module.RsocketModule.*;
 import static io.art.transport.extensions.TransportExtensions.*;
 import static io.art.transport.mime.MimeTypeDataFormatMapper.*;
 import static io.art.transport.payload.TransportPayloadWriter.*;
-import static io.rsocket.core.RSocketClient.*;
+import static io.rsocket.core.RSocketClient.from;
 import static io.rsocket.util.DefaultPayload.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -93,10 +95,9 @@ public class RsocketCommunicationFactory {
 
     private static RSocketClient createTcpClient(RsocketTcpConnectorConfiguration connectorConfiguration, RsocketSetupPayload setupPayload) {
         RsocketCommonConnectorConfiguration common = connectorConfiguration.getCommonConfiguration();
-        ByteBuffer payloadData = transportPayloadWriter(common.getDataFormat())
-                .write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload))
-                .nioBuffer();
-        Payload payload = DefaultPayload.create(payloadData);
+        TransportPayloadWriter writer = transportPayloadWriter(common.getDataFormat());
+        byte[] bytes = releaseToByteArray(writer.write(typed(declaration(RsocketSetupPayload.class).definition(), setupPayload)));
+        Payload payload = DefaultPayload.create(bytes);
         RSocketConnector connector = createConnector(common, payload);
         if (connectorConfiguration.getClientConfigurations().size() > 1) {
             return createTcpBalancer(connector, connectorConfiguration);
