@@ -11,4 +11,5 @@ import lombok.experimental.*;
 public class TarantoolSpaceConfiguration {
     private final String name;
     private final boolean ifNotExists;
+    private final TarantoolFormatConfiguration format;
 }

@@ -9,6 +9,7 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -41,6 +42,19 @@ public class TarantoolSchemaService {
         block(storage.mutable().call(SCHEMA_CREATE_INDEX, input));
     }
 
+    public void formatSpace(String space, TarantoolFormatConfiguration configuration) {
+        ArrayValue input = newArray(
+                newString(space),
+                newMap(
+                        configuration.format()
+                                .entrySet()
+                                .stream()
+                                .collect(mapCollector(entry -> newString(entry.getKey()), entry -> newString(entry.getValue().name().toLowerCase())))
+                )
+        );
+        block(storage.mutable().call(SCHEMA_FORMAT, input));
+    }
+
     public void renameSpace(String from, String to) {
         ArrayValue input = newArray(newString(from), newString(to));
         block(storage.mutable().call(SCHEMA_RENAME_SPACE, input));
@@ -48,12 +62,12 @@ public class TarantoolSchemaService {
 
     public void dropSpace(String name) {
         ArrayValue input = newArray(newString(name));
-        block(storage.mutable().call(DROP_SPACE, input));
+        block(storage.mutable().call(SCHEMA_DROP_SPACE, input));
     }
 
     public void dropIndex(String spaceName, String indexName) {
         ArrayValue input = newArray(newString(spaceName), newString(indexName));
-        block(storage.mutable().call(DROP_SPACE, input));
+        block(storage.mutable().call(SCHEMA_DROP_INDEX, input));
     }
 
     public ImmutableArray<String> spaces() {

@@ -128,33 +128,8 @@ public interface TarantoolModuleConstants {
         String SCHEMA_RENAME_SPACE = "art.schema.renameSpace";
         String SCHEMA_DROP_SPACE = "art.schema.dropSpace";
         String SCHEMA_INDICIES = "art.schema.indicies";
+        String SCHEMA_FORMAT = "art.schema.format";
 
-
-        String PUT = "art.api.put";
-        String GET = "art.api.get";
-        String REPLACE = "art.api.replace";
-        String SELECT = "art.api.select";
-        String DELETE = "art.api.delete";
-        String INSERT = "art.api.insert";
-        String UPDATE = "art.api.update";
-        String UPSERT = "art.api.upsert";
-        String AUTO_INCREMENT = "art.api.autoIncrement";
-
-        String CREATE_SPACE = "art.api.space.createLogger";
-        String FORMAT_SPACE = "art.api.space.format";
-        String CREATE_INDEX = "art.api.space.createIndex";
-        String DROP_INDEX = "art.api.space.dropIndex";
-        String DROP_SPACE = "art.api.space.drop";
-        String RENAME_SPACE = "art.api.space.rename";
-        String TRUNCATE = "art.api.space.truncate";
-        String COUNT = "art.api.space.count";
-        String LEN = "art.api.space.len";
-        String SCHEMA_COUNT = "art.api.space.schemaCount";
-        String SCHEMA_LEN = "art.api.space.schemaLen";
-        String LIST_SPACES = "art.api.space.list";
-        String LIST_INDICES = "art.api.space.listIndices";
-
-        String TRANSACTION = "art.api.transaction";
     }
 
     interface SelectOptions {
@@ -184,14 +159,19 @@ public interface TarantoolModuleConstants {
         String ASCENDING = "art.core.stream.comparators.less";
     }
 
-    enum TarantoolFieldType {
+    enum FieldType {
+        ANY,
         UNSIGNED,
         STRING,
-        INTEGER,
         NUMBER,
+        DOUBLE,
+        INTEGER,
         BOOLEAN,
+        DECIMAL,
+        UUID,
+        SCALAR,
         ARRAY,
-        SCALAR
+        MAP
     }
 
     enum TarantoolIndexType {
