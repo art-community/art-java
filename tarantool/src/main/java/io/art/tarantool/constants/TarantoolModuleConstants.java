@@ -115,11 +115,12 @@ public interface TarantoolModuleConstants {
         String SPACE_SINGLE_DELETE = "art.space.single.delete";
         String SPACE_SINGLE_INSERT = "art.space.single.insert";
         String SPACE_SINGLE_PUT = "art.space.single.put";
-        String SPACE_SINGLE_REPLACE = "art.space.single.replace";
         String SPACE_SINGLE_UPDATE = "art.space.single.update";
         String SPACE_SINGLE_UPSERT = "art.space.single.upsert";
 
         String SPACE_MULTIPLE_PUT = "art.space.multiple.put";
+        String SPACE_MULTIPLE_DELETE = "art.space.multiple.delete";
+        String SPACE_MULTIPLE_INSERT = "art.space.multiple.insert";
 
         String SCHEMA_CREATE_INDEX = "art.schema.createIndex";
         String SCHEMA_CREATE_SPACE = "art.schema.createSpace";

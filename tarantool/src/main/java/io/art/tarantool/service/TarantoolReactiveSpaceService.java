@@ -62,6 +62,97 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
         return parseFlux(output, spaceType);
     }
 
+
+    public Mono<ValueType> delete(KeyType key) {
+        ArrayValue input = wrapRequest(writer.write(definition(key.getClass()), key));
+        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_DELETE, input);
+        return parseMono(output, spaceType);
+    }
+
+    @SafeVarargs
+    public final Flux<ValueType> delete(KeyType... keys) {
+        return findAll(asList(keys));
+    }
+
+    public Flux<ValueType> delete(Collection<KeyType> keys) {
+        ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
+        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        return parseFlux(output, spaceType);
+    }
+
+    public Flux<ValueType> delete(ImmutableCollection<KeyType> keys) {
+        ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
+        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        return parseFlux(output, spaceType);
+    }
+
+
+    public Mono<ValueType> insert(ValueType value) {
+        ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
+        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_INSERT, input);
+        return parseMono(output, spaceType);
+    }
+
+    @SafeVarargs
+    public final Flux<ValueType> insert(ValueType... value) {
+        return insert(Arrays.asList(value));
+    }
+
+    public Flux<ValueType> insert(Collection<ValueType> value) {
+        ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
+        return parseFlux(output, spaceType);
+    }
+
+    public Flux<ValueType> insert(ImmutableCollection<ValueType> value) {
+        ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
+        return parseFlux(output, spaceType);
+    }
+
+
+    public Mono<ValueType> put(ValueType value) {
+        ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
+        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_PUT, input);
+        return parseMono(output, spaceType);
+    }
+
+    @SafeVarargs
+    public final Flux<ValueType> put(ValueType... value) {
+        return insert(Arrays.asList(value));
+    }
+
+    public Flux<ValueType> put(Collection<ValueType> value) {
+        ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
+        return parseFlux(output, spaceType);
+    }
+
+    public Flux<ValueType> put(ImmutableCollection<ValueType> value) {
+        ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
+        return parseFlux(output, spaceType);
+    }
+
+
+    public Mono<ValueType> replace(ValueType value) {
+        return put(value);
+    }
+
+    @SafeVarargs
+    public final Flux<ValueType> replace(ValueType... value) {
+        return put(value);
+    }
+
+    public Flux<ValueType> replace(Collection<ValueType> value) {
+        return put(value);
+    }
+
+    public Flux<ValueType> replace(ImmutableCollection<ValueType> value) {
+        return put(value);
+    }
+
+
     public Mono<Long> count() {
         Mono<Value> output = storage.mutable().call(SPACE_COUNT, newArray(spaceName));
         return parseMono(output, Long.class);
@@ -71,27 +162,6 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
         block(storage.mutable().call(SPACE_TRUNCATE));
     }
 
-    public Mono<ValueType> insert(ValueType value) {
-        ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
-        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_INSERT, input);
-        return parseMono(output, spaceType);
-    }
-
-    public Mono<ValueType> put(ValueType value) {
-        ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
-        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_PUT, input);
-        return parseMono(output, spaceType);
-    }
-
-    public Flux<ValueType> put(Collection<ValueType> value) {
-        ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
-        return parseFlux(output, spaceType);
-    }
-
-    public Mono<ValueType> replace(ValueType value) {
-        return put(value);
-    }
 
     private ArrayValue wrapRequest(Value data) {
         return newArray(spaceName, data);
