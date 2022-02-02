@@ -32,6 +32,6 @@ public class TarantoolTest {
     public void test() {
         TarantoolSpaceService<Integer, User> user = Tarantool.tarantool().space(User.class);
         user.put(User.builder().name("test").build());
-        System.out.println(user.findFirst(1));
+        System.out.println(user.findFirst(1).get());
     }
 }
