@@ -27,10 +27,10 @@ public class TarantoolTest {
         initialize(logging(),
                 meta(MetaTarantoolTest::new),
                 transport(),
-                tarantool(tarantool -> tarantool.space(
-                        TestStorage.class,
-                        TestData.class,
-                        storage -> storage.client(client -> client.username("username").password("password"))))
+                tarantool(tarantool -> tarantool
+                        .storage(TestStorage.class, storage -> storage.client(client -> client.username("username").password("password")))
+                        .space(TestStorage.class, TestData.class)
+                )
         );
         space = Tarantool.tarantool().space(TestData.class);
         schema = Tarantool.tarantool().schema(TestStorage.class);

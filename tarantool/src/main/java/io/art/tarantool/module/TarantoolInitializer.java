@@ -45,16 +45,11 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     }
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
-        this.communicatorConfigurator.storage(storageClass, configurator);
+        communicatorConfigurator.storage(storageClass, configurator);
         return this;
     }
 
     public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> spaceClass) {
-        return space(storageClass, spaceClass, UnaryOperator.identity());
-    }
-
-    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> spaceClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
-        storage(storageClass, configurator);
         servicesConfigurator.space(storageClass, spaceClass);
         return this;
     }
