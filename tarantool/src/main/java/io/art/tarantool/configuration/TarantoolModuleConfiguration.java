@@ -7,6 +7,7 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.refresher.*;
+import io.art.tarantool.registry.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
@@ -26,6 +27,9 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
 
     @Getter
     private ImmutableMap<String, TarantoolStorageConfiguration> storages;
+
+    @Getter
+    private TarantoolServiceRegistry services;
 
     @Getter
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
@@ -54,6 +58,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         public Configurator initialize(TarantoolModuleConfiguration configuration) {
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.storages = configuration.getStorages();
+            this.configuration.services = configuration.getServices();
             return this;
         }
 
