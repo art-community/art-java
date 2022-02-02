@@ -44,6 +44,7 @@ import java.util.function.*;
 public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleConfiguration, TarantoolModuleConfiguration.Configurator, TarantoolModule> {
     private final TarantoolCommunicatorConfigurator communicatorConfigurator = new TarantoolCommunicatorConfigurator();
     private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
+    private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass) {
         return storage(storageClass, identity());
@@ -51,6 +52,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
         this.communicatorConfigurator.storage(storageClass, configurator);
+        schemaServices.put(idByDash(storageClass), lazy(() -> new TarantoolSchemaService(() -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
         return this;
     }
 
@@ -70,7 +72,9 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
         initial.storages = communicatorConfigurator.connectors();
         initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
-        initial.services = new TarantoolServiceRegistry(lazy(() -> spaceServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get()))));
+        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces = lazy(() -> spaceServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
+        LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
+        initial.services = new TarantoolServiceRegistry(spaces, schemas);
 
         return initial;
     }

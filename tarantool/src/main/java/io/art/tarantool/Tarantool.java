@@ -27,5 +27,9 @@ public class Tarantool {
         public <KeyType, ValueType extends Space> TarantoolSpaceService<KeyType, ValueType> space(Class<ValueType> type) {
             return tarantoolModule().configuration().getServices().getSpace(type);
         }
+
+        public TarantoolSchemaService schema(Class<? extends Storage> type) {
+            return tarantoolModule().configuration().getServices().getSchema(type);
+        }
     }
 }
