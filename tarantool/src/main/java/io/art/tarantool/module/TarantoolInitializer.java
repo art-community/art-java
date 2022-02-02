@@ -22,19 +22,14 @@ import io.art.communicator.configuration.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
-import io.art.core.property.*;
 import io.art.storage.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
-import io.art.tarantool.service.*;
 import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
-import static io.art.core.factory.MapFactory.*;
-import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.meta.Meta.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -43,8 +38,7 @@ import java.util.function.*;
 @Public
 public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleConfiguration, TarantoolModuleConfiguration.Configurator, TarantoolModule> {
     private final TarantoolCommunicatorConfigurator communicatorConfigurator = new TarantoolCommunicatorConfigurator();
-    private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
-    private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
+    private final TarantoolServicesConfigurator servicesConfigurator = new TarantoolServicesConfigurator();
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass) {
         return storage(storageClass, identity());
@@ -52,17 +46,16 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
         this.communicatorConfigurator.storage(storageClass, configurator);
-        schemaServices.put(idByDash(storageClass), lazy(() -> new TarantoolSchemaService(() -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
         return this;
     }
 
-    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass) {
+    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> spaceClass) {
         return space(storageClass, spaceClass, UnaryOperator.identity());
     }
 
-    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
+    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> spaceClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
         storage(storageClass, configurator);
-        spaceServices.put(idByDash(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
+        servicesConfigurator.space(storageClass, spaceClass);
         return this;
     }
 
@@ -70,20 +63,20 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.storages = communicatorConfigurator.connectors();
+        initial.storageConfigurations = communicatorConfigurator.storages();
+        initial.storages = initial.storageConfigurations.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolStorage(entry.getValue())));
         initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
-        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces = lazy(() -> spaceServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        initial.services = new TarantoolServiceRegistry(spaces, schemas);
+        initial.services = servicesConfigurator.configure();
 
         return initial;
     }
 
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
-        private ImmutableMap<String, TarantoolStorageConfiguration> storages = super.getStorages();
+        private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = super.getStorageConfigurations();
         private CommunicatorConfiguration communicator = super.getCommunicator();
         private TarantoolServiceRegistry services = super.getServices();
+        private ImmutableMap<String, TarantoolStorage> storages = super.getStorages();
 
         public Initial(TarantoolModuleRefresher refresher) {
             super(refresher);

@@ -12,15 +12,14 @@ import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
-import java.util.function.*;
 
 @Public
 public class TarantoolSchemaService {
-    private final Supplier<TarantoolStorage> storage;
+    private final TarantoolStorage storage;
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
 
-    public TarantoolSchemaService(Supplier<TarantoolStorage> storage) {
+    public TarantoolSchemaService(TarantoolStorage storage) {
         this.storage = storage;
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
@@ -33,7 +32,7 @@ public class TarantoolSchemaService {
                         newString("if_not_exists"), newBoolean(configuration.ifNotExists())
                 )
         );
-        block(storage.get().mutable().call(SCHEMA_CREATE_SPACE, input));
+        block(storage.mutable().call(SCHEMA_CREATE_SPACE, input));
     }
 
     public void createIndex(TarantoolIndexConfiguration configuration) {
@@ -47,11 +46,11 @@ public class TarantoolSchemaService {
                         )
                 )
         );
-        block(storage.get().mutable().call(SCHEMA_CREATE_INDEX, input));
+        block(storage.mutable().call(SCHEMA_CREATE_INDEX, input));
     }
 
     public ImmutableArray<String> spaces() {
-        Mono<ImmutableArray<String>> spaces = storage.get()
+        Mono<ImmutableArray<String>> spaces = storage
                 .immutable()
                 .call(SCHEMA_SPACES)
                 .map(value -> value.asArrayValue()

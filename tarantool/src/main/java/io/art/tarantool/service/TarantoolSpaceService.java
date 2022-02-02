@@ -3,7 +3,6 @@ package io.art.tarantool.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
-import io.art.storage.*;
 import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
@@ -14,10 +13,10 @@ import java.util.function.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolSpaceService<KeyType, ValueType extends Space> {
+public class TarantoolSpaceService<KeyType, ValueType> {
     private TarantoolReactiveSpaceService<KeyType, ValueType> reactive;
 
-    public TarantoolSpaceService(MetaType<ValueType> spaceMeta, Supplier<TarantoolStorage> storage) {
+    public TarantoolSpaceService(MetaType<ValueType> spaceMeta, TarantoolStorage storage) {
         reactive = new TarantoolReactiveSpaceService<>(spaceMeta, storage);
     }
 

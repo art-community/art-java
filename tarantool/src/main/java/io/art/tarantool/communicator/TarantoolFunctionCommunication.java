@@ -13,7 +13,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.core.property.Property.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import java.util.function.*;
@@ -22,7 +21,7 @@ public class TarantoolFunctionCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
-    private final Property<TarantoolStorage> storage;
+    private final TarantoolStorage storage;
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
     private String function;
@@ -31,13 +30,13 @@ public class TarantoolFunctionCommunication implements Communication {
 
     private final static ThreadLocal<TarantoolCommunicationDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolFunctionCommunication(Supplier<TarantoolStorage> storage, TarantoolModuleConfiguration moduleConfiguration) {
-        this.storage = property(storage);
+    public TarantoolFunctionCommunication(TarantoolStorage storage, TarantoolModuleConfiguration moduleConfiguration) {
+        this.storage = storage;
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
         this.client = () -> let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
-                ? storage.get().immutable()
-                : storage.get().mutable();
+                ? storage.immutable()
+                : storage.mutable();
     }
 
     @Override
@@ -56,10 +55,7 @@ public class TarantoolFunctionCommunication implements Communication {
 
     @Override
     public void dispose() {
-        if (storage.initialized()) {
-            storage.get().dispose();
-            storage.dispose();
-        }
+        storage.dispose();
     }
 
     @Override

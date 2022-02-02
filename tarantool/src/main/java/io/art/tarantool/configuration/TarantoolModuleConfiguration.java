@@ -8,6 +8,7 @@ import io.art.core.source.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
@@ -15,6 +16,7 @@ import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.tarantool.configuration.TarantoolStorageConfiguration.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
@@ -26,7 +28,10 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final CommunicatorRefresher communicatorRefresher;
 
     @Getter
-    private ImmutableMap<String, TarantoolStorageConfiguration> storages;
+    private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations;
+
+    @Getter
+    private ImmutableMap<String, TarantoolStorage> storages;
 
     @Getter
     private TarantoolServiceRegistry services;
@@ -47,7 +52,9 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         this.refresher = refresher;
         communicatorRefresher = new CommunicatorRefresher();
         communicator = communicatorConfiguration(communicatorRefresher);
+        storageConfigurations = emptyImmutableMap();
         storages = emptyImmutableMap();
+        services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
     }
 
     @RequiredArgsConstructor
@@ -57,6 +64,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator initialize(TarantoolModuleConfiguration configuration) {
             this.configuration.communicator = configuration.getCommunicator();
+            this.configuration.storageConfigurations = configuration.getStorageConfigurations();
             this.configuration.storages = configuration.getStorages();
             this.configuration.services = configuration.getServices();
             return this;
@@ -67,19 +75,19 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             ConfigurationSource tarantoolSection = source.getNested(TARANTOOL_SECTION);
             if (isNull(tarantoolSection)) return this;
 
-            configuration.storages = tarantoolSection.getNestedMap(
+            configuration.storageConfigurations = tarantoolSection.getNestedMap(
                     TARANTOOL_CLUSTERS_SECTION,
                     clusterConfig -> tarantoolStorageConfiguration(clusterConfig, configuration.refresher)
             );
 
             configuration.logging = orElse(tarantoolSection.getBoolean(TARANTOOL_LOGGING_KEY), configuration.logging);
 
-            configuration.refresher.clusterListeners().update(configuration.storages.keySet());
+            configuration.refresher.clusterListeners().update(configuration.storageConfigurations.keySet());
 
             configuration.refresher.clientListeners().update(
-                    configuration.storages.keySet()
+                    configuration.storageConfigurations.keySet()
                             .stream()
-                            .flatMap(connector -> configuration.storages.get(connector)
+                            .flatMap(connector -> configuration.storageConfigurations.get(connector)
                                     .getClients()
                                     .stream()
                                     .map(tarantoolInstanceConfiguration -> connector + COLON + tarantoolInstanceConfiguration))

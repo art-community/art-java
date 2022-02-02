@@ -1,12 +1,11 @@
 package io.art.tarantool.test.model;
 
-import io.art.storage.*;
 import lombok.*;
 
 @Value
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class TestData implements Space {
+public class TestData {
     int id;
     String content;
     Inner inner;

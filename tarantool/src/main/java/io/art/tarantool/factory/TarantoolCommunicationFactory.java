@@ -11,10 +11,10 @@ public class TarantoolCommunicationFactory {
     public static TarantoolFunctionCommunication createConfiguredTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
         String storage = storageConfiguration.getStorage();
         TarantoolModuleConfiguration moduleConfiguration = tarantoolModule().configuration();
-        return new TarantoolFunctionCommunication(() -> new TarantoolStorage(moduleConfiguration.getStorages().get(storage)), moduleConfiguration);
+        return new TarantoolFunctionCommunication(moduleConfiguration.getStorages().get(storage), moduleConfiguration);
     }
 
     public static TarantoolFunctionCommunication createDefaultTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
-        return new TarantoolFunctionCommunication(() -> new TarantoolStorage(storageConfiguration), tarantoolModule().configuration());
+        return new TarantoolFunctionCommunication(new TarantoolStorage(storageConfiguration), tarantoolModule().configuration());
     }
 }

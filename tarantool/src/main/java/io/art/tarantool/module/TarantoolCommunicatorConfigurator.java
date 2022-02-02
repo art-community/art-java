@@ -41,7 +41,7 @@ public class TarantoolCommunicatorConfigurator extends CommunicatorConfigurator<
         return this;
     }
 
-    ImmutableMap<String, TarantoolStorageConfiguration> connectors() {
+    ImmutableMap<String, TarantoolStorageConfiguration> storages() {
         return immutableMapOf(storages);
     }
 
