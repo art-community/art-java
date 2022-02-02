@@ -1,13 +1,13 @@
-package io.art.tarantool.space;
+package io.art.tarantool.communicator;
 
+import io.art.communicator.*;
 import io.art.core.annotation.*;
-import io.art.storage.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.tarantool.space.TarantoolFunctionCommunication.*;
+import static io.art.tarantool.communicator.TarantoolFunctionCommunication.*;
 import java.util.function.*;
 
 @Public
-public interface TarantoolSpace<C extends TarantoolSpace<C>> extends Space {
+public interface TarantoolCommunicator<C extends TarantoolCommunicator<C>> extends Communicator {
     default C decorate(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
         decorateTarantoolCommunication(decorator);
         return cast(this);

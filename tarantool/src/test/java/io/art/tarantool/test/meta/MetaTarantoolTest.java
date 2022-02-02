@@ -1,7 +1,5 @@
 package io.art.tarantool.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.meta.model.InstanceMetaMethod;
@@ -13,6 +11,7 @@ import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
+import io.art.tarantool.test.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -101,21 +100,21 @@ public class MetaTarantoolTest extends MetaLibrary {
               return usersSpaceClass;
             }
 
-            public static final class MetaTestSpaceMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage, io.art.tarantool.test.UserStorage.UsersSpace> {
+            public static final class MetaTestSpaceMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage, UserStorage.UsersCommunicator> {
               private MetaTestSpaceMethod() {
-                super("testSpace",metaType(io.art.tarantool.test.UserStorage.UsersSpace.class));
+                super("testSpace",metaType(UserStorage.UsersCommunicator.class));
               }
 
               @Override
               public java.lang.Object invoke(io.art.tarantool.test.UserStorage instance,
                   java.lang.Object[] arguments) throws Throwable {
-                return instance.testSpace();
+                return instance.users();
               }
 
               @Override
               public java.lang.Object invoke(io.art.tarantool.test.UserStorage instance) throws
                   Throwable {
-                return instance.testSpace();
+                return instance.users();
               }
             }
 
@@ -129,12 +128,12 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               @Override
-              public io.art.tarantool.test.UserStorage.UsersSpace testSpace() {
-                return (io.art.tarantool.test.UserStorage.UsersSpace)(testSpaceInvocation.apply(null));
+              public UsersCommunicator users() {
+                return (UsersCommunicator)(testSpaceInvocation.apply(null));
               }
             }
 
-            public static final class MetaUsersSpaceClass extends MetaClass<io.art.tarantool.test.UserStorage.UsersSpace> {
+            public static final class MetaUsersSpaceClass extends MetaClass<UserStorage.UsersCommunicator> {
               private final MetaSaveMethod saveMethod = register(new MetaSaveMethod());
 
               private final MetaGetMethod getMethod = register(new MetaGetMethod());
@@ -146,7 +145,7 @@ public class MetaTarantoolTest extends MetaLibrary {
               private final MetaFindTestMethod findTestMethod = register(new MetaFindTestMethod());
 
               private MetaUsersSpaceClass() {
-                super(metaType(io.art.tarantool.test.UserStorage.UsersSpace.class));
+                super(metaType(UserStorage.UsersCommunicator.class));
               }
 
               public MetaSaveMethod saveMethod() {
@@ -175,7 +174,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return new MetaUsersSpaceProxy(invocations);
               }
 
-              public static final class MetaSaveMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UsersSpace, reactor.core.publisher.Mono<io.art.tarantool.test.model.User>> {
+              public static final class MetaSaveMethod extends InstanceMetaMethod<UserStorage.UsersCommunicator, reactor.core.publisher.Mono<io.art.tarantool.test.model.User>> {
                 private final MetaParameter<io.art.tarantool.test.model.User> requestParameter = register(new MetaParameter<>(0, "request",metaType(io.art.tarantool.test.model.User.class)));
 
                 private MetaSaveMethod() {
@@ -184,14 +183,14 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.save((io.art.tarantool.test.model.User)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   return instance.save((io.art.tarantool.test.model.User)(argument));
                 }
@@ -201,7 +200,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaGetMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UsersSpace, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
+              public static final class MetaGetMethod extends InstanceMetaMethod<UserStorage.UsersCommunicator, reactor.core.publisher.Flux<io.art.tarantool.test.model.User>> {
                 private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                 private MetaGetMethod() {
@@ -210,14 +209,14 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.get((int)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   return instance.get((int)(argument));
                 }
@@ -227,7 +226,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaDeleteMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UsersSpace, io.art.tarantool.test.model.User> {
+              public static final class MetaDeleteMethod extends InstanceMetaMethod<UserStorage.UsersCommunicator, io.art.tarantool.test.model.User> {
                 private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                 private MetaDeleteMethod() {
@@ -236,14 +235,14 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.delete((int)(arguments[0]));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object argument) throws Throwable {
                   return instance.delete((int)(argument));
                 }
@@ -253,45 +252,45 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public static final class MetaGetAllMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UsersSpace, java.util.stream.Stream<io.art.tarantool.test.model.User>> {
+              public static final class MetaGetAllMethod extends InstanceMetaMethod<UserStorage.UsersCommunicator, java.util.stream.Stream<io.art.tarantool.test.model.User>> {
                 private MetaGetAllMethod() {
                   super("getAll",metaType(java.util.stream.Stream.class,metaType(io.art.tarantool.test.model.User.class)));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.getAll();
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance) throws Throwable {
+                    UserStorage.UsersCommunicator instance) throws Throwable {
                   return instance.getAll();
                 }
               }
 
-              public static final class MetaFindTestMethod extends InstanceMetaMethod<io.art.tarantool.test.UserStorage.UsersSpace, reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>> {
+              public static final class MetaFindTestMethod extends InstanceMetaMethod<UserStorage.UsersCommunicator, reactor.core.publisher.Flux<java.util.List<io.art.tarantool.test.model.User>>> {
                 private MetaFindTestMethod() {
                   super("findTest",metaType(reactor.core.publisher.Flux.class,metaType(java.util.List.class,metaType(io.art.tarantool.test.model.User.class))));
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance,
+                    UserStorage.UsersCommunicator instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.findTest();
                 }
 
                 @Override
                 public java.lang.Object invoke(
-                    io.art.tarantool.test.UserStorage.UsersSpace instance) throws Throwable {
+                    UserStorage.UsersCommunicator instance) throws Throwable {
                   return instance.findTest();
                 }
               }
 
-              public class MetaUsersSpaceProxy extends MetaProxy implements io.art.tarantool.test.UserStorage.UsersSpace {
+              public class MetaUsersSpaceProxy extends MetaProxy implements UserStorage.UsersCommunicator {
                 private final Function<java.lang.Object, java.lang.Object> saveInvocation;
 
                 private final Function<java.lang.Object, java.lang.Object> getInvocation;

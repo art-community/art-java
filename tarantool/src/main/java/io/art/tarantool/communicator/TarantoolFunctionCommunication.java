@@ -1,4 +1,4 @@
-package io.art.tarantool.space;
+package io.art.tarantool.communicator;
 
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;

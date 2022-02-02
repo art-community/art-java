@@ -1,4 +1,4 @@
-package io.art.tarantool.space;
+package io.art.tarantool.communicator;
 
 import io.art.core.annotation.*;
 import lombok.*;

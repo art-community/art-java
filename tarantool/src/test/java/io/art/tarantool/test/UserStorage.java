@@ -1,16 +1,16 @@
 package io.art.tarantool.test;
 
 import io.art.storage.*;
-import io.art.tarantool.space.*;
+import io.art.tarantool.communicator.*;
 import io.art.tarantool.test.model.*;
 import reactor.core.publisher.*;
 import java.util.*;
 import java.util.stream.*;
 
 public interface UserStorage extends Storage {
-    UsersSpace testSpace();
+    UsersCommunicator users();
 
-    interface UsersSpace extends TarantoolSpace<UsersSpace> {
+    interface UsersCommunicator extends TarantoolCommunicator<UsersCommunicator> {
         Mono<User> save(User request);
 
         Flux<User> get(int id);
