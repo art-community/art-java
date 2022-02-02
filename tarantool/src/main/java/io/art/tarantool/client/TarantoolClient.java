@@ -54,11 +54,7 @@ public class TarantoolClient {
         return connector.asMono().flatMap(client -> client.executeCall(name, input)).doOnSubscribe(ignore -> connect());
     }
 
-    public Mono<Value> call(String name, Value... arguments) {
-        return call(name, Arrays.asList(arguments));
-    }
-
-    public Mono<Value> call(String name, List<Value> arguments) {
+    public Mono<Value> call(String name, Value arguments) {
         return connector.asMono().flatMap(client -> client.executeCall(name, arguments)).doOnSubscribe(ignore -> connect());
     }
 
@@ -68,7 +64,7 @@ public class TarantoolClient {
 
     private Mono<Value> executeCall(String name) {
         TarantoolReceiver receiver = receivers.allocate();
-        emitCall(receiver.getId(), callRequest(name));
+        emitCall(receiver.getId(), callRequest(name, newArray()));
         return receiver.getSink().asMono();
     }
 
@@ -78,7 +74,7 @@ public class TarantoolClient {
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(String name, List<Value> arguments) {
+    private Mono<Value> executeCall(String name, Value arguments) {
         TarantoolReceiver receiver = receivers.allocate();
         emitCall(receiver.getId(), callRequest(name, arguments));
         return receiver.getSink().asMono();

@@ -24,7 +24,7 @@ public class TarantoolDefaultResponse<T> {
         reactive = new TarantoolReactiveResponse<T>(output, type);
     }
 
-    public T get() {
+    public T parse() {
         return parse(block(output));
     }
 

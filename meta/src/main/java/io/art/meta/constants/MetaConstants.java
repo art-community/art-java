@@ -90,7 +90,7 @@ public interface MetaConstants {
     enum MetaTypeModifiers {
         VALIDATABLE,
         COMMUNICATOR,
-        CONNECTOR,
+        PORTAL,
         SPACE,
         STORAGE,
         ARRAY,
@@ -131,7 +131,7 @@ public interface MetaConstants {
 
     interface ClassNames {
         String COMMUNICATOR_NAME = "io.art.communicator.Communicator";
-        String CONNECTOR_NAME = "io.art.communicator.Connector";
+        String PORTAL_NAME = "io.art.communicator.Portal";
         String STORAGE_NAME = "io.art.storage.Storage";
         String SPACE_NAME = "io.art.storage.Space";
         String TESTS_NAME = "io.art.tests.Tests";

@@ -17,17 +17,10 @@ public class TarantoolRequestContentFactory {
         return newMap(request);
     }
 
-    public static Value callRequest(String function, Value... arguments) {
+    public static Value callRequest(String function, Value arguments) {
         Map<IntegerValue, Value> body = map(2);
         body.put(newInteger(IPROTO_FUNCTION_NAME), newString(function));
-        body.put(newInteger(IPROTO_TUPLE), newArray(arguments));
-        return newMap(body);
-    }
-
-    public static Value callRequest(String function, List<Value> arguments) {
-        Map<IntegerValue, Value> body = map(2);
-        body.put(newInteger(IPROTO_FUNCTION_NAME), newString(function));
-        body.put(newInteger(IPROTO_TUPLE), newArray(arguments));
+        body.put(newInteger(IPROTO_TUPLE), arguments);
         return newMap(body);
     }
 }

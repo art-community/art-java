@@ -182,8 +182,8 @@ public class MetaType<T> {
             modifiers.add(COMMUNICATOR);
         }
 
-        if (isAssignableFrom(type, CONNECTOR_NAME)) {
-            modifiers.add(CONNECTOR);
+        if (isAssignableFrom(type, PORTAL_NAME)) {
+            modifiers.add(PORTAL);
         }
 
         if (isAssignableFrom(type, SPACE_NAME)) {

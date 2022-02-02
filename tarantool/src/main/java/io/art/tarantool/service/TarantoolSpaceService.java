@@ -11,7 +11,9 @@ import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -40,55 +42,60 @@ public class TarantoolSpaceService<KeyType, ValueType extends Space> {
         reader = tarantoolModule().configuration().getReader();
     }
 
-    public TarantoolDefaultResponse<ValueType> findFirst(KeyType key) {
+    public ValueType findFirst(KeyType key) {
         ArrayValue input = wrapRequest(writer.write(definition(key.getClass()), key));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_FIRST, input);
-        return new TarantoolDefaultResponse<>(output, spaceType);
+        return parse(output, spaceType);
     }
 
     @SafeVarargs
-    public final TarantoolDefaultResponse<ValueType> findAll(KeyType... keys) {
+    public final ValueType findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    public TarantoolDefaultResponse<ValueType> findAll(Collection<KeyType> keys) {
+    public ValueType findAll(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_ALL, input);
-        return new TarantoolDefaultResponse<>(output, spaceType);
+        return parse(output, spaceType);
     }
 
-    public TarantoolDefaultResponse<ValueType> findAll(ImmutableCollection<KeyType> keys) {
+    public ValueType findAll(ImmutableCollection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_ALL, input);
-        return new TarantoolDefaultResponse<>(output, spaceType);
+        return parse(output, spaceType);
     }
 
     public TarantoolDefaultResponse<Long> count() {
         Mono<Value> output = storage.get().mutable().call(SPACE_COUNT);
-        return new TarantoolDefaultResponse<>(output, Long.class);
+        return parse(output, Long.class);
     }
 
     public void truncate() {
         storage.get().mutable().call(SPACE_TRUNCATE).subscribe();
     }
 
-    public TarantoolDefaultResponse<ValueType> insert(ValueType value) {
+    public ValueType insert(ValueType value) {
         Value input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_INSERT, input);
-        return new TarantoolDefaultResponse<>(output, spaceType);
+        return parse(output, spaceType);
     }
 
-    public TarantoolDefaultResponse<ValueType> put(ValueType value) {
+    public ValueType put(ValueType value) {
         Value input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_PUT, input);
-        return new TarantoolDefaultResponse<>(output, spaceType);
+        return parse(output, spaceType);
     }
 
-    public TarantoolDefaultResponse<ValueType> replace(ValueType value) {
+    public ValueType replace(ValueType value) {
         return put(value);
     }
 
     private ArrayValue wrapRequest(Value data) {
         return newArray(spaceName, data);
+    }
+
+    private <T> T parse(Mono<Value> value, Class<?> type) {
+        TarantoolModelReader reader = tarantoolModule().configuration().getReader();
+        return cast(reader.read(definition(type), block(value)));
     }
 }

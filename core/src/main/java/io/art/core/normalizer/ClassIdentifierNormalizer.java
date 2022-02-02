@@ -21,7 +21,7 @@ public class ClassIdentifierNormalizer {
     public String asId(Class<?> owner, char delimiter) {
         String id = owner.getSimpleName();
         Set<String> knownSuffixes = setOf(
-                CONNECTOR_CLASS_SUFFIX,
+                PORTAL_CLASS_SUFFIX,
                 SERVICE_CLASS_SUFFIX,
                 COMMUNICATOR_CLASS_SUFFIX,
                 SPACE_CLASS_SUFFIX,
