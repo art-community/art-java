@@ -29,6 +29,7 @@ public class TarantoolStorage {
                 immutable.addEndpoint(new TarantoolClient(client));
                 continue;
             }
+            immutable.addEndpoint(new TarantoolClient(client));
             mutable.addEndpoint(new TarantoolClient(client));
         }
     }

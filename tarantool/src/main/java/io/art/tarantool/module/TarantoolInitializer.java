@@ -59,8 +59,8 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     }
 
     public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
-        TarantoolStorageConfigurator storageConfigurator = configurator.apply(new TarantoolStorageConfigurator(idByDash(storageClass)));
-        spaceServices.put(idByDot(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(storageConfigurator.configure()))));
+        storage(storageClass, configurator);
+        spaceServices.put(idByDot(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
         return this;
     }
 
@@ -68,7 +68,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.connectors = communicatorConfigurator.connectors();
+        initial.storages = communicatorConfigurator.connectors();
         initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
         initial.services = new TarantoolServiceRegistry(lazy(() -> spaceServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get()))));
 
@@ -77,7 +77,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
-        private ImmutableMap<String, TarantoolStorageConfiguration> connectors = super.getStorages();
+        private ImmutableMap<String, TarantoolStorageConfiguration> storages = super.getStorages();
         private CommunicatorConfiguration communicator = super.getCommunicator();
         private TarantoolServiceRegistry services = super.getServices();
 
