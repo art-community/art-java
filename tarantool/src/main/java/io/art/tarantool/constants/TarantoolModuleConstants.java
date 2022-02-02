@@ -190,7 +190,24 @@ public interface TarantoolModuleConstants {
         String TEMPORARY_FIELD = "temporary";
     }
 
-    enum TarantoolIndexType {
+    interface IndexConfigurationFields {
+        String ID_FIELD = "id";
+        String TYPE_FIELD = "type";
+        String UNIQUE_FIELD = "unique";
+        String PARTS_FIELD = "parts";
+        String DIMENSION_FIELD = "dimension";
+        String DISTANCE_FIELD = "distance";
+        String BLOOM_FPR_FIELD = "bloom_fpr";
+        String PAGE_SIZE_FIELD = "page_size";
+        String RANGE_SIZE_FIELD = "range_size";
+        String RUN_COUNT_PER_LEVEL_FIELD = "run_count_per_level";
+        String RUN_SIZE_RATIO_FIELD = "run_size_ratio";
+        String SEQUENCE_FIELD = "sequence";
+        String FUNC_FIELD = "func";
+        String HINT_FIELD = "hint";
+    }
+
+    enum IndexType {
         HASH,
         TREE,
         BITSET,
