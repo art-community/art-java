@@ -65,7 +65,7 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     }
 
     public Mono<Long> count() {
-        Mono<Value> output = storage.get().mutable().call(SPACE_COUNT, spaceName);
+        Mono<Value> output = storage.get().mutable().call(SPACE_COUNT, newArray(spaceName));
         return parse(output, Long.class);
     }
 
@@ -74,13 +74,13 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     }
 
     public Mono<ValueType> insert(ValueType value) {
-        Value input = wrapRequest(writer.write(spaceMeta, value));
+        ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_INSERT, input);
         return parse(output, spaceType);
     }
 
     public Mono<ValueType> put(ValueType value) {
-        Value input = wrapRequest(writer.write(spaceMeta, value));
+        ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_PUT, input);
         return parse(output, spaceType);
     }

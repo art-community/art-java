@@ -54,7 +54,7 @@ public class TarantoolClient {
         return connector.asMono().flatMap(client -> client.executeCall(name, input)).doOnSubscribe(ignore -> connect());
     }
 
-    public Mono<Value> call(String name, Value arguments) {
+    public Mono<Value> call(String name, ArrayValue arguments) {
         return connector.asMono().flatMap(client -> client.executeCall(name, arguments)).doOnSubscribe(ignore -> connect());
     }
 
@@ -74,7 +74,7 @@ public class TarantoolClient {
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(String name, Value arguments) {
+    private Mono<Value> executeCall(String name, ArrayValue arguments) {
         TarantoolReceiver receiver = receivers.allocate();
         emitCall(receiver.getId(), callRequest(name, arguments));
         return receiver.getSink().asMono();
@@ -82,7 +82,7 @@ public class TarantoolClient {
 
     private void subscribeInput(String name, Mono<Value> argument, TarantoolReceiver receiver) {
         argument
-                .doOnNext(next -> emitCall(receiver.getId(), callRequest(name, next)))
+                .doOnNext(next -> emitCall(receiver.getId(), callRequest(name, newArray(next))))
                 .doOnError(error -> withLogging(() -> logger.get().error(error)))
                 .subscribe();
     }

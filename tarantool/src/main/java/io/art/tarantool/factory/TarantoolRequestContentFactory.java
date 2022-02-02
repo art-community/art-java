@@ -17,7 +17,7 @@ public class TarantoolRequestContentFactory {
         return newMap(request);
     }
 
-    public static Value callRequest(String function, Value arguments) {
+    public static Value callRequest(String function, ArrayValue arguments) {
         Map<IntegerValue, Value> body = map(2);
         body.put(newInteger(IPROTO_FUNCTION_NAME), newString(function));
         body.put(newInteger(IPROTO_TUPLE), arguments);
