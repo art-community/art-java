@@ -23,4 +23,11 @@ public class TarantoolRequestContentFactory {
         body.put(newInteger(IPROTO_TUPLE), newArray(arguments));
         return newMap(body);
     }
+
+    public static Value callRequest(String function, List<Value> arguments) {
+        Map<IntegerValue, Value> body = map(2);
+        body.put(newInteger(IPROTO_FUNCTION_NAME), newString(function));
+        body.put(newInteger(IPROTO_TUPLE), newArray(arguments));
+        return newMap(body);
+    }
 }

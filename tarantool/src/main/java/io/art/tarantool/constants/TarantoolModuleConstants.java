@@ -107,6 +107,9 @@ public interface TarantoolModuleConstants {
     }
 
     interface Functions {
+        String SPACE_FIND_FIRST = "art.space.findFirst";
+        String SPACE_FIND_ALL = "art.space.findAll";
+
         String PUT = "art.api.put";
         String GET = "art.api.get";
         String REPLACE = "art.api.replace";

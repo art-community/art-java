@@ -203,7 +203,7 @@ public class HttpCommunication implements Communication {
         if (isNull(outputMappingType)) {
             return responseReceiver.response().thenMany(Flux.empty());
         }
-        return responseReceiver.responseSingle((response, data) -> data.map(bytes -> reader.read(bytes, outputMappingType)))
+        return responseReceiver.responseSingle((response, data) -> data.map(bytes -> reader.read(outputMappingType, bytes)))
                 .flux()
                 .filter(payload -> !payload.isEmpty())
                 .map(TransportPayload::getValue);
@@ -230,7 +230,7 @@ public class HttpCommunication implements Communication {
         return inbound
                 .aggregateFrames(configuration.wsAggregateFrames)
                 .receive()
-                .map(bytes -> configuration.reader.read(bytes, outputMappingType))
+                .map(bytes -> configuration.reader.read(outputMappingType, bytes))
                 .filter(payload -> !payload.isEmpty())
                 .map(TransportPayload::getValue);
     }

@@ -33,7 +33,7 @@ public class RsocketPayloadReader {
             payload.release(payload.refCnt());
             return emptyTransportPayload();
         }
-        TransportPayload transportPayload = reader.read(payload.sliceData(), type);
+        TransportPayload transportPayload = reader.read(type, payload.sliceData());
         payload.release(payload.refCnt());
         return transportPayload;
     }

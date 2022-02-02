@@ -78,7 +78,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         Flux<Object> input = (localState.initialized() ? localState.get().request() : request)
                 .receive()
                 .aggregate()
-                .map(data -> reader.read(data, inputMappingType))
+                .map(data -> reader.read(inputMappingType, data))
                 .filter(data -> !data.isEmpty())
                 .map(TransportPayload::getValue)
                 .flux()

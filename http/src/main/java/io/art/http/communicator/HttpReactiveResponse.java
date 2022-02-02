@@ -45,6 +45,6 @@ public class HttpReactiveResponse {
 
     private static <T> T parse(byte[] bytes, TransportModuleConstants.DataFormat dataFormat, Class<T> type) {
         TransportPayloadReader reader = transportPayloadReader(dataFormat);
-        return cast(reader.read(NettyBufferExtensions.from(bytes), definition(type)).getValue());
+        return cast(reader.read(definition(type), NettyBufferExtensions.from(bytes)).getValue());
     }
 }

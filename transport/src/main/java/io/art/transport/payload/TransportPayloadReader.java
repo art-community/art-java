@@ -54,7 +54,7 @@ public class TransportPayloadReader {
             .with(BYTES, new TransportPayloadReader(BYTES))
             .build();
 
-    public TransportPayload read(ByteBuf buffer, MetaType<?> type) {
+    public TransportPayload read(MetaType<?> type, ByteBuf buffer) {
         return reader.get().apply(buffer, type);
     }
 

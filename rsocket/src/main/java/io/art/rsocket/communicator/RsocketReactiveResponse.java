@@ -43,6 +43,6 @@ public class RsocketReactiveResponse {
 
     private static <T> T parse(byte[] bytes, DataFormat dataFormat, Class<T> type) {
         TransportPayloadReader reader = transportPayloadReader(dataFormat);
-        return cast(reader.read(NettyBufferExtensions.from(bytes), definition(type)).getValue());
+        return cast(reader.read(definition(type), NettyBufferExtensions.from(bytes)).getValue());
     }
 }

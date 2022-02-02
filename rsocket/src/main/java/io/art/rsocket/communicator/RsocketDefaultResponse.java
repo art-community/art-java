@@ -76,6 +76,6 @@ public class RsocketDefaultResponse {
 
     private <T> T parse(byte[] bytes, Class<T> type) {
         TransportPayloadReader reader = transportPayloadReader(dataFormat);
-        return cast(reader.read(NettyBufferExtensions.from(bytes), definition(type)).getValue());
+        return cast(reader.read(definition(type), NettyBufferExtensions.from(bytes)).getValue());
     }
 }
