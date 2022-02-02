@@ -6,7 +6,9 @@ import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.tarantool.storage.*;
 import lombok.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
+import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -25,15 +27,15 @@ public class TarantoolSpaceService<KeyType, ValueType extends Space> {
 
     @SafeVarargs
     public final ImmutableArray<ValueType> findAll(KeyType... keys) {
-        return block(reactive.findAll(keys));
+        return findAll(asList(keys));
     }
 
     public ImmutableArray<ValueType> findAll(Collection<KeyType> keys) {
-        return block(reactive.findAll(keys));
+        return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
     public ImmutableArray<ValueType> findAll(ImmutableCollection<KeyType> keys) {
-        return block(reactive.findAll(keys));
+        return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
     public long count() {

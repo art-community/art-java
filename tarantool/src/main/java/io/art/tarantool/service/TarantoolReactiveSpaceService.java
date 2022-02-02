@@ -10,8 +10,6 @@ import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
-import static io.art.core.caster.Caster.*;
-import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
@@ -19,6 +17,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static java.util.Arrays.*;
 import static org.msgpack.value.ValueFactory.*;
+import static reactor.core.publisher.Flux.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -44,29 +43,29 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     public Mono<ValueType> findFirst(KeyType key) {
         ArrayValue input = wrapRequest(writer.write(definition(key.getClass()), key));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_FIRST, input);
-        return parse(output, spaceType);
+        return parseMono(output, spaceType);
     }
 
     @SafeVarargs
-    public final Mono<ImmutableArray<ValueType>> findAll(KeyType... keys) {
+    public final Flux<ValueType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    public Mono<ImmutableArray<ValueType>> findAll(Collection<KeyType> keys) {
+    public Flux<ValueType> findAll(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_ALL, input);
-        return parseArray(output, spaceType);
+        return parseFlux(output, spaceType);
     }
 
-    public Mono<ImmutableArray<ValueType>> findAll(ImmutableCollection<KeyType> keys) {
+    public Flux<ValueType> findAll(ImmutableCollection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_ALL, input);
-        return parseArray(output, spaceType);
+        return parseFlux(output, spaceType);
     }
 
     public Mono<Long> count() {
         Mono<Value> output = storage.get().mutable().call(SPACE_COUNT, newArray(spaceName));
-        return parse(output, Long.class);
+        return parseMono(output, Long.class);
     }
 
     public void truncate() {
@@ -76,13 +75,13 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     public Mono<ValueType> insert(ValueType value) {
         ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_INSERT, input);
-        return parse(output, spaceType);
+        return parseMono(output, spaceType);
     }
 
     public Mono<ValueType> put(ValueType value) {
         ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_PUT, input);
-        return parse(output, spaceType);
+        return parseMono(output, spaceType);
     }
 
     public Mono<ValueType> replace(ValueType value) {
@@ -93,13 +92,16 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
         return newArray(spaceName, data);
     }
 
-    private <T> Mono<T> parse(Mono<Value> value, Class<?> type) {
+    private <T> Mono<T> parseMono(Mono<Value> value, Class<?> type) {
         TarantoolModelReader reader = tarantoolModule().configuration().getReader();
-        return value.map(element -> cast(reader.read(definition(type), element)));
+        return value.map(element -> reader.read(definition(type), element));
     }
 
-    private <T> Mono<ImmutableArray<T>> parseArray(Mono<Value> value, Class<?> type) {
+    private <T> Flux<T> parseFlux(Mono<Value> value, Class<?> type) {
         TarantoolModelReader reader = tarantoolModule().configuration().getReader();
-        return value.map(elements -> cast(elements.asArrayValue().list().stream().map(element -> reader.read(definition(type), element)).collect(immutableArrayCollector())));
+        return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
+                .list()
+                .stream()
+                .map(element -> reader.read(definition(type), element))));
     }
 }
