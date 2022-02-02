@@ -124,6 +124,11 @@ public interface TarantoolModuleConstants {
         String SCHEMA_CREATE_INDEX = "art.schema.createIndex";
         String SCHEMA_CREATE_SPACE = "art.schema.createSpace";
         String SCHEMA_SPACES = "art.schema.spaces";
+        String SCHEMA_DROP_INDEX = "art.schema.dropIndex";
+        String SCHEMA_RENAME_SPACE = "art.schema.renameSpace";
+        String SCHEMA_DROP_SPACE = "art.schema.dropSpace";
+        String SCHEMA_INDICIES = "art.schema.indicies";
+
 
         String PUT = "art.api.put";
         String GET = "art.api.get";

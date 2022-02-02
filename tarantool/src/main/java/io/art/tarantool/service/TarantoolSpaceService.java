@@ -9,7 +9,6 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static java.util.Arrays.*;
 import java.util.*;
-import java.util.function.*;
 
 @Public
 @RequiredArgsConstructor

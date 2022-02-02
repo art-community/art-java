@@ -20,7 +20,6 @@ import java.util.*;
 
 public class TarantoolTest {
     private static TarantoolSpaceService<Integer, TestData> space;
-    private static TarantoolSchemaService schema;
 
     @BeforeAll
     public static void setup() {
@@ -33,7 +32,7 @@ public class TarantoolTest {
                 )
         );
         space = Tarantool.tarantool().space(TestData.class);
-        schema = Tarantool.tarantool().schema(TestStorage.class);
+        TarantoolSchemaService schema = Tarantool.tarantool().schema(TestStorage.class);
         schema.createSpace(TarantoolSpaceConfiguration.builder()
                 .name(idByDash(TestData.class))
                 .ifNotExists(true)
