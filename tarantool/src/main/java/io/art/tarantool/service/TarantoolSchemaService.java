@@ -34,6 +34,7 @@ public class TarantoolSchemaService {
         apply(configuration.sync(), value -> options.put(newString(SpaceFields.IS_SYNC), newBoolean(value)));
         apply(configuration.user(), value -> options.put(newString(SpaceFields.USER), newString(value)));
         apply(configuration.temporary(), value -> options.put(newString(SpaceFields.TEMPORARY), newBoolean(value)));
+        apply(configuration.format(), value -> options.put(newString(SpaceFields.FORMAT), writeFormat(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
         block(storage.mutable().call(SCHEMA_CREATE_SPACE, input));
     }
@@ -45,9 +46,10 @@ public class TarantoolSchemaService {
         apply(configuration.func(), value -> options.put(newString(IndexFields.FUNC), newString(value)));
         apply(configuration.type(), value -> options.put(newString(IndexFields.TYPE), newString(value.name().toLowerCase())));
         apply(configuration.unique(), value -> options.put(newString(IndexFields.UNIQUE), newBoolean(value)));
+        apply(configuration.treeConfiguration(), value -> apply(value.hint(), treeValue -> options.put(newString(IndexFields.HINT), newBoolean(treeValue))));
         apply(configuration.rtreeConfiguration(), value -> {
             apply(value.dimension(), rtreeValue -> options.put(newString(IndexFields.DIMENSION), newInteger(rtreeValue)));
-            apply(value.distance(), rtreeValue -> options.put(newString(IndexFields.DIMENSION), newString(rtreeValue)));
+            apply(value.distance(), rtreeValue -> options.put(newString(IndexFields.DISTANCE), newString(rtreeValue)));
         });
         apply(configuration.vinylConfiguration(), value -> {
             apply(value.bloomFrp(), vinylValue -> options.put(newString(IndexFields.BLOOM_FPR), newInteger(vinylValue)));
@@ -63,10 +65,7 @@ public class TarantoolSchemaService {
     }
 
     public void formatSpace(String space, TarantoolFormatConfiguration configuration) {
-        ArrayValue input = newArray(
-                newString(space),
-                writeFormat(configuration)
-        );
+        ArrayValue input = newArray(newString(space), writeFormat(configuration));
         block(storage.mutable().call(SCHEMA_FORMAT, input));
     }
 

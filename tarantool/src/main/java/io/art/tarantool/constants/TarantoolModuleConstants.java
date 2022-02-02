@@ -188,6 +188,7 @@ public interface TarantoolModuleConstants {
         String IS_SYNC = "is_sync";
         String USER = "user";
         String TEMPORARY = "temporary";
+        String FORMAT = "format";
     }
 
     interface IndexFields {
