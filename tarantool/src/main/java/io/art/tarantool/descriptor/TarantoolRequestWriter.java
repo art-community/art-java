@@ -1,7 +1,7 @@
 package io.art.tarantool.descriptor;
 
 import io.art.tarantool.exception.*;
-import io.art.tarantool.model.transport.*;
+import io.art.tarantool.model.*;
 import io.netty.buffer.*;
 import lombok.experimental.*;
 import org.msgpack.core.*;

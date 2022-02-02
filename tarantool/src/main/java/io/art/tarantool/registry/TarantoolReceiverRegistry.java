@@ -1,6 +1,6 @@
 package io.art.tarantool.registry;
 
-import io.art.tarantool.model.transport.*;
+import io.art.tarantool.model.*;
 import io.netty.util.collection.*;
 import lombok.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;

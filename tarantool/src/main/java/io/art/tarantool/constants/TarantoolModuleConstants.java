@@ -109,6 +109,15 @@ public interface TarantoolModuleConstants {
     interface Functions {
         String SPACE_FIND_FIRST = "art.space.findFirst";
         String SPACE_FIND_ALL = "art.space.findAll";
+        String SPACE_FIND = "art.space.find";
+        String SPACE_COUNT = "art.space.count";
+        String SPACE_TRUNCATE = "art.space.truncate";
+        String SPACE_SINGLE_DELETE = "art.space.single.delete";
+        String SPACE_SINGLE_INSERT = "art.space.single.insert";
+        String SPACE_SINGLE_PUT = "art.space.single.put";
+        String SPACE_SINGLE_REPLACE = "art.space.single.replace";
+        String SPACE_SINGLE_UPDATE = "art.space.single.update";
+        String SPACE_SINGLE_UPSERT = "art.space.single.upsert";
 
         String PUT = "art.api.put";
         String GET = "art.api.get";

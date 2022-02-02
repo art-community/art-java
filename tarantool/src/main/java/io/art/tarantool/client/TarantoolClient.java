@@ -5,7 +5,7 @@ import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.exception.*;
-import io.art.tarantool.model.transport.*;
+import io.art.tarantool.model.*;
 import io.art.tarantool.registry.*;
 import io.netty.buffer.*;
 import lombok.*;

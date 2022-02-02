@@ -1,4 +1,4 @@
-package io.art.tarantool.model.transport;
+package io.art.tarantool.model;
 
 import lombok.*;
 import org.msgpack.value.Value;
