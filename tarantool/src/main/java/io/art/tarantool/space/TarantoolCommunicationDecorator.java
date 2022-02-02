@@ -6,15 +6,15 @@ import static lombok.AccessLevel.*;
 
 @Public
 @Getter(value = PACKAGE)
-public class TarantoolSpaceDecorator {
+public class TarantoolCommunicationDecorator {
     private boolean immutable;
 
-    public TarantoolSpaceDecorator immutable() {
+    public TarantoolCommunicationDecorator immutable() {
         immutable = true;
         return this;
     }
 
-    public TarantoolSpaceDecorator mutable() {
+    public TarantoolCommunicationDecorator mutable() {
         immutable = false;
         return this;
     }

@@ -8,13 +8,13 @@ import static io.art.tarantool.module.TarantoolModule.*;
 
 @UtilityClass
 public class TarantoolCommunicationFactory {
-    public static TarantoolSpaceCommunication createConfiguredTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
+    public static TarantoolFunctionCommunication createConfiguredTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
         String storage = storageConfiguration.getStorage();
         TarantoolModuleConfiguration moduleConfiguration = tarantoolModule().configuration();
-        return new TarantoolSpaceCommunication(() -> new TarantoolStorage(moduleConfiguration.getStorages().get(storage)), moduleConfiguration);
+        return new TarantoolFunctionCommunication(() -> new TarantoolStorage(moduleConfiguration.getStorages().get(storage)), moduleConfiguration);
     }
 
-    public static TarantoolSpaceCommunication createDefaultTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
-        return new TarantoolSpaceCommunication(() -> new TarantoolStorage(storageConfiguration), tarantoolModule().configuration());
+    public static TarantoolFunctionCommunication createDefaultTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
+        return new TarantoolFunctionCommunication(() -> new TarantoolStorage(storageConfiguration), tarantoolModule().configuration());
     }
 }

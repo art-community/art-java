@@ -18,7 +18,7 @@ import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
 import java.util.function.*;
 
-public class TarantoolSpaceCommunication implements Communication {
+public class TarantoolFunctionCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
@@ -29,13 +29,13 @@ public class TarantoolSpaceCommunication implements Communication {
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
 
-    private final static ThreadLocal<TarantoolSpaceDecorator> decorator = new ThreadLocal<>();
+    private final static ThreadLocal<TarantoolCommunicationDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolSpaceCommunication(Supplier<TarantoolStorage> storage, TarantoolModuleConfiguration moduleConfiguration) {
+    public TarantoolFunctionCommunication(Supplier<TarantoolStorage> storage, TarantoolModuleConfiguration moduleConfiguration) {
         this.storage = property(storage);
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
-        this.client = () -> let(decorator.get(), TarantoolSpaceDecorator::isImmutable, false)
+        this.client = () -> let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
                 ? storage.get().immutable()
                 : storage.get().mutable();
     }
@@ -99,7 +99,7 @@ public class TarantoolSpaceCommunication implements Communication {
         emitter.tryEmitComplete();
     }
 
-    static void decorateTarantoolSpace(UnaryOperator<TarantoolSpaceDecorator> decorator) {
-        TarantoolSpaceCommunication.decorator.set(decorator.apply(new TarantoolSpaceDecorator()));
+    static void decorateTarantoolCommunication(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
+        TarantoolFunctionCommunication.decorator.set(decorator.apply(new TarantoolCommunicationDecorator()));
     }
 }
