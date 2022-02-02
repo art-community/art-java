@@ -65,7 +65,7 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     }
 
     public Mono<Long> count() {
-        Mono<Value> output = storage.get().mutable().call(SPACE_COUNT);
+        Mono<Value> output = storage.get().mutable().call(SPACE_COUNT, spaceName);
         return parse(output, Long.class);
     }
 

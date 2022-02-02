@@ -1,7 +1,6 @@
 package io.art.tarantool.test;
 
 import io.art.tarantool.*;
-import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
@@ -11,7 +10,6 @@ import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.transport.module.TransportActivator.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class TarantoolTest {
     @BeforeAll
@@ -31,9 +29,6 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-        TarantoolSpaceService<Integer, User> user = Tarantool.tarantool().space(User.class);
-        user.put(User.builder().id(3).name("test").build());
-        user.put(User.builder().id(4).name("test").build());
-        assertEquals(user.findAll(3, 4).size(), 2);
+        System.out.println(Tarantool.tarantool().space(User.class).count());
     }
 }
