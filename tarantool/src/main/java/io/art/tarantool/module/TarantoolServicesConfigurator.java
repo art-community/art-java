@@ -30,8 +30,14 @@ public class TarantoolServicesConfigurator {
     }
 
     TarantoolServiceRegistry configure() {
-        LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces = lazy(() -> spaceServices.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
+        LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices
+                .entrySet()
+                .stream()
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
+        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces = lazy(() -> spaceServices
+                .entrySet()
+                .stream()
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
         return new TarantoolServiceRegistry(spaces, schemas);
     }
 }
