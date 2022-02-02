@@ -119,8 +119,11 @@ public interface TarantoolModuleConstants {
         String SPACE_SINGLE_UPDATE = "art.space.single.update";
         String SPACE_SINGLE_UPSERT = "art.space.single.upsert";
 
+        String SPACE_MULTIPLE_PUT = "art.space.multiple.put";
+
         String SCHEMA_CREATE_INDEX = "art.schema.createIndex";
         String SCHEMA_CREATE_SPACE = "art.schema.createSpace";
+        String SCHEMA_SPACES = "art.schema.spaces";
 
         String PUT = "art.api.put";
         String GET = "art.api.get";

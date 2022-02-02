@@ -10,4 +10,5 @@ import lombok.experimental.*;
 @Accessors(fluent = true)
 public class TarantoolSpaceConfiguration {
     private final String name;
+    private final boolean ifNotExists;
 }

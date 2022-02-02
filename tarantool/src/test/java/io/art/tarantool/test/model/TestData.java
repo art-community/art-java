@@ -6,15 +6,15 @@ import lombok.*;
 @Value
 @Builder(toBuilder = true)
 @AllArgsConstructor
-public class User implements Space {
+public class TestData implements Space {
     int id;
-    String name;
-    Address address;
+    String content;
+    Inner inner;
 
     @Value
     @Builder(toBuilder = true)
     @AllArgsConstructor
-    public static class Address {
-        int house;
+    public static class Inner {
+        String content;
     }
 }

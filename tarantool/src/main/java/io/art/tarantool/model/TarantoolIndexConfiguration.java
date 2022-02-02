@@ -11,4 +11,5 @@ import lombok.experimental.*;
 public class TarantoolIndexConfiguration {
     private final String spaceName;
     private final String indexName;
+    private final boolean ifNotExists;
 }

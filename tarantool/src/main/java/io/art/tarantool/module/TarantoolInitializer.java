@@ -62,7 +62,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
         storage(storageClass, configurator);
-        spaceServices.put(idByDot(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
+        spaceServices.put(idByDash(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
         return this;
     }
 

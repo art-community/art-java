@@ -62,75 +62,56 @@ public class MetaTarantoolTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaUserStorageClass userStorageClass = register(new MetaUserStorageClass());
-
           private final MetaModelPackage modelPackage = register(new MetaModelPackage());
 
           private MetaTestPackage() {
             super("test");
           }
 
-          public MetaUserStorageClass userStorageClass() {
-            return userStorageClass;
-          }
-
           public MetaModelPackage modelPackage() {
             return modelPackage;
           }
 
-          public static final class MetaUserStorageClass extends MetaClass<io.art.tarantool.test.UserStorage> {
-            private MetaUserStorageClass() {
-              super(metaType(io.art.tarantool.test.UserStorage.class));
-            }
-
-            @Override
-            public MetaProxy proxy(
-                Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
-              return new MetaUserStorageProxy(invocations);
-            }
-
-            public class MetaUserStorageProxy extends MetaProxy implements io.art.tarantool.test.UserStorage {
-              public MetaUserStorageProxy(
-                  Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
-                super(invocations);
-              }
-            }
-          }
-
           public static final class MetaModelPackage extends MetaPackage {
-            private final MetaUserClass userClass = register(new MetaUserClass());
+            private final MetaTestDataClass testDataClass = register(new MetaTestDataClass());
+
+            private final MetaTestStorageClass testStorageClass = register(new MetaTestStorageClass());
 
             private MetaModelPackage() {
               super("model");
             }
 
-            public MetaUserClass userClass() {
-              return userClass;
+            public MetaTestDataClass testDataClass() {
+              return testDataClass;
             }
 
-            public static final class MetaUserClass extends MetaClass<io.art.tarantool.test.model.User> {
+            public MetaTestStorageClass testStorageClass() {
+              return testStorageClass;
+            }
+
+            public static final class MetaTestDataClass extends MetaClass<io.art.tarantool.test.model.TestData> {
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaField<Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
 
-              private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
+              private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
 
-              private final MetaField<io.art.tarantool.test.model.User.Address> addressField = register(new MetaField<>("address",metaType(io.art.tarantool.test.model.User.Address.class),false));
+              private final MetaField<io.art.tarantool.test.model.TestData.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.tarantool.test.model.TestData.Inner.class),false));
 
               private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
 
               private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod());
 
-              private final MetaGetNameMethod getNameMethod = register(new MetaGetNameMethod());
+              private final MetaGetContentMethod getContentMethod = register(new MetaGetContentMethod());
 
-              private final MetaGetAddressMethod getAddressMethod = register(new MetaGetAddressMethod());
+              private final MetaGetInnerMethod getInnerMethod = register(new MetaGetInnerMethod());
 
-              private final MetaUserBuilderClass userBuilderClass = register(new MetaUserBuilderClass());
+              private final MetaTestDataBuilderClass testDataBuilderClass = register(new MetaTestDataBuilderClass());
 
-              private final MetaAddressClass addressClass = register(new MetaAddressClass());
+              private final MetaInnerClass innerClass = register(new MetaInnerClass());
 
-              private MetaUserClass() {
-                super(metaType(io.art.tarantool.test.model.User.class));
+              private MetaTestDataClass() {
+                super(metaType(io.art.tarantool.test.model.TestData.class));
               }
 
               public MetaConstructorConstructor constructor() {
@@ -141,12 +122,12 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return idField;
               }
 
-              public MetaField<java.lang.String> nameField() {
-                return nameField;
+              public MetaField<java.lang.String> contentField() {
+                return contentField;
               }
 
-              public MetaField<io.art.tarantool.test.model.User.Address> addressField() {
-                return addressField;
+              public MetaField<io.art.tarantool.test.model.TestData.Inner> innerField() {
+                return innerField;
               }
 
               public MetaToBuilderMethod toBuilderMethod() {
@@ -157,188 +138,188 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return getIdMethod;
               }
 
-              public MetaGetNameMethod getNameMethod() {
-                return getNameMethod;
+              public MetaGetContentMethod getContentMethod() {
+                return getContentMethod;
               }
 
-              public MetaGetAddressMethod getAddressMethod() {
-                return getAddressMethod;
+              public MetaGetInnerMethod getInnerMethod() {
+                return getInnerMethod;
               }
 
-              public MetaUserBuilderClass userBuilderClass() {
-                return userBuilderClass;
+              public MetaTestDataBuilderClass testDataBuilderClass() {
+                return testDataBuilderClass;
               }
 
-              public MetaAddressClass addressClass() {
-                return addressClass;
+              public MetaInnerClass innerClass() {
+                return innerClass;
               }
 
-              public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.User> {
+              public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.TestData> {
                 private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
-                private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(1, "name",metaType(java.lang.String.class)));
+                private final MetaParameter<java.lang.String> contentParameter = register(new MetaParameter<>(1, "content",metaType(java.lang.String.class)));
 
-                private final MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter = register(new MetaParameter<>(2, "address",metaType(io.art.tarantool.test.model.User.Address.class)));
+                private final MetaParameter<io.art.tarantool.test.model.TestData.Inner> innerParameter = register(new MetaParameter<>(2, "inner",metaType(io.art.tarantool.test.model.TestData.Inner.class)));
 
                 private MetaConstructorConstructor() {
-                  super(metaType(io.art.tarantool.test.model.User.class));
+                  super(metaType(io.art.tarantool.test.model.TestData.class));
                 }
 
                 @Override
-                public io.art.tarantool.test.model.User invoke(java.lang.Object[] arguments) throws
-                    Throwable {
-                  return new io.art.tarantool.test.model.User((int)(arguments[0]),(java.lang.String)(arguments[1]),(io.art.tarantool.test.model.User.Address)(arguments[2]));
+                public io.art.tarantool.test.model.TestData invoke(java.lang.Object[] arguments)
+                    throws Throwable {
+                  return new io.art.tarantool.test.model.TestData((int)(arguments[0]),(java.lang.String)(arguments[1]),(io.art.tarantool.test.model.TestData.Inner)(arguments[2]));
                 }
 
                 public MetaParameter<Integer> idParameter() {
                   return idParameter;
                 }
 
-                public MetaParameter<java.lang.String> nameParameter() {
-                  return nameParameter;
+                public MetaParameter<java.lang.String> contentParameter() {
+                  return contentParameter;
                 }
 
-                public MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter() {
-                  return addressParameter;
+                public MetaParameter<io.art.tarantool.test.model.TestData.Inner> innerParameter() {
+                  return innerParameter;
                 }
               }
 
-              public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, io.art.tarantool.test.model.User.UserBuilder> {
+              public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData, io.art.tarantool.test.model.TestData.TestDataBuilder> {
                 private MetaToBuilderMethod() {
-                  super("toBuilder",metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                  super("toBuilder",metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class));
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.toBuilder();
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance) throws
                     Throwable {
                   return instance.toBuilder();
                 }
               }
 
-              public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, Integer> {
+              public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData, Integer> {
                 private MetaGetIdMethod() {
                   super("getId",metaType(int.class));
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance,
                     java.lang.Object[] arguments) throws Throwable {
                   return instance.getId();
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance) throws
                     Throwable {
                   return instance.getId();
                 }
               }
 
-              public static final class MetaGetNameMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, java.lang.String> {
-                private MetaGetNameMethod() {
-                  super("getName",metaType(java.lang.String.class));
+              public static final class MetaGetContentMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData, java.lang.String> {
+                private MetaGetContentMethod() {
+                  super("getContent",metaType(java.lang.String.class));
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.getName();
+                  return instance.getContent();
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance) throws
                     Throwable {
-                  return instance.getName();
+                  return instance.getContent();
                 }
               }
 
-              public static final class MetaGetAddressMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User, io.art.tarantool.test.model.User.Address> {
-                private MetaGetAddressMethod() {
-                  super("getAddress",metaType(io.art.tarantool.test.model.User.Address.class));
+              public static final class MetaGetInnerMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData, io.art.tarantool.test.model.TestData.Inner> {
+                private MetaGetInnerMethod() {
+                  super("getInner",metaType(io.art.tarantool.test.model.TestData.Inner.class));
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance,
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.getAddress();
+                  return instance.getInner();
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.User instance) throws
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestData instance) throws
                     Throwable {
-                  return instance.getAddress();
+                  return instance.getInner();
                 }
               }
 
-              public static final class MetaUserBuilderClass extends MetaClass<io.art.tarantool.test.model.User.UserBuilder> {
+              public static final class MetaTestDataBuilderClass extends MetaClass<io.art.tarantool.test.model.TestData.TestDataBuilder> {
                 private final MetaField<Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
 
-                private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
+                private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
 
-                private final MetaField<io.art.tarantool.test.model.User.Address> addressField = register(new MetaField<>("address",metaType(io.art.tarantool.test.model.User.Address.class),false));
+                private final MetaField<io.art.tarantool.test.model.TestData.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.tarantool.test.model.TestData.Inner.class),false));
 
                 private final MetaIdMethod idMethod = register(new MetaIdMethod());
 
-                private final MetaNameMethod nameMethod = register(new MetaNameMethod());
+                private final MetaContentMethod contentMethod = register(new MetaContentMethod());
 
-                private final MetaAddressMethod addressMethod = register(new MetaAddressMethod());
+                private final MetaInnerMethod innerMethod = register(new MetaInnerMethod());
 
                 private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
 
-                private MetaUserBuilderClass() {
-                  super(metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                private MetaTestDataBuilderClass() {
+                  super(metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class));
                 }
 
                 public MetaField<Integer> idField() {
                   return idField;
                 }
 
-                public MetaField<java.lang.String> nameField() {
-                  return nameField;
+                public MetaField<java.lang.String> contentField() {
+                  return contentField;
                 }
 
-                public MetaField<io.art.tarantool.test.model.User.Address> addressField() {
-                  return addressField;
+                public MetaField<io.art.tarantool.test.model.TestData.Inner> innerField() {
+                  return innerField;
                 }
 
                 public MetaIdMethod idMethod() {
                   return idMethod;
                 }
 
-                public MetaNameMethod nameMethod() {
-                  return nameMethod;
+                public MetaContentMethod contentMethod() {
+                  return contentMethod;
                 }
 
-                public MetaAddressMethod addressMethod() {
-                  return addressMethod;
+                public MetaInnerMethod innerMethod() {
+                  return innerMethod;
                 }
 
                 public MetaBuildMethod buildMethod() {
                   return buildMethod;
                 }
 
-                public static final class MetaIdMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.UserBuilder, io.art.tarantool.test.model.User.UserBuilder> {
+                public static final class MetaIdMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.TestDataBuilder, io.art.tarantool.test.model.TestData.TestDataBuilder> {
                   private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                   private MetaIdMethod() {
-                    super("id",metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                    super("id",metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object[] arguments) throws Throwable {
                     return instance.id((int)(arguments[0]));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object argument) throws Throwable {
                     return instance.id((int)(argument));
                   }
@@ -348,242 +329,264 @@ public class MetaTarantoolTest extends MetaLibrary {
                   }
                 }
 
-                public static final class MetaNameMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.UserBuilder, io.art.tarantool.test.model.User.UserBuilder> {
-                  private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(0, "name",metaType(java.lang.String.class)));
+                public static final class MetaContentMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.TestDataBuilder, io.art.tarantool.test.model.TestData.TestDataBuilder> {
+                  private final MetaParameter<java.lang.String> contentParameter = register(new MetaParameter<>(0, "content",metaType(java.lang.String.class)));
 
-                  private MetaNameMethod() {
-                    super("name",metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                  private MetaContentMethod() {
+                    super("content",metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object[] arguments) throws Throwable {
-                    return instance.name((java.lang.String)(arguments[0]));
+                    return instance.content((java.lang.String)(arguments[0]));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object argument) throws Throwable {
-                    return instance.name((java.lang.String)(argument));
+                    return instance.content((java.lang.String)(argument));
                   }
 
-                  public MetaParameter<java.lang.String> nameParameter() {
-                    return nameParameter;
+                  public MetaParameter<java.lang.String> contentParameter() {
+                    return contentParameter;
                   }
                 }
 
-                public static final class MetaAddressMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.UserBuilder, io.art.tarantool.test.model.User.UserBuilder> {
-                  private final MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter = register(new MetaParameter<>(0, "address",metaType(io.art.tarantool.test.model.User.Address.class)));
+                public static final class MetaInnerMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.TestDataBuilder, io.art.tarantool.test.model.TestData.TestDataBuilder> {
+                  private final MetaParameter<io.art.tarantool.test.model.TestData.Inner> innerParameter = register(new MetaParameter<>(0, "inner",metaType(io.art.tarantool.test.model.TestData.Inner.class)));
 
-                  private MetaAddressMethod() {
-                    super("address",metaType(io.art.tarantool.test.model.User.UserBuilder.class));
+                  private MetaInnerMethod() {
+                    super("inner",metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object[] arguments) throws Throwable {
-                    return instance.address((io.art.tarantool.test.model.User.Address)(arguments[0]));
+                    return instance.inner((io.art.tarantool.test.model.TestData.Inner)(arguments[0]));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object argument) throws Throwable {
-                    return instance.address((io.art.tarantool.test.model.User.Address)(argument));
+                    return instance.inner((io.art.tarantool.test.model.TestData.Inner)(argument));
                   }
 
-                  public MetaParameter<io.art.tarantool.test.model.User.Address> addressParameter(
+                  public MetaParameter<io.art.tarantool.test.model.TestData.Inner> innerParameter(
                       ) {
-                    return addressParameter;
+                    return innerParameter;
                   }
                 }
 
-                public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.UserBuilder, io.art.tarantool.test.model.User> {
+                public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.TestDataBuilder, io.art.tarantool.test.model.TestData> {
                   private MetaBuildMethod() {
-                    super("build",metaType(io.art.tarantool.test.model.User.class));
+                    super("build",metaType(io.art.tarantool.test.model.TestData.class));
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance,
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance,
                       java.lang.Object[] arguments) throws Throwable {
                     return instance.build();
                   }
 
                   @Override
                   public java.lang.Object invoke(
-                      io.art.tarantool.test.model.User.UserBuilder instance) throws Throwable {
+                      io.art.tarantool.test.model.TestData.TestDataBuilder instance) throws
+                      Throwable {
                     return instance.build();
                   }
                 }
               }
 
-              public static final class MetaAddressClass extends MetaClass<io.art.tarantool.test.model.User.Address> {
+              public static final class MetaInnerClass extends MetaClass<io.art.tarantool.test.model.TestData.Inner> {
                 private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
-                private final MetaField<Integer> houseField = register(new MetaField<>("house",metaType(int.class),false));
+                private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
 
                 private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod());
 
-                private final MetaGetHouseMethod getHouseMethod = register(new MetaGetHouseMethod());
+                private final MetaGetContentMethod getContentMethod = register(new MetaGetContentMethod());
 
-                private final MetaAddressBuilderClass addressBuilderClass = register(new MetaAddressBuilderClass());
+                private final MetaInnerBuilderClass innerBuilderClass = register(new MetaInnerBuilderClass());
 
-                private MetaAddressClass() {
-                  super(metaType(io.art.tarantool.test.model.User.Address.class));
+                private MetaInnerClass() {
+                  super(metaType(io.art.tarantool.test.model.TestData.Inner.class));
                 }
 
                 public MetaConstructorConstructor constructor() {
                   return constructor;
                 }
 
-                public MetaField<Integer> houseField() {
-                  return houseField;
+                public MetaField<java.lang.String> contentField() {
+                  return contentField;
                 }
 
                 public MetaToBuilderMethod toBuilderMethod() {
                   return toBuilderMethod;
                 }
 
-                public MetaGetHouseMethod getHouseMethod() {
-                  return getHouseMethod;
+                public MetaGetContentMethod getContentMethod() {
+                  return getContentMethod;
                 }
 
-                public MetaAddressBuilderClass addressBuilderClass() {
-                  return addressBuilderClass;
+                public MetaInnerBuilderClass innerBuilderClass() {
+                  return innerBuilderClass;
                 }
 
-                public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.User.Address> {
-                  private final MetaParameter<Integer> houseParameter = register(new MetaParameter<>(0, "house",metaType(int.class)));
+                public static final class MetaConstructorConstructor extends MetaConstructor<io.art.tarantool.test.model.TestData.Inner> {
+                  private final MetaParameter<java.lang.String> contentParameter = register(new MetaParameter<>(0, "content",metaType(java.lang.String.class)));
 
                   private MetaConstructorConstructor() {
-                    super(metaType(io.art.tarantool.test.model.User.Address.class));
+                    super(metaType(io.art.tarantool.test.model.TestData.Inner.class));
                   }
 
                   @Override
-                  public io.art.tarantool.test.model.User.Address invoke(
+                  public io.art.tarantool.test.model.TestData.Inner invoke(
                       java.lang.Object[] arguments) throws Throwable {
-                    return new io.art.tarantool.test.model.User.Address((int)(arguments[0]));
+                    return new io.art.tarantool.test.model.TestData.Inner((java.lang.String)(arguments[0]));
                   }
 
                   @Override
-                  public io.art.tarantool.test.model.User.Address invoke(java.lang.Object argument)
-                      throws Throwable {
-                    return new io.art.tarantool.test.model.User.Address((int)(argument));
+                  public io.art.tarantool.test.model.TestData.Inner invoke(
+                      java.lang.Object argument) throws Throwable {
+                    return new io.art.tarantool.test.model.TestData.Inner((java.lang.String)(argument));
                   }
 
-                  public MetaParameter<Integer> houseParameter() {
-                    return houseParameter;
+                  public MetaParameter<java.lang.String> contentParameter() {
+                    return contentParameter;
                   }
                 }
 
-                public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address, io.art.tarantool.test.model.User.Address.AddressBuilder> {
+                public static final class MetaToBuilderMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.Inner, io.art.tarantool.test.model.TestData.Inner.InnerBuilder> {
                   private MetaToBuilderMethod() {
-                    super("toBuilder",metaType(io.art.tarantool.test.model.User.Address.AddressBuilder.class));
+                    super("toBuilder",metaType(io.art.tarantool.test.model.TestData.Inner.InnerBuilder.class));
                   }
 
                   @Override
-                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance,
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestData.Inner instance,
                       java.lang.Object[] arguments) throws Throwable {
                     return instance.toBuilder();
                   }
 
                   @Override
-                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance)
-                      throws Throwable {
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestData.Inner instance) throws Throwable {
                     return instance.toBuilder();
                   }
                 }
 
-                public static final class MetaGetHouseMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address, Integer> {
-                  private MetaGetHouseMethod() {
-                    super("getHouse",metaType(int.class));
+                public static final class MetaGetContentMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.Inner, java.lang.String> {
+                  private MetaGetContentMethod() {
+                    super("getContent",metaType(java.lang.String.class));
                   }
 
                   @Override
-                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance,
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestData.Inner instance,
                       java.lang.Object[] arguments) throws Throwable {
-                    return instance.getHouse();
+                    return instance.getContent();
                   }
 
                   @Override
-                  public java.lang.Object invoke(io.art.tarantool.test.model.User.Address instance)
-                      throws Throwable {
-                    return instance.getHouse();
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestData.Inner instance) throws Throwable {
+                    return instance.getContent();
                   }
                 }
 
-                public static final class MetaAddressBuilderClass extends MetaClass<io.art.tarantool.test.model.User.Address.AddressBuilder> {
-                  private final MetaField<Integer> houseField = register(new MetaField<>("house",metaType(int.class),false));
+                public static final class MetaInnerBuilderClass extends MetaClass<io.art.tarantool.test.model.TestData.Inner.InnerBuilder> {
+                  private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
 
-                  private final MetaHouseMethod houseMethod = register(new MetaHouseMethod());
+                  private final MetaContentMethod contentMethod = register(new MetaContentMethod());
 
                   private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
 
-                  private MetaAddressBuilderClass() {
-                    super(metaType(io.art.tarantool.test.model.User.Address.AddressBuilder.class));
+                  private MetaInnerBuilderClass() {
+                    super(metaType(io.art.tarantool.test.model.TestData.Inner.InnerBuilder.class));
                   }
 
-                  public MetaField<Integer> houseField() {
-                    return houseField;
+                  public MetaField<java.lang.String> contentField() {
+                    return contentField;
                   }
 
-                  public MetaHouseMethod houseMethod() {
-                    return houseMethod;
+                  public MetaContentMethod contentMethod() {
+                    return contentMethod;
                   }
 
                   public MetaBuildMethod buildMethod() {
                     return buildMethod;
                   }
 
-                  public static final class MetaHouseMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address.AddressBuilder, io.art.tarantool.test.model.User.Address.AddressBuilder> {
-                    private final MetaParameter<Integer> houseParameter = register(new MetaParameter<>(0, "house",metaType(int.class)));
+                  public static final class MetaContentMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.Inner.InnerBuilder, io.art.tarantool.test.model.TestData.Inner.InnerBuilder> {
+                    private final MetaParameter<java.lang.String> contentParameter = register(new MetaParameter<>(0, "content",metaType(java.lang.String.class)));
 
-                    private MetaHouseMethod() {
-                      super("house",metaType(io.art.tarantool.test.model.User.Address.AddressBuilder.class));
+                    private MetaContentMethod() {
+                      super("content",metaType(io.art.tarantool.test.model.TestData.Inner.InnerBuilder.class));
                     }
 
                     @Override
                     public java.lang.Object invoke(
-                        io.art.tarantool.test.model.User.Address.AddressBuilder instance,
+                        io.art.tarantool.test.model.TestData.Inner.InnerBuilder instance,
                         java.lang.Object[] arguments) throws Throwable {
-                      return instance.house((int)(arguments[0]));
+                      return instance.content((java.lang.String)(arguments[0]));
                     }
 
                     @Override
                     public java.lang.Object invoke(
-                        io.art.tarantool.test.model.User.Address.AddressBuilder instance,
+                        io.art.tarantool.test.model.TestData.Inner.InnerBuilder instance,
                         java.lang.Object argument) throws Throwable {
-                      return instance.house((int)(argument));
+                      return instance.content((java.lang.String)(argument));
                     }
 
-                    public MetaParameter<Integer> houseParameter() {
-                      return houseParameter;
+                    public MetaParameter<java.lang.String> contentParameter() {
+                      return contentParameter;
                     }
                   }
 
-                  public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.tarantool.test.model.User.Address.AddressBuilder, io.art.tarantool.test.model.User.Address> {
+                  public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.tarantool.test.model.TestData.Inner.InnerBuilder, io.art.tarantool.test.model.TestData.Inner> {
                     private MetaBuildMethod() {
-                      super("build",metaType(io.art.tarantool.test.model.User.Address.class));
+                      super("build",metaType(io.art.tarantool.test.model.TestData.Inner.class));
                     }
 
                     @Override
                     public java.lang.Object invoke(
-                        io.art.tarantool.test.model.User.Address.AddressBuilder instance,
+                        io.art.tarantool.test.model.TestData.Inner.InnerBuilder instance,
                         java.lang.Object[] arguments) throws Throwable {
                       return instance.build();
                     }
 
                     @Override
                     public java.lang.Object invoke(
-                        io.art.tarantool.test.model.User.Address.AddressBuilder instance) throws
+                        io.art.tarantool.test.model.TestData.Inner.InnerBuilder instance) throws
                         Throwable {
                       return instance.build();
                     }
                   }
+                }
+              }
+            }
+
+            public static final class MetaTestStorageClass extends MetaClass<io.art.tarantool.test.model.TestStorage> {
+              private MetaTestStorageClass() {
+                super(metaType(io.art.tarantool.test.model.TestStorage.class));
+              }
+
+              @Override
+              public MetaProxy proxy(
+                  Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
+                return new MetaTestStorageProxy(invocations);
+              }
+
+              public class MetaTestStorageProxy extends MetaProxy implements io.art.tarantool.test.model.TestStorage {
+                public MetaTestStorageProxy(
+                    Map<MetaMethod<?>, Function<java.lang.Object, java.lang.Object>> invocations) {
+                  super(invocations);
                 }
               }
             }

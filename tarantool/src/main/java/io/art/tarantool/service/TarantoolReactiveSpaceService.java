@@ -11,6 +11,7 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -35,7 +36,7 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
         this.spaceType = spaceMeta.type();
         this.storage = storage;
         this.spaceMeta = spaceMeta;
-        this.spaceName = newString(idByDot(spaceType));
+        this.spaceName = newString(idByDash(spaceType));
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
     }
@@ -69,7 +70,7 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     }
 
     public void truncate() {
-        storage.get().mutable().call(SPACE_TRUNCATE).subscribe();
+        block(storage.get().mutable().call(SPACE_TRUNCATE));
     }
 
     public Mono<ValueType> insert(ValueType value) {
@@ -82,6 +83,12 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
         ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.get().immutable().call(SPACE_SINGLE_PUT, input);
         return parseMono(output, spaceType);
+    }
+
+    public Flux<ValueType> put(Collection<ValueType> value) {
+        ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        Mono<Value> output = storage.get().immutable().call(SPACE_MULTIPLE_PUT, input);
+        return parseFlux(output, spaceType);
     }
 
     public Mono<ValueType> replace(ValueType value) {

@@ -54,6 +54,10 @@ public class TarantoolSpaceService<KeyType, ValueType extends Space> {
         return block(reactive.put(value));
     }
 
+    public ImmutableArray<ValueType> put(Collection<ValueType> value) {
+        return reactive.put(value).toStream().collect(immutableArrayCollector());
+    }
+
     public ValueType replace(ValueType value) {
         return put(value);
     }

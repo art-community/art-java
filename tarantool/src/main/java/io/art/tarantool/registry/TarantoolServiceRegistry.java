@@ -14,7 +14,7 @@ public class TarantoolServiceRegistry {
     private final LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas;
 
     public <KeyType, ValueType extends Space> TarantoolSpaceService<KeyType, ValueType> getSpace(Class<ValueType> type) {
-        return cast(spaces.get().get(idByDot(type)));
+        return cast(spaces.get().get(idByDash(type)));
     }
 
     public TarantoolSchemaService getSchema(Class<? extends Storage> storageType) {
