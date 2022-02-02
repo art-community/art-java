@@ -11,6 +11,7 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
@@ -47,20 +48,20 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     }
 
     @SafeVarargs
-    public final Mono<ValueType> findAll(KeyType... keys) {
+    public final Mono<ImmutableArray<ValueType>> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    public Mono<ValueType> findAll(Collection<KeyType> keys) {
+    public Mono<ImmutableArray<ValueType>> findAll(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_ALL, input);
-        return parse(output, spaceType);
+        return parseArray(output, spaceType);
     }
 
-    public Mono<ValueType> findAll(ImmutableCollection<KeyType> keys) {
+    public Mono<ImmutableArray<ValueType>> findAll(ImmutableCollection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.get().immutable().call(SPACE_FIND_ALL, input);
-        return parse(output, spaceType);
+        return parseArray(output, spaceType);
     }
 
     public Mono<Long> count() {
@@ -95,5 +96,10 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType extends Space> {
     private <T> Mono<T> parse(Mono<Value> value, Class<?> type) {
         TarantoolModelReader reader = tarantoolModule().configuration().getReader();
         return value.map(element -> cast(reader.read(definition(type), element)));
+    }
+
+    private <T> Mono<ImmutableArray<T>> parseArray(Mono<Value> value, Class<?> type) {
+        TarantoolModelReader reader = tarantoolModule().configuration().getReader();
+        return value.map(elements -> cast(elements.asArrayValue().list().stream().map(element -> reader.read(definition(type), element)).collect(immutableArrayCollector())));
     }
 }

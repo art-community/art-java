@@ -32,8 +32,8 @@ public class TarantoolTest {
     @Test
     public void test() {
         TarantoolSpaceService<Integer, User> user = Tarantool.tarantool().space(User.class);
-        User model = User.builder().id(2).name("test").build();
-        user.put(model);
-        assertEquals(user.findFirst(2), model);
+        user.put(User.builder().id(3).name("test").build());
+        user.put(User.builder().id(4).name("test").build());
+        assertEquals(user.findAll(3, 4).size(), 2);
     }
 }

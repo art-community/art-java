@@ -24,15 +24,15 @@ public class TarantoolSpaceService<KeyType, ValueType extends Space> {
     }
 
     @SafeVarargs
-    public final ValueType findAll(KeyType... keys) {
+    public final ImmutableArray<ValueType> findAll(KeyType... keys) {
         return block(reactive.findAll(keys));
     }
 
-    public ValueType findAll(Collection<KeyType> keys) {
+    public ImmutableArray<ValueType> findAll(Collection<KeyType> keys) {
         return block(reactive.findAll(keys));
     }
 
-    public ValueType findAll(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<ValueType> findAll(ImmutableCollection<KeyType> keys) {
         return block(reactive.findAll(keys));
     }
 
