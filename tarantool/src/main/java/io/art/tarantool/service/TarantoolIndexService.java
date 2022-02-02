@@ -40,7 +40,7 @@ public class TarantoolIndexService<KeyType, ValueType> {
         return block(reactive.count());
     }
 
-    public TarantoolReactiveSpaceService<KeyType, ValueType> reactive() {
+    public TarantoolReactiveIndexService<KeyType, ValueType> reactive() {
         return reactive;
     }
 }
