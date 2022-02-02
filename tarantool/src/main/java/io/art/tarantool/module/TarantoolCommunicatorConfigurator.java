@@ -27,8 +27,8 @@ public class TarantoolCommunicatorConfigurator extends CommunicatorConfigurator<
     }
 
     public TarantoolCommunicatorConfigurator storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
-        TarantoolStorageConfigurator connectorConfigurator = configurator.apply(new TarantoolStorageConfigurator(idByDash(storageClass)));
-        TarantoolStorageConfiguration configuration = connectorConfigurator.configure();
+        TarantoolStorageConfigurator storageConfigurator = configurator.apply(new TarantoolStorageConfigurator(idByDash(storageClass)));
+        TarantoolStorageConfiguration configuration = storageConfigurator.configure();
         storages.put(idByDash(storageClass), configuration);
         Function<Class<? extends Communicator>, Communicator> communicatorFunction = spaceCommunicator -> tarantoolModule()
                 .configuration()

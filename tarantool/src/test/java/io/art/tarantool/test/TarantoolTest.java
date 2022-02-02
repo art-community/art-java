@@ -1,7 +1,7 @@
 package io.art.tarantool.test;
 
-import io.art.logging.*;
 import io.art.tarantool.*;
+import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
@@ -10,7 +10,6 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
-import static io.art.tarantool.test.UserStorage.*;
 import static io.art.transport.module.TransportActivator.*;
 
 public class TarantoolTest {
@@ -20,7 +19,7 @@ public class TarantoolTest {
                 meta(MetaTarantoolTest::new),
                 transport(),
                 tarantool(tarantool -> tarantool
-                        .storage(UserStorage.class, storage -> storage.client(client -> client.username("username").password("password"))))
+                        .space(UserStorage.class, User.class, storage -> storage.client(client -> client.username("username").password("password"))))
         );
     }
 
@@ -31,16 +30,8 @@ public class TarantoolTest {
 
     @Test
     public void test() {
-/*
-        UsersSpace space = Tarantool.tarantool(UserStorage.class).testSpace();
-        space.save(User.builder().id(4).name("test 4").address(new User.Address(123)).build());
-        User user = space.get(4).blockFirst();
-        space.save(user.toBuilder().address(user.getAddress().toBuilder().house(12).build()).build());
-
-        Logging.logger().info("test: ");
-        space.findTest().subscribe(value -> Logging.logger().info(value.toString()));
-        Logging.logger().info("all: ");
-        space.getAll().forEach(value -> Logging.logger().info(value.toString()));
-*/
+        TarantoolSpaceService<Integer, User> user = Tarantool.tarantool().space(User.class);
+        user.put(User.builder().name("test").build());
+        System.out.println(user.findFirst(1));
     }
 }

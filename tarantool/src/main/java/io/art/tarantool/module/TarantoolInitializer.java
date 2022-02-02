@@ -45,17 +45,22 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     private final TarantoolCommunicatorConfigurator communicatorConfigurator = new TarantoolCommunicatorConfigurator();
     private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
 
-    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass) {
-        spaceServices.put(idByDot(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(tarantoolModule().configuration().getStorages().get(idByDash(storageClass))))));
-        return this;
-    }
-
     public TarantoolInitializer storage(Class<? extends Storage> storageClass) {
         return storage(storageClass, identity());
     }
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
         this.communicatorConfigurator.storage(storageClass, configurator);
+        return this;
+    }
+
+    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass) {
+        return space(storageClass, spaceClass, UnaryOperator.identity());
+    }
+
+    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<? extends Space> spaceClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
+        TarantoolStorageConfigurator storageConfigurator = configurator.apply(new TarantoolStorageConfigurator(idByDash(storageClass)));
+        spaceServices.put(idByDot(spaceClass), lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), () -> new TarantoolStorage(storageConfigurator.configure()))));
         return this;
     }
 
