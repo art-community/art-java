@@ -2,6 +2,7 @@ package io.art.tarantool.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.storage.*;
 import lombok.*;
@@ -24,14 +25,14 @@ public class TarantoolSchemaService {
 
     public void createSpace(TarantoolSpaceConfiguration configuration) {
         Map<Value, Value> options = map();
-        apply(configuration.id(), value -> options.put(newString("id"), newInteger(value)));
-        apply(configuration.engine(), value -> options.put(newString("engine"), newString(value.name().toLowerCase())));
-        apply(configuration.fieldCount(), value -> options.put(newString("field_count"), newInteger(value)));
-        apply(configuration.ifNotExists(), value -> options.put(newString("if_not_exists"), newBoolean(value)));
-        apply(configuration.local(), value -> options.put(newString("is_local"), newBoolean(value)));
-        apply(configuration.sync(), value -> options.put(newString("is_sync"), newBoolean(value)));
-        apply(configuration.user(), value -> options.put(newString("user"), newString(value)));
-        apply(configuration.temporary(), value -> options.put(newString("temporary "), newBoolean(value)));
+        apply(configuration.id(), value -> options.put(newString(SpaceConfigurationFields.ID_FIELD), newInteger(value)));
+        apply(configuration.engine(), value -> options.put(newString(SpaceConfigurationFields.ENGINE_FIELD), newString(value.name().toLowerCase())));
+        apply(configuration.fieldCount(), value -> options.put(newString(SpaceConfigurationFields.FIELD_COUNT_FIELD), newInteger(value)));
+        apply(configuration.ifNotExists(), value -> options.put(newString(SpaceConfigurationFields.IF_NOT_EXISTS_FIELD), newBoolean(value)));
+        apply(configuration.local(), value -> options.put(newString(SpaceConfigurationFields.IS_LOCAL_FIELD), newBoolean(value)));
+        apply(configuration.sync(), value -> options.put(newString(SpaceConfigurationFields.IS_SYNC_FIELD), newBoolean(value)));
+        apply(configuration.user(), value -> options.put(newString(SpaceConfigurationFields.USER_FIELD), newString(value)));
+        apply(configuration.temporary(), value -> options.put(newString(SpaceConfigurationFields.TEMPORARY_FIELD), newBoolean(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
         block(storage.mutable().call(SCHEMA_CREATE_SPACE, input));
     }

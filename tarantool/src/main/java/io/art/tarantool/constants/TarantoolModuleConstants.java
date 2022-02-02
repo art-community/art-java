@@ -179,6 +179,17 @@ public interface TarantoolModuleConstants {
         MAP
     }
 
+    interface SpaceConfigurationFields {
+        String ID_FIELD = "id";
+        String ENGINE_FIELD = "engine";
+        String FIELD_COUNT_FIELD = "field_count";
+        String IF_NOT_EXISTS_FIELD = "if_not_exists";
+        String IS_LOCAL_FIELD = "is_local";
+        String IS_SYNC_FIELD = "is_sync";
+        String USER_FIELD = "user";
+        String TEMPORARY_FIELD = "temporary";
+    }
+
     enum TarantoolIndexType {
         HASH,
         TREE,
