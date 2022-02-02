@@ -159,6 +159,11 @@ public interface TarantoolModuleConstants {
         String ASCENDING = "art.core.stream.comparators.less";
     }
 
+    enum Engine {
+        MEMTEX,
+        VINYL
+    }
+
     enum FieldType {
         ANY,
         UNSIGNED,
