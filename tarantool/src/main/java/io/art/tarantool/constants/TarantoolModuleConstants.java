@@ -179,32 +179,40 @@ public interface TarantoolModuleConstants {
         MAP
     }
 
-    interface SpaceConfigurationFields {
-        String ID_FIELD = "id";
-        String ENGINE_FIELD = "engine";
-        String FIELD_COUNT_FIELD = "field_count";
-        String IF_NOT_EXISTS_FIELD = "if_not_exists";
-        String IS_LOCAL_FIELD = "is_local";
-        String IS_SYNC_FIELD = "is_sync";
-        String USER_FIELD = "user";
-        String TEMPORARY_FIELD = "temporary";
+    interface SpaceFields {
+        String ID = "id";
+        String ENGINE = "engine";
+        String FIELD_COUNT = "field_count";
+        String IF_NOT_EXISTS = "if_not_exists";
+        String IS_LOCAL = "is_local";
+        String IS_SYNC = "is_sync";
+        String USER = "user";
+        String TEMPORARY = "temporary";
     }
 
-    interface IndexConfigurationFields {
-        String ID_FIELD = "id";
-        String TYPE_FIELD = "type";
-        String UNIQUE_FIELD = "unique";
-        String PARTS_FIELD = "parts";
-        String DIMENSION_FIELD = "dimension";
-        String DISTANCE_FIELD = "distance";
-        String BLOOM_FPR_FIELD = "bloom_fpr";
-        String PAGE_SIZE_FIELD = "page_size";
-        String RANGE_SIZE_FIELD = "range_size";
-        String RUN_COUNT_PER_LEVEL_FIELD = "run_count_per_level";
-        String RUN_SIZE_RATIO_FIELD = "run_size_ratio";
-        String SEQUENCE_FIELD = "sequence";
-        String FUNC_FIELD = "func";
-        String HINT_FIELD = "hint";
+    interface IndexFields {
+        String ID = "id";
+        String TYPE = "type";
+        String UNIQUE = "unique";
+        String PARTS = "parts";
+        String DIMENSION = "dimension";
+        String DISTANCE = "distance";
+        String BLOOM_FPR = "bloom_fpr";
+        String PAGE_SIZE = "page_size";
+        String RANGE_SIZE = "range_size";
+        String RUN_COUNT_PER_LEVEL = "run_count_per_level";
+        String RUN_SIZE_RATIO = "run_size_ratio";
+        String SEQUENCE = "sequence";
+        String FUNC = "func";
+        String HINT = "hint";
+        String IF_NOT_EXISTS = "if_not_exists";
+    }
+
+    interface IndexPartFields {
+        String FIELD = "field";
+        String TYPE = "type";
+        String IS_NULLABLE = "is_nullable";
+        String PATH = "path";
     }
 
     enum IndexType {

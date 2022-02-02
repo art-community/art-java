@@ -11,6 +11,7 @@ import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.collector.MapCollector.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.factory.MapFactory.*;
@@ -25,29 +26,39 @@ public class TarantoolSchemaService {
 
     public void createSpace(TarantoolSpaceConfiguration configuration) {
         Map<Value, Value> options = map();
-        apply(configuration.id(), value -> options.put(newString(SpaceConfigurationFields.ID_FIELD), newInteger(value)));
-        apply(configuration.engine(), value -> options.put(newString(SpaceConfigurationFields.ENGINE_FIELD), newString(value.name().toLowerCase())));
-        apply(configuration.fieldCount(), value -> options.put(newString(SpaceConfigurationFields.FIELD_COUNT_FIELD), newInteger(value)));
-        apply(configuration.ifNotExists(), value -> options.put(newString(SpaceConfigurationFields.IF_NOT_EXISTS_FIELD), newBoolean(value)));
-        apply(configuration.local(), value -> options.put(newString(SpaceConfigurationFields.IS_LOCAL_FIELD), newBoolean(value)));
-        apply(configuration.sync(), value -> options.put(newString(SpaceConfigurationFields.IS_SYNC_FIELD), newBoolean(value)));
-        apply(configuration.user(), value -> options.put(newString(SpaceConfigurationFields.USER_FIELD), newString(value)));
-        apply(configuration.temporary(), value -> options.put(newString(SpaceConfigurationFields.TEMPORARY_FIELD), newBoolean(value)));
+        apply(configuration.id(), value -> options.put(newString(SpaceFields.ID), newInteger(value)));
+        apply(configuration.engine(), value -> options.put(newString(SpaceFields.ENGINE), newString(value.name().toLowerCase())));
+        apply(configuration.fieldCount(), value -> options.put(newString(SpaceFields.FIELD_COUNT), newInteger(value)));
+        apply(configuration.ifNotExists(), value -> options.put(newString(SpaceFields.IF_NOT_EXISTS), newBoolean(value)));
+        apply(configuration.local(), value -> options.put(newString(SpaceFields.IS_LOCAL), newBoolean(value)));
+        apply(configuration.sync(), value -> options.put(newString(SpaceFields.IS_SYNC), newBoolean(value)));
+        apply(configuration.user(), value -> options.put(newString(SpaceFields.USER), newString(value)));
+        apply(configuration.temporary(), value -> options.put(newString(SpaceFields.TEMPORARY), newBoolean(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
         block(storage.mutable().call(SCHEMA_CREATE_SPACE, input));
     }
 
     public void createIndex(TarantoolIndexConfiguration configuration) {
-        ArrayValue input = newArray(newString(configuration.spaceName()),
-                newString(configuration.indexName()),
-                newMap(
-                        newString("unique"), newBoolean(true),
-                        newString("if_not_exists"), newBoolean(configuration.ifNotExists()),
-                        newString("parts"), newArray(
-                                newMap(newString("field"), newInteger(1), newString("type"), newString("unsigned"))
-                        )
-                )
-        );
+        Map<Value, Value> options = map();
+        apply(configuration.id(), value -> options.put(newString(IndexFields.ID), newInteger(value)));
+        apply(configuration.sequence(), value -> options.put(newString(IndexFields.SEQUENCE), newString(value)));
+        apply(configuration.func(), value -> options.put(newString(IndexFields.FUNC), newString(value)));
+        apply(configuration.type(), value -> options.put(newString(IndexFields.TYPE), newString(value.name().toLowerCase())));
+        apply(configuration.unique(), value -> options.put(newString(IndexFields.UNIQUE), newBoolean(value)));
+        apply(configuration.rtreeConfiguration(), value -> {
+            apply(value.dimension(), rtreeValue -> options.put(newString(IndexFields.DIMENSION), newInteger(rtreeValue)));
+            apply(value.distance(), rtreeValue -> options.put(newString(IndexFields.DIMENSION), newString(rtreeValue)));
+        });
+        apply(configuration.vinylConfiguration(), value -> {
+            apply(value.bloomFrp(), vinylValue -> options.put(newString(IndexFields.BLOOM_FPR), newInteger(vinylValue)));
+            apply(value.pageSize(), vinylValue -> options.put(newString(IndexFields.PAGE_SIZE), newInteger(vinylValue)));
+            apply(value.rangeSize(), vinylValue -> options.put(newString(IndexFields.RANGE_SIZE), newInteger(vinylValue)));
+            apply(value.runCountPerLevel(), vinylValue -> options.put(newString(IndexFields.RUN_COUNT_PER_LEVEL), newInteger(vinylValue)));
+            apply(value.runSizeRatio(), vinylValue -> options.put(newString(IndexFields.RUN_SIZE_RATIO), newInteger(vinylValue)));
+        });
+        apply(configuration.ifNotExists(), value -> options.put(newString(IndexFields.IF_NOT_EXISTS), newBoolean(value)));
+        options.put(newString(IndexFields.PARTS), newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
+        ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
         block(storage.mutable().call(SCHEMA_CREATE_INDEX, input));
     }
 
@@ -100,6 +111,18 @@ public class TarantoolSchemaService {
         return block(spaces);
     }
 
+    public boolean hasSpace(String space) {
+        return spaces().stream().anyMatch(space::equals);
+    }
+
+    public boolean hasIndex(String space, String index) {
+        return indicies(space).stream().anyMatch(index::equals);
+    }
+
+    public boolean hasIndex(String index) {
+        return spaces().stream().flatMap(space -> indicies(space).stream()).anyMatch(index::equals);
+    }
+
     private ImmutableMapValue writeFormat(TarantoolFormatConfiguration configuration) {
         return newMap(
                 configuration.format()
@@ -107,5 +130,14 @@ public class TarantoolSchemaService {
                         .stream()
                         .collect(mapCollector(entry -> newString(entry.getKey()), entry -> newString(entry.getValue().name().toLowerCase())))
         );
+    }
+
+    private ImmutableMapValue writeIndexPart(TarantoolIndexPartConfiguration configuration) {
+        Map<Value, Value> map = map();
+        map.put(newString(IndexPartFields.FIELD), newInteger(configuration.field()));
+        map.put(newString(IndexPartFields.TYPE), newString(configuration.type().name().toLowerCase()));
+        apply(configuration.nullable(), value -> map.put(newString(IndexPartFields.IS_NULLABLE), newBoolean(value)));
+        apply(configuration.path(), value -> map.put(newString(IndexPartFields.PATH), newString(value)));
+        return newMap(map);
     }
 }

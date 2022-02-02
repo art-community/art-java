@@ -12,6 +12,7 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.factory.TarantoolTestDataFactory.*;
 import static io.art.transport.module.TransportActivator.*;
@@ -41,6 +42,11 @@ public class TarantoolTest {
                 .spaceName(idByDash(TestData.class))
                 .indexName("primary")
                 .ifNotExists(true)
+                .unique(true)
+                .part(TarantoolIndexPartConfiguration.builder()
+                        .field(1)
+                        .type(UNSIGNED)
+                        .build())
                 .build());
     }
 
