@@ -84,26 +84,10 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_INSTANCE_MAX_CONNECTIONS_RETRY_KEY = "max_connections_retry";
     }
 
-    interface ExceptionMessages {
-        String CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'', instance ''{1}'' configuration is null. Please specify it.";
-        String CLUSTER_CONFIGURATION_IS_NULL = "Tarantool cluster ''{0}'' configuration is null. Please specify it.";
-        String UNABLE_TO_CONNECT_TO_TARANTOOL = "Unable to connect to tarantool ''{0}'' with address ''{1}''.";
-        String UNABLE_TO_CONNECT_TO_TARANTOOL_RETRY = "Unable to connect to tarantool ''{0}'' with address ''{1}''. Retrying...\n";
-        String RESULT_IS_INVALID = "Response ''{0}'' returned from Tarantool can`t be converted to Entity.";
-        String UNABLE_TO_GET_RESPONSE = "Unable to get response from function call.";
-        String UNKNOWN_BALANCING_METHOD = "Unknown processInitialization balancing method: ''{0}''";
-        String NULL_REQUEST_DATA_EXCEPTION = "Request data tuple is null.";
-        String TRANSACTION_FAILED = "Transaction failed with error message: ''{0}''";
-        String GET_RESULT_OF_NOT_COMMITTED_TRANSACTION = "Attempt to get result of not committed transaction. Commit first.";
-        String ILLEGAL_TRANSACTION_DEPENDENCY_USAGE = "Attempt to use transaction dependency outside of transaction. Use response data using get() instead.";
-        String ATTEMPT_OF_NESTED_TRANSACTION = "Illegal attempt to begin nested transaction. Cluster is already in another transaction.";
+    interface Errors {
     }
 
-    interface LoggingMessages {
-        String TARANTOOL_CLIENT_CREATED = "Created tarantool client ''{0}'' with address ''{1}''";
-        String CALLING_FUNCTION = "Calling tarantool function ''{0}''";
-        String CALLED_FUNCTION = "Called tarantool function ''{0}'' with result: {1}";
-        String FAILED_FUNCTION = "Failed to call tarantool function ''{0}''";
+    interface Messages {
     }
 
     interface Functions {

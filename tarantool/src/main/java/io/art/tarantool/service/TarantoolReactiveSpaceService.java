@@ -10,7 +10,6 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
-import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -158,8 +157,8 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
         return parseMono(output, Long.class);
     }
 
-    public void truncate() {
-        block(storage.mutable().call(SPACE_TRUNCATE));
+    public Mono<Void> truncate() {
+        return storage.mutable().call(SPACE_TRUNCATE).then();
     }
 
 
@@ -168,12 +167,10 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
     }
 
     private <T> Mono<T> parseMono(Mono<Value> value, Class<?> type) {
-        TarantoolModelReader reader = tarantoolModule().configuration().getReader();
         return value.map(element -> reader.read(definition(type), element));
     }
 
     private <T> Flux<T> parseFlux(Mono<Value> value, Class<?> type) {
-        TarantoolModelReader reader = tarantoolModule().configuration().getReader();
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
