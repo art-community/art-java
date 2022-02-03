@@ -1,10 +1,8 @@
 package io.art.tarantool.test.space;
 
-import io.art.core.collection.*;
 import io.art.tarantool.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.service.*;
-import io.art.tarantool.test.factory.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
@@ -22,7 +20,6 @@ import static io.art.tarantool.test.factory.TarantoolTestDataFactory.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
-import java.util.stream.*;
 
 public class TarantoolTest {
     private static TarantoolSpaceService<Integer, TestData> space;
@@ -70,6 +67,8 @@ public class TarantoolTest {
 
     @Test
     public void testFindAll() {
-        space.put(IntStream.range(1, 1_000_000).boxed().map(TarantoolTestDataFactory::testData).collect(ImmutableArray.immutableArrayCollector()));
+        List<TestData> data = fixedArrayOf(testData(2), testData(3), testData(4));
+        space.put(data);
+        assertEquals(data, space.findAll(2, 3, 4).toMutable());
     }
 }
