@@ -59,7 +59,7 @@ public class TarantoolIndexConfiguration {
         private final int runSizeRatio;
     }
 
-    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexOf(Class<?> type, Function<T, MetaField<?>> fieldExtractor) {
+    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, Function<T, MetaField<?>> fieldExtractor) {
         T meta = cast(declaration(type));
         return TarantoolIndexConfiguration.builder()
                 .spaceName(idByDash(type))

@@ -4,6 +4,7 @@ import io.art.core.annotation.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.idByDash;
 
 @Public
 @Builder
@@ -20,4 +21,8 @@ public class TarantoolSpaceConfiguration {
     private final Boolean sync;
     private final Boolean temporary;
     private final String user;
+
+    public static TarantoolSpaceConfigurationBuilder spaceFor(Class<?> type) {
+        return TarantoolSpaceConfiguration.builder().name(idByDash(type));
+    }
 }
