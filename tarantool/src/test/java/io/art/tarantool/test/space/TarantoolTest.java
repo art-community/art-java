@@ -4,6 +4,7 @@ import io.art.tarantool.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
+import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
@@ -13,6 +14,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
+import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.factory.TarantoolTestDataFactory.*;
 import static io.art.transport.module.TransportActivator.*;
@@ -38,9 +40,7 @@ public class TarantoolTest {
                 .name(idByDash(TestData.class))
                 .ifNotExists(true)
                 .build());
-        schema.createIndex(TarantoolIndexConfiguration.builder()
-                .spaceName(idByDash(TestData.class))
-                .indexName("primary")
+        schema.createIndex(indexOf(TestData.class, MetaTestDataClass::idField)
                 .ifNotExists(true)
                 .unique(true)
                 .part(TarantoolIndexPartConfiguration.builder()

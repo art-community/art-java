@@ -1,13 +1,18 @@
 package io.art.tarantool.model;
 
 import io.art.core.annotation.*;
+import io.art.meta.model.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.meta.Meta.*;
 import java.util.*;
+import java.util.function.*;
 
 @Public
-@Builder
+@Builder(toBuilder = true)
 @Getter
 @Accessors(fluent = true)
 public class TarantoolIndexConfiguration {
@@ -52,5 +57,12 @@ public class TarantoolIndexConfiguration {
         private final int rangeSize;
         private final int runCountPerLevel;
         private final int runSizeRatio;
+    }
+
+    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexOf(Class<?> type, Function<T, MetaField<?>> fieldExtractor) {
+        T meta = cast(declaration(type));
+        return TarantoolIndexConfiguration.builder()
+                .spaceName(idByDash(type))
+                .indexName(fieldExtractor.apply(meta).name());
     }
 }
