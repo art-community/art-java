@@ -41,7 +41,7 @@ import java.util.function.*;
 
 @Public
 public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator {
-    private final static LazyProperty<MetaRsocketExecutionCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketBuiltinCommunicator.class));
+    private final static LazyProperty<MetaRsocketBuiltinCommunicatorClass> communicatorClass = lazy(() -> Meta.declaration(RsocketBuiltinCommunicator.class));
     private final RsocketCommonConnectorConfigurationBuilder commonConnector = commonConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
     private final Property<CommunicatorProxy<RsocketBuiltinCommunicator>> proxy = property(this::createCommunicator);
     private RsocketWsConnectorConfiguration currentWsConnector;
