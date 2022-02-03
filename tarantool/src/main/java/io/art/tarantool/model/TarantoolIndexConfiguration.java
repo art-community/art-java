@@ -8,6 +8,8 @@ import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
+import static java.util.Arrays.*;
+import static java.util.stream.Collectors.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -59,10 +61,11 @@ public class TarantoolIndexConfiguration {
         private final int runSizeRatio;
     }
 
-    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, Function<T, MetaField<?>> fieldExtractor) {
+    @SafeVarargs
+    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, Function<T, MetaField<?>>... fieldExtractors) {
         T meta = cast(declaration(type));
         return TarantoolIndexConfiguration.builder()
                 .spaceName(idByDash(type))
-                .indexName(fieldExtractor.apply(meta).name());
+                .indexName(stream(fieldExtractors).map(extractor -> extractor.apply(meta).name()).collect(joining()));
     }
 }
