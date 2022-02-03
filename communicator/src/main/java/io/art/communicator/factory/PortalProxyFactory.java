@@ -28,7 +28,7 @@ public class PortalProxyFactory {
 
         if (proxies.size() != portalClass.methods().size()) {
             String invalidMethods = joinMethods(portalClass, method -> !proxies.containsKey(method));
-            throw new CommunicatorException(format(GATEWAY_HAS_INVALID_METHODS, portalClass.definition().type(), invalidMethods));
+            throw new CommunicatorException(format(PORTAL_HAS_INVALID_METHODS, portalClass.definition().type(), invalidMethods));
         }
 
         LazyProperty<Map<String, ? extends Communicator>> cache = lazy(() -> proxies
