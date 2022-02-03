@@ -32,8 +32,8 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     @Override
     public void launch(ContextService contextService) {
         onErrorDropped(emptyConsumer());
-        ImmutableMap<String, TarantoolStorageConfiguration> connectors = configuration.getStorageConfigurations();
-        if (!connectors.isEmpty()) {
+        ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = configuration.getStorageConfigurations();
+        if (!storageConfigurations.isEmpty()) {
             manager.initializeCommunicators();
         }
     }
