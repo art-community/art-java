@@ -21,6 +21,7 @@ import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
+@Disabled
 public class TarantoolTest {
     private static TarantoolSpaceService<Integer, TestData> space;
 
