@@ -60,7 +60,7 @@ public class TarantoolSpaceService<KeyType, ValueType> {
     }
 
     public void truncate() {
-        reactive.truncate();
+        block(reactive.truncate());
     }
 
 
