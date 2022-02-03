@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.art.tarantool.model.operation;
+package io.art.tarantool.model;
 
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import lombok.*;

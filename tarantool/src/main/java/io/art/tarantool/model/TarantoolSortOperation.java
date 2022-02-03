@@ -1,6 +1,5 @@
-package io.art.tarantool.model.operation;
+package io.art.tarantool.model;
 
-import io.art.tarantool.model.field.*;
 import lombok.*;
 
 import java.util.*;

@@ -1,12 +1,8 @@
-package io.art.tarantool.model.field;
+package io.art.tarantool.model;
 
-import io.art.tarantool.model.operation.*;
 import lombok.*;
 
 import static io.art.core.factory.ArrayFactory.fixedArrayOf;
-import static io.art.tarantool.constants.TarantoolModuleConstants.SelectSortComparator.ASCENDING;
-import static io.art.tarantool.constants.TarantoolModuleConstants.SelectSortComparator.DESCENDING;
-import static io.art.tarantool.constants.TarantoolModuleConstants.TarantoolOperator.*;
 
 @AllArgsConstructor
 @Getter
