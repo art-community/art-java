@@ -23,7 +23,7 @@ jobs:
 
       - if: runner.os == 'macOS'
         name: Initialize the tarantool on OSX
-        rune: brew install tarantool
+        run: brew install tarantool
 
       - if: runner.os == 'Windows'
         name: Initialize the tarantool on WSL
