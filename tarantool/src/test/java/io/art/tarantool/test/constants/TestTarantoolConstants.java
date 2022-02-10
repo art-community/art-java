@@ -1,10 +1,11 @@
 package io.art.tarantool.test.constants;
 
+import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.extensions.RandomExtensions.*;
 
 public interface TestTarantoolConstants {
-    String EXECUTABLE = "/usr/bin/tarantool";
     String WORKING_DIRECTORY = "test-" + randomPositiveInt();
+    String COMMAND = "cd " + convertToWslPath(WORKING_DIRECTORY) + " && /usr/bin/tarantool";
     String BASH = "bash";
     String BASH_ARGUMENT = "-c";
     String WRONG_ENVIRONMENT = "Tarantool supports only Linux and OSX";

@@ -31,7 +31,7 @@ public class TestTarantoolRunner {
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
-                DOUBLE_QUOTES + EXECUTABLE + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
+                DOUBLE_QUOTES + COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
     }
