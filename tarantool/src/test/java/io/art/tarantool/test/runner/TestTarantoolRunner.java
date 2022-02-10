@@ -31,6 +31,6 @@ public class TestTarantoolRunner {
         Path scriptPath = get(STORAGE_SCRIPT).toAbsolutePath();
         writeFile(convertToWslPath(scriptPath.toString()), toByteArray(script));
         writeFile(convertToWslPath(get(MODULE_SCRIPT).toAbsolutePath().toString()), toByteArray(module));
-        wrapExceptionCall(() -> getRuntime().exec(new String[]{BASH, BASH_ARGUMENT, DOUBLE_QUOTES + EXECUTABLE + SPACE convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES}), TarantoolException::new);
+        wrapExceptionCall(() -> getRuntime().exec(new String[]{BASH, BASH_ARGUMENT, DOUBLE_QUOTES + EXECUTABLE + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES}), TarantoolException::new);
     }
 }
