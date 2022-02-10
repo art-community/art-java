@@ -6,7 +6,6 @@ import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
-import io.art.tarantool.test.runner.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -56,7 +55,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        TestTarantoolRunner.shutdownStorage();
+        SHUTDOWNSTORAGE();
         shutdown();
     }
 
