@@ -3,7 +3,7 @@ package io.art.tarantool.test.runner;
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
-import static io.art.core.determiner.SystemDeterminer.*;
+import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
@@ -20,15 +20,14 @@ import java.nio.file.*;
 public class TestTarantoolRunner {
     public static void runStorage() {
         if (!TCP.isPortAvailable(STORAGE_PORT)) return;
-        if (isWindows()) throw new TarantoolException(WRONG_ENVIRONMENT);
         if (!exists(EXECUTABLE)) throw new TarantoolException(EXECUTABLE_NOT_FOUND);
         InputStream script = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
         if (isNull(script)) throw new ImpossibleSituationException();
         InputStream module = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
         if (isNull(module)) throw new ImpossibleSituationException();
         Path scriptPath = get(STORAGE_SCRIPT).toAbsolutePath();
-        writeFile(scriptPath, toByteArray(script));
-        writeFile(get(MODULE_SCRIPT).toAbsolutePath(), toByteArray(module));
-        wrapExceptionCall(() -> getRuntime().exec(new String[]{EXECUTABLE.toString(), scriptPath.toString()}), TarantoolException::new);
+        writeFile(convertToWslPath(scriptPath.toString()), toByteArray(script));
+        writeFile(convertToWslPath(get(MODULE_SCRIPT).toAbsolutePath().toString()), toByteArray(module));
+        wrapExceptionCall(() -> getRuntime().exec(new String[]{EXECUTABLE.toString(), convertToWslPath(scriptPath.toString())}), TarantoolException::new);
     }
 }
