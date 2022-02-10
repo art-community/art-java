@@ -76,7 +76,7 @@ public class PortSelector {
             @Override
             public boolean isPortAvailable(int port) {
                 try {
-                    getDefault().createServerSocket(port, 1, getByName(LOCALHOST)).close();
+                    getDefault().createServerSocket(port, 1, getByName(LOCALHOST_IP_ADDRESS)).close();
                     return true;
                 } catch (Throwable throwable) {
                     return false;
@@ -88,7 +88,7 @@ public class PortSelector {
             @Override
             public boolean isPortAvailable(int port) {
                 try {
-                    new DatagramSocket(port, getByName(LOCALHOST)).close();
+                    new DatagramSocket(port, getByName(LOCALHOST_IP_ADDRESS)).close();
                     return true;
                 } catch (Throwable throwable) {
                     return false;

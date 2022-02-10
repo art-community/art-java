@@ -19,7 +19,7 @@ import java.nio.file.*;
 @UtilityClass
 public class TestTarantoolRunner {
     public static void runStorage() {
-        if (TCP.isPortAvailable(STORAGE_PORT)) return;
+        if (!TCP.isPortAvailable(STORAGE_PORT)) return;
         if (isWindows()) throw new TarantoolException(WRONG_ENVIRONMENT);
         if (!exists(EXECUTABLE)) throw new TarantoolException(EXECUTABLE_NOT_FOUND);
         InputStream script = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
