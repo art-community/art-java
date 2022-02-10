@@ -5,6 +5,7 @@ import io.art.tarantool.exception.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
+import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
@@ -29,20 +30,26 @@ public class TestTarantoolRunner {
         Path scriptPath = working.resolve(STORAGE_SCRIPT).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));
         writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
+        String executable = isWindows() ? DOUBLE_QUOTES : EMPTY_STRING +
+                STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) +
+                (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
-                DOUBLE_QUOTES + STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
+                executable
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
     }
 
     public static void shutdownStorage() {
+        String executable = isWindows() ? DOUBLE_QUOTES : EMPTY_STRING +
+                KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID)) +
+                (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
-                DOUBLE_QUOTES + KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID)) + DOUBLE_QUOTES
+                executable
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitCondition(() -> TCP.isPortAvailable(STORAGE_PORT));
