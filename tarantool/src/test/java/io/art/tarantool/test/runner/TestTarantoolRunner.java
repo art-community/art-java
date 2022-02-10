@@ -40,7 +40,7 @@ public class TestTarantoolRunner {
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
-                DOUBLE_QUOTES + KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID))
+                DOUBLE_QUOTES + KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID)) + DOUBLE_QUOTES
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         recursiveDelete(get(STORAGE_DIRECTORY));
