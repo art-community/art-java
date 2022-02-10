@@ -20,7 +20,7 @@ import java.nio.file.*;
 public class TestTarantoolRunner {
     public static void runStorage() {
         if (!TCP.isPortAvailable(STORAGE_PORT)) return;
-        Path working = touchDirectory(get(WORKING_DIRECTORY));
+        Path working = touchDirectory(get(STORAGE_DIRECTORY));
         InputStream script = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
         if (isNull(script)) throw new ImpossibleSituationException();
         InputStream module = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
@@ -31,12 +31,18 @@ public class TestTarantoolRunner {
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
-                DOUBLE_QUOTES + COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
+                DOUBLE_QUOTES + STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
     }
 
-    public static void deleteScripts() {
-        recursiveDelete(get(WORKING_DIRECTORY));
+    public static void cleanup() {
+        String[] command = {
+                BASH,
+                BASH_ARGUMENT,
+                DOUBLE_QUOTES + KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID))
+        };
+        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        recursiveDelete(get(STORAGE_DIRECTORY));
     }
 }

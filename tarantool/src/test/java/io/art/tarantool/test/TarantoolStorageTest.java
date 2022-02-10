@@ -6,11 +6,11 @@ import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
+import io.art.tarantool.test.runner.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.core.network.selector.PortSelector.SocketType.TCP;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
@@ -56,7 +56,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        deleteScripts();
+        TestTarantoolRunner.cleanup();
         shutdown();
     }
 
