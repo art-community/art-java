@@ -21,8 +21,7 @@ package io.art.core.network.selector;
 import lombok.experimental.*;
 import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.NetworkConstants.*;
-import static io.art.core.factory.TreeFactory.tree;
-import static io.art.core.factory.TreeFactory.treeOf;
+import static io.art.core.factory.TreeFactory.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
 import static java.net.InetAddress.*;
 import static java.text.MessageFormat.*;
@@ -72,14 +71,14 @@ public class PortSelector {
         return UDP.findAvailablePorts(numRequested, minPort, maxPort);
     }
 
-    enum SocketType {
+    public enum SocketType {
         TCP {
             @Override
-            protected boolean isPortAvailable(int port) {
+            public boolean isPortAvailable(int port) {
                 try {
                     getDefault().createServerSocket(port, 1, getByName(LOCALHOST)).close();
                     return true;
-                } catch (Throwable ex) {
+                } catch (Throwable throwable) {
                     return false;
                 }
             }
@@ -87,17 +86,17 @@ public class PortSelector {
 
         UDP {
             @Override
-            protected boolean isPortAvailable(int port) {
+            public boolean isPortAvailable(int port) {
                 try {
                     new DatagramSocket(port, getByName(LOCALHOST)).close();
                     return true;
-                } catch (Throwable ex) {
+                } catch (Throwable throwable) {
                     return false;
                 }
             }
         };
 
-        protected abstract boolean isPortAvailable(int port);
+        public abstract boolean isPortAvailable(int port);
 
         int findAvailablePort(int minPort, int maxPort) {
             String name = name();

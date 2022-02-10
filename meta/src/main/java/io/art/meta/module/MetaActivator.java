@@ -13,12 +13,8 @@ import java.util.function.*;
 @UtilityClass
 public class MetaActivator {
     public ModuleActivator meta() {
-        return meta(identity());
-    }
-
-    public ModuleActivator meta(UnaryOperator<MetaInitializer> initializer) {
         LazyProperty<EmptyMetaLibrary> library = lazy(() -> new EmptyMetaLibrary(new MetaLibrary[0]));
-        return module(META_MODULE_ID, () -> new MetaModule(library), () -> initializer.apply(new MetaInitializer(library)));
+        return module(META_MODULE_ID, () -> new MetaModule(library), () -> new MetaInitializer(library));
     }
 
     public ModuleActivator meta(Supplier<? extends MetaLibrary> factory) {

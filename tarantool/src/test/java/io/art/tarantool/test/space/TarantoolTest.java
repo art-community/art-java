@@ -7,6 +7,7 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
@@ -16,22 +17,29 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
+import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.factory.TarantoolTestDataFactory.*;
+import static io.art.tarantool.test.runner.TestTarantoolRunner.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.condition.OS.*;
 import java.util.*;
 
-@Disabled
+@EnabledOnOs({LINUX})
 public class TarantoolTest {
     private static TarantoolSpaceService<Integer, TestData> space;
 
     @BeforeAll
     public static void setup() {
+        runStorage();
         initialize(logging(),
                 meta(MetaTarantoolTest::new),
                 transport(),
                 tarantool(tarantool -> tarantool
-                        .storage(TestStorage.class, storage -> storage.client(client -> client.username("username").password("password")))
+                        .storage(TestStorage.class, storage -> storage.client(client -> client
+                                .port(STORAGE_PORT)
+                                .username(TEST)
+                                .password(TEST)))
                         .space(TestStorage.class, TestData.class)
                 )
         );
