@@ -356,11 +356,13 @@ local _ENV = _ENV
 package.preload[ "art.storage.index-multiple-transformer" ] = function( ... ) local arg = _G.arg;
 local transformer = {
     delete = function(space, index, keys)
-        local results = {}
-        for _, key in pairs(keys) do
-            table.insert(results, box.space[space].index[index]:delete(key))
-        end
-        return results
+        return box.atomic(function()
+            local results = {}
+            for _, key in pairs(keys) do
+                table.insert(results, box.space[space].index[index]:delete(key))
+            end
+            return results
+        end)
     end,
 }
 
@@ -392,45 +394,45 @@ local function initialize()
     box.once("art:main", function()
         for name in pairs(art.space) do
             if name ~= "multiple" and name ~= "single" then
-                box.schema.func("art.space." .. name, { if_not_exists = true })
+                box.schema.func.create("art.space." .. name, { if_not_exists = true })
             end
         end
         for name in pairs(art.space.single) do
-            box.schema.func("art.space.single." .. name, { if_not_exists = true })
+            box.schema.func.create("art.space.single." .. name, { if_not_exists = true })
         end
         for name in pairs(art.space.multiple) do
-            box.schema.func("art.space.multiple." .. name, { if_not_exists = true })
+            box.schema.func.create("art.space.multiple." .. name, { if_not_exists = true })
         end
 
         for name in pairs(art.index) do
             if name ~= "multiple" and name ~= "single" then
-                box.schema.func("art.index." .. name, { if_not_exists = true })
+                box.schema.func.create("art.index." .. name, { if_not_exists = true })
             end
         end
         for name in pairs(art.index.single) do
-            box.schema.func("art.index.single." .. name, { if_not_exists = true })
+            box.schema.func.create("art.index.single." .. name, { if_not_exists = true })
         end
         for name in pairs(art.index.multiple) do
-            box.schema.func("art.index.multiple." .. name, { if_not_exists = true })
+            box.schema.func.create("art.index.multiple." .. name, { if_not_exists = true })
         end
 
         for name in pairs(art.schema) do
-            box.schema.func("art.schema." .. name, { if_not_exists = true })
+            box.schema.func.create("art.schema." .. name, { if_not_exists = true })
         end
     end)
 
     box.once("art:main-1", function()
         for name in pairs(art.space.single) do
-            box.schema.func("art.space.single." .. name, { if_not_exists = true })
+            box.schema.func.create("art.space.single." .. name, { if_not_exists = true })
         end
         for name in pairs(art.space.multiple) do
-            box.schema.func("art.space.multiple." .. name, { if_not_exists = true })
+            box.schema.func.create("art.space.multiple." .. name, { if_not_exists = true })
         end
         for name in pairs(art.index.single) do
-            box.schema.func("art.index.single." .. name, { if_not_exists = true })
+            box.schema.func.create("art.index.single." .. name, { if_not_exists = true })
         end
         for name in pairs(art.index.multiple) do
-            box.schema.func("art.index.multiple." .. name, { if_not_exists = true })
+            box.schema.func.create("art.index.multiple." .. name, { if_not_exists = true })
         end
     end)
 end
@@ -561,19 +563,23 @@ local _ENV = _ENV
 package.preload[ "art.storage.space-multiple-transformer" ] = function( ... ) local arg = _G.arg;
 local transformer = {
     delete = function(space, keys)
-        local results = {}
-        for _, key in pairs(keys) do
-            table.insert(results, box.space[space]:delete(key))
-        end
-        return results
+        return box.atomic(function()
+            local results = {}
+            for _, key in pairs(keys) do
+                table.insert(results, box.space[space]:delete(key))
+            end
+            return results
+        end)
     end,
 
     insert = function(space, values)
-        local results = {}
-        for _, value in pairs(values) do
-            table.insert(results, box.space[space]:insert(value))
-        end
-        return results
+        return box.atomic(function()
+            local results = {}
+            for _, value in pairs(values) do
+                table.insert(results, box.space[space]:insert(value))
+            end
+            return results
+        end)
     end,
 
     put = function(space, values)
@@ -5404,7 +5410,7 @@ local function schema_init_0_1_15_0(username, password)
     }
 
     for _, name in ipairs(storage_api) do
-        box.schema.func.create(name, {setuid = true})
+        box.schema.func.create.create(name, {setuid = true})
         box.schema.user.grant(username, 'execute', 'function', name)
     end
 
@@ -5425,7 +5431,7 @@ local function schema_upgrade_to_0_1_16_0(username)
     -- functions without touching the schema.
     local func = 'vshard.storage._call'
     log.info('Create function %s()', func)
-    box.schema.func.create(func, {setuid = true})
+    box.schema.func.create.create(func, {setuid = true})
     box.schema.user.grant(username, 'execute', 'function', func)
     -- Don't drop old functions in the same version. Removal can
     -- happen only after 0.1.16. Or there should appear support of
@@ -5441,7 +5447,7 @@ local function schema_downgrade_from_0_1_16_0()
 
     local func = 'vshard.storage._call'
     log.info('Remove function %s()', func)
-    box.schema.func.drop(func, {if_exists = true})
+    box.schema.func.create.drop(func, {if_exists = true})
 end
 
 local function schema_current_version()
