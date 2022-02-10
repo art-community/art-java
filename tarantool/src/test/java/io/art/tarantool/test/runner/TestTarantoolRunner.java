@@ -45,6 +45,7 @@ public class TestTarantoolRunner {
                 DOUBLE_QUOTES + KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID)) + DOUBLE_QUOTES
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        waitCondition(() -> TCP.isPortAvailable(STORAGE_PORT));
         recursiveDelete(get(STORAGE_DIRECTORY));
     }
 }
