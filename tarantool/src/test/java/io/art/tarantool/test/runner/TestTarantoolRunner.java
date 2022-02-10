@@ -1,6 +1,7 @@
 package io.art.tarantool.test.runner;
 
 import io.art.core.exception.*;
+import io.art.logging.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
@@ -16,6 +17,7 @@ import static java.nio.file.Paths.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.*;
 
 @UtilityClass
 public class TestTarantoolRunner {
@@ -34,6 +36,7 @@ public class TestTarantoolRunner {
                 BASH_ARGUMENT,
                 DOUBLE_QUOTES + STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
         };
+        System.out.println("Executing: " + Arrays.toString(command));
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
     }
