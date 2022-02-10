@@ -20,13 +20,14 @@ import java.nio.file.*;
 public class TestTarantoolRunner {
     public static void runStorage() {
         if (!TCP.isPortAvailable(STORAGE_PORT)) return;
+        Path working = touchDirectory(get(WORKING_DIRECTORY));
         InputStream script = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
         if (isNull(script)) throw new ImpossibleSituationException();
         InputStream module = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
         if (isNull(module)) throw new ImpossibleSituationException();
-        Path scriptPath = get(STORAGE_SCRIPT).toAbsolutePath();
+        Path scriptPath = working.resolve(STORAGE_SCRIPT).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));
-        writeFile(get(MODULE_SCRIPT), toByteArray(module));
+        writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
@@ -36,7 +37,6 @@ public class TestTarantoolRunner {
     }
 
     public static void deleteScripts() {
-        recursiveDelete(get(STORAGE_SCRIPT).toAbsolutePath());
-        recursiveDelete(get(MODULE_SCRIPT).toAbsolutePath());
+        recursiveDelete(get(WORKING_DIRECTORY));
     }
 }
