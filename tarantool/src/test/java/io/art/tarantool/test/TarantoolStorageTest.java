@@ -7,7 +7,6 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.condition.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
@@ -22,10 +21,8 @@ import static io.art.tarantool.test.factory.TarantoolTestDataFactory.*;
 import static io.art.tarantool.test.runner.TestTarantoolRunner.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.condition.OS.*;
 import java.util.*;
 
-@EnabledOnOs({LINUX})
 public class TarantoolStorageTest {
     private static TarantoolSpaceService<Integer, TestData> space;
 
