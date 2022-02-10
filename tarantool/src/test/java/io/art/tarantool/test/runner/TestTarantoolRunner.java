@@ -34,4 +34,9 @@ public class TestTarantoolRunner {
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
     }
+
+    public static void deleteScripts() {
+        recursiveDelete(get(STORAGE_SCRIPT).toAbsolutePath());
+        recursiveDelete(get(MODULE_SCRIPT).toAbsolutePath());
+    }
 }
