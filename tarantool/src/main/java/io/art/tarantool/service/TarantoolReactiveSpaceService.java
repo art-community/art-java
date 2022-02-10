@@ -3,6 +3,7 @@ package io.art.tarantool.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import io.art.storage.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.storage.*;
 import lombok.*;
@@ -21,7 +22,7 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolReactiveSpaceService<KeyType, ValueType> {
+public class TarantoolReactiveSpaceService<KeyType, ValueType> implements ReactiveSpaceService<KeyType, ValueType> {
     private final Class<ValueType> spaceType;
     private final StringValue spaceName;
     private final MetaType<ValueType> spaceMeta;
@@ -38,23 +39,27 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
         reader = tarantoolModule().configuration().getReader();
     }
 
+    @Override
     public Mono<ValueType> findFirst(KeyType key) {
         ArrayValue input = wrapRequest(writer.write(definition(key.getClass()), key));
         Mono<Value> output = storage.immutable().call(SPACE_FIND_FIRST, input);
         return parseMono(output, spaceType);
     }
 
+    @Override
     @SafeVarargs
     public final Flux<ValueType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
+    @Override
     public Flux<ValueType> findAll(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
         return parseFlux(output, spaceType);
     }
 
+    @Override
     public Flux<ValueType> findAll(ImmutableCollection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
@@ -62,23 +67,27 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
     }
 
 
+    @Override
     public Mono<ValueType> delete(KeyType key) {
         ArrayValue input = wrapRequest(writer.write(definition(key.getClass()), key));
         Mono<Value> output = storage.immutable().call(SPACE_SINGLE_DELETE, input);
         return parseMono(output, spaceType);
     }
 
+    @Override
     @SafeVarargs
     public final Flux<ValueType> delete(KeyType... keys) {
         return findAll(asList(keys));
     }
 
+    @Override
     public Flux<ValueType> delete(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseFlux(output, spaceType);
     }
 
+    @Override
     public Flux<ValueType> delete(ImmutableCollection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
@@ -86,23 +95,27 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
     }
 
 
+    @Override
     public Mono<ValueType> insert(ValueType value) {
         ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.immutable().call(SPACE_SINGLE_INSERT, input);
         return parseMono(output, spaceType);
     }
 
+    @Override
     @SafeVarargs
     public final Flux<ValueType> insert(ValueType... value) {
         return insert(Arrays.asList(value));
     }
 
+    @Override
     public Flux<ValueType> insert(Collection<ValueType> value) {
         ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseFlux(output, spaceType);
     }
 
+    @Override
     public Flux<ValueType> insert(ImmutableCollection<ValueType> value) {
         ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
@@ -110,23 +123,27 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
     }
 
 
+    @Override
     public Mono<ValueType> put(ValueType value) {
         ArrayValue input = wrapRequest(writer.write(spaceMeta, value));
         Mono<Value> output = storage.immutable().call(SPACE_SINGLE_PUT, input);
         return parseMono(output, spaceType);
     }
 
+    @Override
     @SafeVarargs
     public final Flux<ValueType> put(ValueType... value) {
         return insert(Arrays.asList(value));
     }
 
+    @Override
     public Flux<ValueType> put(Collection<ValueType> value) {
         ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
         return parseFlux(output, spaceType);
     }
 
+    @Override
     public Flux<ValueType> put(ImmutableCollection<ValueType> value) {
         ArrayValue input = wrapRequest(newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
@@ -134,15 +151,18 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
     }
 
 
+    @Override
     public Mono<ValueType> replace(ValueType value) {
         return put(value);
     }
 
+    @Override
     @SafeVarargs
     public final Flux<ValueType> replace(ValueType... value) {
         return put(value);
     }
 
+    @Override
     public Flux<ValueType> replace(Collection<ValueType> value) {
         return put(value);
     }
@@ -152,18 +172,20 @@ public class TarantoolReactiveSpaceService<KeyType, ValueType> {
     }
 
 
+    @Override
     public Mono<Long> count() {
         Mono<Value> output = storage.mutable().call(SPACE_COUNT, newArray(spaceName));
         return parseMono(output, Long.class);
     }
 
+    @Override
     public Mono<Void> truncate() {
         return storage.mutable().call(SPACE_TRUNCATE).then();
     }
 
 
     private ArrayValue wrapRequest(Value data) {
-        return newArray(spaceName, data);
+        return ValueFactory.newArray(spaceName, data);
     }
 
     private <T> Mono<T> parseMono(Mono<Value> value, Class<?> type) {
