@@ -1,6 +1,7 @@
 package io.art.tarantool.test.runner;
 
 import io.art.core.exception.*;
+import io.art.core.extensions.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
@@ -21,7 +22,7 @@ import java.nio.file.*;
 public class TestTarantoolRunner {
     public static void runStorage() {
         if (!TCP.isPortAvailable(STORAGE_PORT)) return;
-        if (!exists(EXECUTABLE)) throw new TarantoolException(EXECUTABLE_NOT_FOUND);
+        if (!new File(convertToWslPath(EXECUTABLE.toAbsolutePath().toString())).exists()) throw new TarantoolException(EXECUTABLE_NOT_FOUND);
         InputStream script = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
         if (isNull(script)) throw new ImpossibleSituationException();
         InputStream module = TestTarantoolRunner.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
