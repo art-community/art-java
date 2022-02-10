@@ -30,7 +30,7 @@ public class TestTarantoolRunner {
         Path scriptPath = working.resolve(STORAGE_SCRIPT).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));
         writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
-        String executable = isWindows() ? DOUBLE_QUOTES : EMPTY_STRING +
+        String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] command = {
@@ -43,7 +43,7 @@ public class TestTarantoolRunner {
     }
 
     public static void shutdownStorage() {
-        String executable = isWindows() ? DOUBLE_QUOTES : EMPTY_STRING +
+        String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID)) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] command = {
