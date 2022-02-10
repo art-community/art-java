@@ -24,7 +24,7 @@ import java.util.*;
 public class TarantoolSchemaService {
     private final TarantoolStorage storage;
 
-    public void createSpace(TarantoolSpaceConfiguration configuration) {
+    public TarantoolSchemaService createSpace(TarantoolSpaceConfiguration configuration) {
         Map<Value, Value> options = map();
         apply(configuration.id(), value -> options.put(newString(SpaceFields.ID), newInteger(value)));
         apply(configuration.engine(), value -> options.put(newString(SpaceFields.ENGINE), newString(value.name().toLowerCase())));
@@ -37,9 +37,10 @@ public class TarantoolSchemaService {
         apply(configuration.format(), value -> options.put(newString(SpaceFields.FORMAT), writeFormat(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
         block(storage.mutable().call(SCHEMA_CREATE_SPACE, input));
+        return this;
     }
 
-    public void createIndex(TarantoolIndexConfiguration configuration) {
+    public TarantoolSchemaService createIndex(TarantoolIndexConfiguration configuration) {
         Map<Value, Value> options = map();
         apply(configuration.id(), value -> options.put(newString(IndexFields.ID), newInteger(value)));
         apply(configuration.sequence(), value -> options.put(newString(IndexFields.SEQUENCE), newString(value)));
@@ -62,26 +63,31 @@ public class TarantoolSchemaService {
         options.put(newString(IndexFields.PARTS), newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
         ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
         block(storage.mutable().call(SCHEMA_CREATE_INDEX, input));
+        return this;
     }
 
-    public void formatSpace(String space, TarantoolFormatConfiguration configuration) {
+    public TarantoolSchemaService formatSpace(String space, TarantoolFormatConfiguration configuration) {
         ArrayValue input = newArray(newString(space), writeFormat(configuration));
         block(storage.mutable().call(SCHEMA_FORMAT, input));
+        return this;
     }
 
-    public void renameSpace(String from, String to) {
+    public TarantoolSchemaService renameSpace(String from, String to) {
         ArrayValue input = newArray(newString(from), newString(to));
         block(storage.mutable().call(SCHEMA_RENAME_SPACE, input));
+        return this;
     }
 
-    public void dropSpace(String name) {
+    public TarantoolSchemaService dropSpace(String name) {
         ArrayValue input = newArray(newString(name));
         block(storage.mutable().call(SCHEMA_DROP_SPACE, input));
+        return this;
     }
 
-    public void dropIndex(String spaceName, String indexName) {
+    public TarantoolSchemaService dropIndex(String spaceName, String indexName) {
         ArrayValue input = newArray(newString(spaceName), newString(indexName));
         block(storage.mutable().call(SCHEMA_DROP_INDEX, input));
+        return this;
     }
 
     public ImmutableArray<String> spaces() {

@@ -41,16 +41,17 @@ public class TarantoolStorageTest {
                 )
         );
         space = Tarantool.tarantool().space(TestData.class);
-        TarantoolSchemaService schema = Tarantool.tarantool().schema(TestStorage.class);
-        schema.createSpace(spaceFor(TestData.class).ifNotExists(true).build());
-        schema.createIndex(indexFor(TestData.class, MetaTestDataClass::idField)
-                .ifNotExists(true)
-                .unique(true)
-                .part(TarantoolIndexPartConfiguration.builder()
-                        .field(1)
-                        .type(UNSIGNED)
-                        .build())
-                .build());
+        Tarantool.tarantool()
+                .schema(TestStorage.class)
+                .createSpace(spaceFor(TestData.class).ifNotExists(true).build())
+                .createIndex(indexFor(TestData.class, MetaTestDataClass::idField)
+                        .ifNotExists(true)
+                        .unique(true)
+                        .part(TarantoolIndexPartConfiguration.builder()
+                                .field(1)
+                                .type(UNSIGNED)
+                                .build())
+                        .build());
     }
 
     @AfterAll
