@@ -1,4 +1,4 @@
-package io.art.tarantool.test.space;
+package io.art.tarantool.test;
 
 import io.art.tarantool.*;
 import io.art.tarantool.model.*;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.condition.OS.*;
 import java.util.*;
 
 @EnabledOnOs({LINUX})
-public class TarantoolTest {
+public class TarantoolStorageTest {
     private static TarantoolSpaceService<Integer, TestData> space;
 
     @BeforeAll
@@ -38,8 +38,8 @@ public class TarantoolTest {
                 tarantool(tarantool -> tarantool
                         .storage(TestStorage.class, storage -> storage.client(client -> client
                                 .port(STORAGE_PORT)
-                                .username(TEST)
-                                .password(TEST)))
+                                .username(USERNAME)
+                                .password(PASSWORD)))
                         .space(TestStorage.class, TestData.class)
                 )
         );
