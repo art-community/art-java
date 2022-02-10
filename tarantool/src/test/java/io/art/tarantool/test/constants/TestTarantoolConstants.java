@@ -4,7 +4,7 @@ import static io.art.core.converter.WslPathConverter.*;
 
 public interface TestTarantoolConstants {
     String STORAGE_DIRECTORY = "test-storage";
-    String STORAGE_COMMAND = "cd " + convertToWslPath(STORAGE_DIRECTORY) + " && /usr/bin/tarantool";
+    String STORAGE_COMMAND = "cd " + convertToWslPath(STORAGE_DIRECTORY) + " && tarantool";
     String STORAGE_PID = "test-storage.pid";
     String KILL_COMMAND = "kill -9 ";
     String BASH = "bash";
