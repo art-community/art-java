@@ -29,7 +29,7 @@ import java.util.function.*;
 @Public
 public class HttpDefaultCommunicator {
     private final static LazyProperty<MetaHttpBuiltinCommunicatorClass> communicatorClass = lazy(() -> declaration(HttpBuiltinCommunicator.class));
-    private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator();
+    private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator().input(BYTES).output(BYTES);
     private final Property<CommunicatorProxy<HttpBuiltinCommunicator>> proxy = property(this::createCommunicator);
     private HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
 
@@ -212,9 +212,7 @@ public class HttpDefaultCommunicator {
     }
 
     private CommunicatorProxy<HttpBuiltinCommunicator> createCommunicator() {
-        CommunicatorProxy<HttpBuiltinCommunicator> proxy = communicatorProxy(communicatorClass.get(), () -> createDefaultHttpCommunication(connector.build()));
-        proxy.getCommunicator().input(BYTES).output(BYTES);
-        return proxy;
+        return communicatorProxy(communicatorClass.get(), () -> createDefaultHttpCommunication(connector.build()));
     }
 
     private void refreshCommunicator() {

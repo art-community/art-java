@@ -104,25 +104,25 @@ public class HttpCommunication implements Communication {
     }
 
     private Function<Flux<Object>, Flux<Object>> communication() {
-        TransportPayloadReader reader = transportPayloadReader(connectorConfiguration.getInputDataFormat());
-        TransportPayloadWriter writer = transportPayloadWriter(connectorConfiguration.getOutputDataFormat());
-        return input -> communicate(reader, writer, input);
+        return this::communication;
     }
 
-    private Flux<Object> communicate(TransportPayloadReader reader, TransportPayloadWriter writer, Flux<Object> input) {
+    private Flux<Object> communication(Flux<Object> input) {
         UnaryOperator<HttpCommunicationDecorator> communicationDecorator = connectorConfiguration.getCommunicationDecorator();
-        ProcessingConfiguration.ProcessingConfigurationBuilder builder = ProcessingConfiguration.builder()
-                .reader(reader)
-                .writer(writer)
-                .input(input);
+        ProcessingConfiguration.ProcessingConfigurationBuilder builder = ProcessingConfiguration.builder().input(input);
         return communication(builder, communicationDecorator.apply(orElse(HttpCommunication.decorator.get(), HttpCommunicationDecorator::new)));
     }
 
     private Flux<Object> communication(ProcessingConfiguration.ProcessingConfigurationBuilder builder, HttpCommunicationDecorator decorator) {
         HttpCommunication.decorator.remove();
 
-        apply(decorator.getInputDataFormat(), input -> builder.reader(transportPayloadReader(input)));
-        apply(decorator.getOutputDataFormat(), output -> builder.writer(transportPayloadWriter(output)));
+        builder.reader(nonNull(decorator.getInputDataFormat())
+                ? transportPayloadReader(decorator.getInputDataFormat())
+                : transportPayloadReader(connectorConfiguration.getInputDataFormat()));
+
+        builder.writer(nonNull(decorator.getOutputDataFormat())
+                ? transportPayloadWriter(decorator.getOutputDataFormat())
+                : transportPayloadWriter(connectorConfiguration.getOutputDataFormat()));
 
         builder.route(orElse(decorator.getRoute(), extractRouteType(action.getMethod())));
         HttpClient client = orElse(decorator.getClient(), UnaryOperator.<HttpClient>identity()).apply(this.client.get());
