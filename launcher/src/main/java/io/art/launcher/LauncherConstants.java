@@ -19,10 +19,6 @@
 package io.art.launcher;
 
 public interface LauncherConstants {
-    interface Errors {
-        String MODULES_ALREADY_LAUNCHED = "Modules already launched";
-    }
-
-    String DEFAULT_CONFIGURATION = "Configurator not activated. Using default configurations";
+    String DEFAULT_CONFIGURATION = "Configurator has not activated. Using default configurations";
     String LAUNCHER_LOGGER = "launcher";
 }
