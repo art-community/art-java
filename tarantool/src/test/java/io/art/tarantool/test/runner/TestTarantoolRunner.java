@@ -1,11 +1,9 @@
 package io.art.tarantool.test.runner;
 
-import io.art.core.constants.*;
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
-import static io.art.core.constants.StringConstants.DOUBLE_QUOTES;
-import static io.art.core.constants.StringConstants.SPACE;
+import static io.art.core.constants.StringConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
@@ -31,6 +29,11 @@ public class TestTarantoolRunner {
         Path scriptPath = get(STORAGE_SCRIPT).toAbsolutePath();
         writeFile(convertToWslPath(scriptPath.toString()), toByteArray(script));
         writeFile(convertToWslPath(get(MODULE_SCRIPT).toAbsolutePath().toString()), toByteArray(module));
-        wrapExceptionCall(() -> getRuntime().exec(new String[]{BASH, BASH_ARGUMENT, DOUBLE_QUOTES + EXECUTABLE + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES}), TarantoolException::new);
+        String[] command = {
+                BASH,
+                BASH_ARGUMENT,
+                DOUBLE_QUOTES + EXECUTABLE + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
+        };
+        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
     }
 }
