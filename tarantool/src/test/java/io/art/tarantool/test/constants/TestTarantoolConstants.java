@@ -8,7 +8,7 @@ public interface TestTarantoolConstants {
     String STORAGE_COMMAND = "cd " + convertToWslPath(STORAGE_DIRECTORY) + " && /usr/bin/tarantool";
     String STORAGE_PID = "test-storage.pid";
     String KILL_COMMAND = "kill -9 ";
-    String BASH = isWindows() ? "bash" : "/usr/bin/bash";
+    String BASH = isWindows() ? "bash" : "/bin/bash";
     String BASH_ARGUMENT = "-c";
     String STORAGE_SCRIPT = "test-storage.lua";
     int STORAGE_PORT = 3301;
