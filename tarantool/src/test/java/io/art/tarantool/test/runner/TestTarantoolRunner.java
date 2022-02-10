@@ -38,7 +38,7 @@ public class TestTarantoolRunner {
         waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
     }
 
-    public static void cleanup() {
+    public static void shutdownStorage() {
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,

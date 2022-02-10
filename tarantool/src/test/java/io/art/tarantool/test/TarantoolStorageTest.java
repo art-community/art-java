@@ -56,7 +56,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        TestTarantoolRunner.cleanup();
+        TestTarantoolRunner.shutdownStorage();
         shutdown();
     }
 
