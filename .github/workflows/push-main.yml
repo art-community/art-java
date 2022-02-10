@@ -17,12 +17,15 @@ jobs:
         uses: Vampire/setup-wsl@v1
         with:
           distribution: Ubuntu-20.04
+          additional-packages:
+            aptitude
+            sudo
 
       - if: runner.os == 'Windows'
         name: Initialize the tarantool on WSL
         run: |
           bash -c "curl -L https://tarantool.io/KKkJBXq/release/2.8/installer.sh | bash"
-          bash -c "apt-get -y install tarantool"
+          bash -c "aptitude -y install tarantool"
 
       - if: runner.os == 'Linux'
         uses: tarantool/setup-tarantool@v1
