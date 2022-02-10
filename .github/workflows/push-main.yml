@@ -12,6 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+
       - if: runner.os == 'Windows'
         uses: Vampire/setup-wsl@v1
         with:
@@ -19,9 +20,9 @@ jobs:
 
       - if: runner.os == 'Windows'
         name: Initialize tarantool to WSL
-        run:
-          - wsl-bash curl -L https://tarantool.io/KKkJBXq/release/2.8/installer.sh | bash
-            wsl-bash apt-get -y install tarantool
+        run: |
+          wsl-bash curl -L https://tarantool.io/KKkJBXq/release/2.8/installer.sh | bash
+          wsl-bash apt-get -y install tarantool
 
       - if: runner.os == 'Linux'
         uses: tarantool/setup-tarantool@v1
@@ -37,6 +38,7 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew clean build --max-workers 8 --parallel
+
   gradle-publish:
     strategy:
       matrix:
