@@ -1,8 +1,8 @@
 package io.art.tarantool.test;
 
+import io.art.storage.*;
 import io.art.tarantool.*;
 import io.art.tarantool.model.*;
-import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 public class TarantoolStorageTest {
-    private static TarantoolSpaceService<Integer, TestData> space;
+    private static SpaceService<Integer, TestData> space;
 
     @BeforeAll
     public static void setup() {

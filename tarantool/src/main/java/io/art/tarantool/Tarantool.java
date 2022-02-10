@@ -24,7 +24,7 @@ public class Tarantool {
     @Public
     @NoArgsConstructor(access = PRIVATE)
     public static class TarantoolProvider {
-        public <KeyType, ValueType> TarantoolSpaceService<KeyType, ValueType> space(Class<ValueType> type) {
+        public <KeyType, ValueType> SpaceService<KeyType, ValueType> space(Class<ValueType> type) {
             return tarantoolModule().configuration().getServices().getSpace(type);
         }
 
