@@ -1,6 +1,7 @@
 package io.art.tarantool.test.runner;
 
 import io.art.core.exception.*;
+import io.art.core.extensions.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
@@ -34,7 +35,7 @@ public class TestTarantoolRunner {
                 BASH_ARGUMENT,
                 DOUBLE_QUOTES + STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
         };
-        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        ignoreException(() -> System.out.println(InputStreamExtensions.toString(getRuntime().exec(command).getErrorStream())), TarantoolException::new);
         waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
     }
 
