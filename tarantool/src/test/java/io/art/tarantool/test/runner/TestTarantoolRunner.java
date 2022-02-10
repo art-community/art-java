@@ -8,6 +8,7 @@ import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
+import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
@@ -34,6 +35,7 @@ public class TestTarantoolRunner {
                 DOUBLE_QUOTES + STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) + DOUBLE_QUOTES
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
     }
 
     public static void cleanup() {
