@@ -19,7 +19,7 @@ jobs:
           distribution: Ubuntu-20.04
 
       - if: runner.os == 'Windows'
-        name: Initialize tarantool to WSL
+        name: Initialize the tarantool on WSL
         run: |
           wsl-bash curl -L https://tarantool.io/KKkJBXq/release/2.8/installer.sh | bash
           wsl-bash apt-get -y install tarantool
