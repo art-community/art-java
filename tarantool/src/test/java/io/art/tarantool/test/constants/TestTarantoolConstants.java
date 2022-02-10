@@ -1,9 +1,6 @@
 package io.art.tarantool.test.constants;
 
-import java.nio.file.*;
-
 public interface TestTarantoolConstants {
-    Path EXECUTABLE = Paths.get("/usr/bin/tarantool");
     String BASH = "bash";
     String BASH_ARGUMENT = "-c";
     String WRONG_ENVIRONMENT = "Tarantool supports only Linux and OSX";
