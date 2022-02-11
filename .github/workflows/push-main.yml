@@ -29,7 +29,7 @@ jobs:
         name: Initialize the tarantool on WSL
         run: |
           wsl --distribution Ubuntu bash -c "curl -L https://tarantool.io/KKkJBXq/release/2.8/installer.sh | bash"
-          wsl --distribution Ubuntu bash -c "aptitude -y install tarantool"
+          wsl --distribution Ubuntu bash -c "sudo apt-get -y install tarantool"
 
       - if: runner.os == 'Linux'
         uses: tarantool/setup-tarantool@v1
