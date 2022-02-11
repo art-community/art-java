@@ -17,4 +17,5 @@ public interface CompilerSuppressingWarnings {
     String FINAL_FIELD = "FieldMayBeFinal";
     String SUN_API = "sunapi";
     String CALLING_SUBSCRIBE_IN_NON_BLOCKING_SCOPE = "CallingSubscribeInNonBlockingScope";
+    String VARARGS = "varargs";
 }

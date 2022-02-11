@@ -2,13 +2,18 @@ package io.art.storage;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface IndexService<KeyType, ValueType> {
     ValueType findFirst(KeyType key);
 
-    ImmutableArray<ValueType> findAll(KeyType... keys);
+    default ImmutableArray<ValueType> findAll(KeyType... keys) {
+        return findAll(asList(keys));
+    }
 
     ImmutableArray<ValueType> findAll(Collection<KeyType> keys);
 

@@ -15,7 +15,6 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
-import static java.util.Arrays.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -47,12 +46,6 @@ public class TarantoolReactiveIndexService<KeyType, ValueType> implements Reacti
     }
 
     @Override
-    @SafeVarargs
-    public final Flux<ValueType> findAll(KeyType... keys) {
-        return findAll(asList(keys));
-    }
-
-    @Override
     public Flux<ValueType> findAll(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(definition(key.getClass()), key)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
@@ -66,18 +59,11 @@ public class TarantoolReactiveIndexService<KeyType, ValueType> implements Reacti
         return parseFlux(output, spaceType);
     }
 
-
     @Override
     public Mono<ValueType> delete(KeyType key) {
         ArrayValue input = wrapRequest(writer.write(definition(key.getClass()), key));
         Mono<Value> output = storage.immutable().call(SPACE_SINGLE_DELETE, input);
         return parseMono(output, spaceType);
-    }
-
-    @Override
-    @SafeVarargs
-    public final Flux<ValueType> delete(KeyType... keys) {
-        return findAll(asList(keys));
     }
 
     @Override
@@ -93,7 +79,6 @@ public class TarantoolReactiveIndexService<KeyType, ValueType> implements Reacti
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseFlux(output, spaceType);
     }
-
 
     @Override
     public Mono<Long> count() {

@@ -3,13 +3,18 @@ package io.art.storage;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface ReactiveIndexService<KeyType, ValueType> {
     Mono<ValueType> findFirst(KeyType key);
 
-    Flux<ValueType> findAll(KeyType... keys);
+    default Flux<ValueType> findAll(KeyType... keys) {
+        return findAll(asList(keys));
+    }
 
     Flux<ValueType> findAll(Collection<KeyType> keys);
 
@@ -17,7 +22,9 @@ public interface ReactiveIndexService<KeyType, ValueType> {
 
     Mono<ValueType> delete(KeyType key);
 
-    Flux<ValueType> delete(KeyType... keys);
+    default Flux<ValueType> delete(KeyType... keys) {
+        return findAll(asList(keys));
+    }
 
     Flux<ValueType> delete(Collection<KeyType> keys);
 

@@ -2,13 +2,19 @@ package io.art.storage;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface SpaceService<KeyType, ValueType> {
     ValueType findFirst(KeyType key);
 
-    ImmutableArray<ValueType> findAll(KeyType... keys);
+
+    default ImmutableArray<ValueType> findAll(KeyType... keys) {
+        return findAll(asList(keys));
+    }
 
     ImmutableArray<ValueType> findAll(Collection<KeyType> keys);
 
@@ -16,7 +22,9 @@ public interface SpaceService<KeyType, ValueType> {
 
     ValueType delete(KeyType key);
 
-    ImmutableArray<ValueType> delete(KeyType... keys);
+    default ImmutableArray<ValueType> delete(KeyType... keys) {
+        return delete(asList(keys));
+    }
 
     ImmutableArray<ValueType> delete(Collection<KeyType> keys);
 
@@ -28,7 +36,9 @@ public interface SpaceService<KeyType, ValueType> {
 
     ValueType insert(ValueType value);
 
-    ImmutableArray<ValueType> insert(ValueType... value);
+    default ImmutableArray<ValueType> insert(ValueType... value) {
+        return insert(asList(value));
+    }
 
     ImmutableArray<ValueType> insert(Collection<ValueType> value);
 
@@ -41,14 +51,6 @@ public interface SpaceService<KeyType, ValueType> {
     ImmutableArray<ValueType> put(Collection<ValueType> value);
 
     ImmutableArray<ValueType> put(ImmutableCollection<ValueType> value);
-
-    ValueType replace(ValueType value);
-
-    ImmutableArray<ValueType> replace(ValueType... value);
-
-    ImmutableArray<ValueType> replace(Collection<ValueType> value);
-
-    ImmutableArray<ValueType> replace(ImmutableCollection<ValueType> value);
 
     ReactiveSpaceService<KeyType, ValueType> reactive();
 }

@@ -8,7 +8,6 @@ import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
@@ -26,12 +25,6 @@ public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<K
     }
 
     @Override
-    @SafeVarargs
-    public final ImmutableArray<ValueType> findAll(KeyType... keys) {
-        return findAll(asList(keys));
-    }
-
-    @Override
     public ImmutableArray<ValueType> findAll(Collection<KeyType> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
@@ -45,12 +38,6 @@ public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<K
     @Override
     public ValueType delete(KeyType key) {
         return block(reactive.delete(key));
-    }
-
-    @Override
-    @SafeVarargs
-    public final ImmutableArray<ValueType> delete(KeyType... keys) {
-        return delete(asList(keys));
     }
 
     @Override
@@ -78,12 +65,6 @@ public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<K
     @Override
     public ValueType insert(ValueType value) {
         return block(reactive.insert(value));
-    }
-
-    @Override
-    @SafeVarargs
-    public final ImmutableArray<ValueType> insert(ValueType... value) {
-        return reactive.insert(value).toStream().collect(immutableArrayCollector());
     }
 
     @Override
@@ -115,28 +96,6 @@ public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<K
 
     @Override
     public ImmutableArray<ValueType> put(ImmutableCollection<ValueType> value) {
-        return reactive.put(value).toStream().collect(immutableArrayCollector());
-    }
-
-
-    @Override
-    public ValueType replace(ValueType value) {
-        return block(reactive.put(value));
-    }
-
-    @Override
-    @SafeVarargs
-    public final ImmutableArray<ValueType> replace(ValueType... value) {
-        return reactive.put(value).toStream().collect(immutableArrayCollector());
-    }
-
-    @Override
-    public ImmutableArray<ValueType> replace(Collection<ValueType> value) {
-        return reactive.put(value).toStream().collect(immutableArrayCollector());
-    }
-
-    @Override
-    public ImmutableArray<ValueType> replace(ImmutableCollection<ValueType> value) {
         return reactive.put(value).toStream().collect(immutableArrayCollector());
     }
 

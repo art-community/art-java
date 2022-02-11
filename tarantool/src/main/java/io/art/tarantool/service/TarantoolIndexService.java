@@ -26,12 +26,6 @@ public class TarantoolIndexService<KeyType, ValueType> implements IndexService<K
     }
 
     @Override
-    @SafeVarargs
-    public final ImmutableArray<ValueType> findAll(KeyType... keys) {
-        return findAll(asList(keys));
-    }
-
-    @Override
     public ImmutableArray<ValueType> findAll(Collection<KeyType> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }

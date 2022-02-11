@@ -3,13 +3,18 @@ package io.art.storage;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface ReactiveSpaceService<KeyType, ValueType> {
     Mono<ValueType> findFirst(KeyType key);
 
-    Flux<ValueType> findAll(KeyType... keys);
+    default Flux<ValueType> findAll(KeyType... keys) {
+        return findAll(asList(keys));
+    }
 
     Flux<ValueType> findAll(Collection<KeyType> keys);
 
@@ -17,7 +22,9 @@ public interface ReactiveSpaceService<KeyType, ValueType> {
 
     Mono<ValueType> delete(KeyType key);
 
-    Flux<ValueType> delete(KeyType... keys);
+    default Flux<ValueType> delete(KeyType... keys) {
+        return delete(asList(keys));
+    }
 
     Flux<ValueType> delete(Collection<KeyType> keys);
 
@@ -25,7 +32,9 @@ public interface ReactiveSpaceService<KeyType, ValueType> {
 
     Mono<ValueType> insert(ValueType value);
 
-    Flux<ValueType> insert(ValueType... value);
+    default Flux<ValueType> insert(ValueType... value) {
+        return insert(Arrays.asList(value));
+    }
 
     Flux<ValueType> insert(Collection<ValueType> value);
 
@@ -33,17 +42,13 @@ public interface ReactiveSpaceService<KeyType, ValueType> {
 
     Mono<ValueType> put(ValueType value);
 
-    Flux<ValueType> put(ValueType... value);
+    default Flux<ValueType> put(ValueType... value) {
+        return insert(Arrays.asList(value));
+    }
 
     Flux<ValueType> put(Collection<ValueType> value);
 
     Flux<ValueType> put(ImmutableCollection<ValueType> value);
-
-    Mono<ValueType> replace(ValueType value);
-
-    Flux<ValueType> replace(ValueType... value);
-
-    Flux<ValueType> replace(Collection<ValueType> value);
 
     Mono<Long> count();
 
