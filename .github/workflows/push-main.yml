@@ -29,8 +29,8 @@ jobs:
       - if: runner.os == 'Windows'
         name: Initialize the tarantool on WSL
         run: |
-          wsl --distribution Ubuntu bash -c "curl -L https://tarantool.io/KKkJBXq/release/${{ matrix.tarantool }}/installer.sh | bash"
-          wsl --distribution Ubuntu bash -c "sudo apt-get -y install tarantool"
+          wsl bash -c "curl -L https://tarantool.io/KKkJBXq/release/${{ matrix.tarantool }}/installer.sh | bash"
+          wsl bash -c "sudo apt-get -y install tarantool"
 
       - if: runner.os == 'Linux'
         uses: tarantool/setup-tarantool@v1
