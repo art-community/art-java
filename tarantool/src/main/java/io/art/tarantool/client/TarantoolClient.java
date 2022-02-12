@@ -2,9 +2,9 @@ package io.art.tarantool.client;
 
 import io.art.core.property.*;
 import io.art.logging.logger.*;
-import io.art.tarantool.aggregrator.*;
 import io.art.tarantool.authenticator.*;
 import io.art.tarantool.configuration.*;
+import io.art.tarantool.decoder.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.registry.*;
@@ -16,6 +16,7 @@ import reactor.core.*;
 import reactor.core.publisher.*;
 import reactor.netty.*;
 import reactor.netty.tcp.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.property.LazyProperty.*;
@@ -23,7 +24,6 @@ import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
-import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
 import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.*;
@@ -104,8 +104,7 @@ public class TarantoolClient {
         }
     }
 
-    private void receive(ByteBuf bytes) {
-        TarantoolResponse response = readTarantoolResponseContent(bytes, bytes.readableBytes());
+    private void receive(TarantoolResponse response) {
         TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId());
         if (isNull(receiver)) return;
         One<Value> sink = receiver.getSink();
@@ -134,8 +133,6 @@ public class TarantoolClient {
                     .host(configuration.getHost())
                     .port(configuration.getPort())
                     .option(CONNECT_TIMEOUT_MILLIS, (int) configuration.getConnectionTimeout().toMillis())
-                    .option(AUTO_READ, false)
-                    .option(ALLOW_HALF_CLOSURE, false)
                     .connect()
                     .subscribe(this::setup);
         }
@@ -146,11 +143,11 @@ public class TarantoolClient {
             connection.markPersistent(true);
             connection
                     .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
-                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
+                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate))
+                    .addHandlerLast(new TarantoolResponseDecoder());
             connection.inbound()
-                    .receive()
-                    .transform(TarantoolResponseAggregator::new)
-                    .doOnNext(this::receive)
+                    .receiveObject()
+                    .doOnNext(object -> receive(cast(object)))
                     .doOnError(error -> withLogging(() -> logger.get().error(error)))
                     .subscribe();
             connection.outbound()

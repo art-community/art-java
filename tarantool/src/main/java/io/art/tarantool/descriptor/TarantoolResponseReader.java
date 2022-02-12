@@ -26,6 +26,7 @@ public class TarantoolResponseReader {
                 response = unpacker.hasNext()
                         ? new TarantoolResponse(tarantoolHeader, code != IPROTO_OK, unpacker.unpackValue())
                         : new TarantoolResponse(tarantoolHeader, code != IPROTO_OK);
+                unpacker.close();
             }
             bodyBuffer.release();
             return response;
@@ -40,6 +41,7 @@ public class TarantoolResponseReader {
         try (ByteBufInputStream inputStream = new ByteBufInputStream(sizeBuffer)) {
             MessageUnpacker unpacker = newDefaultUnpacker(inputStream);
             size = unpacker.unpackInt();
+            unpacker.close();
         } catch (Throwable throwable) {
             throw new TarantoolException(throwable);
         }
