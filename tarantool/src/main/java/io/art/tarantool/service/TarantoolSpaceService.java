@@ -83,11 +83,6 @@ public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<K
         return block(reactive.put(value));
     }
 
-    @Override
-    @SafeVarargs
-    public final ImmutableArray<ValueType> put(ValueType... value) {
-        return reactive.put(value).toStream().collect(immutableArrayCollector());
-    }
 
     @Override
     public ImmutableArray<ValueType> put(Collection<ValueType> value) {

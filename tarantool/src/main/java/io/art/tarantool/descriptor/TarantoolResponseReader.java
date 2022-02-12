@@ -13,34 +13,37 @@ import java.util.*;
 
 @UtilityClass
 public class TarantoolResponseReader {
-    public static TarantoolResponse readTarantoolResponse(ByteBuf bytes) {
+    public static TarantoolResponse readTarantoolResponseContent(ByteBuf bytes, int size) {
         try {
-            ByteBuf sizeBuffer = bytes.readBytes(MINIMAL_HEADER_SIZE);
-            int size;
-            try (ByteBufInputStream inputStream = new ByteBufInputStream(sizeBuffer)) {
+            ByteBuf bodyBuffer = bytes.readBytes(size);
+            TarantoolResponse response;
+            try (ByteBufInputStream inputStream = new ByteBufInputStream(bodyBuffer)) {
                 MessageUnpacker unpacker = newDefaultUnpacker(inputStream);
-                size = unpacker.unpackInt();
+                Map<Value, Value> header = unpacker.unpackValue().asMapValue().map();
+                int syncId = header.get(newInteger(IPROTO_SYNC)).asIntegerValue().asInt();
+                long code = header.get(newInteger(IPROTO_CODE)).asIntegerValue().asLong();
+                TarantoolHeader tarantoolHeader = new TarantoolHeader(syncId, code);
+                response = unpacker.hasNext()
+                        ? new TarantoolResponse(tarantoolHeader, code != IPROTO_OK, unpacker.unpackValue())
+                        : new TarantoolResponse(tarantoolHeader, code != IPROTO_OK);
             }
-            sizeBuffer.release();
-            if (size > 0) {
-                ByteBuf bodyBuffer = bytes.readBytes(size);
-                TarantoolResponse response;
-                try (ByteBufInputStream inputStream = new ByteBufInputStream(bodyBuffer)) {
-                    MessageUnpacker unpacker = newDefaultUnpacker(inputStream);
-                    Map<Value, Value> header = unpacker.unpackValue().asMapValue().map();
-                    int syncId = header.get(newInteger(IPROTO_SYNC)).asIntegerValue().asInt();
-                    long code = header.get(newInteger(IPROTO_CODE)).asIntegerValue().asLong();
-                    TarantoolHeader tarantoolHeader = new TarantoolHeader(syncId, code);
-                    response = unpacker.hasNext()
-                            ? new TarantoolResponse(tarantoolHeader, code != IPROTO_OK, unpacker.unpackValue())
-                            : new TarantoolResponse(tarantoolHeader, code != IPROTO_OK);
-                }
-                bodyBuffer.release();
-                return response;
-            }
-            throw new TarantoolException("");
+            bodyBuffer.release();
+            return response;
         } catch (Throwable throwable) {
             throw new TarantoolException(throwable);
         }
+    }
+
+    public static int readTarantoolResponseSize(ByteBuf bytes) {
+        ByteBuf sizeBuffer = bytes.readBytes(SIZE_BYTES);
+        int size;
+        try (ByteBufInputStream inputStream = new ByteBufInputStream(sizeBuffer)) {
+            MessageUnpacker unpacker = newDefaultUnpacker(inputStream);
+            size = unpacker.unpackInt();
+        } catch (Throwable throwable) {
+            throw new TarantoolException(throwable);
+        }
+        sizeBuffer.release();
+        return size;
     }
 }

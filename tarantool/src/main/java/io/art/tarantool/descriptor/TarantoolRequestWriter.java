@@ -27,7 +27,7 @@ public class TarantoolRequestWriter {
             packer.packValue(body);
             ByteBuf buffer = allocateWriteBuffer(transportModule().configuration());
             long outputSize = packer.getTotalWrittenBytes();
-            buffer.capacity((int) (outputSize + MINIMAL_HEADER_SIZE));
+            buffer.capacity((int) (outputSize + SIZE_BYTES));
             byte[] output = packer.toByteArray();
             packer.clear();
             packer.packLong(outputSize);

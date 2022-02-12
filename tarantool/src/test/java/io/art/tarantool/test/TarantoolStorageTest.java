@@ -1,50 +1,47 @@
 package io.art.tarantool.test;
 
+import io.art.meta.test.*;
+import io.art.meta.test.meta.*;
+import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.*;
 import io.art.tarantool.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.test.meta.*;
-import io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
-import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.factory.TarantoolTestDataFactory.*;
-import static io.art.tarantool.test.runner.TestTarantoolRunner.*;
+import static io.art.tarantool.test.storage.TestTarantoolStorage.*;
 import static io.art.transport.module.TransportActivator.*;
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.*;
 
 public class TarantoolStorageTest {
-    private static SpaceService<Integer, TestData> space;
-
     @BeforeAll
     public static void setup() {
-        runStorage();
+        initializeStorage();
         initialize(logging(),
-                meta(MetaTarantoolTest::new),
+                meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
                 transport(),
                 tarantool(tarantool -> tarantool
                         .storage(TestStorage.class, storage -> storage.client(client -> client
                                 .port(STORAGE_PORT)
                                 .username(USERNAME)
+                                .logging(true)
                                 .password(PASSWORD)))
-                        .space(TestStorage.class, TestData.class)
+                        .space(TestStorage.class, TestingMetaModel.class)
                 )
         );
-        space = Tarantool.tarantool().space(TestData.class);
         Tarantool.tarantool()
                 .schema(TestStorage.class)
-                .createSpace(spaceFor(TestData.class).ifNotExists(true).build())
-                .createIndex(indexFor(TestData.class, MetaTestDataClass::idField)
+                .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
+                .createIndex(indexFor(TestingMetaModel.class, MetaTestingMetaModelClass::f1Field)
                         .ifNotExists(true)
                         .unique(true)
                         .part(TarantoolIndexPartConfiguration.builder()
@@ -52,6 +49,7 @@ public class TarantoolStorageTest {
                                 .type(UNSIGNED)
                                 .build())
                         .build());
+        System.out.println(Tarantool.tarantool().space(TestingMetaModel.class).count());
     }
 
     @AfterAll
@@ -62,21 +60,18 @@ public class TarantoolStorageTest {
 
     @Test
     public void testSinglePut() {
-        TestData data = testData(1);
-        assertEquals(data, space.put(data));
+        TestingMetaModel data = generateTestingModel();
+        data.assertEquals(space().put(data));
     }
 
     @Test
     public void testFindFirst() {
-        TestData data = testData(1);
-        space.put(data);
-        assertEquals(data, space.findFirst(1));
+        TestingMetaModel data = generateTestingModel();
+        space().put(data);
+        data.assertEquals(space().findFirst(1));
     }
 
-    @Test
-    public void testFindAll() {
-        List<TestData> data = fixedArrayOf(testData(2), testData(3), testData(4));
-        space.put(data);
-        assertEquals(data, space.findAll(2, 3, 4).toMutable());
+    private static SpaceService<Integer, TestingMetaModel> space() {
+        return Tarantool.tarantool().space(TestingMetaModel.class);
     }
 }

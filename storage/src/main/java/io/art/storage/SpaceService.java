@@ -11,7 +11,6 @@ import java.util.*;
 public interface SpaceService<KeyType, ValueType> {
     ValueType findFirst(KeyType key);
 
-
     default ImmutableArray<ValueType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
@@ -22,6 +21,7 @@ public interface SpaceService<KeyType, ValueType> {
 
     ValueType delete(KeyType key);
 
+
     default ImmutableArray<ValueType> delete(KeyType... keys) {
         return delete(asList(keys));
     }
@@ -30,9 +30,12 @@ public interface SpaceService<KeyType, ValueType> {
 
     ImmutableArray<ValueType> delete(ImmutableCollection<KeyType> keys);
 
+
     long count();
 
+
     void truncate();
+
 
     ValueType insert(ValueType value);
 
@@ -44,13 +47,17 @@ public interface SpaceService<KeyType, ValueType> {
 
     ImmutableArray<ValueType> insert(ImmutableCollection<ValueType> value);
 
+
     ValueType put(ValueType value);
 
-    ImmutableArray<ValueType> put(ValueType... value);
+    default ImmutableArray<ValueType> put(ValueType... value) {
+        return put(Arrays.asList(value));
+    }
 
     ImmutableArray<ValueType> put(Collection<ValueType> value);
 
     ImmutableArray<ValueType> put(ImmutableCollection<ValueType> value);
+
 
     ReactiveSpaceService<KeyType, ValueType> reactive();
 }

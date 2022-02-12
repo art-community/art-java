@@ -1,5 +1,6 @@
 package io.art.tarantool.client;
 
+import io.art.core.extensions.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
@@ -17,6 +18,7 @@ import reactor.netty.*;
 import reactor.netty.tcp.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
+import static io.art.core.extensions.NettyBufferExtensions.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.logging.Logging.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
@@ -24,9 +26,12 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.descriptor.TarantoolResponseReader.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
+import static io.art.transport.allocator.WriteBufferAllocator.*;
+import static io.art.transport.module.TransportModule.*;
 import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
+import static reactor.core.publisher.Flux.*;
 import static reactor.core.publisher.Sinks.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -104,7 +109,7 @@ public class TarantoolClient {
     }
 
     private void receive(ByteBuf bytes) {
-        TarantoolResponse response = readTarantoolResponse(bytes);
+        TarantoolResponse response = readTarantoolResponseContent(bytes, bytes.readableBytes());
         TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId());
         if (isNull(receiver)) return;
         One<Value> sink = receiver.getSink();
@@ -144,15 +149,47 @@ public class TarantoolClient {
             connection
                     .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
                     .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
-            connection.inbound()
-                    .receive()
-                    .doOnError(error -> withLogging(() -> logger.get().error(error)))
+            connection.inbound().receive()
+                    .transform(input -> defer(() -> aggregateResponse(input)))
                     .doOnNext(this::receive)
+                    .doOnError(error -> withLogging(() -> logger.get().error(error)))
                     .subscribe();
             connection.outbound()
                     .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
                     .then()
                     .subscribe();
+        }
+    }
+
+
+    private Flux<ByteBuf> aggregateResponse(Flux<ByteBuf> input) {
+        CompositeByteBuf output = allocateWriteBuffer(transportModule().configuration()).alloc().compositeBuffer();
+        Many<ByteBuf> emitter = many().unicast().onBackpressureBuffer();
+        input
+                .doOnNext(ByteBuf::retain)
+                .doOnDiscard(ByteBuf.class, NettyBufferExtensions::releaseBuffer)
+                .doOnNext(bytes -> updateResponseBuffer(output, emitter, bytes))
+                .doOnComplete(emitter::tryEmitComplete)
+                .doOnError(emitter::tryEmitError)
+                .subscribe();
+        return emitter.asFlux().doFinally(ignore -> releaseBuffer(output));
+    }
+
+    private void updateResponseBuffer(CompositeByteBuf buffer, Many<ByteBuf> emitter, ByteBuf input) {
+        if (buffer.writerIndex() == 0) {
+            int size = readTarantoolResponseSize(input);
+            buffer.addComponent(true, input).capacity(size);
+            if (size == input.readableBytes()) {
+                emitter.tryEmitNext(buffer);
+                buffer.discardReadComponents().clear();
+            }
+            return;
+        }
+
+        int capacity = buffer.capacity();
+        if (buffer.addComponents(true, input).writerIndex() >= capacity) {
+            emitter.tryEmitNext(buffer);
+            buffer.discardReadComponents().clear();
         }
     }
 }

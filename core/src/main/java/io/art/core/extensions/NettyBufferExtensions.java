@@ -101,4 +101,10 @@ public class NettyBufferExtensions {
     public static String releaseToString(ByteBuf buffer, Charset charset) {
         return new String(releaseToByteArray(buffer), charset);
     }
+
+    public static void releaseBuffer(ByteBuf byteBuf) {
+        if (byteBuf.refCnt() > 0) {
+            byteBuf.release();
+        }
+    }
 }

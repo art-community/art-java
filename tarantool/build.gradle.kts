@@ -29,6 +29,7 @@ dependencies {
     api(project(":storage"))
 
     implementation(project(":logging"))
+    testImplementation(testFixtures(project(":meta")))
 }
 
 

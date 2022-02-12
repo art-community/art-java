@@ -44,7 +44,7 @@ public interface TarantoolModuleConstants {
         int VERSION_LENGTH = 64;
         int SALT_LENGTH = 44;
         int GREETING_LENGTH = 128;
-        int MINIMAL_HEADER_SIZE = 5;
+        int SIZE_BYTES = 5;
         int SCRAMBLE_SIZE = 20;
 
         int IPROTO_CODE = 0x00;
@@ -85,6 +85,7 @@ public interface TarantoolModuleConstants {
     }
 
     interface Errors {
+        String RESPONSE_BYTES_EMPTY = "Resnpose byte buffer is empty";
     }
 
     interface Messages {
