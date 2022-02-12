@@ -155,7 +155,7 @@ public class TarantoolClient {
                     .doOnError(error -> withLogging(() -> logger.get().error(error)))
                     .subscribe();
             connection.outbound()
-                    .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
+                    .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))), ignore -> true)
                     .then()
                     .subscribe();
         }
@@ -187,7 +187,8 @@ public class TarantoolClient {
         }
 
         int capacity = buffer.capacity();
-        if (buffer.addComponents(true, input).writerIndex() >= capacity) {
+        buffer.addComponent(true, input);
+        if (buffer.writerIndex() >= capacity) {
             emitter.tryEmitNext(buffer);
             buffer.discardReadComponents().clear();
         }
