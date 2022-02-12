@@ -96,6 +96,8 @@ public class MetaHttpTest extends MetaLibrary {
 
             private final MetaField<java.nio.file.Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false));
 
+            private final MetaField<java.nio.file.Path> downloadedFileField = register(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false));
+
             private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
 
             private final MetaCleanupMethod cleanupMethod = register(new MetaCleanupMethod());
@@ -112,6 +114,10 @@ public class MetaHttpTest extends MetaLibrary {
 
             public MetaField<java.nio.file.Path> testFileField() {
               return testFileField;
+            }
+
+            public MetaField<java.nio.file.Path> downloadedFileField() {
+              return downloadedFileField;
             }
 
             public MetaSetupMethod setupMethod() {

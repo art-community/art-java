@@ -138,6 +138,8 @@ public class TarantoolClient {
                     .host(configuration.getHost())
                     .port(configuration.getPort())
                     .option(CONNECT_TIMEOUT_MILLIS, (int) configuration.getConnectionTimeout().toMillis())
+                    .option(AUTO_READ, false)
+                    .option(ALLOW_HALF_CLOSURE, false)
                     .connect()
                     .subscribe(this::setup);
         }
@@ -148,14 +150,15 @@ public class TarantoolClient {
             connection.markPersistent(true);
             connection
                     .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
-                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
+                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate))
+            ;
             connection.inbound().receive()
                     .transform(input -> defer(() -> aggregateResponse(input)))
                     .doOnNext(this::receive)
                     .doOnError(error -> withLogging(() -> logger.get().error(error)))
                     .subscribe();
             connection.outbound()
-                    .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))), ignore -> true)
+                    .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
                     .then()
                     .subscribe();
         }
@@ -164,33 +167,35 @@ public class TarantoolClient {
 
     private Flux<ByteBuf> aggregateResponse(Flux<ByteBuf> input) {
         CompositeByteBuf output = allocateWriteBuffer(transportModule().configuration()).alloc().compositeBuffer();
+        AtomicInteger size = new AtomicInteger();
         Many<ByteBuf> emitter = many().unicast().onBackpressureBuffer();
         input
                 .doOnNext(ByteBuf::retain)
                 .doOnDiscard(ByteBuf.class, NettyBufferExtensions::releaseBuffer)
-                .doOnNext(bytes -> updateResponseBuffer(output, emitter, bytes))
+                .doOnNext(bytes -> updateResponseBuffer(output, emitter, bytes, size))
                 .doOnComplete(emitter::tryEmitComplete)
                 .doOnError(emitter::tryEmitError)
                 .subscribe();
         return emitter.asFlux().doFinally(ignore -> releaseBuffer(output));
     }
 
-    private void updateResponseBuffer(CompositeByteBuf buffer, Many<ByteBuf> emitter, ByteBuf input) {
+    private void updateResponseBuffer(CompositeByteBuf buffer, Many<ByteBuf> emitter, ByteBuf input, AtomicInteger currentSize) {
         if (buffer.writerIndex() == 0) {
-            int size = readTarantoolResponseSize(input);
-            buffer.addComponent(true, input).capacity(size);
+            int size = currentSize.addAndGet(readTarantoolResponseSize(input));
+            buffer.addComponent(true, input);
             if (size == input.readableBytes()) {
                 emitter.tryEmitNext(buffer);
                 buffer.discardReadComponents().clear();
+                currentSize.set(0);
             }
             return;
         }
 
-        int capacity = buffer.capacity();
         buffer.addComponent(true, input);
-        if (buffer.writerIndex() >= capacity) {
+        if (buffer.writerIndex() >= currentSize.get()) {
             emitter.tryEmitNext(buffer);
             buffer.discardReadComponents().clear();
+            currentSize.set(0);
         }
     }
 }

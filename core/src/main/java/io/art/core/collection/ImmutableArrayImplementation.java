@@ -20,6 +20,7 @@ package io.art.core.collection;
 
 import com.google.common.collect.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static java.util.Objects.isNull;
 import javax.annotation.*;
 import java.util.*;
 
@@ -76,11 +77,18 @@ public class ImmutableArrayImplementation<T> implements ImmutableArray<T> {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (object == this) return true;
-        if (!(object instanceof ImmutableArrayImplementation)) return false;
-        return array.equals(((ImmutableArrayImplementation<?>) object).array);
-    }
+    public boolean equals(Object other) {
+        if (isNull(other)) return false;
+        if (!(other instanceof ImmutableArray)) return false;
+        ImmutableArray<?> otherArray = (ImmutableArray<?>) other;
+        int size = size();
+        if (size != otherArray.size()) return false;
+        for (int index = 0; index < size; index++) {
+            if (!Objects.deepEquals(get(index), otherArray.get(index))) {
+                return false;
+            }
+        }
+        return true;    }
 
     @Override
     public int hashCode() {
