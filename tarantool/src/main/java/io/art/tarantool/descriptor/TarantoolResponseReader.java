@@ -13,9 +13,8 @@ import java.util.*;
 
 @UtilityClass
 public class TarantoolResponseReader {
-    public static TarantoolResponse readTarantoolResponseContent(ByteBuf bytes, int size) {
+    public static TarantoolResponse readTarantoolResponseContent(ByteBuf bodyBuffer) {
         try {
-            ByteBuf bodyBuffer = bytes.readBytes(size);
             TarantoolResponse response;
             try (ByteBufInputStream inputStream = new ByteBufInputStream(bodyBuffer)) {
                 MessageUnpacker unpacker = newDefaultUnpacker(inputStream);

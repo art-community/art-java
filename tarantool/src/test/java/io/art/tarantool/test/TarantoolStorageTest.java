@@ -21,7 +21,6 @@ import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.storage.TestTarantoolStorage.*;
 import static io.art.transport.module.TransportActivator.*;
-import java.util.concurrent.*;
 
 public class TarantoolStorageTest {
     @BeforeAll
@@ -59,15 +58,9 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testSinglePut() throws InterruptedException {
-        ExecutorService pool = Executors.newFixedThreadPool(1024);
-        for (int i = 0; i < 64; i++) {
-            pool.execute(() -> {
-                TestingMetaModel data = generateTestingModel();
-                data.assertEquals(space().put(data));
-            });
-        }
-        Assertions.assertTrue(pool.awaitTermination(60, TimeUnit.SECONDS));
+    public void testSinglePut() {
+        TestingMetaModel data = generateTestingModel();
+        data.assertEquals(space().put(data));
     }
 
     @Test
