@@ -24,7 +24,7 @@ public class TarantoolResponseDecoder extends ReplayingDecoder<TarantoolResponse
             case CONTENT:
                 if (size > 0) {
                     if (bytes.readableBytes() < size) return;
-                    list.add(readTarantoolResponseContent(bytes, size));
+                    list.add(readTarantoolResponseContent(bytes,size));
                     size = 0;
                 }
                 checkpoint(LENGTH);
