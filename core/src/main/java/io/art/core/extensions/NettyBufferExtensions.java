@@ -27,6 +27,7 @@ import static io.art.core.extensions.NioBufferExtensions.*;
 import static io.netty.buffer.ByteBufAllocator.*;
 import static io.netty.buffer.Unpooled.*;
 import static java.nio.ByteBuffer.*;
+import static java.util.Objects.nonNull;
 import java.io.*;
 import java.nio.*;
 import java.nio.charset.*;
@@ -103,7 +104,7 @@ public class NettyBufferExtensions {
     }
 
     public static void releaseBuffer(ByteBuf byteBuf) {
-        if (byteBuf.refCnt() > 0) {
+        if (nonNull(byteBuf) && byteBuf.refCnt() > 0) {
             byteBuf.release();
         }
     }
