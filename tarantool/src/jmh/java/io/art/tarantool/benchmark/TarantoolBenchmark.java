@@ -76,11 +76,12 @@ public class TarantoolBenchmark {
                             .build());
             space = Tarantool.tarantool().space(TestingShortMetaModel.class);
             model = TestingShortMetaModel.builder().id(1).name("test").inner(TestingShortMetaModel.Inner.builder().id(2).name("test").build()).build();
+            space.put(model);
         }
     }
 
     @Benchmark
     public void putBenchmark(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.space.reactive().put(state.model).subscribe(blackhole::consume));
+        blackhole.consume(state.space.findFirst(1));
     }
 }
