@@ -9,46 +9,46 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface ReactiveSpaceService<KeyType, ValueType> {
-    Mono<ValueType> findFirst(KeyType key);
+public interface ReactiveSpaceService<KeyType, ModelType> {
+    Mono<ModelType> findFirst(KeyType key);
 
-    default Flux<ValueType> findAll(KeyType... keys) {
+    default Flux<ModelType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    Flux<ValueType> findAll(Collection<KeyType> keys);
+    Flux<ModelType> findAll(Collection<KeyType> keys);
 
-    Flux<ValueType> findAll(ImmutableCollection<KeyType> keys);
+    Flux<ModelType> findAll(ImmutableCollection<KeyType> keys);
 
-    Mono<ValueType> delete(KeyType key);
+    Mono<ModelType> delete(KeyType key);
 
-    default Flux<ValueType> delete(KeyType... keys) {
+    default Flux<ModelType> delete(KeyType... keys) {
         return delete(asList(keys));
     }
 
-    Flux<ValueType> delete(Collection<KeyType> keys);
+    Flux<ModelType> delete(Collection<KeyType> keys);
 
-    Flux<ValueType> delete(ImmutableCollection<KeyType> keys);
+    Flux<ModelType> delete(ImmutableCollection<KeyType> keys);
 
-    Mono<ValueType> insert(ValueType value);
+    Mono<ModelType> insert(ModelType value);
 
-    default Flux<ValueType> insert(ValueType... value) {
+    default Flux<ModelType> insert(ModelType... value) {
         return insert(Arrays.asList(value));
     }
 
-    Flux<ValueType> insert(Collection<ValueType> value);
+    Flux<ModelType> insert(Collection<ModelType> value);
 
-    Flux<ValueType> insert(ImmutableCollection<ValueType> value);
+    Flux<ModelType> insert(ImmutableCollection<ModelType> value);
 
-    Mono<ValueType> put(ValueType value);
+    Mono<ModelType> put(ModelType value);
 
-    default Flux<ValueType> put(ValueType... value) {
+    default Flux<ModelType> put(ModelType... value) {
         return insert(Arrays.asList(value));
     }
 
-    Flux<ValueType> put(Collection<ValueType> value);
+    Flux<ModelType> put(Collection<ModelType> value);
 
-    Flux<ValueType> put(ImmutableCollection<ValueType> value);
+    Flux<ModelType> put(ImmutableCollection<ModelType> value);
 
     Mono<Long> count();
 

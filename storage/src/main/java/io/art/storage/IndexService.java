@@ -8,18 +8,18 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface IndexService<KeyType, ValueType> {
-    ValueType findFirst(KeyType key);
+public interface IndexService<KeyType, ModelType> {
+    ModelType findFirst(KeyType key);
 
-    default ImmutableArray<ValueType> findAll(KeyType... keys) {
+    default ImmutableArray<ModelType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    ImmutableArray<ValueType> findAll(Collection<KeyType> keys);
+    ImmutableArray<ModelType> findAll(Collection<KeyType> keys);
 
-    ImmutableArray<ValueType> findAll(ImmutableCollection<KeyType> keys);
+    ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys);
 
     long count();
 
-    ReactiveIndexService<KeyType, ValueType> reactive();
+    ReactiveIndexService<KeyType, ModelType> reactive();
 }

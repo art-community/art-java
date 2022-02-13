@@ -21,7 +21,6 @@ import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.storage.TestTarantoolStorage.*;
 import static io.art.transport.module.TransportActivator.*;
-import java.util.concurrent.*;
 
 public class TarantoolStorageTest {
     @BeforeAll
@@ -36,7 +35,7 @@ public class TarantoolStorageTest {
                                 .username(USERNAME)
                                 .logging(true)
                                 .password(PASSWORD)))
-                        .space(TestStorage.class, TestingMetaModel.class)
+                        .space(TestStorage.class, int.class, TestingMetaModel.class)
                 )
         );
         Tarantool.tarantool()

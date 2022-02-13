@@ -12,41 +12,41 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<KeyType, ValueType> {
-    private TarantoolReactiveSpaceService<KeyType, ValueType> reactive;
+public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<KeyType, ModelType> {
+    private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
 
-    public TarantoolSpaceService(MetaType<ValueType> spaceMeta, TarantoolStorage storage) {
-        reactive = new TarantoolReactiveSpaceService<>(spaceMeta, storage);
+    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, TarantoolStorage storage) {
+        reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, storage);
     }
 
     @Override
-    public ValueType findFirst(KeyType key) {
+    public ModelType findFirst(KeyType key) {
         return block(reactive.findFirst(key));
     }
 
     @Override
-    public ImmutableArray<ValueType> findAll(Collection<KeyType> keys) {
+    public ImmutableArray<ModelType> findAll(Collection<KeyType> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ValueType> findAll(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
 
     @Override
-    public ValueType delete(KeyType key) {
+    public ModelType delete(KeyType key) {
         return block(reactive.delete(key));
     }
 
     @Override
-    public ImmutableArray<ValueType> delete(Collection<KeyType> keys) {
+    public ImmutableArray<ModelType> delete(Collection<KeyType> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ValueType> delete(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<ModelType> delete(ImmutableCollection<KeyType> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
@@ -63,40 +63,40 @@ public class TarantoolSpaceService<KeyType, ValueType> implements SpaceService<K
 
 
     @Override
-    public ValueType insert(ValueType value) {
+    public ModelType insert(ModelType value) {
         return block(reactive.insert(value));
     }
 
     @Override
-    public ImmutableArray<ValueType> insert(Collection<ValueType> value) {
+    public ImmutableArray<ModelType> insert(Collection<ModelType> value) {
         return reactive.insert(value).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ValueType> insert(ImmutableCollection<ValueType> value) {
+    public ImmutableArray<ModelType> insert(ImmutableCollection<ModelType> value) {
         return reactive.insert(value).toStream().collect(immutableArrayCollector());
     }
 
 
     @Override
-    public ValueType put(ValueType value) {
+    public ModelType put(ModelType value) {
         return block(reactive.put(value));
     }
 
 
     @Override
-    public ImmutableArray<ValueType> put(Collection<ValueType> value) {
+    public ImmutableArray<ModelType> put(Collection<ModelType> value) {
         return reactive.put(value).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ValueType> put(ImmutableCollection<ValueType> value) {
+    public ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value) {
         return reactive.put(value).toStream().collect(immutableArrayCollector());
     }
 
 
     @Override
-    public ReactiveSpaceService<KeyType, ValueType> reactive() {
+    public ReactiveSpaceService<KeyType, ModelType> reactive() {
         return reactive;
     }
 }

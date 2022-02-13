@@ -5,33 +5,40 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.tarantool.storage.*;
+import lombok.Builder;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolIndexService<KeyType, ValueType> implements IndexService<KeyType, ValueType> {
-    private ReactiveIndexService<KeyType, ValueType> reactive;
+public class TarantoolIndexService<KeyType, ModelType> implements IndexService<KeyType, ModelType> {
+    private ReactiveIndexService<KeyType, ModelType> reactive;
 
-    public TarantoolIndexService(MetaType<ValueType> spaceMeta, String indexName, TarantoolStorage storage) {
-        reactive = new TarantoolReactiveIndexService<>(spaceMeta, indexName, storage);
+    @Builder
+    public TarantoolIndexService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, String spaceName, String indexName, TarantoolStorage storage) {
+        reactive = TarantoolReactiveIndexService.<KeyType, ModelType>builder()
+                .spaceName(spaceName)
+                .spaceMeta(spaceMeta)
+                .keyMeta(keyMeta)
+                .indexName(indexName)
+                .storage(storage)
+                .build();
     }
 
     @Override
-    public ValueType findFirst(KeyType key) {
+    public ModelType findFirst(KeyType key) {
         return block(reactive.findFirst(key));
     }
 
     @Override
-    public ImmutableArray<ValueType> findAll(Collection<KeyType> keys) {
+    public ImmutableArray<ModelType> findAll(Collection<KeyType> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ValueType> findAll(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
@@ -41,7 +48,7 @@ public class TarantoolIndexService<KeyType, ValueType> implements IndexService<K
     }
 
     @Override
-    public ReactiveIndexService<KeyType, ValueType> reactive() {
+    public ReactiveIndexService<KeyType, ModelType> reactive() {
         return reactive;
     }
 }

@@ -49,8 +49,8 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         return this;
     }
 
-    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> spaceClass) {
-        servicesConfigurator.space(storageClass, spaceClass);
+    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> keyClass, Class<?> spaceClass) {
+        servicesConfigurator.space(storageClass, keyClass, spaceClass);
         return this;
     }
 

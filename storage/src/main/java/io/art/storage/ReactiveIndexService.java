@@ -9,26 +9,26 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface ReactiveIndexService<KeyType, ValueType> {
-    Mono<ValueType> findFirst(KeyType key);
+public interface ReactiveIndexService<KeyType, ModelType> {
+    Mono<ModelType> findFirst(KeyType key);
 
-    default Flux<ValueType> findAll(KeyType... keys) {
+    default Flux<ModelType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    Flux<ValueType> findAll(Collection<KeyType> keys);
+    Flux<ModelType> findAll(Collection<KeyType> keys);
 
-    Flux<ValueType> findAll(ImmutableCollection<KeyType> keys);
+    Flux<ModelType> findAll(ImmutableCollection<KeyType> keys);
 
-    Mono<ValueType> delete(KeyType key);
+    Mono<ModelType> delete(KeyType key);
 
-    default Flux<ValueType> delete(KeyType... keys) {
+    default Flux<ModelType> delete(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    Flux<ValueType> delete(Collection<KeyType> keys);
+    Flux<ModelType> delete(Collection<KeyType> keys);
 
-    Flux<ValueType> delete(ImmutableCollection<KeyType> keys);
+    Flux<ModelType> delete(ImmutableCollection<KeyType> keys);
 
     Mono<Long> count();
 }

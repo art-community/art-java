@@ -8,27 +8,27 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface SpaceService<KeyType, ValueType> {
-    ValueType findFirst(KeyType key);
+public interface SpaceService<KeyType, ModelType> {
+    ModelType findFirst(KeyType key);
 
-    default ImmutableArray<ValueType> findAll(KeyType... keys) {
+    default ImmutableArray<ModelType> findAll(KeyType... keys) {
         return findAll(asList(keys));
     }
 
-    ImmutableArray<ValueType> findAll(Collection<KeyType> keys);
+    ImmutableArray<ModelType> findAll(Collection<KeyType> keys);
 
-    ImmutableArray<ValueType> findAll(ImmutableCollection<KeyType> keys);
+    ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys);
 
-    ValueType delete(KeyType key);
+    ModelType delete(KeyType key);
 
 
-    default ImmutableArray<ValueType> delete(KeyType... keys) {
+    default ImmutableArray<ModelType> delete(KeyType... keys) {
         return delete(asList(keys));
     }
 
-    ImmutableArray<ValueType> delete(Collection<KeyType> keys);
+    ImmutableArray<ModelType> delete(Collection<KeyType> keys);
 
-    ImmutableArray<ValueType> delete(ImmutableCollection<KeyType> keys);
+    ImmutableArray<ModelType> delete(ImmutableCollection<KeyType> keys);
 
 
     long count();
@@ -37,27 +37,27 @@ public interface SpaceService<KeyType, ValueType> {
     void truncate();
 
 
-    ValueType insert(ValueType value);
+    ModelType insert(ModelType value);
 
-    default ImmutableArray<ValueType> insert(ValueType... value) {
+    default ImmutableArray<ModelType> insert(ModelType... value) {
         return insert(asList(value));
     }
 
-    ImmutableArray<ValueType> insert(Collection<ValueType> value);
+    ImmutableArray<ModelType> insert(Collection<ModelType> value);
 
-    ImmutableArray<ValueType> insert(ImmutableCollection<ValueType> value);
+    ImmutableArray<ModelType> insert(ImmutableCollection<ModelType> value);
 
 
-    ValueType put(ValueType value);
+    ModelType put(ModelType value);
 
-    default ImmutableArray<ValueType> put(ValueType... value) {
+    default ImmutableArray<ModelType> put(ModelType... value) {
         return put(Arrays.asList(value));
     }
 
-    ImmutableArray<ValueType> put(Collection<ValueType> value);
+    ImmutableArray<ModelType> put(Collection<ModelType> value);
 
-    ImmutableArray<ValueType> put(ImmutableCollection<ValueType> value);
+    ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
 
 
-    ReactiveSpaceService<KeyType, ValueType> reactive();
+    ReactiveSpaceService<KeyType, ModelType> reactive();
 }

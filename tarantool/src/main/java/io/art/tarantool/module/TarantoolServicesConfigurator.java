@@ -21,11 +21,11 @@ public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
 
-    public TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<?> spaceClass) {
+    public TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<?> keyClass, Class<?> spaceClass) {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(tarantoolModule().configuration().getStorages().get(storageId))));
-        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(definition(spaceClass), tarantoolModule().configuration().getStorages().get(storageId))));
+        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(definition(keyClass), definition(spaceClass), tarantoolModule().configuration().getStorages().get(storageId))));
         return this;
     }
 
