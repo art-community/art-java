@@ -5,6 +5,7 @@ import io.art.core.exception.*;
 import io.art.meta.model.*;
 import io.art.meta.schema.*;
 import io.art.meta.transformer.*;
+import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
@@ -54,30 +55,32 @@ public class TarantoolModelWriter {
 
 
     private org.msgpack.value.ArrayValue writeArray(MetaType<?> elementType, List<?> array) {
-        List<org.msgpack.value.Value> values = dynamicArray(array.size());
+        org.msgpack.value.Value[] values = new Value[array.size()];
+        int index = 0;
         for (Object element : array) {
             if (isNull(element)) {
-                values.add(newNil());
+                values[index++] = newNil();
                 continue;
             }
-            values.add(write(elementType, element));
+            values[index++] = write(elementType, element);
         }
-        return newArray(values);
+        return newArray(values, true);
     }
 
     private org.msgpack.value.ArrayValue writeEntity(MetaType<?> type, Object value) {
         MetaProviderTemplate.MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         ImmutableArray<MetaProperty<?>> properties = provider.propertyArray();
-        List<org.msgpack.value.Value> values = dynamicArray(properties.size());
+        org.msgpack.value.Value[] values = new Value[properties.size()];
+        int index = 0;
         for (MetaProperty<?> property : properties) {
             Object propertyValue = provider.getValue(property);
             if (isNull(propertyValue)) {
-                values.add(newNil());
+                values[index++] = newNil();
                 continue;
             }
-            values.add(write(property.type(), propertyValue));
+            values[index++] = write(property.type(), propertyValue);
         }
-        return newArray(values);
+        return newArray(values, true);
     }
 
     private org.msgpack.value.MapValue writeMap(MetaType<?> keyType, MetaType<?> valueType, Map<?, ?> value) {
