@@ -63,6 +63,8 @@ public class MetaMetaTest extends MetaLibrary {
 
           private final MetaTestingMetaConfigurationClass testingMetaConfigurationClass = register(new MetaTestingMetaConfigurationClass());
 
+          private final MetaTestingShortMetaModelClass testingShortMetaModelClass = register(new MetaTestingShortMetaModelClass());
+
           private final MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass = register(new MetaTestingMetaModelGeneratorClass());
 
           private final MetaTestingMetaModelClass testingMetaModelClass = register(new MetaTestingMetaModelClass());
@@ -78,6 +80,10 @@ public class MetaMetaTest extends MetaLibrary {
 
           public MetaTestingMetaConfigurationClass testingMetaConfigurationClass() {
             return testingMetaConfigurationClass;
+          }
+
+          public MetaTestingShortMetaModelClass testingShortMetaModelClass() {
+            return testingShortMetaModelClass;
           }
 
           public MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass() {
@@ -4932,6 +4938,507 @@ public class MetaMetaTest extends MetaLibrary {
                     io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder instance)
                     throws Throwable {
                   return instance.build();
+                }
+              }
+            }
+          }
+
+          public static final class MetaTestingShortMetaModelClass extends MetaClass<io.art.meta.test.TestingShortMetaModel> {
+            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
+
+            private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
+
+            private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
+
+            private final MetaField<io.art.meta.test.TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false));
+
+            private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod());
+
+            private final MetaGetNameMethod getNameMethod = register(new MetaGetNameMethod());
+
+            private final MetaGetInnerMethod getInnerMethod = register(new MetaGetInnerMethod());
+
+            private final MetaTestingShortMetaModelBuilderClass testingShortMetaModelBuilderClass = register(new MetaTestingShortMetaModelBuilderClass());
+
+            private final MetaInnerClass innerClass = register(new MetaInnerClass());
+
+            private MetaTestingShortMetaModelClass() {
+              super(metaType(io.art.meta.test.TestingShortMetaModel.class));
+            }
+
+            public MetaConstructorConstructor constructor() {
+              return constructor;
+            }
+
+            public MetaField<java.lang.Integer> idField() {
+              return idField;
+            }
+
+            public MetaField<java.lang.String> nameField() {
+              return nameField;
+            }
+
+            public MetaField<io.art.meta.test.TestingShortMetaModel.Inner> innerField() {
+              return innerField;
+            }
+
+            public MetaGetIdMethod getIdMethod() {
+              return getIdMethod;
+            }
+
+            public MetaGetNameMethod getNameMethod() {
+              return getNameMethod;
+            }
+
+            public MetaGetInnerMethod getInnerMethod() {
+              return getInnerMethod;
+            }
+
+            public MetaTestingShortMetaModelBuilderClass testingShortMetaModelBuilderClass() {
+              return testingShortMetaModelBuilderClass;
+            }
+
+            public MetaInnerClass innerClass() {
+              return innerClass;
+            }
+
+            public static final class MetaConstructorConstructor extends MetaConstructor<io.art.meta.test.TestingShortMetaModel> {
+              private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+
+              private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(1, "name",metaType(java.lang.String.class)));
+
+              private final MetaParameter<io.art.meta.test.TestingShortMetaModel.Inner> innerParameter = register(new MetaParameter<>(2, "inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class)));
+
+              private MetaConstructorConstructor() {
+                super(metaType(io.art.meta.test.TestingShortMetaModel.class));
+              }
+
+              @Override
+              public io.art.meta.test.TestingShortMetaModel invoke(Object[] arguments) throws
+                  Throwable {
+                return new io.art.meta.test.TestingShortMetaModel((int)(arguments[0]),(java.lang.String)(arguments[1]),(io.art.meta.test.TestingShortMetaModel.Inner)(arguments[2]));
+              }
+
+              public MetaParameter<java.lang.Integer> idParameter() {
+                return idParameter;
+              }
+
+              public MetaParameter<java.lang.String> nameParameter() {
+                return nameParameter;
+              }
+
+              public MetaParameter<io.art.meta.test.TestingShortMetaModel.Inner> innerParameter() {
+                return innerParameter;
+              }
+            }
+
+            public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel, java.lang.Integer> {
+              private MetaGetIdMethod() {
+                super("getId",metaType(int.class));
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingShortMetaModel instance,
+                  Object[] arguments) throws Throwable {
+                return instance.getId();
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingShortMetaModel instance) throws
+                  Throwable {
+                return instance.getId();
+              }
+            }
+
+            public static final class MetaGetNameMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel, java.lang.String> {
+              private MetaGetNameMethod() {
+                super("getName",metaType(java.lang.String.class));
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingShortMetaModel instance,
+                  Object[] arguments) throws Throwable {
+                return instance.getName();
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingShortMetaModel instance) throws
+                  Throwable {
+                return instance.getName();
+              }
+            }
+
+            public static final class MetaGetInnerMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel, io.art.meta.test.TestingShortMetaModel.Inner> {
+              private MetaGetInnerMethod() {
+                super("getInner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class));
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingShortMetaModel instance,
+                  Object[] arguments) throws Throwable {
+                return instance.getInner();
+              }
+
+              @Override
+              public Object invoke(io.art.meta.test.TestingShortMetaModel instance) throws
+                  Throwable {
+                return instance.getInner();
+              }
+            }
+
+            public static final class MetaTestingShortMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
+              private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
+
+              private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
+
+              private final MetaField<io.art.meta.test.TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false));
+
+              private final MetaIdMethod idMethod = register(new MetaIdMethod());
+
+              private final MetaNameMethod nameMethod = register(new MetaNameMethod());
+
+              private final MetaInnerMethod innerMethod = register(new MetaInnerMethod());
+
+              private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
+
+              private MetaTestingShortMetaModelBuilderClass() {
+                super(metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class));
+              }
+
+              public MetaField<java.lang.Integer> idField() {
+                return idField;
+              }
+
+              public MetaField<java.lang.String> nameField() {
+                return nameField;
+              }
+
+              public MetaField<io.art.meta.test.TestingShortMetaModel.Inner> innerField() {
+                return innerField;
+              }
+
+              public MetaIdMethod idMethod() {
+                return idMethod;
+              }
+
+              public MetaNameMethod nameMethod() {
+                return nameMethod;
+              }
+
+              public MetaInnerMethod innerMethod() {
+                return innerMethod;
+              }
+
+              public MetaBuildMethod buildMethod() {
+                return buildMethod;
+              }
+
+              public static final class MetaIdMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
+                private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+
+                private MetaIdMethod() {
+                  super("id",metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.id((int)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object argument) throws Throwable {
+                  return instance.id((int)(argument));
+                }
+
+                public MetaParameter<java.lang.Integer> idParameter() {
+                  return idParameter;
+                }
+              }
+
+              public static final class MetaNameMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
+                private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(0, "name",metaType(java.lang.String.class)));
+
+                private MetaNameMethod() {
+                  super("name",metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.name((java.lang.String)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object argument) throws Throwable {
+                  return instance.name((java.lang.String)(argument));
+                }
+
+                public MetaParameter<java.lang.String> nameParameter() {
+                  return nameParameter;
+                }
+              }
+
+              public static final class MetaInnerMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
+                private final MetaParameter<io.art.meta.test.TestingShortMetaModel.Inner> innerParameter = register(new MetaParameter<>(0, "inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class)));
+
+                private MetaInnerMethod() {
+                  super("inner",metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.inner((io.art.meta.test.TestingShortMetaModel.Inner)(arguments[0]));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object argument) throws Throwable {
+                  return instance.inner((io.art.meta.test.TestingShortMetaModel.Inner)(argument));
+                }
+
+                public MetaParameter<io.art.meta.test.TestingShortMetaModel.Inner> innerParameter(
+                    ) {
+                  return innerParameter;
+                }
+              }
+
+              public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel> {
+                private MetaBuildMethod() {
+                  super("build",metaType(io.art.meta.test.TestingShortMetaModel.class));
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.build();
+                }
+
+                @Override
+                public Object invoke(
+                    io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder instance)
+                    throws Throwable {
+                  return instance.build();
+                }
+              }
+            }
+
+            public static final class MetaInnerClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner> {
+              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
+
+              private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
+
+              private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
+
+              private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod());
+
+              private final MetaGetNameMethod getNameMethod = register(new MetaGetNameMethod());
+
+              private final MetaInnerBuilderClass innerBuilderClass = register(new MetaInnerBuilderClass());
+
+              private MetaInnerClass() {
+                super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.class));
+              }
+
+              public MetaConstructorConstructor constructor() {
+                return constructor;
+              }
+
+              public MetaField<java.lang.Integer> idField() {
+                return idField;
+              }
+
+              public MetaField<java.lang.String> nameField() {
+                return nameField;
+              }
+
+              public MetaGetIdMethod getIdMethod() {
+                return getIdMethod;
+              }
+
+              public MetaGetNameMethod getNameMethod() {
+                return getNameMethod;
+              }
+
+              public MetaInnerBuilderClass innerBuilderClass() {
+                return innerBuilderClass;
+              }
+
+              public static final class MetaConstructorConstructor extends MetaConstructor<io.art.meta.test.TestingShortMetaModel.Inner> {
+                private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+
+                private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(1, "name",metaType(java.lang.String.class)));
+
+                private MetaConstructorConstructor() {
+                  super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.class));
+                }
+
+                @Override
+                public io.art.meta.test.TestingShortMetaModel.Inner invoke(Object[] arguments)
+                    throws Throwable {
+                  return new io.art.meta.test.TestingShortMetaModel.Inner((int)(arguments[0]),(java.lang.String)(arguments[1]));
+                }
+
+                public MetaParameter<java.lang.Integer> idParameter() {
+                  return idParameter;
+                }
+
+                public MetaParameter<java.lang.String> nameParameter() {
+                  return nameParameter;
+                }
+              }
+
+              public static final class MetaGetIdMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.Inner, java.lang.Integer> {
+                private MetaGetIdMethod() {
+                  super("getId",metaType(int.class));
+                }
+
+                @Override
+                public Object invoke(io.art.meta.test.TestingShortMetaModel.Inner instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.getId();
+                }
+
+                @Override
+                public Object invoke(io.art.meta.test.TestingShortMetaModel.Inner instance) throws
+                    Throwable {
+                  return instance.getId();
+                }
+              }
+
+              public static final class MetaGetNameMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.Inner, java.lang.String> {
+                private MetaGetNameMethod() {
+                  super("getName",metaType(java.lang.String.class));
+                }
+
+                @Override
+                public Object invoke(io.art.meta.test.TestingShortMetaModel.Inner instance,
+                    Object[] arguments) throws Throwable {
+                  return instance.getName();
+                }
+
+                @Override
+                public Object invoke(io.art.meta.test.TestingShortMetaModel.Inner instance) throws
+                    Throwable {
+                  return instance.getName();
+                }
+              }
+
+              public static final class MetaInnerBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
+                private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
+
+                private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
+
+                private final MetaIdMethod idMethod = register(new MetaIdMethod());
+
+                private final MetaNameMethod nameMethod = register(new MetaNameMethod());
+
+                private final MetaBuildMethod buildMethod = register(new MetaBuildMethod());
+
+                private MetaInnerBuilderClass() {
+                  super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class));
+                }
+
+                public MetaField<java.lang.Integer> idField() {
+                  return idField;
+                }
+
+                public MetaField<java.lang.String> nameField() {
+                  return nameField;
+                }
+
+                public MetaIdMethod idMethod() {
+                  return idMethod;
+                }
+
+                public MetaNameMethod nameMethod() {
+                  return nameMethod;
+                }
+
+                public MetaBuildMethod buildMethod() {
+                  return buildMethod;
+                }
+
+                public static final class MetaIdMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
+                  private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+
+                  private MetaIdMethod() {
+                    super("id",metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class));
+                  }
+
+                  @Override
+                  public Object invoke(
+                      io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder instance,
+                      Object[] arguments) throws Throwable {
+                    return instance.id((int)(arguments[0]));
+                  }
+
+                  @Override
+                  public Object invoke(
+                      io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder instance,
+                      Object argument) throws Throwable {
+                    return instance.id((int)(argument));
+                  }
+
+                  public MetaParameter<java.lang.Integer> idParameter() {
+                    return idParameter;
+                  }
+                }
+
+                public static final class MetaNameMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
+                  private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(0, "name",metaType(java.lang.String.class)));
+
+                  private MetaNameMethod() {
+                    super("name",metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class));
+                  }
+
+                  @Override
+                  public Object invoke(
+                      io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder instance,
+                      Object[] arguments) throws Throwable {
+                    return instance.name((java.lang.String)(arguments[0]));
+                  }
+
+                  @Override
+                  public Object invoke(
+                      io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder instance,
+                      Object argument) throws Throwable {
+                    return instance.name((java.lang.String)(argument));
+                  }
+
+                  public MetaParameter<java.lang.String> nameParameter() {
+                    return nameParameter;
+                  }
+                }
+
+                public static final class MetaBuildMethod extends InstanceMetaMethod<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder, io.art.meta.test.TestingShortMetaModel.Inner> {
+                  private MetaBuildMethod() {
+                    super("build",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class));
+                  }
+
+                  @Override
+                  public Object invoke(
+                      io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder instance,
+                      Object[] arguments) throws Throwable {
+                    return instance.build();
+                  }
+
+                  @Override
+                  public Object invoke(
+                      io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder instance) throws
+                      Throwable {
+                    return instance.build();
+                  }
                 }
               }
             }
