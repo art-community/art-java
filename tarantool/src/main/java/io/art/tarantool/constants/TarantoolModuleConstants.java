@@ -30,7 +30,7 @@ public interface TarantoolModuleConstants {
     Duration DEFAULT_TARANTOOL_READ_TIMEOUT = ofSeconds(15);
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 8129;
-    int RECEIVERS_POOL_MAXIMUM = MAX_VALUE / 128;
+    int RECEIVERS_POOL_MAXIMUM = MAX_VALUE / 2048;
     int REQUEST_ID_STEP = 8;
     String DEFAULT_TARANTOOL_HOST = "localhost";
     String DEFAULT_TARANTOOL_USERNAME = "guest";

@@ -21,8 +21,7 @@ package io.art.core.network.balancer;
 import io.art.core.property.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.factory.ArrayFactory.dynamicArray;
-import static io.art.core.factory.ListFactory.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.property.LazyProperty.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
@@ -42,7 +41,7 @@ public class RoundRobinBalancer<T> implements Balancer<T> {
 
     @Override
     public void endpoints(Collection<T> endpoints) {
-        this.endpoints = linkedListOf(endpoints);
+        this.endpoints = dynamicArrayOf(endpoints);
     }
 
     @Override
