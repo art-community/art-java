@@ -121,7 +121,7 @@ public class TarantoolClient {
         Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
         ArrayValue bodyValues;
         if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() != 1) {
-            sink.tryEmitError(new TarantoolException(let(body, Value::toJson)));
+            sink.tryEmitEmpty();
             return;
         }
         sink.tryEmitValue(bodyValues.get(0));

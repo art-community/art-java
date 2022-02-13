@@ -18,6 +18,7 @@
 
 plugins {
     id("art-internal-jvm")
+    id("me.champeau.jmh")
 }
 
 dependencies {
