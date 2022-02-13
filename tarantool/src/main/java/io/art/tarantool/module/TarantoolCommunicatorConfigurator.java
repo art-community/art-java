@@ -36,7 +36,7 @@ public class TarantoolCommunicatorConfigurator extends CommunicatorConfigurator<
                 .getPortals()
                 .getCommunicator(storageClass, spaceCommunicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createConfiguredTarantoolCommunication(configuration);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createTarantoolCommunication(configuration);
         registerPortal(storageClass, communicatorFunction, communicationFunction);
         return this;
     }

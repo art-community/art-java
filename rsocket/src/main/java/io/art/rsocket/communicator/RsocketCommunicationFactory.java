@@ -57,14 +57,14 @@ import java.util.function.*;
 public class RsocketCommunicationFactory {
     private final static LazyProperty<Logger> logger = lazy(() -> Logging.logger(RSOCKET_COMMUNICATOR_LOGGER));
 
-    public static RsocketCommunication createConfiguredTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    public static RsocketCommunication createManagedTcpCommunication(RsocketTcpConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
         RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
         Supplier<RSocketClient> client = () -> configureTcpClient(identifier, connector, moduleConfiguration);
         return new RsocketCommunication(client, moduleConfiguration, connectorConfiguration.getCommonConfiguration());
     }
 
-    public static RsocketCommunication createConfiguredWsCommunication(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
+    public static RsocketCommunication createManagedWsCommunication(RsocketWsConnectorConfiguration connectorConfiguration, CommunicatorActionIdentifier identifier) {
         String connector = connectorConfiguration.getCommonConfiguration().getConnector();
         RsocketModuleConfiguration moduleConfiguration = rsocketModule().configuration();
         Supplier<RSocketClient> client = () -> configureWsClient(identifier, connector, moduleConfiguration);

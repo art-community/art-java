@@ -37,7 +37,7 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
                 .getPortals()
                 .getCommunicator(portalClass, communicator)
                 .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createConfiguredHttpCommunication(configuration);
+        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createManagedHttpCommunication(configuration);
         registerPortal(portalClass, communicatorFunction, communicationFunction);
         return this;
     }

@@ -1,7 +1,6 @@
 package io.art.tarantool.decoder;
 
 import io.art.core.exception.*;
-import io.art.tarantool.model.*;
 import io.netty.buffer.*;
 import io.netty.channel.*;
 import io.netty.handler.codec.*;
@@ -17,7 +16,7 @@ public class TarantoolResponseDecoder extends ReplayingDecoder<TarantoolResponse
     }
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf bytes, List<Object> list) throws Exception {
+    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf bytes, List<Object> list) {
         switch (state()) {
             case LENGTH:
                 size = readTarantoolResponseSize(bytes);
@@ -25,8 +24,7 @@ public class TarantoolResponseDecoder extends ReplayingDecoder<TarantoolResponse
             case CONTENT:
                 if (size > 0) {
                     if (bytes.readableBytes() < size) return;
-                    TarantoolResponse tarantoolResponse = readTarantoolResponseContent(bytes.readBytes(size));
-                    list.add(tarantoolResponse);
+                    list.add(readTarantoolResponseContent(bytes.readBytes(size)));
                     size = 0;
                 }
                 checkpoint(LENGTH);
