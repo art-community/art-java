@@ -1,7 +1,6 @@
 box.cfg {
     listen = 3301,
     pid_file = "test-storage.pid",
-    log_level = 7,
     log = "file:test-storage.log",
 }
 box.schema.user.create('username', { password = 'password' })
