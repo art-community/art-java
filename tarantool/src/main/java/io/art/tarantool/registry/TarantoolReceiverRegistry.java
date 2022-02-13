@@ -47,6 +47,7 @@ public class TarantoolReceiverRegistry {
         }
 
         int next() {
+            current += REQUEST_ID_STEP;
             if (current >= max) {
                 current = 0;
                 while (receivers.containsKey(offset + current)) {
