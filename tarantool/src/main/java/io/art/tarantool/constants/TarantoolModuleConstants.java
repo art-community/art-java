@@ -85,7 +85,8 @@ public interface TarantoolModuleConstants {
     }
 
     interface Errors {
-        String RESPONSE_BYTES_EMPTY = "Resnpose byte buffer is empty";
+        String RESPONSE_BYTES_EMPTY = "Response byte buffer is empty";
+        String INVALID_TYPE_FOR_INDEX_PART = "Type {0} is not available for using as tarantool index part type";
     }
 
     interface Messages {

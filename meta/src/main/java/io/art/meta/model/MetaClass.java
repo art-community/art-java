@@ -256,6 +256,10 @@ public abstract class MetaClass<T> {
         return cast(fields.get(name));
     }
 
+    public int index(MetaField<?> field) {
+        return fixedArrayOf(fields.values()).indexOf(field);
+    }
+
     public ImmutableMap<String, MetaField<?>> fields() {
         return immutableMapOf(fields);
     }
