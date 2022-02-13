@@ -21,6 +21,7 @@ package io.art.meta.model;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.meta.exception.*;
 import io.art.meta.model.MetaProperty.*;
 import io.art.meta.schema.*;
@@ -34,6 +35,8 @@ import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.core.property.LazyProperty.*;
+import static io.art.meta.Meta.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.constants.MetaConstants.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
@@ -306,6 +309,10 @@ public abstract class MetaClass<T> {
         }
 
         return known = true;
+    }
+
+    protected static <T extends MetaClass<?>> LazyProperty<T> self(Class<?> type) {
+        return lazy(() -> cast(declaration(type)));
     }
 
     static void clearClassMutableRegistry() {

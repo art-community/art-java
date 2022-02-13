@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.*;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -123,6 +124,12 @@ public class MetaMetaTest extends MetaLibrary {
           }
 
           public static final class MetaTestingMetaConfigurationClass extends MetaClass<io.art.meta.test.TestingMetaConfiguration> {
+            private static final LazyProperty<MetaTestingMetaConfigurationClass> self = self(io.art.meta.test.TestingMetaConfiguration.class);
+
+            public static final MetaTestingMetaConfigurationClass testingMetaConfiguration() {
+                return self.get();
+            }
+
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
             private final MetaField<java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false));
