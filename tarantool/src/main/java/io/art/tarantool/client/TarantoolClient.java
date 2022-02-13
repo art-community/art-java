@@ -1,5 +1,6 @@
 package io.art.tarantool.client;
 
+import io.art.core.extensions.*;
 import io.art.core.property.*;
 import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
@@ -151,7 +152,9 @@ public class TarantoolClient {
                     .doOnError(error -> withLogging(() -> logger.get().error(error)))
                     .subscribe();
             connection.outbound()
-                    .send(sender.asFlux().doOnError(error -> withLogging(() -> logger.get().error(error))))
+                    .send(sender.asFlux()
+                            .doOnError(error -> withLogging(() -> logger.get().error(error)))
+                            .doOnDiscard(ByteBuf.class, NettyBufferExtensions::releaseBuffer))
                     .then()
                     .subscribe();
         }
