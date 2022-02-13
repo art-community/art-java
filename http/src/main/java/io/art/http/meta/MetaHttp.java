@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.LazyProperty;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaLibrary;
@@ -71,10 +72,16 @@ public class MetaHttp extends MetaLibrary {
           }
 
           public static final class MetaHttpDefaultPortalClass extends MetaClass<io.art.http.portal.HttpDefaultPortal> {
+            private static final LazyProperty<MetaHttpDefaultPortalClass> self = MetaClass.self(io.art.http.portal.HttpDefaultPortal.class);
+
             private final MetaHttpBuiltinCommunicatorClass httpBuiltinCommunicatorClass = register(new MetaHttpBuiltinCommunicatorClass());
 
             private MetaHttpDefaultPortalClass() {
               super(metaType(io.art.http.portal.HttpDefaultPortal.class));
+            }
+
+            public static MetaHttpDefaultPortalClass httpDefaultPortal() {
+              return self.get();
             }
 
             @Override
@@ -94,10 +101,16 @@ public class MetaHttp extends MetaLibrary {
             }
 
             public static final class MetaHttpBuiltinCommunicatorClass extends MetaClass<io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator> {
+              private static final LazyProperty<MetaHttpBuiltinCommunicatorClass> self = MetaClass.self(io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator.class);
+
               private final MetaExecuteMethod executeMethod = register(new MetaExecuteMethod());
 
               private MetaHttpBuiltinCommunicatorClass() {
                 super(metaType(io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator.class));
+              }
+
+              public static MetaHttpBuiltinCommunicatorClass httpBuiltinCommunicator() {
+                return self.get();
               }
 
               public MetaExecuteMethod executeMethod() {

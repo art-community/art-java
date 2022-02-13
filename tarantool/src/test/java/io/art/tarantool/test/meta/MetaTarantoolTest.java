@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.LazyProperty;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -92,6 +93,8 @@ public class MetaTarantoolTest extends MetaLibrary {
           }
 
           public static final class MetaTarantoolStorageTestClass extends MetaClass<io.art.tarantool.test.TarantoolStorageTest> {
+            private static final LazyProperty<MetaTarantoolStorageTestClass> self = MetaClass.self(io.art.tarantool.test.TarantoolStorageTest.class);
+
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
             private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
@@ -104,6 +107,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             private MetaTarantoolStorageTestClass() {
               super(metaType(io.art.tarantool.test.TarantoolStorageTest.class));
+            }
+
+            public static MetaTarantoolStorageTestClass tarantoolStorageTest() {
+              return self.get();
             }
 
             public MetaConstructorConstructor constructor() {
@@ -232,6 +239,8 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             public static final class MetaTestTarantoolConstantsClass extends MetaClass<io.art.tarantool.test.constants.TestTarantoolConstants> {
+              private static final LazyProperty<MetaTestTarantoolConstantsClass> self = MetaClass.self(io.art.tarantool.test.constants.TestTarantoolConstants.class);
+
               private final MetaField<java.lang.String> STORAGE_DIRECTORYField = register(new MetaField<>("STORAGE_DIRECTORY",metaType(java.lang.String.class),false));
 
               private final MetaField<java.lang.String> STORAGE_COMMANDField = register(new MetaField<>("STORAGE_COMMAND",metaType(java.lang.String.class),false));
@@ -256,6 +265,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private MetaTestTarantoolConstantsClass() {
                 super(metaType(io.art.tarantool.test.constants.TestTarantoolConstants.class));
+              }
+
+              public static MetaTestTarantoolConstantsClass testTarantoolConstants() {
+                return self.get();
               }
 
               public MetaField<java.lang.String> STORAGE_DIRECTORYField() {
@@ -329,12 +342,18 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             public static final class MetaTestTarantoolStorageClass extends MetaClass<io.art.tarantool.test.storage.TestTarantoolStorage> {
+              private static final LazyProperty<MetaTestTarantoolStorageClass> self = MetaClass.self(io.art.tarantool.test.storage.TestTarantoolStorage.class);
+
               private final MetaInitializeStorageMethod initializeStorageMethod = register(new MetaInitializeStorageMethod());
 
               private final MetaShutdownStorageMethod shutdownStorageMethod = register(new MetaShutdownStorageMethod());
 
               private MetaTestTarantoolStorageClass() {
                 super(metaType(io.art.tarantool.test.storage.TestTarantoolStorage.class));
+              }
+
+              public static MetaTestTarantoolStorageClass testTarantoolStorage() {
+                return self.get();
               }
 
               public MetaInitializeStorageMethod initializeStorageMethod() {
@@ -401,6 +420,8 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             public static final class MetaTestDataClass extends MetaClass<io.art.tarantool.test.model.TestData> {
+              private static final LazyProperty<MetaTestDataClass> self = MetaClass.self(io.art.tarantool.test.model.TestData.class);
+
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
@@ -423,6 +444,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private MetaTestDataClass() {
                 super(metaType(io.art.tarantool.test.model.TestData.class));
+              }
+
+              public static MetaTestDataClass testData() {
+                return self.get();
               }
 
               public MetaConstructorConstructor constructor() {
@@ -568,6 +593,8 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               public static final class MetaTestDataBuilderClass extends MetaClass<io.art.tarantool.test.model.TestData.TestDataBuilder> {
+                private static final LazyProperty<MetaTestDataBuilderClass> self = MetaClass.self(io.art.tarantool.test.model.TestData.TestDataBuilder.class);
+
                 private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
 
                 private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
@@ -584,6 +611,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private MetaTestDataBuilderClass() {
                   super(metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class));
+                }
+
+                public static MetaTestDataBuilderClass testDataBuilder() {
+                  return self.get();
                 }
 
                 public MetaField<java.lang.Integer> idField() {
@@ -715,6 +746,8 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               public static final class MetaInnerClass extends MetaClass<io.art.tarantool.test.model.TestData.Inner> {
+                private static final LazyProperty<MetaInnerClass> self = MetaClass.self(io.art.tarantool.test.model.TestData.Inner.class);
+
                 private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
                 private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
@@ -727,6 +760,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private MetaInnerClass() {
                   super(metaType(io.art.tarantool.test.model.TestData.Inner.class));
+                }
+
+                public static MetaInnerClass inner() {
+                  return self.get();
                 }
 
                 public MetaConstructorConstructor constructor() {
@@ -812,6 +849,8 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 public static final class MetaInnerBuilderClass extends MetaClass<io.art.tarantool.test.model.TestData.Inner.InnerBuilder> {
+                  private static final LazyProperty<MetaInnerBuilderClass> self = MetaClass.self(io.art.tarantool.test.model.TestData.Inner.InnerBuilder.class);
+
                   private final MetaField<java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false));
 
                   private final MetaContentMethod contentMethod = register(new MetaContentMethod());
@@ -820,6 +859,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                   private MetaInnerBuilderClass() {
                     super(metaType(io.art.tarantool.test.model.TestData.Inner.InnerBuilder.class));
+                  }
+
+                  public static MetaInnerBuilderClass innerBuilder() {
+                    return self.get();
                   }
 
                   public MetaField<java.lang.String> contentField() {
@@ -884,8 +927,14 @@ public class MetaTarantoolTest extends MetaLibrary {
             }
 
             public static final class MetaTestStorageClass extends MetaClass<io.art.tarantool.test.model.TestStorage> {
+              private static final LazyProperty<MetaTestStorageClass> self = MetaClass.self(io.art.tarantool.test.model.TestStorage.class);
+
               private MetaTestStorageClass() {
                 super(metaType(io.art.tarantool.test.model.TestStorage.class));
+              }
+
+              public static MetaTestStorageClass testStorage() {
+                return self.get();
               }
 
               @Override

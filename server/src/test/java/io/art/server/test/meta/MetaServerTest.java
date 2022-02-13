@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.LazyProperty;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
 import io.art.meta.model.MetaLibrary;
@@ -85,6 +86,8 @@ public class MetaServerTest extends MetaLibrary {
             }
 
             public static final class MetaBenchmarkServiceClass extends MetaClass<io.art.server.test.service.BenchmarkService> {
+              private static final LazyProperty<MetaBenchmarkServiceClass> self = MetaClass.self(io.art.server.test.service.BenchmarkService.class);
+
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaM1Method m1Method = register(new MetaM1Method());
@@ -121,6 +124,10 @@ public class MetaServerTest extends MetaLibrary {
 
               private MetaBenchmarkServiceClass() {
                 super(metaType(io.art.server.test.service.BenchmarkService.class));
+              }
+
+              public static MetaBenchmarkServiceClass benchmarkService() {
+                return self.get();
               }
 
               public MetaConstructorConstructor constructor() {
@@ -554,6 +561,8 @@ public class MetaServerTest extends MetaLibrary {
             }
 
             public static final class MetaTestServiceClass extends MetaClass<io.art.server.test.service.TestService> {
+              private static final LazyProperty<MetaTestServiceClass> self = MetaClass.self(io.art.server.test.service.TestService.class);
+
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaM1Method m1Method = register(new MetaM1Method());
@@ -590,6 +599,10 @@ public class MetaServerTest extends MetaLibrary {
 
               private MetaTestServiceClass() {
                 super(metaType(io.art.server.test.service.TestService.class));
+              }
+
+              public static MetaTestServiceClass testService() {
+                return self.get();
               }
 
               public MetaConstructorConstructor constructor() {

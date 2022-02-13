@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.LazyProperty;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaLibrary;
@@ -82,6 +83,8 @@ public class MetaCommunicatorTest extends MetaLibrary {
             }
 
             public static final class MetaTestCommunicatorClass extends MetaClass<io.art.communicator.test.proxy.TestCommunicator> {
+              private static final LazyProperty<MetaTestCommunicatorClass> self = MetaClass.self(io.art.communicator.test.proxy.TestCommunicator.class);
+
               private final MetaM1Method m1Method = register(new MetaM1Method());
 
               private final MetaM2Method m2Method = register(new MetaM2Method());
@@ -116,6 +119,10 @@ public class MetaCommunicatorTest extends MetaLibrary {
 
               private MetaTestCommunicatorClass() {
                 super(metaType(io.art.communicator.test.proxy.TestCommunicator.class));
+              }
+
+              public static MetaTestCommunicatorClass testCommunicator() {
+                return self.get();
               }
 
               public MetaM1Method m1Method() {

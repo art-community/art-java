@@ -4,7 +4,6 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
-import io.art.core.property.*;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -96,10 +95,17 @@ public class MetaMetaTest extends MetaLibrary {
           }
 
           public static final class MetaTestingMetaConfigurationGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaConfigurationGenerator> {
+            private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationGeneratorClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfigurationGenerator.class);
+
             private final MetaGenerateTestingConfigurationMethod generateTestingConfigurationMethod = register(new MetaGenerateTestingConfigurationMethod());
 
             private MetaTestingMetaConfigurationGeneratorClass() {
               super(metaType(io.art.meta.test.TestingMetaConfigurationGenerator.class));
+            }
+
+            public static MetaTestingMetaConfigurationGeneratorClass testingMetaConfigurationGenerator(
+                ) {
+              return self.get();
             }
 
             public MetaGenerateTestingConfigurationMethod generateTestingConfigurationMethod() {
@@ -124,11 +130,7 @@ public class MetaMetaTest extends MetaLibrary {
           }
 
           public static final class MetaTestingMetaConfigurationClass extends MetaClass<io.art.meta.test.TestingMetaConfiguration> {
-            private static final LazyProperty<MetaTestingMetaConfigurationClass> self = self(io.art.meta.test.TestingMetaConfiguration.class);
-
-            public static final MetaTestingMetaConfigurationClass testingMetaConfiguration() {
-                return self.get();
-            }
+            private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfiguration.class);
 
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
@@ -392,6 +394,10 @@ public class MetaMetaTest extends MetaLibrary {
 
             private MetaTestingMetaConfigurationClass() {
               super(metaType(io.art.meta.test.TestingMetaConfiguration.class));
+            }
+
+            public static MetaTestingMetaConfigurationClass testingMetaConfiguration() {
+              return self.get();
             }
 
             public MetaConstructorConstructor constructor() {
@@ -2502,6 +2508,8 @@ public class MetaMetaTest extends MetaLibrary {
             }
 
             public static final class MetaTestingMetaConfigurationBuilderClass extends MetaClass<io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationBuilderClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class);
+
               private final MetaField<java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false));
 
               private final MetaField<java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false));
@@ -2758,6 +2766,11 @@ public class MetaMetaTest extends MetaLibrary {
 
               private MetaTestingMetaConfigurationBuilderClass() {
                 super(metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class));
+              }
+
+              public static MetaTestingMetaConfigurationBuilderClass testingMetaConfigurationBuilder(
+                  ) {
+                return self.get();
               }
 
               public MetaField<java.lang.Integer> f1Field() {
@@ -4951,6 +4964,8 @@ public class MetaMetaTest extends MetaLibrary {
           }
 
           public static final class MetaTestingShortMetaModelClass extends MetaClass<io.art.meta.test.TestingShortMetaModel> {
+            private static final io.art.core.property.LazyProperty<MetaTestingShortMetaModelClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.class);
+
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
             private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
@@ -4971,6 +4986,10 @@ public class MetaMetaTest extends MetaLibrary {
 
             private MetaTestingShortMetaModelClass() {
               super(metaType(io.art.meta.test.TestingShortMetaModel.class));
+            }
+
+            public static MetaTestingShortMetaModelClass testingShortMetaModel() {
+              return self.get();
             }
 
             public MetaConstructorConstructor constructor() {
@@ -5094,6 +5113,8 @@ public class MetaMetaTest extends MetaLibrary {
             }
 
             public static final class MetaTestingShortMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
+              private static final io.art.core.property.LazyProperty<MetaTestingShortMetaModelBuilderClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class);
+
               private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
 
               private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
@@ -5110,6 +5131,10 @@ public class MetaMetaTest extends MetaLibrary {
 
               private MetaTestingShortMetaModelBuilderClass() {
                 super(metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class));
+              }
+
+              public static MetaTestingShortMetaModelBuilderClass testingShortMetaModelBuilder() {
+                return self.get();
               }
 
               public MetaField<java.lang.Integer> idField() {
@@ -5241,6 +5266,8 @@ public class MetaMetaTest extends MetaLibrary {
             }
 
             public static final class MetaInnerClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner> {
+              private static final io.art.core.property.LazyProperty<MetaInnerClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.Inner.class);
+
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
@@ -5255,6 +5282,10 @@ public class MetaMetaTest extends MetaLibrary {
 
               private MetaInnerClass() {
                 super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.class));
+              }
+
+              public static MetaInnerClass inner() {
+                return self.get();
               }
 
               public MetaConstructorConstructor constructor() {
@@ -5342,6 +5373,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
 
               public static final class MetaInnerBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
+                private static final io.art.core.property.LazyProperty<MetaInnerBuilderClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class);
+
                 private final MetaField<java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false));
 
                 private final MetaField<java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false));
@@ -5354,6 +5387,10 @@ public class MetaMetaTest extends MetaLibrary {
 
                 private MetaInnerBuilderClass() {
                   super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class));
+                }
+
+                public static MetaInnerBuilderClass innerBuilder() {
+                  return self.get();
                 }
 
                 public MetaField<java.lang.Integer> idField() {
@@ -5452,10 +5489,16 @@ public class MetaMetaTest extends MetaLibrary {
           }
 
           public static final class MetaTestingMetaModelGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaModelGenerator> {
+            private static final io.art.core.property.LazyProperty<MetaTestingMetaModelGeneratorClass> self = MetaClass.self(io.art.meta.test.TestingMetaModelGenerator.class);
+
             private final MetaGenerateTestingModelMethod generateTestingModelMethod = register(new MetaGenerateTestingModelMethod());
 
             private MetaTestingMetaModelGeneratorClass() {
               super(metaType(io.art.meta.test.TestingMetaModelGenerator.class));
+            }
+
+            public static MetaTestingMetaModelGeneratorClass testingMetaModelGenerator() {
+              return self.get();
             }
 
             public MetaGenerateTestingModelMethod generateTestingModelMethod() {
@@ -5480,6 +5523,8 @@ public class MetaMetaTest extends MetaLibrary {
           }
 
           public static final class MetaTestingMetaModelClass extends MetaClass<io.art.meta.test.TestingMetaModel> {
+            private static final io.art.core.property.LazyProperty<MetaTestingMetaModelClass> self = MetaClass.self(io.art.meta.test.TestingMetaModel.class);
+
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
             private final MetaField<java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false));
@@ -5758,6 +5803,10 @@ public class MetaMetaTest extends MetaLibrary {
 
             private MetaTestingMetaModelClass() {
               super(metaType(io.art.meta.test.TestingMetaModel.class));
+            }
+
+            public static MetaTestingMetaModelClass testingMetaModel() {
+              return self.get();
             }
 
             public MetaConstructorConstructor constructor() {
@@ -7927,6 +7976,8 @@ public class MetaMetaTest extends MetaLibrary {
             }
 
             public static final class MetaTestingMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
+              private static final io.art.core.property.LazyProperty<MetaTestingMetaModelBuilderClass> self = MetaClass.self(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class);
+
               private final MetaField<java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false));
 
               private final MetaField<java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false));
@@ -8199,6 +8250,10 @@ public class MetaMetaTest extends MetaLibrary {
 
               private MetaTestingMetaModelBuilderClass() {
                 super(metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class));
+              }
+
+              public static MetaTestingMetaModelBuilderClass testingMetaModelBuilder() {
+                return self.get();
               }
 
               public MetaField<java.lang.Integer> f1Field() {

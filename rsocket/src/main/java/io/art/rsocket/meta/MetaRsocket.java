@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.LazyProperty;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -79,6 +80,8 @@ public class MetaRsocket extends MetaLibrary {
           }
 
           public static final class MetaRsocketSetupPayloadClass extends MetaClass<io.art.rsocket.model.RsocketSetupPayload> {
+            private static final LazyProperty<MetaRsocketSetupPayloadClass> self = MetaClass.self(io.art.rsocket.model.RsocketSetupPayload.class);
+
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
             private final MetaField<io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField = register(new MetaField<>("dataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false));
@@ -103,6 +106,10 @@ public class MetaRsocket extends MetaLibrary {
 
             private MetaRsocketSetupPayloadClass() {
               super(metaType(io.art.rsocket.model.RsocketSetupPayload.class));
+            }
+
+            public static MetaRsocketSetupPayloadClass rsocketSetupPayload() {
+              return self.get();
             }
 
             public MetaConstructorConstructor constructor() {
@@ -280,6 +287,8 @@ public class MetaRsocket extends MetaLibrary {
             }
 
             public static final class MetaRsocketSetupPayloadBuilderClass extends MetaClass<io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder> {
+              private static final LazyProperty<MetaRsocketSetupPayloadBuilderClass> self = MetaClass.self(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class);
+
               private final MetaField<io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField = register(new MetaField<>("dataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false));
 
               private final MetaField<io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = register(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false));
@@ -300,6 +309,10 @@ public class MetaRsocket extends MetaLibrary {
 
               private MetaRsocketSetupPayloadBuilderClass() {
                 super(metaType(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class));
+              }
+
+              public static MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilder() {
+                return self.get();
               }
 
               public MetaField<io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField(
@@ -481,10 +494,16 @@ public class MetaRsocket extends MetaLibrary {
           }
 
           public static final class MetaRsocketDefaultPortalClass extends MetaClass<io.art.rsocket.portal.RsocketDefaultPortal> {
+            private static final LazyProperty<MetaRsocketDefaultPortalClass> self = MetaClass.self(io.art.rsocket.portal.RsocketDefaultPortal.class);
+
             private final MetaRsocketBuiltinCommunicatorClass rsocketBuiltinCommunicatorClass = register(new MetaRsocketBuiltinCommunicatorClass());
 
             private MetaRsocketDefaultPortalClass() {
               super(metaType(io.art.rsocket.portal.RsocketDefaultPortal.class));
+            }
+
+            public static MetaRsocketDefaultPortalClass rsocketDefaultPortal() {
+              return self.get();
             }
 
             @Override
@@ -505,6 +524,8 @@ public class MetaRsocket extends MetaLibrary {
             }
 
             public static final class MetaRsocketBuiltinCommunicatorClass extends MetaClass<io.art.rsocket.portal.RsocketDefaultPortal.RsocketBuiltinCommunicator> {
+              private static final LazyProperty<MetaRsocketBuiltinCommunicatorClass> self = MetaClass.self(io.art.rsocket.portal.RsocketDefaultPortal.RsocketBuiltinCommunicator.class);
+
               private final MetaFireAndForgetMethod fireAndForgetMethod = register(new MetaFireAndForgetMethod());
 
               private final MetaRequestResponseMethod requestResponseMethod = register(new MetaRequestResponseMethod());
@@ -515,6 +536,10 @@ public class MetaRsocket extends MetaLibrary {
 
               private MetaRsocketBuiltinCommunicatorClass() {
                 super(metaType(io.art.rsocket.portal.RsocketDefaultPortal.RsocketBuiltinCommunicator.class));
+              }
+
+              public static MetaRsocketBuiltinCommunicatorClass rsocketBuiltinCommunicator() {
+                return self.get();
               }
 
               public MetaFireAndForgetMethod fireAndForgetMethod() {

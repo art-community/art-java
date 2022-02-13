@@ -4,6 +4,7 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.core.property.LazyProperty;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -85,6 +86,8 @@ public class MetaRsocketTest extends MetaLibrary {
           }
 
           public static final class MetaRsocketDefaultTestClass extends MetaClass<io.art.rsocket.test.RsocketDefaultTest> {
+            private static final LazyProperty<MetaRsocketDefaultTestClass> self = MetaClass.self(io.art.rsocket.test.RsocketDefaultTest.class);
+
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
             private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
@@ -95,6 +98,10 @@ public class MetaRsocketTest extends MetaLibrary {
 
             private MetaRsocketDefaultTestClass() {
               super(metaType(io.art.rsocket.test.RsocketDefaultTest.class));
+            }
+
+            public static MetaRsocketDefaultTestClass rsocketDefaultTest() {
+              return self.get();
             }
 
             public MetaConstructorConstructor constructor() {
@@ -199,6 +206,8 @@ public class MetaRsocketTest extends MetaLibrary {
             }
 
             public static final class MetaTestRsocketClass extends MetaClass<io.art.rsocket.test.communicator.TestRsocket> {
+              private static final LazyProperty<MetaTestRsocketClass> self = MetaClass.self(io.art.rsocket.test.communicator.TestRsocket.class);
+
               private final MetaM1Method m1Method = register(new MetaM1Method());
 
               private final MetaM2Method m2Method = register(new MetaM2Method());
@@ -235,6 +244,10 @@ public class MetaRsocketTest extends MetaLibrary {
 
               private MetaTestRsocketClass() {
                 super(metaType(io.art.rsocket.test.communicator.TestRsocket.class));
+              }
+
+              public static MetaTestRsocketClass testRsocket() {
+                return self.get();
               }
 
               public MetaM1Method m1Method() {
@@ -826,10 +839,16 @@ public class MetaRsocketTest extends MetaLibrary {
               }
 
               public static final class MetaTestRsocketConnectorClass extends MetaClass<io.art.rsocket.test.communicator.TestRsocket.TestRsocketConnector> {
+                private static final LazyProperty<MetaTestRsocketConnectorClass> self = MetaClass.self(io.art.rsocket.test.communicator.TestRsocket.TestRsocketConnector.class);
+
                 private final MetaTestRsocketMethod testRsocketMethod = register(new MetaTestRsocketMethod());
 
                 private MetaTestRsocketConnectorClass() {
                   super(metaType(io.art.rsocket.test.communicator.TestRsocket.TestRsocketConnector.class));
+                }
+
+                public static MetaTestRsocketConnectorClass testRsocketConnector() {
+                  return self.get();
                 }
 
                 public MetaTestRsocketMethod testRsocketMethod() {
@@ -897,6 +916,8 @@ public class MetaRsocketTest extends MetaLibrary {
             }
 
             public static final class MetaTestRsocketServiceClass extends MetaClass<io.art.rsocket.test.service.TestRsocketService> {
+              private static final LazyProperty<MetaTestRsocketServiceClass> self = MetaClass.self(io.art.rsocket.test.service.TestRsocketService.class);
+
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaM1Method m1Method = register(new MetaM1Method());
@@ -933,6 +954,10 @@ public class MetaRsocketTest extends MetaLibrary {
 
               private MetaTestRsocketServiceClass() {
                 super(metaType(io.art.rsocket.test.service.TestRsocketService.class));
+              }
+
+              public static MetaTestRsocketServiceClass testRsocketService() {
+                return self.get();
               }
 
               public MetaConstructorConstructor constructor() {
@@ -1398,6 +1423,8 @@ public class MetaRsocketTest extends MetaLibrary {
             }
 
             public static final class MetaBenchmarkRsocketServiceClass extends MetaClass<io.art.rsocket.test.service.BenchmarkRsocketService> {
+              private static final LazyProperty<MetaBenchmarkRsocketServiceClass> self = MetaClass.self(io.art.rsocket.test.service.BenchmarkRsocketService.class);
+
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
               private final MetaM1Method m1Method = register(new MetaM1Method());
@@ -1434,6 +1461,10 @@ public class MetaRsocketTest extends MetaLibrary {
 
               private MetaBenchmarkRsocketServiceClass() {
                 super(metaType(io.art.rsocket.test.service.BenchmarkRsocketService.class));
+              }
+
+              public static MetaBenchmarkRsocketServiceClass benchmarkRsocketService() {
+                return self.get();
               }
 
               public MetaConstructorConstructor constructor() {
