@@ -26,12 +26,19 @@ import static java.util.Objects.*;
 @ToString
 @Generation
 @EqualsAndHashCode
-@RequiredArgsConstructor
 public class MetaField<T> {
     private final String name;
     private final MetaType<?> type;
     private final boolean inherited;
+    private final MetaClass<?> owner;
     private Boolean known;
+
+    public MetaField(String name, MetaType<?> type, boolean inherited, MetaClass<?> owner) {
+        this.name = name;
+        this.owner = owner;
+        this.type = type;
+        this.inherited = inherited;
+    }
 
     public String name() {
         return name;

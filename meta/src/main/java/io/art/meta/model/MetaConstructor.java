@@ -36,10 +36,12 @@ import java.util.*;
 public abstract class MetaConstructor<T> {
     private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
+    private final MetaClass<T> owner;
     private Boolean known;
 
-    protected MetaConstructor(MetaType<T> type) {
+    protected MetaConstructor(MetaType<T> type, MetaClass<T> owner) {
         this.type = type;
+        this.owner = owner;
         parameters = map();
     }
 

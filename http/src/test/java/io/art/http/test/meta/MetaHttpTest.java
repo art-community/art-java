@@ -1,7 +1,5 @@
 package io.art.http.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -97,9 +95,9 @@ public class MetaHttpTest extends MetaLibrary {
 
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor());
 
-            private final MetaField<java.nio.file.Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false));
+            private final MetaField<java.nio.file.Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false, null));
 
-            private final MetaField<java.nio.file.Path> downloadedFileField = register(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false));
+            private final MetaField<java.nio.file.Path> downloadedFileField = register(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false, null));
 
             private final MetaSetupMethod setupMethod = register(new MetaSetupMethod());
 
@@ -141,7 +139,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.HttpDefaultTest> {
               private MetaConstructorConstructor() {
-                super(metaType(io.art.http.test.HttpDefaultTest.class));
+                super(metaType(io.art.http.test.HttpDefaultTest.class), null);
               }
 
               @Override
@@ -157,7 +155,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaSetupMethod extends StaticMetaMethod<Void> {
               private MetaSetupMethod() {
-                super("setup",metaType(Void.class));
+                super("setup",metaType(Void.class), null);
               }
 
               @Override
@@ -175,7 +173,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaCleanupMethod extends StaticMetaMethod<Void> {
               private MetaCleanupMethod() {
-                super("cleanup",metaType(Void.class));
+                super("cleanup",metaType(Void.class), null);
               }
 
               @Override
@@ -193,7 +191,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaTestHttpDefaultCommunicatorMethod extends InstanceMetaMethod<io.art.http.test.HttpDefaultTest, Void> {
               private MetaTestHttpDefaultCommunicatorMethod() {
-                super("testHttpDefaultCommunicator",metaType(Void.class));
+                super("testHttpDefaultCommunicator",metaType(Void.class), null);
               }
 
               @Override
@@ -248,7 +246,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.WsTest> {
               private MetaConstructorConstructor() {
-                super(metaType(io.art.http.test.WsTest.class));
+                super(metaType(io.art.http.test.WsTest.class), null);
               }
 
               @Override
@@ -264,7 +262,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaSetupMethod extends StaticMetaMethod<Void> {
               private MetaSetupMethod() {
-                super("setup",metaType(Void.class));
+                super("setup",metaType(Void.class), null);
               }
 
               @Override
@@ -282,7 +280,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaCleanupMethod extends StaticMetaMethod<Void> {
               private MetaCleanupMethod() {
-                super("cleanup",metaType(Void.class));
+                super("cleanup",metaType(Void.class), null);
               }
 
               @Override
@@ -300,7 +298,7 @@ public class MetaHttpTest extends MetaLibrary {
 
             public static final class MetaTestWsMethod extends InstanceMetaMethod<io.art.http.test.WsTest, Void> {
               private MetaTestWsMethod() {
-                super("testWs",metaType(Void.class));
+                super("testWs",metaType(Void.class), null);
               }
 
               @Override
@@ -485,7 +483,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost1Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
                 private MetaPost1Method() {
-                  super("post1",metaType(Void.class));
+                  super("post1",metaType(Void.class), null);
                 }
 
                 @Override
@@ -505,7 +503,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost2Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
                 private MetaPost2Method() {
-                  super("post2",metaType(java.lang.String.class));
+                  super("post2",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -523,7 +521,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost3Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaPost3Method() {
-                  super("post3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -541,7 +539,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost4Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
                 private MetaPost4Method() {
-                  super("post4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -561,7 +559,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost5Method() {
-                  super("post5",metaType(Void.class));
+                  super("post5",metaType(Void.class), null);
                 }
 
                 @Override
@@ -587,7 +585,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost6Method() {
-                  super("post6",metaType(java.lang.String.class));
+                  super("post6",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -611,7 +609,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost7Method() {
-                  super("post7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -635,7 +633,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost8Method() {
-                  super("post8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -659,7 +657,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost9Method() {
-                  super("post9",metaType(Void.class));
+                  super("post9",metaType(Void.class), null);
                 }
 
                 @Override
@@ -686,7 +684,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost10Method() {
-                  super("post10",metaType(java.lang.String.class));
+                  super("post10",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -711,7 +709,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost11Method() {
-                  super("post11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -736,7 +734,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost12Method() {
-                  super("post12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -761,7 +759,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost13Method() {
-                  super("post13",metaType(Void.class));
+                  super("post13",metaType(Void.class), null);
                 }
 
                 @Override
@@ -788,7 +786,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost14Method() {
-                  super("post14",metaType(java.lang.String.class));
+                  super("post14",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -813,7 +811,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost15Method() {
-                  super("post15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -838,7 +836,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost16Method() {
-                  super("post16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -863,7 +861,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost17Method() {
-                  super("post17",metaType(Void.class));
+                  super("post17",metaType(Void.class), null);
                 }
 
                 @Override
@@ -890,7 +888,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost18Method() {
-                  super("post18",metaType(java.lang.String.class));
+                  super("post18",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -915,7 +913,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost19Method() {
-                  super("post19",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post19",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -940,7 +938,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost20Method() {
-                  super("post20",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post20",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -963,7 +961,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaGetFileMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
                 private MetaGetFileMethod() {
-                  super("getFile",metaType(java.lang.String.class));
+                  super("getFile",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -1186,7 +1184,7 @@ public class MetaHttpTest extends MetaLibrary {
 
                 public static final class MetaTestHttpMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp.TestHttpConnector, io.art.http.test.communicator.TestHttp> {
                   private MetaTestHttpMethod() {
-                    super("testHttp",metaType(io.art.http.test.communicator.TestHttp.class));
+                    super("testHttp",metaType(io.art.http.test.communicator.TestHttp.class), null);
                   }
 
                   @Override
@@ -1353,7 +1351,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs1Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
                 private MetaWs1Method() {
-                  super("ws1",metaType(Void.class));
+                  super("ws1",metaType(Void.class), null);
                 }
 
                 @Override
@@ -1373,7 +1371,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs2Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, java.lang.String> {
                 private MetaWs2Method() {
-                  super("ws2",metaType(java.lang.String.class));
+                  super("ws2",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -1391,7 +1389,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs3Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaWs3Method() {
-                  super("ws3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1409,7 +1407,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs4Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
                 private MetaWs4Method() {
-                  super("ws4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1429,7 +1427,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs5Method() {
-                  super("ws5",metaType(Void.class));
+                  super("ws5",metaType(Void.class), null);
                 }
 
                 @Override
@@ -1455,7 +1453,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs6Method() {
-                  super("ws6",metaType(java.lang.String.class));
+                  super("ws6",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -1479,7 +1477,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs7Method() {
-                  super("ws7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1503,7 +1501,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs8Method() {
-                  super("ws8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1527,7 +1525,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs9Method() {
-                  super("ws9",metaType(Void.class));
+                  super("ws9",metaType(Void.class), null);
                 }
 
                 @Override
@@ -1554,7 +1552,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs10Method() {
-                  super("ws10",metaType(java.lang.String.class));
+                  super("ws10",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -1579,7 +1577,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs11Method() {
-                  super("ws11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1604,7 +1602,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs12Method() {
-                  super("ws12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1629,7 +1627,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs13Method() {
-                  super("ws13",metaType(Void.class));
+                  super("ws13",metaType(Void.class), null);
                 }
 
                 @Override
@@ -1656,7 +1654,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs14Method() {
-                  super("ws14",metaType(java.lang.String.class));
+                  super("ws14",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -1681,7 +1679,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs15Method() {
-                  super("ws15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1706,7 +1704,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs16Method() {
-                  super("ws16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1731,7 +1729,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs17Method() {
-                  super("ws17",metaType(Void.class));
+                  super("ws17",metaType(Void.class), null);
                 }
 
                 @Override
@@ -1758,7 +1756,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWsEchoMethod() {
-                  super("wsEcho",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("wsEcho",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1958,7 +1956,7 @@ public class MetaHttpTest extends MetaLibrary {
 
                 public static final class MetaTestWsMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestWs.TestWsConnector, io.art.http.test.communicator.TestWs> {
                   private MetaTestWsMethod() {
-                    super("testWs",metaType(io.art.http.test.communicator.TestWs.class));
+                    super("testWs",metaType(io.art.http.test.communicator.TestWs.class), null);
                   }
 
                   @Override
@@ -2150,7 +2148,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestHttpService> {
                 private MetaConstructorConstructor() {
-                  super(metaType(io.art.http.test.service.TestHttpService.class));
+                  super(metaType(io.art.http.test.service.TestHttpService.class), null);
                 }
 
                 @Override
@@ -2167,7 +2165,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost1Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
                 private MetaPost1Method() {
-                  super("post1",metaType(Void.class));
+                  super("post1",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2187,7 +2185,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost2Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
                 private MetaPost2Method() {
-                  super("post2",metaType(java.lang.String.class));
+                  super("post2",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2205,7 +2203,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost3Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaPost3Method() {
-                  super("post3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2223,7 +2221,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaPost4Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
                 private MetaPost4Method() {
-                  super("post4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2243,7 +2241,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost5Method() {
-                  super("post5",metaType(Void.class));
+                  super("post5",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2269,7 +2267,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost6Method() {
-                  super("post6",metaType(java.lang.String.class));
+                  super("post6",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2293,7 +2291,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost7Method() {
-                  super("post7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2317,7 +2315,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost8Method() {
-                  super("post8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2341,7 +2339,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost9Method() {
-                  super("post9",metaType(Void.class));
+                  super("post9",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2368,7 +2366,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost10Method() {
-                  super("post10",metaType(java.lang.String.class));
+                  super("post10",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2393,7 +2391,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost11Method() {
-                  super("post11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2418,7 +2416,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost12Method() {
-                  super("post12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2443,7 +2441,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost13Method() {
-                  super("post13",metaType(Void.class));
+                  super("post13",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2470,7 +2468,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost14Method() {
-                  super("post14",metaType(java.lang.String.class));
+                  super("post14",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2495,7 +2493,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost15Method() {
-                  super("post15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2520,7 +2518,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost16Method() {
-                  super("post16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2545,7 +2543,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost17Method() {
-                  super("post17",metaType(Void.class));
+                  super("post17",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2572,7 +2570,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost18Method() {
-                  super("post18",metaType(java.lang.String.class));
+                  super("post18",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2597,7 +2595,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost19Method() {
-                  super("post19",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("post19",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2622,7 +2620,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost20Method() {
-                  super("post20",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("post20",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2771,7 +2769,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestWsService> {
                 private MetaConstructorConstructor() {
-                  super(metaType(io.art.http.test.service.TestWsService.class));
+                  super(metaType(io.art.http.test.service.TestWsService.class), null);
                 }
 
                 @Override
@@ -2788,7 +2786,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs1Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
                 private MetaWs1Method() {
-                  super("ws1",metaType(Void.class));
+                  super("ws1",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2808,7 +2806,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs2Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, java.lang.String> {
                 private MetaWs2Method() {
-                  super("ws2",metaType(java.lang.String.class));
+                  super("ws2",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2826,7 +2824,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs3Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaWs3Method() {
-                  super("ws3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2844,7 +2842,7 @@ public class MetaHttpTest extends MetaLibrary {
 
               public static final class MetaWs4Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
                 private MetaWs4Method() {
-                  super("ws4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2864,7 +2862,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs5Method() {
-                  super("ws5",metaType(Void.class));
+                  super("ws5",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2890,7 +2888,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs6Method() {
-                  super("ws6",metaType(java.lang.String.class));
+                  super("ws6",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -2914,7 +2912,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs7Method() {
-                  super("ws7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2938,7 +2936,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs8Method() {
-                  super("ws8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -2962,7 +2960,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs9Method() {
-                  super("ws9",metaType(Void.class));
+                  super("ws9",metaType(Void.class), null);
                 }
 
                 @Override
@@ -2989,7 +2987,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs10Method() {
-                  super("ws10",metaType(java.lang.String.class));
+                  super("ws10",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -3014,7 +3012,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs11Method() {
-                  super("ws11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -3039,7 +3037,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs12Method() {
-                  super("ws12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -3064,7 +3062,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs13Method() {
-                  super("ws13",metaType(Void.class));
+                  super("ws13",metaType(Void.class), null);
                 }
 
                 @Override
@@ -3091,7 +3089,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs14Method() {
-                  super("ws14",metaType(java.lang.String.class));
+                  super("ws14",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -3116,7 +3114,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs15Method() {
-                  super("ws15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("ws15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -3141,7 +3139,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs16Method() {
-                  super("ws16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("ws16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -3166,7 +3164,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs17Method() {
-                  super("ws17",metaType(Void.class));
+                  super("ws17",metaType(Void.class), null);
                 }
 
                 @Override
@@ -3193,7 +3191,7 @@ public class MetaHttpTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWsEchoMethod() {
-                  super("wsEcho",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("wsEcho",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override

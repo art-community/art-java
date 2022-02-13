@@ -36,10 +36,12 @@ public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;
     private final MetaType<T> returnType;
+    private final MetaClass<?> owner;
     private Boolean known;
 
-    protected MetaMethod(String name, MetaType<?> returnType) {
+    protected MetaMethod(String name, MetaType<?> returnType, MetaClass<?> owner) {
         this.name = name;
+        this.owner = owner;
         this.returnType = cast(returnType);
         this.parameters = map();
     }

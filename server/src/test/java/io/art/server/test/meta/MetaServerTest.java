@@ -1,7 +1,5 @@
 package io.art.server.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -200,7 +198,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.server.test.service.BenchmarkService> {
                 private MetaConstructorConstructor() {
-                  super(metaType(io.art.server.test.service.BenchmarkService.class));
+                  super(metaType(io.art.server.test.service.BenchmarkService.class), null);
                 }
 
                 @Override
@@ -217,7 +215,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM1Method extends StaticMetaMethod<Void> {
                 private MetaM1Method() {
-                  super("m1",metaType(Void.class));
+                  super("m1",metaType(Void.class), null);
                 }
 
                 @Override
@@ -235,7 +233,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM2Method extends StaticMetaMethod<java.lang.String> {
                 private MetaM2Method() {
-                  super("m2",metaType(java.lang.String.class));
+                  super("m2",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -251,7 +249,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM3Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaM3Method() {
-                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -267,7 +265,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM4Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
                 private MetaM4Method() {
-                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -285,7 +283,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method() {
-                  super("m5",metaType(Void.class));
+                  super("m5",metaType(Void.class), null);
                 }
 
                 @Override
@@ -309,7 +307,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method() {
-                  super("m6",metaType(java.lang.String.class));
+                  super("m6",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -331,7 +329,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method() {
-                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -353,7 +351,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method() {
-                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -375,7 +373,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method() {
-                  super("m9",metaType(Void.class));
+                  super("m9",metaType(Void.class), null);
                 }
 
                 @Override
@@ -400,7 +398,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method() {
-                  super("m10",metaType(java.lang.String.class));
+                  super("m10",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -423,7 +421,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method() {
-                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -446,7 +444,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method() {
-                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -469,7 +467,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method() {
-                  super("m13",metaType(Void.class));
+                  super("m13",metaType(Void.class), null);
                 }
 
                 @Override
@@ -494,7 +492,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method() {
-                  super("m14",metaType(java.lang.String.class));
+                  super("m14",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -517,7 +515,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method() {
-                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -540,7 +538,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method() {
-                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -675,7 +673,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaConstructorConstructor extends MetaConstructor<io.art.server.test.service.TestService> {
                 private MetaConstructorConstructor() {
-                  super(metaType(io.art.server.test.service.TestService.class));
+                  super(metaType(io.art.server.test.service.TestService.class), null);
                 }
 
                 @Override
@@ -692,7 +690,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM1Method extends StaticMetaMethod<Void> {
                 private MetaM1Method() {
-                  super("m1",metaType(Void.class));
+                  super("m1",metaType(Void.class), null);
                 }
 
                 @Override
@@ -710,7 +708,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM2Method extends StaticMetaMethod<java.lang.String> {
                 private MetaM2Method() {
-                  super("m2",metaType(java.lang.String.class));
+                  super("m2",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -726,7 +724,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM3Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
                 private MetaM3Method() {
-                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -742,7 +740,7 @@ public class MetaServerTest extends MetaLibrary {
 
               public static final class MetaM4Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
                 private MetaM4Method() {
-                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -760,7 +758,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method() {
-                  super("m5",metaType(Void.class));
+                  super("m5",metaType(Void.class), null);
                 }
 
                 @Override
@@ -784,7 +782,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method() {
-                  super("m6",metaType(java.lang.String.class));
+                  super("m6",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -806,7 +804,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method() {
-                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m7",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -828,7 +826,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method() {
-                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m8",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -850,7 +848,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method() {
-                  super("m9",metaType(Void.class));
+                  super("m9",metaType(Void.class), null);
                 }
 
                 @Override
@@ -875,7 +873,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method() {
-                  super("m10",metaType(java.lang.String.class));
+                  super("m10",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -898,7 +896,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method() {
-                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m11",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -921,7 +919,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method() {
-                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m12",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -944,7 +942,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method() {
-                  super("m13",metaType(Void.class));
+                  super("m13",metaType(Void.class), null);
                 }
 
                 @Override
@@ -969,7 +967,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method() {
-                  super("m14",metaType(java.lang.String.class));
+                  super("m14",metaType(java.lang.String.class), null);
                 }
 
                 @Override
@@ -992,7 +990,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method() {
-                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)));
+                  super("m15",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
@@ -1015,7 +1013,7 @@ public class MetaServerTest extends MetaLibrary {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method() {
-                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)));
+                  super("m16",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)), null);
                 }
 
                 @Override
