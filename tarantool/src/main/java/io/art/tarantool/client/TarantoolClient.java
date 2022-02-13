@@ -143,8 +143,8 @@ public class TarantoolClient {
             connection.markPersistent(true);
             connection
                     .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
-                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate))
-                    .addHandlerLast(new TarantoolResponseDecoder());
+                    .addHandlerLast(new TarantoolResponseDecoder())
+                    .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
             connection.inbound()
                     .receiveObject()
                     .doOnNext(object -> receive(cast(object)))

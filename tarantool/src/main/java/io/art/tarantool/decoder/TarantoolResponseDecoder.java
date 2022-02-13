@@ -17,7 +17,7 @@ public class TarantoolResponseDecoder extends ReplayingDecoder<TarantoolResponse
     }
 
     @Override
-    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf bytes, List<Object> list)  throws Exception  {
+    protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf bytes, List<Object> list) throws Exception {
         switch (state()) {
             case LENGTH:
                 size = readTarantoolResponseSize(bytes);
