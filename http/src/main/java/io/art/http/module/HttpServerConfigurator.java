@@ -47,13 +47,13 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    public HttpServerConfigurator route(MetaMethod<?> serviceMethod) {
+    public HttpServerConfigurator route(Supplier<MetaMethod<?>> serviceMethod) {
         return route(serviceMethod, identity());
     }
 
-    public HttpServerConfigurator route(MetaMethod<?> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+    public HttpServerConfigurator route(Supplier<MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
         method(serviceMethod);
-        methodBased.add(new MethodBasedConfiguration(serviceMethod::owner, serviceMethod, decorator));
+        methodBased.add(new MethodBasedConfiguration(() -> serviceMethod.get().owner(), serviceMethod, decorator));
         return this;
     }
 
@@ -99,7 +99,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
-            MetaMethod<?> method = methodBasedConfiguration.serviceMethod;
+            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.get();
             if (!method.isKnown()) continue;
             configurationBuilder
                     .type(extractRouteType(method))
@@ -150,7 +150,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<?>> serviceClass;
-        final MetaMethod<?> serviceMethod;
+        final Supplier<MetaMethod<?>> serviceMethod;
         final UnaryOperator<HttpRouteConfigurationBuilder> decorator;
     }
 }

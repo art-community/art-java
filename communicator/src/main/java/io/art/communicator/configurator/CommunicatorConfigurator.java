@@ -50,7 +50,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return cast(this);
     }
 
-    public C communicator(Class<? extends Communicator> communicatorClass, MetaMethod<?> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public C communicator(Class<? extends Communicator> communicatorClass, Supplier<MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
         return cast(this);
     }
@@ -106,7 +106,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             String communicatorId = classToId(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) actions = existed.getActions().toMutable();
-            MetaMethod<?> method = methodBasedConfiguration.actionMethod;
+            MetaMethod<?> method = methodBasedConfiguration.actionMethod.get();
             if (!method.isKnown()) continue;
             UnaryOperator<CommunicatorActionConfigurator> decorator = getCommunicatorDecorator(communicatorClass);
             decorator = then(decorator, getActionDecorator(communicatorClass, method));
@@ -214,7 +214,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<? extends Communicator>> communicatorClass;
-        final MetaMethod<?> actionMethod;
+        final Supplier<MetaMethod<?>> actionMethod;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 
