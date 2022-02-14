@@ -187,19 +187,19 @@ public class ServingRsocket implements RSocket {
     @Override
     public void dispose() {
         MetaMethodInvoker invoker = serviceMethod.getInvoker();
-        state.clearRsocketState(invoker.getOwner(), invoker.getDelegate());
+        state.clearRsocketState(invoker.getDelegate());
     }
 
     private void updateState(ConnectionSetupPayload payload) {
         MetaMethodInvoker invoker = serviceMethod.getInvoker();
-        state.rsocketState(invoker.getOwner(), invoker.getDelegate(), RsocketLocalState.builder()
+        state.rsocketState(invoker.getDelegate(), RsocketLocalState.builder()
                 .setupPayloadRaw(payload)
                 .build());
     }
 
     private void updateState(ConnectionSetupPayload payload, RsocketSetupPayload setupPayloadDataValue) {
         MetaMethodInvoker invoker = serviceMethod.getInvoker();
-        state.rsocketState(invoker.getOwner(), invoker.getDelegate(), RsocketLocalState.builder()
+        state.rsocketState(invoker.getDelegate(), RsocketLocalState.builder()
                 .setupPayloadModel(Optional.of(setupPayloadDataValue))
                 .setupPayloadRaw(payload)
                 .build());
