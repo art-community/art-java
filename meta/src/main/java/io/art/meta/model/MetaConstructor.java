@@ -105,4 +105,8 @@ public abstract class MetaConstructor<T> {
 
         return known = parameters.values().stream().allMatch(parameter -> parameter.type().isKnown());
     }
+
+    public MetaClass<T> owner() {
+        return owner;
+    }
 }

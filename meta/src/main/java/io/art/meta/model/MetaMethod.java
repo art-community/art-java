@@ -59,6 +59,10 @@ public abstract class MetaMethod<T> {
         return returnType;
     }
 
+    public MetaClass<?> owner() {
+        return owner;
+    }
+
     public <P> MetaParameter<P> parameter(String name) {
         return cast(parameters.get(name));
     }

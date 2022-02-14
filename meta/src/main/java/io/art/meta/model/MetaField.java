@@ -57,4 +57,8 @@ public class MetaField<T> {
         known = true;
         return known = type.isKnown();
     }
+
+    public MetaClass<?> owner() {
+        return owner;
+    }
 }
