@@ -20,7 +20,6 @@ package io.art.tarantool.benchmark;
 
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
-import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.*;
 import io.art.tarantool.*;
 import io.art.tarantool.test.meta.*;
@@ -30,6 +29,7 @@ import org.openjdk.jmh.infra.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingShortMetaModelClass.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
@@ -69,10 +69,10 @@ public class TarantoolBenchmark {
             Tarantool.tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingShortMetaModel.class).ifNotExists(true).build())
-                    .createIndex(indexFor(TestingShortMetaModel.class, MetaTestingShortMetaModelClass::idField)
+                    .createIndex(indexFor(TestingShortMetaModel.class, testingShortMetaModel().idField())
                             .ifNotExists(true)
                             .unique(true)
-                            .part(indexPartFor(TestingShortMetaModel.class, MetaTestingShortMetaModelClass::idField))
+                            .part(indexPartFor(testingShortMetaModel().idField()))
                             .build());
             space = Tarantool.tarantool().space(TestingShortMetaModel.class);
             model = TestingShortMetaModel.builder().id(1).name("test").inner(TestingShortMetaModel.Inner.builder().id(2).name("test").build()).build();

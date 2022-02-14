@@ -48,14 +48,12 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         return cast(this);
     }
 
-    public <T extends MetaClass<?>>
-    S method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
-        return method(serviceClass, serviceMethod, identity());
+    public S method(MetaMethod<?> serviceMethod) {
+        return method(serviceMethod, identity());
     }
 
-    public <T extends MetaClass<?>>
-    S method(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
+    public S method(MetaMethod<?> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        methodBased.add(new MethodBasedConfiguration(serviceMethod::owner, serviceMethod, decorator));
         return cast(this);
     }
 
@@ -91,7 +89,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
             String communicatorId = idByDash(serviceClass.definition().type());
             ServiceMethodsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) methods = existed.getMethods().toMutable();
-            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
+            MetaMethod<?> method = methodBasedConfiguration.serviceMethod;
             if (!method.isKnown()) continue;
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
             decorator = then(decorator, getMethodDecorator(serviceClass, method));
@@ -122,7 +120,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
 
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             MetaClass<?> serviceClass = methodBasedConfiguration.serviceClass.get();
-            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(serviceClass));
+            MetaMethod<?> method = methodBasedConfiguration.serviceMethod;
             UnaryOperator<ServiceMethodConfigurator> decorator = getServiceDecorator(serviceClass);
             decorator = then(decorator, getMethodDecorator(serviceClass, method));
             MethodConfiguration methodConfiguration = new MethodConfiguration(serviceClass, method, decorator);
@@ -147,7 +145,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
-                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod.apply(cast(methodConfiguration.serviceClass.get()))))
+                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
                 .map(methodConfiguration -> methodConfiguration.decorator)
                 .reduce(FunctionExtensions::then)
                 .orElse(identity());
@@ -201,7 +199,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<?>> serviceClass;
-        final Function<? extends MetaClass<?>, MetaMethod<?>> serviceMethod;
+        final MetaMethod<?> serviceMethod;
         final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 

@@ -45,16 +45,12 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     private final List<MethodBasedConfiguration> methodBased = linkedList();
     private final Map<Class<? extends Portal>, PortalConfiguration> portals = map();
 
-    public C communicator(Class<? extends Communicator> communicatorClass,
-                          UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public C communicator(Class<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
         return cast(this);
     }
 
-    public <T extends MetaClass<? extends Communicator>>
-    C communicator(Class<? extends Communicator> communicatorClass,
-                   Function<T, MetaMethod<?>> actionMethod,
-                   UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public C communicator(Class<? extends Communicator> communicatorClass, MetaMethod<?> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
         return cast(this);
     }
@@ -110,7 +106,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             String communicatorId = classToId(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) actions = existed.getActions().toMutable();
-            MetaMethod<?> method = methodBasedConfiguration.actionMethod.apply(cast(communicatorClass));
+            MetaMethod<?> method = methodBasedConfiguration.actionMethod;
             if (!method.isKnown()) continue;
             UnaryOperator<CommunicatorActionConfigurator> decorator = getCommunicatorDecorator(communicatorClass);
             decorator = then(decorator, getActionDecorator(communicatorClass, method));
@@ -167,7 +163,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> communicatorClass.equals(methodConfiguration.communicatorClass.get()))
-                .filter(methodConfiguration -> method.equals(methodConfiguration.actionMethod.apply(cast(methodConfiguration.communicatorClass.get()))))
+                .filter(methodConfiguration -> method.equals(methodConfiguration.actionMethod))
                 .map(methodConfiguration -> methodConfiguration.decorator)
                 .reduce(FunctionExtensions::then)
                 .orElse(identity());
@@ -218,7 +214,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<? extends Communicator>> communicatorClass;
-        final Function<? extends MetaClass<? extends Communicator>, MetaMethod<?>> actionMethod;
+        final MetaMethod<?> actionMethod;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 

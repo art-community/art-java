@@ -5,13 +5,10 @@ import io.art.meta.model.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static io.art.meta.Meta.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
-import java.util.function.*;
 
 @Public
 @Builder(toBuilder = true)
@@ -61,11 +58,9 @@ public class TarantoolIndexConfiguration {
         private final int runSizeRatio;
     }
 
-    @SafeVarargs
-    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, Function<T, MetaField<?>>... fieldExtractors) {
-        T meta = cast(declaration(type));
+    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, MetaField<?>... fields) {
         return TarantoolIndexConfiguration.builder()
                 .spaceName(idByDash(type))
-                .indexName(stream(fieldExtractors).map(extractor -> extractor.apply(meta).name()).collect(joining()));
+                .indexName(stream(fields).map(MetaField::name).collect(joining()));
     }
 }

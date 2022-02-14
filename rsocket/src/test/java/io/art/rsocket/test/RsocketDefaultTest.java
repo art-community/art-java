@@ -3,7 +3,6 @@ package io.art.rsocket.test;
 import io.art.meta.test.meta.*;
 import io.art.rsocket.*;
 import io.art.rsocket.test.meta.*;
-import io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaServicePackage.*;
 import io.art.rsocket.test.registry.*;
 import io.art.rsocket.test.service.*;
 import org.junit.jupiter.api.*;
@@ -14,6 +13,7 @@ import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
 import static io.art.rsocket.module.RsocketActivator.*;
+import static io.art.rsocket.test.meta.MetaRsocketTest.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaTestPackage.MetaServicePackage.MetaTestRsocketServiceClass.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +41,7 @@ public class RsocketDefaultTest {
         Rsocket.rsocket()
                 .tcp()
                 .client(LOCALHOST, DEFAULT_PORT)
-                .target(TestRsocketService.class, MetaTestRsocketServiceClass::m1Method)
+                .target(testRsocketService().m1Method())
                 .fireAndForget();
         assertNotNull(executions(1).get("m1"));
     }

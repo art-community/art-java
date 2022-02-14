@@ -2,7 +2,6 @@ package io.art.tarantool.test;
 
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
-import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.*;
 import io.art.tarantool.*;
 import io.art.tarantool.test.meta.*;
@@ -13,6 +12,7 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
+import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
@@ -40,10 +40,10 @@ public class TarantoolStorageTest {
         Tarantool.tarantool()
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
-                .createIndex(indexFor(TestingMetaModel.class, MetaTestingMetaModelClass::f1Field)
+                .createIndex(indexFor(TestingMetaModel.class, testingMetaModel().f1Field())
                         .ifNotExists(true)
                         .unique(true)
-                        .part(indexPartFor(TestingMetaModel.class, MetaTestingMetaModelClass::f1Field))
+                        .part(indexPartFor(testingMetaModel().f1Field()))
                         .build());
     }
 

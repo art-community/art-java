@@ -22,7 +22,6 @@ import io.rsocket.transport.netty.client.*;
 import reactor.core.publisher.*;
 import reactor.netty.tcp.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
@@ -124,9 +123,9 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         return this;
     }
 
-    public <T extends MetaClass<?>> RsocketDefaultTcpCommunicator target(Class<?> serviceIdMarker, Function<T, MetaMethod<?>> methodId) {
+    public RsocketDefaultTcpCommunicator target(MetaMethod<?> methodId) {
         refreshCommunicator();
-        serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId.apply(cast(Meta.declaration(serviceIdMarker))).name());
+        serviceMethodId = serviceMethodId(idByDash(methodId.owner().definition().type()), methodId.name());
         return this;
     }
 

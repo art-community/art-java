@@ -6,12 +6,9 @@ import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.exception.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.meta.Meta.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Errors.*;
 import static java.text.MessageFormat.*;
-import java.util.function.*;
 
 @Public
 @Builder
@@ -23,11 +20,9 @@ public class TarantoolIndexPartConfiguration {
     private final Boolean nullable;
     private final String path;
 
-    public static <T extends MetaClass<?>> TarantoolIndexPartConfiguration indexPartFor(Class<?> type, Function<T, MetaField<?>> extractor) {
-        T meta = cast(definition(type).declaration());
-        MetaField<?> field = extractor.apply(meta);
+    public static <T extends MetaClass<?>> TarantoolIndexPartConfiguration indexPartFor(MetaField<?> field) {
         return TarantoolIndexPartConfiguration.builder()
-                .field(meta.index(field) + 1)
+                .field(field.owner().index(field) + 1)
                 .type(extractType(field.type()))
                 .build();
     }

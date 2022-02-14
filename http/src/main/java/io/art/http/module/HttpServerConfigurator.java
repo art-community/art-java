@@ -10,7 +10,6 @@ import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.server.configurator.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.factory.ListFactory.*;
@@ -48,15 +47,13 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    public <T extends MetaClass<?>>
-    HttpServerConfigurator route(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod) {
-        return route(serviceClass, serviceMethod, identity());
+    public HttpServerConfigurator route(MetaMethod<?> serviceMethod) {
+        return route(serviceMethod, identity());
     }
 
-    public <T extends MetaClass<?>>
-    HttpServerConfigurator route(Class<?> serviceClass, Function<T, MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
-        method(serviceClass, serviceMethod);
-        methodBased.add(new MethodBasedConfiguration(() -> declaration(serviceClass), serviceMethod, decorator));
+    public HttpServerConfigurator route(MetaMethod<?> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+        method(serviceMethod);
+        methodBased.add(new MethodBasedConfiguration(serviceMethod::owner, serviceMethod, decorator));
         return this;
     }
 
@@ -102,7 +99,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
-            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.apply(cast(metaClass));
+            MetaMethod<?> method = methodBasedConfiguration.serviceMethod;
             if (!method.isKnown()) continue;
             configurationBuilder
                     .type(extractRouteType(method))
@@ -138,7 +135,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
-                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod.apply(cast(methodConfiguration.serviceClass.get()))))
+                .filter(methodConfiguration -> method.equals(methodConfiguration.serviceMethod))
                 .map(methodConfiguration -> methodConfiguration.decorator)
                 .reduce(FunctionExtensions::then)
                 .orElse(identity());
@@ -153,7 +150,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<?>> serviceClass;
-        final Function<? extends MetaClass<?>, MetaMethod<?>> serviceMethod;
+        final MetaMethod<?> serviceMethod;
         final UnaryOperator<HttpRouteConfigurationBuilder> decorator;
     }
 }
