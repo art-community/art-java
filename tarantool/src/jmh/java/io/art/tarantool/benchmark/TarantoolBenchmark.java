@@ -31,7 +31,6 @@ import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingShortMetaModelClass.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
-import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
@@ -63,17 +62,13 @@ public class TarantoolBenchmark {
                                     .username(USERNAME)
                                     .logging(true)
                                     .password(PASSWORD)))
-                            .space(TestStorage.class, int.class, TestingShortMetaModel.class)
+                            .space(TestStorage.class, TestingShortMetaModel.class, () -> testingShortMetaModel().idField())
                     )
             );
             Tarantool.tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingShortMetaModel.class).ifNotExists(true).build())
-                    .createIndex(indexFor(TestingShortMetaModel.class, testingShortMetaModel().idField())
-                            .ifNotExists(true)
-                            .unique(true)
-                            .part(indexPartFor(testingShortMetaModel().idField()))
-                            .build());
+                    .createIndex(indexFor(TestingShortMetaModel.class, testingShortMetaModel().idField()).ifNotExists(true).unique(true).build());
             space = Tarantool.tarantool().space(TestingShortMetaModel.class);
             model = TestingShortMetaModel.builder().id(1).name("test").inner(TestingShortMetaModel.Inner.builder().id(2).name("test").build()).build();
             space.put(model);
