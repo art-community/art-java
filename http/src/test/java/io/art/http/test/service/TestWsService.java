@@ -2,10 +2,12 @@ package io.art.http.test.service;
 
 import io.art.http.state.*;
 import io.art.http.test.communicator.*;
+import io.art.http.test.meta.*;
 import io.art.http.test.meta.MetaHttpTest.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaTestPackage.MetaServicePackage.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.http.module.HttpModule.*;
+import static io.art.http.test.meta.MetaHttpTest.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaTestPackage.MetaCommunicatorPackage.MetaTestWsClass.testWs;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static reactor.core.publisher.Sinks.EmitFailureHandler.*;
 
@@ -90,7 +92,7 @@ public class TestWsService implements TestWs {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
                 .state()
-                .wsState(TestWsService.class, MetaTestWsServiceClass::ws13Method)
+                .wsState(testWs().ws13Method())
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
                 .doOnNext(ignore -> state.close())
@@ -105,7 +107,7 @@ public class TestWsService implements TestWs {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
                 .state()
-                .wsState(TestWsService.class, MetaTestWsServiceClass::ws14Method)
+                .wsState(testWs().ws14Method())
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
                 .doOnNext(ignore -> state.close())
@@ -121,7 +123,7 @@ public class TestWsService implements TestWs {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
                 .state()
-                .wsState(TestWsService.class, MetaTestWsServiceClass::ws15Method)
+                .wsState(testWs().ws15Method())
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
                 .doOnNext(ignore -> state.close())
@@ -137,7 +139,7 @@ public class TestWsService implements TestWs {
         Sinks.Many<Object> many = Sinks.many().unicast().onBackpressureBuffer();
         WsLocalState state = httpModule()
                 .state()
-                .wsState(TestWsService.class, MetaTestWsServiceClass::ws16Method)
+                .wsState(testWs().ws16Method())
                 .disableAutoClosing();
         input.doOnNext(element -> many.emitNext(element, FAIL_FAST))
                 .doOnNext(ignore -> state.close())
@@ -162,7 +164,7 @@ public class TestWsService implements TestWs {
     public Flux<String> wsEcho(Flux<String> input) {
         WsLocalState state = httpModule()
                 .state()
-                .wsState(TestWsService.class, MetaTestWsServiceClass::wsEchoMethod)
+                .wsState(testWs().wsEchoMethod())
                 .disableAutoClosing();
         Sinks.Many<String> output = Sinks.many().unicast().onBackpressureBuffer();
         input.buffer(10)

@@ -28,10 +28,11 @@ import static io.art.meta.constants.MetaConstants.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import static java.util.stream.Collectors.*;
+import static lombok.EqualsAndHashCode.CacheStrategy.*;
 import java.util.*;
 
 @Generation
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "owner", cacheStrategy = LAZY)
 public abstract class MetaMethod<T> {
     private final String name;
     private final Map<String, MetaParameter<?>> parameters;

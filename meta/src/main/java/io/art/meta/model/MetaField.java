@@ -22,10 +22,11 @@ import io.art.core.annotation.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
 import static java.util.Objects.*;
+import static lombok.EqualsAndHashCode.CacheStrategy.*;
 
 @ToString
 @Generation
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "owner", cacheStrategy = LAZY)
 public class MetaField<T> {
     private final String name;
     private final MetaType<?> type;

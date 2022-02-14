@@ -24,6 +24,7 @@ import io.art.meta.exception.*;
 import lombok.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
+import static lombok.EqualsAndHashCode.CacheStrategy.LAZY;
 
 @Generation
 @EqualsAndHashCode(callSuper = true)

@@ -28,11 +28,12 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static lombok.EqualsAndHashCode.CacheStrategy.*;
 import java.util.*;
 
 @ToString
 @Generation
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "owner", cacheStrategy = LAZY)
 public abstract class MetaConstructor<T> {
     private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
