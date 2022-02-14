@@ -1,7 +1,5 @@
 package io.art.tarantool.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -15,6 +13,7 @@ import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
 import io.art.meta.model.StaticMetaMethod;
+import io.art.tarantool.test.manager.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -341,15 +340,15 @@ public class MetaTarantoolTest extends MetaLibrary {
               return testTarantoolStorageClass;
             }
 
-            public static final class MetaTestTarantoolStorageClass extends MetaClass<io.art.tarantool.test.storage.TestTarantoolStorage> {
-              private static final LazyProperty<MetaTestTarantoolStorageClass> self = MetaClass.self(io.art.tarantool.test.storage.TestTarantoolStorage.class);
+            public static final class MetaTestTarantoolStorageClass extends MetaClass<TestTarantoolInstanceManager> {
+              private static final LazyProperty<MetaTestTarantoolStorageClass> self = MetaClass.self(TestTarantoolInstanceManager.class);
 
               private final MetaInitializeStorageMethod initializeStorageMethod = register(new MetaInitializeStorageMethod(this));
 
               private final MetaShutdownStorageMethod shutdownStorageMethod = register(new MetaShutdownStorageMethod(this));
 
               private MetaTestTarantoolStorageClass() {
-                super(metaType(io.art.tarantool.test.storage.TestTarantoolStorage.class));
+                super(metaType(TestTarantoolInstanceManager.class));
               }
 
               public static MetaTestTarantoolStorageClass testTarantoolStorage() {
@@ -371,13 +370,13 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(java.lang.Object[] arguments) throws Throwable {
-                  io.art.tarantool.test.storage.TestTarantoolStorage.initializeStorage();
+                  TestTarantoolInstanceManager.initializeStorage();
                   return null;
                 }
 
                 @Override
                 public java.lang.Object invoke() throws Throwable {
-                  io.art.tarantool.test.storage.TestTarantoolStorage.initializeStorage();
+                  TestTarantoolInstanceManager.initializeStorage();
                   return null;
                 }
               }
@@ -389,13 +388,13 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 @Override
                 public java.lang.Object invoke(java.lang.Object[] arguments) throws Throwable {
-                  io.art.tarantool.test.storage.TestTarantoolStorage.shutdownStorage();
+                  TestTarantoolInstanceManager.shutdownStorage();
                   return null;
                 }
 
                 @Override
                 public java.lang.Object invoke() throws Throwable {
-                  io.art.tarantool.test.storage.TestTarantoolStorage.shutdownStorage();
+                  TestTarantoolInstanceManager.shutdownStorage();
                   return null;
                 }
               }

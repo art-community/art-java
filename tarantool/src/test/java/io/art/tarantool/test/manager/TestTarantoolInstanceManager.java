@@ -1,4 +1,4 @@
-package io.art.tarantool.test.storage;
+package io.art.tarantool.test.manager;
 
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
@@ -19,13 +19,13 @@ import java.io.*;
 import java.nio.file.*;
 
 @UtilityClass
-public class TestTarantoolStorage {
+public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
         if (!TCP.isPortAvailable(STORAGE_PORT)) return;
         Path working = touchDirectory(get(STORAGE_DIRECTORY));
-        InputStream script = TestTarantoolStorage.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
+        InputStream script = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
         if (isNull(script)) throw new ImpossibleSituationException();
-        InputStream module = TestTarantoolStorage.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
+        InputStream module = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
         if (isNull(module)) throw new ImpossibleSituationException();
         Path scriptPath = working.resolve(STORAGE_SCRIPT).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));

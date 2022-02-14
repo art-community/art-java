@@ -35,7 +35,7 @@ import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.storage.TestTarantoolStorage.*;
+import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.transport.module.TransportActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;

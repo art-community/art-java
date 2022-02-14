@@ -18,7 +18,7 @@ import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.storage.TestTarantoolStorage.*;
+import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.transport.module.TransportActivator.*;
 
 public class TarantoolStorageTest {
