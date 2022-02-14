@@ -1,6 +1,7 @@
 package io.art.http.meta;
 
 import static io.art.meta.model.MetaType.metaArray;
+import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -102,7 +103,7 @@ public class MetaHttp extends MetaLibrary {
             public static final class MetaHttpBuiltinCommunicatorClass extends MetaClass<io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator> {
               private static final LazyProperty<MetaHttpBuiltinCommunicatorClass> self = MetaClass.self(io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator.class);
 
-              private final MetaExecuteMethod executeMethod = register(new MetaExecuteMethod());
+              private final MetaExecuteMethod executeMethod = register(new MetaExecuteMethod(this));
 
               private MetaHttpBuiltinCommunicatorClass() {
                 super(metaType(io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator.class));
@@ -121,11 +122,11 @@ public class MetaHttp extends MetaLibrary {
                 return new MetaHttpBuiltinCommunicatorProxy(invocations);
               }
 
-              public static final class MetaExecuteMethod extends InstanceMetaMethod<io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator, reactor.core.publisher.Flux<byte[]>> {
+              public final class MetaExecuteMethod extends InstanceMetaMethod<io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator, reactor.core.publisher.Flux<byte[]>> {
                 private final MetaParameter<reactor.core.publisher.Flux<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
-                private MetaExecuteMethod() {
-                  super("execute",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))), null);
+                private MetaExecuteMethod(MetaClass owner) {
+                  super("execute",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),owner);
                 }
 
                 @Override

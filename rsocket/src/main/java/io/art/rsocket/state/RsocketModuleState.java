@@ -25,21 +25,20 @@ import io.rsocket.*;
 import lombok.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import java.util.*;
-import java.util.function.*;
 
 public class RsocketModuleState implements ModuleState {
     private final MetaLocalState<RsocketLocalState> localState = new MetaLocalState<>();
 
-    public void rsocketState(MetaClass<?> owner, MetaMethod<?> method, RsocketLocalState state) {
-        localState.set(owner, method, state);
+    public void rsocketState(MetaMethod<?> method, RsocketLocalState state) {
+        localState.set(method, state);
     }
 
-    public <C, M extends MetaClass<C>> RsocketLocalState rsocketState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return localState.get(owner, method);
+    public RsocketLocalState rsocketState(MetaMethod<?> method) {
+        return localState.get(method);
     }
 
-    public <C, M extends MetaClass<C>> void clearRsocketState(MetaClass<?> owner, MetaMethod<?> method) {
-        localState.remove(owner, method);
+    public void clearRsocketState(MetaMethod<?> method) {
+        localState.remove(method);
     }
 
     @Getter

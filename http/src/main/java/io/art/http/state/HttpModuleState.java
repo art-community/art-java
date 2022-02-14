@@ -27,27 +27,27 @@ public class HttpModuleState implements ModuleState {
     private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
     private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
 
-    public void httpState(MetaClass<?> owner, MetaMethod<?> method, LazyProperty<HttpLocalState> state) {
-        httpLocalState.set(owner, method, state);
+    public void httpState(MetaMethod<?> method, LazyProperty<HttpLocalState> state) {
+        httpLocalState.set(method, state);
     }
 
-    public <C, M extends MetaClass<C>> HttpLocalState httpState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return httpLocalState.get(owner, method).get();
+    public HttpLocalState httpState(MetaMethod<?> method) {
+        return httpLocalState.get(method).get();
     }
 
-    public <C, M extends MetaClass<C>> void clearHttpState(MetaClass<?> owner, MetaMethod<?> method) {
-        httpLocalState.remove(owner, method);
+    public void clearHttpState(MetaMethod<?> method) {
+        httpLocalState.remove(method);
     }
 
-    public void wsState(MetaClass<?> owner, MetaMethod<?> method, WsLocalState state) {
-        wsLocalState.set(owner, method, state);
+    public void wsState(MetaMethod<?> method, WsLocalState state) {
+        wsLocalState.set(method, state);
     }
 
-    public <C, M extends MetaClass<C>> WsLocalState wsState(Class<C> owner, Function<M, MetaMethod<?>> method) {
-        return wsLocalState.get(owner, method);
+    public WsLocalState wsState(MetaMethod<?> method) {
+        return wsLocalState.get(method);
     }
 
-    public <C, M extends MetaClass<C>> void clearWsState(MetaClass<?> owner, MetaMethod<?> method) {
-        wsLocalState.remove(owner, method);
+    public void clearWsState(MetaMethod<?> method) {
+        wsLocalState.remove(method);
     }
 }

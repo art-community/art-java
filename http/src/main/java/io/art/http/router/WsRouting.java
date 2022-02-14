@@ -33,7 +33,6 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
     private final MetaType<?> inputMappingType;
     private final MetaType<?> outputMappingType;
     private final HttpModuleState state;
-    private final MetaClass<?> owner;
     private final MetaMethod<?> delegate;
 
     @Builder(access = PACKAGE)
@@ -48,7 +47,6 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         this.inputMappingType = inputMappingType;
         this.outputMappingType = outputMappingType;
         state = httpModule().state();
-        owner = serviceMethod.getInvoker().getOwner();
         delegate = serviceMethod.getInvoker().getDelegate();
         inputType = serviceMethod.getInputType();
     }
@@ -62,7 +60,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
         WsLocalState localState = wsLocalState(inbound, outbound, routeConfiguration);
-        state.wsState(owner, delegate, localState);
+        state.wsState(delegate, localState);
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));

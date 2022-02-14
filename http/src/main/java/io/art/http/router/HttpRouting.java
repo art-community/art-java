@@ -64,7 +64,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         TransportPayloadWriter writer = transportPayloadWriter(outputDataFormat);
 
         LazyProperty<HttpLocalState> localState = lazy(() -> httpLocalState(request, response, routeConfiguration));
-        state.httpState(owner, delegate, localState);
+        state.httpState(delegate, localState);
 
         if (isNull(inputType)) {
             Flux<ByteBuf> output = serviceMethod.serve(Flux.empty()).map(value -> writer.write(typed(outputMappingType, value)));
