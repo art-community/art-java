@@ -14,7 +14,6 @@ import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
-import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
@@ -40,11 +39,7 @@ public class TarantoolStorageTest {
         Tarantool.tarantool()
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
-                .createIndex(indexFor(TestingMetaModel.class, testingMetaModel().f1Field())
-                        .ifNotExists(true)
-                        .unique(true)
-                        .part(indexPartFor(testingMetaModel().f1Field()))
-                        .build());
+                .createIndex(indexFor(TestingMetaModel.class, testingMetaModel().f1Field()).ifNotExists(true).unique(true).build());
     }
 
     @AfterAll

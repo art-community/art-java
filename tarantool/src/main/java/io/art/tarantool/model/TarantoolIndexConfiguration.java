@@ -5,6 +5,7 @@ import io.art.meta.model.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static java.util.Arrays.*;
 import static java.util.stream.Collectors.*;
@@ -61,6 +62,7 @@ public class TarantoolIndexConfiguration {
     public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, MetaField<?>... fields) {
         return TarantoolIndexConfiguration.builder()
                 .spaceName(idByDash(type))
-                .indexName(stream(fields).map(MetaField::name).collect(joining()));
+                .indexName(stream(fields).map(MetaField::name).collect(joining()))
+                .parts(stream(fields).map(TarantoolIndexPartConfiguration::indexPartFor).collect(listCollector()));
     }
 }
