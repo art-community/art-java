@@ -33,7 +33,7 @@ public class TarantoolStorageTest {
                                 .username(USERNAME)
                                 .logging(true)
                                 .password(PASSWORD)))
-                        .space(TestStorage.class, int.class, TestingMetaModel.class)
+                        .space(TestStorage.class, TestingMetaModel.class, () -> testingMetaModel().f1Field())
                 )
         );
         Tarantool.tarantool()

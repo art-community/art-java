@@ -22,6 +22,7 @@ import io.art.communicator.configuration.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
@@ -49,8 +50,8 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         return this;
     }
 
-    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> keyClass, Class<?> spaceClass) {
-        servicesConfigurator.space(storageClass, keyClass, spaceClass);
+    public TarantoolInitializer space(Class<? extends Storage> storageClass, Class<?> spaceClass, Supplier<MetaField<?>> idField) {
+        servicesConfigurator.space(storageClass, spaceClass, idField);
         return this;
     }
 
