@@ -522,7 +522,8 @@ local space = {
     findAll = function(space, keys)
         local result = {}
         for _, key in pairs(keys) do
-            table.insert(result, box.space[space]:get(key))
+            local value = box.space[space]:get(key)
+            if value ~= nil then table.insert(result, value) end
         end
         return result
     end,
