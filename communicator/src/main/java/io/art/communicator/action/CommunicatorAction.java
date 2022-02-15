@@ -64,7 +64,7 @@ public class CommunicatorAction implements Managed {
     private final MetaClass<? extends Communicator> owner;
 
     @Getter
-    private final MetaMethod<?> method;
+    private final MetaMethod<MetaClass<?>, ?> method;
 
     private final LazyProperty<Supplier<Object>> producer = lazy(this::selectProducer);
 

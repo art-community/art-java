@@ -32,20 +32,20 @@ public class MetaCreatorTemplate {
     private final MetaClass<?> owner;
     private final ImmutableMap<String, MetaProperty<?>> propertyMap;
     private final ImmutableArray<MetaProperty<?>> propertyArray;
-    private final MetaConstructor<?> allPropertiesConstructor;
-    private final MetaConstructor<?> localPropertiesConstructor;
-    private final MetaConstructor<?> noPropertiesConstructor;
+    private final MetaConstructor<MetaClass<?>, ?> allPropertiesConstructor;
+    private final MetaConstructor<MetaClass<?>, ?> localPropertiesConstructor;
+    private final MetaConstructor<MetaClass<?>, ?> noPropertiesConstructor;
     private int localPropertiesCount;
 
-    public MetaConstructor<?> allPropertiesConstructor() {
+    public MetaConstructor<MetaClass<?>, ?> allPropertiesConstructor() {
         return allPropertiesConstructor;
     }
 
-    public MetaConstructor<?> localPropertiesConstructor() {
+    public MetaConstructor<MetaClass<?>, ?> localPropertiesConstructor() {
         return localPropertiesConstructor;
     }
 
-    public MetaConstructor<?> noPropertiesConstructor() {
+    public MetaConstructor<MetaClass<?>, ?> noPropertiesConstructor() {
         return noPropertiesConstructor;
     }
 

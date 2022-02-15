@@ -20,19 +20,19 @@ import static java.util.Objects.*;
 
 @UtilityClass
 public class ServiceMethodFactory {
-    public ServiceMethod preconfiguredServiceMethod(MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethod preconfiguredServiceMethod(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
         return preconfiguredServiceMethod(serviceMethodId(owner, method), owner, method);
     }
 
-    public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
         return serviceMethod(serviceMethodId(owner, method), owner, method);
     }
 
-    public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
         return ServiceMethodIdentifier.serviceMethodId(idByDash(owner.definition().type()), method.name());
     }
 
-    public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
@@ -44,7 +44,7 @@ public class ServiceMethodFactory {
         return builder.build();
     }
 
-    public ServiceMethod preconfiguredServiceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<?> method) {
+    public ServiceMethod preconfiguredServiceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         boolean validatable = nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE);
         ServerConfiguration configuration = ServerConfiguration.serverConfiguration(new ServerRefresher());

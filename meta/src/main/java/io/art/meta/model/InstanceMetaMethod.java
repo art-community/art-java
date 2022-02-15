@@ -27,8 +27,8 @@ import static java.text.MessageFormat.*;
 
 @Generation
 @EqualsAndHashCode(callSuper = true)
-public abstract class InstanceMetaMethod<I, R> extends MetaMethod<R> {
-    protected InstanceMetaMethod(String name, MetaType<?> returnType, MetaClass<?> owner) {
+public abstract class InstanceMetaMethod<O extends MetaClass<?>, I, R> extends MetaMethod<O, R> {
+    protected InstanceMetaMethod(String name, MetaType<?> returnType, O owner) {
         super(name, returnType, owner);
     }
 

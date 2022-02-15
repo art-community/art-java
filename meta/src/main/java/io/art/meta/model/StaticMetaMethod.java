@@ -24,13 +24,12 @@ import io.art.meta.exception.*;
 import lombok.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
-import static lombok.EqualsAndHashCode.CacheStrategy.LAZY;
 
 @Generation
 @EqualsAndHashCode(callSuper = true)
-public abstract class StaticMetaMethod<T> extends MetaMethod<T> {
+public abstract class StaticMetaMethod<O extends MetaClass<?>, T> extends MetaMethod<O, T> {
 
-    protected StaticMetaMethod(String name, MetaType<?> returnType, MetaClass<?> owner) {
+    protected StaticMetaMethod(String name, MetaType<?> returnType, O owner) {
         super(name, returnType, owner);
     }
 

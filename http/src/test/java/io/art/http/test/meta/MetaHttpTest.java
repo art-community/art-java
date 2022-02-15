@@ -1,10 +1,11 @@
 package io.art.http.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
+import io.art.http.test.*;
+import io.art.http.test.communicator.*;
+import io.art.http.test.service.*;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -15,6 +16,8 @@ import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
 import io.art.meta.model.StaticMetaMethod;
+import reactor.core.publisher.*;
+import java.nio.file.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -97,9 +100,9 @@ public class MetaHttpTest extends MetaLibrary {
 
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-            private final MetaField<java.nio.file.Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false,this));
+            private final MetaField<MetaClass<?>, Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false,this));
 
-            private final MetaField<java.nio.file.Path> downloadedFileField = register(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false,this));
+            private final MetaField<MetaClass<?>, Path> downloadedFileField = register(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false,this));
 
             private final MetaSetupMethod setupMethod = register(new MetaSetupMethod(this));
 
@@ -119,11 +122,11 @@ public class MetaHttpTest extends MetaLibrary {
               return constructor;
             }
 
-            public MetaField<java.nio.file.Path> testFileField() {
+            public MetaField<MetaClass<?>, Path> testFileField() {
               return testFileField;
             }
 
-            public MetaField<java.nio.file.Path> downloadedFileField() {
+            public MetaField<MetaClass<?>, Path> downloadedFileField() {
               return downloadedFileField;
             }
 
@@ -139,7 +142,7 @@ public class MetaHttpTest extends MetaLibrary {
               return testHttpDefaultCommunicatorMethod;
             }
 
-            public final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.HttpDefaultTest> {
+            public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, HttpDefaultTest> {
               private MetaConstructorConstructor(MetaClass owner) {
                 super(metaType(io.art.http.test.HttpDefaultTest.class),owner);
               }
@@ -155,7 +158,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
             }
 
-            public final class MetaSetupMethod extends StaticMetaMethod<Void> {
+            public final class MetaSetupMethod extends StaticMetaMethod<MetaClass<?>, Void> {
               private MetaSetupMethod(MetaClass owner) {
                 super("setup",metaType(Void.class),owner);
               }
@@ -173,7 +176,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
             }
 
-            public final class MetaCleanupMethod extends StaticMetaMethod<Void> {
+            public final class MetaCleanupMethod extends StaticMetaMethod<MetaClass<?>, Void> {
               private MetaCleanupMethod(MetaClass owner) {
                 super("cleanup",metaType(Void.class),owner);
               }
@@ -191,7 +194,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
             }
 
-            public final class MetaTestHttpDefaultCommunicatorMethod extends InstanceMetaMethod<io.art.http.test.HttpDefaultTest, Void> {
+            public final class MetaTestHttpDefaultCommunicatorMethod extends InstanceMetaMethod<MetaClass<?>, HttpDefaultTest, Void> {
               private MetaTestHttpDefaultCommunicatorMethod(MetaClass owner) {
                 super("testHttpDefaultCommunicator",metaType(Void.class),owner);
               }
@@ -246,7 +249,7 @@ public class MetaHttpTest extends MetaLibrary {
               return testWsMethod;
             }
 
-            public final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.WsTest> {
+            public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, WsTest> {
               private MetaConstructorConstructor(MetaClass owner) {
                 super(metaType(io.art.http.test.WsTest.class),owner);
               }
@@ -262,7 +265,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
             }
 
-            public final class MetaSetupMethod extends StaticMetaMethod<Void> {
+            public final class MetaSetupMethod extends StaticMetaMethod<MetaClass<?>, Void> {
               private MetaSetupMethod(MetaClass owner) {
                 super("setup",metaType(Void.class),owner);
               }
@@ -280,7 +283,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
             }
 
-            public final class MetaCleanupMethod extends StaticMetaMethod<Void> {
+            public final class MetaCleanupMethod extends StaticMetaMethod<MetaClass<?>, Void> {
               private MetaCleanupMethod(MetaClass owner) {
                 super("cleanup",metaType(Void.class),owner);
               }
@@ -298,7 +301,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
             }
 
-            public final class MetaTestWsMethod extends InstanceMetaMethod<io.art.http.test.WsTest, Void> {
+            public final class MetaTestWsMethod extends InstanceMetaMethod<MetaClass<?>, WsTest, Void> {
               private MetaTestWsMethod(MetaClass owner) {
                 super("testWs",metaType(Void.class),owner);
               }
@@ -475,7 +478,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
 
               @Override
-              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+              public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaTestHttpProxy(invocations);
               }
 
@@ -483,7 +486,7 @@ public class MetaHttpTest extends MetaLibrary {
                 return testHttpConnectorClass;
               }
 
-              public final class MetaPost1Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
+              public final class MetaPost1Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Void> {
                 private MetaPost1Method(MetaClass owner) {
                   super("post1",metaType(Void.class),owner);
                 }
@@ -503,7 +506,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost2Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+              public final class MetaPost2Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, String> {
                 private MetaPost2Method(MetaClass owner) {
                   super("post2",metaType(java.lang.String.class),owner);
                 }
@@ -521,7 +524,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost3Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost3Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Mono<String>> {
                 private MetaPost3Method(MetaClass owner) {
                   super("post3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -539,7 +542,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost4Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost4Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Flux<String>> {
                 private MetaPost4Method(MetaClass owner) {
                   super("post4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -557,7 +560,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost5Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
+              public final class MetaPost5Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost5Method(MetaClass owner) {
@@ -583,7 +586,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost6Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+              public final class MetaPost6Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost6Method(MetaClass owner) {
@@ -607,7 +610,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost7Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost7Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost7Method(MetaClass owner) {
@@ -631,7 +634,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost8Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost8Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost8Method(MetaClass owner) {
@@ -655,7 +658,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost9Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
+              public final class MetaPost9Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost9Method(MetaClass owner) {
@@ -682,7 +685,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost10Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+              public final class MetaPost10Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost10Method(MetaClass owner) {
@@ -707,7 +710,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost11Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost11Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost11Method(MetaClass owner) {
@@ -732,7 +735,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost12Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost12Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost12Method(MetaClass owner) {
@@ -757,7 +760,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost13Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
+              public final class MetaPost13Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost13Method(MetaClass owner) {
@@ -784,7 +787,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost14Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+              public final class MetaPost14Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost14Method(MetaClass owner) {
@@ -809,7 +812,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost15Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost15Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost15Method(MetaClass owner) {
@@ -834,7 +837,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost16Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost16Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost16Method(MetaClass owner) {
@@ -859,7 +862,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost17Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, Void> {
+              public final class MetaPost17Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost17Method(MetaClass owner) {
@@ -886,7 +889,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost18Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+              public final class MetaPost18Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost18Method(MetaClass owner) {
@@ -911,7 +914,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost19Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost19Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost19Method(MetaClass owner) {
@@ -936,7 +939,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost20Method extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost20Method extends InstanceMetaMethod<MetaClass<?>, TestHttp, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost20Method(MetaClass owner) {
@@ -961,7 +964,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaGetFileMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp, java.lang.String> {
+              public final class MetaGetFileMethod extends InstanceMetaMethod<MetaClass<?>, TestHttp, String> {
                 private MetaGetFileMethod(MetaClass owner) {
                   super("getFile",metaType(java.lang.String.class),owner);
                 }
@@ -1022,7 +1025,7 @@ public class MetaHttpTest extends MetaLibrary {
 
                 private final Function<Object, Object> getFileInvocation;
 
-                public MetaTestHttpProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                public MetaTestHttpProxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   post1Invocation = invocations.get(post1Method);
                   post2Invocation = invocations.get(post2Method);
@@ -1180,11 +1183,11 @@ public class MetaHttpTest extends MetaLibrary {
                 }
 
                 @Override
-                public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   return new MetaTestHttpConnectorProxy(invocations);
                 }
 
-                public final class MetaTestHttpMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestHttp.TestHttpConnector, io.art.http.test.communicator.TestHttp> {
+                public final class MetaTestHttpMethod extends InstanceMetaMethod<MetaClass<?>, TestHttp.TestHttpConnector, TestHttp> {
                   private MetaTestHttpMethod(MetaClass owner) {
                     super("testHttp",metaType(io.art.http.test.communicator.TestHttp.class),owner);
                   }
@@ -1208,7 +1211,7 @@ public class MetaHttpTest extends MetaLibrary {
                   private final Function<Object, Object> testHttpInvocation;
 
                   public MetaTestHttpConnectorProxy(
-                      Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                      Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                     super(invocations);
                     testHttpInvocation = invocations.get(testHttpMethod);
                   }
@@ -1343,7 +1346,7 @@ public class MetaHttpTest extends MetaLibrary {
               }
 
               @Override
-              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+              public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaTestWsProxy(invocations);
               }
 
@@ -1351,7 +1354,7 @@ public class MetaHttpTest extends MetaLibrary {
                 return testWsConnectorClass;
               }
 
-              public final class MetaWs1Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
+              public final class MetaWs1Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Void> {
                 private MetaWs1Method(MetaClass owner) {
                   super("ws1",metaType(Void.class),owner);
                 }
@@ -1371,7 +1374,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs2Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, java.lang.String> {
+              public final class MetaWs2Method extends InstanceMetaMethod<MetaClass<?>, TestWs, String> {
                 private MetaWs2Method(MetaClass owner) {
                   super("ws2",metaType(java.lang.String.class),owner);
                 }
@@ -1389,7 +1392,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs3Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs3Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Mono<String>> {
                 private MetaWs3Method(MetaClass owner) {
                   super("ws3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -1407,7 +1410,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs4Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs4Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Flux<String>> {
                 private MetaWs4Method(MetaClass owner) {
                   super("ws4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -1425,7 +1428,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs5Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
+              public final class MetaWs5Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs5Method(MetaClass owner) {
@@ -1451,7 +1454,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs6Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, java.lang.String> {
+              public final class MetaWs6Method extends InstanceMetaMethod<MetaClass<?>, TestWs, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs6Method(MetaClass owner) {
@@ -1475,7 +1478,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs7Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs7Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs7Method(MetaClass owner) {
@@ -1499,7 +1502,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs8Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs8Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs8Method(MetaClass owner) {
@@ -1523,7 +1526,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs9Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
+              public final class MetaWs9Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs9Method(MetaClass owner) {
@@ -1550,7 +1553,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs10Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, java.lang.String> {
+              public final class MetaWs10Method extends InstanceMetaMethod<MetaClass<?>, TestWs, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs10Method(MetaClass owner) {
@@ -1575,7 +1578,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs11Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs11Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs11Method(MetaClass owner) {
@@ -1600,7 +1603,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs12Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs12Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs12Method(MetaClass owner) {
@@ -1625,7 +1628,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs13Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
+              public final class MetaWs13Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs13Method(MetaClass owner) {
@@ -1652,7 +1655,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs14Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, java.lang.String> {
+              public final class MetaWs14Method extends InstanceMetaMethod<MetaClass<?>, TestWs, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs14Method(MetaClass owner) {
@@ -1677,7 +1680,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs15Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs15Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs15Method(MetaClass owner) {
@@ -1702,7 +1705,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs16Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs16Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs16Method(MetaClass owner) {
@@ -1727,7 +1730,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs17Method extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, Void> {
+              public final class MetaWs17Method extends InstanceMetaMethod<MetaClass<?>, TestWs, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs17Method(MetaClass owner) {
@@ -1754,7 +1757,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWsEchoMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestWs, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWsEchoMethod extends InstanceMetaMethod<MetaClass<?>, TestWs, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWsEchoMethod(MetaClass owner) {
@@ -1816,7 +1819,7 @@ public class MetaHttpTest extends MetaLibrary {
 
                 private final Function<Object, Object> wsEchoInvocation;
 
-                public MetaTestWsProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                public MetaTestWsProxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   ws1Invocation = invocations.get(ws1Method);
                   ws2Invocation = invocations.get(ws2Method);
@@ -1952,11 +1955,11 @@ public class MetaHttpTest extends MetaLibrary {
                 }
 
                 @Override
-                public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   return new MetaTestWsConnectorProxy(invocations);
                 }
 
-                public final class MetaTestWsMethod extends InstanceMetaMethod<io.art.http.test.communicator.TestWs.TestWsConnector, io.art.http.test.communicator.TestWs> {
+                public final class MetaTestWsMethod extends InstanceMetaMethod<MetaClass<?>, TestWs.TestWsConnector, TestWs> {
                   private MetaTestWsMethod(MetaClass owner) {
                     super("testWs",metaType(io.art.http.test.communicator.TestWs.class),owner);
                   }
@@ -1980,7 +1983,7 @@ public class MetaHttpTest extends MetaLibrary {
                   private final Function<Object, Object> testWsInvocation;
 
                   public MetaTestWsConnectorProxy(
-                      Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                      Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                     super(invocations);
                     testWsInvocation = invocations.get(testWsMethod);
                   }
@@ -2148,7 +2151,7 @@ public class MetaHttpTest extends MetaLibrary {
                 return post20Method;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestHttpService> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestHttpService> {
                 private MetaConstructorConstructor(MetaClass owner) {
                   super(metaType(io.art.http.test.service.TestHttpService.class),owner);
                 }
@@ -2165,7 +2168,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost1Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
+              public final class MetaPost1Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Void> {
                 private MetaPost1Method(MetaClass owner) {
                   super("post1",metaType(Void.class),owner);
                 }
@@ -2185,7 +2188,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost2Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
+              public final class MetaPost2Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, String> {
                 private MetaPost2Method(MetaClass owner) {
                   super("post2",metaType(java.lang.String.class),owner);
                 }
@@ -2203,7 +2206,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost3Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost3Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Mono<String>> {
                 private MetaPost3Method(MetaClass owner) {
                   super("post3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -2221,7 +2224,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost4Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost4Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Flux<String>> {
                 private MetaPost4Method(MetaClass owner) {
                   super("post4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -2239,7 +2242,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost5Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
+              public final class MetaPost5Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost5Method(MetaClass owner) {
@@ -2265,7 +2268,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost6Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
+              public final class MetaPost6Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost6Method(MetaClass owner) {
@@ -2289,7 +2292,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost7Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost7Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost7Method(MetaClass owner) {
@@ -2313,7 +2316,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost8Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost8Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaPost8Method(MetaClass owner) {
@@ -2337,7 +2340,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost9Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
+              public final class MetaPost9Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost9Method(MetaClass owner) {
@@ -2364,7 +2367,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost10Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
+              public final class MetaPost10Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost10Method(MetaClass owner) {
@@ -2389,7 +2392,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost11Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost11Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost11Method(MetaClass owner) {
@@ -2414,7 +2417,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost12Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost12Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaPost12Method(MetaClass owner) {
@@ -2439,7 +2442,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost13Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
+              public final class MetaPost13Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost13Method(MetaClass owner) {
@@ -2466,7 +2469,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost14Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
+              public final class MetaPost14Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost14Method(MetaClass owner) {
@@ -2491,7 +2494,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost15Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost15Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost15Method(MetaClass owner) {
@@ -2516,7 +2519,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost16Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost16Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost16Method(MetaClass owner) {
@@ -2541,7 +2544,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost17Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, Void> {
+              public final class MetaPost17Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost17Method(MetaClass owner) {
@@ -2568,7 +2571,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost18Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, java.lang.String> {
+              public final class MetaPost18Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost18Method(MetaClass owner) {
@@ -2593,7 +2596,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost19Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaPost19Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost19Method(MetaClass owner) {
@@ -2618,7 +2621,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaPost20Method extends InstanceMetaMethod<io.art.http.test.service.TestHttpService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaPost20Method extends InstanceMetaMethod<MetaClass<?>, TestHttpService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> emptyParameter = register(new MetaParameter<>(0, "empty",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaPost20Method(MetaClass owner) {
@@ -2769,7 +2772,7 @@ public class MetaHttpTest extends MetaLibrary {
                 return wsEchoMethod;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<io.art.http.test.service.TestWsService> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestWsService> {
                 private MetaConstructorConstructor(MetaClass owner) {
                   super(metaType(io.art.http.test.service.TestWsService.class),owner);
                 }
@@ -2786,7 +2789,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs1Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
+              public final class MetaWs1Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Void> {
                 private MetaWs1Method(MetaClass owner) {
                   super("ws1",metaType(Void.class),owner);
                 }
@@ -2806,7 +2809,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs2Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, java.lang.String> {
+              public final class MetaWs2Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, String> {
                 private MetaWs2Method(MetaClass owner) {
                   super("ws2",metaType(java.lang.String.class),owner);
                 }
@@ -2824,7 +2827,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs3Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs3Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Mono<String>> {
                 private MetaWs3Method(MetaClass owner) {
                   super("ws3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -2842,7 +2845,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs4Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs4Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Flux<String>> {
                 private MetaWs4Method(MetaClass owner) {
                   super("ws4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -2860,7 +2863,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs5Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
+              public final class MetaWs5Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs5Method(MetaClass owner) {
@@ -2886,7 +2889,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs6Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, java.lang.String> {
+              public final class MetaWs6Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs6Method(MetaClass owner) {
@@ -2910,7 +2913,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs7Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs7Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs7Method(MetaClass owner) {
@@ -2934,7 +2937,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs8Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs8Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaWs8Method(MetaClass owner) {
@@ -2958,7 +2961,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs9Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
+              public final class MetaWs9Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs9Method(MetaClass owner) {
@@ -2985,7 +2988,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs10Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, java.lang.String> {
+              public final class MetaWs10Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs10Method(MetaClass owner) {
@@ -3010,7 +3013,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs11Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs11Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs11Method(MetaClass owner) {
@@ -3035,7 +3038,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs12Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs12Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaWs12Method(MetaClass owner) {
@@ -3060,7 +3063,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs13Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
+              public final class MetaWs13Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs13Method(MetaClass owner) {
@@ -3087,7 +3090,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs14Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, java.lang.String> {
+              public final class MetaWs14Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs14Method(MetaClass owner) {
@@ -3112,7 +3115,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs15Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaWs15Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs15Method(MetaClass owner) {
@@ -3137,7 +3140,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs16Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWs16Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs16Method(MetaClass owner) {
@@ -3162,7 +3165,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWs17Method extends InstanceMetaMethod<io.art.http.test.service.TestWsService, Void> {
+              public final class MetaWs17Method extends InstanceMetaMethod<MetaClass<?>, TestWsService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWs17Method(MetaClass owner) {
@@ -3189,7 +3192,7 @@ public class MetaHttpTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaWsEchoMethod extends InstanceMetaMethod<io.art.http.test.service.TestWsService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaWsEchoMethod extends InstanceMetaMethod<MetaClass<?>, TestWsService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaWsEchoMethod(MetaClass owner) {

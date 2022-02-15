@@ -21,33 +21,32 @@ package io.art.http.state;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
-import java.util.function.*;
 
 public class HttpModuleState implements ModuleState {
     private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
     private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
 
-    public void httpState(MetaMethod<?> method, LazyProperty<HttpLocalState> state) {
+    public void httpState(MetaMethod<MetaClass<?>, ?> method, LazyProperty<HttpLocalState> state) {
         httpLocalState.set(method, state);
     }
 
-    public HttpLocalState httpState(MetaMethod<?> method) {
+    public HttpLocalState httpState(MetaMethod<MetaClass<?>, ?> method) {
         return httpLocalState.get(method).get();
     }
 
-    public void clearHttpState(MetaMethod<?> method) {
+    public void clearHttpState(MetaMethod<MetaClass<?>, ?> method) {
         httpLocalState.remove(method);
     }
 
-    public void wsState(MetaMethod<?> method, WsLocalState state) {
+    public void wsState(MetaMethod<MetaClass<?>, ?> method, WsLocalState state) {
         wsLocalState.set(method, state);
     }
 
-    public WsLocalState wsState(MetaMethod<?> method) {
+    public WsLocalState wsState(MetaMethod<MetaClass<?>, ?> method) {
         return wsLocalState.get(method);
     }
 
-    public void clearWsState(MetaMethod<?> method) {
+    public void clearWsState(MetaMethod<MetaClass<?>, ?> method) {
         wsLocalState.remove(method);
     }
 }

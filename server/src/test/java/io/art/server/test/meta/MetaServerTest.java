@@ -1,7 +1,5 @@
 package io.art.server.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -11,6 +9,8 @@ import io.art.meta.model.MetaLibrary;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.StaticMetaMethod;
+import io.art.server.test.service.*;
+import reactor.core.publisher.*;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaServerTest extends MetaLibrary {
@@ -198,7 +198,7 @@ public class MetaServerTest extends MetaLibrary {
                 return m16Method;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<io.art.server.test.service.BenchmarkService> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, BenchmarkService> {
                 private MetaConstructorConstructor(MetaClass owner) {
                   super(metaType(io.art.server.test.service.BenchmarkService.class),owner);
                 }
@@ -215,7 +215,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM1Method extends StaticMetaMethod<Void> {
+              public final class MetaM1Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private MetaM1Method(MetaClass owner) {
                   super("m1",metaType(Void.class),owner);
                 }
@@ -233,7 +233,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM2Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM2Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private MetaM2Method(MetaClass owner) {
                   super("m2",metaType(java.lang.String.class),owner);
                 }
@@ -249,7 +249,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM3Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM3Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private MetaM3Method(MetaClass owner) {
                   super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -265,7 +265,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM4Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM4Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private MetaM4Method(MetaClass owner) {
                   super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -281,7 +281,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM5Method extends StaticMetaMethod<Void> {
+              public final class MetaM5Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method(MetaClass owner) {
@@ -305,7 +305,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM6Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM6Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method(MetaClass owner) {
@@ -327,7 +327,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM7Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM7Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method(MetaClass owner) {
@@ -349,7 +349,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM8Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM8Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method(MetaClass owner) {
@@ -371,7 +371,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM9Method extends StaticMetaMethod<Void> {
+              public final class MetaM9Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method(MetaClass owner) {
@@ -396,7 +396,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM10Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM10Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method(MetaClass owner) {
@@ -419,7 +419,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM11Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM11Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method(MetaClass owner) {
@@ -442,7 +442,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM12Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM12Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method(MetaClass owner) {
@@ -465,7 +465,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM13Method extends StaticMetaMethod<Void> {
+              public final class MetaM13Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method(MetaClass owner) {
@@ -490,7 +490,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM14Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM14Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method(MetaClass owner) {
@@ -513,7 +513,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM15Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM15Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method(MetaClass owner) {
@@ -536,7 +536,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM16Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM16Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method(MetaClass owner) {
@@ -673,7 +673,7 @@ public class MetaServerTest extends MetaLibrary {
                 return m16Method;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<io.art.server.test.service.TestService> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestService> {
                 private MetaConstructorConstructor(MetaClass owner) {
                   super(metaType(io.art.server.test.service.TestService.class),owner);
                 }
@@ -690,7 +690,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM1Method extends StaticMetaMethod<Void> {
+              public final class MetaM1Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private MetaM1Method(MetaClass owner) {
                   super("m1",metaType(Void.class),owner);
                 }
@@ -708,7 +708,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM2Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM2Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private MetaM2Method(MetaClass owner) {
                   super("m2",metaType(java.lang.String.class),owner);
                 }
@@ -724,7 +724,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM3Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM3Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private MetaM3Method(MetaClass owner) {
                   super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -740,7 +740,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM4Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM4Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private MetaM4Method(MetaClass owner) {
                   super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -756,7 +756,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM5Method extends StaticMetaMethod<Void> {
+              public final class MetaM5Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method(MetaClass owner) {
@@ -780,7 +780,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM6Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM6Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method(MetaClass owner) {
@@ -802,7 +802,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM7Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM7Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method(MetaClass owner) {
@@ -824,7 +824,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM8Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM8Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method(MetaClass owner) {
@@ -846,7 +846,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM9Method extends StaticMetaMethod<Void> {
+              public final class MetaM9Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method(MetaClass owner) {
@@ -871,7 +871,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM10Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM10Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method(MetaClass owner) {
@@ -894,7 +894,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM11Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM11Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method(MetaClass owner) {
@@ -917,7 +917,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM12Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM12Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method(MetaClass owner) {
@@ -940,7 +940,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM13Method extends StaticMetaMethod<Void> {
+              public final class MetaM13Method extends StaticMetaMethod<MetaClass<?>, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method(MetaClass owner) {
@@ -965,7 +965,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM14Method extends StaticMetaMethod<java.lang.String> {
+              public final class MetaM14Method extends StaticMetaMethod<MetaClass<?>, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method(MetaClass owner) {
@@ -988,7 +988,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM15Method extends StaticMetaMethod<reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM15Method extends StaticMetaMethod<MetaClass<?>, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method(MetaClass owner) {
@@ -1011,7 +1011,7 @@ public class MetaServerTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM16Method extends StaticMetaMethod<reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM16Method extends StaticMetaMethod<MetaClass<?>, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method(MetaClass owner) {

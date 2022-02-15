@@ -19,12 +19,12 @@ public class MetaSelector {
 
     @FunctionalInterface
     public interface MetaSelectorFieldConsumer {
-        MetaField<?> consume(MetaSelector selector);
+        MetaField<MetaClass<?>, ?> consume(MetaSelector selector);
     }
 
     @FunctionalInterface
     public interface MetaSelectorMethodConsumer {
-        MetaMethod<?> consume(MetaSelector selector);
+        MetaMethod<MetaClass<?>, ?> consume(MetaSelector selector);
     }
 
     public MetaClass<?> type() {

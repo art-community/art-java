@@ -33,7 +33,7 @@ class WsRouting implements BiFunction<WebsocketInbound, WebsocketOutbound, Publi
     private final MetaType<?> inputMappingType;
     private final MetaType<?> outputMappingType;
     private final HttpModuleState state;
-    private final MetaMethod<?> delegate;
+    private final MetaMethod<MetaClass<?>, ?> delegate;
 
     @Builder(access = PACKAGE)
     private WsRouting(ServiceMethod serviceMethod,

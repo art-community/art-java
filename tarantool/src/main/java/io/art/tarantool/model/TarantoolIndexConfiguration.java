@@ -59,7 +59,7 @@ public class TarantoolIndexConfiguration {
         private final int runSizeRatio;
     }
 
-    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, MetaField<?>... fields) {
+    public static <T extends MetaClass<?>> TarantoolIndexConfiguration.TarantoolIndexConfigurationBuilder indexFor(Class<?> type, MetaField<MetaClass<?>, ?>... fields) {
         return TarantoolIndexConfiguration.builder()
                 .spaceName(idByDash(type))
                 .indexName(stream(fields).map(MetaField::name).collect(joining()))

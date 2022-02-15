@@ -35,7 +35,7 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
     private final MetaType<?> outputMappingType;
     private final HttpModuleState state;
     private final MetaClass<?> owner;
-    private final MetaMethod<?> delegate;
+    private final MetaMethod<MetaClass<?>, ?> delegate;
     private final MetaType<?> inputType;
 
     @Builder(access = PACKAGE)

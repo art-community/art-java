@@ -22,7 +22,7 @@ import static java.util.Objects.*;
 
 @UtilityClass
 public class CommunicatorActionFactory {
-    public CommunicatorAction communicatorAction(MetaClass<? extends Communicator> owner, MetaMethod<?> method, Communication communication) {
+    public CommunicatorAction communicatorAction(MetaClass<? extends Communicator> owner, MetaMethod<MetaClass<?>, ?> method, Communication communication) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         CommunicatorActionBuilder builder = CommunicatorAction.builder()
                 .id(communicatorActionId(idByDash(owner.definition().type()), method.name()))
@@ -36,7 +36,7 @@ public class CommunicatorActionFactory {
         return builder.build();
     }
 
-    public CommunicatorAction preconfiguredCommunicatorAction(MetaClass<? extends Communicator> owner, MetaMethod<?> method, Communication communication) {
+    public CommunicatorAction preconfiguredCommunicatorAction(MetaClass<? extends Communicator> owner, MetaMethod<MetaClass<?>, ?> method, Communication communication) {
         CommunicatorActionIdentifier id = communicatorActionId(idByDash(owner.definition().type()), method.name());
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         CommunicatorConfiguration configuration = communicatorConfiguration(new CommunicatorRefresher());

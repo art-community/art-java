@@ -20,7 +20,7 @@ import java.util.function.*;
 @UtilityClass
 public class PortalProxyFactory {
     public static <T extends Portal> T createPortalProxy(MetaClass<T> portalClass, Function<Class<? extends Communicator>, ? extends Communicator> provider) {
-        Map<MetaMethod<?>, MetaClass<?>> proxies = portalClass.methods()
+        Map<MetaMethod<MetaClass<?>, ?>, MetaClass<?>> proxies = portalClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() == 0)
                 .filter(method -> nonNull(method.returnType().declaration()) && method.returnType().modifiers().contains(COMMUNICATOR))
@@ -36,7 +36,7 @@ public class PortalProxyFactory {
                 .stream()
                 .collect(mapCollector(entry -> entry.getKey().name(), entry -> provider.apply(cast(entry.getKey().returnType().type())))));
 
-        Map<MetaMethod<?>, Function<Object, ? extends Communicator>> invocations = proxies
+        Map<MetaMethod<MetaClass<?>, ?>, Function<Object, ? extends Communicator>> invocations = proxies
                 .entrySet()
                 .stream()
                 .collect(mapCollector(Map.Entry::getKey, entry -> ignore -> cache.get().get(entry.getKey().name())));

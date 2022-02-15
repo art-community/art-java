@@ -50,9 +50,9 @@ import java.util.function.*;
 @EqualsAndHashCode
 public abstract class MetaClass<T> {
     private final MetaType<T> definition;
-    private final Set<MetaConstructor<T>> constructors;
-    private final Map<String, MetaField<?>> fields;
-    private final Set<MetaMethod<?>> methods;
+    private final Set<MetaConstructor<MetaClass<?>, T>> constructors;
+    private final Map<String, MetaField<MetaClass<?>, ?>> fields;
+    private final Set<MetaMethod<MetaClass<?>, ?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
     private final static Map<Class<?>, MetaClass<?>> mutableRegistry = map();
     private MetaProviderTemplate provider;
@@ -68,16 +68,16 @@ public abstract class MetaClass<T> {
         mutableRegistry.put(definition().type(), this);
     }
 
-    protected <F> MetaField<F> register(MetaField<F> field) {
-        return cast(computeIfAbsent(fields, field.name(), () -> field));
+    protected <Meta extends MetaClass<?>, F> MetaField<Meta, F> register(MetaField<Meta, F> field) {
+        return cast(computeIfAbsent(fields, field.name(), () -> cast(field)));
     }
 
-    protected <M extends MetaMethod<?>> M register(M method) {
-        return cast(computeIfAbsent(methods, method));
+    protected <Meta extends MetaClass<?>, M extends MetaMethod<Meta, ?>> M register(M method) {
+        return cast(computeIfAbsent(methods, cast(method)));
     }
 
-    protected <C extends MetaConstructor<T>> C register(C constructor) {
-        return cast(computeIfAbsent(constructors, constructor));
+    protected <Meta extends MetaClass<?>, C extends MetaConstructor<Meta, T>> C register(C constructor) {
+        return cast(computeIfAbsent(constructors, cast(constructor)));
     }
 
     protected <C extends MetaClass<?>> C register(C metaClass) {
@@ -88,15 +88,15 @@ public abstract class MetaClass<T> {
     protected void beginComputation() {
         definition.beginComputation();
 
-        for (MetaField<?> field : fields.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fields.values()) {
             field.type().beginComputation();
         }
 
-        for (MetaConstructor<T> constructor : constructors) {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
             constructor.parameters().values().forEach(parameter -> parameter.type().beginComputation());
         }
 
-        for (MetaMethod<?> method : methods) {
+        for (MetaMethod<MetaClass<?>, ?> method : methods) {
             method.returnType().beginComputation();
             method.parameters().values().forEach(parameter -> parameter.type().beginComputation());
         }
@@ -105,19 +105,19 @@ public abstract class MetaClass<T> {
             nested.beginComputation();
         }
 
-        MetaConstructor<T> noPropertiesConstructor = selectNoPropertiesConstructor();
-        MetaConstructor<T> localPropertiesConstructor = selectLocalPropertiesConstructor();
-        MetaConstructor<T> allPropertiesConstructor = selectAllPropertiesConstructor();
+        MetaConstructor<MetaClass<?>, T> noPropertiesConstructor = selectNoPropertiesConstructor();
+        MetaConstructor<MetaClass<?>, T> localPropertiesConstructor = selectLocalPropertiesConstructor();
+        MetaConstructor<MetaClass<?>, T> allPropertiesConstructor = selectAllPropertiesConstructor();
 
         List<MetaProperty<?>> gettableProperties = linkedList();
         List<MetaProperty<?>> constructableProperties = linkedList();
 
-        for (MetaField<?> field : fields.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fields.values()) {
             MetaPropertyBuilder<?> builder = MetaProperty.builder()
                     .name(field.name())
                     .type(cast(field.type()));
 
-            Optional<MetaMethod<?>> getter = methods
+            Optional<MetaMethod<MetaClass<?>, ?>> getter = methods
                     .stream()
                     .filter(method -> isGetter(field, method))
                     .findFirst();
@@ -125,7 +125,7 @@ public abstract class MetaClass<T> {
             getter.ifPresent(metaMethod -> builder.getter(cast(metaMethod)));
 
             if (nonNull(localPropertiesConstructor) || nonNull(allPropertiesConstructor)) {
-                MetaConstructor<?> constructor = nonNull(allPropertiesConstructor) ? allPropertiesConstructor : localPropertiesConstructor;
+                MetaConstructor<MetaClass<?>, ?> constructor = nonNull(allPropertiesConstructor) ? allPropertiesConstructor : localPropertiesConstructor;
                 builder.index(constructor.parameters().get(field.name()).index());
 
                 MetaProperty<?> property = builder.build();
@@ -163,16 +163,16 @@ public abstract class MetaClass<T> {
                 .build();
     }
 
-    private MetaConstructor<T> selectNoPropertiesConstructor() {
-        for (MetaConstructor<T> constructor : constructors) {
+    private MetaConstructor<MetaClass<?>, T> selectNoPropertiesConstructor() {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
             if (constructor.parameters().isEmpty()) return constructor;
         }
         return null;
     }
 
-    private MetaConstructor<T> selectLocalPropertiesConstructor() {
-        for (MetaConstructor<T> constructor : constructors) {
-            List<MetaField<?>> localFields = this.fields.values()
+    private MetaConstructor<MetaClass<?>, T> selectLocalPropertiesConstructor() {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
+            List<MetaField<MetaClass<?>, ?>> localFields = this.fields.values()
                     .stream()
                     .filter(field -> !field.inherited())
                     .collect(listCollector());
@@ -191,9 +191,9 @@ public abstract class MetaClass<T> {
         return null;
     }
 
-    private MetaConstructor<T> selectAllPropertiesConstructor() {
-        for (MetaConstructor<T> constructor : constructors) {
-            Collection<MetaField<?>> fields = this.fields.values();
+    private MetaConstructor<MetaClass<?>, T> selectAllPropertiesConstructor() {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
+            Collection<MetaField<MetaClass<?>, ?>> fields = this.fields.values();
             MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
             if (fields.size() != parameters.length) continue;
             for (int index = 0; index < fields.size(); index++) {
@@ -212,15 +212,15 @@ public abstract class MetaClass<T> {
     protected void completeComputation() {
         definition.completeComputation();
 
-        for (MetaField<?> field : fields.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fields.values()) {
             field.type().completeComputation();
         }
 
-        for (MetaConstructor<T> constructor : constructors) {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
             constructor.parameters().values().forEach(parameter -> parameter.type().completeComputation());
         }
 
-        for (MetaMethod<?> method : methods) {
+        for (MetaMethod<MetaClass<?>, ?> method : methods) {
             method.returnType().completeComputation();
             method.parameters().values().forEach(parameter -> parameter.type().completeComputation());
         }
@@ -229,12 +229,12 @@ public abstract class MetaClass<T> {
             nested.completeComputation();
         }
 
-        for (MetaConstructor<T> constructor : constructors) {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
             constructor.parameters().values().forEach(parameter -> parameter.type().completeComputation());
         }
     }
 
-    private boolean isGetter(MetaField<?> field, MetaMethod<?> method) {
+    private boolean isGetter(MetaField<MetaClass<?>, ?> field, MetaMethod<MetaClass<?>, ?> method) {
         if (method.isStatic()) return false;
         if (!method.parameters().isEmpty()) return false;
         if (!method.returnType().equals(field.type())) return false;
@@ -255,23 +255,23 @@ public abstract class MetaClass<T> {
         return definition;
     }
 
-    public <F> MetaField<F> field(String name) {
+    public <F> MetaField<MetaClass<?>, F> field(String name) {
         return cast(fields.get(name));
     }
 
-    public int index(MetaField<?> field) {
+    public int index(MetaField<MetaClass<?>, ?> field) {
         return fixedArrayOf(fields.values()).indexOf(field);
     }
 
-    public ImmutableMap<String, MetaField<?>> fields() {
+    public ImmutableMap<String, MetaField<MetaClass<?>, ?>> fields() {
         return immutableMapOf(fields);
     }
 
-    public ImmutableSet<MetaMethod<?>> methods() {
+    public ImmutableSet<MetaMethod<MetaClass<?>, ?>> methods() {
         return immutableSetOf(methods);
     }
 
-    public ImmutableSet<MetaConstructor<T>> constructors() {
+    public ImmutableSet<MetaConstructor<MetaClass<?>, T>> constructors() {
         return immutableSetOf(constructors);
     }
 
@@ -279,7 +279,7 @@ public abstract class MetaClass<T> {
         return immutableMapOf(classes);
     }
 
-    public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+    public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
         throw new MetaException(format(CLASS_WITHOUT_PROXY, definition().type()));
     }
 
@@ -292,15 +292,15 @@ public abstract class MetaClass<T> {
 
         known = true;
 
-        for (MetaField<?> field : fields.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fields.values()) {
             if (!field.isKnown()) return known = false;
         }
 
-        for (MetaMethod<?> method : methods) {
+        for (MetaMethod<MetaClass<?>, ?> method : methods) {
             if (!method.isKnown()) return known = false;
         }
 
-        for (MetaConstructor<T> constructor : constructors) {
+        for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
             if (!constructor.isKnown()) return known = false;
         }
 

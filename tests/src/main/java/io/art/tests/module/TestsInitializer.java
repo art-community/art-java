@@ -40,7 +40,7 @@ public class TestsInitializer implements ModuleInitializer<TestsModuleConfigurat
             if (!suitMeta.definition().modifiers().contains(TESTS)) continue;
             TestSuitConfigurationBuilder suitBuilder = TestSuitConfiguration.builder().definition(cast(suitMeta));
             Map<String, TestConfiguration> tests = map();
-            for (MetaMethod<?> method : suitMeta.methods()) {
+            for (MetaMethod<MetaClass<?>, ?> method : suitMeta.methods()) {
                 if (!method.parameters().isEmpty()) continue;
                 switch (method.name()) {
                     case SETUP_METHOD_NAME:

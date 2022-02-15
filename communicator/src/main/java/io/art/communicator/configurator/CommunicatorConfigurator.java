@@ -50,7 +50,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return cast(this);
     }
 
-    public C communicator(Class<? extends Communicator> communicatorClass, Supplier<MetaMethod<?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public C communicator(Class<? extends Communicator> communicatorClass, Supplier<MetaMethod<MetaClass<?>, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
         return cast(this);
     }
@@ -87,7 +87,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         for (ClassBasedConfiguration classBasedConfiguration : classBased) {
             MetaClass<? extends Communicator> communicatorClass = classBasedConfiguration.communicatorClass.get();
             Map<String, CommunicatorActionConfiguration> actions = map();
-            for (MetaMethod<?> method : communicatorClass.methods()) {
+            for (MetaMethod<MetaClass<?>, ?> method : communicatorClass.methods()) {
                 if (!method.isKnown()) continue;
                 UnaryOperator<CommunicatorActionConfigurator> decorator = getActionDecorator(communicatorClass, method);
                 decorator = then(getCommunicatorDecorator(communicatorClass), decorator);
@@ -106,7 +106,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
             String communicatorId = classToId(communicatorClass.definition().type());
             CommunicatorActionsConfiguration existed = configurations.get(communicatorId);
             if (nonNull(existed)) actions = existed.getActions().toMutable();
-            MetaMethod<?> method = methodBasedConfiguration.actionMethod.get();
+            MetaMethod<MetaClass<?>, ?> method = methodBasedConfiguration.actionMethod.get();
             if (!method.isKnown()) continue;
             UnaryOperator<CommunicatorActionConfigurator> decorator = getCommunicatorDecorator(communicatorClass);
             decorator = then(decorator, getActionDecorator(communicatorClass, method));
@@ -135,10 +135,10 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
                                                                                                                  Class<? extends Portal> portalClass,
                                                                                                                  PortalConfiguration portalConfiguration) {
         Map<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>> proxies = map();
-        ImmutableSet<MetaMethod<? extends Communicator>> methods = cast(declaration(portalClass).methods());
-        for (MetaMethod<? extends Communicator> method : methods) {
+        ImmutableSet<MetaMethod<MetaClass<?>, ? extends Communicator>> methods = cast(declaration(portalClass).methods());
+        for (MetaMethod<MetaClass<?>, ? extends Communicator> method : methods) {
             MetaClass<? extends Communicator> communicatorClass = method.returnType().declaration();
-            Function<MetaMethod<?>, CommunicatorAction> actions = actionMethod -> createAction(configurationProvider, ActionConfiguration.builder()
+            Function<MetaMethod<MetaClass<?>, ?>, CommunicatorAction> actions = actionMethod -> createAction(configurationProvider, ActionConfiguration.builder()
                     .communicatorClass(communicatorClass)
                     .decorator(then(getCommunicatorDecorator(communicatorClass), getActionDecorator(communicatorClass, method)))
                     .method(actionMethod)
@@ -159,7 +159,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
                 .orElse(identity());
     }
 
-    private UnaryOperator<CommunicatorActionConfigurator> getActionDecorator(MetaClass<?> communicatorClass, MetaMethod<?> method) {
+    private UnaryOperator<CommunicatorActionConfigurator> getActionDecorator(MetaClass<?> communicatorClass, MetaMethod<MetaClass<?>, ?> method) {
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> communicatorClass.equals(methodConfiguration.communicatorClass.get()))
@@ -214,7 +214,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<? extends Communicator>> communicatorClass;
-        final Supplier<MetaMethod<?>> actionMethod;
+        final Supplier<MetaMethod<MetaClass<?>, ?>> actionMethod;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 
@@ -222,7 +222,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     private static class ActionConfiguration {
         final MetaClass<? extends Communicator> communicatorClass;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
-        final MetaMethod<?> method;
+        final MetaMethod<MetaClass<?>, ?> method;
         final PortalConfiguration portalConfiguration;
     }
 

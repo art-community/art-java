@@ -92,7 +92,7 @@ public interface HttpModuleConstants {
             return fallback;
         }
 
-        public static HttpRouteType extractRouteType(MetaMethod<?> method) {
+        public static HttpRouteType extractRouteType(MetaMethod<MetaClass<?>, ?> method) {
             for (HttpRouteType value : values()) {
                 if (value != PATH && method.name().toLowerCase().startsWith(value.type)) return value;
             }

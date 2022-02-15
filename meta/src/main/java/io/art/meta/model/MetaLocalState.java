@@ -5,21 +5,21 @@ import static java.util.Objects.*;
 import java.util.*;
 
 public class MetaLocalState<T> {
-    private final Map<MetaMethod<?>, T> state = concurrentMap();
+    private final Map<MetaMethod<MetaClass<?>, ?>, T> state = concurrentMap();
 
-    public void remove(MetaMethod<?> method) {
+    public void remove(MetaMethod<MetaClass<?>, ?> method) {
         state.remove(method);
     }
 
-    public T get(MetaMethod<?> method) {
+    public T get(MetaMethod<MetaClass<?>, ?> method) {
         return state.get(method);
     }
 
-    public void set(MetaMethod<?> method, T value) {
+    public void set(MetaMethod<MetaClass<?>, ?> method, T value) {
         state.put(method, value);
     }
 
-    public boolean contains(MetaMethod<?> method) {
+    public boolean contains(MetaMethod<MetaClass<?>, ?> method) {
         return nonNull(get(method));
     }
 }

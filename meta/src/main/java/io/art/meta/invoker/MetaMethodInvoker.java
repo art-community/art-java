@@ -22,25 +22,25 @@ public class MetaMethodInvoker implements Invoker {
     private final MetaClass<?> owner;
 
     @Getter
-    private final MetaMethod<?> delegate;
+    private final MetaMethod<MetaClass<?>, ?> delegate;
 
-    public MetaMethodInvoker(MetaClass<?> owner, MetaMethod<?> delegate) {
+    public MetaMethodInvoker(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> delegate) {
         this.owner = owner;
         this.delegate = delegate;
         if (delegate.isStatic()) {
-            invokeWithoutParameters = ((StaticMetaMethod<?>) delegate)::invokeCatched;
-            invokeOneParameter = ((StaticMetaMethod<?>) delegate)::invokeCatched;
-            invokeWithParameters = ((StaticMetaMethod<?>) delegate)::invokeCatched;
+            invokeWithoutParameters = ((StaticMetaMethod<MetaClass<?>, ?>) delegate)::invokeCatched;
+            invokeOneParameter = ((StaticMetaMethod<MetaClass<?>, ?>) delegate)::invokeCatched;
+            invokeWithParameters = ((StaticMetaMethod<MetaClass<?>, ?>) delegate)::invokeCatched;
             return;
         }
-        MetaConstructor<?> constructor = owner.creator().noPropertiesConstructor();
+        MetaConstructor<MetaClass<?>, ?> constructor = owner.creator().noPropertiesConstructor();
         if (isNull(constructor)) {
             throw new MetaException(format(UNABLE_TO_CREATE_SINGLETON, owner.definition().type()));
         }
         Object singleton = singleton(owner.definition().type(), constructor::invokeCatched);
-        invokeWithoutParameters = () -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton));
-        invokeOneParameter = argument -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton), argument);
-        invokeWithParameters = arguments -> ((InstanceMetaMethod<?, ?>) delegate).invokeCatched(cast(singleton), arguments);
+        invokeWithoutParameters = () -> ((InstanceMetaMethod<MetaClass<?>, ?, ?>) delegate).invokeCatched(cast(singleton));
+        invokeOneParameter = argument -> ((InstanceMetaMethod<MetaClass<?>, ?, ?>) delegate).invokeCatched(cast(singleton), argument);
+        invokeWithParameters = arguments -> ((InstanceMetaMethod<MetaClass<?>, ?, ?>) delegate).invokeCatched(cast(singleton), arguments);
     }
 
     @Override

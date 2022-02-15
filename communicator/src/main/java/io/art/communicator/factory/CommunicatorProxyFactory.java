@@ -39,13 +39,13 @@ public class CommunicatorProxyFactory {
         return preconfiguredCommunicatorProxy(Meta.declaration(proxyClass), communication);
     }
 
-    public static <T extends Communicator> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<?>, CommunicatorAction> provider) {
+    public static <T extends Communicator> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<MetaClass<?>, ?>, CommunicatorAction> provider) {
         Function<CommunicatorAction, Object> noArguments = CommunicatorAction::communicate;
         BiFunction<CommunicatorAction, Object, Object> oneArgument = CommunicatorAction::communicate;
 
-        ImmutableSet<MetaMethod<?>> methods = proxyClass.methods().stream().filter(MetaMethod::isKnown).collect(immutableSetCollector());
+        ImmutableSet<MetaMethod<MetaClass<?>, ?>> methods = proxyClass.methods().stream().filter(MetaMethod::isKnown).collect(immutableSetCollector());
 
-        Map<MetaMethod<?>, CommunicatorAction> actions = methods
+        Map<MetaMethod<MetaClass<?>, ?>, CommunicatorAction> actions = methods
                 .stream()
                 .filter(method -> method.parameters().size() < 2)
                 .collect(mapCollector(identity(), provider));
@@ -55,7 +55,7 @@ public class CommunicatorProxyFactory {
             throw new CommunicatorException(format(COMMUNICATOR_HAS_INVALID_METHODS, proxyClass.definition().type().getName(), invalidMethods));
         }
 
-        Map<MetaMethod<?>, Function<Object, Object>> invocations = actions
+        Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations = actions
                 .entrySet()
                 .stream()
                 .collect(mapCollector(Map.Entry::getKey, entry -> entry.getKey().parameters().isEmpty()

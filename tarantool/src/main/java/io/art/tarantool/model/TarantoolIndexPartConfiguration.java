@@ -20,7 +20,7 @@ public class TarantoolIndexPartConfiguration {
     private final Boolean nullable;
     private final String path;
 
-    public static <T extends MetaClass<?>> TarantoolIndexPartConfiguration indexPartFor(MetaField<?> field) {
+    public static <T extends MetaClass<?>> TarantoolIndexPartConfiguration indexPartFor(MetaField<MetaClass<?>, ?> field) {
         return TarantoolIndexPartConfiguration.builder()
                 .field(field.owner().index(field) + 1)
                 .type(extractType(field.type()))

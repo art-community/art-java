@@ -8,13 +8,13 @@ import java.util.function.*;
 
 @Generation
 public abstract class MetaProxy {
-    private final Map<MetaMethod<?>, Function<Object, Object>> invocations;
+    private final Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations;
 
-    public MetaProxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+    public MetaProxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
         this.invocations = invocations;
     }
 
-    public ImmutableMap<MetaMethod<?>, Function<Object, Object>> invocations() {
+    public ImmutableMap<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations() {
         return immutableMapOf(invocations);
     }
 }

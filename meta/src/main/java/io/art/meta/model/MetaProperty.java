@@ -12,6 +12,6 @@ public class MetaProperty<T> {
     @EqualsAndHashCode.Include
     private final String name;
     private final MetaType<T> type;
-    private final InstanceMetaMethod<Object, ?> getter;
+    private final InstanceMetaMethod<MetaClass<?>, Object, ?> getter;
     private final int index;
 }

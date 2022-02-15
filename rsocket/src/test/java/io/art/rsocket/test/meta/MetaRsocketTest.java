@@ -1,7 +1,5 @@
 package io.art.rsocket.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -14,6 +12,10 @@ import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
 import io.art.meta.model.StaticMetaMethod;
+import io.art.rsocket.test.*;
+import io.art.rsocket.test.communicator.*;
+import io.art.rsocket.test.service.*;
+import reactor.core.publisher.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -120,7 +122,7 @@ public class MetaRsocketTest extends MetaLibrary {
               return testDefaultRsocketMethod;
             }
 
-            public final class MetaConstructorConstructor extends MetaConstructor<io.art.rsocket.test.RsocketDefaultTest> {
+            public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, RsocketDefaultTest> {
               private MetaConstructorConstructor(MetaClass owner) {
                 super(metaType(io.art.rsocket.test.RsocketDefaultTest.class),owner);
               }
@@ -137,7 +139,7 @@ public class MetaRsocketTest extends MetaLibrary {
               }
             }
 
-            public final class MetaSetupMethod extends StaticMetaMethod<Void> {
+            public final class MetaSetupMethod extends StaticMetaMethod<MetaClass<?>, Void> {
               private MetaSetupMethod(MetaClass owner) {
                 super("setup",metaType(Void.class),owner);
               }
@@ -155,7 +157,7 @@ public class MetaRsocketTest extends MetaLibrary {
               }
             }
 
-            public final class MetaCleanupMethod extends StaticMetaMethod<Void> {
+            public final class MetaCleanupMethod extends StaticMetaMethod<MetaClass<?>, Void> {
               private MetaCleanupMethod(MetaClass owner) {
                 super("cleanup",metaType(Void.class),owner);
               }
@@ -173,7 +175,7 @@ public class MetaRsocketTest extends MetaLibrary {
               }
             }
 
-            public final class MetaTestDefaultRsocketMethod extends InstanceMetaMethod<io.art.rsocket.test.RsocketDefaultTest, Void> {
+            public final class MetaTestDefaultRsocketMethod extends InstanceMetaMethod<MetaClass<?>, RsocketDefaultTest, Void> {
               private MetaTestDefaultRsocketMethod(MetaClass owner) {
                 super("testDefaultRsocket",metaType(Void.class),owner);
               }
@@ -315,7 +317,7 @@ public class MetaRsocketTest extends MetaLibrary {
               }
 
               @Override
-              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+              public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaTestRsocketProxy(invocations);
               }
 
@@ -323,7 +325,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 return testRsocketConnectorClass;
               }
 
-              public final class MetaM1Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+              public final class MetaM1Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Void> {
                 private MetaM1Method(MetaClass owner) {
                   super("m1",metaType(Void.class),owner);
                 }
@@ -343,7 +345,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
+              public final class MetaM2Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, String> {
                 private MetaM2Method(MetaClass owner) {
                   super("m2",metaType(java.lang.String.class),owner);
                 }
@@ -361,7 +363,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM3Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Mono<String>> {
                 private MetaM3Method(MetaClass owner) {
                   super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -379,7 +381,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM4Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Flux<String>> {
                 private MetaM4Method(MetaClass owner) {
                   super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -397,7 +399,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM5Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+              public final class MetaM5Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method(MetaClass owner) {
@@ -423,7 +425,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM6Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
+              public final class MetaM6Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method(MetaClass owner) {
@@ -447,7 +449,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM7Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM7Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method(MetaClass owner) {
@@ -471,7 +473,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM8Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM8Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method(MetaClass owner) {
@@ -495,7 +497,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM9Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+              public final class MetaM9Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method(MetaClass owner) {
@@ -522,7 +524,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM10Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
+              public final class MetaM10Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method(MetaClass owner) {
@@ -547,7 +549,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM11Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM11Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method(MetaClass owner) {
@@ -572,7 +574,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM12Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM12Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method(MetaClass owner) {
@@ -597,7 +599,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM13Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, Void> {
+              public final class MetaM13Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method(MetaClass owner) {
@@ -624,7 +626,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM14Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, java.lang.String> {
+              public final class MetaM14Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method(MetaClass owner) {
@@ -649,7 +651,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM15Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM15Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method(MetaClass owner) {
@@ -674,7 +676,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM16Method extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM16Method extends InstanceMetaMethod<MetaClass<?>, TestRsocket, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method(MetaClass owner) {
@@ -733,7 +735,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 private final Function<Object, Object> m16Invocation;
 
                 public MetaTestRsocketProxy(
-                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                    Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   m1Invocation = invocations.get(m1Method);
                   m2Invocation = invocations.get(m2Method);
@@ -856,11 +858,11 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
 
                 @Override
-                public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   return new MetaTestRsocketConnectorProxy(invocations);
                 }
 
-                public final class MetaTestRsocketMethod extends InstanceMetaMethod<io.art.rsocket.test.communicator.TestRsocket.TestRsocketConnector, io.art.rsocket.test.communicator.TestRsocket> {
+                public final class MetaTestRsocketMethod extends InstanceMetaMethod<MetaClass<?>, TestRsocket.TestRsocketConnector, TestRsocket> {
                   private MetaTestRsocketMethod(MetaClass owner) {
                     super("testRsocket",metaType(io.art.rsocket.test.communicator.TestRsocket.class),owner);
                   }
@@ -884,7 +886,7 @@ public class MetaRsocketTest extends MetaLibrary {
                   private final Function<Object, Object> testRsocketInvocation;
 
                   public MetaTestRsocketConnectorProxy(
-                      Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                      Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                     super(invocations);
                     testRsocketInvocation = invocations.get(testRsocketMethod);
                   }
@@ -1028,7 +1030,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 return m16Method;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<io.art.rsocket.test.service.TestRsocketService> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestRsocketService> {
                 private MetaConstructorConstructor(MetaClass owner) {
                   super(metaType(io.art.rsocket.test.service.TestRsocketService.class),owner);
                 }
@@ -1045,7 +1047,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM1Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+              public final class MetaM1Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Void> {
                 private MetaM1Method(MetaClass owner) {
                   super("m1",metaType(Void.class),owner);
                 }
@@ -1065,7 +1067,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
+              public final class MetaM2Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, String> {
                 private MetaM2Method(MetaClass owner) {
                   super("m2",metaType(java.lang.String.class),owner);
                 }
@@ -1083,7 +1085,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM3Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Mono<String>> {
                 private MetaM3Method(MetaClass owner) {
                   super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -1101,7 +1103,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM4Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Flux<String>> {
                 private MetaM4Method(MetaClass owner) {
                   super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -1119,7 +1121,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM5Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+              public final class MetaM5Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method(MetaClass owner) {
@@ -1145,7 +1147,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM6Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
+              public final class MetaM6Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method(MetaClass owner) {
@@ -1169,7 +1171,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM7Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM7Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method(MetaClass owner) {
@@ -1193,7 +1195,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM8Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM8Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method(MetaClass owner) {
@@ -1217,7 +1219,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM9Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+              public final class MetaM9Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method(MetaClass owner) {
@@ -1244,7 +1246,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM10Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
+              public final class MetaM10Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method(MetaClass owner) {
@@ -1269,7 +1271,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM11Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM11Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method(MetaClass owner) {
@@ -1294,7 +1296,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM12Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM12Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method(MetaClass owner) {
@@ -1319,7 +1321,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM13Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, Void> {
+              public final class MetaM13Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method(MetaClass owner) {
@@ -1346,7 +1348,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM14Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, java.lang.String> {
+              public final class MetaM14Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method(MetaClass owner) {
@@ -1371,7 +1373,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM15Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM15Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method(MetaClass owner) {
@@ -1396,7 +1398,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM16Method extends InstanceMetaMethod<io.art.rsocket.test.service.TestRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM16Method extends InstanceMetaMethod<MetaClass<?>, TestRsocketService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method(MetaClass owner) {
@@ -1535,7 +1537,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 return m16Method;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<io.art.rsocket.test.service.BenchmarkRsocketService> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, BenchmarkRsocketService> {
                 private MetaConstructorConstructor(MetaClass owner) {
                   super(metaType(io.art.rsocket.test.service.BenchmarkRsocketService.class),owner);
                 }
@@ -1553,7 +1555,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM1Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, Void> {
+              public final class MetaM1Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Void> {
                 private MetaM1Method(MetaClass owner) {
                   super("m1",metaType(Void.class),owner);
                 }
@@ -1573,7 +1575,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM2Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, java.lang.String> {
+              public final class MetaM2Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, String> {
                 private MetaM2Method(MetaClass owner) {
                   super("m2",metaType(java.lang.String.class),owner);
                 }
@@ -1591,7 +1593,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM3Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM3Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Mono<String>> {
                 private MetaM3Method(MetaClass owner) {
                   super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -1609,7 +1611,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM4Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM4Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Flux<String>> {
                 private MetaM4Method(MetaClass owner) {
                   super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -1627,7 +1629,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM5Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, Void> {
+              public final class MetaM5Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method(MetaClass owner) {
@@ -1653,7 +1655,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM6Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, java.lang.String> {
+              public final class MetaM6Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method(MetaClass owner) {
@@ -1677,7 +1679,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM7Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM7Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method(MetaClass owner) {
@@ -1701,7 +1703,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM8Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM8Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method(MetaClass owner) {
@@ -1725,7 +1727,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM9Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, Void> {
+              public final class MetaM9Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method(MetaClass owner) {
@@ -1752,7 +1754,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM10Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, java.lang.String> {
+              public final class MetaM10Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method(MetaClass owner) {
@@ -1777,7 +1779,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM11Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM11Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method(MetaClass owner) {
@@ -1802,7 +1804,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM12Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM12Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method(MetaClass owner) {
@@ -1827,7 +1829,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM13Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, Void> {
+              public final class MetaM13Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method(MetaClass owner) {
@@ -1854,7 +1856,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM14Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, java.lang.String> {
+              public final class MetaM14Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method(MetaClass owner) {
@@ -1879,7 +1881,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM15Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM15Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method(MetaClass owner) {
@@ -1904,7 +1906,7 @@ public class MetaRsocketTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM16Method extends InstanceMetaMethod<io.art.rsocket.test.service.BenchmarkRsocketService, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM16Method extends InstanceMetaMethod<MetaClass<?>, BenchmarkRsocketService, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method(MetaClass owner) {

@@ -1,9 +1,8 @@
 package io.art.communicator.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
+import io.art.communicator.test.proxy.*;
 import io.art.core.property.LazyProperty;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
@@ -12,6 +11,7 @@ import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
+import reactor.core.publisher.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -190,11 +190,11 @@ public class MetaCommunicatorTest extends MetaLibrary {
               }
 
               @Override
-              public MetaProxy proxy(Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+              public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaTestCommunicatorProxy(invocations);
               }
 
-              public final class MetaM1Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, Void> {
+              public final class MetaM1Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Void> {
                 private MetaM1Method(MetaClass owner) {
                   super("m1",metaType(Void.class),owner);
                 }
@@ -214,7 +214,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM2Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, java.lang.String> {
+              public final class MetaM2Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, String> {
                 private MetaM2Method(MetaClass owner) {
                   super("m2",metaType(java.lang.String.class),owner);
                 }
@@ -232,7 +232,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM3Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM3Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Mono<String>> {
                 private MetaM3Method(MetaClass owner) {
                   super("m3",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
                 }
@@ -250,7 +250,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM4Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM4Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Flux<String>> {
                 private MetaM4Method(MetaClass owner) {
                   super("m4",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
                 }
@@ -268,7 +268,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM5Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, Void> {
+              public final class MetaM5Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Void> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM5Method(MetaClass owner) {
@@ -294,7 +294,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM6Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, java.lang.String> {
+              public final class MetaM6Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, String> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM6Method(MetaClass owner) {
@@ -318,7 +318,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM7Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM7Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Mono<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM7Method(MetaClass owner) {
@@ -342,7 +342,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM8Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM8Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Flux<String>> {
                 private final MetaParameter<java.lang.String> inputParameter = register(new MetaParameter<>(0, "input",metaType(java.lang.String.class)));
 
                 private MetaM8Method(MetaClass owner) {
@@ -366,7 +366,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM9Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, Void> {
+              public final class MetaM9Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Void> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM9Method(MetaClass owner) {
@@ -393,7 +393,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM10Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, java.lang.String> {
+              public final class MetaM10Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, String> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM10Method(MetaClass owner) {
@@ -418,7 +418,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM11Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM11Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM11Method(MetaClass owner) {
@@ -443,7 +443,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM12Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM12Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
                 private MetaM12Method(MetaClass owner) {
@@ -468,7 +468,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM13Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, Void> {
+              public final class MetaM13Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Void> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM13Method(MetaClass owner) {
@@ -495,7 +495,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM14Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, java.lang.String> {
+              public final class MetaM14Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, String> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM14Method(MetaClass owner) {
@@ -520,7 +520,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM15Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Mono<java.lang.String>> {
+              public final class MetaM15Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Mono<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM15Method(MetaClass owner) {
@@ -545,7 +545,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaM16Method extends InstanceMetaMethod<io.art.communicator.test.proxy.TestCommunicator, reactor.core.publisher.Flux<java.lang.String>> {
+              public final class MetaM16Method extends InstanceMetaMethod<MetaClass<?>, TestCommunicator, Flux<String>> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
                 private MetaM16Method(MetaClass owner) {
@@ -604,7 +604,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
                 private final Function<Object, Object> m16Invocation;
 
                 public MetaTestCommunicatorProxy(
-                    Map<MetaMethod<?>, Function<Object, Object>> invocations) {
+                    Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                   super(invocations);
                   m1Invocation = invocations.get(m1Method);
                   m2Invocation = invocations.get(m2Method);

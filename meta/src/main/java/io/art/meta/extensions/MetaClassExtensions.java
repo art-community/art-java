@@ -8,7 +8,7 @@ import java.util.function.*;
 
 @UtilityClass
 public class MetaClassExtensions {
-    public static String joinMethods(MetaClass<?> owner, Predicate<MetaMethod<?>> predicate) {
+    public static String joinMethods(MetaClass<?> owner, Predicate<MetaMethod<MetaClass<?>, ?>> predicate) {
         return owner.methods().stream()
                 .filter(predicate)
                 .map(MetaMethod::toString)

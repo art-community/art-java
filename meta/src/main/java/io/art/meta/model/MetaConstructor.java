@@ -34,13 +34,13 @@ import java.util.*;
 @ToString
 @Generation
 @EqualsAndHashCode(exclude = "owner", cacheStrategy = LAZY)
-public abstract class MetaConstructor<T> {
+public abstract class MetaConstructor<O extends MetaClass<?>, T> {
     private final MetaType<T> type;
     private final Map<String, MetaParameter<?>> parameters;
-    private final MetaClass<T> owner;
+    private final O owner;
     private Boolean known;
 
-    protected MetaConstructor(MetaType<T> type, MetaClass<T> owner) {
+    protected MetaConstructor(MetaType<T> type, O owner) {
         this.type = type;
         this.owner = owner;
         parameters = map();
@@ -107,7 +107,7 @@ public abstract class MetaConstructor<T> {
         return known = parameters.values().stream().allMatch(parameter -> parameter.type().isKnown());
     }
 
-    public MetaClass<T> owner() {
+    public O owner() {
         return owner;
     }
 }

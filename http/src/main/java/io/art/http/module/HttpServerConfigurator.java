@@ -47,11 +47,11 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    public HttpServerConfigurator route(Supplier<MetaMethod<?>> serviceMethod) {
+    public HttpServerConfigurator route(Supplier<MetaMethod<MetaClass<?>, ?>> serviceMethod) {
         return route(serviceMethod, identity());
     }
 
-    public HttpServerConfigurator route(Supplier<MetaMethod<?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
+    public HttpServerConfigurator route(Supplier<MetaMethod<MetaClass<?>, ?>> serviceMethod, UnaryOperator<HttpRouteConfigurationBuilder> decorator) {
         method(serviceMethod);
         methodBased.add(new MethodBasedConfiguration(() -> serviceMethod.get().owner(), serviceMethod, decorator));
         return this;
@@ -86,7 +86,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         for (ClassBasedConfiguration classBasedConfiguration : classBased) {
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = classBasedConfiguration.serviceClass.get();
-            for (MetaMethod<?> method : extractHttpMethods(metaClass)) {
+            for (MetaMethod<MetaClass<?>, ?> method : extractHttpMethods(metaClass)) {
                 if (!method.isKnown()) continue;
                 configurationBuilder.type(extractRouteType(method))
                         .uri(byServiceMethod())
@@ -99,7 +99,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         for (MethodBasedConfiguration methodBasedConfiguration : methodBased) {
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = methodBasedConfiguration.serviceClass.get();
-            MetaMethod<?> method = methodBasedConfiguration.serviceMethod.get();
+            MetaMethod<MetaClass<?>, ?> method = methodBasedConfiguration.serviceMethod.get();
             if (!method.isKnown()) continue;
             configurationBuilder
                     .type(extractRouteType(method))
@@ -115,7 +115,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return routes.build();
     }
 
-    private static Set<MetaMethod<?>> extractHttpMethods(MetaClass<?> serviceClass) {
+    private static Set<MetaMethod<MetaClass<?>, ?>> extractHttpMethods(MetaClass<?> serviceClass) {
         return serviceClass.methods()
                 .stream()
                 .filter(method -> method.parameters().size() < 2)
@@ -131,7 +131,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
                 .orElse(identity());
     }
 
-    private UnaryOperator<HttpRouteConfigurationBuilder> getMethodDecorator(MetaClass<?> serviceClass, MetaMethod<?> method) {
+    private UnaryOperator<HttpRouteConfigurationBuilder> getMethodDecorator(MetaClass<?> serviceClass, MetaMethod<MetaClass<?>, ?> method) {
         return methodBased
                 .stream()
                 .filter(methodConfiguration -> serviceClass.equals(methodConfiguration.serviceClass.get()))
@@ -150,7 +150,7 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
     @RequiredArgsConstructor
     private static class MethodBasedConfiguration {
         final Supplier<? extends MetaClass<?>> serviceClass;
-        final Supplier<MetaMethod<?>> serviceMethod;
+        final Supplier<MetaMethod<MetaClass<?>, ?>> serviceMethod;
         final UnaryOperator<HttpRouteConfigurationBuilder> decorator;
     }
 }

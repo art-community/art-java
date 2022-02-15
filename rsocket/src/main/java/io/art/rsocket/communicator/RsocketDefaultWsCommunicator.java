@@ -22,7 +22,6 @@ import io.rsocket.transport.netty.client.*;
 import reactor.core.publisher.*;
 import reactor.netty.http.client.*;
 import static io.art.communicator.factory.CommunicatorProxyFactory.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.core.model.ServiceMethodIdentifier.*;
@@ -124,7 +123,7 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
         return this;
     }
 
-    public <T extends MetaClass<?>> RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, MetaMethod<?> methodId) {
+    public <T extends MetaClass<?>> RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, MetaMethod<MetaClass<?>, ?> methodId) {
         refreshCommunicator();
         serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId.name());
         return this;

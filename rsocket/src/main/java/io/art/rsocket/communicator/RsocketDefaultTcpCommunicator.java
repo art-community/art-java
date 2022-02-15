@@ -123,7 +123,7 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         return this;
     }
 
-    public RsocketDefaultTcpCommunicator target(MetaMethod<?> methodId) {
+    public RsocketDefaultTcpCommunicator target(MetaMethod<MetaClass<?>, ?> methodId) {
         refreshCommunicator();
         serviceMethodId = serviceMethodId(idByDash(methodId.owner().definition().type()), methodId.name());
         return this;

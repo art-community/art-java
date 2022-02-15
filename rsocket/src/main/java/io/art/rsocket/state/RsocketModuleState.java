@@ -29,15 +29,15 @@ import java.util.*;
 public class RsocketModuleState implements ModuleState {
     private final MetaLocalState<RsocketLocalState> localState = new MetaLocalState<>();
 
-    public void rsocketState(MetaMethod<?> method, RsocketLocalState state) {
+    public void rsocketState(MetaMethod<MetaClass<?>, ?> method, RsocketLocalState state) {
         localState.set(method, state);
     }
 
-    public RsocketLocalState rsocketState(MetaMethod<?> method) {
+    public RsocketLocalState rsocketState(MetaMethod<MetaClass<?>, ?> method) {
         return localState.get(method);
     }
 
-    public void clearRsocketState(MetaMethod<?> method) {
+    public void clearRsocketState(MetaMethod<MetaClass<?>, ?> method) {
         localState.remove(method);
     }
 
