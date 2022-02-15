@@ -31,7 +31,6 @@ public class TarantoolStorageTest {
                         .storage(TestStorage.class, storage -> storage.client(client -> client
                                 .port(STORAGE_PORT)
                                 .username(USERNAME)
-                                .logging(true)
                                 .password(PASSWORD)))
                         .space(TestStorage.class, TestingMetaModel.class, () -> testingMetaModel().f1Field())
                 )
