@@ -18,35 +18,37 @@
 
 package io.art.http.state;
 
+import io.art.core.caster.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
+import static io.art.core.caster.Caster.cast;
 
 public class HttpModuleState implements ModuleState {
     private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
     private final MetaLocalState<WsLocalState> wsLocalState = new MetaLocalState<>();
 
-    public void httpState(MetaMethod<MetaClass<?>, ?> method, LazyProperty<HttpLocalState> state) {
-        httpLocalState.set(method, state);
+    public void httpState(MetaMethod<? extends MetaClass<?>, ?> method, LazyProperty<HttpLocalState> state) {
+        httpLocalState.set(cast(method), state);
     }
 
-    public HttpLocalState httpState(MetaMethod<MetaClass<?>, ?> method) {
-        return httpLocalState.get(method).get();
+    public HttpLocalState httpState(MetaMethod<? extends MetaClass<?>, ?> method) {
+        return httpLocalState.get(cast(method)).get();
     }
 
-    public void clearHttpState(MetaMethod<MetaClass<?>, ?> method) {
-        httpLocalState.remove(method);
+    public void clearHttpState(MetaMethod<? extends MetaClass<?>, ?> method) {
+        httpLocalState.remove(cast(method));
     }
 
-    public void wsState(MetaMethod<MetaClass<?>, ?> method, WsLocalState state) {
-        wsLocalState.set(method, state);
+    public void wsState(MetaMethod<? extends MetaClass<?>, ?> method, WsLocalState state) {
+        wsLocalState.set(cast(method), state);
     }
 
-    public WsLocalState wsState(MetaMethod<MetaClass<?>, ?> method) {
-        return wsLocalState.get(method);
+    public WsLocalState wsState(MetaMethod<? extends MetaClass<?>, ?> method) {
+        return wsLocalState.get(cast(method));
     }
 
-    public void clearWsState(MetaMethod<MetaClass<?>, ?> method) {
-        wsLocalState.remove(method);
+    public void clearWsState(MetaMethod<? extends MetaClass<?>, ?> method) {
+        wsLocalState.remove(cast(method));
     }
 }
