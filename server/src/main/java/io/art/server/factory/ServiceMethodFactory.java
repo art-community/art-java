@@ -1,6 +1,5 @@
 package io.art.server.factory;
 
-import io.art.core.caster.*;
 import io.art.core.model.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
@@ -10,6 +9,7 @@ import io.art.server.method.*;
 import io.art.server.method.ServiceMethod.*;
 import io.art.server.refresher.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.EmptinessChecker.*;
 import static io.art.core.checker.ModuleChecker.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -22,11 +22,11 @@ import static java.util.Objects.*;
 @UtilityClass
 public class ServiceMethodFactory {
     public ServiceMethod preconfiguredServiceMethod(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
-        return preconfiguredServiceMethod(serviceMethodId(owner, Caster.cast(method)), owner, method);
+        return preconfiguredServiceMethod(serviceMethodId(owner, cast(method)), owner, method);
     }
 
     public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
-        return serviceMethod(serviceMethodId(owner, method), owner, method);
+        return SERVICEMETHOD(serviceMethodId(owner, method), owner, method);
     }
 
     public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
@@ -38,7 +38,7 @@ public class ServiceMethodFactory {
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())
-                .invoker(new MetaMethodInvoker(owner, Caster.cast(method)));
+                .invoker(new MetaMethodInvoker(owner, cast(method)));
         if (nonNull(inputType)) {
             return builder.inputType(inputType).build();
         }
@@ -52,7 +52,7 @@ public class ServiceMethodFactory {
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())
-                .invoker(new MetaMethodInvoker(owner, Caster.cast(method)));
+                .invoker(new MetaMethodInvoker(owner, cast(method)));
 
         if (validatable) {
             builder.inputDecorator(new ServiceValidationDecorator(id, configuration));

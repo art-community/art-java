@@ -56,12 +56,12 @@ public abstract class MetaLibrary {
         this.dependencies.addAll(linkedListOf(dependencies));
     }
 
-    protected <T extends MetaPackage> T register(T metaPackage) {
+    protected <Meta extends MetaPackage> Meta register(Meta metaPackage) {
         packages.put(metaPackage.name(), metaPackage);
         return metaPackage;
     }
 
-    protected <T extends MetaClass<?>> T register(T metaClass) {
+    protected <Meta extends MetaClass<?>> Meta register(Meta metaClass) {
         rootClasses.add(metaClass);
         return metaClass;
     }
@@ -78,7 +78,7 @@ public abstract class MetaLibrary {
         return classes;
     }
 
-    public <T extends MetaPackage> Optional<T> packageOf(String name) {
+    public <Meta extends MetaPackage> Optional<Meta> packageOf(String name) {
         String[] parts = name.split(ESCAPED_DOT);
         if (isEmpty(parts)) return empty();
         MetaPackage root = packages.get(parts[0]);

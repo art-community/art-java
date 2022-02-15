@@ -80,7 +80,7 @@ public abstract class MetaClass<T> {
         return cast(computeIfAbsent(constructors, cast(constructor)));
     }
 
-    protected <C extends MetaClass<?>> C register(C metaClass) {
+    protected <Meta extends MetaClass<?>> Meta register(Meta metaClass) {
         classes.put(metaClass.definition().type(), metaClass);
         return metaClass;
     }
@@ -311,7 +311,7 @@ public abstract class MetaClass<T> {
         return known = true;
     }
 
-    protected static <T extends MetaClass<?>> LazyProperty<T> self(Class<?> type) {
+    protected static <Meta extends MetaClass<?>> LazyProperty<Meta> self(Class<?> type) {
         return lazy(() -> cast(declaration(type)));
     }
 

@@ -19,7 +19,7 @@ public class Rsocket {
         return new RsocketDefaultWsCommunicator();
     }
 
-    public RsocketLocalState rsocketState(MetaMethod<MetaClass<?>, ?> method) {
+    public RsocketLocalState rsocketState(MetaMethod<? extends MetaClass<?>, ?> method) {
         return rsocketModule().state().rsocketState(method);
     }
 }

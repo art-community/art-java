@@ -123,7 +123,7 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
         return this;
     }
 
-    public <T extends MetaClass<?>> RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, MetaMethod<MetaClass<?>, ?> methodId) {
+    public RsocketDefaultWsCommunicator target(Class<?> serviceIdMarker, MetaMethod<? extends MetaClass<?>, ?> methodId) {
         refreshCommunicator();
         serviceMethodId = serviceMethodId(idByDash(serviceIdMarker), methodId.name());
         return this;

@@ -23,22 +23,23 @@ import io.art.meta.model.*;
 import io.art.rsocket.model.*;
 import io.rsocket.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import java.util.*;
 
 public class RsocketModuleState implements ModuleState {
     private final MetaLocalState<RsocketLocalState> localState = new MetaLocalState<>();
 
-    public void rsocketState(MetaMethod<MetaClass<?>, ?> method, RsocketLocalState state) {
-        localState.set(method, state);
+    public void rsocketState(MetaMethod<? extends MetaClass<?>, ?> method, RsocketLocalState state) {
+        localState.set(cast(method), state);
     }
 
-    public RsocketLocalState rsocketState(MetaMethod<MetaClass<?>, ?> method) {
-        return localState.get(method);
+    public RsocketLocalState rsocketState(MetaMethod<? extends MetaClass<?>, ?> method) {
+        return localState.get(cast(method));
     }
 
-    public void clearRsocketState(MetaMethod<MetaClass<?>, ?> method) {
-        localState.remove(method);
+    public void clearRsocketState(MetaMethod<? extends MetaClass<?>, ?> method) {
+        localState.remove(cast(method));
     }
 
     @Getter

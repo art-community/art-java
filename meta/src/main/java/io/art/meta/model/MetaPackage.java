@@ -46,12 +46,12 @@ public abstract class MetaPackage {
         this.name = name;
     }
 
-    protected <T extends MetaPackage> T register(T metaPackage) {
+    protected <Meta extends MetaPackage> Meta register(Meta metaPackage) {
         packages.put(metaPackage.name(), metaPackage);
         return metaPackage;
     }
 
-    protected <T extends MetaClass<?>> T register(T metaClass) {
+    protected <Meta extends MetaClass<?>> Meta register(Meta metaClass) {
         classes.put(metaClass.definition().type(), metaClass);
         return metaClass;
     }

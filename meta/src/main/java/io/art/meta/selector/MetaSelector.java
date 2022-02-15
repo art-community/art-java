@@ -5,7 +5,7 @@ import io.art.meta.model.*;
 public class MetaSelector {
     private final ThreadLocal<MetaClass<?>> type = new ThreadLocal<>();
 
-    public <T extends MetaClass<?>> T type(T type) {
+    public <Meta extends MetaClass<?>> Meta type(Meta type) {
         this.type.set(type);
         return type;
     }
