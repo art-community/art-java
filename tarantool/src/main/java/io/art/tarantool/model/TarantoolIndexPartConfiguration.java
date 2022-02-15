@@ -1,7 +1,6 @@
 package io.art.tarantool.model;
 
 import io.art.core.annotation.*;
-import io.art.core.caster.*;
 import io.art.meta.model.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.exception.*;
@@ -22,11 +21,10 @@ public class TarantoolIndexPartConfiguration {
     private final Boolean nullable;
     private final String path;
 
-    public static <C, M extends MetaClass<C>> TarantoolIndexPartConfiguration indexPartFor(MetaField<M, ?> field) {
+    public static <C, M extends MetaClass<C>> TarantoolIndexPartConfigurationBuilder indexPartFor(MetaField<M, ?> field) {
         return TarantoolIndexPartConfiguration.builder()
                 .field(field.owner().index(cast(field)) + 1)
-                .type(extractType(field.type()))
-                .build();
+                .type(extractType(field.type()));
     }
 
     private static FieldType extractType(MetaType<?> type) {
