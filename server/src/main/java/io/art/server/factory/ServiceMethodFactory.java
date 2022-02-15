@@ -26,7 +26,7 @@ public class ServiceMethodFactory {
     }
 
     public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
-        return SERVICEMETHOD(serviceMethodId(owner, method), owner, method);
+        return serviceMethod(serviceMethodId(owner, method), owner, method);
     }
 
     public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
