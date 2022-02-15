@@ -13,9 +13,9 @@ import static java.util.stream.Collectors.*;
 import java.util.*;
 
 @Public
-@Builder(toBuilder = true)
 @Getter
 @Accessors(fluent = true)
+@Builder(toBuilder = true)
 public class TarantoolIndexConfiguration<C, M extends MetaClass<C>> {
     private final String spaceName;
     private final String indexName;
