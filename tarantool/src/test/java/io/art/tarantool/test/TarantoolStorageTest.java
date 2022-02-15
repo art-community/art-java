@@ -9,7 +9,6 @@ import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
@@ -24,7 +23,7 @@ public class TarantoolStorageTest {
     @BeforeAll
     public static void setup() {
         initializeStorage();
-        initialize(logging(),
+        initialize(
                 meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
                 transport(),
                 tarantool(tarantool -> tarantool
