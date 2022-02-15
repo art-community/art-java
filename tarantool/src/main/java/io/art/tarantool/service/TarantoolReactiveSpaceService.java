@@ -137,7 +137,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public Mono<Void> truncate() {
-        return storage.mutable().call(SPACE_TRUNCATE).then();
+        return storage.mutable().call(SPACE_TRUNCATE, newArray(spaceName)).then();
     }
 
 
