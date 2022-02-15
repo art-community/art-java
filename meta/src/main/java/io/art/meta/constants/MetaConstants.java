@@ -125,7 +125,7 @@ public interface MetaConstants {
         String MAP_WITH_NO_STRING_KEY = "Unable to parse configuration value in map with non-string key type: {0}";
         String UNABLE_TO_CREATE_SINGLETON = "Class {0} hasn't 0-args constructor. We can't use it for method invoker";
         String META_CLASS_FOR_CLASS_NOT_EXISTS = "Class {0} has not meta class. Check Meta Library class";
-        String CLASS_WITHOUT_PROXY = "Class {0} has not proxy. Proxy could be created only for interfaces";
+        String CLASS_WITHOUT_PROXY = "Class {0} has not proxy. Proxy is available only for interfaces";
         String UNKNOWN_RUNTIME_META_TYPE_CLASS = "We can not compute meta type in runtime for reflection Type: {0}";
     }
 
