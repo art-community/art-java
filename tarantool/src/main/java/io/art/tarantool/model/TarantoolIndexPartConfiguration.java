@@ -1,11 +1,13 @@
 package io.art.tarantool.model;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.meta.model.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.exception.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Errors.*;
 import static java.text.MessageFormat.*;
@@ -20,9 +22,9 @@ public class TarantoolIndexPartConfiguration {
     private final Boolean nullable;
     private final String path;
 
-    public static <T extends MetaClass<?>> TarantoolIndexPartConfiguration indexPartFor(MetaField<MetaClass<?>, ?> field) {
+    public static <C, M extends MetaClass<C>> TarantoolIndexPartConfiguration indexPartFor(MetaField<M, ?> field) {
         return TarantoolIndexPartConfiguration.builder()
-                .field(field.owner().index(field) + 1)
+                .field(field.owner().index(cast(field)) + 1)
                 .type(extractType(field.type()))
                 .build();
     }

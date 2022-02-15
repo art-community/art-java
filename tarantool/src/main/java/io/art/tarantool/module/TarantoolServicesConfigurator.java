@@ -23,7 +23,7 @@ public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
 
-    public TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<?> spaceClass, Supplier<MetaField<MetaClass<?>, ?>> idField) {
+    public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField)  {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(tarantoolModule().configuration().getStorages().get(storageId))));

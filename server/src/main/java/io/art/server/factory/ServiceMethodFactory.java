@@ -1,5 +1,6 @@
 package io.art.server.factory;
 
+import io.art.core.caster.*;
 import io.art.core.model.*;
 import io.art.meta.invoker.*;
 import io.art.meta.model.*;
@@ -20,38 +21,38 @@ import static java.util.Objects.*;
 
 @UtilityClass
 public class ServiceMethodFactory {
-    public ServiceMethod preconfiguredServiceMethod(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
-        return preconfiguredServiceMethod(serviceMethodId(owner, method), owner, method);
+    public ServiceMethod preconfiguredServiceMethod(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
+        return preconfiguredServiceMethod(serviceMethodId(owner, Caster.cast(method)), owner, method);
     }
 
-    public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
+    public ServiceMethod serviceMethod(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
         return serviceMethod(serviceMethodId(owner, method), owner, method);
     }
 
-    public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
+    public ServiceMethodIdentifier serviceMethodId(MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
         return ServiceMethodIdentifier.serviceMethodId(idByDash(owner.definition().type()), method.name());
     }
 
-    public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
+    public ServiceMethod serviceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())
-                .invoker(new MetaMethodInvoker(owner, method));
+                .invoker(new MetaMethodInvoker(owner, Caster.cast(method)));
         if (nonNull(inputType)) {
             return builder.inputType(inputType).build();
         }
         return builder.build();
     }
 
-    public ServiceMethod preconfiguredServiceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<MetaClass<?>, ?> method) {
+    public ServiceMethod preconfiguredServiceMethod(ServiceMethodIdentifier id, MetaClass<?> owner, MetaMethod<? extends MetaClass<?>, ?> method) {
         MetaType<?> inputType = orNull(() -> immutableArrayOf(method.parameters().values()).get(0).type(), isNotEmpty(method.parameters()));
         boolean validatable = nonNull(inputType) && inputType.modifiers().contains(VALIDATABLE);
         ServerConfiguration configuration = ServerConfiguration.serverConfiguration(new ServerRefresher());
         ServiceMethodBuilder builder = ServiceMethod.builder()
                 .id(id)
                 .outputType(method.returnType())
-                .invoker(new MetaMethodInvoker(owner, method));
+                .invoker(new MetaMethodInvoker(owner, Caster.cast(method)));
 
         if (validatable) {
             builder.inputDecorator(new ServiceValidationDecorator(id, configuration));
