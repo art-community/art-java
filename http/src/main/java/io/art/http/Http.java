@@ -19,11 +19,11 @@ public class Http {
         return new HttpDefaultCommunicator();
     }
 
-    public <C, M extends MetaClass<C>> HttpLocalState httpState(MetaMethod<M, ?> method) {
+    public HttpLocalState httpState(MetaMethod<? extends MetaClass<?>, ?> method) {
         return httpModule().state().httpState(method);
     }
 
-    public <C, M extends MetaClass<C>> WsLocalState wsState(MetaMethod<M, ?> method) {
+    public WsLocalState wsState(MetaMethod<? extends MetaClass<?>, ?> method) {
         return httpModule().state().wsState(method);
     }
 }
