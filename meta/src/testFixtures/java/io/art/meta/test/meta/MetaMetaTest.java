@@ -4,8 +4,6 @@ import static io.art.meta.model.MetaType.metaArray;
 import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
-import io.art.core.collection.*;
-import io.art.core.property.*;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaConstructor;
@@ -14,12 +12,6 @@ import io.art.meta.model.MetaLibrary;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.StaticMetaMethod;
-import io.art.meta.test.*;
-import reactor.core.publisher.*;
-import java.time.*;
-import java.util.*;
-import java.util.function.*;
-import java.util.stream.*;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaMetaTest extends MetaLibrary {
@@ -120,8 +112,9 @@ public class MetaMetaTest extends MetaLibrary {
               return generateTestingConfigurationMethod;
             }
 
-            public final class MetaGenerateTestingConfigurationMethod extends StaticMetaMethod<MetaClass<?>, TestingMetaConfiguration> {
-              private MetaGenerateTestingConfigurationMethod(MetaClass owner) {
+            public final class MetaGenerateTestingConfigurationMethod extends StaticMetaMethod<MetaTestingMetaConfigurationGeneratorClass, io.art.meta.test.TestingMetaConfiguration> {
+              private MetaGenerateTestingConfigurationMethod(
+                  MetaTestingMetaConfigurationGeneratorClass owner) {
                 super("generateTestingConfiguration",metaType(io.art.meta.test.TestingMetaConfiguration.class),owner);
               }
 
@@ -142,131 +135,131 @@ public class MetaMetaTest extends MetaLibrary {
 
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaClass<?>, Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
 
-            private final MetaField<MetaClass<?>, Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
 
-            private final MetaField<MetaClass<?>, Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
 
-            private final MetaField<MetaClass<?>, Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
 
-            private final MetaField<MetaClass<?>, Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
 
-            private final MetaField<MetaClass<?>, Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-            private final MetaField<MetaClass<?>, Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
 
-            private final MetaField<MetaClass<?>, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
 
-            private final MetaField<MetaClass<?>, Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-            private final MetaField<MetaClass<?>, Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-            private final MetaField<MetaClass<?>, Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-            private final MetaField<MetaClass<?>, Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-            private final MetaField<MetaClass<?>, Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-            private final MetaField<MetaClass<?>, Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-            private final MetaField<MetaClass<?>, Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-            private final MetaField<MetaClass<?>, String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaClass<?>, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-            private final MetaField<MetaClass<?>, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-            private final MetaField<MetaClass<?>, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-            private final MetaField<MetaClass<?>, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-            private final MetaField<MetaClass<?>, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-            private final MetaField<MetaClass<?>, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-            private final MetaField<MetaClass<?>, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Integer[]> f24Field = register(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer[]> f24Field = register(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Short[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Double[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Float[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Long[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Boolean[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Character[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-            private final MetaField<MetaClass<?>, String[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, List<String>> f32Field = register(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String>> f32Field = register(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Set<String>> f33Field = register(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Set<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Collection<String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Collection<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, ImmutableArray<String>> f35Field = register(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, ImmutableSet<String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Supplier<String>> f37Field = register(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.function.Supplier<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, LazyProperty<String>> f38Field = register(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, List<int[]>> f39Field = register(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>> f39Field = register(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<String[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<int[]>[]> f41Field = register(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>[]> f41Field = register(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<String[]>[]> f42Field = register(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>[]> f42Field = register(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<List<String>>> f43Field = register(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>>> f43Field = register(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<List<String>[]>> f44Field = register(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field = register(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, String[]>> f45Field = register(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field = register(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, List<String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f48Field = register(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field = register(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, TestingMetaConfiguration> f49Field = register(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration> f49Field = register(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
 
-            private final MetaField<MetaClass<?>, LocalDateTime> f50Field = register(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.time.LocalDateTime> f50Field = register(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
 
-            private final MetaField<MetaClass<?>, ZonedDateTime> f51Field = register(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.time.ZonedDateTime> f51Field = register(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
 
-            private final MetaField<MetaClass<?>, Duration> f52Field = register(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.time.Duration> f52Field = register(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
 
-            private final MetaField<MetaClass<?>, TestingMetaConfiguration.ModelEnum> f53Field = register(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field = register(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
 
-            private final MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f54Field = register(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field = register(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<TestingMetaConfiguration>> f55Field = register(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field = register(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Set<TestingMetaConfiguration>> f56Field = register(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field = register(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, TestingMetaConfiguration>> f57Field = register(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field = register(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Mono<String>> f58Field = register(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String>> f58Field = register(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Flux<String>> f59Field = register(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Flux<java.lang.String>> f59Field = register(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Stream<String>> f60Field = register(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.stream.Stream<java.lang.String>> f60Field = register(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Mono<String[]>> f61Field = register(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field = register(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, String> f62Field = register(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f62Field = register(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaClass<?>, String> f63Field = register(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f63Field = register(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
 
             private final MetaAssertEqualsMethod assertEqualsMethod = register(new MetaAssertEqualsMethod(this));
 
@@ -412,260 +405,283 @@ public class MetaMetaTest extends MetaLibrary {
               return constructor;
             }
 
-            public MetaField<MetaClass<?>, Integer> f1Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f1Field() {
               return f1Field;
             }
 
-            public MetaField<MetaClass<?>, Short> f2Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f2Field() {
               return f2Field;
             }
 
-            public MetaField<MetaClass<?>, Double> f3Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f3Field() {
               return f3Field;
             }
 
-            public MetaField<MetaClass<?>, Float> f4Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f4Field() {
               return f4Field;
             }
 
-            public MetaField<MetaClass<?>, Long> f5Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f5Field() {
               return f5Field;
             }
 
-            public MetaField<MetaClass<?>, Boolean> f6Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f6Field() {
               return f6Field;
             }
 
-            public MetaField<MetaClass<?>, Character> f7Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f7Field() {
               return f7Field;
             }
 
-            public MetaField<MetaClass<?>, Byte> f8Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, Byte> f8Field() {
               return f8Field;
             }
 
-            public MetaField<MetaClass<?>, Integer> f9Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f9Field() {
               return f9Field;
             }
 
-            public MetaField<MetaClass<?>, Short> f10Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f10Field() {
               return f10Field;
             }
 
-            public MetaField<MetaClass<?>, Double> f11Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f11Field() {
               return f11Field;
             }
 
-            public MetaField<MetaClass<?>, Float> f12Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f12Field() {
               return f12Field;
             }
 
-            public MetaField<MetaClass<?>, Long> f13Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f13Field() {
               return f13Field;
             }
 
-            public MetaField<MetaClass<?>, Boolean> f14Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f14Field() {
               return f14Field;
             }
 
-            public MetaField<MetaClass<?>, Character> f15Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f15Field() {
               return f15Field;
             }
 
-            public MetaField<MetaClass<?>, String> f16Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f16Field() {
               return f16Field;
             }
 
-            public MetaField<MetaClass<?>, int[]> f17Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, int[]> f17Field() {
               return f17Field;
             }
 
-            public MetaField<MetaClass<?>, short[]> f18Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, short[]> f18Field() {
               return f18Field;
             }
 
-            public MetaField<MetaClass<?>, double[]> f19Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, double[]> f19Field() {
               return f19Field;
             }
 
-            public MetaField<MetaClass<?>, float[]> f20Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, float[]> f20Field() {
               return f20Field;
             }
 
-            public MetaField<MetaClass<?>, long[]> f21Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, long[]> f21Field() {
               return f21Field;
             }
 
-            public MetaField<MetaClass<?>, boolean[]> f22Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, boolean[]> f22Field() {
               return f22Field;
             }
 
-            public MetaField<MetaClass<?>, char[]> f23Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, char[]> f23Field() {
               return f23Field;
             }
 
-            public MetaField<MetaClass<?>, Integer[]> f24Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer[]> f24Field() {
               return f24Field;
             }
 
-            public MetaField<MetaClass<?>, Short[]> f25Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Short[]> f25Field() {
               return f25Field;
             }
 
-            public MetaField<MetaClass<?>, Double[]> f26Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Double[]> f26Field() {
               return f26Field;
             }
 
-            public MetaField<MetaClass<?>, Float[]> f27Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Float[]> f27Field() {
               return f27Field;
             }
 
-            public MetaField<MetaClass<?>, Long[]> f28Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Long[]> f28Field() {
               return f28Field;
             }
 
-            public MetaField<MetaClass<?>, Boolean[]> f29Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean[]> f29Field() {
               return f29Field;
             }
 
-            public MetaField<MetaClass<?>, Character[]> f30Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.Character[]> f30Field() {
               return f30Field;
             }
 
-            public MetaField<MetaClass<?>, String[]> f31Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.String[]> f31Field() {
               return f31Field;
             }
 
-            public MetaField<MetaClass<?>, List<String>> f32Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String>> f32Field(
+                ) {
               return f32Field;
             }
 
-            public MetaField<MetaClass<?>, Set<String>> f33Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Set<java.lang.String>> f33Field(
+                ) {
               return f33Field;
             }
 
-            public MetaField<MetaClass<?>, Collection<String>> f34Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Collection<java.lang.String>> f34Field(
+                ) {
               return f34Field;
             }
 
-            public MetaField<MetaClass<?>, ImmutableArray<String>> f35Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field(
+                ) {
               return f35Field;
             }
 
-            public MetaField<MetaClass<?>, ImmutableSet<String>> f36Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field(
+                ) {
               return f36Field;
             }
 
-            public MetaField<MetaClass<?>, Supplier<String>> f37Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.function.Supplier<java.lang.String>> f37Field(
+                ) {
               return f37Field;
             }
 
-            public MetaField<MetaClass<?>, LazyProperty<String>> f38Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field(
+                ) {
               return f38Field;
             }
 
-            public MetaField<MetaClass<?>, List<int[]>> f39Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>> f39Field() {
               return f39Field;
             }
 
-            public MetaField<MetaClass<?>, List<String[]>> f40Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>> f40Field(
+                ) {
               return f40Field;
             }
 
-            public MetaField<MetaClass<?>, List<int[]>[]> f41Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>[]> f41Field(
+                ) {
               return f41Field;
             }
 
-            public MetaField<MetaClass<?>, List<String[]>[]> f42Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>[]> f42Field(
+                ) {
               return f42Field;
             }
 
-            public MetaField<MetaClass<?>, List<List<String>>> f43Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>>> f43Field(
+                ) {
               return f43Field;
             }
 
-            public MetaField<MetaClass<?>, List<List<String>[]>> f44Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field(
+                ) {
               return f44Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, String[]>> f45Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field(
+                ) {
               return f45Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, List<String>>> f46Field(
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field(
                 ) {
               return f46Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f47Field(
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field(
                 ) {
               return f47Field;
             }
 
-            public MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f48Field(
+            public MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field(
                 ) {
               return f48Field;
             }
 
-            public MetaField<MetaClass<?>, TestingMetaConfiguration> f49Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration> f49Field(
+                ) {
               return f49Field;
             }
 
-            public MetaField<MetaClass<?>, LocalDateTime> f50Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.time.LocalDateTime> f50Field(
+                ) {
               return f50Field;
             }
 
-            public MetaField<MetaClass<?>, ZonedDateTime> f51Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.time.ZonedDateTime> f51Field(
+                ) {
               return f51Field;
             }
 
-            public MetaField<MetaClass<?>, Duration> f52Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.time.Duration> f52Field() {
               return f52Field;
             }
 
-            public MetaField<MetaClass<?>, TestingMetaConfiguration.ModelEnum> f53Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field(
+                ) {
               return f53Field;
             }
 
-            public MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f54Field(
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field(
                 ) {
               return f54Field;
             }
 
-            public MetaField<MetaClass<?>, List<TestingMetaConfiguration>> f55Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field(
+                ) {
               return f55Field;
             }
 
-            public MetaField<MetaClass<?>, Set<TestingMetaConfiguration>> f56Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field(
+                ) {
               return f56Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, TestingMetaConfiguration>> f57Field(
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field(
                 ) {
               return f57Field;
             }
 
-            public MetaField<MetaClass<?>, Mono<String>> f58Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String>> f58Field(
+                ) {
               return f58Field;
             }
 
-            public MetaField<MetaClass<?>, Flux<String>> f59Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Flux<java.lang.String>> f59Field(
+                ) {
               return f59Field;
             }
 
-            public MetaField<MetaClass<?>, Stream<String>> f60Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.util.stream.Stream<java.lang.String>> f60Field(
+                ) {
               return f60Field;
             }
 
-            public MetaField<MetaClass<?>, Mono<String[]>> f61Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field(
+                ) {
               return f61Field;
             }
 
-            public MetaField<MetaClass<?>, String> f62Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f62Field() {
               return f62Field;
             }
 
-            public MetaField<MetaClass<?>, String> f63Field() {
+            public MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f63Field() {
               return f63Field;
             }
 
@@ -933,7 +949,7 @@ public class MetaMetaTest extends MetaLibrary {
               return testingMetaConfigurationBuilderClass;
             }
 
-            public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestingMetaConfiguration> {
+            public final class MetaConstructorConstructor extends MetaConstructor<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration> {
               private final MetaParameter<java.lang.Integer> f1Parameter = register(new MetaParameter<>(0, "f1",metaType(int.class)));
 
               private final MetaParameter<java.lang.Short> f2Parameter = register(new MetaParameter<>(1, "f2",metaType(short.class)));
@@ -1060,7 +1076,7 @@ public class MetaMetaTest extends MetaLibrary {
 
               private final MetaParameter<java.lang.String> f63Parameter = register(new MetaParameter<>(62, "f63",metaType(java.lang.String.class)));
 
-              private MetaConstructorConstructor(MetaClass owner) {
+              private MetaConstructorConstructor(MetaTestingMetaConfigurationClass owner) {
                 super(metaType(io.art.meta.test.TestingMetaConfiguration.class),owner);
               }
 
@@ -1337,10 +1353,10 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaAssertEqualsMethod extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Void> {
+            public final class MetaAssertEqualsMethod extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, Void> {
               private final MetaParameter<io.art.meta.test.TestingMetaConfiguration> modelParameter = register(new MetaParameter<>(0, "model",metaType(io.art.meta.test.TestingMetaConfiguration.class)));
 
-              private MetaAssertEqualsMethod(MetaClass owner) {
+              private MetaAssertEqualsMethod(MetaTestingMetaConfigurationClass owner) {
                 super("assertEquals",metaType(Void.class),owner);
               }
 
@@ -1363,8 +1379,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaToBuilderMethod extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
-              private MetaToBuilderMethod(MetaClass owner) {
+            public final class MetaToBuilderMethod extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              private MetaToBuilderMethod(MetaTestingMetaConfigurationClass owner) {
                 super("toBuilder",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
               }
 
@@ -1381,8 +1397,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF1Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Integer> {
-              private MetaGetF1Method(MetaClass owner) {
+            public final class MetaGetF1Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Integer> {
+              private MetaGetF1Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF1",metaType(int.class),owner);
               }
 
@@ -1399,8 +1415,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF2Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Short> {
-              private MetaGetF2Method(MetaClass owner) {
+            public final class MetaGetF2Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Short> {
+              private MetaGetF2Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF2",metaType(short.class),owner);
               }
 
@@ -1417,8 +1433,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF3Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Double> {
-              private MetaGetF3Method(MetaClass owner) {
+            public final class MetaGetF3Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Double> {
+              private MetaGetF3Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF3",metaType(double.class),owner);
               }
 
@@ -1435,8 +1451,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF4Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Float> {
-              private MetaGetF4Method(MetaClass owner) {
+            public final class MetaGetF4Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Float> {
+              private MetaGetF4Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF4",metaType(float.class),owner);
               }
 
@@ -1453,8 +1469,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF5Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Long> {
-              private MetaGetF5Method(MetaClass owner) {
+            public final class MetaGetF5Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Long> {
+              private MetaGetF5Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF5",metaType(long.class),owner);
               }
 
@@ -1471,8 +1487,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaIsF6Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Boolean> {
-              private MetaIsF6Method(MetaClass owner) {
+            public final class MetaIsF6Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Boolean> {
+              private MetaIsF6Method(MetaTestingMetaConfigurationClass owner) {
                 super("isF6",metaType(boolean.class),owner);
               }
 
@@ -1489,8 +1505,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF7Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Character> {
-              private MetaGetF7Method(MetaClass owner) {
+            public final class MetaGetF7Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Character> {
+              private MetaGetF7Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF7",metaType(char.class),owner);
               }
 
@@ -1507,8 +1523,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF8Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Byte> {
-              private MetaGetF8Method(MetaClass owner) {
+            public final class MetaGetF8Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, Byte> {
+              private MetaGetF8Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF8",metaType(byte.class),owner);
               }
 
@@ -1525,8 +1541,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF9Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Integer> {
-              private MetaGetF9Method(MetaClass owner) {
+            public final class MetaGetF9Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Integer> {
+              private MetaGetF9Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF9",metaType(java.lang.Integer.class),owner);
               }
 
@@ -1543,8 +1559,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF10Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Short> {
-              private MetaGetF10Method(MetaClass owner) {
+            public final class MetaGetF10Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Short> {
+              private MetaGetF10Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF10",metaType(java.lang.Short.class),owner);
               }
 
@@ -1561,8 +1577,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF11Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Double> {
-              private MetaGetF11Method(MetaClass owner) {
+            public final class MetaGetF11Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Double> {
+              private MetaGetF11Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF11",metaType(java.lang.Double.class),owner);
               }
 
@@ -1579,8 +1595,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF12Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Float> {
-              private MetaGetF12Method(MetaClass owner) {
+            public final class MetaGetF12Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Float> {
+              private MetaGetF12Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF12",metaType(java.lang.Float.class),owner);
               }
 
@@ -1597,8 +1613,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF13Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Long> {
-              private MetaGetF13Method(MetaClass owner) {
+            public final class MetaGetF13Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Long> {
+              private MetaGetF13Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF13",metaType(java.lang.Long.class),owner);
               }
 
@@ -1615,8 +1631,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF14Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Boolean> {
-              private MetaGetF14Method(MetaClass owner) {
+            public final class MetaGetF14Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Boolean> {
+              private MetaGetF14Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF14",metaType(java.lang.Boolean.class),owner);
               }
 
@@ -1633,8 +1649,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF15Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Character> {
-              private MetaGetF15Method(MetaClass owner) {
+            public final class MetaGetF15Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Character> {
+              private MetaGetF15Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF15",metaType(java.lang.Character.class),owner);
               }
 
@@ -1651,8 +1667,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF16Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, String> {
-              private MetaGetF16Method(MetaClass owner) {
+            public final class MetaGetF16Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.String> {
+              private MetaGetF16Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF16",metaType(java.lang.String.class),owner);
               }
 
@@ -1669,8 +1685,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF17Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, int[]> {
-              private MetaGetF17Method(MetaClass owner) {
+            public final class MetaGetF17Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, int[]> {
+              private MetaGetF17Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF17",metaArray(int[].class, int[]::new, metaType(int.class)),owner);
               }
 
@@ -1687,8 +1703,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF18Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, short[]> {
-              private MetaGetF18Method(MetaClass owner) {
+            public final class MetaGetF18Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, short[]> {
+              private MetaGetF18Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF18",metaArray(short[].class, short[]::new, metaType(short.class)),owner);
               }
 
@@ -1705,8 +1721,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF19Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, double[]> {
-              private MetaGetF19Method(MetaClass owner) {
+            public final class MetaGetF19Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, double[]> {
+              private MetaGetF19Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF19",metaArray(double[].class, double[]::new, metaType(double.class)),owner);
               }
 
@@ -1723,8 +1739,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF20Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, float[]> {
-              private MetaGetF20Method(MetaClass owner) {
+            public final class MetaGetF20Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, float[]> {
+              private MetaGetF20Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF20",metaArray(float[].class, float[]::new, metaType(float.class)),owner);
               }
 
@@ -1741,8 +1757,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF21Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, long[]> {
-              private MetaGetF21Method(MetaClass owner) {
+            public final class MetaGetF21Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, long[]> {
+              private MetaGetF21Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF21",metaArray(long[].class, long[]::new, metaType(long.class)),owner);
               }
 
@@ -1759,8 +1775,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF22Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, boolean[]> {
-              private MetaGetF22Method(MetaClass owner) {
+            public final class MetaGetF22Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, boolean[]> {
+              private MetaGetF22Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),owner);
               }
 
@@ -1777,8 +1793,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF23Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, char[]> {
-              private MetaGetF23Method(MetaClass owner) {
+            public final class MetaGetF23Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, char[]> {
+              private MetaGetF23Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF23",metaArray(char[].class, char[]::new, metaType(char.class)),owner);
               }
 
@@ -1795,8 +1811,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF24Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Integer[]> {
-              private MetaGetF24Method(MetaClass owner) {
+            public final class MetaGetF24Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Integer[]> {
+              private MetaGetF24Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),owner);
               }
 
@@ -1813,8 +1829,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF25Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Short[]> {
-              private MetaGetF25Method(MetaClass owner) {
+            public final class MetaGetF25Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Short[]> {
+              private MetaGetF25Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),owner);
               }
 
@@ -1831,8 +1847,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF26Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Double[]> {
-              private MetaGetF26Method(MetaClass owner) {
+            public final class MetaGetF26Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Double[]> {
+              private MetaGetF26Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),owner);
               }
 
@@ -1849,8 +1865,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF27Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Float[]> {
-              private MetaGetF27Method(MetaClass owner) {
+            public final class MetaGetF27Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Float[]> {
+              private MetaGetF27Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),owner);
               }
 
@@ -1867,8 +1883,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF28Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Long[]> {
-              private MetaGetF28Method(MetaClass owner) {
+            public final class MetaGetF28Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Long[]> {
+              private MetaGetF28Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),owner);
               }
 
@@ -1885,8 +1901,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF29Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Boolean[]> {
-              private MetaGetF29Method(MetaClass owner) {
+            public final class MetaGetF29Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Boolean[]> {
+              private MetaGetF29Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),owner);
               }
 
@@ -1903,8 +1919,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF30Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Character[]> {
-              private MetaGetF30Method(MetaClass owner) {
+            public final class MetaGetF30Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.Character[]> {
+              private MetaGetF30Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),owner);
               }
 
@@ -1921,8 +1937,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF31Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, String[]> {
-              private MetaGetF31Method(MetaClass owner) {
+            public final class MetaGetF31Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.String[]> {
+              private MetaGetF31Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),owner);
               }
 
@@ -1939,8 +1955,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF32Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<String>> {
-              private MetaGetF32Method(MetaClass owner) {
+            public final class MetaGetF32Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<java.lang.String>> {
+              private MetaGetF32Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF32",metaType(java.util.List.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -1957,8 +1973,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF33Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Set<String>> {
-              private MetaGetF33Method(MetaClass owner) {
+            public final class MetaGetF33Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Set<java.lang.String>> {
+              private MetaGetF33Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF33",metaType(java.util.Set.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -1975,8 +1991,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF34Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Collection<String>> {
-              private MetaGetF34Method(MetaClass owner) {
+            public final class MetaGetF34Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Collection<java.lang.String>> {
+              private MetaGetF34Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -1993,8 +2009,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF35Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, ImmutableArray<String>> {
-              private MetaGetF35Method(MetaClass owner) {
+            public final class MetaGetF35Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.core.collection.ImmutableArray<java.lang.String>> {
+              private MetaGetF35Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2011,8 +2027,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF36Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, ImmutableSet<String>> {
-              private MetaGetF36Method(MetaClass owner) {
+            public final class MetaGetF36Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.core.collection.ImmutableSet<java.lang.String>> {
+              private MetaGetF36Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2029,8 +2045,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF37Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Supplier<String>> {
-              private MetaGetF37Method(MetaClass owner) {
+            public final class MetaGetF37Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.function.Supplier<java.lang.String>> {
+              private MetaGetF37Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2047,8 +2063,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF38Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, LazyProperty<String>> {
-              private MetaGetF38Method(MetaClass owner) {
+            public final class MetaGetF38Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.core.property.LazyProperty<java.lang.String>> {
+              private MetaGetF38Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2065,8 +2081,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF39Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<int[]>> {
-              private MetaGetF39Method(MetaClass owner) {
+            public final class MetaGetF39Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<int[]>> {
+              private MetaGetF39Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),owner);
               }
 
@@ -2083,8 +2099,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF40Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<String[]>> {
-              private MetaGetF40Method(MetaClass owner) {
+            public final class MetaGetF40Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<java.lang.String[]>> {
+              private MetaGetF40Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),owner);
               }
 
@@ -2101,8 +2117,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF41Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<int[]>[]> {
-              private MetaGetF41Method(MetaClass owner) {
+            public final class MetaGetF41Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<int[]>[]> {
+              private MetaGetF41Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),owner);
               }
 
@@ -2119,8 +2135,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF42Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<String[]>[]> {
-              private MetaGetF42Method(MetaClass owner) {
+            public final class MetaGetF42Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<java.lang.String[]>[]> {
+              private MetaGetF42Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),owner);
               }
 
@@ -2137,8 +2153,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF43Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<List<String>>> {
-              private MetaGetF43Method(MetaClass owner) {
+            public final class MetaGetF43Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<java.util.List<java.lang.String>>> {
+              private MetaGetF43Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),owner);
               }
 
@@ -2155,8 +2171,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF44Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<List<String>[]>> {
-              private MetaGetF44Method(MetaClass owner) {
+            public final class MetaGetF44Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<java.util.List<java.lang.String>[]>> {
+              private MetaGetF44Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),owner);
               }
 
@@ -2173,8 +2189,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF45Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Map<String, String[]>> {
-              private MetaGetF45Method(MetaClass owner) {
+            public final class MetaGetF45Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Map<java.lang.String, java.lang.String[]>> {
+              private MetaGetF45Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),owner);
               }
 
@@ -2191,8 +2207,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF46Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Map<String, List<String>>> {
-              private MetaGetF46Method(MetaClass owner) {
+            public final class MetaGetF46Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> {
+              private MetaGetF46Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),owner);
               }
 
@@ -2209,8 +2225,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF47Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Map<String, Map<String, String>[]>> {
-              private MetaGetF47Method(MetaClass owner) {
+            public final class MetaGetF47Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> {
+              private MetaGetF47Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),owner);
               }
 
@@ -2227,8 +2243,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF48Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, ImmutableMap<String, Map<String, String>[]>> {
-              private MetaGetF48Method(MetaClass owner) {
+            public final class MetaGetF48Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> {
+              private MetaGetF48Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),owner);
               }
 
@@ -2245,8 +2261,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF49Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, TestingMetaConfiguration> {
-              private MetaGetF49Method(MetaClass owner) {
+            public final class MetaGetF49Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.meta.test.TestingMetaConfiguration> {
+              private MetaGetF49Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF49",metaType(io.art.meta.test.TestingMetaConfiguration.class),owner);
               }
 
@@ -2263,8 +2279,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF50Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, LocalDateTime> {
-              private MetaGetF50Method(MetaClass owner) {
+            public final class MetaGetF50Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.time.LocalDateTime> {
+              private MetaGetF50Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF50",metaType(java.time.LocalDateTime.class),owner);
               }
 
@@ -2281,8 +2297,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF51Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, ZonedDateTime> {
-              private MetaGetF51Method(MetaClass owner) {
+            public final class MetaGetF51Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.time.ZonedDateTime> {
+              private MetaGetF51Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF51",metaType(java.time.ZonedDateTime.class),owner);
               }
 
@@ -2299,8 +2315,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF52Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Duration> {
-              private MetaGetF52Method(MetaClass owner) {
+            public final class MetaGetF52Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.time.Duration> {
+              private MetaGetF52Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF52",metaType(java.time.Duration.class),owner);
               }
 
@@ -2317,8 +2333,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF53Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, TestingMetaConfiguration.ModelEnum> {
-              private MetaGetF53Method(MetaClass owner) {
+            public final class MetaGetF53Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, io.art.meta.test.TestingMetaConfiguration.ModelEnum> {
+              private MetaGetF53Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),owner);
               }
 
@@ -2335,8 +2351,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF54Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Optional<List<LazyProperty<String>>>> {
-              private MetaGetF54Method(MetaClass owner) {
+            public final class MetaGetF54Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> {
+              private MetaGetF54Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),owner);
               }
 
@@ -2353,8 +2369,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF55Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, List<TestingMetaConfiguration>> {
-              private MetaGetF55Method(MetaClass owner) {
+            public final class MetaGetF55Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.List<io.art.meta.test.TestingMetaConfiguration>> {
+              private MetaGetF55Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),owner);
               }
 
@@ -2371,8 +2387,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF56Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Set<TestingMetaConfiguration>> {
-              private MetaGetF56Method(MetaClass owner) {
+            public final class MetaGetF56Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> {
+              private MetaGetF56Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),owner);
               }
 
@@ -2389,8 +2405,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF57Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Map<String, TestingMetaConfiguration>> {
-              private MetaGetF57Method(MetaClass owner) {
+            public final class MetaGetF57Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> {
+              private MetaGetF57Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),owner);
               }
 
@@ -2407,8 +2423,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF58Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Mono<String>> {
-              private MetaGetF58Method(MetaClass owner) {
+            public final class MetaGetF58Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, reactor.core.publisher.Mono<java.lang.String>> {
+              private MetaGetF58Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2425,8 +2441,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF59Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Flux<String>> {
-              private MetaGetF59Method(MetaClass owner) {
+            public final class MetaGetF59Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, reactor.core.publisher.Flux<java.lang.String>> {
+              private MetaGetF59Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2443,8 +2459,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF60Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Stream<String>> {
-              private MetaGetF60Method(MetaClass owner) {
+            public final class MetaGetF60Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.util.stream.Stream<java.lang.String>> {
+              private MetaGetF60Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -2461,8 +2477,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF61Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, Mono<String[]>> {
-              private MetaGetF61Method(MetaClass owner) {
+            public final class MetaGetF61Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, reactor.core.publisher.Mono<java.lang.String[]>> {
+              private MetaGetF61Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),owner);
               }
 
@@ -2479,8 +2495,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF62Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, String> {
-              private MetaGetF62Method(MetaClass owner) {
+            public final class MetaGetF62Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.String> {
+              private MetaGetF62Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF62",metaType(java.lang.String.class),owner);
               }
 
@@ -2497,8 +2513,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF63Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration, String> {
-              private MetaGetF63Method(MetaClass owner) {
+            public final class MetaGetF63Method extends InstanceMetaMethod<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration, java.lang.String> {
+              private MetaGetF63Method(MetaTestingMetaConfigurationClass owner) {
                 super("getF63",metaType(java.lang.String.class),owner);
               }
 
@@ -2518,131 +2534,131 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaTestingMetaConfigurationBuilderClass extends MetaClass<io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
               private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationBuilderClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class);
 
-              private final MetaField<MetaClass<?>, Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
 
-              private final MetaField<MetaClass<?>, Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
 
-              private final MetaField<MetaClass<?>, Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
 
-              private final MetaField<MetaClass<?>, Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
 
-              private final MetaField<MetaClass<?>, Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
 
-              private final MetaField<MetaClass<?>, Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-              private final MetaField<MetaClass<?>, Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
 
-              private final MetaField<MetaClass<?>, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
 
-              private final MetaField<MetaClass<?>, Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-              private final MetaField<MetaClass<?>, Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-              private final MetaField<MetaClass<?>, Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-              private final MetaField<MetaClass<?>, Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-              private final MetaField<MetaClass<?>, Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-              private final MetaField<MetaClass<?>, Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-              private final MetaField<MetaClass<?>, Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-              private final MetaField<MetaClass<?>, String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaClass<?>, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-              private final MetaField<MetaClass<?>, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-              private final MetaField<MetaClass<?>, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-              private final MetaField<MetaClass<?>, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-              private final MetaField<MetaClass<?>, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-              private final MetaField<MetaClass<?>, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-              private final MetaField<MetaClass<?>, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Integer[]> f24Field = register(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer[]> f24Field = register(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Short[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Double[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Float[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Long[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Boolean[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Character[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-              private final MetaField<MetaClass<?>, String[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, List<String>> f32Field = register(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String>> f32Field = register(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Set<String>> f33Field = register(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Collection<String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Collection<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, ImmutableArray<String>> f35Field = register(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, ImmutableSet<String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Supplier<String>> f37Field = register(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.function.Supplier<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, LazyProperty<String>> f38Field = register(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, List<int[]>> f39Field = register(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>> f39Field = register(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<String[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<int[]>[]> f41Field = register(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>[]> f41Field = register(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<String[]>[]> f42Field = register(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>[]> f42Field = register(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<List<String>>> f43Field = register(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>>> f43Field = register(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<List<String>[]>> f44Field = register(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field = register(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, String[]>> f45Field = register(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field = register(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, List<String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f48Field = register(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field = register(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, TestingMetaConfiguration> f49Field = register(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration> f49Field = register(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
 
-              private final MetaField<MetaClass<?>, LocalDateTime> f50Field = register(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.LocalDateTime> f50Field = register(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
 
-              private final MetaField<MetaClass<?>, ZonedDateTime> f51Field = register(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.ZonedDateTime> f51Field = register(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
 
-              private final MetaField<MetaClass<?>, Duration> f52Field = register(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.Duration> f52Field = register(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
 
-              private final MetaField<MetaClass<?>, TestingMetaConfiguration.ModelEnum> f53Field = register(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field = register(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
 
-              private final MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f54Field = register(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field = register(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<TestingMetaConfiguration>> f55Field = register(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field = register(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Set<TestingMetaConfiguration>> f56Field = register(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field = register(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, TestingMetaConfiguration>> f57Field = register(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field = register(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Mono<String>> f58Field = register(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f58Field = register(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Flux<String>> f59Field = register(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f59Field = register(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Stream<String>> f60Field = register(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.stream.Stream<java.lang.String>> f60Field = register(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Mono<String[]>> f61Field = register(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field = register(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, String> f62Field = register(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f62Field = register(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaClass<?>, String> f63Field = register(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f63Field = register(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
 
               private final MetaF1Method f1Method = register(new MetaF1Method(this));
 
@@ -2781,262 +2797,309 @@ public class MetaMetaTest extends MetaLibrary {
                 return self.get();
               }
 
-              public MetaField<MetaClass<?>, Integer> f1Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f1Field(
+                  ) {
                 return f1Field;
               }
 
-              public MetaField<MetaClass<?>, Short> f2Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f2Field(
+                  ) {
                 return f2Field;
               }
 
-              public MetaField<MetaClass<?>, Double> f3Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f3Field(
+                  ) {
                 return f3Field;
               }
 
-              public MetaField<MetaClass<?>, Float> f4Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f4Field(
+                  ) {
                 return f4Field;
               }
 
-              public MetaField<MetaClass<?>, Long> f5Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f5Field() {
                 return f5Field;
               }
 
-              public MetaField<MetaClass<?>, Boolean> f6Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f6Field(
+                  ) {
                 return f6Field;
               }
 
-              public MetaField<MetaClass<?>, Character> f7Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f7Field(
+                  ) {
                 return f7Field;
               }
 
-              public MetaField<MetaClass<?>, Byte> f8Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, Byte> f8Field() {
                 return f8Field;
               }
 
-              public MetaField<MetaClass<?>, Integer> f9Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f9Field(
+                  ) {
                 return f9Field;
               }
 
-              public MetaField<MetaClass<?>, Short> f10Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f10Field(
+                  ) {
                 return f10Field;
               }
 
-              public MetaField<MetaClass<?>, Double> f11Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f11Field(
+                  ) {
                 return f11Field;
               }
 
-              public MetaField<MetaClass<?>, Float> f12Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f12Field(
+                  ) {
                 return f12Field;
               }
 
-              public MetaField<MetaClass<?>, Long> f13Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f13Field(
+                  ) {
                 return f13Field;
               }
 
-              public MetaField<MetaClass<?>, Boolean> f14Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f14Field(
+                  ) {
                 return f14Field;
               }
 
-              public MetaField<MetaClass<?>, Character> f15Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f15Field(
+                  ) {
                 return f15Field;
               }
 
-              public MetaField<MetaClass<?>, String> f16Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f16Field(
+                  ) {
                 return f16Field;
               }
 
-              public MetaField<MetaClass<?>, int[]> f17Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, int[]> f17Field() {
                 return f17Field;
               }
 
-              public MetaField<MetaClass<?>, short[]> f18Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, short[]> f18Field() {
                 return f18Field;
               }
 
-              public MetaField<MetaClass<?>, double[]> f19Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, double[]> f19Field() {
                 return f19Field;
               }
 
-              public MetaField<MetaClass<?>, float[]> f20Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, float[]> f20Field() {
                 return f20Field;
               }
 
-              public MetaField<MetaClass<?>, long[]> f21Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, long[]> f21Field() {
                 return f21Field;
               }
 
-              public MetaField<MetaClass<?>, boolean[]> f22Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, boolean[]> f22Field() {
                 return f22Field;
               }
 
-              public MetaField<MetaClass<?>, char[]> f23Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, char[]> f23Field() {
                 return f23Field;
               }
 
-              public MetaField<MetaClass<?>, Integer[]> f24Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer[]> f24Field(
+                  ) {
                 return f24Field;
               }
 
-              public MetaField<MetaClass<?>, Short[]> f25Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short[]> f25Field(
+                  ) {
                 return f25Field;
               }
 
-              public MetaField<MetaClass<?>, Double[]> f26Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double[]> f26Field(
+                  ) {
                 return f26Field;
               }
 
-              public MetaField<MetaClass<?>, Float[]> f27Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float[]> f27Field(
+                  ) {
                 return f27Field;
               }
 
-              public MetaField<MetaClass<?>, Long[]> f28Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long[]> f28Field(
+                  ) {
                 return f28Field;
               }
 
-              public MetaField<MetaClass<?>, Boolean[]> f29Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean[]> f29Field(
+                  ) {
                 return f29Field;
               }
 
-              public MetaField<MetaClass<?>, Character[]> f30Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character[]> f30Field(
+                  ) {
                 return f30Field;
               }
 
-              public MetaField<MetaClass<?>, String[]> f31Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String[]> f31Field(
+                  ) {
                 return f31Field;
               }
 
-              public MetaField<MetaClass<?>, List<String>> f32Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String>> f32Field(
+                  ) {
                 return f32Field;
               }
 
-              public MetaField<MetaClass<?>, Set<String>> f33Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<java.lang.String>> f33Field(
+                  ) {
                 return f33Field;
               }
 
-              public MetaField<MetaClass<?>, Collection<String>> f34Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Collection<java.lang.String>> f34Field(
+                  ) {
                 return f34Field;
               }
 
-              public MetaField<MetaClass<?>, ImmutableArray<String>> f35Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field(
+                  ) {
                 return f35Field;
               }
 
-              public MetaField<MetaClass<?>, ImmutableSet<String>> f36Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field(
+                  ) {
                 return f36Field;
               }
 
-              public MetaField<MetaClass<?>, Supplier<String>> f37Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.function.Supplier<java.lang.String>> f37Field(
+                  ) {
                 return f37Field;
               }
 
-              public MetaField<MetaClass<?>, LazyProperty<String>> f38Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field(
+                  ) {
                 return f38Field;
               }
 
-              public MetaField<MetaClass<?>, List<int[]>> f39Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>> f39Field(
+                  ) {
                 return f39Field;
               }
 
-              public MetaField<MetaClass<?>, List<String[]>> f40Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>> f40Field(
+                  ) {
                 return f40Field;
               }
 
-              public MetaField<MetaClass<?>, List<int[]>[]> f41Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>[]> f41Field(
+                  ) {
                 return f41Field;
               }
 
-              public MetaField<MetaClass<?>, List<String[]>[]> f42Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>[]> f42Field(
+                  ) {
                 return f42Field;
               }
 
-              public MetaField<MetaClass<?>, List<List<String>>> f43Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>>> f43Field(
+                  ) {
                 return f43Field;
               }
 
-              public MetaField<MetaClass<?>, List<List<String>[]>> f44Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field(
+                  ) {
                 return f44Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, String[]>> f45Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field(
+                  ) {
                 return f45Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, List<String>>> f46Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field(
                   ) {
                 return f46Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f47Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field(
                   ) {
                 return f47Field;
               }
 
-              public MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f48Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field(
                   ) {
                 return f48Field;
               }
 
-              public MetaField<MetaClass<?>, TestingMetaConfiguration> f49Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration> f49Field(
+                  ) {
                 return f49Field;
               }
 
-              public MetaField<MetaClass<?>, LocalDateTime> f50Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.LocalDateTime> f50Field(
+                  ) {
                 return f50Field;
               }
 
-              public MetaField<MetaClass<?>, ZonedDateTime> f51Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.ZonedDateTime> f51Field(
+                  ) {
                 return f51Field;
               }
 
-              public MetaField<MetaClass<?>, Duration> f52Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.Duration> f52Field(
+                  ) {
                 return f52Field;
               }
 
-              public MetaField<MetaClass<?>, TestingMetaConfiguration.ModelEnum> f53Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field(
+                  ) {
                 return f53Field;
               }
 
-              public MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f54Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field(
                   ) {
                 return f54Field;
               }
 
-              public MetaField<MetaClass<?>, List<TestingMetaConfiguration>> f55Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field(
                   ) {
                 return f55Field;
               }
 
-              public MetaField<MetaClass<?>, Set<TestingMetaConfiguration>> f56Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field(
                   ) {
                 return f56Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, TestingMetaConfiguration>> f57Field(
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field(
                   ) {
                 return f57Field;
               }
 
-              public MetaField<MetaClass<?>, Mono<String>> f58Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f58Field(
+                  ) {
                 return f58Field;
               }
 
-              public MetaField<MetaClass<?>, Flux<String>> f59Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f59Field(
+                  ) {
                 return f59Field;
               }
 
-              public MetaField<MetaClass<?>, Stream<String>> f60Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.stream.Stream<java.lang.String>> f60Field(
+                  ) {
                 return f60Field;
               }
 
-              public MetaField<MetaClass<?>, Mono<String[]>> f61Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field(
+                  ) {
                 return f61Field;
               }
 
-              public MetaField<MetaClass<?>, String> f62Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f62Field(
+                  ) {
                 return f62Field;
               }
 
-              public MetaField<MetaClass<?>, String> f63Field() {
+              public MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f63Field(
+                  ) {
                 return f63Field;
               }
 
@@ -3296,10 +3359,10 @@ public class MetaMetaTest extends MetaLibrary {
                 return buildMethod;
               }
 
-              public final class MetaF1Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF1Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Integer> f1Parameter = register(new MetaParameter<>(0, "f1",metaType(int.class)));
 
-                private MetaF1Method(MetaClass owner) {
+                private MetaF1Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f1",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3322,10 +3385,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF2Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF2Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Short> f2Parameter = register(new MetaParameter<>(0, "f2",metaType(short.class)));
 
-                private MetaF2Method(MetaClass owner) {
+                private MetaF2Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f2",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3348,10 +3411,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF3Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF3Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Double> f3Parameter = register(new MetaParameter<>(0, "f3",metaType(double.class)));
 
-                private MetaF3Method(MetaClass owner) {
+                private MetaF3Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f3",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3374,10 +3437,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF4Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF4Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Float> f4Parameter = register(new MetaParameter<>(0, "f4",metaType(float.class)));
 
-                private MetaF4Method(MetaClass owner) {
+                private MetaF4Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f4",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3400,10 +3463,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF5Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF5Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Long> f5Parameter = register(new MetaParameter<>(0, "f5",metaType(long.class)));
 
-                private MetaF5Method(MetaClass owner) {
+                private MetaF5Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f5",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3426,10 +3489,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF6Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF6Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Boolean> f6Parameter = register(new MetaParameter<>(0, "f6",metaType(boolean.class)));
 
-                private MetaF6Method(MetaClass owner) {
+                private MetaF6Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f6",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3452,10 +3515,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF7Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF7Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Character> f7Parameter = register(new MetaParameter<>(0, "f7",metaType(char.class)));
 
-                private MetaF7Method(MetaClass owner) {
+                private MetaF7Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f7",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3478,10 +3541,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF8Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF8Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<Byte> f8Parameter = register(new MetaParameter<>(0, "f8",metaType(byte.class)));
 
-                private MetaF8Method(MetaClass owner) {
+                private MetaF8Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f8",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3504,10 +3567,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF9Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF9Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Integer> f9Parameter = register(new MetaParameter<>(0, "f9",metaType(java.lang.Integer.class)));
 
-                private MetaF9Method(MetaClass owner) {
+                private MetaF9Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f9",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3530,10 +3593,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF10Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF10Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Short> f10Parameter = register(new MetaParameter<>(0, "f10",metaType(java.lang.Short.class)));
 
-                private MetaF10Method(MetaClass owner) {
+                private MetaF10Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f10",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3556,10 +3619,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF11Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF11Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Double> f11Parameter = register(new MetaParameter<>(0, "f11",metaType(java.lang.Double.class)));
 
-                private MetaF11Method(MetaClass owner) {
+                private MetaF11Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f11",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3582,10 +3645,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF12Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF12Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Float> f12Parameter = register(new MetaParameter<>(0, "f12",metaType(java.lang.Float.class)));
 
-                private MetaF12Method(MetaClass owner) {
+                private MetaF12Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f12",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3608,10 +3671,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF13Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF13Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Long> f13Parameter = register(new MetaParameter<>(0, "f13",metaType(java.lang.Long.class)));
 
-                private MetaF13Method(MetaClass owner) {
+                private MetaF13Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f13",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3634,10 +3697,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF14Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF14Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Boolean> f14Parameter = register(new MetaParameter<>(0, "f14",metaType(java.lang.Boolean.class)));
 
-                private MetaF14Method(MetaClass owner) {
+                private MetaF14Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f14",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3660,10 +3723,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF15Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF15Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Character> f15Parameter = register(new MetaParameter<>(0, "f15",metaType(java.lang.Character.class)));
 
-                private MetaF15Method(MetaClass owner) {
+                private MetaF15Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f15",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3686,10 +3749,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF16Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF16Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.String> f16Parameter = register(new MetaParameter<>(0, "f16",metaType(java.lang.String.class)));
 
-                private MetaF16Method(MetaClass owner) {
+                private MetaF16Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f16",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3712,10 +3775,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF17Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF17Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<int[]> f17Parameter = register(new MetaParameter<>(0, "f17",metaArray(int[].class, int[]::new, metaType(int.class))));
 
-                private MetaF17Method(MetaClass owner) {
+                private MetaF17Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f17",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3738,10 +3801,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF18Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF18Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<short[]> f18Parameter = register(new MetaParameter<>(0, "f18",metaArray(short[].class, short[]::new, metaType(short.class))));
 
-                private MetaF18Method(MetaClass owner) {
+                private MetaF18Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f18",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3764,10 +3827,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF19Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF19Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<double[]> f19Parameter = register(new MetaParameter<>(0, "f19",metaArray(double[].class, double[]::new, metaType(double.class))));
 
-                private MetaF19Method(MetaClass owner) {
+                private MetaF19Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f19",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3790,10 +3853,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF20Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF20Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<float[]> f20Parameter = register(new MetaParameter<>(0, "f20",metaArray(float[].class, float[]::new, metaType(float.class))));
 
-                private MetaF20Method(MetaClass owner) {
+                private MetaF20Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f20",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3816,10 +3879,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF21Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF21Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<long[]> f21Parameter = register(new MetaParameter<>(0, "f21",metaArray(long[].class, long[]::new, metaType(long.class))));
 
-                private MetaF21Method(MetaClass owner) {
+                private MetaF21Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f21",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3842,10 +3905,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF22Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF22Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<boolean[]> f22Parameter = register(new MetaParameter<>(0, "f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class))));
 
-                private MetaF22Method(MetaClass owner) {
+                private MetaF22Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f22",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3868,10 +3931,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF23Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF23Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<char[]> f23Parameter = register(new MetaParameter<>(0, "f23",metaArray(char[].class, char[]::new, metaType(char.class))));
 
-                private MetaF23Method(MetaClass owner) {
+                private MetaF23Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f23",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3894,10 +3957,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF24Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF24Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Integer[]> f24Parameter = register(new MetaParameter<>(0, "f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class))));
 
-                private MetaF24Method(MetaClass owner) {
+                private MetaF24Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f24",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3920,10 +3983,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF25Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF25Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Short[]> f25Parameter = register(new MetaParameter<>(0, "f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class))));
 
-                private MetaF25Method(MetaClass owner) {
+                private MetaF25Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f25",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3946,10 +4009,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF26Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF26Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Double[]> f26Parameter = register(new MetaParameter<>(0, "f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class))));
 
-                private MetaF26Method(MetaClass owner) {
+                private MetaF26Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f26",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3972,10 +4035,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF27Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF27Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Float[]> f27Parameter = register(new MetaParameter<>(0, "f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class))));
 
-                private MetaF27Method(MetaClass owner) {
+                private MetaF27Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f27",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -3998,10 +4061,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF28Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF28Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Long[]> f28Parameter = register(new MetaParameter<>(0, "f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class))));
 
-                private MetaF28Method(MetaClass owner) {
+                private MetaF28Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f28",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4024,10 +4087,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF29Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF29Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Boolean[]> f29Parameter = register(new MetaParameter<>(0, "f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class))));
 
-                private MetaF29Method(MetaClass owner) {
+                private MetaF29Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f29",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4050,10 +4113,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF30Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF30Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.Character[]> f30Parameter = register(new MetaParameter<>(0, "f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class))));
 
-                private MetaF30Method(MetaClass owner) {
+                private MetaF30Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f30",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4076,10 +4139,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF31Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF31Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.String[]> f31Parameter = register(new MetaParameter<>(0, "f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))));
 
-                private MetaF31Method(MetaClass owner) {
+                private MetaF31Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f31",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4102,10 +4165,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF32Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF32Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<java.lang.String>> f32Parameter = register(new MetaParameter<>(0, "f32",metaType(java.util.List.class,metaType(java.lang.String.class))));
 
-                private MetaF32Method(MetaClass owner) {
+                private MetaF32Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f32",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4128,10 +4191,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF33Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF33Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Set<java.lang.String>> f33Parameter = register(new MetaParameter<>(0, "f33",metaType(java.util.Set.class,metaType(java.lang.String.class))));
 
-                private MetaF33Method(MetaClass owner) {
+                private MetaF33Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f33",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4154,10 +4217,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF34Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF34Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Collection<java.lang.String>> f34Parameter = register(new MetaParameter<>(0, "f34",metaType(java.util.Collection.class,metaType(java.lang.String.class))));
 
-                private MetaF34Method(MetaClass owner) {
+                private MetaF34Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f34",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4180,10 +4243,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF35Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF35Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<io.art.core.collection.ImmutableArray<java.lang.String>> f35Parameter = register(new MetaParameter<>(0, "f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class))));
 
-                private MetaF35Method(MetaClass owner) {
+                private MetaF35Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f35",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4207,10 +4270,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF36Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF36Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<io.art.core.collection.ImmutableSet<java.lang.String>> f36Parameter = register(new MetaParameter<>(0, "f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class))));
 
-                private MetaF36Method(MetaClass owner) {
+                private MetaF36Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f36",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4234,10 +4297,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF37Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF37Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.function.Supplier<java.lang.String>> f37Parameter = register(new MetaParameter<>(0, "f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class))));
 
-                private MetaF37Method(MetaClass owner) {
+                private MetaF37Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f37",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4260,10 +4323,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF38Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF38Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<io.art.core.property.LazyProperty<java.lang.String>> f38Parameter = register(new MetaParameter<>(0, "f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class))));
 
-                private MetaF38Method(MetaClass owner) {
+                private MetaF38Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f38",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4287,10 +4350,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF39Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF39Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<int[]>> f39Parameter = register(new MetaParameter<>(0, "f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))));
 
-                private MetaF39Method(MetaClass owner) {
+                private MetaF39Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f39",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4313,10 +4376,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF40Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF40Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<java.lang.String[]>> f40Parameter = register(new MetaParameter<>(0, "f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))));
 
-                private MetaF40Method(MetaClass owner) {
+                private MetaF40Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f40",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4339,10 +4402,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF41Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF41Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<int[]>[]> f41Parameter = register(new MetaParameter<>(0, "f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))))));
 
-                private MetaF41Method(MetaClass owner) {
+                private MetaF41Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f41",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4365,10 +4428,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF42Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF42Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<java.lang.String[]>[]> f42Parameter = register(new MetaParameter<>(0, "f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))))));
 
-                private MetaF42Method(MetaClass owner) {
+                private MetaF42Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f42",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4391,10 +4454,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF43Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF43Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<java.util.List<java.lang.String>>> f43Parameter = register(new MetaParameter<>(0, "f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class)))));
 
-                private MetaF43Method(MetaClass owner) {
+                private MetaF43Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f43",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4418,10 +4481,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF44Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF44Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<java.util.List<java.lang.String>[]>> f44Parameter = register(new MetaParameter<>(0, "f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class))))));
 
-                private MetaF44Method(MetaClass owner) {
+                private MetaF44Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f44",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4445,10 +4508,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF45Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF45Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, java.lang.String[]>> f45Parameter = register(new MetaParameter<>(0, "f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))));
 
-                private MetaF45Method(MetaClass owner) {
+                private MetaF45Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f45",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4472,10 +4535,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF46Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF46Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Parameter = register(new MetaParameter<>(0, "f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class)))));
 
-                private MetaF46Method(MetaClass owner) {
+                private MetaF46Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f46",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4499,10 +4562,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF47Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF47Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Parameter = register(new MetaParameter<>(0, "f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class))))));
 
-                private MetaF47Method(MetaClass owner) {
+                private MetaF47Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f47",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4526,10 +4589,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF48Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF48Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Parameter = register(new MetaParameter<>(0, "f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class))))));
 
-                private MetaF48Method(MetaClass owner) {
+                private MetaF48Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f48",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4553,10 +4616,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF49Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF49Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<io.art.meta.test.TestingMetaConfiguration> f49Parameter = register(new MetaParameter<>(0, "f49",metaType(io.art.meta.test.TestingMetaConfiguration.class)));
 
-                private MetaF49Method(MetaClass owner) {
+                private MetaF49Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f49",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4579,10 +4642,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF50Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF50Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.time.LocalDateTime> f50Parameter = register(new MetaParameter<>(0, "f50",metaType(java.time.LocalDateTime.class)));
 
-                private MetaF50Method(MetaClass owner) {
+                private MetaF50Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f50",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4605,10 +4668,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF51Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF51Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.time.ZonedDateTime> f51Parameter = register(new MetaParameter<>(0, "f51",metaType(java.time.ZonedDateTime.class)));
 
-                private MetaF51Method(MetaClass owner) {
+                private MetaF51Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f51",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4631,10 +4694,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF52Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF52Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.time.Duration> f52Parameter = register(new MetaParameter<>(0, "f52",metaType(java.time.Duration.class)));
 
-                private MetaF52Method(MetaClass owner) {
+                private MetaF52Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f52",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4657,10 +4720,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF53Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF53Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Parameter = register(new MetaParameter<>(0, "f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf)));
 
-                private MetaF53Method(MetaClass owner) {
+                private MetaF53Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f53",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4684,10 +4747,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF54Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF54Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Parameter = register(new MetaParameter<>(0, "f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class))))));
 
-                private MetaF54Method(MetaClass owner) {
+                private MetaF54Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f54",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4711,10 +4774,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF55Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF55Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Parameter = register(new MetaParameter<>(0, "f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class))));
 
-                private MetaF55Method(MetaClass owner) {
+                private MetaF55Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f55",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4738,10 +4801,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF56Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF56Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Parameter = register(new MetaParameter<>(0, "f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class))));
 
-                private MetaF56Method(MetaClass owner) {
+                private MetaF56Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f56",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4765,10 +4828,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF57Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF57Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Parameter = register(new MetaParameter<>(0, "f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class))));
 
-                private MetaF57Method(MetaClass owner) {
+                private MetaF57Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f57",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4792,10 +4855,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF58Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF58Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> f58Parameter = register(new MetaParameter<>(0, "f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
-                private MetaF58Method(MetaClass owner) {
+                private MetaF58Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f58",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4818,10 +4881,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF59Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF59Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> f59Parameter = register(new MetaParameter<>(0, "f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
-                private MetaF59Method(MetaClass owner) {
+                private MetaF59Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f59",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4844,10 +4907,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF60Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF60Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.util.stream.Stream<java.lang.String>> f60Parameter = register(new MetaParameter<>(0, "f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class))));
 
-                private MetaF60Method(MetaClass owner) {
+                private MetaF60Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f60",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4870,10 +4933,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF61Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF61Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String[]>> f61Parameter = register(new MetaParameter<>(0, "f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))));
 
-                private MetaF61Method(MetaClass owner) {
+                private MetaF61Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f61",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4897,10 +4960,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF62Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF62Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.String> f62Parameter = register(new MetaParameter<>(0, "f62",metaType(java.lang.String.class)));
 
-                private MetaF62Method(MetaClass owner) {
+                private MetaF62Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f62",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4923,10 +4986,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF63Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
+              public final class MetaF63Method extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
                 private final MetaParameter<java.lang.String> f63Parameter = register(new MetaParameter<>(0, "f63",metaType(java.lang.String.class)));
 
-                private MetaF63Method(MetaClass owner) {
+                private MetaF63Method(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("f63",metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class),owner);
                 }
 
@@ -4949,8 +5012,8 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaBuildMethod extends InstanceMetaMethod<MetaClass<?>, TestingMetaConfiguration.TestingMetaConfigurationBuilder, TestingMetaConfiguration> {
-                private MetaBuildMethod(MetaClass owner) {
+              public final class MetaBuildMethod extends InstanceMetaMethod<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder, io.art.meta.test.TestingMetaConfiguration> {
+                private MetaBuildMethod(MetaTestingMetaConfigurationBuilderClass owner) {
                   super("build",metaType(io.art.meta.test.TestingMetaConfiguration.class),owner);
                 }
 
@@ -4976,11 +5039,11 @@ public class MetaMetaTest extends MetaLibrary {
 
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaClass<?>, Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+            private final MetaField<MetaTestingShortMetaModelClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
 
-            private final MetaField<MetaClass<?>, String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingShortMetaModelClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaClass<?>, TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
+            private final MetaField<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
 
             private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod(this));
 
@@ -5004,15 +5067,16 @@ public class MetaMetaTest extends MetaLibrary {
               return constructor;
             }
 
-            public MetaField<MetaClass<?>, Integer> idField() {
+            public MetaField<MetaTestingShortMetaModelClass, java.lang.Integer> idField() {
               return idField;
             }
 
-            public MetaField<MetaClass<?>, String> nameField() {
+            public MetaField<MetaTestingShortMetaModelClass, java.lang.String> nameField() {
               return nameField;
             }
 
-            public MetaField<MetaClass<?>, TestingShortMetaModel.Inner> innerField() {
+            public MetaField<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField(
+                ) {
               return innerField;
             }
 
@@ -5036,14 +5100,14 @@ public class MetaMetaTest extends MetaLibrary {
               return innerClass;
             }
 
-            public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestingShortMetaModel> {
+            public final class MetaConstructorConstructor extends MetaConstructor<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel> {
               private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
               private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(1, "name",metaType(java.lang.String.class)));
 
               private final MetaParameter<io.art.meta.test.TestingShortMetaModel.Inner> innerParameter = register(new MetaParameter<>(2, "inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class)));
 
-              private MetaConstructorConstructor(MetaClass owner) {
+              private MetaConstructorConstructor(MetaTestingShortMetaModelClass owner) {
                 super(metaType(io.art.meta.test.TestingShortMetaModel.class),owner);
               }
 
@@ -5066,8 +5130,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetIdMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel, Integer> {
-              private MetaGetIdMethod(MetaClass owner) {
+            public final class MetaGetIdMethod extends InstanceMetaMethod<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel, java.lang.Integer> {
+              private MetaGetIdMethod(MetaTestingShortMetaModelClass owner) {
                 super("getId",metaType(int.class),owner);
               }
 
@@ -5084,8 +5148,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetNameMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel, String> {
-              private MetaGetNameMethod(MetaClass owner) {
+            public final class MetaGetNameMethod extends InstanceMetaMethod<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel, java.lang.String> {
+              private MetaGetNameMethod(MetaTestingShortMetaModelClass owner) {
                 super("getName",metaType(java.lang.String.class),owner);
               }
 
@@ -5102,8 +5166,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetInnerMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel, TestingShortMetaModel.Inner> {
-              private MetaGetInnerMethod(MetaClass owner) {
+            public final class MetaGetInnerMethod extends InstanceMetaMethod<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel, io.art.meta.test.TestingShortMetaModel.Inner> {
+              private MetaGetInnerMethod(MetaTestingShortMetaModelClass owner) {
                 super("getInner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),owner);
               }
 
@@ -5123,11 +5187,11 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaTestingShortMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
               private static final io.art.core.property.LazyProperty<MetaTestingShortMetaModelBuilderClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class);
 
-              private final MetaField<MetaClass<?>, Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+              private final MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
 
-              private final MetaField<MetaClass<?>, String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaClass<?>, TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
+              private final MetaField<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
 
               private final MetaIdMethod idMethod = register(new MetaIdMethod(this));
 
@@ -5145,15 +5209,17 @@ public class MetaMetaTest extends MetaLibrary {
                 return self.get();
               }
 
-              public MetaField<MetaClass<?>, Integer> idField() {
+              public MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.Integer> idField() {
                 return idField;
               }
 
-              public MetaField<MetaClass<?>, String> nameField() {
+              public MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.String> nameField(
+                  ) {
                 return nameField;
               }
 
-              public MetaField<MetaClass<?>, TestingShortMetaModel.Inner> innerField() {
+              public MetaField<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField(
+                  ) {
                 return innerField;
               }
 
@@ -5173,10 +5239,10 @@ public class MetaMetaTest extends MetaLibrary {
                 return buildMethod;
               }
 
-              public final class MetaIdMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.TestingShortMetaModelBuilder, TestingShortMetaModel.TestingShortMetaModelBuilder> {
+              public final class MetaIdMethod extends InstanceMetaMethod<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
                 private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
-                private MetaIdMethod(MetaClass owner) {
+                private MetaIdMethod(MetaTestingShortMetaModelBuilderClass owner) {
                   super("id",metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class),owner);
                 }
 
@@ -5199,10 +5265,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaNameMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.TestingShortMetaModelBuilder, TestingShortMetaModel.TestingShortMetaModelBuilder> {
+              public final class MetaNameMethod extends InstanceMetaMethod<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
                 private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(0, "name",metaType(java.lang.String.class)));
 
-                private MetaNameMethod(MetaClass owner) {
+                private MetaNameMethod(MetaTestingShortMetaModelBuilderClass owner) {
                   super("name",metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class),owner);
                 }
 
@@ -5225,10 +5291,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaInnerMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.TestingShortMetaModelBuilder, TestingShortMetaModel.TestingShortMetaModelBuilder> {
+              public final class MetaInnerMethod extends InstanceMetaMethod<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
                 private final MetaParameter<io.art.meta.test.TestingShortMetaModel.Inner> innerParameter = register(new MetaParameter<>(0, "inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class)));
 
-                private MetaInnerMethod(MetaClass owner) {
+                private MetaInnerMethod(MetaTestingShortMetaModelBuilderClass owner) {
                   super("inner",metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class),owner);
                 }
 
@@ -5252,8 +5318,8 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaBuildMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.TestingShortMetaModelBuilder, TestingShortMetaModel> {
-                private MetaBuildMethod(MetaClass owner) {
+              public final class MetaBuildMethod extends InstanceMetaMethod<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder, io.art.meta.test.TestingShortMetaModel> {
+                private MetaBuildMethod(MetaTestingShortMetaModelBuilderClass owner) {
                   super("build",metaType(io.art.meta.test.TestingShortMetaModel.class),owner);
                 }
 
@@ -5278,9 +5344,9 @@ public class MetaMetaTest extends MetaLibrary {
 
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-              private final MetaField<MetaClass<?>, Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+              private final MetaField<MetaInnerClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
 
-              private final MetaField<MetaClass<?>, String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaInnerClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
               private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod(this));
 
@@ -5300,11 +5366,11 @@ public class MetaMetaTest extends MetaLibrary {
                 return constructor;
               }
 
-              public MetaField<MetaClass<?>, Integer> idField() {
+              public MetaField<MetaInnerClass, java.lang.Integer> idField() {
                 return idField;
               }
 
-              public MetaField<MetaClass<?>, String> nameField() {
+              public MetaField<MetaInnerClass, java.lang.String> nameField() {
                 return nameField;
               }
 
@@ -5320,12 +5386,12 @@ public class MetaMetaTest extends MetaLibrary {
                 return innerBuilderClass;
               }
 
-              public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestingShortMetaModel.Inner> {
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaInnerClass, io.art.meta.test.TestingShortMetaModel.Inner> {
                 private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                 private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(1, "name",metaType(java.lang.String.class)));
 
-                private MetaConstructorConstructor(MetaClass owner) {
+                private MetaConstructorConstructor(MetaInnerClass owner) {
                   super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),owner);
                 }
 
@@ -5344,8 +5410,8 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaGetIdMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.Inner, Integer> {
-                private MetaGetIdMethod(MetaClass owner) {
+              public final class MetaGetIdMethod extends InstanceMetaMethod<MetaInnerClass, io.art.meta.test.TestingShortMetaModel.Inner, java.lang.Integer> {
+                private MetaGetIdMethod(MetaInnerClass owner) {
                   super("getId",metaType(int.class),owner);
                 }
 
@@ -5362,8 +5428,8 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaGetNameMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.Inner, String> {
-                private MetaGetNameMethod(MetaClass owner) {
+              public final class MetaGetNameMethod extends InstanceMetaMethod<MetaInnerClass, io.art.meta.test.TestingShortMetaModel.Inner, java.lang.String> {
+                private MetaGetNameMethod(MetaInnerClass owner) {
                   super("getName",metaType(java.lang.String.class),owner);
                 }
 
@@ -5383,9 +5449,9 @@ public class MetaMetaTest extends MetaLibrary {
               public static final class MetaInnerBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
                 private static final io.art.core.property.LazyProperty<MetaInnerBuilderClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class);
 
-                private final MetaField<MetaClass<?>, Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+                private final MetaField<MetaInnerBuilderClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
 
-                private final MetaField<MetaClass<?>, String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+                private final MetaField<MetaInnerBuilderClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
                 private final MetaIdMethod idMethod = register(new MetaIdMethod(this));
 
@@ -5401,11 +5467,11 @@ public class MetaMetaTest extends MetaLibrary {
                   return self.get();
                 }
 
-                public MetaField<MetaClass<?>, Integer> idField() {
+                public MetaField<MetaInnerBuilderClass, java.lang.Integer> idField() {
                   return idField;
                 }
 
-                public MetaField<MetaClass<?>, String> nameField() {
+                public MetaField<MetaInnerBuilderClass, java.lang.String> nameField() {
                   return nameField;
                 }
 
@@ -5421,10 +5487,10 @@ public class MetaMetaTest extends MetaLibrary {
                   return buildMethod;
                 }
 
-                public final class MetaIdMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.Inner.InnerBuilder, TestingShortMetaModel.Inner.InnerBuilder> {
+                public final class MetaIdMethod extends InstanceMetaMethod<MetaInnerBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
                   private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
-                  private MetaIdMethod(MetaClass owner) {
+                  private MetaIdMethod(MetaInnerBuilderClass owner) {
                     super("id",metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class),owner);
                   }
 
@@ -5447,10 +5513,10 @@ public class MetaMetaTest extends MetaLibrary {
                   }
                 }
 
-                public final class MetaNameMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.Inner.InnerBuilder, TestingShortMetaModel.Inner.InnerBuilder> {
+                public final class MetaNameMethod extends InstanceMetaMethod<MetaInnerBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
                   private final MetaParameter<java.lang.String> nameParameter = register(new MetaParameter<>(0, "name",metaType(java.lang.String.class)));
 
-                  private MetaNameMethod(MetaClass owner) {
+                  private MetaNameMethod(MetaInnerBuilderClass owner) {
                     super("name",metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class),owner);
                   }
 
@@ -5473,8 +5539,8 @@ public class MetaMetaTest extends MetaLibrary {
                   }
                 }
 
-                public final class MetaBuildMethod extends InstanceMetaMethod<MetaClass<?>, TestingShortMetaModel.Inner.InnerBuilder, TestingShortMetaModel.Inner> {
-                  private MetaBuildMethod(MetaClass owner) {
+                public final class MetaBuildMethod extends InstanceMetaMethod<MetaInnerBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder, io.art.meta.test.TestingShortMetaModel.Inner> {
+                  private MetaBuildMethod(MetaInnerBuilderClass owner) {
                     super("build",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),owner);
                   }
 
@@ -5513,8 +5579,8 @@ public class MetaMetaTest extends MetaLibrary {
               return generateTestingModelMethod;
             }
 
-            public final class MetaGenerateTestingModelMethod extends StaticMetaMethod<MetaClass<?>, TestingMetaModel> {
-              private MetaGenerateTestingModelMethod(MetaClass owner) {
+            public final class MetaGenerateTestingModelMethod extends StaticMetaMethod<MetaTestingMetaModelGeneratorClass, io.art.meta.test.TestingMetaModel> {
+              private MetaGenerateTestingModelMethod(MetaTestingMetaModelGeneratorClass owner) {
                 super("generateTestingModel",metaType(io.art.meta.test.TestingMetaModel.class),owner);
               }
 
@@ -5535,139 +5601,139 @@ public class MetaMetaTest extends MetaLibrary {
 
             private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaClass<?>, Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
 
-            private final MetaField<MetaClass<?>, Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
 
-            private final MetaField<MetaClass<?>, Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
 
-            private final MetaField<MetaClass<?>, Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
 
-            private final MetaField<MetaClass<?>, Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
 
-            private final MetaField<MetaClass<?>, Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-            private final MetaField<MetaClass<?>, Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
 
-            private final MetaField<MetaClass<?>, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
 
-            private final MetaField<MetaClass<?>, Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-            private final MetaField<MetaClass<?>, Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-            private final MetaField<MetaClass<?>, Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-            private final MetaField<MetaClass<?>, Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-            private final MetaField<MetaClass<?>, Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-            private final MetaField<MetaClass<?>, Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-            private final MetaField<MetaClass<?>, Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-            private final MetaField<MetaClass<?>, String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaClass<?>, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-            private final MetaField<MetaClass<?>, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-            private final MetaField<MetaClass<?>, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-            private final MetaField<MetaClass<?>, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-            private final MetaField<MetaClass<?>, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-            private final MetaField<MetaClass<?>, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-            private final MetaField<MetaClass<?>, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-            private final MetaField<MetaClass<?>, byte[]> f24Field = register(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, byte[]> f24Field = register(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Integer[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Short[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Short[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Double[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Double[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Float[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Float[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Long[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Long[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Boolean[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Character[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Character[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-            private final MetaField<MetaClass<?>, String[]> f32Field = register(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String[]> f32Field = register(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, List<String>> f33Field = register(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Set<String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Set<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Collection<String>> f35Field = register(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Collection<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, ImmutableArray<String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, ImmutableSet<String>> f37Field = register(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Supplier<String>> f38Field = register(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.function.Supplier<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, LazyProperty<String>> f39Field = register(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field = register(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, List<int[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<int[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<byte[]>> f41Field = register(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>> f41Field = register(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<String[]>> f42Field = register(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>> f42Field = register(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<byte[]>[]> f43Field = register(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>[]> f43Field = register(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<int[]>[]> f44Field = register(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<int[]>[]> f44Field = register(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<String[]>[]> f45Field = register(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>[]> f45Field = register(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<List<String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, List<List<String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, Map<Integer, String>> f48Field = register(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field = register(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, String[]>> f49Field = register(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field = register(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, List<String>>> f50Field = register(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field = register(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f51Field = register(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field = register(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f52Field = register(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field = register(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, TestingMetaModel> f53Field = register(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel> f53Field = register(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
 
-            private final MetaField<MetaClass<?>, LocalDateTime> f54Field = register(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.time.LocalDateTime> f54Field = register(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
 
-            private final MetaField<MetaClass<?>, ZonedDateTime> f55Field = register(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.time.ZonedDateTime> f55Field = register(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
 
-            private final MetaField<MetaClass<?>, Duration> f56Field = register(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.time.Duration> f56Field = register(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
 
-            private final MetaField<MetaClass<?>, TestingMetaModel.ModelEnum> f57Field = register(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field = register(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
 
-            private final MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f58Field = register(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field = register(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaClass<?>, List<TestingMetaModel>> f59Field = register(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field = register(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Set<TestingMetaModel>> f60Field = register(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field = register(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Map<String, TestingMetaModel>> f61Field = register(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field = register(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Mono<String>> f62Field = register(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String>> f62Field = register(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Flux<String>> f63Field = register(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Flux<java.lang.String>> f63Field = register(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Stream<String>> f64Field = register(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.stream.Stream<java.lang.String>> f64Field = register(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaClass<?>, Mono<String[]>> f65Field = register(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field = register(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaClass<?>, String> f66Field = register(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f66Field = register(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaClass<?>, String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
 
             private final MetaAssertEqualsMethod assertEqualsMethod = register(new MetaAssertEqualsMethod(this));
 
@@ -5821,276 +5887,297 @@ public class MetaMetaTest extends MetaLibrary {
               return constructor;
             }
 
-            public MetaField<MetaClass<?>, Integer> f1Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Integer> f1Field() {
               return f1Field;
             }
 
-            public MetaField<MetaClass<?>, Short> f2Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Short> f2Field() {
               return f2Field;
             }
 
-            public MetaField<MetaClass<?>, Double> f3Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Double> f3Field() {
               return f3Field;
             }
 
-            public MetaField<MetaClass<?>, Float> f4Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Float> f4Field() {
               return f4Field;
             }
 
-            public MetaField<MetaClass<?>, Long> f5Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Long> f5Field() {
               return f5Field;
             }
 
-            public MetaField<MetaClass<?>, Boolean> f6Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f6Field() {
               return f6Field;
             }
 
-            public MetaField<MetaClass<?>, Character> f7Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Character> f7Field() {
               return f7Field;
             }
 
-            public MetaField<MetaClass<?>, Byte> f8Field() {
+            public MetaField<MetaTestingMetaModelClass, Byte> f8Field() {
               return f8Field;
             }
 
-            public MetaField<MetaClass<?>, Integer> f9Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Integer> f9Field() {
               return f9Field;
             }
 
-            public MetaField<MetaClass<?>, Short> f10Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Short> f10Field() {
               return f10Field;
             }
 
-            public MetaField<MetaClass<?>, Double> f11Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Double> f11Field() {
               return f11Field;
             }
 
-            public MetaField<MetaClass<?>, Float> f12Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Float> f12Field() {
               return f12Field;
             }
 
-            public MetaField<MetaClass<?>, Long> f13Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Long> f13Field() {
               return f13Field;
             }
 
-            public MetaField<MetaClass<?>, Boolean> f14Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f14Field() {
               return f14Field;
             }
 
-            public MetaField<MetaClass<?>, Character> f15Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Character> f15Field() {
               return f15Field;
             }
 
-            public MetaField<MetaClass<?>, String> f16Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.String> f16Field() {
               return f16Field;
             }
 
-            public MetaField<MetaClass<?>, int[]> f17Field() {
+            public MetaField<MetaTestingMetaModelClass, int[]> f17Field() {
               return f17Field;
             }
 
-            public MetaField<MetaClass<?>, short[]> f18Field() {
+            public MetaField<MetaTestingMetaModelClass, short[]> f18Field() {
               return f18Field;
             }
 
-            public MetaField<MetaClass<?>, double[]> f19Field() {
+            public MetaField<MetaTestingMetaModelClass, double[]> f19Field() {
               return f19Field;
             }
 
-            public MetaField<MetaClass<?>, float[]> f20Field() {
+            public MetaField<MetaTestingMetaModelClass, float[]> f20Field() {
               return f20Field;
             }
 
-            public MetaField<MetaClass<?>, long[]> f21Field() {
+            public MetaField<MetaTestingMetaModelClass, long[]> f21Field() {
               return f21Field;
             }
 
-            public MetaField<MetaClass<?>, boolean[]> f22Field() {
+            public MetaField<MetaTestingMetaModelClass, boolean[]> f22Field() {
               return f22Field;
             }
 
-            public MetaField<MetaClass<?>, char[]> f23Field() {
+            public MetaField<MetaTestingMetaModelClass, char[]> f23Field() {
               return f23Field;
             }
 
-            public MetaField<MetaClass<?>, byte[]> f24Field() {
+            public MetaField<MetaTestingMetaModelClass, byte[]> f24Field() {
               return f24Field;
             }
 
-            public MetaField<MetaClass<?>, Integer[]> f25Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Integer[]> f25Field() {
               return f25Field;
             }
 
-            public MetaField<MetaClass<?>, Short[]> f26Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Short[]> f26Field() {
               return f26Field;
             }
 
-            public MetaField<MetaClass<?>, Double[]> f27Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Double[]> f27Field() {
               return f27Field;
             }
 
-            public MetaField<MetaClass<?>, Float[]> f28Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Float[]> f28Field() {
               return f28Field;
             }
 
-            public MetaField<MetaClass<?>, Long[]> f29Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Long[]> f29Field() {
               return f29Field;
             }
 
-            public MetaField<MetaClass<?>, Boolean[]> f30Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Boolean[]> f30Field() {
               return f30Field;
             }
 
-            public MetaField<MetaClass<?>, Character[]> f31Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.Character[]> f31Field() {
               return f31Field;
             }
 
-            public MetaField<MetaClass<?>, String[]> f32Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.String[]> f32Field() {
               return f32Field;
             }
 
-            public MetaField<MetaClass<?>, List<String>> f33Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String>> f33Field(
+                ) {
               return f33Field;
             }
 
-            public MetaField<MetaClass<?>, Set<String>> f34Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.Set<java.lang.String>> f34Field(
+                ) {
               return f34Field;
             }
 
-            public MetaField<MetaClass<?>, Collection<String>> f35Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.Collection<java.lang.String>> f35Field(
+                ) {
               return f35Field;
             }
 
-            public MetaField<MetaClass<?>, ImmutableArray<String>> f36Field() {
+            public MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field(
+                ) {
               return f36Field;
             }
 
-            public MetaField<MetaClass<?>, ImmutableSet<String>> f37Field() {
+            public MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field(
+                ) {
               return f37Field;
             }
 
-            public MetaField<MetaClass<?>, Supplier<String>> f38Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.function.Supplier<java.lang.String>> f38Field(
+                ) {
               return f38Field;
             }
 
-            public MetaField<MetaClass<?>, LazyProperty<String>> f39Field() {
+            public MetaField<MetaTestingMetaModelClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field(
+                ) {
               return f39Field;
             }
 
-            public MetaField<MetaClass<?>, List<int[]>> f40Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<int[]>> f40Field() {
               return f40Field;
             }
 
-            public MetaField<MetaClass<?>, List<byte[]>> f41Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>> f41Field() {
               return f41Field;
             }
 
-            public MetaField<MetaClass<?>, List<String[]>> f42Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>> f42Field(
+                ) {
               return f42Field;
             }
 
-            public MetaField<MetaClass<?>, List<byte[]>[]> f43Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>[]> f43Field() {
               return f43Field;
             }
 
-            public MetaField<MetaClass<?>, List<int[]>[]> f44Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<int[]>[]> f44Field() {
               return f44Field;
             }
 
-            public MetaField<MetaClass<?>, List<String[]>[]> f45Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>[]> f45Field(
+                ) {
               return f45Field;
             }
 
-            public MetaField<MetaClass<?>, List<List<String>>> f46Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>>> f46Field(
+                ) {
               return f46Field;
             }
 
-            public MetaField<MetaClass<?>, List<List<String>[]>> f47Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field(
+                ) {
               return f47Field;
             }
 
-            public MetaField<MetaClass<?>, Map<Integer, String>> f48Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field(
+                ) {
               return f48Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, String[]>> f49Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field(
+                ) {
               return f49Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, List<String>>> f50Field(
+            public MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field(
                 ) {
               return f50Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f51Field(
+            public MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field(
                 ) {
               return f51Field;
             }
 
-            public MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f52Field(
+            public MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field(
                 ) {
               return f52Field;
             }
 
-            public MetaField<MetaClass<?>, TestingMetaModel> f53Field() {
+            public MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel> f53Field(
+                ) {
               return f53Field;
             }
 
-            public MetaField<MetaClass<?>, LocalDateTime> f54Field() {
+            public MetaField<MetaTestingMetaModelClass, java.time.LocalDateTime> f54Field() {
               return f54Field;
             }
 
-            public MetaField<MetaClass<?>, ZonedDateTime> f55Field() {
+            public MetaField<MetaTestingMetaModelClass, java.time.ZonedDateTime> f55Field() {
               return f55Field;
             }
 
-            public MetaField<MetaClass<?>, Duration> f56Field() {
+            public MetaField<MetaTestingMetaModelClass, java.time.Duration> f56Field() {
               return f56Field;
             }
 
-            public MetaField<MetaClass<?>, TestingMetaModel.ModelEnum> f57Field() {
+            public MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field(
+                ) {
               return f57Field;
             }
 
-            public MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f58Field(
+            public MetaField<MetaTestingMetaModelClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field(
                 ) {
               return f58Field;
             }
 
-            public MetaField<MetaClass<?>, List<TestingMetaModel>> f59Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field(
+                ) {
               return f59Field;
             }
 
-            public MetaField<MetaClass<?>, Set<TestingMetaModel>> f60Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field(
+                ) {
               return f60Field;
             }
 
-            public MetaField<MetaClass<?>, Map<String, TestingMetaModel>> f61Field(
+            public MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field(
                 ) {
               return f61Field;
             }
 
-            public MetaField<MetaClass<?>, Mono<String>> f62Field() {
+            public MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String>> f62Field(
+                ) {
               return f62Field;
             }
 
-            public MetaField<MetaClass<?>, Flux<String>> f63Field() {
+            public MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Flux<java.lang.String>> f63Field(
+                ) {
               return f63Field;
             }
 
-            public MetaField<MetaClass<?>, Stream<String>> f64Field() {
+            public MetaField<MetaTestingMetaModelClass, java.util.stream.Stream<java.lang.String>> f64Field(
+                ) {
               return f64Field;
             }
 
-            public MetaField<MetaClass<?>, Mono<String[]>> f65Field() {
+            public MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field(
+                ) {
               return f65Field;
             }
 
-            public MetaField<MetaClass<?>, String> f66Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.String> f66Field() {
               return f66Field;
             }
 
-            public MetaField<MetaClass<?>, String> f67Field() {
+            public MetaField<MetaTestingMetaModelClass, java.lang.String> f67Field() {
               return f67Field;
             }
 
@@ -6374,7 +6461,7 @@ public class MetaMetaTest extends MetaLibrary {
               return testingMetaModelBuilderClass;
             }
 
-            public final class MetaConstructorConstructor extends MetaConstructor<MetaClass<?>, TestingMetaModel> {
+            public final class MetaConstructorConstructor extends MetaConstructor<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel> {
               private final MetaParameter<java.lang.Integer> f1Parameter = register(new MetaParameter<>(0, "f1",metaType(int.class)));
 
               private final MetaParameter<java.lang.Short> f2Parameter = register(new MetaParameter<>(1, "f2",metaType(short.class)));
@@ -6509,7 +6596,7 @@ public class MetaMetaTest extends MetaLibrary {
 
               private final MetaParameter<java.lang.String> f67Parameter = register(new MetaParameter<>(66, "f67",metaType(java.lang.String.class)));
 
-              private MetaConstructorConstructor(MetaClass owner) {
+              private MetaConstructorConstructor(MetaTestingMetaModelClass owner) {
                 super(metaType(io.art.meta.test.TestingMetaModel.class),owner);
               }
 
@@ -6801,10 +6888,10 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaAssertEqualsMethod extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Void> {
+            public final class MetaAssertEqualsMethod extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, Void> {
               private final MetaParameter<io.art.meta.test.TestingMetaModel> modelParameter = register(new MetaParameter<>(0, "model",metaType(io.art.meta.test.TestingMetaModel.class)));
 
-              private MetaAssertEqualsMethod(MetaClass owner) {
+              private MetaAssertEqualsMethod(MetaTestingMetaModelClass owner) {
                 super("assertEquals",metaType(Void.class),owner);
               }
 
@@ -6827,8 +6914,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaToBuilderMethod extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, TestingMetaModel.TestingMetaModelBuilder> {
-              private MetaToBuilderMethod(MetaClass owner) {
+            public final class MetaToBuilderMethod extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
+              private MetaToBuilderMethod(MetaTestingMetaModelClass owner) {
                 super("toBuilder",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
               }
 
@@ -6844,8 +6931,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF1Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Integer> {
-              private MetaGetF1Method(MetaClass owner) {
+            public final class MetaGetF1Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Integer> {
+              private MetaGetF1Method(MetaTestingMetaModelClass owner) {
                 super("getF1",metaType(int.class),owner);
               }
 
@@ -6861,8 +6948,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF2Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Short> {
-              private MetaGetF2Method(MetaClass owner) {
+            public final class MetaGetF2Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Short> {
+              private MetaGetF2Method(MetaTestingMetaModelClass owner) {
                 super("getF2",metaType(short.class),owner);
               }
 
@@ -6878,8 +6965,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF3Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Double> {
-              private MetaGetF3Method(MetaClass owner) {
+            public final class MetaGetF3Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Double> {
+              private MetaGetF3Method(MetaTestingMetaModelClass owner) {
                 super("getF3",metaType(double.class),owner);
               }
 
@@ -6895,8 +6982,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF4Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Float> {
-              private MetaGetF4Method(MetaClass owner) {
+            public final class MetaGetF4Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Float> {
+              private MetaGetF4Method(MetaTestingMetaModelClass owner) {
                 super("getF4",metaType(float.class),owner);
               }
 
@@ -6912,8 +6999,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF5Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Long> {
-              private MetaGetF5Method(MetaClass owner) {
+            public final class MetaGetF5Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Long> {
+              private MetaGetF5Method(MetaTestingMetaModelClass owner) {
                 super("getF5",metaType(long.class),owner);
               }
 
@@ -6929,8 +7016,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaIsF6Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Boolean> {
-              private MetaIsF6Method(MetaClass owner) {
+            public final class MetaIsF6Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Boolean> {
+              private MetaIsF6Method(MetaTestingMetaModelClass owner) {
                 super("isF6",metaType(boolean.class),owner);
               }
 
@@ -6946,8 +7033,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF7Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Character> {
-              private MetaGetF7Method(MetaClass owner) {
+            public final class MetaGetF7Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Character> {
+              private MetaGetF7Method(MetaTestingMetaModelClass owner) {
                 super("getF7",metaType(char.class),owner);
               }
 
@@ -6963,8 +7050,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF8Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Byte> {
-              private MetaGetF8Method(MetaClass owner) {
+            public final class MetaGetF8Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, Byte> {
+              private MetaGetF8Method(MetaTestingMetaModelClass owner) {
                 super("getF8",metaType(byte.class),owner);
               }
 
@@ -6980,8 +7067,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF9Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Integer> {
-              private MetaGetF9Method(MetaClass owner) {
+            public final class MetaGetF9Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Integer> {
+              private MetaGetF9Method(MetaTestingMetaModelClass owner) {
                 super("getF9",metaType(java.lang.Integer.class),owner);
               }
 
@@ -6997,8 +7084,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF10Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Short> {
-              private MetaGetF10Method(MetaClass owner) {
+            public final class MetaGetF10Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Short> {
+              private MetaGetF10Method(MetaTestingMetaModelClass owner) {
                 super("getF10",metaType(java.lang.Short.class),owner);
               }
 
@@ -7014,8 +7101,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF11Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Double> {
-              private MetaGetF11Method(MetaClass owner) {
+            public final class MetaGetF11Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Double> {
+              private MetaGetF11Method(MetaTestingMetaModelClass owner) {
                 super("getF11",metaType(java.lang.Double.class),owner);
               }
 
@@ -7031,8 +7118,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF12Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Float> {
-              private MetaGetF12Method(MetaClass owner) {
+            public final class MetaGetF12Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Float> {
+              private MetaGetF12Method(MetaTestingMetaModelClass owner) {
                 super("getF12",metaType(java.lang.Float.class),owner);
               }
 
@@ -7048,8 +7135,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF13Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Long> {
-              private MetaGetF13Method(MetaClass owner) {
+            public final class MetaGetF13Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Long> {
+              private MetaGetF13Method(MetaTestingMetaModelClass owner) {
                 super("getF13",metaType(java.lang.Long.class),owner);
               }
 
@@ -7065,8 +7152,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF14Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Boolean> {
-              private MetaGetF14Method(MetaClass owner) {
+            public final class MetaGetF14Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Boolean> {
+              private MetaGetF14Method(MetaTestingMetaModelClass owner) {
                 super("getF14",metaType(java.lang.Boolean.class),owner);
               }
 
@@ -7082,8 +7169,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF15Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Character> {
-              private MetaGetF15Method(MetaClass owner) {
+            public final class MetaGetF15Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Character> {
+              private MetaGetF15Method(MetaTestingMetaModelClass owner) {
                 super("getF15",metaType(java.lang.Character.class),owner);
               }
 
@@ -7099,8 +7186,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF16Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, String> {
-              private MetaGetF16Method(MetaClass owner) {
+            public final class MetaGetF16Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.String> {
+              private MetaGetF16Method(MetaTestingMetaModelClass owner) {
                 super("getF16",metaType(java.lang.String.class),owner);
               }
 
@@ -7116,8 +7203,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF17Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, int[]> {
-              private MetaGetF17Method(MetaClass owner) {
+            public final class MetaGetF17Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, int[]> {
+              private MetaGetF17Method(MetaTestingMetaModelClass owner) {
                 super("getF17",metaArray(int[].class, int[]::new, metaType(int.class)),owner);
               }
 
@@ -7133,8 +7220,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF18Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, short[]> {
-              private MetaGetF18Method(MetaClass owner) {
+            public final class MetaGetF18Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, short[]> {
+              private MetaGetF18Method(MetaTestingMetaModelClass owner) {
                 super("getF18",metaArray(short[].class, short[]::new, metaType(short.class)),owner);
               }
 
@@ -7150,8 +7237,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF19Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, double[]> {
-              private MetaGetF19Method(MetaClass owner) {
+            public final class MetaGetF19Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, double[]> {
+              private MetaGetF19Method(MetaTestingMetaModelClass owner) {
                 super("getF19",metaArray(double[].class, double[]::new, metaType(double.class)),owner);
               }
 
@@ -7167,8 +7254,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF20Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, float[]> {
-              private MetaGetF20Method(MetaClass owner) {
+            public final class MetaGetF20Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, float[]> {
+              private MetaGetF20Method(MetaTestingMetaModelClass owner) {
                 super("getF20",metaArray(float[].class, float[]::new, metaType(float.class)),owner);
               }
 
@@ -7184,8 +7271,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF21Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, long[]> {
-              private MetaGetF21Method(MetaClass owner) {
+            public final class MetaGetF21Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, long[]> {
+              private MetaGetF21Method(MetaTestingMetaModelClass owner) {
                 super("getF21",metaArray(long[].class, long[]::new, metaType(long.class)),owner);
               }
 
@@ -7201,8 +7288,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF22Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, boolean[]> {
-              private MetaGetF22Method(MetaClass owner) {
+            public final class MetaGetF22Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, boolean[]> {
+              private MetaGetF22Method(MetaTestingMetaModelClass owner) {
                 super("getF22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),owner);
               }
 
@@ -7218,8 +7305,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF23Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, char[]> {
-              private MetaGetF23Method(MetaClass owner) {
+            public final class MetaGetF23Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, char[]> {
+              private MetaGetF23Method(MetaTestingMetaModelClass owner) {
                 super("getF23",metaArray(char[].class, char[]::new, metaType(char.class)),owner);
               }
 
@@ -7235,8 +7322,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF24Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, byte[]> {
-              private MetaGetF24Method(MetaClass owner) {
+            public final class MetaGetF24Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, byte[]> {
+              private MetaGetF24Method(MetaTestingMetaModelClass owner) {
                 super("getF24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),owner);
               }
 
@@ -7252,8 +7339,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF25Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Integer[]> {
-              private MetaGetF25Method(MetaClass owner) {
+            public final class MetaGetF25Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Integer[]> {
+              private MetaGetF25Method(MetaTestingMetaModelClass owner) {
                 super("getF25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),owner);
               }
 
@@ -7269,8 +7356,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF26Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Short[]> {
-              private MetaGetF26Method(MetaClass owner) {
+            public final class MetaGetF26Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Short[]> {
+              private MetaGetF26Method(MetaTestingMetaModelClass owner) {
                 super("getF26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),owner);
               }
 
@@ -7286,8 +7373,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF27Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Double[]> {
-              private MetaGetF27Method(MetaClass owner) {
+            public final class MetaGetF27Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Double[]> {
+              private MetaGetF27Method(MetaTestingMetaModelClass owner) {
                 super("getF27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),owner);
               }
 
@@ -7303,8 +7390,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF28Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Float[]> {
-              private MetaGetF28Method(MetaClass owner) {
+            public final class MetaGetF28Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Float[]> {
+              private MetaGetF28Method(MetaTestingMetaModelClass owner) {
                 super("getF28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),owner);
               }
 
@@ -7320,8 +7407,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF29Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Long[]> {
-              private MetaGetF29Method(MetaClass owner) {
+            public final class MetaGetF29Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Long[]> {
+              private MetaGetF29Method(MetaTestingMetaModelClass owner) {
                 super("getF29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),owner);
               }
 
@@ -7337,8 +7424,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF30Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Boolean[]> {
-              private MetaGetF30Method(MetaClass owner) {
+            public final class MetaGetF30Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Boolean[]> {
+              private MetaGetF30Method(MetaTestingMetaModelClass owner) {
                 super("getF30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),owner);
               }
 
@@ -7354,8 +7441,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF31Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Character[]> {
-              private MetaGetF31Method(MetaClass owner) {
+            public final class MetaGetF31Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.Character[]> {
+              private MetaGetF31Method(MetaTestingMetaModelClass owner) {
                 super("getF31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),owner);
               }
 
@@ -7371,8 +7458,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF32Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, String[]> {
-              private MetaGetF32Method(MetaClass owner) {
+            public final class MetaGetF32Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.String[]> {
+              private MetaGetF32Method(MetaTestingMetaModelClass owner) {
                 super("getF32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),owner);
               }
 
@@ -7388,8 +7475,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF33Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<String>> {
-              private MetaGetF33Method(MetaClass owner) {
+            public final class MetaGetF33Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<java.lang.String>> {
+              private MetaGetF33Method(MetaTestingMetaModelClass owner) {
                 super("getF33",metaType(java.util.List.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7405,8 +7492,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF34Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Set<String>> {
-              private MetaGetF34Method(MetaClass owner) {
+            public final class MetaGetF34Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Set<java.lang.String>> {
+              private MetaGetF34Method(MetaTestingMetaModelClass owner) {
                 super("getF34",metaType(java.util.Set.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7422,8 +7509,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF35Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Collection<String>> {
-              private MetaGetF35Method(MetaClass owner) {
+            public final class MetaGetF35Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Collection<java.lang.String>> {
+              private MetaGetF35Method(MetaTestingMetaModelClass owner) {
                 super("getF35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7439,8 +7526,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF36Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, ImmutableArray<String>> {
-              private MetaGetF36Method(MetaClass owner) {
+            public final class MetaGetF36Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.core.collection.ImmutableArray<java.lang.String>> {
+              private MetaGetF36Method(MetaTestingMetaModelClass owner) {
                 super("getF36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7456,8 +7543,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF37Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, ImmutableSet<String>> {
-              private MetaGetF37Method(MetaClass owner) {
+            public final class MetaGetF37Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.core.collection.ImmutableSet<java.lang.String>> {
+              private MetaGetF37Method(MetaTestingMetaModelClass owner) {
                 super("getF37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7473,8 +7560,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF38Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Supplier<String>> {
-              private MetaGetF38Method(MetaClass owner) {
+            public final class MetaGetF38Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.function.Supplier<java.lang.String>> {
+              private MetaGetF38Method(MetaTestingMetaModelClass owner) {
                 super("getF38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7490,8 +7577,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF39Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, LazyProperty<String>> {
-              private MetaGetF39Method(MetaClass owner) {
+            public final class MetaGetF39Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.core.property.LazyProperty<java.lang.String>> {
+              private MetaGetF39Method(MetaTestingMetaModelClass owner) {
                 super("getF39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7507,8 +7594,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF40Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<int[]>> {
-              private MetaGetF40Method(MetaClass owner) {
+            public final class MetaGetF40Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<int[]>> {
+              private MetaGetF40Method(MetaTestingMetaModelClass owner) {
                 super("getF40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),owner);
               }
 
@@ -7524,8 +7611,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF41Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<byte[]>> {
-              private MetaGetF41Method(MetaClass owner) {
+            public final class MetaGetF41Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<byte[]>> {
+              private MetaGetF41Method(MetaTestingMetaModelClass owner) {
                 super("getF41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),owner);
               }
 
@@ -7541,8 +7628,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF42Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<String[]>> {
-              private MetaGetF42Method(MetaClass owner) {
+            public final class MetaGetF42Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<java.lang.String[]>> {
+              private MetaGetF42Method(MetaTestingMetaModelClass owner) {
                 super("getF42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),owner);
               }
 
@@ -7558,8 +7645,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF43Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<byte[]>[]> {
-              private MetaGetF43Method(MetaClass owner) {
+            public final class MetaGetF43Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<byte[]>[]> {
+              private MetaGetF43Method(MetaTestingMetaModelClass owner) {
                 super("getF43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),owner);
               }
 
@@ -7575,8 +7662,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF44Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<int[]>[]> {
-              private MetaGetF44Method(MetaClass owner) {
+            public final class MetaGetF44Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<int[]>[]> {
+              private MetaGetF44Method(MetaTestingMetaModelClass owner) {
                 super("getF44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),owner);
               }
 
@@ -7592,8 +7679,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF45Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<String[]>[]> {
-              private MetaGetF45Method(MetaClass owner) {
+            public final class MetaGetF45Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<java.lang.String[]>[]> {
+              private MetaGetF45Method(MetaTestingMetaModelClass owner) {
                 super("getF45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),owner);
               }
 
@@ -7609,8 +7696,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF46Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<List<String>>> {
-              private MetaGetF46Method(MetaClass owner) {
+            public final class MetaGetF46Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<java.util.List<java.lang.String>>> {
+              private MetaGetF46Method(MetaTestingMetaModelClass owner) {
                 super("getF46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),owner);
               }
 
@@ -7626,8 +7713,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF47Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<List<String>[]>> {
-              private MetaGetF47Method(MetaClass owner) {
+            public final class MetaGetF47Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<java.util.List<java.lang.String>[]>> {
+              private MetaGetF47Method(MetaTestingMetaModelClass owner) {
                 super("getF47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),owner);
               }
 
@@ -7643,8 +7730,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF48Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Map<Integer, String>> {
-              private MetaGetF48Method(MetaClass owner) {
+            public final class MetaGetF48Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Map<java.lang.Integer, java.lang.String>> {
+              private MetaGetF48Method(MetaTestingMetaModelClass owner) {
                 super("getF48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),owner);
               }
 
@@ -7660,8 +7747,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF49Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Map<String, String[]>> {
-              private MetaGetF49Method(MetaClass owner) {
+            public final class MetaGetF49Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Map<java.lang.String, java.lang.String[]>> {
+              private MetaGetF49Method(MetaTestingMetaModelClass owner) {
                 super("getF49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),owner);
               }
 
@@ -7677,8 +7764,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF50Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Map<String, List<String>>> {
-              private MetaGetF50Method(MetaClass owner) {
+            public final class MetaGetF50Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> {
+              private MetaGetF50Method(MetaTestingMetaModelClass owner) {
                 super("getF50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),owner);
               }
 
@@ -7694,8 +7781,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF51Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Map<String, Map<String, String>[]>> {
-              private MetaGetF51Method(MetaClass owner) {
+            public final class MetaGetF51Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> {
+              private MetaGetF51Method(MetaTestingMetaModelClass owner) {
                 super("getF51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),owner);
               }
 
@@ -7711,8 +7798,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF52Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, ImmutableMap<String, Map<String, String>[]>> {
-              private MetaGetF52Method(MetaClass owner) {
+            public final class MetaGetF52Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> {
+              private MetaGetF52Method(MetaTestingMetaModelClass owner) {
                 super("getF52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),owner);
               }
 
@@ -7728,8 +7815,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF53Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, TestingMetaModel> {
-              private MetaGetF53Method(MetaClass owner) {
+            public final class MetaGetF53Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.meta.test.TestingMetaModel> {
+              private MetaGetF53Method(MetaTestingMetaModelClass owner) {
                 super("getF53",metaType(io.art.meta.test.TestingMetaModel.class),owner);
               }
 
@@ -7745,8 +7832,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF54Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, LocalDateTime> {
-              private MetaGetF54Method(MetaClass owner) {
+            public final class MetaGetF54Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.time.LocalDateTime> {
+              private MetaGetF54Method(MetaTestingMetaModelClass owner) {
                 super("getF54",metaType(java.time.LocalDateTime.class),owner);
               }
 
@@ -7762,8 +7849,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF55Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, ZonedDateTime> {
-              private MetaGetF55Method(MetaClass owner) {
+            public final class MetaGetF55Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.time.ZonedDateTime> {
+              private MetaGetF55Method(MetaTestingMetaModelClass owner) {
                 super("getF55",metaType(java.time.ZonedDateTime.class),owner);
               }
 
@@ -7779,8 +7866,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF56Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Duration> {
-              private MetaGetF56Method(MetaClass owner) {
+            public final class MetaGetF56Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.time.Duration> {
+              private MetaGetF56Method(MetaTestingMetaModelClass owner) {
                 super("getF56",metaType(java.time.Duration.class),owner);
               }
 
@@ -7796,8 +7883,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF57Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, TestingMetaModel.ModelEnum> {
-              private MetaGetF57Method(MetaClass owner) {
+            public final class MetaGetF57Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, io.art.meta.test.TestingMetaModel.ModelEnum> {
+              private MetaGetF57Method(MetaTestingMetaModelClass owner) {
                 super("getF57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),owner);
               }
 
@@ -7813,8 +7900,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF58Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Optional<List<LazyProperty<String>>>> {
-              private MetaGetF58Method(MetaClass owner) {
+            public final class MetaGetF58Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> {
+              private MetaGetF58Method(MetaTestingMetaModelClass owner) {
                 super("getF58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),owner);
               }
 
@@ -7830,8 +7917,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF59Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, List<TestingMetaModel>> {
-              private MetaGetF59Method(MetaClass owner) {
+            public final class MetaGetF59Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.List<io.art.meta.test.TestingMetaModel>> {
+              private MetaGetF59Method(MetaTestingMetaModelClass owner) {
                 super("getF59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),owner);
               }
 
@@ -7847,8 +7934,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF60Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Set<TestingMetaModel>> {
-              private MetaGetF60Method(MetaClass owner) {
+            public final class MetaGetF60Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Set<io.art.meta.test.TestingMetaModel>> {
+              private MetaGetF60Method(MetaTestingMetaModelClass owner) {
                 super("getF60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),owner);
               }
 
@@ -7864,8 +7951,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF61Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Map<String, TestingMetaModel>> {
-              private MetaGetF61Method(MetaClass owner) {
+            public final class MetaGetF61Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> {
+              private MetaGetF61Method(MetaTestingMetaModelClass owner) {
                 super("getF61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),owner);
               }
 
@@ -7881,8 +7968,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF62Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Mono<String>> {
-              private MetaGetF62Method(MetaClass owner) {
+            public final class MetaGetF62Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, reactor.core.publisher.Mono<java.lang.String>> {
+              private MetaGetF62Method(MetaTestingMetaModelClass owner) {
                 super("getF62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7898,8 +7985,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF63Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Flux<String>> {
-              private MetaGetF63Method(MetaClass owner) {
+            public final class MetaGetF63Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, reactor.core.publisher.Flux<java.lang.String>> {
+              private MetaGetF63Method(MetaTestingMetaModelClass owner) {
                 super("getF63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7915,8 +8002,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF64Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Stream<String>> {
-              private MetaGetF64Method(MetaClass owner) {
+            public final class MetaGetF64Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.util.stream.Stream<java.lang.String>> {
+              private MetaGetF64Method(MetaTestingMetaModelClass owner) {
                 super("getF64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),owner);
               }
 
@@ -7932,8 +8019,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF65Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, Mono<String[]>> {
-              private MetaGetF65Method(MetaClass owner) {
+            public final class MetaGetF65Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, reactor.core.publisher.Mono<java.lang.String[]>> {
+              private MetaGetF65Method(MetaTestingMetaModelClass owner) {
                 super("getF65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),owner);
               }
 
@@ -7949,8 +8036,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF66Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, String> {
-              private MetaGetF66Method(MetaClass owner) {
+            public final class MetaGetF66Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.String> {
+              private MetaGetF66Method(MetaTestingMetaModelClass owner) {
                 super("getF66",metaType(java.lang.String.class),owner);
               }
 
@@ -7966,8 +8053,8 @@ public class MetaMetaTest extends MetaLibrary {
               }
             }
 
-            public final class MetaGetF67Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel, String> {
-              private MetaGetF67Method(MetaClass owner) {
+            public final class MetaGetF67Method extends InstanceMetaMethod<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel, java.lang.String> {
+              private MetaGetF67Method(MetaTestingMetaModelClass owner) {
                 super("getF67",metaType(java.lang.String.class),owner);
               }
 
@@ -7986,139 +8073,139 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaTestingMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
               private static final io.art.core.property.LazyProperty<MetaTestingMetaModelBuilderClass> self = MetaClass.self(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class);
 
-              private final MetaField<MetaClass<?>, Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
 
-              private final MetaField<MetaClass<?>, Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
 
-              private final MetaField<MetaClass<?>, Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
 
-              private final MetaField<MetaClass<?>, Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
 
-              private final MetaField<MetaClass<?>, Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
 
-              private final MetaField<MetaClass<?>, Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-              private final MetaField<MetaClass<?>, Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
 
-              private final MetaField<MetaClass<?>, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
 
-              private final MetaField<MetaClass<?>, Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-              private final MetaField<MetaClass<?>, Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-              private final MetaField<MetaClass<?>, Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-              private final MetaField<MetaClass<?>, Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-              private final MetaField<MetaClass<?>, Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-              private final MetaField<MetaClass<?>, Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-              private final MetaField<MetaClass<?>, Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-              private final MetaField<MetaClass<?>, String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaClass<?>, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-              private final MetaField<MetaClass<?>, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-              private final MetaField<MetaClass<?>, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-              private final MetaField<MetaClass<?>, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-              private final MetaField<MetaClass<?>, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-              private final MetaField<MetaClass<?>, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-              private final MetaField<MetaClass<?>, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-              private final MetaField<MetaClass<?>, byte[]> f24Field = register(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, byte[]> f24Field = register(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Integer[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Short[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Double[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Float[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Long[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Boolean[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Character[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-              private final MetaField<MetaClass<?>, String[]> f32Field = register(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String[]> f32Field = register(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, List<String>> f33Field = register(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Set<String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Collection<String>> f35Field = register(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Collection<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, ImmutableArray<String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, ImmutableSet<String>> f37Field = register(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Supplier<String>> f38Field = register(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.function.Supplier<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, LazyProperty<String>> f39Field = register(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field = register(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, List<int[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<byte[]>> f41Field = register(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>> f41Field = register(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<String[]>> f42Field = register(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>> f42Field = register(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<byte[]>[]> f43Field = register(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>[]> f43Field = register(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<int[]>[]> f44Field = register(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>[]> f44Field = register(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<String[]>[]> f45Field = register(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>[]> f45Field = register(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<List<String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, List<List<String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, Map<Integer, String>> f48Field = register(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field = register(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, String[]>> f49Field = register(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field = register(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, List<String>>> f50Field = register(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field = register(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f51Field = register(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field = register(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f52Field = register(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field = register(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, TestingMetaModel> f53Field = register(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel> f53Field = register(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
 
-              private final MetaField<MetaClass<?>, LocalDateTime> f54Field = register(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.LocalDateTime> f54Field = register(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
 
-              private final MetaField<MetaClass<?>, ZonedDateTime> f55Field = register(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.ZonedDateTime> f55Field = register(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
 
-              private final MetaField<MetaClass<?>, Duration> f56Field = register(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.Duration> f56Field = register(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
 
-              private final MetaField<MetaClass<?>, TestingMetaModel.ModelEnum> f57Field = register(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field = register(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
 
-              private final MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f58Field = register(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field = register(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaClass<?>, List<TestingMetaModel>> f59Field = register(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field = register(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Set<TestingMetaModel>> f60Field = register(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field = register(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Map<String, TestingMetaModel>> f61Field = register(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field = register(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Mono<String>> f62Field = register(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f62Field = register(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Flux<String>> f63Field = register(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f63Field = register(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Stream<String>> f64Field = register(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.stream.Stream<java.lang.String>> f64Field = register(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaClass<?>, Mono<String[]>> f65Field = register(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field = register(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaClass<?>, String> f66Field = register(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f66Field = register(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaClass<?>, String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
 
               private final MetaF1Method f1Method = register(new MetaF1Method(this));
 
@@ -8264,276 +8351,302 @@ public class MetaMetaTest extends MetaLibrary {
                 return self.get();
               }
 
-              public MetaField<MetaClass<?>, Integer> f1Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f1Field() {
                 return f1Field;
               }
 
-              public MetaField<MetaClass<?>, Short> f2Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f2Field() {
                 return f2Field;
               }
 
-              public MetaField<MetaClass<?>, Double> f3Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f3Field() {
                 return f3Field;
               }
 
-              public MetaField<MetaClass<?>, Float> f4Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f4Field() {
                 return f4Field;
               }
 
-              public MetaField<MetaClass<?>, Long> f5Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f5Field() {
                 return f5Field;
               }
 
-              public MetaField<MetaClass<?>, Boolean> f6Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f6Field() {
                 return f6Field;
               }
 
-              public MetaField<MetaClass<?>, Character> f7Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f7Field() {
                 return f7Field;
               }
 
-              public MetaField<MetaClass<?>, Byte> f8Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, Byte> f8Field() {
                 return f8Field;
               }
 
-              public MetaField<MetaClass<?>, Integer> f9Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f9Field() {
                 return f9Field;
               }
 
-              public MetaField<MetaClass<?>, Short> f10Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f10Field() {
                 return f10Field;
               }
 
-              public MetaField<MetaClass<?>, Double> f11Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f11Field() {
                 return f11Field;
               }
 
-              public MetaField<MetaClass<?>, Float> f12Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f12Field() {
                 return f12Field;
               }
 
-              public MetaField<MetaClass<?>, Long> f13Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f13Field() {
                 return f13Field;
               }
 
-              public MetaField<MetaClass<?>, Boolean> f14Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f14Field() {
                 return f14Field;
               }
 
-              public MetaField<MetaClass<?>, Character> f15Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f15Field() {
                 return f15Field;
               }
 
-              public MetaField<MetaClass<?>, String> f16Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f16Field() {
                 return f16Field;
               }
 
-              public MetaField<MetaClass<?>, int[]> f17Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, int[]> f17Field() {
                 return f17Field;
               }
 
-              public MetaField<MetaClass<?>, short[]> f18Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, short[]> f18Field() {
                 return f18Field;
               }
 
-              public MetaField<MetaClass<?>, double[]> f19Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, double[]> f19Field() {
                 return f19Field;
               }
 
-              public MetaField<MetaClass<?>, float[]> f20Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, float[]> f20Field() {
                 return f20Field;
               }
 
-              public MetaField<MetaClass<?>, long[]> f21Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, long[]> f21Field() {
                 return f21Field;
               }
 
-              public MetaField<MetaClass<?>, boolean[]> f22Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, boolean[]> f22Field() {
                 return f22Field;
               }
 
-              public MetaField<MetaClass<?>, char[]> f23Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, char[]> f23Field() {
                 return f23Field;
               }
 
-              public MetaField<MetaClass<?>, byte[]> f24Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, byte[]> f24Field() {
                 return f24Field;
               }
 
-              public MetaField<MetaClass<?>, Integer[]> f25Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer[]> f25Field() {
                 return f25Field;
               }
 
-              public MetaField<MetaClass<?>, Short[]> f26Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short[]> f26Field() {
                 return f26Field;
               }
 
-              public MetaField<MetaClass<?>, Double[]> f27Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double[]> f27Field() {
                 return f27Field;
               }
 
-              public MetaField<MetaClass<?>, Float[]> f28Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float[]> f28Field() {
                 return f28Field;
               }
 
-              public MetaField<MetaClass<?>, Long[]> f29Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long[]> f29Field() {
                 return f29Field;
               }
 
-              public MetaField<MetaClass<?>, Boolean[]> f30Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean[]> f30Field() {
                 return f30Field;
               }
 
-              public MetaField<MetaClass<?>, Character[]> f31Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character[]> f31Field() {
                 return f31Field;
               }
 
-              public MetaField<MetaClass<?>, String[]> f32Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.String[]> f32Field() {
                 return f32Field;
               }
 
-              public MetaField<MetaClass<?>, List<String>> f33Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String>> f33Field(
+                  ) {
                 return f33Field;
               }
 
-              public MetaField<MetaClass<?>, Set<String>> f34Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<java.lang.String>> f34Field(
+                  ) {
                 return f34Field;
               }
 
-              public MetaField<MetaClass<?>, Collection<String>> f35Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Collection<java.lang.String>> f35Field(
+                  ) {
                 return f35Field;
               }
 
-              public MetaField<MetaClass<?>, ImmutableArray<String>> f36Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field(
+                  ) {
                 return f36Field;
               }
 
-              public MetaField<MetaClass<?>, ImmutableSet<String>> f37Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field(
+                  ) {
                 return f37Field;
               }
 
-              public MetaField<MetaClass<?>, Supplier<String>> f38Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.function.Supplier<java.lang.String>> f38Field(
+                  ) {
                 return f38Field;
               }
 
-              public MetaField<MetaClass<?>, LazyProperty<String>> f39Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field(
+                  ) {
                 return f39Field;
               }
 
-              public MetaField<MetaClass<?>, List<int[]>> f40Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>> f40Field() {
                 return f40Field;
               }
 
-              public MetaField<MetaClass<?>, List<byte[]>> f41Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>> f41Field(
+                  ) {
                 return f41Field;
               }
 
-              public MetaField<MetaClass<?>, List<String[]>> f42Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>> f42Field(
+                  ) {
                 return f42Field;
               }
 
-              public MetaField<MetaClass<?>, List<byte[]>[]> f43Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>[]> f43Field(
+                  ) {
                 return f43Field;
               }
 
-              public MetaField<MetaClass<?>, List<int[]>[]> f44Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>[]> f44Field(
+                  ) {
                 return f44Field;
               }
 
-              public MetaField<MetaClass<?>, List<String[]>[]> f45Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>[]> f45Field(
+                  ) {
                 return f45Field;
               }
 
-              public MetaField<MetaClass<?>, List<List<String>>> f46Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>>> f46Field(
+                  ) {
                 return f46Field;
               }
 
-              public MetaField<MetaClass<?>, List<List<String>[]>> f47Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field(
+                  ) {
                 return f47Field;
               }
 
-              public MetaField<MetaClass<?>, Map<Integer, String>> f48Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field(
+                  ) {
                 return f48Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, String[]>> f49Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field(
+                  ) {
                 return f49Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, List<String>>> f50Field(
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field(
                   ) {
                 return f50Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, Map<String, String>[]>> f51Field(
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field(
                   ) {
                 return f51Field;
               }
 
-              public MetaField<MetaClass<?>, ImmutableMap<String, Map<String, String>[]>> f52Field(
+              public MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field(
                   ) {
                 return f52Field;
               }
 
-              public MetaField<MetaClass<?>, TestingMetaModel> f53Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel> f53Field(
+                  ) {
                 return f53Field;
               }
 
-              public MetaField<MetaClass<?>, LocalDateTime> f54Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.time.LocalDateTime> f54Field(
+                  ) {
                 return f54Field;
               }
 
-              public MetaField<MetaClass<?>, ZonedDateTime> f55Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.time.ZonedDateTime> f55Field(
+                  ) {
                 return f55Field;
               }
 
-              public MetaField<MetaClass<?>, Duration> f56Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.time.Duration> f56Field() {
                 return f56Field;
               }
 
-              public MetaField<MetaClass<?>, TestingMetaModel.ModelEnum> f57Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field(
+                  ) {
                 return f57Field;
               }
 
-              public MetaField<MetaClass<?>, Optional<List<LazyProperty<String>>>> f58Field(
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field(
                   ) {
                 return f58Field;
               }
 
-              public MetaField<MetaClass<?>, List<TestingMetaModel>> f59Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field(
+                  ) {
                 return f59Field;
               }
 
-              public MetaField<MetaClass<?>, Set<TestingMetaModel>> f60Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field(
+                  ) {
                 return f60Field;
               }
 
-              public MetaField<MetaClass<?>, Map<String, TestingMetaModel>> f61Field(
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field(
                   ) {
                 return f61Field;
               }
 
-              public MetaField<MetaClass<?>, Mono<String>> f62Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f62Field(
+                  ) {
                 return f62Field;
               }
 
-              public MetaField<MetaClass<?>, Flux<String>> f63Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f63Field(
+                  ) {
                 return f63Field;
               }
 
-              public MetaField<MetaClass<?>, Stream<String>> f64Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.util.stream.Stream<java.lang.String>> f64Field(
+                  ) {
                 return f64Field;
               }
 
-              public MetaField<MetaClass<?>, Mono<String[]>> f65Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field(
+                  ) {
                 return f65Field;
               }
 
-              public MetaField<MetaClass<?>, String> f66Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f66Field() {
                 return f66Field;
               }
 
-              public MetaField<MetaClass<?>, String> f67Field() {
+              public MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f67Field() {
                 return f67Field;
               }
 
@@ -8809,10 +8922,10 @@ public class MetaMetaTest extends MetaLibrary {
                 return buildMethod;
               }
 
-              public final class MetaF1Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF1Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Integer> f1Parameter = register(new MetaParameter<>(0, "f1",metaType(int.class)));
 
-                private MetaF1Method(MetaClass owner) {
+                private MetaF1Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f1",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8835,10 +8948,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF2Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF2Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Short> f2Parameter = register(new MetaParameter<>(0, "f2",metaType(short.class)));
 
-                private MetaF2Method(MetaClass owner) {
+                private MetaF2Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f2",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8861,10 +8974,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF3Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF3Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Double> f3Parameter = register(new MetaParameter<>(0, "f3",metaType(double.class)));
 
-                private MetaF3Method(MetaClass owner) {
+                private MetaF3Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f3",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8887,10 +9000,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF4Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF4Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Float> f4Parameter = register(new MetaParameter<>(0, "f4",metaType(float.class)));
 
-                private MetaF4Method(MetaClass owner) {
+                private MetaF4Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f4",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8913,10 +9026,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF5Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF5Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Long> f5Parameter = register(new MetaParameter<>(0, "f5",metaType(long.class)));
 
-                private MetaF5Method(MetaClass owner) {
+                private MetaF5Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f5",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8939,10 +9052,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF6Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF6Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Boolean> f6Parameter = register(new MetaParameter<>(0, "f6",metaType(boolean.class)));
 
-                private MetaF6Method(MetaClass owner) {
+                private MetaF6Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f6",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8965,10 +9078,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF7Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF7Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Character> f7Parameter = register(new MetaParameter<>(0, "f7",metaType(char.class)));
 
-                private MetaF7Method(MetaClass owner) {
+                private MetaF7Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f7",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -8991,10 +9104,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF8Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF8Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<Byte> f8Parameter = register(new MetaParameter<>(0, "f8",metaType(byte.class)));
 
-                private MetaF8Method(MetaClass owner) {
+                private MetaF8Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f8",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9017,10 +9130,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF9Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF9Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Integer> f9Parameter = register(new MetaParameter<>(0, "f9",metaType(java.lang.Integer.class)));
 
-                private MetaF9Method(MetaClass owner) {
+                private MetaF9Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f9",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9043,10 +9156,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF10Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF10Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Short> f10Parameter = register(new MetaParameter<>(0, "f10",metaType(java.lang.Short.class)));
 
-                private MetaF10Method(MetaClass owner) {
+                private MetaF10Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f10",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9069,10 +9182,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF11Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF11Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Double> f11Parameter = register(new MetaParameter<>(0, "f11",metaType(java.lang.Double.class)));
 
-                private MetaF11Method(MetaClass owner) {
+                private MetaF11Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f11",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9095,10 +9208,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF12Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF12Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Float> f12Parameter = register(new MetaParameter<>(0, "f12",metaType(java.lang.Float.class)));
 
-                private MetaF12Method(MetaClass owner) {
+                private MetaF12Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f12",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9121,10 +9234,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF13Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF13Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Long> f13Parameter = register(new MetaParameter<>(0, "f13",metaType(java.lang.Long.class)));
 
-                private MetaF13Method(MetaClass owner) {
+                private MetaF13Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f13",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9147,10 +9260,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF14Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF14Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Boolean> f14Parameter = register(new MetaParameter<>(0, "f14",metaType(java.lang.Boolean.class)));
 
-                private MetaF14Method(MetaClass owner) {
+                private MetaF14Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f14",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9173,10 +9286,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF15Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF15Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Character> f15Parameter = register(new MetaParameter<>(0, "f15",metaType(java.lang.Character.class)));
 
-                private MetaF15Method(MetaClass owner) {
+                private MetaF15Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f15",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9199,10 +9312,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF16Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF16Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.String> f16Parameter = register(new MetaParameter<>(0, "f16",metaType(java.lang.String.class)));
 
-                private MetaF16Method(MetaClass owner) {
+                private MetaF16Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f16",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9225,10 +9338,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF17Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF17Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<int[]> f17Parameter = register(new MetaParameter<>(0, "f17",metaArray(int[].class, int[]::new, metaType(int.class))));
 
-                private MetaF17Method(MetaClass owner) {
+                private MetaF17Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f17",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9251,10 +9364,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF18Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF18Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<short[]> f18Parameter = register(new MetaParameter<>(0, "f18",metaArray(short[].class, short[]::new, metaType(short.class))));
 
-                private MetaF18Method(MetaClass owner) {
+                private MetaF18Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f18",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9277,10 +9390,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF19Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF19Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<double[]> f19Parameter = register(new MetaParameter<>(0, "f19",metaArray(double[].class, double[]::new, metaType(double.class))));
 
-                private MetaF19Method(MetaClass owner) {
+                private MetaF19Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f19",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9303,10 +9416,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF20Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF20Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<float[]> f20Parameter = register(new MetaParameter<>(0, "f20",metaArray(float[].class, float[]::new, metaType(float.class))));
 
-                private MetaF20Method(MetaClass owner) {
+                private MetaF20Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f20",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9329,10 +9442,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF21Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF21Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<long[]> f21Parameter = register(new MetaParameter<>(0, "f21",metaArray(long[].class, long[]::new, metaType(long.class))));
 
-                private MetaF21Method(MetaClass owner) {
+                private MetaF21Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f21",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9355,10 +9468,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF22Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF22Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<boolean[]> f22Parameter = register(new MetaParameter<>(0, "f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class))));
 
-                private MetaF22Method(MetaClass owner) {
+                private MetaF22Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f22",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9381,10 +9494,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF23Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF23Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<char[]> f23Parameter = register(new MetaParameter<>(0, "f23",metaArray(char[].class, char[]::new, metaType(char.class))));
 
-                private MetaF23Method(MetaClass owner) {
+                private MetaF23Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f23",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9407,10 +9520,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF24Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF24Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<byte[]> f24Parameter = register(new MetaParameter<>(0, "f24",metaArray(byte[].class, byte[]::new, metaType(byte.class))));
 
-                private MetaF24Method(MetaClass owner) {
+                private MetaF24Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f24",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9433,10 +9546,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF25Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF25Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Integer[]> f25Parameter = register(new MetaParameter<>(0, "f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class))));
 
-                private MetaF25Method(MetaClass owner) {
+                private MetaF25Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f25",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9459,10 +9572,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF26Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF26Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Short[]> f26Parameter = register(new MetaParameter<>(0, "f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class))));
 
-                private MetaF26Method(MetaClass owner) {
+                private MetaF26Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f26",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9485,10 +9598,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF27Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF27Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Double[]> f27Parameter = register(new MetaParameter<>(0, "f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class))));
 
-                private MetaF27Method(MetaClass owner) {
+                private MetaF27Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f27",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9511,10 +9624,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF28Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF28Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Float[]> f28Parameter = register(new MetaParameter<>(0, "f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class))));
 
-                private MetaF28Method(MetaClass owner) {
+                private MetaF28Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f28",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9537,10 +9650,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF29Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF29Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Long[]> f29Parameter = register(new MetaParameter<>(0, "f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class))));
 
-                private MetaF29Method(MetaClass owner) {
+                private MetaF29Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f29",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9563,10 +9676,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF30Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF30Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Boolean[]> f30Parameter = register(new MetaParameter<>(0, "f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class))));
 
-                private MetaF30Method(MetaClass owner) {
+                private MetaF30Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f30",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9589,10 +9702,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF31Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF31Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.Character[]> f31Parameter = register(new MetaParameter<>(0, "f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class))));
 
-                private MetaF31Method(MetaClass owner) {
+                private MetaF31Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f31",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9615,10 +9728,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF32Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF32Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.String[]> f32Parameter = register(new MetaParameter<>(0, "f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))));
 
-                private MetaF32Method(MetaClass owner) {
+                private MetaF32Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f32",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9641,10 +9754,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF33Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF33Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<java.lang.String>> f33Parameter = register(new MetaParameter<>(0, "f33",metaType(java.util.List.class,metaType(java.lang.String.class))));
 
-                private MetaF33Method(MetaClass owner) {
+                private MetaF33Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f33",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9667,10 +9780,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF34Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF34Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Set<java.lang.String>> f34Parameter = register(new MetaParameter<>(0, "f34",metaType(java.util.Set.class,metaType(java.lang.String.class))));
 
-                private MetaF34Method(MetaClass owner) {
+                private MetaF34Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f34",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9693,10 +9806,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF35Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF35Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Collection<java.lang.String>> f35Parameter = register(new MetaParameter<>(0, "f35",metaType(java.util.Collection.class,metaType(java.lang.String.class))));
 
-                private MetaF35Method(MetaClass owner) {
+                private MetaF35Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f35",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9719,10 +9832,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF36Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF36Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<io.art.core.collection.ImmutableArray<java.lang.String>> f36Parameter = register(new MetaParameter<>(0, "f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class))));
 
-                private MetaF36Method(MetaClass owner) {
+                private MetaF36Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f36",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9746,10 +9859,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF37Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF37Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<io.art.core.collection.ImmutableSet<java.lang.String>> f37Parameter = register(new MetaParameter<>(0, "f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class))));
 
-                private MetaF37Method(MetaClass owner) {
+                private MetaF37Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f37",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9773,10 +9886,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF38Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF38Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.function.Supplier<java.lang.String>> f38Parameter = register(new MetaParameter<>(0, "f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class))));
 
-                private MetaF38Method(MetaClass owner) {
+                private MetaF38Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f38",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9799,10 +9912,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF39Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF39Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<io.art.core.property.LazyProperty<java.lang.String>> f39Parameter = register(new MetaParameter<>(0, "f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class))));
 
-                private MetaF39Method(MetaClass owner) {
+                private MetaF39Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f39",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9826,10 +9939,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF40Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF40Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<int[]>> f40Parameter = register(new MetaParameter<>(0, "f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))));
 
-                private MetaF40Method(MetaClass owner) {
+                private MetaF40Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f40",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9852,10 +9965,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF41Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF41Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<byte[]>> f41Parameter = register(new MetaParameter<>(0, "f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
-                private MetaF41Method(MetaClass owner) {
+                private MetaF41Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f41",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9878,10 +9991,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF42Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF42Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<java.lang.String[]>> f42Parameter = register(new MetaParameter<>(0, "f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))));
 
-                private MetaF42Method(MetaClass owner) {
+                private MetaF42Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f42",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9904,10 +10017,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF43Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF43Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<byte[]>[]> f43Parameter = register(new MetaParameter<>(0, "f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))))));
 
-                private MetaF43Method(MetaClass owner) {
+                private MetaF43Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f43",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9930,10 +10043,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF44Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF44Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<int[]>[]> f44Parameter = register(new MetaParameter<>(0, "f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))))));
 
-                private MetaF44Method(MetaClass owner) {
+                private MetaF44Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f44",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9956,10 +10069,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF45Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF45Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<java.lang.String[]>[]> f45Parameter = register(new MetaParameter<>(0, "f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))))));
 
-                private MetaF45Method(MetaClass owner) {
+                private MetaF45Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f45",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -9982,10 +10095,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF46Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF46Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<java.util.List<java.lang.String>>> f46Parameter = register(new MetaParameter<>(0, "f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class)))));
 
-                private MetaF46Method(MetaClass owner) {
+                private MetaF46Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f46",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10009,10 +10122,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF47Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF47Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<java.util.List<java.lang.String>[]>> f47Parameter = register(new MetaParameter<>(0, "f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class))))));
 
-                private MetaF47Method(MetaClass owner) {
+                private MetaF47Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f47",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10036,10 +10149,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF48Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF48Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.Integer, java.lang.String>> f48Parameter = register(new MetaParameter<>(0, "f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class))));
 
-                private MetaF48Method(MetaClass owner) {
+                private MetaF48Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f48",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10063,10 +10176,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF49Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF49Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, java.lang.String[]>> f49Parameter = register(new MetaParameter<>(0, "f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))));
 
-                private MetaF49Method(MetaClass owner) {
+                private MetaF49Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f49",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10090,10 +10203,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF50Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF50Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Parameter = register(new MetaParameter<>(0, "f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class)))));
 
-                private MetaF50Method(MetaClass owner) {
+                private MetaF50Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f50",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10117,10 +10230,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF51Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF51Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Parameter = register(new MetaParameter<>(0, "f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class))))));
 
-                private MetaF51Method(MetaClass owner) {
+                private MetaF51Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f51",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10144,10 +10257,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF52Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF52Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Parameter = register(new MetaParameter<>(0, "f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class))))));
 
-                private MetaF52Method(MetaClass owner) {
+                private MetaF52Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f52",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10171,10 +10284,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF53Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF53Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<io.art.meta.test.TestingMetaModel> f53Parameter = register(new MetaParameter<>(0, "f53",metaType(io.art.meta.test.TestingMetaModel.class)));
 
-                private MetaF53Method(MetaClass owner) {
+                private MetaF53Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f53",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10197,10 +10310,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF54Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF54Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.time.LocalDateTime> f54Parameter = register(new MetaParameter<>(0, "f54",metaType(java.time.LocalDateTime.class)));
 
-                private MetaF54Method(MetaClass owner) {
+                private MetaF54Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f54",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10223,10 +10336,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF55Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF55Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.time.ZonedDateTime> f55Parameter = register(new MetaParameter<>(0, "f55",metaType(java.time.ZonedDateTime.class)));
 
-                private MetaF55Method(MetaClass owner) {
+                private MetaF55Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f55",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10249,10 +10362,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF56Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF56Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.time.Duration> f56Parameter = register(new MetaParameter<>(0, "f56",metaType(java.time.Duration.class)));
 
-                private MetaF56Method(MetaClass owner) {
+                private MetaF56Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f56",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10275,10 +10388,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF57Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF57Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<io.art.meta.test.TestingMetaModel.ModelEnum> f57Parameter = register(new MetaParameter<>(0, "f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf)));
 
-                private MetaF57Method(MetaClass owner) {
+                private MetaF57Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f57",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10301,10 +10414,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF58Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF58Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Parameter = register(new MetaParameter<>(0, "f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class))))));
 
-                private MetaF58Method(MetaClass owner) {
+                private MetaF58Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f58",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10328,10 +10441,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF59Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF59Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.List<io.art.meta.test.TestingMetaModel>> f59Parameter = register(new MetaParameter<>(0, "f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class))));
 
-                private MetaF59Method(MetaClass owner) {
+                private MetaF59Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f59",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10355,10 +10468,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF60Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF60Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Set<io.art.meta.test.TestingMetaModel>> f60Parameter = register(new MetaParameter<>(0, "f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class))));
 
-                private MetaF60Method(MetaClass owner) {
+                private MetaF60Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f60",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10382,10 +10495,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF61Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF61Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Parameter = register(new MetaParameter<>(0, "f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class))));
 
-                private MetaF61Method(MetaClass owner) {
+                private MetaF61Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f61",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10409,10 +10522,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF62Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF62Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String>> f62Parameter = register(new MetaParameter<>(0, "f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class))));
 
-                private MetaF62Method(MetaClass owner) {
+                private MetaF62Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f62",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10435,10 +10548,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF63Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF63Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<reactor.core.publisher.Flux<java.lang.String>> f63Parameter = register(new MetaParameter<>(0, "f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class))));
 
-                private MetaF63Method(MetaClass owner) {
+                private MetaF63Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f63",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10461,10 +10574,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF64Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF64Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.util.stream.Stream<java.lang.String>> f64Parameter = register(new MetaParameter<>(0, "f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class))));
 
-                private MetaF64Method(MetaClass owner) {
+                private MetaF64Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f64",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10487,10 +10600,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF65Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF65Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<reactor.core.publisher.Mono<java.lang.String[]>> f65Parameter = register(new MetaParameter<>(0, "f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))));
 
-                private MetaF65Method(MetaClass owner) {
+                private MetaF65Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f65",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10514,10 +10627,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF66Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF66Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.String> f66Parameter = register(new MetaParameter<>(0, "f66",metaType(java.lang.String.class)));
 
-                private MetaF66Method(MetaClass owner) {
+                private MetaF66Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f66",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10540,10 +10653,10 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaF67Method extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel.TestingMetaModelBuilder> {
+              public final class MetaF67Method extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
                 private final MetaParameter<java.lang.String> f67Parameter = register(new MetaParameter<>(0, "f67",metaType(java.lang.String.class)));
 
-                private MetaF67Method(MetaClass owner) {
+                private MetaF67Method(MetaTestingMetaModelBuilderClass owner) {
                   super("f67",metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class),owner);
                 }
 
@@ -10566,8 +10679,8 @@ public class MetaMetaTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaBuildMethod extends InstanceMetaMethod<MetaClass<?>, TestingMetaModel.TestingMetaModelBuilder, TestingMetaModel> {
-                private MetaBuildMethod(MetaClass owner) {
+              public final class MetaBuildMethod extends InstanceMetaMethod<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder, io.art.meta.test.TestingMetaModel> {
+                private MetaBuildMethod(MetaTestingMetaModelBuilderClass owner) {
                   super("build",metaType(io.art.meta.test.TestingMetaModel.class),owner);
                 }
 

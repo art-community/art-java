@@ -1,10 +1,10 @@
 package io.art.http.meta;
 
 import static io.art.meta.model.MetaType.metaArray;
+import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
-import io.art.http.portal.*;
 import io.art.meta.model.InstanceMetaMethod;
 import io.art.meta.model.MetaClass;
 import io.art.meta.model.MetaLibrary;
@@ -12,7 +12,6 @@ import io.art.meta.model.MetaMethod;
 import io.art.meta.model.MetaPackage;
 import io.art.meta.model.MetaParameter;
 import io.art.meta.model.MetaProxy;
-import reactor.core.publisher.*;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -86,7 +85,8 @@ public class MetaHttp extends MetaLibrary {
             }
 
             @Override
-            public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
+            public MetaProxy proxy(
+                Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
               return new MetaHttpDefaultPortalProxy(invocations);
             }
 
@@ -119,14 +119,15 @@ public class MetaHttp extends MetaLibrary {
               }
 
               @Override
-              public MetaProxy proxy(Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
+              public MetaProxy proxy(
+                  Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaHttpBuiltinCommunicatorProxy(invocations);
               }
 
-              public final class MetaExecuteMethod extends InstanceMetaMethod<MetaClass<?>, HttpDefaultPortal.HttpBuiltinCommunicator, Flux<byte[]>> {
+              public final class MetaExecuteMethod extends InstanceMetaMethod<MetaHttpBuiltinCommunicatorClass, io.art.http.portal.HttpDefaultPortal.HttpBuiltinCommunicator, reactor.core.publisher.Flux<byte[]>> {
                 private final MetaParameter<reactor.core.publisher.Flux<byte[]>> inputParameter = register(new MetaParameter<>(0, "input",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))));
 
-                private MetaExecuteMethod(MetaClass owner) {
+                private MetaExecuteMethod(MetaHttpBuiltinCommunicatorClass owner) {
                   super("execute",metaType(reactor.core.publisher.Flux.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),owner);
                 }
 
