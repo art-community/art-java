@@ -92,8 +92,8 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return configure(configurationProvider, current);
     }
 
-    private ImmutableArray<HttpRouteConfiguration> configureRoutes() {
-        ImmutableArray.Builder<HttpRouteConfiguration> routes = immutableArrayBuilder();
+    private ImmutableSet<HttpRouteConfiguration> configureRoutes() {
+        ImmutableSet.Builder<HttpRouteConfiguration> routes = ImmutableSet.immutableSetBuilder();
         for (ClassBasedConfiguration classBasedConfiguration : classBased) {
             HttpRouteConfigurationBuilder configurationBuilder = routeConfiguration().toBuilder();
             MetaClass<?> metaClass = classBasedConfiguration.serviceClass.get();

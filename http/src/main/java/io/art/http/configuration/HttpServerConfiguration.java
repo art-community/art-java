@@ -45,7 +45,7 @@ import java.util.function.*;
 @Builder(toBuilder = true)
 public class HttpServerConfiguration {
     private UnaryOperator<HttpServer> decorator;
-    private LazyProperty<ImmutableArray<HttpRouteConfiguration>> routes;
+    private LazyProperty<ImmutableSet<HttpRouteConfiguration>> routes;
     private DataFormat defaultDataFormat;
     private int port;
     private boolean verbose;
@@ -70,7 +70,7 @@ public class HttpServerConfiguration {
         configuration.decorator = UnaryOperator.identity();
         configuration.port = DEFAULT_PORT;
         configuration.host = BROADCAST_IP_ADDRESS;
-        configuration.routes = lazy(ImmutableArray::emptyImmutableArray);
+        configuration.routes = lazy(ImmutableSet::emptyImmutableSet);
         return configuration;
     }
 
@@ -89,7 +89,7 @@ public class HttpServerConfiguration {
         configuration.forward = serverListener.emit(orElse(source.getBoolean(FORWARD_KEY), current.forward));
         configuration.idleTimeout = serverListener.emit(orElse(source.getDuration(IDLE_TIMEOUT_KEY), current.idleTimeout));
         configuration.protocol = serverListener.emit(httpProtocol(source.getString(PROTOCOL_KEY), current.protocol));
-        configuration.routes = lazy(() -> merge(source.getNestedArray(ROUTES_SECTION, HttpServerConfiguration::routeConfiguration), current.routes.get()));
+        configuration.routes = lazy(() -> merge(source.getNestedArray(ROUTES_SECTION, HttpServerConfiguration::routeConfiguration).asSet(), current.routes.get()));
         configuration.ssl = serverListener.emit(orElse(source.getNested(SSL_SECTION, HttpSslConfiguration::httpSsl), current.ssl));
         return configuration;
     }

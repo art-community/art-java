@@ -37,7 +37,7 @@ public class HttpMessageBuilder {
             message.append(format(HTTP_CONNECTORS_PART, connectorsString));
         }
 
-        ImmutableArray<HttpRouteConfiguration> roues = configuration.getHttpServer().getRoutes().get();
+        ImmutableSet<HttpRouteConfiguration> roues = configuration.getHttpServer().getRoutes().get();
         if (!roues.isEmpty()) {
             String routesString = roues
                     .stream()

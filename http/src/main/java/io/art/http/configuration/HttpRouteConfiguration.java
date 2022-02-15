@@ -43,6 +43,7 @@ import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import java.nio.file.*;
 
 @Getter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Builder(toBuilder = true)
 public class HttpRouteConfiguration {
     private HttpServingUri uri;
@@ -51,6 +52,8 @@ public class HttpRouteConfiguration {
     private HttpWsRouteConfiguration wsConfiguration;
     private HttpPathRouteConfiguration pathConfiguration;
     private ImmutableSet<String> pathParameters;
+
+    @EqualsAndHashCode.Include
     private ServiceMethodIdentifier serviceMethodId;
 
     public static HttpRouteConfiguration routeConfiguration() {
