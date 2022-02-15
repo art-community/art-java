@@ -18,25 +18,17 @@
 
 package io.art.launcher;
 
-import io.art.configurator.module.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.extensions.*;
 import io.art.core.module.*;
-import io.art.http.module.*;
-import io.art.json.module.*;
-import io.art.logging.module.*;
-import io.art.meta.module.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.configurator.module.ConfiguratorActivator.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.ArrayConstants.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.http.module.HttpActivator.*;
-import static io.art.json.module.JsonActivator.*;
-import static io.art.logging.module.LoggingActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import java.util.*;
 
