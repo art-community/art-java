@@ -40,7 +40,7 @@ public class TarantoolSchemaService {
         return this;
     }
 
-    public TarantoolSchemaService createIndex(TarantoolIndexConfiguration configuration) {
+    public TarantoolSchemaService createIndex(TarantoolIndexConfiguration<?, ?> configuration) {
         Map<Value, Value> options = map();
         apply(configuration.id(), value -> options.put(newString(IndexFields.ID), newInteger(value)));
         apply(configuration.sequence(), value -> options.put(newString(IndexFields.SEQUENCE), newString(value)));
@@ -137,7 +137,7 @@ public class TarantoolSchemaService {
         );
     }
 
-    private ImmutableMapValue writeIndexPart(TarantoolIndexPartConfiguration configuration) {
+    private ImmutableMapValue writeIndexPart(TarantoolIndexPartConfiguration<?, ?> configuration) {
         Map<Value, Value> map = map();
         map.put(newString(IndexPartFields.FIELD), newInteger(configuration.field()));
         map.put(newString(IndexPartFields.TYPE), newString(configuration.type().name().toLowerCase()));
