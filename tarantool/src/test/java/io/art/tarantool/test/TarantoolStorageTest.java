@@ -157,6 +157,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
+        space().put(data);
         ImmutableArray<TestingMetaModel> result = space().findAll(1, 2, 3);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
