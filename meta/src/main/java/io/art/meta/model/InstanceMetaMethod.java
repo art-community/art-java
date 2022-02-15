@@ -27,22 +27,22 @@ import static java.text.MessageFormat.*;
 
 @Generation
 @EqualsAndHashCode(callSuper = true)
-public abstract class InstanceMetaMethod<O extends MetaClass<?>, I, R> extends MetaMethod<O, R> {
-    protected InstanceMetaMethod(String name, MetaType<?> returnType, O owner) {
+public abstract class InstanceMetaMethod<OwnerType extends MetaClass<?>, InstanceType, ReturnType> extends MetaMethod<OwnerType, ReturnType> {
+    protected InstanceMetaMethod(String name, MetaType<?> returnType, OwnerType owner) {
         super(name, returnType, owner);
     }
 
-    public Object invoke(I instance) throws Throwable {
+    public Object invoke(InstanceType instance) throws Throwable {
         throw new NotImplementedException(INVOKE_INSTANCE);
     }
 
-    public Object invoke(I instance, Object argument) throws Throwable {
+    public Object invoke(InstanceType instance, Object argument) throws Throwable {
         throw new NotImplementedException(INVOKE_INSTANCE_ARGUMENT);
     }
 
-    public abstract Object invoke(I instance, Object[] arguments) throws Throwable;
+    public abstract Object invoke(InstanceType instance, Object[] arguments) throws Throwable;
 
-    public Object invokeCatched(I instance) {
+    public Object invokeCatched(InstanceType instance) {
         try {
             return invoke(instance);
         } catch (Throwable throwable) {
@@ -50,7 +50,7 @@ public abstract class InstanceMetaMethod<O extends MetaClass<?>, I, R> extends M
         }
     }
 
-    public Object invokeCatched(I instance, Object argument) {
+    public Object invokeCatched(InstanceType instance, Object argument) {
         try {
             return invoke(instance, argument);
         } catch (Throwable throwable) {
@@ -58,7 +58,7 @@ public abstract class InstanceMetaMethod<O extends MetaClass<?>, I, R> extends M
         }
     }
 
-    public Object invokeCatched(I instance, Object[] arguments) {
+    public Object invokeCatched(InstanceType instance, Object[] arguments) {
         try {
             return invoke(instance, arguments);
         } catch (Throwable throwable) {

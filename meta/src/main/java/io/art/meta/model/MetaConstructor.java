@@ -34,13 +34,13 @@ import java.util.*;
 @ToString
 @Generation
 @EqualsAndHashCode(exclude = "owner", cacheStrategy = LAZY)
-public abstract class MetaConstructor<O extends MetaClass<?>, T> {
-    private final MetaType<T> type;
+public abstract class MetaConstructor<OwnerType extends MetaClass<?>, ReturnType> {
+    private final MetaType<ReturnType> type;
     private final Map<String, MetaParameter<?>> parameters;
-    private final O owner;
+    private final OwnerType owner;
     private Boolean known;
 
-    protected MetaConstructor(MetaType<T> type, O owner) {
+    protected MetaConstructor(MetaType<ReturnType> type, OwnerType owner) {
         this.type = type;
         this.owner = owner;
         parameters = map();
@@ -51,7 +51,7 @@ public abstract class MetaConstructor<O extends MetaClass<?>, T> {
         return parameter;
     }
 
-    public MetaType<T> type() {
+    public MetaType<ReturnType> type() {
         return type;
     }
 
@@ -63,17 +63,17 @@ public abstract class MetaConstructor<O extends MetaClass<?>, T> {
         return immutableMapOf(parameters);
     }
 
-    public T invoke() throws Throwable {
+    public ReturnType invoke() throws Throwable {
         throw new NotImplementedException(INVOKE_WITHOUT_ARGUMENTS);
     }
 
-    public T invoke(Object argument) throws Throwable {
+    public ReturnType invoke(Object argument) throws Throwable {
         throw new NotImplementedException(INVOKE_ARGUMENT);
     }
 
-    public abstract T invoke(Object[] arguments) throws Throwable;
+    public abstract ReturnType invoke(Object[] arguments) throws Throwable;
 
-    public T invokeCatched() {
+    public ReturnType invokeCatched() {
         try {
             return invoke();
         } catch (Throwable throwable) {
@@ -81,7 +81,7 @@ public abstract class MetaConstructor<O extends MetaClass<?>, T> {
         }
     }
 
-    public T invokeCatched(Object argument) {
+    public ReturnType invokeCatched(Object argument) {
         try {
             return invoke(argument);
         } catch (Throwable throwable) {
@@ -89,7 +89,7 @@ public abstract class MetaConstructor<O extends MetaClass<?>, T> {
         }
     }
 
-    public T invokeCatched(Object[] arguments) {
+    public ReturnType invokeCatched(Object[] arguments) {
         try {
             return invoke(arguments);
         } catch (Throwable throwable) {
@@ -107,7 +107,7 @@ public abstract class MetaConstructor<O extends MetaClass<?>, T> {
         return known = parameters.values().stream().allMatch(parameter -> parameter.type().isKnown());
     }
 
-    public O owner() {
+    public OwnerType owner() {
         return owner;
     }
 }

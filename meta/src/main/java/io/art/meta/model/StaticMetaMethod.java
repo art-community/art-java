@@ -27,9 +27,9 @@ import static java.text.MessageFormat.*;
 
 @Generation
 @EqualsAndHashCode(callSuper = true)
-public abstract class StaticMetaMethod<O extends MetaClass<?>, T> extends MetaMethod<O, T> {
+public abstract class StaticMetaMethod<OwnerType extends MetaClass<?>, ReturnType> extends MetaMethod<OwnerType, ReturnType> {
 
-    protected StaticMetaMethod(String name, MetaType<?> returnType, O owner) {
+    protected StaticMetaMethod(String name, MetaType<?> returnType, OwnerType owner) {
         super(name, returnType, owner);
     }
 

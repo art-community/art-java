@@ -27,14 +27,14 @@ import static lombok.EqualsAndHashCode.CacheStrategy.*;
 @ToString
 @Generation
 @EqualsAndHashCode(exclude = "owner", cacheStrategy = LAZY)
-public class MetaField<O extends MetaClass<?>, T> {
+public class MetaField<OwnerType extends MetaClass<?>, FieldType> {
     private final String name;
     private final MetaType<?> type;
     private final boolean inherited;
-    private final O owner;
+    private final OwnerType owner;
     private Boolean known;
 
-    public MetaField(String name, MetaType<?> type, boolean inherited, O owner) {
+    public MetaField(String name, MetaType<?> type, boolean inherited, OwnerType owner) {
         this.name = name;
         this.owner = owner;
         this.type = type;
@@ -49,7 +49,7 @@ public class MetaField<O extends MetaClass<?>, T> {
         return inherited;
     }
 
-    public MetaType<T> type() {
+    public MetaType<FieldType> type() {
         return cast(type);
     }
 
@@ -59,7 +59,7 @@ public class MetaField<O extends MetaClass<?>, T> {
         return known = type.isKnown();
     }
 
-    public O owner() {
+    public OwnerType owner() {
         return owner;
     }
 }
