@@ -44,16 +44,25 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
     }
 
     public S service(Class<?> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        classBased.add(new ClassBasedConfiguration(() -> declaration(serviceClass), decorator));
+        return service(() -> declaration(serviceClass), decorator);
+    }
+
+    public <M extends MetaClass<?>> S service(Supplier<M> serviceClass) {
+        return service(serviceClass, identity());
+    }
+
+    public <M extends MetaClass<?>> S service(Supplier<M> serviceClass, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        classBased.add(new ClassBasedConfiguration(serviceClass, decorator));
         return cast(this);
     }
 
-    public S method(Supplier<MetaMethod<MetaClass<?>, ?>> serviceMethod) {
+    public <M extends MetaClass<?>> S method(Supplier<MetaMethod<M, ?>> serviceMethod) {
         return method(serviceMethod, identity());
     }
 
-    public S method(Supplier<MetaMethod<MetaClass<?>, ?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
-        methodBased.add(new MethodBasedConfiguration(() -> serviceMethod.get().owner(), serviceMethod, decorator));
+    public <M extends MetaClass<?>>
+    S method(Supplier<MetaMethod<M, ?>> serviceMethod, UnaryOperator<ServiceMethodConfigurator> decorator) {
+        methodBased.add(new MethodBasedConfiguration(() -> serviceMethod.get().owner(), cast(serviceMethod), decorator));
         return cast(this);
     }
 
@@ -192,7 +201,7 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
 
     @RequiredArgsConstructor
     private static class ClassBasedConfiguration {
-        final Supplier<MetaClass<?>> serviceClass;
+        final Supplier<? extends MetaClass<?>> serviceClass;
         final UnaryOperator<ServiceMethodConfigurator> decorator;
     }
 

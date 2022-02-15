@@ -45,13 +45,19 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
     private final List<MethodBasedConfiguration> methodBased = linkedList();
     private final Map<Class<? extends Portal>, PortalConfiguration> portals = map();
 
-    public C communicator(Class<? extends Communicator> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        classBased.add(new ClassBasedConfiguration(() -> declaration(communicatorClass), decorator));
+    public C communicator(Class<?> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        return communicator(() -> cast(declaration(communicatorClass)), decorator);
+    }
+
+    public <M extends MetaClass<? extends Communicator>> C
+    communicator(Supplier<M> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        classBased.add(new ClassBasedConfiguration(communicatorClass, decorator));
         return cast(this);
     }
 
-    public C communicator(Class<? extends Communicator> communicatorClass, Supplier<MetaMethod<MetaClass<?>, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
-        methodBased.add(new MethodBasedConfiguration(() -> declaration(communicatorClass), actionMethod, decorator));
+    public <M extends MetaClass<? extends Communicator>> C
+    action(Supplier<M> communicatorClass, Supplier<MetaMethod<M, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+        methodBased.add(new MethodBasedConfiguration(communicatorClass, cast(actionMethod), decorator));
         return cast(this);
     }
 
@@ -207,7 +213,7 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
 
     @RequiredArgsConstructor
     private static class ClassBasedConfiguration {
-        final Supplier<MetaClass<? extends Communicator>> communicatorClass;
+        final Supplier<? extends MetaClass<? extends Communicator>> communicatorClass;
         final UnaryOperator<CommunicatorActionConfigurator> decorator;
     }
 
