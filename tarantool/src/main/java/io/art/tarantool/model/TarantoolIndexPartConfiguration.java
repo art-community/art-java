@@ -15,14 +15,14 @@ import static java.text.MessageFormat.*;
 @Builder
 @Getter
 @Accessors(fluent = true)
-public class TarantoolIndexPartConfiguration {
+public class TarantoolIndexPartConfiguration<C, M extends MetaClass<C>> {
     private final int field;
     private final FieldType type;
     private final Boolean nullable;
     private final String path;
 
-    public static <C, M extends MetaClass<C>> TarantoolIndexPartConfigurationBuilder indexPartFor(MetaField<M, ?> field) {
-        return TarantoolIndexPartConfiguration.builder()
+    public static <C, M extends MetaClass<C>> TarantoolIndexPartConfigurationBuilder<C, M> indexPartFor(MetaField<M, ?> field) {
+        return TarantoolIndexPartConfiguration.<C, M>builder()
                 .field(field.owner().index(cast(field)) + 1)
                 .type(extractType(field.type()));
     }
