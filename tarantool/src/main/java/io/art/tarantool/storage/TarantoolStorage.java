@@ -34,6 +34,11 @@ public class TarantoolStorage {
         all().forEach(consumer);
     }
 
+    public void dispose() {
+        immutable.endpoints().forEach(TarantoolClient::dispose);
+        mutable.endpoints().forEach(TarantoolClient::dispose);
+    }
+
     private void initializeClients(TarantoolStorageConfiguration configuration) {
         for (TarantoolClientConfiguration client : configuration.getClients()) {
             if (client.isImmutable()) {
@@ -43,10 +48,5 @@ public class TarantoolStorage {
             immutable.addEndpoint(new TarantoolClient(client));
             mutable.addEndpoint(new TarantoolClient(client));
         }
-    }
-
-    public void dispose() {
-        immutable.endpoints().forEach(TarantoolClient::dispose);
-        mutable.endpoints().forEach(TarantoolClient::dispose);
     }
 }
