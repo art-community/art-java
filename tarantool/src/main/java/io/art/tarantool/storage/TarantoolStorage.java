@@ -3,6 +3,9 @@ package io.art.tarantool.storage;
 import io.art.core.network.balancer.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
+import static io.art.core.extensions.CollectionExtensions.*;
+import java.util.*;
+import java.util.function.*;
 
 
 public class TarantoolStorage {
@@ -21,6 +24,14 @@ public class TarantoolStorage {
 
     public TarantoolClient mutable() {
         return mutable.select();
+    }
+
+    public List<TarantoolClient> all() {
+        return combineToList(immutable.endpoints(), mutable.endpoints());
+    }
+
+    public void each(Consumer<TarantoolClient> consumer) {
+        all().forEach(consumer);
     }
 
     private void initializeClients(TarantoolStorageConfiguration configuration) {
