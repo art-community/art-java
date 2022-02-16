@@ -104,7 +104,8 @@ public class TarantoolStorageTest {
     public void testSingleDelete() {
         TestingMetaModel data = generateTestingModel();
         space().insert(data);
-        space().delete(data.getF1());
+        assertEquals(1, space().count());
+        data.assertEquals(space().delete(data.getF1()));
         assertEquals(0, space().count());
     }
 
