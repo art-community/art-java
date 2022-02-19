@@ -2,10 +2,11 @@ package io.art.core.graal;
 
 import com.oracle.svm.core.jdk.*;
 import com.oracle.svm.core.jni.*;
+import com.oracle.svm.hosted.*;
 import com.oracle.svm.hosted.c.*;
 import lombok.experimental.*;
-import org.graalvm.nativeimage.hosted.*;
 import org.graalvm.nativeimage.hosted.Feature.*;
+import org.graalvm.nativeimage.hosted.*;
 import static com.oracle.svm.hosted.FeatureImpl.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.graal.GraalNativeLibraryConfiguration.Type.*;
@@ -75,5 +76,10 @@ public class GraalNativeRegistrator {
                     break;
             }
         }
+    }
+
+    public static void registerStaticNonJniLibrary(BeforeAnalysisAccess access, String name) {
+        NativeLibraries nativeLibraries = ((FeatureImpl.BeforeAnalysisAccessImpl) access).getNativeLibraries();
+        nativeLibraries.addStaticNonJniLibrary(name);
     }
 }

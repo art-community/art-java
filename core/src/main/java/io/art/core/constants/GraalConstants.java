@@ -1,5 +1,7 @@
 package io.art.core.constants;
 
+import lombok.*;
+
 public interface GraalConstants {
     String[] GRAAL_NATIVE_CORE_CLASSES = new String[]{
             "java.io.IOException",
@@ -26,4 +28,16 @@ public interface GraalConstants {
 
     String GRAAL_WORKING_PATH_PROPERTY = "working-path";
     String GRAAL_LIBRARY_EXTRACTION_DIRECTORY_POSTFIX = "-library";
+
+    @Getter
+    @AllArgsConstructor
+    enum GraalLinuxLibrary {
+        SSL("ssl"),
+        CRYPTO("crypto"),
+        SELINUX("selinux"),
+        UTIL("util"),
+        CAP("cap");
+
+        private final String library;
+    }
 }
