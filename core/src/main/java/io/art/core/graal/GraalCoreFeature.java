@@ -6,7 +6,7 @@ import static io.art.core.constants.GraalConstants.*;
 import static io.art.core.graal.GraalNativeRegistrator.*;
 
 @AutomaticFeature
-public class GraalCoreFeatures implements Feature {
+public class GraalCoreFeature implements Feature {
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
         registerForNativeUsage(GRAAL_NATIVE_CORE_CLASSES);

@@ -1,4 +1,4 @@
-package io.art.transport.graal.features;
+package io.art.transport.graal.feature;
 
 import com.oracle.svm.core.annotate.*;
 import io.art.core.graal.*;
@@ -14,7 +14,7 @@ import static java.lang.System.*;
 import java.util.*;
 
 @AutomaticFeature
-public class GraalNettyFeatures implements Feature {
+public class GraalNettyFeature implements Feature {
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
         setProperty(MAX_UPDATE_ARRAY_SIZE_PROPERTY, DEFAULT_MAX_UPDATE_ARRAY_SIZE);
@@ -62,7 +62,7 @@ public class GraalNettyFeatures implements Feature {
 
     private void registerKqueue() {
         try {
-            Class.forName(NETTY_KQUEUE_CLASS_NAME, false, GraalNettyFeatures.class.getClassLoader());
+            Class.forName(NETTY_KQUEUE_CLASS_NAME, false, GraalNettyFeature.class.getClassLoader());
             registerForNativeUsage(NETTY_NATIVE_KQUEUE_CLASSES);
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
@@ -73,7 +73,7 @@ public class GraalNettyFeatures implements Feature {
 
     private void registerEpoll() {
         try {
-            Class.forName(NETTY_EPOLL_CLASS_NAME, false, GraalNettyFeatures.class.getClassLoader());
+            Class.forName(NETTY_EPOLL_CLASS_NAME, false, GraalNettyFeature.class.getClassLoader());
             registerForNativeUsage(NETTY_NATIVE_EPOLL_CLASSES);
         } catch (ClassNotFoundException classNotFoundException) {
             // Ignore
