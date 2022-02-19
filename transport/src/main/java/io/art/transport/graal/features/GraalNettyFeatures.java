@@ -1,5 +1,6 @@
 package io.art.transport.graal.features;
 
+import com.oracle.svm.core.annotate.*;
 import io.art.core.graal.*;
 import org.graalvm.nativeimage.*;
 import org.graalvm.nativeimage.hosted.*;
@@ -12,6 +13,7 @@ import static java.lang.Boolean.*;
 import static java.lang.System.*;
 import java.util.*;
 
+@AutomaticFeature
 public class GraalNettyFeatures implements Feature {
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {
