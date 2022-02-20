@@ -30,7 +30,11 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
     private final MetaType<KeyType> keyMeta;
 
     @Builder
-    public TarantoolReactiveIndexService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, String spaceName, String indexName, TarantoolStorage storage) {
+    public TarantoolReactiveIndexService(MetaType<KeyType> keyMeta,
+                                         MetaType<ModelType> spaceMeta,
+                                         String spaceName,
+                                         String indexName,
+                                         TarantoolStorage storage) {
         this.spaceMeta = spaceMeta;
         this.keyMeta = keyMeta;
         this.storage = storage;

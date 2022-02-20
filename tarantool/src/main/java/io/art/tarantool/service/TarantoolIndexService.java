@@ -17,7 +17,11 @@ public class TarantoolIndexService<KeyType, ModelType> implements IndexService<K
     private ReactiveIndexService<KeyType, ModelType> reactive;
 
     @Builder
-    public TarantoolIndexService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, String spaceName, String indexName, TarantoolStorage storage) {
+    public TarantoolIndexService(MetaType<KeyType> keyMeta,
+                                 MetaType<ModelType> spaceMeta,
+                                 String spaceName,
+                                 String indexName,
+                                 TarantoolStorage storage) {
         reactive = TarantoolReactiveIndexService.<KeyType, ModelType>builder()
                 .spaceName(spaceName)
                 .spaceMeta(spaceMeta)
