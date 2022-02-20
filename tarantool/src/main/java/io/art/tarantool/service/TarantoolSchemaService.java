@@ -48,17 +48,8 @@ public class TarantoolSchemaService {
         apply(configuration.type(), value -> options.put(newString(IndexFields.TYPE), newString(value.name().toLowerCase())));
         apply(configuration.unique(), value -> options.put(newString(IndexFields.UNIQUE), newBoolean(value)));
         apply(configuration.treeConfiguration(), value -> apply(value.hint(), treeValue -> options.put(newString(IndexFields.HINT), newBoolean(treeValue))));
-        apply(configuration.rtreeConfiguration(), value -> {
-            apply(value.dimension(), rtreeValue -> options.put(newString(IndexFields.DIMENSION), newInteger(rtreeValue)));
-            apply(value.distance(), rtreeValue -> options.put(newString(IndexFields.DISTANCE), newString(rtreeValue)));
-        });
-        apply(configuration.vinylConfiguration(), value -> {
-            apply(value.bloomFrp(), vinylValue -> options.put(newString(IndexFields.BLOOM_FPR), newInteger(vinylValue)));
-            apply(value.pageSize(), vinylValue -> options.put(newString(IndexFields.PAGE_SIZE), newInteger(vinylValue)));
-            apply(value.rangeSize(), vinylValue -> options.put(newString(IndexFields.RANGE_SIZE), newInteger(vinylValue)));
-            apply(value.runCountPerLevel(), vinylValue -> options.put(newString(IndexFields.RUN_COUNT_PER_LEVEL), newInteger(vinylValue)));
-            apply(value.runSizeRatio(), vinylValue -> options.put(newString(IndexFields.RUN_SIZE_RATIO), newInteger(vinylValue)));
-        });
+        apply(configuration.rtreeConfiguration(), value -> writeRtreeConfiguration(options, value));
+        apply(configuration.vinylConfiguration(), value -> writeVinylConfiguration(options, value));
         apply(configuration.ifNotExists(), value -> options.put(newString(IndexFields.IF_NOT_EXISTS), newBoolean(value)));
         options.put(newString(IndexFields.PARTS), newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
         ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
@@ -145,4 +136,18 @@ public class TarantoolSchemaService {
         apply(configuration.path(), value -> map.put(newString(IndexPartFields.PATH), newString(value)));
         return newMap(map);
     }
+
+    private void writeRtreeConfiguration(Map<Value, Value> options, TarantoolIndexConfiguration.TarantoolRtreeIndexConfiguration value) {
+        apply(value.dimension(), rtreeValue -> options.put(newString(IndexFields.DIMENSION), newInteger(rtreeValue)));
+        apply(value.distance(), rtreeValue -> options.put(newString(IndexFields.DISTANCE), newString(rtreeValue)));
+    }
+
+    private void writeVinylConfiguration(Map<Value, Value> options, TarantoolIndexConfiguration.TarantoolVinylIndexConfiguration value) {
+        apply(value.bloomFrp(), vinylValue -> options.put(newString(IndexFields.BLOOM_FPR), newInteger(vinylValue)));
+        apply(value.pageSize(), vinylValue -> options.put(newString(IndexFields.PAGE_SIZE), newInteger(vinylValue)));
+        apply(value.rangeSize(), vinylValue -> options.put(newString(IndexFields.RANGE_SIZE), newInteger(vinylValue)));
+        apply(value.runCountPerLevel(), vinylValue -> options.put(newString(IndexFields.RUN_COUNT_PER_LEVEL), newInteger(vinylValue)));
+        apply(value.runSizeRatio(), vinylValue -> options.put(newString(IndexFields.RUN_SIZE_RATIO), newInteger(vinylValue)));
+    }
+
 }
