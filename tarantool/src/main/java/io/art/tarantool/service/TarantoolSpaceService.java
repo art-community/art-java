@@ -99,26 +99,6 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
-    public ModelType add(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value) {
-        return block(reactive.add(field, value));
-    }
-
-    @Override
-    public ModelType subtract(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value) {
-        return block(reactive.subtract(field, value));
-    }
-
-    @Override
-    public <FieldType> ModelType set(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value) {
-        return block(reactive.set(field, value));
-    }
-
-    @Override
-    public <FieldType> ModelType delete(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value) {
-        return block(reactive.delete(field, value));
-    }
-
-    @Override
     public TarantoolStream<ModelType> stream() {
         TarantoolStream<ModelType> stream = this.stream.get();
         stream.refresh();
