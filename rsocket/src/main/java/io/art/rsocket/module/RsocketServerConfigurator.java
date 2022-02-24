@@ -1,11 +1,9 @@
 package io.art.rsocket.module;
 
 import io.art.core.annotation.*;
-import io.art.core.property.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketWsServerConfiguration.*;
-import io.art.server.configuration.*;
 import io.art.server.configurator.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
@@ -39,11 +37,11 @@ public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerC
         return this;
     }
 
-    RsocketTcpServerConfiguration configure(RsocketTcpServerConfiguration current) {
+    RsocketTcpServerConfiguration configureTcp(RsocketTcpServerConfiguration current) {
         return tcpConfigurator.apply(current.toBuilder()).build();
     }
 
-    RsocketWsServerConfiguration configure(RsocketWsServerConfiguration current) {
+    RsocketWsServerConfiguration configureWs(RsocketWsServerConfiguration current) {
         return wsConfigurator.apply(current.toBuilder()).build();
     }
 
@@ -53,9 +51,5 @@ public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerC
 
     boolean enableWs() {
         return ws;
-    }
-
-    ServerConfiguration configureServer(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
-        return configure(configurationProvider, current);
     }
 }

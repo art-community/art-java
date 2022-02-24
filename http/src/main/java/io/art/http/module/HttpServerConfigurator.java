@@ -82,15 +82,12 @@ public class HttpServerConfigurator extends ServerConfigurator<HttpServerConfigu
         return this;
     }
 
-    HttpServerConfiguration configure(HttpServerConfiguration current) {
+    HttpServerConfiguration configureHttp(HttpServerConfiguration current) {
         return configurator
                 .apply(current.toBuilder().routes(lazy(this::configureRoutes)))
                 .build();
     }
 
-    ServerConfiguration configureServer(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
-        return configure(configurationProvider, current);
-    }
 
     private ImmutableSet<HttpRouteConfiguration> configureRoutes() {
         ImmutableSet.Builder<HttpRouteConfiguration> routes = ImmutableSet.immutableSetBuilder();

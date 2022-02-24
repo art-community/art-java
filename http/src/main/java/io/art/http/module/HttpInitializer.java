@@ -54,11 +54,11 @@ public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguratio
         Initial initial = new Initial(module.getRefresher());
 
         initial.enableServer = enableServer;
-        initial.httpServer = serverConfigurator.configure(initial.httpServer);
-        initial.server = serverConfigurator.configureServer(lazy(() -> httpModule().configuration().getServer()), initial.server);
+        initial.httpServer = serverConfigurator.configureHttp(initial.httpServer);
+        initial.server = serverConfigurator.configure(lazy(() -> httpModule().configuration().getServer()), initial.server);
 
         initial.connectors = communicatorConfigurator.connectors();
-        initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> httpModule().configuration().getCommunicator()), initial.communicator);
+        initial.communicator = communicatorConfigurator.configure(lazy(() -> httpModule().configuration().getCommunicator()), initial.communicator);
 
         return initial;
     }

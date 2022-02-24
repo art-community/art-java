@@ -50,7 +50,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         return this;
     }
 
-    public <C, M extends MetaClass<C>>  TarantoolInitializer space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
+    public <C, M extends MetaClass<C>> TarantoolInitializer space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
         servicesConfigurator.space(storageClass, spaceClass, idField);
         return this;
     }
@@ -61,7 +61,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
         initial.storageConfigurations = communicatorConfigurator.storages();
         initial.storages = initial.storageConfigurations.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolStorage(entry.getValue())));
-        initial.communicator = communicatorConfigurator.configureCommunicator(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
+        initial.communicator = communicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
         initial.services = servicesConfigurator.configure();
 
         return initial;

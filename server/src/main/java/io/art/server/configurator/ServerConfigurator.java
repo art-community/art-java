@@ -66,13 +66,13 @@ public abstract class ServerConfigurator<S extends ServerConfigurator<S>> {
         return cast(this);
     }
 
-
-    protected ServerConfiguration configure(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
+    public ServerConfiguration configure(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
         return current.toBuilder()
                 .configurations(lazy(this::createConfigurations))
                 .methods(lazy(() -> createMethods(configurationProvider)))
                 .build();
     }
+
 
     private ImmutableMap<String, ServiceMethodsConfiguration> createConfigurations() {
         Map<String, ServiceMethodsConfiguration> configurations = map();

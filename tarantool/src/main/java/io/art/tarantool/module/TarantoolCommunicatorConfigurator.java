@@ -1,13 +1,11 @@
 package io.art.tarantool.module;
 
 import io.art.communicator.*;
-import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.storage.*;
 import io.art.tarantool.configuration.*;
 import static io.art.core.factory.MapFactory.*;
@@ -43,9 +41,5 @@ public class TarantoolCommunicatorConfigurator extends CommunicatorConfigurator<
 
     ImmutableMap<String, TarantoolStorageConfiguration> storages() {
         return immutableMapOf(storages);
-    }
-
-    CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
-        return configure(configurationProvider, current);
     }
 }

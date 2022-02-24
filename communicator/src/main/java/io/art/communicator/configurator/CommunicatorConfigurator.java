@@ -61,6 +61,13 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         return cast(this);
     }
 
+    public CommunicatorConfiguration configure(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
+        return current.toBuilder()
+                .configurations(lazy(this::createConfigurations))
+                .portals(new PortalRegistry(createPortals(configurationProvider)))
+                .build();
+    }
+
     protected String classToId(Class<?> inputClass) {
         return idByDash(inputClass);
     }
@@ -71,13 +78,6 @@ public abstract class CommunicatorConfigurator<C extends CommunicatorConfigurato
         LazyProperty<? extends Portal> portal = lazy(() -> createPortalProxy(declaration(portalClass), communicator));
         PortalConfiguration portalConfiguration = new PortalConfiguration(portal, communication);
         portals.put(portalClass, portalConfiguration);
-    }
-
-    protected CommunicatorConfiguration configure(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
-        return current.toBuilder()
-                .configurations(lazy(this::createConfigurations))
-                .portals(new PortalRegistry(createPortals(configurationProvider)))
-                .build();
     }
 
 

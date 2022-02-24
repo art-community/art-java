@@ -1,13 +1,11 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.*;
-import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import static io.art.core.caster.Caster.*;
@@ -68,9 +66,5 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
 
     ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors() {
         return immutableMapOf(wsConnectors);
-    }
-
-    CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
-        return configure(configurationProvider, current);
     }
 }

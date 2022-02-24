@@ -1,13 +1,11 @@
 package io.art.http.module;
 
 import io.art.communicator.*;
-import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
-import io.art.core.property.*;
 import io.art.http.configuration.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
@@ -44,9 +42,5 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
 
     ImmutableMap<String, HttpConnectorConfiguration> connectors() {
         return immutableMapOf(connectors);
-    }
-
-    CommunicatorConfiguration configureCommunicator(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorConfiguration current) {
-        return configure(configurationProvider, current);
     }
 }
