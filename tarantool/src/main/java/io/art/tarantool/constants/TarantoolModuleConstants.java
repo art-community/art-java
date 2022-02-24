@@ -19,8 +19,10 @@
 package io.art.tarantool.constants;
 
 import lombok.*;
+import org.msgpack.value.*;
 import static java.lang.Integer.*;
 import static java.time.Duration.*;
+import static org.msgpack.value.ValueFactory.*;
 import java.time.*;
 
 
@@ -106,29 +108,29 @@ public interface TarantoolModuleConstants {
     }
 
     interface SelectOptions {
-        String LIMIT = "limit";
-        String OFFSET = "offset";
-        String FILTER = "filter";
-        String SORT = "sort";
-        String DISTINCT = "distinct";
+        ImmutableStringValue LIMIT = newString("limit");
+        ImmutableStringValue OFFSET = newString("offset");
+        ImmutableStringValue FILTER = newString("filter");
+        ImmutableStringValue SORT = newString("sort");
+        ImmutableStringValue DISTINCT = newString("distinct");
     }
 
     interface SortOptions {
-        String COMPARATOR_MORE = "more";
-        String COMPARATOR_LESS = "less";
+        ImmutableStringValue COMPARATOR_MORE = newString("more");
+        ImmutableStringValue COMPARATOR_LESS = newString("less");
     }
 
     interface FilterOptions {
-        String OPERATOR_EQUALS = "equals";
-        String OPERATOR_NOT_EQUALS = "notEquals";
-        String OPERATOR_MORE = "more";
-        String OPERATOR_LESS = "less";
-        String OPERATOR_IN = "in";
-        String OPERATOR_NOT_IN = "notIn";
-        String OPERATOR_LIKE = "like";
-        String OPERATOR_STARTS_WITH = "startsWith";
-        String OPERATOR_ENDS_WITH = "endsWith";
-        String OPERATOR_CONTAINS = "contains";
+        ImmutableStringValue OPERATOR_EQUALS = newString("equals");
+        ImmutableStringValue OPERATOR_NOT_EQUALS = newString("notEquals");
+        ImmutableStringValue OPERATOR_MORE = newString("more");
+        ImmutableStringValue OPERATOR_LESS = newString("less");
+        ImmutableStringValue OPERATOR_IN = newString("in");
+        ImmutableStringValue OPERATOR_NOT_IN = newString("notIn");
+        ImmutableStringValue OPERATOR_LIKE = newString("like");
+        ImmutableStringValue OPERATOR_STARTS_WITH = newString("startsWith");
+        ImmutableStringValue OPERATOR_ENDS_WITH = newString("endsWith");
+        ImmutableStringValue OPERATOR_CONTAINS = newString("contains");
     }
 
     enum Engine {
@@ -209,7 +211,7 @@ public interface TarantoolModuleConstants {
 
     @Getter
     @AllArgsConstructor
-    enum TarantoolOperator {
+    enum TarantoolUpdateOperator {
         ADDITION("+"),
         SUBTRACTION("-"),
         AND("&"),
