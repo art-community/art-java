@@ -244,7 +244,6 @@ public class TarantoolStorageTest {
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
-
     }
 
     private static SpaceService<Integer, TestingMetaModel> space() {
