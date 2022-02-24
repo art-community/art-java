@@ -6,7 +6,6 @@ import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.exception.*;
 import lombok.*;
 import lombok.experimental.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Errors.*;
 import static java.text.MessageFormat.*;
@@ -23,7 +22,7 @@ public class TarantoolIndexPartConfiguration<C, M extends MetaClass<C>> {
 
     public static <C, M extends MetaClass<C>> TarantoolIndexPartConfigurationBuilder<C, M> indexPartFor(MetaField<M, ?> field) {
         return TarantoolIndexPartConfiguration.<C, M>builder()
-                .field(field.owner().index(cast(field)) + 1)
+                .field(field.index() + 1)
                 .type(extractType(field.type()));
     }
 

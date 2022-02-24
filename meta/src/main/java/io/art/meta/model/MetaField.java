@@ -33,6 +33,7 @@ public class MetaField<OwnerType extends MetaClass<?>, FieldType> {
     private final boolean inherited;
     private final OwnerType owner;
     private Boolean known;
+    private int index;
 
     public MetaField(String name, MetaType<?> type, boolean inherited, OwnerType owner) {
         this.name = name;
@@ -61,5 +62,13 @@ public class MetaField<OwnerType extends MetaClass<?>, FieldType> {
 
     public OwnerType owner() {
         return owner;
+    }
+
+    public int index() {
+        return index;
+    }
+
+    public void compute() {
+        index = owner.index(cast(this));
     }
 }

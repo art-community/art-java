@@ -59,17 +59,16 @@ public abstract class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type
     @Getter
     @RequiredArgsConstructor
     public static class Sorter<Type, Meta extends MetaClass<Type>, FieldType> {
-        private final MetaField<Meta, FieldType> current;
+        private final MetaField<Meta, FieldType> field;
         private SortOrder order = ASCENDANT;
         private SortComparator comparator = MORE;
-        private MetaField<Meta, FieldType> other;
 
-        enum SortOrder {
+        public enum SortOrder {
             DESCENDANT,
             ASCENDANT
         }
 
-        enum SortComparator {
+        public enum SortComparator {
             MORE,
             LESS
         }
@@ -84,15 +83,13 @@ public abstract class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type
             return this;
         }
 
-        public Sorter<Type, Meta, FieldType> moreThan(MetaField<Meta, FieldType> field) {
+        public Sorter<Type, Meta, FieldType> more() {
             comparator = MORE;
-            other = field;
             return this;
         }
 
-        public Sorter<Type, Meta, FieldType> lessThan(MetaField<Meta, FieldType> field) {
+        public Sorter<Type, Meta, FieldType> less() {
             comparator = LESS;
-            other = field;
             return this;
         }
     }
@@ -105,7 +102,7 @@ public abstract class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type
         private FilterOperator operator;
         private final List<Object> values = linkedList();
 
-        enum FilterOperator {
+        public enum FilterOperator {
             EQUALS,
             NOT_EQUALS,
             MORE,

@@ -142,7 +142,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType, MetaModel extends
 
     @Override
     public TarantoolReactiveStream<ModelType, MetaModel> stream() {
-        return new TarantoolReactiveStream<>(storage, reader, spaceMeta);
+        return new TarantoolReactiveStream<>(storage, reader, writer, spaceMeta);
     }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {

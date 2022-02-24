@@ -127,6 +127,24 @@ public interface TarantoolModuleConstants {
         String DISTINCT = "distinct";
     }
 
+    interface SortOptions {
+        String COMPARATOR_MORE = "more";
+        String COMPARATOR_LESS = "less";
+    }
+
+    interface FilterOptions {
+        String OPERATOR_EQUALS = "equals";
+        String OPERATOR_NOT_EQUALS = "notEquals";
+        String OPERATOR_MORE = "more";
+        String OPERATOR_LESS = "less";
+        String OPERATOR_IN = "in";
+        String OPERATOR_NOT_IN = "notIn";
+        String OPERATOR_LIKE = "like";
+        String OPERATOR_STARTS_WITH = "startsWith";
+        String OPERATOR_ENDS_WITH = "endsWith";
+        String OPERATOR_CONTAINS = "contains";
+    }
+
     interface SelectFilters {
         String EQUALS = "art.core.stream.filters.equals";
         String NOT_EQUALS = "art.core.stream.filters.notEquals";
