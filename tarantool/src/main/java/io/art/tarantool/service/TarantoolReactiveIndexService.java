@@ -67,27 +67,27 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> delete(KeyType key) {
         ArrayValue input = wrapRequest(writer.write(keyMeta, key));
-        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_DELETE, input);
+        Mono<Value> output = storage.mutable().call(SPACE_SINGLE_DELETE, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> delete(Collection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<KeyType> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count() {
-        return parseCountMono(storage.mutable().call(SPACE_COUNT, newArray(spaceName)));
+        return parseCountMono(storage.immutable().call(SPACE_COUNT, newArray(spaceName)));
     }
 
 

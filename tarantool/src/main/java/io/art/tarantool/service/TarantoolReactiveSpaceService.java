@@ -94,21 +94,21 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> insert(ModelType value) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_INSERT, input);
+        Mono<Value> output = storage.mutable().call(SPACE_SINGLE_INSERT, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> insert(Collection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
+        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> insert(ImmutableCollection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
+        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
@@ -116,27 +116,27 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> put(ModelType value) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_PUT, input);
+        Mono<Value> output = storage.mutable().call(SPACE_SINGLE_PUT, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> put(Collection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
+        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> put(ImmutableCollection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
+        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count() {
-        Mono<Value> output = storage.mutable().call(SPACE_COUNT, newArray(spaceName));
+        Mono<Value> output = storage.immutable().call(SPACE_COUNT, newArray(spaceName));
         return parseCountMono(output);
     }
 
