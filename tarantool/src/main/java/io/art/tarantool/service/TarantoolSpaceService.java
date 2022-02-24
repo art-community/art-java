@@ -10,6 +10,8 @@ import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.local.ThreadLocalValue.*;
+import static java.util.stream.Collectors.*;
+import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 @Public
@@ -108,5 +110,17 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     @Override
     public TarantoolReactiveSpaceService<KeyType, ModelType> reactive() {
         return reactive;
+    }
+
+    @Override
+    @SafeVarargs
+    public final IndexService<KeyType, ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields) {
+        return TarantoolIndexService.<KeyType, ModelType>builder()
+                .indexName(newString(Arrays.stream(fields).map(MetaField::name).collect(joining())))
+                .spaceMeta(reactive.spaceMetaType)
+                .keyMeta(reactive.keyMeta)
+                .storage(reactive.storage)
+                .spaceName(reactive.spaceName)
+                .build();
     }
 }

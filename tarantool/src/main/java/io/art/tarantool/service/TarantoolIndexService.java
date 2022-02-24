@@ -7,6 +7,7 @@ import io.art.storage.*;
 import io.art.tarantool.storage.*;
 import lombok.Builder;
 import lombok.*;
+import org.msgpack.value.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import java.util.*;
@@ -19,8 +20,8 @@ public class TarantoolIndexService<KeyType, ModelType> implements IndexService<K
     @Builder
     public TarantoolIndexService(MetaType<KeyType> keyMeta,
                                  MetaType<ModelType> spaceMeta,
-                                 String spaceName,
-                                 String indexName,
+                                 ImmutableStringValue spaceName,
+                                 ImmutableStringValue indexName,
                                  TarantoolStorage storage) {
         reactive = TarantoolReactiveIndexService.<KeyType, ModelType>builder()
                 .spaceName(spaceName)

@@ -31,14 +31,14 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
     @Builder
     public TarantoolReactiveIndexService(MetaType<KeyType> keyMeta,
                                          MetaType<ModelType> spaceMeta,
-                                         String spaceName,
-                                         String indexName,
+                                         ImmutableStringValue spaceName,
+                                         ImmutableStringValue indexName,
                                          TarantoolStorage storage) {
         this.spaceMeta = spaceMeta;
         this.keyMeta = keyMeta;
         this.storage = storage;
-        this.spaceName = newString(spaceName);
-        this.indexName = newString(indexName);
+        this.spaceName = spaceName;
+        this.indexName = indexName;
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
     }

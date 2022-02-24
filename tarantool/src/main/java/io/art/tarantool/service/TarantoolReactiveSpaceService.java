@@ -17,6 +17,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
+import static java.util.stream.Collectors.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -25,7 +26,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
     final Class<ModelType> spaceType;
-    final StringValue spaceName;
+    final ImmutableStringValue spaceName;
     final MetaType<ModelType> spaceMetaType;
     final MetaClass<ModelType> spaceMetaClass;
     final MetaType<KeyType> keyMeta;
@@ -150,6 +151,18 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         TarantoolReactiveStream<ModelType> stream = this.stream.get();
         stream.refresh();
         return stream;
+    }
+
+    @Override
+    @SafeVarargs
+    public final ReactiveIndexService<KeyType, ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields) {
+        return TarantoolReactiveIndexService.<KeyType, ModelType>builder()
+                .indexName(newString(Arrays.stream(fields).map(MetaField::name).collect(joining())))
+                .spaceMeta(spaceMetaType)
+                .keyMeta(keyMeta)
+                .storage(storage)
+                .spaceName(spaceName)
+                .build();
     }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {
