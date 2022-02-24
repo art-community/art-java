@@ -127,26 +127,26 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> moreThan(FieldType value) {
+        public Filter<Type, Meta, FieldType> moreThan(long value) {
             operator = FilterOperator.MORE;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> lessThan(FieldType value) {
+        public Filter<Type, Meta, FieldType> lessThan(long value) {
             operator = FilterOperator.LESS;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> in(FieldType startValue, FieldType endValue) {
+        public Filter<Type, Meta, FieldType> in(long startValue, long endValue) {
             operator = IN;
             values.add(startValue);
             values.add(endValue);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> notIn(FieldType startValue, FieldType endValue) {
+        public Filter<Type, Meta, FieldType> notIn(long startValue, long endValue) {
             operator = NOT_IN;
             values.add(startValue);
             values.add(endValue);
