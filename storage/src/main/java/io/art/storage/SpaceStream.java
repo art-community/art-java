@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.function.*;
 
 public abstract class SpaceStream<Type> {
-    protected final List<StreamOperator> operators = linkedList();
+    protected List<StreamOperator> operators = linkedList();
 
     public SpaceStream<Type> limit(long value) {
         operators.add(new StreamOperator(LIMIT, value));
@@ -45,7 +45,7 @@ public abstract class SpaceStream<Type> {
     }
 
     public SpaceStream<Type> refresh() {
-        operators.clear();
+        operators = linkedList();
         return this;
     }
 

@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.*;
 
 public abstract class ReactiveSpaceStream<Type> {
-    protected final List<StreamOperator> operators = linkedList();
+    protected List<StreamOperator> operators = linkedList();
 
     public ReactiveSpaceStream<Type> limit(long value) {
         operators.add(new StreamOperator(LIMIT, value));
@@ -43,7 +43,7 @@ public abstract class ReactiveSpaceStream<Type> {
     }
 
     public ReactiveSpaceStream<Type> refresh() {
-        operators.clear();
+        operators = linkedList();
         return this;
     }
 
