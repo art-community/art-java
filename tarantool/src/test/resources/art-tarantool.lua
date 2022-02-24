@@ -511,6 +511,8 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.space" ] = function( ... ) local arg = _G.arg;
+stream = require("art.storage.stream")
+
 local space = {
     findFirst = function(space, key)
         return box.space[space]:get(key)
@@ -520,22 +522,24 @@ local space = {
         local result = {}
         for _, key in pairs(keys) do
             local value = box.space[space]:get(key)
-            if value ~= nil then table.insert(result, value) end
+            if value ~= nil then
+                table.insert(result, value)
+            end
         end
         return result
     end,
 
-    find = function(space, key, operators)
-        local generator, param, state = box.space[space]:pairs(key)
+    find = function(space, operators)
+        local generator, param, state = box.space[space]:pairs()
 
         for _, operator in pairs(operators) do
             local name = operator[1]
             local parameters = operator[2]
-            local functor = art.storage.stream.select(name)
+            local functor = stream.select(name)
             generator, param, state = functor(generator, param, state, parameters)
         end
 
-        return art.storage.stream.collect(generator, param, state)
+        return stream.collect(generator, param, state)
     end,
 
     count = function(space)
@@ -650,12 +654,12 @@ filters["less"] = function(filtering, field, value)
     return filtering[field] < value
 end
 
-filters["in"] = function(filtering, field, startValue, endValue)
-    return (filtering[field] >= startValue) and (filtering[field] <= endValue)
+filters["in"] = function(filtering, field, values)
+    return (filtering[field] >= values[1]) and (filtering[field] <= values[2])
 end
 
-filters["notIn"] = function(filtering, field, startValue, endValue)
-    return not ((filtering[field] >= startValue) and (filtering[field] <= endValue))
+filters["notIn"] = function(filtering, field, values)
+    return not ((filtering[field] >= values[1]) and (filtering[field] <= values[2]))
 end
 
 filters["like"] = function(filtering, field, pattern)
@@ -674,9 +678,9 @@ filters["contains"] = function(filtering, field, pattern)
     return string.find(filtering[field], pattern)
 end
 
-local filterSelector = function(name, field, request)
+local filterSelector = function(name, field, values)
     return function(filtering)
-        return filters[name](filtering, field, unpack(request))
+        return filters[name](filtering, field, unpack(values))
     end
 end
 
