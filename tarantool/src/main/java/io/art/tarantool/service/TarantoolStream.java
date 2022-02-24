@@ -48,6 +48,12 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
+    public SpaceStream<Type> refresh() {
+        stream.refresh();
+        return this;
+    }
+
+    @Override
     public ImmutableArray<Type> collect() {
         return stream.collect().toStream().collect(immutableArrayCollector());
     }
