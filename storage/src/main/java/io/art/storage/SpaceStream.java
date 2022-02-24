@@ -132,30 +132,30 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
         public Filter<Type, Meta> moreThan(MetaField<Meta, ? extends Number> field, Number value) {
             this.field = field;
             operator = FilterOperator.MORE;
-            values.add(value.longValue());
+            values.add(value);
             return this;
         }
 
         public Filter<Type, Meta> lessThan(MetaField<Meta, ? extends Number> field, Number value) {
             this.field = field;
             operator = FilterOperator.LESS;
-            values.add(value.longValue());
+            values.add(value);
             return this;
         }
 
         public Filter<Type, Meta> in(MetaField<Meta, ? extends Number> field, Number startValue, Number endValue) {
             this.field = field;
             operator = IN;
-            values.add(startValue.longValue());
-            values.add(endValue.longValue());
+            values.add(startValue);
+            values.add(endValue);
             return this;
         }
 
         public Filter<Type, Meta> notIn(MetaField<Meta, ? extends Number> field, Number startValue, Number endValue) {
             this.field = field;
             operator = NOT_IN;
-            values.add(startValue.longValue());
-            values.add(endValue.longValue());
+            values.add(startValue);
+            values.add(endValue);
             return this;
         }
 
