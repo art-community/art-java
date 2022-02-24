@@ -152,40 +152,40 @@ public interface TarantoolModuleConstants {
     }
 
     interface SpaceFields {
-        String ID = "id";
-        String ENGINE = "engine";
-        String FIELD_COUNT = "field_count";
-        String IF_NOT_EXISTS = "if_not_exists";
-        String IS_LOCAL = "is_local";
-        String IS_SYNC = "is_sync";
-        String USER = "user";
-        String TEMPORARY = "temporary";
-        String FORMAT = "format";
+        ImmutableStringValue ID = newString("id");
+        ImmutableStringValue ENGINE = newString("engine");
+        ImmutableStringValue FIELD_COUNT = newString("field_count");
+        ImmutableStringValue IF_NOT_EXISTS = newString("if_not_exists");
+        ImmutableStringValue IS_LOCAL = newString("is_local");
+        ImmutableStringValue IS_SYNC = newString("is_sync");
+        ImmutableStringValue USER = newString("user");
+        ImmutableStringValue TEMPORARY = newString("temporary");
+        ImmutableStringValue FORMAT = newString("format");
     }
 
     interface IndexFields {
-        String ID = "id";
-        String TYPE = "type";
-        String UNIQUE = "unique";
-        String PARTS = "parts";
-        String DIMENSION = "dimension";
-        String DISTANCE = "distance";
-        String BLOOM_FPR = "bloom_fpr";
-        String PAGE_SIZE = "page_size";
-        String RANGE_SIZE = "range_size";
-        String RUN_COUNT_PER_LEVEL = "run_count_per_level";
-        String RUN_SIZE_RATIO = "run_size_ratio";
-        String SEQUENCE = "sequence";
-        String FUNC = "func";
-        String HINT = "hint";
-        String IF_NOT_EXISTS = "if_not_exists";
+        ImmutableStringValue ID = newString("id");
+        ImmutableStringValue TYPE = newString("type");
+        ImmutableStringValue UNIQUE = newString("unique");
+        ImmutableStringValue PARTS = newString("parts");
+        ImmutableStringValue DIMENSION = newString("dimension");
+        ImmutableStringValue DISTANCE = newString("distance");
+        ImmutableStringValue BLOOM_FPR = newString("bloom_fpr");
+        ImmutableStringValue PAGE_SIZE = newString("page_size");
+        ImmutableStringValue RANGE_SIZE = newString("range_size");
+        ImmutableStringValue RUN_COUNT_PER_LEVEL = newString("run_count_per_level");
+        ImmutableStringValue RUN_SIZE_RATIO = newString("run_size_ratio");
+        ImmutableStringValue SEQUENCE = newString("sequence");
+        ImmutableStringValue FUNC = newString("func");
+        ImmutableStringValue HINT = newString("hint");
+        ImmutableStringValue IF_NOT_EXISTS = newString("if_not_exists");
     }
 
     interface IndexPartFields {
-        String FIELD = "field";
-        String TYPE = "type";
-        String IS_NULLABLE = "is_nullable";
-        String PATH = "path";
+        ImmutableStringValue FIELD = newString("field");
+        ImmutableStringValue TYPE = newString("type");
+        ImmutableStringValue IS_NULLABLE = newString("is_nullable");
+        ImmutableStringValue PATH = newString("path");
     }
 
     enum IndexType {
