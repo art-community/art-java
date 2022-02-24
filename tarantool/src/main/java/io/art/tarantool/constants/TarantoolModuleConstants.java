@@ -25,9 +25,7 @@ import java.time.*;
 
 
 public interface TarantoolModuleConstants {
-    int DEFAULT_TARANTOOL_CONNECTIONS_NUMBER = 1;
     Duration DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = ofSeconds(30);
-    Duration DEFAULT_TARANTOOL_READ_TIMEOUT = ofSeconds(15);
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 8129;
     int RECEIVERS_POOL_MAXIMUM = MAX_VALUE / 2048;
@@ -35,10 +33,7 @@ public interface TarantoolModuleConstants {
     String DEFAULT_TARANTOOL_HOST = "localhost";
     String DEFAULT_TARANTOOL_USERNAME = "guest";
     String DEFAULT_TARANTOOL_PASSWORD = "";
-    String DEFAULT_TARANTOOL_CLUSTER_NAME = "default";
     String TARANTOOL_LOGGER = "tarantool";
-
-    int DEFAULT_TARANTOOL_RETRIES = 3;
 
     interface ProtocolConstants {
         int VERSION_LENGTH = 64;
@@ -56,9 +51,7 @@ public interface TarantoolModuleConstants {
         int IPROTO_FUNCTION_NAME = 0x22;
         int IPROTO_AUTH = 0x07;
         int IPROTO_OK = 0x00;
-        int IPROTO_NOT_OK = 0x8000;
         int IPROTO_BODY_DATA = 0x30;
-        int IPROTO_BODY_ERROR = 0x31;
     }
 
     interface AuthenticationMechanism {
@@ -69,23 +62,16 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_SECTION = "tarantool";
         String TARANTOOL_LOGGING_KEY = "logging";
         String TARANTOOL_CLUSTERS_SECTION = "clusters";
-        String TARANTOOL_CLUSTER_BALANCING_METHOD = "balancing";
         String TARANTOOL_INSTANCES_SECTION = "instances";
         String TARANTOOL_INSTANCE_HOST_KEY = "host";
         String TARANTOOL_INSTANCE_PORT_KEY = "port";
         String TARANTOOL_INSTANCE_IMMUTABLE_KEY = "immutable";
-        String TARANTOOL_INSTANCE_WRITEABLE_KEY = "writeable";
         String TARANTOOL_INSTANCE_USERNAME_KEY = "username";
         String TARANTOOL_INSTANCE_PASSWORD_KEY = "password";
-        String TARANTOOL_INSTANCE_CONNECTIONS_KEY = "connections";
         String TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY = "connection_timeout";
-        String TARANTOOL_INSTANCE_READ_TIMEOUT_KEY = "read_timeout";
-        String TARANTOOL_INSTANCE_REQUEST_TIMEOUT_KEY = "request_timeout";
-        String TARANTOOL_INSTANCE_MAX_CONNECTIONS_RETRY_KEY = "max_connections_retry";
     }
 
     interface Errors {
-        String RESPONSE_BYTES_EMPTY = "Response byte buffer is empty";
         String INVALID_TYPE_FOR_INDEX_PART = "Type {0} is not available for using as tarantool index part type";
     }
 
@@ -143,25 +129,6 @@ public interface TarantoolModuleConstants {
         String OPERATOR_STARTS_WITH = "startsWith";
         String OPERATOR_ENDS_WITH = "endsWith";
         String OPERATOR_CONTAINS = "contains";
-    }
-
-    interface SelectFilters {
-        String EQUALS = "art.core.stream.filters.equals";
-        String NOT_EQUALS = "art.core.stream.filters.notEquals";
-        String MORE = "art.core.stream.filters.more";
-        String LESS = "art.core.stream.filters.less";
-        String IN_RANGE = "art.core.stream.filters.inRange";
-        String MOT_IN_RANGE = "art.core.stream.filters.notInRange";
-
-        String LIKE = "art.core.stream.filters.like";
-        String STARTS_WITH = "art.core.stream.filters.startsWith";
-        String ENDS_WITH = "art.core.stream.filters.endsWith";
-        String CONTAINS = "art.core.stream.filters.contains";
-    }
-
-    interface SelectSortComparator {
-        String DESCENDING = "art.core.stream.comparators.greater";
-        String ASCENDING = "art.core.stream.comparators.less";
     }
 
     enum Engine {
