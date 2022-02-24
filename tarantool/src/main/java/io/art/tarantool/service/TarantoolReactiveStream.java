@@ -53,10 +53,10 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
                     MetaField<MetaModel, ?> field = sorter.getField();
                     switch (comparator) {
                         case MORE:
-                            serialized.add(newArray(newString(COMPARATOR_MORE), newInteger(field.index())));
+                            serialized.add(newArray(newString(SelectOptions.SORT), newArray(newString(COMPARATOR_MORE), newInteger(field.index()))));
                             break;
                         case LESS:
-                            serialized.add(newArray(newString(COMPARATOR_LESS), newInteger(field.index())));
+                            serialized.add(newArray(newString(SelectOptions.SORT), newArray(newString(COMPARATOR_LESS), newInteger(field.index()))));
                             break;
                     }
                     break;
@@ -67,34 +67,34 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
                     List<Object> values = filter.getValues();
                     switch (filterOperator) {
                         case EQUALS:
-                            serialized.add(serializeModelOperator(OPERATOR_EQUALS, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeModelOperator(OPERATOR_EQUALS, field, values)));
                             break;
                         case NOT_EQUALS:
-                            serialized.add(serializeModelOperator(OPERATOR_NOT_EQUALS, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeModelOperator(OPERATOR_NOT_EQUALS, field, values)));
                             break;
                         case MORE:
-                            serialized.add(serializeNumberOperator(OPERATOR_MORE, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeNumberOperator(OPERATOR_MORE, field, values)));
                             break;
                         case LESS:
-                            serialized.add(serializeNumberOperator(OPERATOR_LESS, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeNumberOperator(OPERATOR_LESS, field, values)));
                             break;
                         case IN:
-                            serialized.add(serializeNumberOperator(OPERATOR_IN, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeNumberOperator(OPERATOR_IN, field, values)));
                             break;
                         case NOT_IN:
-                            serialized.add(serializeNumberOperator(OPERATOR_NOT_IN, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeNumberOperator(OPERATOR_NOT_IN, field, values)));
                             break;
                         case LIKE:
-                            serialized.add(serializeStringOperator(OPERATOR_LIKE, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeStringOperator(OPERATOR_LIKE, field, values)));
                             break;
                         case STARTS_WITH:
-                            serialized.add(serializeStringOperator(OPERATOR_STARTS_WITH, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeStringOperator(OPERATOR_STARTS_WITH, field, values)));
                             break;
                         case ENDS_WITH:
-                            serialized.add(serializeStringOperator(OPERATOR_ENDS_WITH, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeStringOperator(OPERATOR_ENDS_WITH, field, values)));
                             break;
                         case CONTAINS:
-                            serialized.add(serializeStringOperator(OPERATOR_CONTAINS, field, values));
+                            serialized.add(newArray(newString(, SelectOptions.FILTER), serializeStringOperator(OPERATOR_CONTAINS, field, values)));
                             break;
                     }
                     break;
