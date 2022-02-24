@@ -42,5 +42,10 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
+    public ReactiveSpaceStream<Type> refresh() {
+        operators.clear();
+        return this;
+    }
+
     public abstract Flux<Type> collect();
 }

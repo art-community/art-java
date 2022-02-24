@@ -17,7 +17,6 @@ import java.util.function.*;
 public abstract class SpaceStream<Type> {
     protected final List<Pair<StreamOperation, Object>> operators = linkedList();
 
-
     public SpaceStream<Type> limit(long value) {
         operators.add(pairOf(LIMIT, value));
         return this;
@@ -44,6 +43,11 @@ public abstract class SpaceStream<Type> {
 
     public SpaceStream<Type> filter(UnaryOperator<Filter<Type>> filter) {
         operators.add(pairOf(FILTER, filter.apply(new Filter<>())));
+        return this;
+    }
+
+    public SpaceStream<Type> refresh() {
+        operators.clear();
         return this;
     }
 
@@ -94,7 +98,6 @@ public abstract class SpaceStream<Type> {
             return this;
         }
     }
-
 
     @Getter
     @RequiredArgsConstructor
