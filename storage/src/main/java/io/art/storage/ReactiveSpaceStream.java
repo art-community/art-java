@@ -38,7 +38,7 @@ public abstract class ReactiveSpaceStream<Type> {
     }
 
     public ReactiveSpaceStream<Type> filter(UnaryOperator<SpaceStream.Filter<Type>> filter) {
-        operators.add(pairOf(FILTER, filter.apply(new SpaceStream.Filter<>())));
+        operators.add(pairOf(FILTER, filter.apply(new Filter<>())));
         return this;
     }
 
