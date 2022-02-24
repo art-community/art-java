@@ -49,7 +49,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     break;
                 case SORT:
                     Sorter<ModelType, ?> sorter = cast(operator.getSecond());
-                    Sorter.SortComparator comparator = sorter.getComparator();
+                    SortComparator comparator = sorter.getComparator();
                     MetaField<?, ?> field = sorter.getField();
                     switch (comparator) {
                         case MORE:
@@ -62,7 +62,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     break;
                 case FILTER:
                     Filter<ModelType> filter = cast(operator.getSecond());
-                    Filter.FilterOperator filterOperator = filter.getOperator();
+                    FilterOperator filterOperator = filter.getOperator();
                     field = filter.getField();
                     List<Object> values = filter.getValues();
                     switch (filterOperator) {
