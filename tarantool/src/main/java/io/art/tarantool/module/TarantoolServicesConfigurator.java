@@ -27,7 +27,7 @@ public class TarantoolServicesConfigurator {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(tarantoolModule().configuration().getStorages().get(storageId))));
-        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(idField.get().type(), definition(spaceClass), tarantoolModule().configuration().getStorages().get(storageId))));
+        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(idField.get().type(), declaration(spaceClass), tarantoolModule().configuration().getStorages().get(storageId))));
         return this;
     }
 

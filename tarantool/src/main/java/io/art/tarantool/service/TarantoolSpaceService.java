@@ -15,7 +15,7 @@ import java.util.*;
 public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<KeyType, ModelType> {
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
 
-    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, TarantoolStorage storage) {
+    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolStorage storage) {
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, storage);
     }
 
@@ -95,8 +95,8 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
-    public <MetaModel extends MetaClass<ModelType>> TarantoolStream<ModelType, MetaModel> stream(MetaModel model) {
-        return new TarantoolStream<>(reactive.stream(model));
+    public TarantoolStream<ModelType> stream() {
+        return new TarantoolStream<>(reactive.stream());
     }
 
     @Override

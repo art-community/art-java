@@ -25,9 +25,9 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
     private final TarantoolStorage storage;
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
-    private final static MetaType<Long> LONG_TYPE = definition(Long.class);
     private final MetaType<ModelType> spaceMeta;
     private final MetaType<KeyType> keyMeta;
+    private final static MetaType<Long> LONG_TYPE = definition(Long.class);
 
     @Builder
     public TarantoolReactiveIndexService(MetaType<KeyType> keyMeta,

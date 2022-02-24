@@ -1,10 +1,11 @@
 package io.art.storage;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.MapFactory.*;
+import static io.art.core.factory.PairFactory.*;
 import static io.art.storage.SpaceStream.Filter.FilterOperator.*;
 import static io.art.storage.SpaceStream.Sorter.SortComparator.LESS;
 import static io.art.storage.SpaceStream.Sorter.SortComparator.MORE;
@@ -13,36 +14,36 @@ import static io.art.storage.SpaceStream.StreamOperation.*;
 import java.util.*;
 import java.util.function.*;
 
-public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
-    protected final List<Map<StreamOperation, Object>> operators = linkedList();
+public abstract class SpaceStream<Type> {
+    protected final List<Pair<StreamOperation, Object>> operators = linkedList();
 
 
-    public SpaceStream<Type, Meta> limit(long value) {
-        operators.add(mapOf(LIMIT, value));
+    public SpaceStream<Type> limit(long value) {
+        operators.add(pairOf(LIMIT, value));
         return this;
     }
 
-    public SpaceStream<Type, Meta> offset(long value) {
-        operators.add(mapOf(OFFSET, value));
+    public SpaceStream<Type> offset(long value) {
+        operators.add(pairOf(OFFSET, value));
         return this;
     }
 
-    public SpaceStream<Type, Meta> range(long offset, long limit) {
+    public SpaceStream<Type> range(long offset, long limit) {
         return offset(offset).limit(limit);
     }
 
-    public SpaceStream<Type, Meta> distinct() {
-        operators.add(mapOf(DISTINCT, null));
+    public SpaceStream<Type> distinct() {
+        operators.add(pairOf(DISTINCT, null));
         return this;
     }
 
-    public <FieldType> SpaceStream<Type, Meta> sort(MetaField<Meta, FieldType> current, UnaryOperator<Sorter<Type, Meta, FieldType>> sorter) {
-        operators.add(mapOf(SORT, sorter.apply(new Sorter<>(current))));
+    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
+        operators.add(pairOf(SORT, sorter.apply(new Sorter<>(current))));
         return this;
     }
 
-    public SpaceStream<Type, Meta> filter(UnaryOperator<Filter<Type, Meta>> filter) {
-        operators.add(mapOf(FILTER, filter.apply(new Filter<>())));
+    public SpaceStream<Type> filter(UnaryOperator<Filter<Type>> filter) {
+        operators.add(pairOf(FILTER, filter.apply(new Filter<>())));
         return this;
     }
 
@@ -58,8 +59,8 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
 
     @Getter
     @RequiredArgsConstructor
-    public static class Sorter<Type, Meta extends MetaClass<Type>, FieldType> {
-        private final MetaField<Meta, FieldType> field;
+    public static class Sorter<Type, FieldType> {
+        private final MetaField<? extends MetaClass<Type>, FieldType> field;
         private SortOrder order = ASCENDANT;
         private SortComparator comparator = MORE;
 
@@ -73,22 +74,22 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
             LESS
         }
 
-        public Sorter<Type, Meta, FieldType> ascendant() {
+        public Sorter<Type, FieldType> ascendant() {
             order = ASCENDANT;
             return this;
         }
 
-        public Sorter<Type, Meta, FieldType> descendant() {
+        public Sorter<Type, FieldType> descendant() {
             order = DESCENDANT;
             return this;
         }
 
-        public Sorter<Type, Meta, FieldType> more() {
+        public Sorter<Type, FieldType> more() {
             comparator = MORE;
             return this;
         }
 
-        public Sorter<Type, Meta, FieldType> less() {
+        public Sorter<Type, FieldType> less() {
             comparator = LESS;
             return this;
         }
@@ -97,8 +98,8 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
 
     @Getter
     @RequiredArgsConstructor
-    public static class Filter<Type, Meta extends MetaClass<Type>> {
-        private MetaField<Meta, ?> field;
+    public static class Filter<Type> {
+        private MetaField<? extends MetaClass<Type>, ?> field;
         private FilterOperator operator;
         private final List<Object> values = linkedList();
 
@@ -115,35 +116,35 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
             CONTAINS
         }
 
-        public <FieldType> Filter<Type, Meta> equal(MetaField<Meta, FieldType> field, FieldType value) {
+        public <FieldType> Filter<Type> equal(MetaField<? extends MetaClass<Type>, FieldType> field, FieldType value) {
             this.field = field;
             operator = EQUALS;
             values.add(value);
             return this;
         }
 
-        public <FieldType> Filter<Type, Meta> notEqual(MetaField<Meta, FieldType> field, FieldType value) {
+        public <FieldType> Filter<Type> notEqual(MetaField<? extends MetaClass<Type>, FieldType> field, FieldType value) {
             this.field = field;
             operator = NOT_EQUALS;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta> moreThan(MetaField<Meta, ? extends Number> field, Number value) {
+        public Filter<Type> moreThan(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number value) {
             this.field = field;
             operator = FilterOperator.MORE;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta> lessThan(MetaField<Meta, ? extends Number> field, Number value) {
+        public Filter<Type> lessThan(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number value) {
             this.field = field;
             operator = FilterOperator.LESS;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta> in(MetaField<Meta, ? extends Number> field, Number startValue, Number endValue) {
+        public Filter<Type> in(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number startValue, Number endValue) {
             this.field = field;
             operator = IN;
             values.add(startValue);
@@ -151,7 +152,7 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
             return this;
         }
 
-        public Filter<Type, Meta> notIn(MetaField<Meta, ? extends Number> field, Number startValue, Number endValue) {
+        public Filter<Type> notIn(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number startValue, Number endValue) {
             this.field = field;
             operator = NOT_IN;
             values.add(startValue);
@@ -159,28 +160,28 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
             return this;
         }
 
-        public Filter<Type, Meta> like(MetaField<Meta, String> field, String pattern) {
+        public Filter<Type> like(MetaField<? extends MetaClass<Type>, String> field, String pattern) {
             this.field = field;
             operator = LIKE;
             values.add(pattern);
             return this;
         }
 
-        public Filter<Type, Meta> startsWith(MetaField<Meta, String> field, String pattern) {
+        public Filter<Type> startsWith(MetaField<? extends MetaClass<Type>, String> field, String pattern) {
             this.field = field;
             operator = STARTS_WITH;
             values.add(pattern);
             return this;
         }
 
-        public Filter<Type, Meta> endsWith(MetaField<Meta, String> field, String pattern) {
+        public Filter<Type> endsWith(MetaField<? extends MetaClass<Type>, String> field, String pattern) {
             this.field = field;
             operator = ENDS_WITH;
             values.add(pattern);
             return this;
         }
 
-        public Filter<Type, Meta> contains(MetaField<Meta, String> field, String pattern) {
+        public Filter<Type> contains(MetaField<? extends MetaClass<Type>, String> field, String pattern) {
             this.field = field;
             operator = CONTAINS;
             values.add(pattern);

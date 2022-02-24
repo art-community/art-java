@@ -10,6 +10,7 @@ import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
@@ -22,21 +23,25 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
-    private final Class<ModelType> spaceType;
-    private final StringValue spaceName;
-    private final MetaType<ModelType> spaceMeta;
-    private final MetaType<KeyType> keyMeta;
-    private final TarantoolStorage storage;
-    private final TarantoolModelWriter writer;
-    private final TarantoolModelReader reader;
+    final Class<ModelType> spaceType;
+    final StringValue spaceName;
+    final MetaType<ModelType> spaceMetaType;
+    final MetaClass<ModelType> spaceMetaClass;
+    final MetaType<KeyType> keyMeta;
+    final TarantoolStorage storage;
+    final TarantoolModelWriter writer;
+    final TarantoolModelReader reader;
     private final static MetaType<Long> LONG_TYPE = definition(Long.class);
+    private TarantoolReactiveStream<ModelType> stream;
 
-    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, TarantoolStorage storage) {
-        this.spaceType = spaceMeta.type();
+    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolStorage storage) {
+        this.spaceType = spaceMeta.definition().type();
         this.storage = storage;
-        this.spaceMeta = spaceMeta;
+        this.spaceMetaType = spaceMeta.definition();
+        this.spaceMetaClass = spaceMeta;
         this.keyMeta = keyMeta;
         this.spaceName = newString(idByDash(spaceType));
+        stream = new TarantoolReactiveStream<>(this);
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
     }
@@ -88,21 +93,21 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public Mono<ModelType> insert(ModelType value) {
-        ArrayValue input = newArray(spaceName, writer.write(spaceMeta, value));
+        ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
         Mono<Value> output = storage.immutable().call(SPACE_SINGLE_INSERT, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> insert(Collection<ModelType> value) {
-        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> insert(ImmutableCollection<ModelType> value) {
-        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
@@ -110,21 +115,21 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public Mono<ModelType> put(ModelType value) {
-        ArrayValue input = newArray(spaceName, writer.write(spaceMeta, value));
+        ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
         Mono<Value> output = storage.immutable().call(SPACE_SINGLE_PUT, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> put(Collection<ModelType> value) {
-        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> put(ImmutableCollection<ModelType> value) {
-        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMeta, element)).collect(listCollector())));
+        ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
@@ -141,8 +146,8 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public <MetaModel extends MetaClass<ModelType>> TarantoolReactiveStream<ModelType, MetaModel> stream(MetaModel model) {
-        return new TarantoolReactiveStream<>(storage, reader, writer, spaceName, spaceMeta);
+    public TarantoolReactiveStream<ModelType> stream() {
+        return cast(stream);
     }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {
@@ -150,13 +155,13 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
-        return value.map(element -> reader.read(spaceMeta, element));
+        return value.map(element -> reader.read(spaceMetaType, element));
     }
 
-    private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
+    Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
-                .map(element -> reader.read(spaceMeta, element))));
+                .map(element -> reader.read(spaceMetaType, element))));
     }
 }

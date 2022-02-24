@@ -2,7 +2,6 @@ package io.art.storage;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.meta.model.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
@@ -59,7 +58,7 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
 
-    <MetaModel extends MetaClass<ModelType>> SpaceStream<ModelType, MetaModel> stream(MetaModel model);
+    SpaceStream<ModelType> stream();
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 }

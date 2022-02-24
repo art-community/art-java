@@ -8,41 +8,41 @@ import static io.art.core.collection.ImmutableArray.*;
 import java.util.function.*;
 
 @AllArgsConstructor
-public class TarantoolStream<Type, Meta extends MetaClass<Type>> extends SpaceStream<Type, Meta> {
-    private final TarantoolReactiveStream<Type, Meta> stream;
+public class TarantoolStream<Type> extends SpaceStream<Type> {
+    private final TarantoolReactiveStream<Type> stream;
 
     @Override
-    public SpaceStream<Type, Meta> limit(long value) {
+    public SpaceStream<Type> limit(long value) {
         stream.limit(value);
         return this;
     }
 
     @Override
-    public SpaceStream<Type, Meta> offset(long value) {
+    public SpaceStream<Type> offset(long value) {
         stream.offset(value);
         return this;
     }
 
     @Override
-    public SpaceStream<Type, Meta> range(long offset, long limit) {
+    public SpaceStream<Type> range(long offset, long limit) {
         stream.range(offset, limit);
         return this;
     }
 
     @Override
-    public SpaceStream<Type, Meta> distinct() {
+    public SpaceStream<Type> distinct() {
         stream.distinct();
         return this;
     }
 
     @Override
-    public <FieldType> SpaceStream<Type, Meta> sort(MetaField<Meta, FieldType> current, UnaryOperator<Sorter<Type, Meta, FieldType>> sorter) {
+    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
         stream.sort(current, sorter);
         return this;
     }
 
     @Override
-    public SpaceStream<Type, Meta> filter(UnaryOperator<Filter<Type, Meta>> filter) {
+    public SpaceStream<Type> filter(UnaryOperator<Filter<Type>> filter) {
         stream.filter(filter);
         return this;
     }

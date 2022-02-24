@@ -5,8 +5,6 @@ import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.SpaceStream.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
-import io.art.tarantool.descriptor.*;
-import io.art.tarantool.storage.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -19,19 +17,13 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
 import static org.msgpack.value.ValueFactory.*;
-import static reactor.core.publisher.Flux.*;
 import java.util.*;
 
 
-@AllArgsConstructor
-public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<ModelType>> extends ReactiveSpaceStream<ModelType, MetaModel> {
-    private final TarantoolStorage storage;
-    private final TarantoolModelReader reader;
-    private final TarantoolModelWriter writer;
-    private final StringValue spaceName;
-    private final MetaType<ModelType> spaceMeta;
-    private final MetaType<String> STRING = definition(String.class);
-    private final MetaType<Long> LONG = definition(long.class);
+@RequiredArgsConstructor
+public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<ModelType> {
+    private final MetaType<Long> LONG_TYPE = definition(long.class);
+    private final TarantoolReactiveSpaceService<?, ModelType> service;
 
     @Override
     public Flux<ModelType> collect() {
@@ -39,18 +31,18 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
         for (Pair<StreamOperation, Object> operator : operators) {
             switch (operator.getFirst()) {
                 case LIMIT:
-                    serialized.add(newArray(newString(SelectOptions.LIMIT), serializeValue(LONG, operator.getSecond())));
+                    serialized.add(newArray(newString(SelectOptions.LIMIT), serializeValue(LONG_TYPE, operator.getSecond())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(newString(SelectOptions.OFFSET), serializeValue(LONG, operator.getSecond())));
+                    serialized.add(newArray(newString(SelectOptions.OFFSET), serializeValue(LONG_TYPE, operator.getSecond())));
                     break;
                 case DISTINCT:
                     serialized.add(newArray(newString(SelectOptions.DISTINCT)));
                     break;
                 case SORT:
-                    Sorter<ModelType, MetaModel, ?> sorter = cast(operator.getSecond());
+                    Sorter<ModelType, ?> sorter = cast(operator.getSecond());
                     Sorter.SortComparator comparator = sorter.getComparator();
-                    MetaField<MetaModel, ?> field = sorter.getField();
+                    MetaField<?, ?> field = sorter.getField();
                     switch (comparator) {
                         case MORE:
                             serialized.add(newArray(newString(SelectOptions.SORT), newArray(newString(COMPARATOR_MORE), newInteger(field.index() + 1))));
@@ -61,7 +53,7 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
                     }
                     break;
                 case FILTER:
-                    Filter<ModelType, MetaModel> filter = cast(operator.getSecond());
+                    Filter<ModelType> filter = cast(operator.getSecond());
                     Filter.FilterOperator filterOperator = filter.getOperator();
                     field = filter.getField();
                     List<Object> values = filter.getValues();
@@ -101,27 +93,18 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
             }
         }
 
-        return parseSpaceFlux(storage.immutable().call(SPACE_FIND, newArray(spaceName, newArray(serialized))));
+        return service.parseSpaceFlux(service.storage.immutable().call(SPACE_FIND, newArray(service.spaceName, newArray(serialized))));
     }
 
-    private ImmutableArrayValue serializeFilterOperator(String operator, MetaField<MetaModel, ?> field, List<Object> values) {
+    private ImmutableArrayValue serializeFilterOperator(String operator, MetaField<?, ?> field, List<Object> values) {
         return newArray(newString(operator), newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
     }
 
     private ImmutableArrayValue serializeFilterValues(MetaType<?> type, List<Object> values) {
-        return newArray(values
-                .stream()
-                .map(value -> serializeValue(type, value)).collect(listCollector()));
+        return newArray(values.stream().map(value -> serializeValue(type, value)).collect(listCollector()));
     }
 
     private Value serializeValue(MetaType<?> type, Object value) {
-        return writer.write(type, value);
-    }
-
-    private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
-        return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
-                .list()
-                .stream()
-                .map(element -> reader.read(spaceMeta, element))));
+        return service.writer.write(type, value);
     }
 }

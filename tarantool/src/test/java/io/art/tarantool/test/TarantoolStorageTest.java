@@ -175,7 +175,7 @@ public class TarantoolStorageTest {
         );
         space().put(data);
         ImmutableArray<TestingMetaModel> result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .limit(2)
                 .filter(filter -> filter.in(testingMetaModel().f1Field(), 1, 3))
                 .sort(testingMetaModel().f1Field(), SpaceStream.Sorter::descendant)
@@ -194,14 +194,14 @@ public class TarantoolStorageTest {
         );
         space().put(data);
         ImmutableArray<TestingMetaModel> result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .filter(filter -> filter.equal(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .filter(filter -> filter.notEqual(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .collect();
         assertEquals(2, result.size());
@@ -218,28 +218,28 @@ public class TarantoolStorageTest {
         );
         space().put(data);
         ImmutableArray<TestingMetaModel> result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .filter(filter -> filter.like(testingMetaModel().f16Field(), "rin"))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .filter(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = space()
-                .stream(testingMetaModel())
+                .stream()
                 .filter(filter -> filter.endsWith(testingMetaModel().f16Field(), "ng"))
                 .collect();
         assertEquals(1, result.size());
