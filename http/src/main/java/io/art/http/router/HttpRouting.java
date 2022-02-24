@@ -34,7 +34,6 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
     private final MetaType<?> inputMappingType;
     private final MetaType<?> outputMappingType;
     private final HttpModuleState state;
-    private final MetaClass<?> owner;
     private final MetaMethod<MetaClass<?>, ?> delegate;
     private final MetaType<?> inputType;
 
@@ -50,7 +49,6 @@ class HttpRouting implements BiFunction<HttpServerRequest, HttpServerResponse, P
         this.inputMappingType = inputMappingType;
         this.outputMappingType = outputMappingType;
         state = httpModule().state();
-        owner = serviceMethod.getInvoker().getOwner();
         delegate = serviceMethod.getInvoker().getDelegate();
         inputType = serviceMethod.getInputType();
     }

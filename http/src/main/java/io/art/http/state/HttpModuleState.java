@@ -18,11 +18,10 @@
 
 package io.art.http.state;
 
-import io.art.core.caster.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
-import static io.art.core.caster.Caster.cast;
+import static io.art.core.caster.Caster.*;
 
 public class HttpModuleState implements ModuleState {
     private final MetaLocalState<LazyProperty<HttpLocalState>> httpLocalState = new MetaLocalState<>();
