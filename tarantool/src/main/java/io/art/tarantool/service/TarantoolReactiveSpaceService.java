@@ -14,7 +14,7 @@ import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.local.ThreadLocalValue.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static io.art.meta.Meta.*;
+import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -24,7 +24,6 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
-    private final static MetaType<Long> LONG_TYPE = definition(Long.class);
     final Class<ModelType> spaceType;
     final StringValue spaceName;
     final MetaType<ModelType> spaceMetaType;
@@ -154,7 +153,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {
-        return value.map(element -> reader.read(LONG_TYPE, element));
+        return value.map(element -> reader.read(longType(), element));
     }
 
     private Mono<ModelType> parseSpaceMono(Mono<Value> value) {

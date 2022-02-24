@@ -1,6 +1,7 @@
 package io.art.tarantool.service;
 
 import io.art.meta.model.*;
+import io.art.meta.registry.*;
 import io.art.storage.*;
 import io.art.storage.SpaceStream.*;
 import lombok.*;
@@ -10,9 +11,7 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.meta.Meta.*;
-import static io.art.meta.registry.BuiltinMetaTypes.LONG_PRIMITIVE_TYPE;
-import static io.art.meta.registry.BuiltinMetaTypes.LONG_TYPE;
+import static io.art.meta.registry.BuiltinMetaTypes.longPrimitiveType;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
@@ -39,10 +38,10 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         for (StreamOperator operator : operators) {
             switch (operator.getOperation()) {
                 case LIMIT:
-                    serialized.add(newArray(LIMIT, serializeValue(LONG_PRIMITIVE_TYPE, operator.getValue())));
+                    serialized.add(newArray(LIMIT, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(OFFSET, serializeValue(LONG_PRIMITIVE_TYPE, operator.getValue())));
+                    serialized.add(newArray(OFFSET, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case DISTINCT:
                     serialized.add(newArray(DISTINCT));

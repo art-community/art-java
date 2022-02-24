@@ -96,7 +96,7 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
     }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {
-        return value.map(element -> reader.read(LONG_TYPE, element));
+        return value.map(element -> reader.read(longType(), element));
     }
 
     private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
