@@ -90,8 +90,7 @@ public class TarantoolClient {
     }
 
     private void emitCall(IntegerValue id, Value body) {
-        ByteBuf tarantoolRequest = writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), body);
-        sender.tryEmitNext(tarantoolRequest);
+        sender.tryEmitNext(writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), body));
     }
 
     private void onAuthenticate(boolean authenticated, String error) {

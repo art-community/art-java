@@ -27,6 +27,14 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
 
     @Override
     public Flux<ModelType> collect() {
+        Mono<Value> result = service
+                .storage
+                .immutable()
+                .call(SPACE_FIND, newArray(service.spaceName, newArray(serializeStream())));
+        return service.parseSpaceFlux(result);
+    }
+
+    private List<Value> serializeStream() {
         List<Value> serialized = linkedList();
         for (Pair<StreamOperation, Object> operator : operators) {
             switch (operator.getFirst()) {
@@ -92,8 +100,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     break;
             }
         }
-
-        return service.parseSpaceFlux(service.storage.immutable().call(SPACE_FIND, newArray(service.spaceName, newArray(serialized))));
+        return serialized;
     }
 
     private ImmutableArrayValue serializeFilterOperator(ImmutableStringValue operator, MetaField<?, ?> field, List<Object> values) {
