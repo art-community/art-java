@@ -654,12 +654,12 @@ filters["less"] = function(filtering, field, value)
     return filtering[field] < value
 end
 
-filters["in"] = function(filtering, field, values)
-    return (filtering[field] >= values[1]) and (filtering[field] <= values[2])
+filters["in"] = function(filtering, field, startValue, endValue)
+    return (filtering[field] >= startValue) and (filtering[field] <= endValue)
 end
 
-filters["notIn"] = function(filtering, field, values)
-    return not ((filtering[field] >= values[1]) and (filtering[field] <= values[2]))
+filters["notIn"] = function(filtering, field, startValue, endValue)
+    return not ((filtering[field] >= startValue) and (filtering[field] <= endValue))
 end
 
 filters["like"] = function(filtering, field, pattern)
@@ -678,9 +678,9 @@ filters["contains"] = function(filtering, field, pattern)
     return string.find(filtering[field], pattern)
 end
 
-local filterSelector = function(name, field, values)
+local filterSelector = function(name, field, request)
     return function(filtering)
-        return filters[name](filtering, field, unpack(values))
+        return filters[name](filtering, field, unpack(request))
     end
 end
 

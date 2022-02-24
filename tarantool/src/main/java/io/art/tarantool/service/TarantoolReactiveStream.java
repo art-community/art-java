@@ -61,40 +61,40 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
                     }
                     break;
                 case FILTER:
-                    Filter<ModelType, MetaModel, ?> filter = cast(operator.getSecond());
+                    Filter<ModelType, MetaModel> filter = cast(operator.getSecond());
                     Filter.FilterOperator filterOperator = filter.getOperator();
-                    field = filter.getCurrent();
+                    field = filter.getField();
                     List<Object> values = filter.getValues();
                     switch (filterOperator) {
                         case EQUALS:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeModelOperator(OPERATOR_EQUALS, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_EQUALS, field, values)));
                             break;
                         case NOT_EQUALS:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeModelOperator(OPERATOR_NOT_EQUALS, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_NOT_EQUALS, field, values)));
                             break;
                         case MORE:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeNumberOperator(OPERATOR_MORE, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_MORE, field, values)));
                             break;
                         case LESS:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeNumberOperator(OPERATOR_LESS, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_LESS, field, values)));
                             break;
                         case IN:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeNumberOperator(OPERATOR_IN, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_IN, field, values)));
                             break;
                         case NOT_IN:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeNumberOperator(OPERATOR_NOT_IN, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_NOT_IN, field, values)));
                             break;
                         case LIKE:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeStringOperator(OPERATOR_LIKE, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_LIKE, field, values)));
                             break;
                         case STARTS_WITH:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeStringOperator(OPERATOR_STARTS_WITH, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_STARTS_WITH, field, values)));
                             break;
                         case ENDS_WITH:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeStringOperator(OPERATOR_ENDS_WITH, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_ENDS_WITH, field, values)));
                             break;
                         case CONTAINS:
-                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeStringOperator(OPERATOR_CONTAINS, field, values)));
+                            serialized.add(newArray(newString(SelectOptions.FILTER), serializeFilterOperator(OPERATOR_CONTAINS, field, values)));
                             break;
                     }
                     break;
@@ -104,16 +104,8 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
         return parseSpaceFlux(storage.immutable().call(SPACE_FIND, newArray(spaceName, newArray(serialized))));
     }
 
-    private ImmutableArrayValue serializeModelOperator(String operator, MetaField<MetaModel, ?> field, List<Object> values) {
-        return newArray(newString(operator), newInteger(field.index() + 1), serializeFilterValues(spaceMeta, values));
-    }
-
-    private ImmutableArrayValue serializeStringOperator(String operator, MetaField<MetaModel, ?> field, List<Object> values) {
-        return newArray(newString(operator), newInteger(field.index() + 1), serializeFilterValues(STRING, values));
-    }
-
-    private ImmutableArrayValue serializeNumberOperator(String operator, MetaField<MetaModel, ?> field, List<Object> values) {
-        return newArray(newString(operator), newInteger(field.index() + 1), serializeFilterValues(LONG, values));
+    private ImmutableArrayValue serializeFilterOperator(String operator, MetaField<MetaModel, ?> field, List<Object> values) {
+        return newArray(newString(operator), newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
     }
 
     private ImmutableArrayValue serializeFilterValues(MetaType<?> type, List<Object> values) {

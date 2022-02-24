@@ -51,7 +51,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        //shutdownStorage();
+        shutdownStorage();
         shutdown();
     }
 
@@ -167,7 +167,7 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testStream() {
+    public void testStreamByNumbers() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
                 generateTestingModel().toBuilder().f1(2).build(),
@@ -177,12 +177,74 @@ public class TarantoolStorageTest {
         ImmutableArray<TestingMetaModel> result = space()
                 .stream(testingMetaModel())
                 .limit(2)
-                .filter(testingMetaModel().f1Field(), filter -> filter.in(1, 3))
+                .filter(filter -> filter.in(testingMetaModel().f1Field(), 1, 3))
                 .sort(testingMetaModel().f1Field(), SpaceStream.Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
-        data.get(2).assertEquals(result.get(2));
-        data.get(1).assertEquals(result.get(1));
+        data.get(1).assertEquals(result.get(0));
+        data.get(0).assertEquals(result.get(1));
+    }
+
+    @Test
+    public void testStreamByValues() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).f16("string").build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        space().put(data);
+        ImmutableArray<TestingMetaModel> result = space()
+                .stream(testingMetaModel())
+                .filter(filter -> filter.equal(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = space()
+                .stream(testingMetaModel())
+                .filter(filter -> filter.notEqual(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .collect();
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+    }
+
+    @Test
+    public void testStreamByStrings() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).f16("string").build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        space().put(data);
+        ImmutableArray<TestingMetaModel> result = space()
+                .stream(testingMetaModel())
+                .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = space()
+                .stream(testingMetaModel())
+                .filter(filter -> filter.like(testingMetaModel().f16Field(), "rin"))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = space()
+                .stream(testingMetaModel())
+                .filter(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = space()
+                .stream(testingMetaModel())
+                .filter(filter -> filter.endsWith(testingMetaModel().f16Field(), "ng"))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
     }
 
     private static SpaceService<Integer, TestingMetaModel> space() {

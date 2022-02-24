@@ -37,8 +37,8 @@ public abstract class ReactiveSpaceStream<Type, Meta extends MetaClass<Type>> {
         return this;
     }
 
-    public <FieldType> ReactiveSpaceStream<Type, Meta> filter(MetaField<Meta, FieldType> current, UnaryOperator<SpaceStream.Filter<Type, Meta, FieldType>> filter) {
-        operators.add(pairOf(FILTER, filter.apply(new SpaceStream.Filter<>(current))));
+    public ReactiveSpaceStream<Type, Meta> filter(UnaryOperator<SpaceStream.Filter<Type, Meta>> filter) {
+        operators.add(pairOf(FILTER, filter.apply(new SpaceStream.Filter<>())));
         return this;
     }
 

@@ -41,8 +41,8 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
         return this;
     }
 
-    public <FieldType> SpaceStream<Type, Meta> filter(MetaField<Meta, FieldType> current, UnaryOperator<Filter<Type, Meta, FieldType>> filter) {
-        operators.add(mapOf(FILTER, filter.apply(new Filter<>(current))));
+    public SpaceStream<Type, Meta> filter(UnaryOperator<Filter<Type, Meta>> filter) {
+        operators.add(mapOf(FILTER, filter.apply(new Filter<>())));
         return this;
     }
 
@@ -97,8 +97,8 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
 
     @Getter
     @RequiredArgsConstructor
-    public static class Filter<Type, Meta extends MetaClass<Type>, FieldType> {
-        private final MetaField<Meta, FieldType> current;
+    public static class Filter<Type, Meta extends MetaClass<Type>> {
+        private MetaField<Meta, ?> field;
         private FilterOperator operator;
         private final List<Object> values = linkedList();
 
@@ -115,63 +115,73 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
             CONTAINS
         }
 
-        public Filter<Type, Meta, FieldType> equal(FieldType value) {
+        public <FieldType> Filter<Type, Meta> equal(MetaField<Meta, FieldType> field, FieldType value) {
+            this.field = field;
             operator = EQUALS;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> notEqual(FieldType value) {
+        public <FieldType> Filter<Type, Meta> notEqual(MetaField<Meta, FieldType> field, FieldType value) {
+            this.field = field;
             operator = NOT_EQUALS;
             values.add(value);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> moreThan(long value) {
+        public Filter<Type, Meta> moreThan(MetaField<Meta, ? extends Number> field, Number value) {
+            this.field = field;
             operator = FilterOperator.MORE;
-            values.add(value);
+            values.add(value.longValue());
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> lessThan(long value) {
+        public Filter<Type, Meta> lessThan(MetaField<Meta, ? extends Number> field, Number value) {
+            this.field = field;
             operator = FilterOperator.LESS;
-            values.add(value);
+            values.add(value.longValue());
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> in(long startValue, long endValue) {
+        public Filter<Type, Meta> in(MetaField<Meta, ? extends Number> field, Number startValue, Number endValue) {
+            this.field = field;
             operator = IN;
-            values.add(startValue);
-            values.add(endValue);
+            values.add(startValue.longValue());
+            values.add(endValue.longValue());
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> notIn(long startValue, long endValue) {
+        public Filter<Type, Meta> notIn(MetaField<Meta, ? extends Number> field, Number startValue, Number endValue) {
+            this.field = field;
             operator = NOT_IN;
-            values.add(startValue);
-            values.add(endValue);
+            values.add(startValue.longValue());
+            values.add(endValue.longValue());
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> like(String pattern) {
+        public Filter<Type, Meta> like(MetaField<Meta, String> field, String pattern) {
+            this.field = field;
             operator = LIKE;
             values.add(pattern);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> startsWith(String pattern) {
+        public Filter<Type, Meta> startsWith(MetaField<Meta, String> field, String pattern) {
+            this.field = field;
             operator = STARTS_WITH;
             values.add(pattern);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> endsWith(String pattern) {
+        public Filter<Type, Meta> endsWith(MetaField<Meta, String> field, String pattern) {
+            this.field = field;
             operator = ENDS_WITH;
             values.add(pattern);
             return this;
         }
 
-        public Filter<Type, Meta, FieldType> contains(String pattern) {
+        public Filter<Type, Meta> contains(MetaField<Meta, String> field, String pattern) {
+            this.field = field;
             operator = CONTAINS;
             values.add(pattern);
             return this;

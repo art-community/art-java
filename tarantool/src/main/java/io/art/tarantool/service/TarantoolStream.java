@@ -42,8 +42,8 @@ public class TarantoolStream<Type, Meta extends MetaClass<Type>> extends SpaceSt
     }
 
     @Override
-    public <FieldType> SpaceStream<Type, Meta> filter(MetaField<Meta, FieldType> current, UnaryOperator<Filter<Type, Meta, FieldType>> filter) {
-        stream.filter(current, filter);
+    public SpaceStream<Type, Meta> filter(UnaryOperator<Filter<Type, Meta>> filter) {
+        stream.filter(filter);
         return this;
     }
 
