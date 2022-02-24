@@ -11,6 +11,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.Meta.*;
+import static io.art.meta.registry.BuiltinMetaTypes.LONG_PRIMITIVE_TYPE;
+import static io.art.meta.registry.BuiltinMetaTypes.LONG_TYPE;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
@@ -21,7 +23,6 @@ import java.util.*;
 
 @RequiredArgsConstructor
 public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<ModelType> {
-    private final MetaType<Long> LONG_TYPE = definition(long.class);
     private final TarantoolReactiveSpaceService<?, ModelType> service;
 
     @Override
@@ -38,10 +39,10 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         for (StreamOperator operator : operators) {
             switch (operator.getOperation()) {
                 case LIMIT:
-                    serialized.add(newArray(LIMIT, serializeValue(LONG_TYPE, operator.getValue())));
+                    serialized.add(newArray(LIMIT, serializeValue(LONG_PRIMITIVE_TYPE, operator.getValue())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(OFFSET, serializeValue(LONG_TYPE, operator.getValue())));
+                    serialized.add(newArray(OFFSET, serializeValue(LONG_PRIMITIVE_TYPE, operator.getValue())));
                     break;
                 case DISTINCT:
                     serialized.add(newArray(DISTINCT));

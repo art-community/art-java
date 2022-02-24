@@ -35,6 +35,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.factory.SetFactory.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static io.art.meta.model.MetaClass.*;
+import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.meta.state.MetaComputationState.*;
 import static java.lang.String.*;
 import static java.util.Objects.*;
@@ -99,6 +100,7 @@ public abstract class MetaLibrary {
             dependency.computeLibrary();
         }
         computeLibrary();
+        initializeBuiltinMetaTypes();
         clearClassMutableRegistry();
     }
 

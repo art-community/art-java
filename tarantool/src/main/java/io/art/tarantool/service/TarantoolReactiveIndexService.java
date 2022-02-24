@@ -11,7 +11,7 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
-import static io.art.meta.Meta.*;
+import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -27,7 +27,6 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
     private final TarantoolModelReader reader;
     private final MetaType<ModelType> spaceMeta;
     private final MetaType<KeyType> keyMeta;
-    private final static MetaType<Long> LONG_TYPE = definition(Long.class);
 
     @Builder
     public TarantoolReactiveIndexService(MetaType<KeyType> keyMeta,
