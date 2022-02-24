@@ -2,6 +2,7 @@ package io.art.storage;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
@@ -21,7 +22,6 @@ public interface SpaceService<KeyType, ModelType> {
 
     ModelType delete(KeyType key);
 
-
     default ImmutableArray<ModelType> delete(KeyType... keys) {
         return delete(asList(keys));
     }
@@ -30,12 +30,9 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> delete(ImmutableCollection<KeyType> keys);
 
-
     long count();
 
-
     void truncate();
-
 
     ModelType insert(ModelType value);
 
@@ -47,7 +44,6 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> insert(ImmutableCollection<ModelType> value);
 
-
     ModelType put(ModelType value);
 
     default ImmutableArray<ModelType> put(ModelType... value) {
@@ -57,6 +53,14 @@ public interface SpaceService<KeyType, ModelType> {
     ImmutableArray<ModelType> put(Collection<ModelType> value);
 
     ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
+
+    ModelType add(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value);
+
+    ModelType subtract(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value);
+
+    <FieldType> ModelType set(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value);
+
+    <FieldType> ModelType delete(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value);
 
     SpaceStream<ModelType> stream();
 

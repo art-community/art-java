@@ -8,6 +8,7 @@ import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.storage.*;
+import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -15,6 +16,7 @@ import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
+import static org.msgpack.value.ValueFactory.*;
 import java.util.function.*;
 
 public class TarantoolFunctionCommunication implements Communication {
@@ -24,7 +26,7 @@ public class TarantoolFunctionCommunication implements Communication {
     private final TarantoolStorage storage;
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
-    private String function;
+    private ImmutableStringValue function;
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
 
@@ -41,7 +43,7 @@ public class TarantoolFunctionCommunication implements Communication {
 
     @Override
     public void initialize(CommunicatorAction action) {
-        this.function = action.getId().getCommunicatorId() + DOT + action.getId().getActionId();
+        this.function = newString(action.getId().getCommunicatorId() + DOT + action.getId().getActionId());
         inputMappingType = action.getInputType();
         if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
             inputMappingType = inputMappingType.parameters().get(0);

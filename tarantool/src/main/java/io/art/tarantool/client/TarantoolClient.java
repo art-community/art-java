@@ -48,15 +48,15 @@ public class TarantoolClient {
 
     private volatile Disposable disposer;
 
-    public Mono<Value> call(String name) {
+    public Mono<Value> call(ImmutableStringValue name) {
         return connector.asMono().flatMap(client -> client.executeCall(name)).doOnSubscribe(ignore -> connect());
     }
 
-    public Mono<Value> call(String name, Mono<Value> input) {
+    public Mono<Value> call(ImmutableStringValue name, Mono<Value> input) {
         return connector.asMono().flatMap(client -> client.executeCall(name, input)).doOnSubscribe(ignore -> connect());
     }
 
-    public Mono<Value> call(String name, ArrayValue arguments) {
+    public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments) {
         return connector.asMono().flatMap(client -> client.executeCall(name, arguments)).doOnSubscribe(ignore -> connect());
     }
 
@@ -64,32 +64,32 @@ public class TarantoolClient {
         apply(disposer, Disposable::dispose);
     }
 
-    private Mono<Value> executeCall(String name) {
+    private Mono<Value> executeCall(ImmutableStringValue name) {
         TarantoolReceiver receiver = receivers.allocate();
         emitCall(receiver.getId(), callRequest(name, newArray()));
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(String name, Mono<Value> argument) {
+    private Mono<Value> executeCall(ImmutableStringValue name, Mono<Value> argument) {
         TarantoolReceiver receiver = receivers.allocate();
         subscribeInput(name, argument, receiver);
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(String name, ArrayValue arguments) {
+    private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments) {
         TarantoolReceiver receiver = receivers.allocate();
         emitCall(receiver.getId(), callRequest(name, arguments));
         return receiver.getSink().asMono();
     }
 
-    private void subscribeInput(String name, Mono<Value> argument, TarantoolReceiver receiver) {
+    private void subscribeInput(ImmutableStringValue name, Mono<Value> argument, TarantoolReceiver receiver) {
         argument
                 .doOnNext(next -> emitCall(receiver.getId(), callRequest(name, newArray(next))))
                 .doOnError(error -> withLogging(() -> logger.get().error(error)))
                 .subscribe();
     }
 
-    private void emitCall(int id, Value body) {
+    private void emitCall(IntegerValue id, Value body) {
         ByteBuf tarantoolRequest = writeTarantoolRequest(new TarantoolHeader(id, IPROTO_CALL), body);
         sender.tryEmitNext(tarantoolRequest);
     }
@@ -106,7 +106,7 @@ public class TarantoolClient {
     }
 
     private void receive(TarantoolResponse response) {
-        TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId());
+        TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId().asInt());
         if (isNull(receiver)) return;
         One<Value> sink = receiver.getSink();
         Value body = response.getBody();
@@ -119,7 +119,7 @@ public class TarantoolClient {
             return;
         }
         Map<Value, Value> mapValue = body.asMapValue().map();
-        Value bodyData = mapValue.get(newInteger(IPROTO_BODY_DATA));
+        Value bodyData = mapValue.get(IPROTO_BODY_DATA);
         ArrayValue bodyValues;
         if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() != 1) {
             sink.tryEmitEmpty();

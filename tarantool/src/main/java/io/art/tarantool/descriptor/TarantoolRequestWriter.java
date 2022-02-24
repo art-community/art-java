@@ -21,8 +21,8 @@ public class TarantoolRequestWriter {
         MessageBufferPacker packer = newDefaultBufferPacker();
         try {
             Map<IntegerValue, IntegerValue> headerMap = map(2);
-            headerMap.put(newInteger(IPROTO_CODE), newInteger(header.getCode()));
-            headerMap.put(newInteger(IPROTO_SYNC), newInteger(header.getSyncId()));
+            headerMap.put(IPROTO_CODE, header.getCode());
+            headerMap.put(IPROTO_SYNC, header.getSyncId());
             packer.packValue(newMap(headerMap));
             packer.packValue(body);
             ByteBuf buffer = allocateWriteBuffer(transportModule().configuration());

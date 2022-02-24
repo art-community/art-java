@@ -21,7 +21,7 @@ public class TarantoolAuthenticationRequester extends SimpleChannelInboundHandle
     protected void channelRead0(ChannelHandlerContext context, ByteBuf input) {
         if (input.readableBytes() < GREETING_LENGTH) return;
         Value request = createAuthenticationRequest(input, username, password);
-        context.channel().writeAndFlush(writeTarantoolRequest(new TarantoolHeader(0, IPROTO_AUTH), request));
+        context.channel().writeAndFlush(writeTarantoolRequest(new TarantoolHeader(ZERO, IPROTO_AUTH), request));
         context.pipeline().remove(this);
     }
 

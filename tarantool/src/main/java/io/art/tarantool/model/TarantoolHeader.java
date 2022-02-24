@@ -1,10 +1,11 @@
 package io.art.tarantool.model;
 
 import lombok.*;
+import org.msgpack.value.*;
 
 @Getter
 @AllArgsConstructor
 public class TarantoolHeader {
-    private final int syncId;
-    private final long code;
+    private final IntegerValue syncId;
+    private final IntegerValue code;
 }

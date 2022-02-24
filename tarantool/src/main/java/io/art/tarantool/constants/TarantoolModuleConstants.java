@@ -44,20 +44,21 @@ public interface TarantoolModuleConstants {
         int SIZE_BYTES = 5;
         int SCRAMBLE_SIZE = 20;
 
-        int IPROTO_CODE = 0x00;
-        int IPROTO_SYNC = 0x01;
-        int IPROTO_CALL = 0x0a;
-        int IPROTO_USER_NAME = 0x23;
-        int IPROTO_AUTH_DATA = 0x21;
-        int IPROTO_TUPLE = 0x21;
-        int IPROTO_FUNCTION_NAME = 0x22;
-        int IPROTO_AUTH = 0x07;
-        int IPROTO_OK = 0x00;
-        int IPROTO_BODY_DATA = 0x30;
+        ImmutableIntegerValue ZERO = newInteger(0);
+        ImmutableIntegerValue IPROTO_CODE = newInteger(0x00);
+        ImmutableIntegerValue IPROTO_SYNC = newInteger(0x01);
+        ImmutableIntegerValue IPROTO_CALL = newInteger(0x0a);
+        ImmutableIntegerValue IPROTO_USER_NAME = newInteger(0x23);
+        ImmutableIntegerValue IPROTO_AUTH_DATA = newInteger(0x21);
+        ImmutableIntegerValue IPROTO_TUPLE = newInteger(0x21);
+        ImmutableIntegerValue IPROTO_FUNCTION_NAME = newInteger(0x22);
+        ImmutableIntegerValue IPROTO_AUTH = newInteger(0x07);
+        ImmutableIntegerValue IPROTO_OK = newInteger(0x00);
+        ImmutableIntegerValue IPROTO_BODY_DATA = newInteger(0x30);
     }
 
     interface AuthenticationMechanism {
-        String CHAP_SHA1 = "chap-sha1";
+        ImmutableStringValue CHAP_SHA1 = newString("chap-sha1");
     }
 
     interface ConfigurationKeys {
@@ -81,29 +82,26 @@ public interface TarantoolModuleConstants {
     }
 
     interface Functions {
-        String SPACE_FIND_FIRST = "art.space.findFirst";
-        String SPACE_FIND_ALL = "art.space.findAll";
-        String SPACE_FIND = "art.space.find";
-        String SPACE_COUNT = "art.space.count";
-        String SPACE_TRUNCATE = "art.space.truncate";
-        String SPACE_SINGLE_DELETE = "art.space.single.delete";
-        String SPACE_SINGLE_INSERT = "art.space.single.insert";
-        String SPACE_SINGLE_PUT = "art.space.single.put";
-        String SPACE_SINGLE_UPDATE = "art.space.single.update";
-        String SPACE_SINGLE_UPSERT = "art.space.single.upsert";
-
-        String SPACE_MULTIPLE_PUT = "art.space.multiple.put";
-        String SPACE_MULTIPLE_DELETE = "art.space.multiple.delete";
-        String SPACE_MULTIPLE_INSERT = "art.space.multiple.insert";
-
-        String SCHEMA_CREATE_INDEX = "art.schema.createIndex";
-        String SCHEMA_CREATE_SPACE = "art.schema.createSpace";
-        String SCHEMA_SPACES = "art.schema.spaces";
-        String SCHEMA_DROP_INDEX = "art.schema.dropIndex";
-        String SCHEMA_RENAME_SPACE = "art.schema.renameSpace";
-        String SCHEMA_DROP_SPACE = "art.schema.dropSpace";
-        String SCHEMA_INDICIES = "art.schema.indicies";
-        String SCHEMA_FORMAT = "art.schema.format";
+        ImmutableStringValue SPACE_FIND_FIRST = newString("art.space.findFirst");
+        ImmutableStringValue SPACE_FIND_ALL = newString("art.space.findAll");
+        ImmutableStringValue SPACE_FIND = newString("art.space.find");
+        ImmutableStringValue SPACE_COUNT = newString("art.space.count");
+        ImmutableStringValue SPACE_TRUNCATE = newString("art.space.truncate");
+        ImmutableStringValue SPACE_SINGLE_DELETE = newString("art.space.single.delete");
+        ImmutableStringValue SPACE_SINGLE_INSERT = newString("art.space.single.insert");
+        ImmutableStringValue SPACE_SINGLE_PUT = newString("art.space.single.put");
+        ImmutableStringValue SPACE_SINGLE_UPDATE = newString("art.space.single.update");
+        ImmutableStringValue SPACE_MULTIPLE_PUT = newString("art.space.multiple.put");
+        ImmutableStringValue SPACE_MULTIPLE_DELETE = newString("art.space.multiple.delete");
+        ImmutableStringValue SPACE_MULTIPLE_INSERT = newString("art.space.multiple.insert");
+        ImmutableStringValue SCHEMA_CREATE_INDEX = newString("art.schema.createIndex");
+        ImmutableStringValue SCHEMA_CREATE_SPACE = newString("art.schema.createSpace");
+        ImmutableStringValue SCHEMA_SPACES = newString("art.schema.spaces");
+        ImmutableStringValue SCHEMA_DROP_INDEX = newString("art.schema.dropIndex");
+        ImmutableStringValue SCHEMA_RENAME_SPACE = newString("art.schema.renameSpace");
+        ImmutableStringValue SCHEMA_DROP_SPACE = newString("art.schema.dropSpace");
+        ImmutableStringValue SCHEMA_INDICIES = newString("art.schema.indicies");
+        ImmutableStringValue SCHEMA_FORMAT = newString("art.schema.format");
 
     }
 

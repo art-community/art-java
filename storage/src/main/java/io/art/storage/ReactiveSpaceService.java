@@ -2,6 +2,7 @@ package io.art.storage;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
@@ -53,6 +54,14 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
     Mono<Long> count();
 
     Mono<Void> truncate();
+
+    Mono<ModelType> add(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value);
+
+    Mono<ModelType> subtract(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value);
+
+    <FieldType> Mono<ModelType> set(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value);
+
+    <FieldType> Mono<ModelType> delete(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value);
 
     ReactiveSpaceStream<ModelType> stream();
 }

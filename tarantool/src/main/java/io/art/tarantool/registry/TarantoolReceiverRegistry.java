@@ -5,6 +5,7 @@ import io.netty.util.collection.*;
 import lombok.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static java.util.Objects.*;
+import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Sinks.*;
 import java.util.concurrent.atomic.*;
 
@@ -19,7 +20,7 @@ public class TarantoolReceiverRegistry {
         LocalPool localPool = pool.get();
         if (nonNull(localPool)) {
             int id = localPool.next();
-            TarantoolReceiver receiver = new TarantoolReceiver(id, one());
+            TarantoolReceiver receiver = new TarantoolReceiver(newInteger(id), one());
             receivers.put(id, receiver);
             return receiver;
         }
@@ -27,7 +28,7 @@ public class TarantoolReceiverRegistry {
         localPool = new LocalPool(pools.incrementAndGet() * localPoolSize + 1, localPoolSize);
         this.pool.set(localPool);
         int id = localPool.next();
-        TarantoolReceiver receiver = new TarantoolReceiver(id, one());
+        TarantoolReceiver receiver = new TarantoolReceiver(newInteger(id), one());
         receivers.put(id, receiver);
         return receiver;
     }

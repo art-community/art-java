@@ -147,6 +147,26 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
+    public Mono<ModelType> add(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value) {
+        return null;
+    }
+
+    @Override
+    public Mono<ModelType> subtract(MetaField<MetaClass<ModelType>, ? extends Number> field, Number value) {
+        return null;
+    }
+
+    @Override
+    public <FieldType> Mono<ModelType> set(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value) {
+        return null;
+    }
+
+    @Override
+    public <FieldType> Mono<ModelType> delete(MetaField<MetaClass<ModelType>, FieldType> field, FieldType value) {
+        return null;
+    }
+
+    @Override
     public TarantoolReactiveStream<ModelType> stream() {
         TarantoolReactiveStream<ModelType> stream = this.stream.get();
         stream.refresh();

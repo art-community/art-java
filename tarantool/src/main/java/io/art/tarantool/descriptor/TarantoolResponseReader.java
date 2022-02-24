@@ -8,7 +8,6 @@ import org.msgpack.core.*;
 import org.msgpack.value.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConstants.*;
 import static org.msgpack.core.MessagePack.*;
-import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 @UtilityClass
@@ -19,12 +18,12 @@ public class TarantoolResponseReader {
             try (ByteBufInputStream inputStream = new ByteBufInputStream(bodyBuffer)) {
                 MessageUnpacker unpacker = newDefaultUnpacker(inputStream);
                 Map<Value, Value> header = unpacker.unpackValue().asMapValue().map();
-                int syncId = header.get(newInteger(IPROTO_SYNC)).asIntegerValue().asInt();
-                long code = header.get(newInteger(IPROTO_CODE)).asIntegerValue().asLong();
+                IntegerValue syncId = header.get(IPROTO_SYNC).asIntegerValue();
+                IntegerValue code = header.get(IPROTO_CODE).asIntegerValue();
                 TarantoolHeader tarantoolHeader = new TarantoolHeader(syncId, code);
                 response = unpacker.hasNext()
-                        ? new TarantoolResponse(tarantoolHeader, code != IPROTO_OK, unpacker.unpackValue())
-                        : new TarantoolResponse(tarantoolHeader, code != IPROTO_OK);
+                        ? new TarantoolResponse(tarantoolHeader, code.asInt() != IPROTO_OK.asInt(), unpacker.unpackValue())
+                        : new TarantoolResponse(tarantoolHeader, code.asInt() != IPROTO_OK.asInt());
                 unpacker.close();
             }
             bodyBuffer.release();
