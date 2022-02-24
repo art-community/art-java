@@ -2,10 +2,10 @@ package io.art.storage;
 
 import io.art.core.model.*;
 import io.art.meta.model.*;
-import io.art.storage.SpaceStream.*;
 import reactor.core.publisher.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.PairFactory.*;
+import static io.art.storage.SpaceStream.*;
 import static io.art.storage.SpaceStream.StreamOperation.*;
 import java.util.*;
 import java.util.function.*;
@@ -37,8 +37,9 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public ReactiveSpaceStream<Type> filter(UnaryOperator<SpaceStream.Filter<Type>> filter) {
-        operators.add(pairOf(FILTER, filter.apply(new Filter<>())));
+    public ReactiveSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
+        Filter<Type> newFilter = new Filter<>();
+        filter.accept(newFilter);
         return this;
     }
 

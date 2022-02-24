@@ -39,8 +39,8 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
-    public SpaceStream<Type> filter(Consumer<Filter> filter) {
-        Filter newFilter = new Filter();
+    public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
+        Filter<Type> newFilter = new Filter<>();
         filter.accept(newFilter);
         operators.add(pairOf(FILTER, newFilter));
         return this;
@@ -83,7 +83,7 @@ public abstract class SpaceStream<Type> {
 
     @Getter
     @RequiredArgsConstructor
-    public class Filter {
+    public static class Filter<Type> {
         private MetaField<? extends MetaClass<Type>, ?> field;
         private FilterOperator operator;
         private final List<Object> values = linkedList();

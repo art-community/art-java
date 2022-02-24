@@ -42,7 +42,7 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public SpaceStream<Type> filter(UnaryOperator<Filter<Type>> filter) {
+    public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         stream.filter(filter);
         return this;
     }
