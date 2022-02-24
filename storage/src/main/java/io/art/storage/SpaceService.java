@@ -9,7 +9,7 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface SpaceService<KeyType, ModelType, Meta extends MetaClass<ModelType>, StreamType extends SpaceStream<StreamType, ModelType, Meta>> {
+public interface SpaceService<KeyType, ModelType> {
     ModelType findFirst(KeyType key);
 
     default ImmutableArray<ModelType> findAll(KeyType... keys) {
@@ -59,7 +59,7 @@ public interface SpaceService<KeyType, ModelType, Meta extends MetaClass<ModelTy
 
     ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
 
-    StreamType stream();
+    <MetaModel extends MetaClass<ModelType>> SpaceStream<ModelType, MetaModel> stream();
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 }

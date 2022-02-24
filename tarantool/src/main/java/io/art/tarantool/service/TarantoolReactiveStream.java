@@ -24,7 +24,7 @@ import java.util.*;
 
 
 @AllArgsConstructor
-public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<ModelType>> extends ReactiveSpaceStream<TarantoolReactiveStream<ModelType, MetaModel>, ModelType, MetaModel> {
+public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<ModelType>> extends ReactiveSpaceStream<ModelType, MetaModel> {
     private final TarantoolStorage storage;
     private final TarantoolModelReader reader;
     private final TarantoolModelWriter writer;

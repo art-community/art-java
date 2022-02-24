@@ -10,7 +10,7 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface ReactiveSpaceService<KeyType, ModelType, Meta extends MetaClass<ModelType>, StreamType extends ReactiveSpaceStream<StreamType, ModelType, Meta>> {
+public interface ReactiveSpaceService<KeyType, ModelType> {
     Mono<ModelType> findFirst(KeyType key);
 
     default Flux<ModelType> findAll(KeyType... keys) {
@@ -55,5 +55,5 @@ public interface ReactiveSpaceService<KeyType, ModelType, Meta extends MetaClass
 
     Mono<Void> truncate();
 
-    StreamType stream();
+    <MetaModel extends MetaClass<ModelType>> ReactiveSpaceStream<ModelType, MetaModel> stream();
 }

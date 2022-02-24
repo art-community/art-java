@@ -7,7 +7,7 @@ import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 
 @AllArgsConstructor
-public class TarantoolStream<Type, Meta extends MetaClass<Type>> extends SpaceStream<TarantoolStream<Type, Meta>, Type, Meta> {
+public class TarantoolStream<Type, Meta extends MetaClass<Type>> extends SpaceStream<Type, Meta> {
     private final TarantoolReactiveStream<Type, Meta> stream;
 
     @Override

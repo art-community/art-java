@@ -21,7 +21,7 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolReactiveSpaceService<KeyType, ModelType, MetaModel extends MetaClass<ModelType>> implements ReactiveSpaceService<KeyType, ModelType, MetaModel, TarantoolReactiveStream<ModelType, MetaModel>> {
+public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
     private final Class<ModelType> spaceType;
     private final StringValue spaceName;
     private final MetaType<ModelType> spaceMeta;
@@ -141,7 +141,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType, MetaModel extends
     }
 
     @Override
-    public TarantoolReactiveStream<ModelType, MetaModel> stream() {
+    public <MetaModel extends MetaClass<ModelType>> TarantoolReactiveStream<ModelType, MetaModel> stream() {
         return new TarantoolReactiveStream<>(storage, reader, writer, spaceMeta);
     }
 

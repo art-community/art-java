@@ -3,7 +3,6 @@ package io.art.storage;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.storage.SpaceStream.Filter.FilterOperator.*;
@@ -14,36 +13,37 @@ import static io.art.storage.SpaceStream.StreamOperation.*;
 import java.util.*;
 import java.util.function.*;
 
-public abstract class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type, Meta extends MetaClass<Type>> {
+public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
     protected final List<Map<StreamOperation, Object>> operators = linkedList();
 
-    public Stream limit(int value) {
+
+    public SpaceStream<Type, Meta> limit(int value) {
         operators.add(mapOf(LIMIT, value));
-        return cast(this);
+        return this;
     }
 
-    public Stream offset(int value) {
+    public SpaceStream<Type, Meta> offset(int value) {
         operators.add(mapOf(OFFSET, value));
-        return cast(this);
+        return this;
     }
 
-    public Stream range(int offset, int limit) {
+    public SpaceStream<Type, Meta> range(int offset, int limit) {
         return offset(offset).limit(limit);
     }
 
-    public Stream distinct() {
+    public SpaceStream<Type, Meta> distinct() {
         operators.add(mapOf(DISTINCT, null));
-        return cast(this);
+        return this;
     }
 
-    public <FieldType> Stream sort(MetaField<Meta, FieldType> current, UnaryOperator<Sorter<Type, Meta, FieldType>> sorter) {
+    public <FieldType> SpaceStream<Type, Meta> sort(MetaField<Meta, FieldType> current, UnaryOperator<Sorter<Type, Meta, FieldType>> sorter) {
         operators.add(mapOf(SORT, sorter.apply(new Sorter<>(current))));
-        return cast(this);
+        return this;
     }
 
-    public <FieldType> Stream filter(MetaField<Meta, FieldType> current, UnaryOperator<Filter<Type, Meta, FieldType>> filter) {
+    public <FieldType> SpaceStream<Type, Meta> filter(MetaField<Meta, FieldType> current, UnaryOperator<Filter<Type, Meta, FieldType>> filter) {
         operators.add(mapOf(FILTER, filter.apply(new Filter<>(current))));
-        return cast(this);
+        return this;
     }
 
     public abstract ImmutableArray<Type> collect();

@@ -2,6 +2,7 @@ package io.art.tarantool.registry;
 
 import io.art.core.collection.*;
 import io.art.core.property.*;
+import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.tarantool.service.*;
 import lombok.*;

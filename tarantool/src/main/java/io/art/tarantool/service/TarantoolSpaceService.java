@@ -12,8 +12,8 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolSpaceService<KeyType, ModelType, MetaModel extends MetaClass<ModelType>> implements SpaceService<KeyType, ModelType, MetaModel, TarantoolStream<ModelType, MetaModel>> {
-    private TarantoolReactiveSpaceService<KeyType, ModelType, MetaModel> reactive;
+public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<KeyType, ModelType> {
+    private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
 
     public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaType<ModelType> spaceMeta, TarantoolStorage storage) {
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, storage);
@@ -95,12 +95,12 @@ public class TarantoolSpaceService<KeyType, ModelType, MetaModel extends MetaCla
     }
 
     @Override
-    public TarantoolStream<ModelType, MetaModel> stream() {
+    public <MetaModel extends MetaClass<ModelType>> TarantoolStream<ModelType, MetaModel> stream() {
         return new TarantoolStream<>(reactive.stream());
     }
 
     @Override
-    public ReactiveSpaceService<KeyType, ModelType, MetaModel, TarantoolReactiveStream<ModelType, MetaModel>> reactive() {
+    public TarantoolReactiveSpaceService<KeyType, ModelType> reactive() {
         return reactive;
     }
 }
