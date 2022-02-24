@@ -40,6 +40,7 @@ public abstract class ReactiveSpaceStream<Type> {
     public ReactiveSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         Filter<Type> newFilter = new Filter<>();
         filter.accept(newFilter);
+        operators.add(pairOf(FILTER, newFilter));
         return this;
     }
 
