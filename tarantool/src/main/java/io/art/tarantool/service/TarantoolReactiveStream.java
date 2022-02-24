@@ -1,6 +1,5 @@
 package io.art.tarantool.service;
 
-import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.SpaceStream.*;
@@ -36,19 +35,19 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
 
     private List<Value> serializeStream() {
         List<Value> serialized = linkedList();
-        for (Pair<StreamOperation, Object> operator : operators) {
-            switch (operator.getFirst()) {
+        for (StreamOperator operator : operators) {
+            switch (operator.getOperation()) {
                 case LIMIT:
-                    serialized.add(newArray(LIMIT, serializeValue(LONG_TYPE, operator.getSecond())));
+                    serialized.add(newArray(LIMIT, serializeValue(LONG_TYPE, operator.getValue())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(OFFSET, serializeValue(LONG_TYPE, operator.getSecond())));
+                    serialized.add(newArray(OFFSET, serializeValue(LONG_TYPE, operator.getValue())));
                     break;
                 case DISTINCT:
                     serialized.add(newArray(DISTINCT));
                     break;
                 case SORT:
-                    Sorter<ModelType, ?> sorter = cast(operator.getSecond());
+                    Sorter<ModelType, ?> sorter = cast(operator.getValue());
                     SortComparator comparator = sorter.getComparator();
                     MetaField<?, ?> field = sorter.getField();
                     switch (comparator) {
@@ -61,7 +60,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     }
                     break;
                 case FILTER:
-                    Filter<ModelType> filter = cast(operator.getSecond());
+                    Filter<ModelType> filter = cast(operator.getValue());
                     FilterOperator filterOperator = filter.getOperator();
                     field = filter.getField();
                     List<Object> values = filter.getValues();

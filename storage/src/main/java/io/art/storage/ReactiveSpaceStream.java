@@ -1,25 +1,23 @@
 package io.art.storage;
 
-import io.art.core.model.*;
 import io.art.meta.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.core.factory.PairFactory.*;
 import static io.art.storage.SpaceStream.*;
 import static io.art.storage.SpaceStream.StreamOperation.*;
 import java.util.*;
 import java.util.function.*;
 
 public abstract class ReactiveSpaceStream<Type> {
-    protected final List<Pair<StreamOperation, Object>> operators = linkedList();
+    protected final List<StreamOperator> operators = linkedList();
 
     public ReactiveSpaceStream<Type> limit(long value) {
-        operators.add(pairOf(LIMIT, value));
+        operators.add(new StreamOperator(LIMIT, value));
         return this;
     }
 
     public ReactiveSpaceStream<Type> offset(long value) {
-        operators.add(pairOf(OFFSET, value));
+        operators.add(new StreamOperator(OFFSET, value));
         return this;
     }
 
@@ -28,19 +26,19 @@ public abstract class ReactiveSpaceStream<Type> {
     }
 
     public ReactiveSpaceStream<Type> distinct() {
-        operators.add(pairOf(DISTINCT, null));
+        operators.add(new StreamOperator(DISTINCT, null));
         return this;
     }
 
     public <FieldType> ReactiveSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<SpaceStream.Sorter<Type, FieldType>> sorter) {
-        operators.add(pairOf(SORT, sorter.apply(new SpaceStream.Sorter<>(current))));
+        operators.add(new StreamOperator(SORT, sorter.apply(new SpaceStream.Sorter<>(current))));
         return this;
     }
 
     public ReactiveSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         Filter<Type> newFilter = new Filter<>();
         filter.accept(newFilter);
-        operators.add(pairOf(FILTER, newFilter));
+        operators.add(new StreamOperator(FILTER, newFilter));
         return this;
     }
 
