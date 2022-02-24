@@ -28,9 +28,10 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
     private final TarantoolStorage storage;
     private final TarantoolModelReader reader;
     private final TarantoolModelWriter writer;
+    private final StringValue spaceName;
     private final MetaType<ModelType> spaceMeta;
     private final MetaType<String> STRING = definition(String.class);
-    private final MetaType<Long> LONG = definition(Long.class);
+    private final MetaType<Long> LONG = definition(long.class);
 
     @Override
     public Flux<ModelType> collect() {
@@ -38,10 +39,10 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
         for (Pair<StreamOperation, Object> operator : operators) {
             switch (operator.getFirst()) {
                 case LIMIT:
-                    serialized.add(newArray(newString(SelectOptions.LIMIT), newInteger(cast(operator.getSecond()))));
+                    serialized.add(newArray(newString(SelectOptions.LIMIT), serializeValue(LONG, operator.getSecond())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(newString(SelectOptions.OFFSET), newInteger(cast(operator.getSecond()))));
+                    serialized.add(newArray(newString(SelectOptions.OFFSET), serializeValue(LONG, operator.getSecond())));
                     break;
                 case DISTINCT:
                     serialized.add(newArray(newString(SelectOptions.DISTINCT)));
@@ -84,23 +85,23 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
                             serialized.add(serializeNumberOperator(OPERATOR_NOT_IN, field, values));
                             break;
                         case LIKE:
-                            serialized.add(serializeNumberOperator(OPERATOR_LIKE, field, values));
+                            serialized.add(serializeStringOperator(OPERATOR_LIKE, field, values));
                             break;
                         case STARTS_WITH:
-                            serialized.add(serializeNumberOperator(OPERATOR_STARTS_WITH, field, values));
+                            serialized.add(serializeStringOperator(OPERATOR_STARTS_WITH, field, values));
                             break;
                         case ENDS_WITH:
-                            serialized.add(serializeNumberOperator(OPERATOR_ENDS_WITH, field, values));
+                            serialized.add(serializeStringOperator(OPERATOR_ENDS_WITH, field, values));
                             break;
                         case CONTAINS:
-                            serialized.add(serializeNumberOperator(OPERATOR_CONTAINS, field, values));
+                            serialized.add(serializeStringOperator(OPERATOR_CONTAINS, field, values));
                             break;
                     }
                     break;
             }
         }
 
-        return parseSpaceFlux(storage.immutable().call(SPACE_FIND, newArray(serialized)));
+        return parseSpaceFlux(storage.immutable().call(SPACE_FIND, newArray(spaceName, newArray(serialized))));
     }
 
     private ImmutableArrayValue serializeModelOperator(String operator, MetaField<MetaModel, ?> field, List<Object> values) {
@@ -118,7 +119,11 @@ public class TarantoolReactiveStream<ModelType, MetaModel extends MetaClass<Mode
     private ImmutableArrayValue serializeFilterValues(MetaType<?> type, List<Object> values) {
         return newArray(values
                 .stream()
-                .map(value -> writer.write(type, value)).collect(listCollector()));
+                .map(value -> serializeValue(type, value)).collect(listCollector()));
+    }
+
+    private Value serializeValue(MetaType<?> type, Object value) {
+        return writer.write(type, value);
     }
 
     private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {

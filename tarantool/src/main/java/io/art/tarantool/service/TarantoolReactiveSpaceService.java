@@ -141,8 +141,8 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public <MetaModel extends MetaClass<ModelType>> TarantoolReactiveStream<ModelType, MetaModel> stream() {
-        return new TarantoolReactiveStream<>(storage, reader, writer, spaceMeta);
+    public <MetaModel extends MetaClass<ModelType>> TarantoolReactiveStream<ModelType, MetaModel> stream(MetaModel model) {
+        return new TarantoolReactiveStream<>(storage, reader, writer, spaceName, spaceMeta);
     }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {

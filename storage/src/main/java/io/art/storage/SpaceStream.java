@@ -17,17 +17,17 @@ public abstract class SpaceStream<Type, Meta extends MetaClass<Type>> {
     protected final List<Map<StreamOperation, Object>> operators = linkedList();
 
 
-    public SpaceStream<Type, Meta> limit(int value) {
+    public SpaceStream<Type, Meta> limit(long value) {
         operators.add(mapOf(LIMIT, value));
         return this;
     }
 
-    public SpaceStream<Type, Meta> offset(int value) {
+    public SpaceStream<Type, Meta> offset(long value) {
         operators.add(mapOf(OFFSET, value));
         return this;
     }
 
-    public SpaceStream<Type, Meta> range(int offset, int limit) {
+    public SpaceStream<Type, Meta> range(long offset, long limit) {
         return offset(offset).limit(limit);
     }
 

@@ -20,10 +20,10 @@ import java.util.function.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolServicesConfigurator {
-    private final Map<String, LazyProperty<TarantoolSpaceService<?, ?, ?>>> spaceServices = map();
+    private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
 
-    public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField)  {
+    public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(tarantoolModule().configuration().getStorages().get(storageId))));
@@ -36,7 +36,7 @@ public class TarantoolServicesConfigurator {
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?, ?>>> spaces = lazy(() -> spaceServices
+        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces = lazy(() -> spaceServices
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));

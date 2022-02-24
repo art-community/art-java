@@ -166,6 +166,25 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(2));
     }
 
+    @Test
+    public void testStream() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        space().put(data);
+        ImmutableArray<TestingMetaModel> result = space()
+                .stream(testingMetaModel())
+                .limit(2)
+                .filter(testingMetaModel().f1Field(), filter -> filter.in(1, 3))
+                .sort(testingMetaModel().f1Field(), SpaceStream.Sorter::descendant)
+                .collect();
+        assertEquals(2, result.size());
+        data.get(2).assertEquals(result.get(2));
+        data.get(1).assertEquals(result.get(1));
+    }
+
     private static SpaceService<Integer, TestingMetaModel> space() {
         return Tarantool.tarantool().space(TestingMetaModel.class);
     }

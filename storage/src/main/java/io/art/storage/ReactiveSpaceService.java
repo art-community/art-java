@@ -55,5 +55,5 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Mono<Void> truncate();
 
-    <MetaModel extends MetaClass<ModelType>> ReactiveSpaceStream<ModelType, MetaModel> stream();
+    <MetaModel extends MetaClass<ModelType>> ReactiveSpaceStream<ModelType, MetaModel> stream(MetaModel model);
 }

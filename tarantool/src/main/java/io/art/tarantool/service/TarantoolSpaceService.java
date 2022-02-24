@@ -95,8 +95,8 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
-    public <MetaModel extends MetaClass<ModelType>> TarantoolStream<ModelType, MetaModel> stream() {
-        return new TarantoolStream<>(reactive.stream());
+    public <MetaModel extends MetaClass<ModelType>> TarantoolStream<ModelType, MetaModel> stream(MetaModel model) {
+        return new TarantoolStream<>(reactive.stream(model));
     }
 
     @Override

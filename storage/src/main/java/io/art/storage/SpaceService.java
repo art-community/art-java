@@ -59,7 +59,7 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
 
-    <MetaModel extends MetaClass<ModelType>> SpaceStream<ModelType, MetaModel> stream();
+    <MetaModel extends MetaClass<ModelType>> SpaceStream<ModelType, MetaModel> stream(MetaModel model);
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 }

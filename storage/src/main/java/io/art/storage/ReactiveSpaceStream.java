@@ -13,17 +13,17 @@ import java.util.function.*;
 public abstract class ReactiveSpaceStream<Type, Meta extends MetaClass<Type>> {
     protected final List<Pair<StreamOperation, Object>> operators = linkedList();
 
-    public ReactiveSpaceStream<Type, Meta> limit(int value) {
+    public ReactiveSpaceStream<Type, Meta> limit(long value) {
         operators.add(pairOf(LIMIT, value));
         return this;
     }
 
-    public ReactiveSpaceStream<Type, Meta> offset(int value) {
+    public ReactiveSpaceStream<Type, Meta> offset(long value) {
         operators.add(pairOf(OFFSET, value));
         return this;
     }
 
-    public ReactiveSpaceStream<Type, Meta> range(int offset, int limit) {
+    public ReactiveSpaceStream<Type, Meta> range(long offset, long limit) {
         return offset(offset).limit(limit);
     }
 

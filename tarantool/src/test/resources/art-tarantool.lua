@@ -419,9 +419,6 @@ local function initialize()
         for name in pairs(art.schema) do
             box.schema.func.create("art.schema." .. name, { if_not_exists = true })
         end
-    end)
-
-    box.once("art:main-1", function()
         for name in pairs(art.space.single) do
             box.schema.func.create("art.space.single." .. name, { if_not_exists = true })
         end
@@ -684,7 +681,7 @@ local filterSelector = function(name, field, request)
 end
 
 local comparators = {}
-comparators["greater"] = function(first, second, field)
+comparators["more"] = function(first, second, field)
     return first[field] > second[field]
 end
 
@@ -717,12 +714,12 @@ streams["offset"] = function(generator, parameter, state, count)
 end
 
 streams["filter"] = function(generator, parameter, state, request)
-    return functional.filter(filterSelector(request), generator, parameter, state)
+    return functional.filter(filterSelector(unpack(request)), generator, parameter, state)
 end
 
-streams["sort"] = function(generator, parameter, state, field)
+streams["sort"] = function(generator, parameter, state, request)
     local values = collect(generator, parameter, state)
-    table.sort(values, comparatorSelector(field))
+    table.sort(values, comparatorSelector(unpack(request)))
     return functional.iter(values)
 end
 
