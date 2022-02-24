@@ -41,7 +41,7 @@ public class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type extends 
     }
 
     public <FieldType> Stream filter(MetaField<Meta, FieldType> current, UnaryOperator<Filter<Type, Meta, FieldType>> filter) {
-        operators.add(mapOf(FILTER, filter));
+        operators.add(mapOf(FILTER, filter.apply(new Filter<>(current))));
         return cast(this);
     }
 
