@@ -1,5 +1,6 @@
 package io.art.storage;
 
+import io.art.core.collection.*;
 import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -13,8 +14,8 @@ import static io.art.storage.SpaceStream.StreamOperation.*;
 import java.util.*;
 import java.util.function.*;
 
-public class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type extends Class<?>, Meta extends MetaClass<Type>> {
-    private final List<Map<StreamOperation, Object>> operators = linkedList();
+public abstract class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type, Meta extends MetaClass<Type>> {
+    protected final List<Map<StreamOperation, Object>> operators = linkedList();
 
     public Stream limit(int value) {
         operators.add(mapOf(LIMIT, value));
@@ -45,9 +46,7 @@ public class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type extends 
         return cast(this);
     }
 
-    public List<Map<StreamOperation, Object>> collect() {
-        return operators;
-    }
+    public abstract ImmutableArray<Type> collect();
 
     public enum StreamOperation {
         LIMIT,
@@ -59,7 +58,7 @@ public class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type extends 
 
     @Getter
     @RequiredArgsConstructor
-    public static class Sorter<Type extends Class<?>, Meta extends MetaClass<Type>, FieldType> {
+    public static class Sorter<Type, Meta extends MetaClass<Type>, FieldType> {
         private final MetaField<Meta, FieldType> current;
         private SortOrder order = ASCENDANT;
         private SortComparator comparator = MORE;
@@ -101,7 +100,7 @@ public class SpaceStream<Stream extends SpaceStream<Stream, ?, ?>, Type extends 
 
     @Getter
     @RequiredArgsConstructor
-    public static class Filter<Type extends Class<?>, Meta extends MetaClass<Type>, FieldType> {
+    public static class Filter<Type, Meta extends MetaClass<Type>, FieldType> {
         private final MetaField<Meta, FieldType> current;
         private FilterOperator operator;
         private final List<Object> values = linkedList();

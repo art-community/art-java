@@ -2,6 +2,7 @@ package io.art.storage;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.meta.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
@@ -9,7 +10,7 @@ import java.util.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface ReactiveSpaceService<KeyType, ModelType> {
+public interface ReactiveSpaceService<KeyType, ModelType, Meta extends MetaClass<ModelType>, StreamType extends ReactiveSpaceStream<StreamType, ModelType, Meta>> {
     Mono<ModelType> findFirst(KeyType key);
 
     default Flux<ModelType> findAll(KeyType... keys) {
@@ -53,4 +54,6 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
     Mono<Long> count();
 
     Mono<Void> truncate();
+
+    StreamType stream();
 }

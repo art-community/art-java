@@ -21,7 +21,7 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
+public class TarantoolReactiveSpaceService<KeyType, ModelType, MetaModel extends MetaClass<ModelType>> implements ReactiveSpaceService<KeyType, ModelType, MetaModel, TarantoolReactiveStream<ModelType, MetaModel>> {
     private final Class<ModelType> spaceType;
     private final StringValue spaceName;
     private final MetaType<ModelType> spaceMeta;
@@ -140,6 +140,10 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         return storage.mutable().call(SPACE_TRUNCATE, newArray(spaceName)).then();
     }
 
+    @Override
+    public TarantoolReactiveStream<ModelType, MetaModel> stream() {
+        return new TarantoolReactiveStream<>(storage, reader, spaceMeta);
+    }
 
     private Mono<Long> parseCountMono(Mono<Value> value) {
         return value.map(element -> reader.read(LONG_TYPE, element));
