@@ -1,5 +1,6 @@
 package io.art.storage;
 
+import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import lombok.*;
@@ -10,6 +11,7 @@ import static io.art.storage.SpaceStream.SortOrder.*;
 import java.util.*;
 import java.util.function.*;
 
+@Public
 public abstract class SpaceStream<Type> {
     protected List<ProcessingOperator> operators = linkedList();
 

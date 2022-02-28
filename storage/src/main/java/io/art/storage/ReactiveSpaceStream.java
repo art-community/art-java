@@ -1,5 +1,6 @@
 package io.art.storage;
 
+import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.factory.ListFactory.*;
@@ -8,6 +9,7 @@ import static io.art.storage.SpaceStream.ProcessingOperation.*;
 import java.util.*;
 import java.util.function.*;
 
+@Public
 public abstract class ReactiveSpaceStream<Type> {
     protected List<ProcessingOperator> operators = linkedList();
 
