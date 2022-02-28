@@ -64,27 +64,31 @@ public class TarantoolCommunication implements Communication {
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
-        if (decorator.get().isChannel()) {
-            if (isNull(inputMappingType)) {
-                return (input, client) -> {
+
+        if (isNull(inputMappingType)) {
+            return (input, client) -> {
+                TarantoolCommunicationDecorator decorator = TarantoolCommunication.decorator.get();
+                TarantoolCommunication.decorator.remove();
+
+                if (nonNull(decorator) && decorator.isChannel()) {
                     Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
                     subscribeChannelEmptyInput(client, emitter);
                     return emitter.asFlux();
-                };
-            }
-
-            return (input, client) -> {
-                Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
-                subscribeChannelInput(input, client, emitter);
-                return emitter.asFlux();
+                }
+                return cast(client.call(function).map(element -> reader.read(outputMappingType, element)).flux());
             };
         }
 
-        if (isNull(inputMappingType)) {
-            return (input, client) -> cast(client.call(function).map(element -> reader.read(outputMappingType, element)).flux());
-        }
-
         return (input, client) -> {
+            TarantoolCommunicationDecorator decorator = TarantoolCommunication.decorator.get();
+            TarantoolCommunication.decorator.remove();
+
+            if (nonNull(decorator) && decorator.isChannel()) {
+                Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
+                subscribeChannelInput(input, client, emitter);
+                return emitter.asFlux();
+            }
+
             Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
             subscribeFunction(input, client, emitter);
             return emitter.asFlux();
@@ -132,6 +136,6 @@ public class TarantoolCommunication implements Communication {
     }
 
     static void decorateTarantoolFunctionCommunication(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
-        TarantoolCommunication.decorator.set(decorator.apply(new TarantoolCommunicationDecorator()));
+        TarantoolCommunication.decorator.set(decorator.apply(orElse(TarantoolCommunication.decorator.get(), new TarantoolCommunicationDecorator())));
     }
 }
