@@ -137,7 +137,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue COLLECT = newString("collect");
         ImmutableStringValue COUNT = newString("count");
         ImmutableStringValue ANY = newString("any");
-        ImmutableStringValue NONE = newString("noen");
+        ImmutableStringValue NONE = newString("none");
     }
 
     enum Engine {
