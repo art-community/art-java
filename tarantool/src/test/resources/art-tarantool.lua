@@ -442,6 +442,8 @@ art = {
 
     stream = require("art.storage.stream"),
 
+    subscription = require("art.storage.subscription"),
+
     initialize = initialize
 }
 
@@ -514,7 +516,6 @@ stream = require("art.storage.stream")
 
 local space = {
     findFirst = function(space, key)
-        box.session.push("test")
         return box.space[space]:get(key)
     end,
 
@@ -806,6 +807,22 @@ return {
         return terminalFunctors[stream]
     end,
 }
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.storage.subscription" ] = function( ... ) local arg = _G.arg;
+local subscription = {
+    publish = function(serviceId, methodId, value)
+        local request = {}
+        request[0x1] = serviceId
+        request[0x2] = methodId
+        request[0x3] = value
+        box.session.push(request)
+    end
+}
+return subscription
 end
 end
 

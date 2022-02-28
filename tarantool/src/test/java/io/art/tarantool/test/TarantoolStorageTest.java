@@ -35,6 +35,7 @@ public class TarantoolStorageTest {
                                 .port(STORAGE_PORT)
                                 .username(USERNAME)
                                 .password(PASSWORD)))
+                        .subscribe(subscriptions -> subscriptions.onService(TestService.class))
                         .space(TestStorage.class, TestingMetaModel.class, () -> testingMetaModel().f1Field())
                 )
         );
@@ -244,6 +245,12 @@ public class TarantoolStorageTest {
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
+    }
+
+    @Test
+    public void testSubscription() {
+        Tarantool.tarantool(TestStorage.class).testSubscription();
+        TestService.await();
     }
 
     private static SpaceService<Integer, TestingMetaModel> space() {

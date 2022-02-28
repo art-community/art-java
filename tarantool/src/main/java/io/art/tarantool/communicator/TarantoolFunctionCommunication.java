@@ -12,7 +12,6 @@ import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.constants.MetaConstants.MetaTypeInternalKind.*;
 import static java.util.Objects.*;
@@ -43,7 +42,7 @@ public class TarantoolFunctionCommunication implements Communication {
 
     @Override
     public void initialize(CommunicatorAction action) {
-        this.function = newString(action.getId().getCommunicatorId() + DOT + action.getId().getActionId());
+        this.function = newString(action.getId().getActionId());
         inputMappingType = action.getInputType();
         if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
             inputMappingType = inputMappingType.parameters().get(0);
