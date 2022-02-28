@@ -210,6 +210,21 @@ public class TarantoolStorageTest {
         assertEquals(2, result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(2).assertEquals(result.get(1));
+
+        result = space()
+                .stream()
+                .filter(filter -> filter.in(testingMetaModel().f1Field(), data.get(0).getF1(), data.get(2).getF1()))
+                .collect();
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+
+        result = space()
+                .stream()
+                .filter(filter -> filter.notIn(testingMetaModel().f1Field(), data.get(0).getF1(), data.get(2).getF1()))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
     }
 
     @Test

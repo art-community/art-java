@@ -77,6 +77,12 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                         case LESS:
                             serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_LESS, field, values)));
                             break;
+                        case IN:
+                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_IN, field, values)));
+                            break;
+                        case NOT_IN:
+                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_NOT_IN, field, values)));
+                            break;
                         case BETWEEN:
                             serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_BETWEEN, field, values)));
                             break;

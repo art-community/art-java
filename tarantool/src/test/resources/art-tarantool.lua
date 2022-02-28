@@ -671,28 +671,28 @@ end
 
 local filters = {}
 
-filters["equals"] = function(filtering, field, value)
-    return deepEqual(filtering[field], value)
+filters["equals"] = function(filtering, field, request)
+    return deepEqual(filtering[field], request[1])
 end
 
-filters["notEquals"] = function(filtering, field, value)
-    return not deepEqual(filtering[field], value)
+filters["notEquals"] = function(filtering, field, request)
+    return not deepEqual(filtering[field], request[1])
 end
 
-filters["more"] = function(filtering, field, value)
-    return filtering[field] > value
+filters["more"] = function(filtering, field, request)
+    return filtering[field] > request[1]
 end
 
-filters["less"] = function(filtering, field, value)
-    return filtering[field] < value
+filters["less"] = function(filtering, field, request)
+    return filtering[field] < request[1]
 end
 
-filters["between"] = function(filtering, field, startValue, endValue)
-    return (filtering[field] >= startValue) and (filtering[field] <= endValue)
+filters["between"] = function(filtering, field, request)
+    return (filtering[field] >= request[1]) and (filtering[field] <= request[2])
 end
 
-filters["notBetween"] = function(filtering, field, startValue, endValue)
-    return not ((filtering[field] >= startValue) and (filtering[field] <= endValue))
+filters["notBetween"] = function(filtering, field, request)
+    return not ((filtering[field] >= request[1]) and (filtering[field] <= request[2]))
 end
 
 filters["in"] = function(filtering, field, values)
@@ -707,7 +707,7 @@ end
 
 filters["notIn"] = function(filtering, field, values)
     for _, value in pairs(values) do
-        if not deepEqual(filtering[field], value) then
+        if deepEqual(filtering[field], value) then
             return false
         end
     end
@@ -715,21 +715,21 @@ filters["notIn"] = function(filtering, field, values)
     return true
 end
 
-filters["startsWith"] = function(filtering, field, pattern)
-    return string.startswith(filtering[field], pattern)
+filters["startsWith"] = function(filtering, field, request)
+    return string.startswith(filtering[field], request[1])
 end
 
-filters["endsWith"] = function(filtering, field, pattern)
-    return string.endswith(filtering[field], pattern)
+filters["endsWith"] = function(filtering, field, request)
+    return string.endswith(filtering[field], request[1])
 end
 
-filters["contains"] = function(filtering, field, pattern)
-    return string.find(filtering[field], pattern)
+filters["contains"] = function(filtering, field, request)
+    return string.find(filtering[field], request[1])
 end
 
 local filterSelector = function(name, field, request)
     return function(filtering)
-        return filters[name](filtering, field, unpack(request))
+        return filters[name](filtering, field, request)
     end
 end
 

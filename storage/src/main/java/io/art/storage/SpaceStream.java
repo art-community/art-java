@@ -98,6 +98,28 @@ public abstract class SpaceStream<Type> {
             values.add(value);
         }
 
+        public <FieldType> void in(MetaField<? extends MetaClass<Type>, FieldType> field, List<FieldType> values) {
+            this.field = field;
+            operator = IN;
+            this.values.addAll(values);
+        }
+
+        public <FieldType> void notIn(MetaField<? extends MetaClass<Type>, FieldType> field, List<FieldType> values) {
+            this.field = field;
+            operator = NOT_IN;
+            this.values.addAll(values);
+        }
+
+        @SafeVarargs
+        public final <FieldType> void in(MetaField<? extends MetaClass<Type>, FieldType> field, FieldType... values) {
+            in(field, Arrays.asList(values));
+        }
+
+        @SafeVarargs
+        public final <FieldType> void notIn(MetaField<? extends MetaClass<Type>, FieldType> field, FieldType... values) {
+            notIn(field, Arrays.asList(values));
+        }
+
         public void moreThan(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number value) {
             this.field = field;
             operator = FilterOperator.MORE;
