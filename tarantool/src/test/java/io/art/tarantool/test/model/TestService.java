@@ -1,8 +1,6 @@
 package io.art.tarantool.test.model;
 
-import io.art.tarantool.exception.*;
 import lombok.*;
-import static io.art.core.wrapper.ExceptionWrapper.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
 
@@ -16,8 +14,13 @@ public class TestService {
         private final String stringValue;
     }
 
-    public static void await() {
-        wrapExceptionCall(() -> WAITER.await(10, TimeUnit.SECONDS), TarantoolException::new);
+    public static boolean await() {
+        try {
+            return WAITER.await(10, TimeUnit.SECONDS);
+        } catch (Throwable throwable) {
+            fail(throwable);
+        }
+        return false;
     }
 
     public void test(TestRequest request) {

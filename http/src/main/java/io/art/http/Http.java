@@ -11,8 +11,8 @@ import static io.art.http.module.HttpModule.*;
 @Public
 @UtilityClass
 public class Http {
-    public static <T extends Portal> T http(Class<T> portalClass) {
-        return httpModule().configuration().getCommunicator().getPortals().getPortal(portalClass);
+    public static <T extends Communicator> T http(Class<T> communicatorClass) {
+        return httpModule().configuration().getCommunicator().getCommunicators().getCommunicator(communicatorClass).getCommunicator();
     }
 
     public static HttpDefaultCommunicator http() {

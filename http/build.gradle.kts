@@ -48,6 +48,6 @@ generator {
         sourcesPattern {
             include("src/main/**")
         }
-        includeClasses("**portal**")
+        includeClasses("**HttpBuiltinCommunicator**")
     }
 }

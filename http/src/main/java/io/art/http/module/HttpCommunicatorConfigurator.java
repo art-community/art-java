@@ -2,17 +2,13 @@ package io.art.http.module;
 
 import io.art.communicator.*;
 import io.art.communicator.configurator.*;
-import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.model.*;
 import io.art.http.configuration.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
-import static io.art.http.module.HttpModule.*;
 import static io.art.http.path.HttpCommunicationUri.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -22,21 +18,24 @@ import java.util.function.*;
 public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpCommunicatorConfigurator> {
     private final Map<String, HttpConnectorConfiguration> connectors = map();
 
-    public HttpCommunicatorConfigurator portal(Class<? extends Portal> portalClass) {
-        return portal(portalClass, cast(identity()));
+    public HttpCommunicatorConfigurator connector(Class<? extends Communicator> communicatorClass) {
+        return connector(() -> idByDash(communicatorClass), communicatorClass, identity());
     }
 
-    public HttpCommunicatorConfigurator portal(Class<? extends Portal> portalClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
-        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(idByDash(portalClass)).toBuilder().uri(byCommunicatorAction())).build();
-        connectors.put(idByDash(portalClass), configuration);
-        Function<Class<? extends Communicator>, Communicator> communicatorFunction = communicator -> httpModule()
-                .configuration()
-                .getCommunicator()
-                .getPortals()
-                .getCommunicator(portalClass, communicator)
-                .getCommunicator();
-        Function<CommunicatorActionIdentifier, Communication> communicationFunction = identifier -> createManagedHttpCommunication(configuration);
-        registerPortal(portalClass, communicatorFunction, communicationFunction);
+    public HttpCommunicatorConfigurator connector(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass) {
+        return connector(connector, communicatorClass, identity());
+    }
+
+    public HttpCommunicatorConfigurator connector(Class<? extends Communicator> communicatorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+        return connector(() -> idByDash(communicatorClass), communicatorClass, configurator);
+    }
+
+    public HttpCommunicatorConfigurator connector(ConnectorIdentifier connector,
+                                                  Class<? extends Communicator> communicatorClass,
+                                                  UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+        HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(connector.id()).toBuilder().uri(byCommunicatorAction())).build();
+        connectors.put(connector.id(), configuration);
+        register(communicatorClass, identifier -> createManagedHttpCommunication(configuration));
         return this;
     }
 

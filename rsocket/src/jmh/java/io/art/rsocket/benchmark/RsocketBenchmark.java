@@ -32,7 +32,6 @@ import static io.art.core.strategy.ServiceMethodStrategy.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.module.RsocketActivator.*;
-import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.transport.module.TransportActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
@@ -57,12 +56,11 @@ public class RsocketBenchmark {
                     messagePack(),
                     rsocket(rsocket -> rsocket
                             .communicator(communicator -> communicator
-                                    .tcp(TestRsocketConnector.class, tcp -> tcp.configure(builder -> builder.service(manual(BenchmarkRsocketService.class))))
+                                    .tcp(TestRsocket.class, tcp -> tcp.configure(builder -> builder.service(manual(BenchmarkRsocketService.class))))
                             )
                             .server(server -> server.tcp().service(BenchmarkRsocketService.class)))
             );
-            TestRsocketConnector connector = Rsocket.rsocket(TestRsocketConnector.class);
-            communicator = connector.testRsocket();
+            communicator = Rsocket.rsocket(TestRsocket.class);
             m13 = Sinks.many().unicast().onBackpressureBuffer();
             communicator.m13(m13.asFlux());
         }

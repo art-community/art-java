@@ -46,7 +46,7 @@ public class HttpMessageBuilder {
             message.append(format(HTTP_ROUTES_MESSAGE_PART, routesString));
         }
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
-                .getPortals()
+                .getCommunicators()
                 .communicators();
         if (!communicators.isEmpty()) {
             String communicatorsString = communicators

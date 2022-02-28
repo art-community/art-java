@@ -4,5 +4,5 @@ import io.art.communicator.*;
 import io.art.core.annotation.*;
 
 @Public
-public interface Storage extends Portal {
+public interface Storage extends Communicator {
 }

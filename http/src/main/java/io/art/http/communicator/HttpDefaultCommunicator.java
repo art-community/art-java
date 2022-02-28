@@ -1,12 +1,12 @@
 package io.art.http.communicator;
 
+import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.mime.*;
 import io.art.core.property.*;
 import io.art.http.configuration.*;
-import io.art.http.meta.MetaHttp.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaPortalPackage.MetaHttpDefaultPortalClass.*;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.codec.http.cookie.Cookie;
 import reactor.core.publisher.*;
@@ -18,8 +18,8 @@ import static io.art.core.property.Property.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
 import static io.art.http.constants.HttpModuleConstants.Defaults.*;
+import static io.art.http.meta.MetaHttp.MetaIoPackage.MetaArtPackage.MetaHttpPackage.MetaCommunicatorPackage.*;
 import static io.art.http.module.HttpModule.*;
-import static io.art.http.portal.HttpDefaultPortal.*;
 import static io.art.meta.Meta.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
@@ -32,6 +32,10 @@ public class HttpDefaultCommunicator {
     private final HttpCommunicationDecorator decorator = new HttpCommunicationDecorator().input(BYTES).output(BYTES);
     private final Property<CommunicatorProxy<HttpBuiltinCommunicator>> proxy = property(this::createCommunicator);
     private HttpConnectorConfigurationBuilder connector = httpConnectorConfiguration(DEFAULT_CONNECTOR_ID).toBuilder();
+
+    public HttpDefaultCommunicator from(ConnectorIdentifier connectorId) {
+        return from(httpModule().configuration().getConnectors().get(connectorId.id()));
+    }
 
     public HttpDefaultCommunicator from(String connectorId) {
         return from(httpModule().configuration().getConnectors().get(connectorId));

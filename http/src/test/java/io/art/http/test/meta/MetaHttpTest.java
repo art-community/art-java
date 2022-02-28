@@ -380,8 +380,6 @@ public class MetaHttpTest extends MetaLibrary {
 
               private final MetaGetFileMethod getFileMethod = register(new MetaGetFileMethod(this));
 
-              private final MetaTestHttpConnectorClass testHttpConnectorClass = register(new MetaTestHttpConnectorClass());
-
               private MetaTestHttpClass() {
                 super(metaType(io.art.http.test.communicator.TestHttp.class));
               }
@@ -478,10 +476,6 @@ public class MetaHttpTest extends MetaLibrary {
               public MetaProxy proxy(
                   Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaTestHttpProxy(invocations);
-              }
-
-              public MetaTestHttpConnectorClass testHttpConnectorClass() {
-                return testHttpConnectorClass;
               }
 
               public final class MetaPost1Method extends InstanceMetaMethod<MetaTestHttpClass, io.art.http.test.communicator.TestHttp, Void> {
@@ -1163,65 +1157,6 @@ public class MetaHttpTest extends MetaLibrary {
                   return (java.lang.String)(getFileInvocation.apply(null));
                 }
               }
-
-              public static final class MetaTestHttpConnectorClass extends MetaClass<io.art.http.test.communicator.TestHttp.TestHttpConnector> {
-                private static final LazyProperty<MetaTestHttpConnectorClass> self = MetaClass.self(io.art.http.test.communicator.TestHttp.TestHttpConnector.class);
-
-                private final MetaTestHttpMethod testHttpMethod = register(new MetaTestHttpMethod(this));
-
-                private MetaTestHttpConnectorClass() {
-                  super(metaType(io.art.http.test.communicator.TestHttp.TestHttpConnector.class));
-                }
-
-                public static MetaTestHttpConnectorClass testHttpConnector() {
-                  return self.get();
-                }
-
-                public MetaTestHttpMethod testHttpMethod() {
-                  return testHttpMethod;
-                }
-
-                @Override
-                public MetaProxy proxy(
-                    Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
-                  return new MetaTestHttpConnectorProxy(invocations);
-                }
-
-                public final class MetaTestHttpMethod extends InstanceMetaMethod<MetaTestHttpConnectorClass, io.art.http.test.communicator.TestHttp.TestHttpConnector, io.art.http.test.communicator.TestHttp> {
-                  private MetaTestHttpMethod(MetaTestHttpConnectorClass owner) {
-                    super("testHttp",metaType(io.art.http.test.communicator.TestHttp.class),owner);
-                  }
-
-                  @Override
-                  public Object invoke(
-                      io.art.http.test.communicator.TestHttp.TestHttpConnector instance,
-                      Object[] arguments) throws Throwable {
-                    return instance.testHttp();
-                  }
-
-                  @Override
-                  public Object invoke(
-                      io.art.http.test.communicator.TestHttp.TestHttpConnector instance) throws
-                      Throwable {
-                    return instance.testHttp();
-                  }
-                }
-
-                public class MetaTestHttpConnectorProxy extends MetaProxy implements io.art.http.test.communicator.TestHttp.TestHttpConnector {
-                  private final Function<Object, Object> testHttpInvocation;
-
-                  public MetaTestHttpConnectorProxy(
-                      Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
-                    super(invocations);
-                    testHttpInvocation = invocations.get(testHttpMethod);
-                  }
-
-                  @Override
-                  public io.art.http.test.communicator.TestHttp testHttp() {
-                    return (io.art.http.test.communicator.TestHttp)(testHttpInvocation.apply(null));
-                  }
-                }
-              }
             }
 
             public static final class MetaTestWsClass extends MetaClass<io.art.http.test.communicator.TestWs> {
@@ -1262,8 +1197,6 @@ public class MetaHttpTest extends MetaLibrary {
               private final MetaWs17Method ws17Method = register(new MetaWs17Method(this));
 
               private final MetaWsEchoMethod wsEchoMethod = register(new MetaWsEchoMethod(this));
-
-              private final MetaTestWsConnectorClass testWsConnectorClass = register(new MetaTestWsConnectorClass());
 
               private MetaTestWsClass() {
                 super(metaType(io.art.http.test.communicator.TestWs.class));
@@ -1349,10 +1282,6 @@ public class MetaHttpTest extends MetaLibrary {
               public MetaProxy proxy(
                   Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
                 return new MetaTestWsProxy(invocations);
-              }
-
-              public MetaTestWsConnectorClass testWsConnectorClass() {
-                return testWsConnectorClass;
               }
 
               public final class MetaWs1Method extends InstanceMetaMethod<MetaTestWsClass, io.art.http.test.communicator.TestWs, Void> {
@@ -1936,65 +1865,6 @@ public class MetaHttpTest extends MetaLibrary {
                 public reactor.core.publisher.Flux<java.lang.String> wsEcho(
                     reactor.core.publisher.Flux<java.lang.String> input) {
                   return (reactor.core.publisher.Flux<java.lang.String>)(wsEchoInvocation.apply(input));
-                }
-              }
-
-              public static final class MetaTestWsConnectorClass extends MetaClass<io.art.http.test.communicator.TestWs.TestWsConnector> {
-                private static final LazyProperty<MetaTestWsConnectorClass> self = MetaClass.self(io.art.http.test.communicator.TestWs.TestWsConnector.class);
-
-                private final MetaTestWsMethod testWsMethod = register(new MetaTestWsMethod(this));
-
-                private MetaTestWsConnectorClass() {
-                  super(metaType(io.art.http.test.communicator.TestWs.TestWsConnector.class));
-                }
-
-                public static MetaTestWsConnectorClass testWsConnector() {
-                  return self.get();
-                }
-
-                public MetaTestWsMethod testWsMethod() {
-                  return testWsMethod;
-                }
-
-                @Override
-                public MetaProxy proxy(
-                    Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
-                  return new MetaTestWsConnectorProxy(invocations);
-                }
-
-                public final class MetaTestWsMethod extends InstanceMetaMethod<MetaTestWsConnectorClass, io.art.http.test.communicator.TestWs.TestWsConnector, io.art.http.test.communicator.TestWs> {
-                  private MetaTestWsMethod(MetaTestWsConnectorClass owner) {
-                    super("testWs",metaType(io.art.http.test.communicator.TestWs.class),owner);
-                  }
-
-                  @Override
-                  public Object invoke(
-                      io.art.http.test.communicator.TestWs.TestWsConnector instance,
-                      Object[] arguments) throws Throwable {
-                    return instance.testWs();
-                  }
-
-                  @Override
-                  public Object invoke(
-                      io.art.http.test.communicator.TestWs.TestWsConnector instance) throws
-                      Throwable {
-                    return instance.testWs();
-                  }
-                }
-
-                public class MetaTestWsConnectorProxy extends MetaProxy implements io.art.http.test.communicator.TestWs.TestWsConnector {
-                  private final Function<Object, Object> testWsInvocation;
-
-                  public MetaTestWsConnectorProxy(
-                      Map<MetaMethod<MetaClass<?>, ?>, Function<Object, Object>> invocations) {
-                    super(invocations);
-                    testWsInvocation = invocations.get(testWsMethod);
-                  }
-
-                  @Override
-                  public io.art.http.test.communicator.TestWs testWs() {
-                    return (io.art.http.test.communicator.TestWs)(testWsInvocation.apply(null));
-                  }
                 }
               }
             }

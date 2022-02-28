@@ -56,10 +56,6 @@ public interface TarantoolModuleConstants {
         ImmutableIntegerValue IPROTO_OK = newInteger(0);
         ImmutableIntegerValue IPROTO_BODY_DATA = newInteger(48);
         ImmutableIntegerValue IPROTO_CHUNK = newInteger(128);
-
-        ImmutableIntegerValue SERVICE_ID_KEY = newInteger(0x1);
-        ImmutableIntegerValue METHOD_ID_KEY = newInteger(0x2);
-        ImmutableIntegerValue SERVICE_METHOD_REQUEST_KEY = newInteger(0x3);
     }
 
     interface AuthenticationMechanism {

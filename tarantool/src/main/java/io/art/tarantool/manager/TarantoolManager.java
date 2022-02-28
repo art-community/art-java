@@ -32,14 +32,14 @@ public class TarantoolManager {
 
     public void initializeCommunicators() {
         configuration.getCommunicator()
-                .getPortals()
+                .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::initialize);
     }
 
     public void disposeCommunicators() {
         configuration.getCommunicator()
-                .getPortals()
+                .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::dispose);
     }

@@ -17,7 +17,6 @@ import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.http.module.HttpActivator.*;
-import static io.art.http.test.communicator.TestHttp.*;
 import static io.art.http.test.registry.HttpTestExecutionsRegistry.*;
 import static io.art.json.module.JsonActivator.*;
 import static io.art.meta.module.MetaActivator.*;
@@ -39,7 +38,7 @@ public class HttpTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.portal(TestHttpConnector.class, connector -> connector.url(url)))
+                        .communicator(communicator -> communicator.connector(TestHttp.class, connector -> connector.url(url)))
                         .server(server -> server.file("/file", testFile)
                                 .routes(TestHttpService.class)
                                 .configure(serverConfigurator -> serverConfigurator.port(1234)))
@@ -56,8 +55,7 @@ public class HttpTest {
 
     @Test
     public void testHttp() {
-        TestHttpConnector connector = Http.http(TestHttpConnector.class);
-        TestHttp communicator = connector.testHttp();
+        TestHttp communicator = Http.http(TestHttp.class);
 
         communicator.post1();
         assertEquals("test", communicator.post2(), "post2");

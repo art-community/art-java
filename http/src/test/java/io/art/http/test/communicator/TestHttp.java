@@ -1,6 +1,5 @@
 package io.art.http.test.communicator;
 
-import io.art.communicator.*;
 import io.art.http.communicator.*;
 import reactor.core.publisher.*;
 
@@ -46,8 +45,4 @@ public interface TestHttp extends HttpCommunicator<TestHttp> {
     Flux<String> post20(Flux<String> empty);
 
     String getFile();
-
-    interface TestHttpConnector extends Portal {
-        TestHttp testHttp();
-    }
 }

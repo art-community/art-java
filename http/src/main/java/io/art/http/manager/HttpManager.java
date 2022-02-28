@@ -37,14 +37,14 @@ public class HttpManager {
 
     public void initializeCommunicators() {
         configuration.getCommunicator()
-                .getPortals()
+                .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::initialize);
     }
 
     public void disposeCommunicators() {
         configuration.getCommunicator()
-                .getPortals()
+                .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::dispose);
     }

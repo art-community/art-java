@@ -56,7 +56,7 @@ public class RsocketMessageBuilder {
         ImmutableMap<ServiceMethodIdentifier, ServiceMethod> methods = configuration.getServer().getMethods().get();
         if (!methods.isEmpty()) message.append(buildServiceMethodsMessage(methods));
         ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators = configuration.getCommunicator()
-                .getPortals()
+                .getCommunicators()
                 .communicators();
         if (!communicators.isEmpty()) {
             String communicatorsString = communicators

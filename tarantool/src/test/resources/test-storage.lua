@@ -9,6 +9,7 @@ require("art-tarantool")
 require("art.storage").initialize()
 
 testSubscription = function()
-    require("art.subscription").publish("test", "test", { 1, "test" })
+    require("log").error("testSubscription")
+    require("art.storage.subscription").publish("test", "test", { 1, "test" })
 end
 box.schema.func.create("testSubscription", { if_not_exists = true })

@@ -815,11 +815,7 @@ local _ENV = _ENV
 package.preload[ "art.storage.subscription" ] = function( ... ) local arg = _G.arg;
 local subscription = {
     publish = function(serviceId, methodId, value)
-        local request = {}
-        request[0x1] = serviceId
-        request[0x2] = methodId
-        request[0x3] = value
-        box.session.push(request)
+        box.session.push({ serviceId, methodId, value })
     end
 }
 return subscription

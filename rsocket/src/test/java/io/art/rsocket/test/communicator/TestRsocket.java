@@ -35,8 +35,4 @@ public interface TestRsocket extends Communicator {
     Mono<String> m15(Flux<String> input);
 
     Flux<String> m16(Flux<String> input);
-
-    interface TestRsocketConnector extends Portal {
-        TestRsocket testRsocket();
-    }
 }

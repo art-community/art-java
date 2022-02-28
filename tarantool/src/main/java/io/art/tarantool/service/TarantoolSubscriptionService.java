@@ -18,12 +18,25 @@ public class TarantoolSubscriptionService {
             return;
         }
         Map<Value, Value> mapValue = payload.asMapValue().map();
-        Value serviceId = mapValue.get(SERVICE_ID_KEY);
-        Value methodId = mapValue.get(METHOD_ID_KEY);
-        Value request = mapValue.get(SERVICE_METHOD_REQUEST_KEY);
+        Value bodyData = mapValue.get(IPROTO_BODY_DATA);
+        ArrayValue bodyValues;
+        if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() != 1) {
+            return;
+        }
+        Value notification;
+        ArrayValue notificationValues;
+        if (isNull(notification = bodyValues.get(0)) || !notification.isArrayValue() || (notificationValues = notification.asArrayValue()).size() != 3) {
+            return;
+        }
+
+        Value serviceId = notificationValues.get(0);
+        Value methodId = notificationValues.get(1);
+        Value request = notificationValues.get(2);
+
         if (isNull(serviceId) || !serviceId.isStringValue()) {
             return;
         }
+
         if (isNull(methodId) || !methodId.isStringValue()) {
             return;
         }

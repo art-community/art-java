@@ -48,7 +48,7 @@ public class CommunicatorConfiguration {
     private final LazyProperty<ImmutableMap<String, CommunicatorActionsConfiguration>> configurations;
 
     @Getter
-    private final PortalRegistry portals;
+    private final CommunicatorRegistry communicators;
 
 
     public Optional<CommunicatorActionConfiguration> getActionConfiguration(CommunicatorActionIdentifier id) {
@@ -109,7 +109,7 @@ public class CommunicatorConfiguration {
         return CommunicatorConfiguration.builder()
                 .refresher(refresher)
                 .consumer(refresher.consumer())
-                .portals(new PortalRegistry(lazy(ImmutableMap::emptyImmutableMap)))
+                .communicators(new CommunicatorRegistry(lazy(ImmutableMap::emptyImmutableMap)))
                 .configurations(lazy(ImmutableMap::emptyImmutableMap))
                 .build();
     }

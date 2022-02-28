@@ -49,7 +49,7 @@ generator {
             include("src/main/**")
         }
         includeClasses("**model**")
-        includeClasses("**portal**")
+        includeClasses("**RsocketBuiltinCommunicator**")
     }
     source("RsocketTest") {
         modulePackage("io.art.rsocket.test")

@@ -2,7 +2,6 @@ package io.art.http.test;
 
 import io.art.http.*;
 import io.art.http.test.communicator.*;
-import io.art.http.test.communicator.TestWs.*;
 import io.art.http.test.meta.*;
 import io.art.http.test.registry.*;
 import io.art.http.test.service.*;
@@ -34,7 +33,7 @@ public class WsTest {
                 transport(),
                 json(),
                 http(http -> http
-                        .communicator(communicator -> communicator.portal(TestWsConnector.class, connector -> connector.url(HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 5678)))
+                        .communicator(communicator -> communicator.connector(TestWs.class, connector -> connector.url(HTTP_SCHEME + SCHEME_DELIMITER + LOCALHOST_IP_ADDRESS + COLON + 5678)))
                         .server(server -> server.routes(TestWsService.class).configure(serverConfigurator -> serverConfigurator.port(5678)))
                 )
         );
@@ -48,8 +47,7 @@ public class WsTest {
 
     @Test
     public void testWs() {
-        TestWsConnector connector = Http.http(TestWsConnector.class);
-        TestWs communicator = connector.testWs();
+        TestWs communicator = Http.http(TestWs.class);
 
         communicator.ws1();
         assertEquals("test", communicator.ws2(), "ws2");

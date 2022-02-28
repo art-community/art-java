@@ -15,7 +15,6 @@ import static io.art.core.initializer.Initializer.*;
 import static io.art.message.pack.module.MessagePackActivator.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.rsocket.module.RsocketActivator.*;
-import static io.art.rsocket.test.communicator.TestRsocket.*;
 import static io.art.rsocket.test.registry.RsocketTestExecutionsRegistry.*;
 import static io.art.transport.module.TransportActivator.*;
 import static java.util.function.UnaryOperator.*;
@@ -31,7 +30,7 @@ public class RsocketTest {
                 transport(),
                 messagePack(),
                 rsocket(rsocket -> rsocket
-                        .communicator(communicator -> communicator.tcp(TestRsocketConnector.class, tcp -> tcp.client(identity())))
+                        .communicator(communicator -> communicator.tcp(TestRsocket.class, tcp -> tcp.client(identity())))
                         .server(server -> server.tcp().service(TestRsocketService.class)))
         );
     }
@@ -44,8 +43,7 @@ public class RsocketTest {
 
     @Test
     public void testRsocket() {
-        TestRsocketConnector connector = Rsocket.rsocket(TestRsocketConnector.class);
-        TestRsocket communicator = connector.testRsocket();
+        TestRsocket communicator = Rsocket.rsocket(TestRsocket.class);
 
         communicator.m1();
         assertEquals("test", communicator.m2(), "m2");

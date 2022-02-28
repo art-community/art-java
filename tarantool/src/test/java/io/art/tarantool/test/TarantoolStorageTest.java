@@ -52,7 +52,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        shutdownStorage();
+        //shutdownStorage();
         shutdown();
     }
 
@@ -250,7 +250,7 @@ public class TarantoolStorageTest {
     @Test
     public void testSubscription() {
         Tarantool.tarantool(TestStorage.class).testSubscription();
-        TestService.await();
+        assertTrue(TestService.await());
     }
 
     private static SpaceService<Integer, TestingMetaModel> space() {
