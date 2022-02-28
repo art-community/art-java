@@ -9,7 +9,7 @@ import java.util.function.*;
 @Public
 public interface TarantoolStorage<C extends TarantoolStorage<C>> extends Storage {
     default C decorate(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
-        decorateTarantoolFunctionCommunication(decorator);
+        decorateTarantoolCommunication(decorator);
         return cast(this);
     }
 

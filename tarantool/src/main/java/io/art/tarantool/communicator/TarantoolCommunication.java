@@ -135,7 +135,7 @@ public class TarantoolCommunication implements Communication {
         emitter.tryEmitNext(reader.read(outputMappingType, value.get(0)));
     }
 
-    static void decorateTarantoolFunctionCommunication(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
+    static void decorateTarantoolCommunication(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
         TarantoolCommunication.decorator.set(decorator.apply(orElse(TarantoolCommunication.decorator.get(), new TarantoolCommunicationDecorator())));
     }
 }
