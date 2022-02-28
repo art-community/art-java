@@ -20,8 +20,8 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
     private ThreadLocalValue<TarantoolStream<ModelType>> stream;
 
-    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClients storage) {
-        reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, storage);
+    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClients clients) {
+        reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
         stream = threadLocal(() -> new TarantoolStream<>(reactive.stream()));
     }
 
