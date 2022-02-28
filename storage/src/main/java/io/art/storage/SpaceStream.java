@@ -5,21 +5,21 @@ import io.art.meta.model.*;
 import lombok.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.SpaceStream.FilterOperator.*;
+import static io.art.storage.SpaceStream.ProcessingOperation.*;
 import static io.art.storage.SpaceStream.SortOrder.*;
-import static io.art.storage.SpaceStream.StreamOperation.*;
 import java.util.*;
 import java.util.function.*;
 
 public abstract class SpaceStream<Type> {
-    protected List<StreamOperator> operators = linkedList();
+    protected List<ProcessingOperator> operators = linkedList();
 
     public SpaceStream<Type> limit(long value) {
-        operators.add(new StreamOperator(LIMIT, value));
+        operators.add(new ProcessingOperator(LIMIT, value));
         return this;
     }
 
     public SpaceStream<Type> offset(long value) {
-        operators.add(new StreamOperator(OFFSET, value));
+        operators.add(new ProcessingOperator(OFFSET, value));
         return this;
     }
 
@@ -28,19 +28,19 @@ public abstract class SpaceStream<Type> {
     }
 
     public SpaceStream<Type> distinct() {
-        operators.add(new StreamOperator(DISTINCT, null));
+        operators.add(new ProcessingOperator(DISTINCT, null));
         return this;
     }
 
     public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
-        operators.add(new StreamOperator(SORT, sorter.apply(new Sorter<>(current))));
+        operators.add(new ProcessingOperator(SORT, sorter.apply(new Sorter<>(current))));
         return this;
     }
 
     public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         Filter<Type> newFilter = new Filter<>();
         filter.accept(newFilter);
-        operators.add(new StreamOperator(FILTER, newFilter));
+        operators.add(new ProcessingOperator(FILTER, newFilter));
         return this;
     }
 
@@ -157,7 +157,7 @@ public abstract class SpaceStream<Type> {
         CONTAINS
     }
 
-    public enum StreamOperation {
+    public enum ProcessingOperation {
         LIMIT,
         OFFSET,
         DISTINCT,
@@ -177,8 +177,8 @@ public abstract class SpaceStream<Type> {
 
     @Getter
     @AllArgsConstructor
-    public static class StreamOperator {
-        private final StreamOperation operation;
+    public static class ProcessingOperator {
+        private final ProcessingOperation operation;
         private final Object value;
     }
 }

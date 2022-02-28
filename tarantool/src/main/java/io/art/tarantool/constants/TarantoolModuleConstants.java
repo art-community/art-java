@@ -106,7 +106,7 @@ public interface TarantoolModuleConstants {
 
     }
 
-    interface SelectOptions {
+    interface ProcessingOptions {
         ImmutableStringValue LIMIT = newString("limit");
         ImmutableStringValue OFFSET = newString("offset");
         ImmutableStringValue FILTER = newString("filter");
@@ -133,8 +133,11 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue OPERATOR_CONTAINS = newString("contains");
     }
 
-    interface TerminalOperators {
-        ImmutableStringValue TERMINAL_COLLECT = newString("collect");
+    interface TerminalOptions {
+        ImmutableStringValue COLLECT = newString("collect");
+        ImmutableStringValue COUNT = newString("count");
+        ImmutableStringValue ANY = newString("any");
+        ImmutableStringValue NONE = newString("noen");
     }
 
     enum Engine {

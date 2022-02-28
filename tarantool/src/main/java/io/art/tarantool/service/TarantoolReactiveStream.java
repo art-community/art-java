@@ -13,9 +13,9 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.TerminalOperators.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.TerminalOptions.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
@@ -29,13 +29,13 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         Mono<Value> result = service
                 .storage
                 .immutable()
-                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), TERMINAL_COLLECT));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), COLLECT));
         return service.parseSpaceFlux(result);
     }
 
     private List<Value> serializeStream() {
         List<Value> serialized = linkedList();
-        for (StreamOperator operator : operators) {
+        for (ProcessingOperator operator : operators) {
             switch (operator.getOperation()) {
                 case LIMIT:
                     serialized.add(newArray(LIMIT, serializeValue(longPrimitiveType(), operator.getValue())));
