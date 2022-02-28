@@ -131,6 +131,8 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             private final MetaTestSubscriptionMethod testSubscriptionMethod = register(new MetaTestSubscriptionMethod(this));
 
+            private final MetaTestChannelMethod testChannelMethod = register(new MetaTestChannelMethod(this));
+
             private MetaTarantoolStorageTestClass() {
               super(metaType(io.art.tarantool.test.TarantoolStorageTest.class));
             }
@@ -209,6 +211,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             public MetaTestSubscriptionMethod testSubscriptionMethod() {
               return testSubscriptionMethod;
+            }
+
+            public MetaTestChannelMethod testChannelMethod() {
+              return testChannelMethod;
             }
 
             public final class MetaConstructorConstructor extends MetaConstructor<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest> {
@@ -560,6 +566,26 @@ public class MetaTarantoolTest extends MetaLibrary {
               public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance)
                   throws Throwable {
                 instance.testSubscription();
+                return null;
+              }
+            }
+
+            public final class MetaTestChannelMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
+              private MetaTestChannelMethod(MetaTarantoolStorageTestClass owner) {
+                super("testChannel",metaType(Void.class),owner);
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                instance.testChannel();
+                return null;
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance)
+                  throws Throwable {
+                instance.testChannel();
                 return null;
               }
             }
@@ -1285,6 +1311,8 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaTestSubscriptionMethod testSubscriptionMethod = register(new MetaTestSubscriptionMethod(this));
 
+              private final MetaTestChannelMethod testChannelMethod = register(new MetaTestChannelMethod(this));
+
               private MetaTestStorageClass() {
                 super(metaType(io.art.tarantool.test.model.TestStorage.class));
               }
@@ -1295,6 +1323,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaTestSubscriptionMethod testSubscriptionMethod() {
                 return testSubscriptionMethod;
+              }
+
+              public MetaTestChannelMethod testChannelMethod() {
+                return testChannelMethod;
               }
 
               @Override
@@ -1323,18 +1355,44 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
+              public final class MetaTestChannelMethod extends InstanceMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage, reactor.core.publisher.Flux<java.lang.String>> {
+                private MetaTestChannelMethod(MetaTestStorageClass owner) {
+                  super("testChannel",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.testChannel();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance)
+                    throws Throwable {
+                  return instance.testChannel();
+                }
+              }
+
               public class MetaTestStorageProxy extends MetaProxy implements io.art.tarantool.test.model.TestStorage {
                 private final Function<java.lang.Object, java.lang.Object> testSubscriptionInvocation;
+
+                private final Function<java.lang.Object, java.lang.Object> testChannelInvocation;
 
                 public MetaTestStorageProxy(
                     Map<MetaMethod<MetaClass<?>, ?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                   super(invocations);
                   testSubscriptionInvocation = invocations.get(testSubscriptionMethod);
+                  testChannelInvocation = invocations.get(testChannelMethod);
                 }
 
                 @Override
                 public void testSubscription() {
                   testSubscriptionInvocation.apply(null);
+                }
+
+                @Override
+                public reactor.core.publisher.Flux<java.lang.String> testChannel() {
+                  return (reactor.core.publisher.Flux<java.lang.String>)(testChannelInvocation.apply(null));
                 }
               }
             }
@@ -1348,7 +1406,11 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaAwaitMethod awaitMethod = register(new MetaAwaitMethod(this));
 
-              private final MetaTestMethod testMethod = register(new MetaTestMethod(this));
+              private final MetaTestEmptyMethod testEmptyMethod = register(new MetaTestEmptyMethod(this));
+
+              private final MetaTestRequestMethod testRequestMethod = register(new MetaTestRequestMethod(this));
+
+              private final MetaTestChannelMethod testChannelMethod = register(new MetaTestChannelMethod(this));
 
               private final MetaTestRequestClass testRequestClass = register(new MetaTestRequestClass());
 
@@ -1373,8 +1435,16 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return awaitMethod;
               }
 
-              public MetaTestMethod testMethod() {
-                return testMethod;
+              public MetaTestEmptyMethod testEmptyMethod() {
+                return testEmptyMethod;
+              }
+
+              public MetaTestRequestMethod testRequestMethod() {
+                return testRequestMethod;
+              }
+
+              public MetaTestChannelMethod testChannelMethod() {
+                return testChannelMethod;
               }
 
               public MetaTestRequestClass testRequestClass() {
@@ -1398,48 +1468,93 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaAwaitMethod extends StaticMetaMethod<MetaTestServiceClass, Void> {
+              public final class MetaAwaitMethod extends StaticMetaMethod<MetaTestServiceClass, Boolean> {
                 private MetaAwaitMethod(MetaTestServiceClass owner) {
-                  super("await",metaType(Void.class),owner);
+                  super("await",metaType(boolean.class),owner);
                 }
 
                 @Override
                 public java.lang.Object invoke(java.lang.Object[] arguments) throws Throwable {
-                  io.art.tarantool.test.model.TestService.await();
-                  return null;
+                  return io.art.tarantool.test.model.TestService.await();
                 }
 
                 @Override
                 public java.lang.Object invoke() throws Throwable {
-                  io.art.tarantool.test.model.TestService.await();
-                  return null;
+                  return io.art.tarantool.test.model.TestService.await();
                 }
               }
 
-              public final class MetaTestMethod extends InstanceMetaMethod<MetaTestServiceClass, io.art.tarantool.test.model.TestService, Void> {
-                private final MetaParameter<io.art.tarantool.test.model.TestService.TestRequest> requestParameter = register(new MetaParameter<>(0, "request",metaType(io.art.tarantool.test.model.TestService.TestRequest.class)));
-
-                private MetaTestMethod(MetaTestServiceClass owner) {
-                  super("test",metaType(Void.class),owner);
+              public final class MetaTestEmptyMethod extends InstanceMetaMethod<MetaTestServiceClass, io.art.tarantool.test.model.TestService, Void> {
+                private MetaTestEmptyMethod(MetaTestServiceClass owner) {
+                  super("testEmpty",metaType(Void.class),owner);
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.model.TestService instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  instance.test((io.art.tarantool.test.model.TestService.TestRequest)(arguments[0]));
+                  instance.testEmpty();
+                  return null;
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestService instance)
+                    throws Throwable {
+                  instance.testEmpty();
+                  return null;
+                }
+              }
+
+              public final class MetaTestRequestMethod extends InstanceMetaMethod<MetaTestServiceClass, io.art.tarantool.test.model.TestService, Void> {
+                private final MetaParameter<io.art.tarantool.test.model.TestService.TestRequest> requestParameter = register(new MetaParameter<>(0, "request",metaType(io.art.tarantool.test.model.TestService.TestRequest.class)));
+
+                private MetaTestRequestMethod(MetaTestServiceClass owner) {
+                  super("testRequest",metaType(Void.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestService instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  instance.testRequest((io.art.tarantool.test.model.TestService.TestRequest)(arguments[0]));
                   return null;
                 }
 
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.model.TestService instance,
                     java.lang.Object argument) throws Throwable {
-                  instance.test((io.art.tarantool.test.model.TestService.TestRequest)(argument));
+                  instance.testRequest((io.art.tarantool.test.model.TestService.TestRequest)(argument));
                   return null;
                 }
 
                 public MetaParameter<io.art.tarantool.test.model.TestService.TestRequest> requestParameter(
                     ) {
                   return requestParameter;
+                }
+              }
+
+              public final class MetaTestChannelMethod extends InstanceMetaMethod<MetaTestServiceClass, io.art.tarantool.test.model.TestService, Void> {
+                private final MetaParameter<reactor.core.publisher.Flux<io.art.tarantool.test.model.TestService.TestRequest>> channelParameter = register(new MetaParameter<>(0, "channel",metaType(reactor.core.publisher.Flux.class,metaType(io.art.tarantool.test.model.TestService.TestRequest.class))));
+
+                private MetaTestChannelMethod(MetaTestServiceClass owner) {
+                  super("testChannel",metaType(Void.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestService instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  instance.testChannel((reactor.core.publisher.Flux<io.art.tarantool.test.model.TestService.TestRequest>)(arguments[0]));
+                  return null;
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestService instance,
+                    java.lang.Object argument) throws Throwable {
+                  instance.testChannel((reactor.core.publisher.Flux)(argument));
+                  return null;
+                }
+
+                public MetaParameter<reactor.core.publisher.Flux<io.art.tarantool.test.model.TestService.TestRequest>> channelParameter(
+                    ) {
+                  return channelParameter;
                 }
               }
 

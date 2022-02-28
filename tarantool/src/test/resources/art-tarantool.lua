@@ -785,6 +785,7 @@ processingFunctors["filter"] = function(generator, parameter, state, request)
     return functional.filter(filterSelector(unpack(request)), generator, parameter, state)
 end
 
+local collect = terminalFunctors["collect"]
 processingFunctors["sort"] = function(generator, parameter, state, request)
     local values = collect(generator, parameter, state)
     table.sort(values, comparatorSelector(unpack(request)))

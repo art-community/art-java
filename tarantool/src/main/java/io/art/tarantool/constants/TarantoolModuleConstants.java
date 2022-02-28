@@ -85,7 +85,7 @@ public interface TarantoolModuleConstants {
     interface Functions {
         ImmutableStringValue SPACE_FIND_FIRST = newString("art.space.findFirst");
         ImmutableStringValue SPACE_FIND_ALL = newString("art.space.findAll");
-        ImmutableStringValue SPACE_FIND = newString("art.space.find");
+        ImmutableStringValue SPACE_STREAM = newString("art.space.stream");
         ImmutableStringValue SPACE_COUNT = newString("art.space.count");
         ImmutableStringValue SPACE_TRUNCATE = newString("art.space.truncate");
         ImmutableStringValue SPACE_SINGLE_DELETE = newString("art.space.single.delete");
@@ -124,12 +124,17 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue OPERATOR_NOT_EQUALS = newString("notEquals");
         ImmutableStringValue OPERATOR_MORE = newString("more");
         ImmutableStringValue OPERATOR_LESS = newString("less");
+        ImmutableStringValue OPERATOR_BETWEEN = newString("between");
+        ImmutableStringValue OPERATOR_NOT_BETWEEN = newString("notBetween");
         ImmutableStringValue OPERATOR_IN = newString("in");
         ImmutableStringValue OPERATOR_NOT_IN = newString("notIn");
-        ImmutableStringValue OPERATOR_LIKE = newString("like");
         ImmutableStringValue OPERATOR_STARTS_WITH = newString("startsWith");
         ImmutableStringValue OPERATOR_ENDS_WITH = newString("endsWith");
         ImmutableStringValue OPERATOR_CONTAINS = newString("contains");
+    }
+
+    interface TerminalOperators {
+        ImmutableStringValue TERMINAL_COLLECT = newString("collect");
     }
 
     enum Engine {

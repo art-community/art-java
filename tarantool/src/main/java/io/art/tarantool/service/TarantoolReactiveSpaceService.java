@@ -5,8 +5,8 @@ import io.art.core.collection.*;
 import io.art.core.local.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.descriptor.*;
-import io.art.tarantool.storage.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -30,12 +30,12 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     final MetaType<ModelType> spaceMetaType;
     final MetaClass<ModelType> spaceMetaClass;
     final MetaType<KeyType> keyMeta;
-    final TarantoolStorage storage;
+    final TarantoolClients storage;
     final TarantoolModelWriter writer;
     final TarantoolModelReader reader;
     private ThreadLocalValue<TarantoolReactiveStream<ModelType>> stream;
 
-    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolStorage storage) {
+    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClients storage) {
         this.spaceType = spaceMeta.definition().type();
         this.storage = storage;
         this.spaceMetaType = spaceMeta.definition();

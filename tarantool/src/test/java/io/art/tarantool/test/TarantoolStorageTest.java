@@ -11,6 +11,7 @@ import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
+import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
@@ -22,6 +23,7 @@ import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 public class TarantoolStorageTest {
     @BeforeAll
@@ -52,7 +54,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        //shutdownStorage();
+        shutdownStorage();
         shutdown();
     }
 
@@ -178,7 +180,7 @@ public class TarantoolStorageTest {
         ImmutableArray<TestingMetaModel> result = space()
                 .stream()
                 .limit(2)
-                .filter(filter -> filter.in(testingMetaModel().f1Field(), 1, 3))
+                .filter(filter -> filter.between(testingMetaModel().f1Field(), 1, 3))
                 .sort(testingMetaModel().f1Field(), SpaceStream.Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
@@ -227,13 +229,6 @@ public class TarantoolStorageTest {
 
         result = space()
                 .stream()
-                .filter(filter -> filter.like(testingMetaModel().f16Field(), "rin"))
-                .collect();
-        assertEquals(1, result.size());
-        data.get(1).assertEquals(result.get(0));
-
-        result = space()
-                .stream()
                 .filter(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"))
                 .collect();
         assertEquals(1, result.size());
@@ -251,6 +246,16 @@ public class TarantoolStorageTest {
     public void testSubscription() {
         Tarantool.tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
+    }
+
+    @Test
+    public void testChannel() {
+        CountDownLatch waiter = new CountDownLatch(2);
+        Tarantool.tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {
+            assertEquals("test", value);
+            waiter.countDown();
+        });
+        wrapExceptionCall(() -> waiter.await(30, TimeUnit.SECONDS), Assertions::fail);
     }
 
     private static SpaceService<Integer, TestingMetaModel> space() {

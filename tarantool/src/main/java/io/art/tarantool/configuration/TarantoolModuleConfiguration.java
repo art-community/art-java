@@ -7,10 +7,10 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.configuration.*;
 import io.art.server.refresher.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
-import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.communicator.configuration.CommunicatorConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
@@ -35,7 +35,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations;
 
     @Getter
-    private ImmutableMap<String, TarantoolStorage> storages;
+    private ImmutableMap<String, TarantoolClients> clients;
 
     @Getter
     private TarantoolServiceRegistry services;
@@ -65,7 +65,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         communicator = communicatorConfiguration(communicatorRefresher);
         server = serverConfiguration(serverRefresher);
         storageConfigurations = emptyImmutableMap();
-        storages = emptyImmutableMap();
+        clients = emptyImmutableMap();
         services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
         subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
     }
@@ -79,7 +79,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.server = configuration.getServer();
             this.configuration.storageConfigurations = configuration.getStorageConfigurations();
-            this.configuration.storages = configuration.getStorages();
+            this.configuration.clients = configuration.getClients();
             this.configuration.services = configuration.getServices();
             this.configuration.subscriptions = configuration.getSubscriptions();
             return this;

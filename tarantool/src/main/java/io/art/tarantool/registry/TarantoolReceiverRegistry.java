@@ -3,7 +3,7 @@ package io.art.tarantool.registry;
 import io.art.tarantool.model.*;
 import io.netty.util.collection.*;
 import lombok.*;
-import org.msgpack.value.Value;
+import org.msgpack.value.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -18,7 +18,7 @@ public class TarantoolReceiverRegistry {
     private final AtomicInteger pools = new AtomicInteger(-1);
     private final ThreadLocal<LocalPool> pool = new ThreadLocal<>();
 
-    public TarantoolReceiver allocate(Consumer<Value> onChunk) {
+    public TarantoolReceiver allocate(Consumer<ArrayValue> onChunk) {
         LocalPool localPool = pool.get();
         if (nonNull(localPool)) {
             int id = localPool.next();

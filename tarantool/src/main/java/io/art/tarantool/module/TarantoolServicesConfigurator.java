@@ -5,9 +5,9 @@ import io.art.core.collection.*;
 import io.art.core.property.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.service.*;
-import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
@@ -44,7 +44,7 @@ public class TarantoolServicesConfigurator {
         return new TarantoolServiceRegistry(spaces, schemas);
     }
 
-    private static ImmutableMap<String, TarantoolStorage> storages() {
-        return tarantoolModule().configuration().getStorages();
+    private static ImmutableMap<String, TarantoolClients> storages() {
+        return tarantoolModule().configuration().getClients();
     }
 }

@@ -7,7 +7,6 @@ import io.art.meta.model.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.descriptor.*;
-import io.art.tarantool.storage.*;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -18,11 +17,11 @@ import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.function.*;
 
-public class TarantoolFunctionCommunication implements Communication {
+public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
-    private final TarantoolStorage storage;
+    private final TarantoolClients clients;
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
     private ImmutableStringValue function;
@@ -31,13 +30,13 @@ public class TarantoolFunctionCommunication implements Communication {
 
     private final static ThreadLocal<TarantoolCommunicationDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolFunctionCommunication(TarantoolStorage storage, TarantoolModuleConfiguration moduleConfiguration) {
-        this.storage = storage;
+    public TarantoolCommunication(TarantoolClients clients, TarantoolModuleConfiguration moduleConfiguration) {
+        this.clients = clients;
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
         this.client = () -> let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
-                ? storage.immutable()
-                : storage.mutable();
+                ? clients.immutable()
+                : clients.mutable();
     }
 
     @Override
@@ -56,7 +55,7 @@ public class TarantoolFunctionCommunication implements Communication {
 
     @Override
     public void dispose() {
-        storage.dispose();
+        clients.dispose();
     }
 
     @Override
@@ -65,21 +64,52 @@ public class TarantoolFunctionCommunication implements Communication {
     }
 
     private BiFunction<Flux<Object>, TarantoolClient, Flux<Object>> call() {
+        if (decorator.get().isChannel()) {
+            if (isNull(inputMappingType)) {
+                return (input, client) -> {
+                    Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
+                    subscribeChannelEmptyInput(client, emitter);
+                    return emitter.asFlux();
+                };
+            }
+
+            return (input, client) -> {
+                Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
+                subscribeChannelInput(input, client, emitter);
+                return emitter.asFlux();
+            };
+        }
+
         if (isNull(inputMappingType)) {
             return (input, client) -> cast(client.call(function).map(element -> reader.read(outputMappingType, element)).flux());
         }
 
         return (input, client) -> {
             Sinks.Many<Object> emitter = Sinks.many().unicast().onBackpressureBuffer();
-            subscribeInput(input, client, emitter);
+            subscribeFunction(input, client, emitter);
             return emitter.asFlux();
         };
     }
 
-    private void subscribeInput(Flux<Object> input, TarantoolClient client, Sinks.Many<Object> emitter) {
+    private void subscribeChannelEmptyInput(TarantoolClient client, Sinks.Many<Object> emitter) {
+        client.call(function, value -> emitChannelOutput(emitter, value))
+                .doOnError(error -> emitError(emitter, error))
+                .subscribe();
+    }
+
+    private void subscribeChannelInput(Flux<Object> input, TarantoolClient client, Sinks.Many<Object> emitter) {
+        input
+                .doOnNext(element -> client.call(function, Mono.just(writer.write(inputMappingType, element)), value -> emitChannelOutput(emitter, value))
+                        .doOnError(error -> emitError(emitter, error))
+                        .subscribe())
+                .doOnError(error -> emitError(emitter, error))
+                .subscribe();
+    }
+
+    private void subscribeFunction(Flux<Object> input, TarantoolClient client, Sinks.Many<Object> emitter) {
         input
                 .doOnNext(element -> client.call(function, Mono.just(writer.write(inputMappingType, element)))
-                        .doOnNext(value -> emitOutput(emitter, value))
+                        .doOnNext(value -> emitFunctionOutput(emitter, value))
                         .doOnError(error -> emitError(emitter, error))
                         .subscribe())
                 .doOnError(error -> emitError(emitter, error))
@@ -91,12 +121,17 @@ public class TarantoolFunctionCommunication implements Communication {
         emitter.tryEmitComplete();
     }
 
-    private void emitOutput(Sinks.Many<Object> emitter, org.msgpack.value.Value value) {
+    private void emitFunctionOutput(Sinks.Many<Object> emitter, org.msgpack.value.Value value) {
         emitter.tryEmitNext(reader.read(outputMappingType, value));
         emitter.tryEmitComplete();
     }
 
-    static void decorateTarantoolCommunication(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
-        TarantoolFunctionCommunication.decorator.set(decorator.apply(new TarantoolCommunicationDecorator()));
+    private void emitChannelOutput(Sinks.Many<Object> emitter, org.msgpack.value.ArrayValue value) {
+        if (isNull(value) || value.size() == 0) return;
+        emitter.tryEmitNext(reader.read(outputMappingType, value.get(0)));
+    }
+
+    static void decorateTarantoolFunctionCommunication(UnaryOperator<TarantoolCommunicationDecorator> decorator) {
+        TarantoolCommunication.decorator.set(decorator.apply(new TarantoolCommunicationDecorator()));
     }
 }

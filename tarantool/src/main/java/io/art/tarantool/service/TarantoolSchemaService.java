@@ -2,9 +2,9 @@ package io.art.tarantool.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.model.*;
-import io.art.tarantool.storage.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -22,7 +22,7 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolSchemaService {
-    private final TarantoolStorage storage;
+    private final TarantoolClients storage;
 
     public TarantoolSchemaService createSpace(TarantoolSpaceConfiguration configuration) {
         Map<Value, Value> options = map();

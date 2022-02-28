@@ -110,24 +110,18 @@ public abstract class SpaceStream<Type> {
             values.add(value);
         }
 
-        public void in(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number startValue, Number endValue) {
+        public void between(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number startValue, Number endValue) {
             this.field = field;
-            operator = IN;
+            operator = BETWEEN;
             values.add(startValue);
             values.add(endValue);
         }
 
-        public void notIn(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number startValue, Number endValue) {
+        public void notBetween(MetaField<? extends MetaClass<Type>, ? extends Number> field, Number startValue, Number endValue) {
             this.field = field;
-            operator = NOT_IN;
+            operator = NOT_BETWEEN;
             values.add(startValue);
             values.add(endValue);
-        }
-
-        public void like(MetaField<? extends MetaClass<Type>, String> field, String pattern) {
-            this.field = field;
-            operator = LIKE;
-            values.add(pattern);
         }
 
         public void startsWith(MetaField<? extends MetaClass<Type>, String> field, String pattern) {
@@ -154,9 +148,10 @@ public abstract class SpaceStream<Type> {
         NOT_EQUALS,
         MORE,
         LESS,
+        BETWEEN,
+        NOT_BETWEEN,
         IN,
         NOT_IN,
-        LIKE,
         STARTS_WITH,
         ENDS_WITH,
         CONTAINS

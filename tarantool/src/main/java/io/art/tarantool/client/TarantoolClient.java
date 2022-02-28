@@ -71,15 +71,15 @@ public class TarantoolClient {
         return call(name, arguments, payload -> publish(payload, subscriptions, reader));
     }
 
-    public Mono<Value> call(ImmutableStringValue name, Consumer<Value> onChunk) {
+    public Mono<Value> call(ImmutableStringValue name, Consumer<ArrayValue> onChunk) {
         return connector.asMono().flatMap(client -> client.executeCall(name, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
-    public Mono<Value> call(ImmutableStringValue name, Mono<Value> input, Consumer<Value> onChunk) {
+    public Mono<Value> call(ImmutableStringValue name, Mono<Value> input, Consumer<ArrayValue> onChunk) {
         return connector.asMono().flatMap(client -> client.executeCall(name, input, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
-    public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments, Consumer<Value> onChunk) {
+    public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments, Consumer<ArrayValue> onChunk) {
         return connector.asMono().flatMap(client -> client.executeCall(name, arguments, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
@@ -87,19 +87,19 @@ public class TarantoolClient {
         apply(disposer, Disposable::dispose);
     }
 
-    private Mono<Value> executeCall(ImmutableStringValue name, Consumer<Value> onChunk) {
+    private Mono<Value> executeCall(ImmutableStringValue name, Consumer<ArrayValue> onChunk) {
         TarantoolReceiver receiver = receivers.allocate(onChunk);
         emitCall(receiver.getId(), callRequest(name, newArray()));
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(ImmutableStringValue name, Mono<Value> argument, Consumer<Value> onChunk) {
+    private Mono<Value> executeCall(ImmutableStringValue name, Mono<Value> argument, Consumer<ArrayValue> onChunk) {
         TarantoolReceiver receiver = receivers.allocate(onChunk);
         subscribeInput(name, argument, receiver);
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments, Consumer<Value> onChunk) {
+    private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments, Consumer<ArrayValue> onChunk) {
         TarantoolReceiver receiver = receivers.allocate(onChunk);
         emitCall(receiver.getId(), callRequest(name, arguments));
         return receiver.getSink().asMono();
@@ -139,7 +139,16 @@ public class TarantoolClient {
             return;
         }
         if (response.isChunk()) {
-            receiver.getOnChunk().accept(response.getBody());
+            if (isNull(body) || !body.isMapValue()) {
+                return;
+            }
+            Map<Value, Value> mapValue = body.asMapValue().map();
+            Value bodyData = mapValue.get(IPROTO_BODY_DATA);
+            ArrayValue bodyValues;
+            if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() != 1) {
+                return;
+            }
+            receiver.getOnChunk().accept(bodyValues);
             return;
         }
         receivers.free(id);

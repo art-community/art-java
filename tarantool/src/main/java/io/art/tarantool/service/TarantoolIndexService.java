@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
-import io.art.tarantool.storage.*;
+import io.art.tarantool.client.*;
 import lombok.Builder;
 import lombok.*;
 import org.msgpack.value.*;
@@ -22,7 +22,7 @@ public class TarantoolIndexService<KeyType, ModelType> implements IndexService<K
                                  MetaType<ModelType> spaceMeta,
                                  ImmutableStringValue spaceName,
                                  ImmutableStringValue indexName,
-                                 TarantoolStorage storage) {
+                                 TarantoolClients storage) {
         reactive = TarantoolReactiveIndexService.<KeyType, ModelType>builder()
                 .spaceName(spaceName)
                 .spaceMeta(spaceMeta)

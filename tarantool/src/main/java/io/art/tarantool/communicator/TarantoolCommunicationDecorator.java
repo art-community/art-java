@@ -8,6 +8,7 @@ import static lombok.AccessLevel.*;
 @Getter(value = PACKAGE)
 public class TarantoolCommunicationDecorator {
     private boolean immutable;
+    private boolean channel;
 
     public TarantoolCommunicationDecorator immutable() {
         immutable = true;
@@ -16,6 +17,11 @@ public class TarantoolCommunicationDecorator {
 
     public TarantoolCommunicationDecorator mutable() {
         immutable = false;
+        return this;
+    }
+
+    public TarantoolCommunicationDecorator channel() {
+        channel = true;
         return this;
     }
 }

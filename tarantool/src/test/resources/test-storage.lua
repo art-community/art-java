@@ -9,7 +9,16 @@ require("art-tarantool")
 require("art.storage").initialize()
 
 testSubscription = function()
-    require("log").error("testSubscription")
-    require("art.storage.subscription").publish("test", "test", { 1, "test" })
+    local subscription = require("art.storage.subscription")
+    subscription.publish("test", "testEmpty")
+    subscription.publish("test", "testRequest", {1, "test"})
+    subscription.publish("test", "testChannel", {1, "test"})
+    subscription.publish("test", "testChannel", {1, "test"})
 end
 box.schema.func.create("testSubscription", { if_not_exists = true })
+
+testChannel = function()
+    box.session.push("test")
+    box.session.push("test")
+end
+box.schema.func.create("testChannel", { if_not_exists = true })

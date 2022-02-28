@@ -11,5 +11,5 @@ import java.util.function.*;
 public class TarantoolReceiver {
     private final IntegerValue id;
     private final Sinks.One<Value> sink;
-    private final Consumer<Value> onChunk;
+    private final Consumer<ArrayValue> onChunk;
 }

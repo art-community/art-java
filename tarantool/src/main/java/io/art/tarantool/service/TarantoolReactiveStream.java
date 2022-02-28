@@ -1,7 +1,6 @@
 package io.art.tarantool.service;
 
 import io.art.meta.model.*;
-import io.art.meta.registry.*;
 import io.art.storage.*;
 import io.art.storage.SpaceStream.*;
 import lombok.*;
@@ -11,11 +10,12 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.meta.registry.BuiltinMetaTypes.longPrimitiveType;
+import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SelectOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.TerminalOperators.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
@@ -29,7 +29,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         Mono<Value> result = service
                 .storage
                 .immutable()
-                .call(SPACE_FIND, newArray(service.spaceName, newArray(serializeStream())));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), TERMINAL_COLLECT));
         return service.parseSpaceFlux(result);
     }
 
@@ -77,14 +77,11 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                         case LESS:
                             serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_LESS, field, values)));
                             break;
-                        case IN:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_IN, field, values)));
+                        case BETWEEN:
+                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_BETWEEN, field, values)));
                             break;
-                        case NOT_IN:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_NOT_IN, field, values)));
-                            break;
-                        case LIKE:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_LIKE, field, values)));
+                        case NOT_BETWEEN:
+                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_NOT_BETWEEN, field, values)));
                             break;
                         case STARTS_WITH:
                             serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_STARTS_WITH, field, values)));

@@ -13,25 +13,15 @@ import java.util.*;
 
 @UtilityClass
 public class TarantoolSubscriptionService {
-    public static void publish(Value payload, TarantoolSubscriptionRegistry subscriptions, TarantoolModelReader reader) {
-        if (isNull(payload) || !payload.isMapValue()) {
-            return;
-        }
-        Map<Value, Value> mapValue = payload.asMapValue().map();
-        Value bodyData = mapValue.get(IPROTO_BODY_DATA);
-        ArrayValue bodyValues;
-        if (isNull(bodyData) || !bodyData.isArrayValue() || (bodyValues = bodyData.asArrayValue()).size() != 1) {
-            return;
-        }
+    public static void publish(ArrayValue bodyValues, TarantoolSubscriptionRegistry subscriptions, TarantoolModelReader reader) {
         Value notification;
         ArrayValue notificationValues;
-        if (isNull(notification = bodyValues.get(0)) || !notification.isArrayValue() || (notificationValues = notification.asArrayValue()).size() != 3) {
+        if (isNull(notification = bodyValues.get(0)) || !notification.isArrayValue() || (notificationValues = notification.asArrayValue()).size() < 2) {
             return;
         }
 
         Value serviceId = notificationValues.get(0);
         Value methodId = notificationValues.get(1);
-        Value request = notificationValues.get(2);
 
         if (isNull(serviceId) || !serviceId.isStringValue()) {
             return;
@@ -42,6 +32,6 @@ public class TarantoolSubscriptionService {
         }
 
         TarantoolSubscription tarantoolSubscription = subscriptions.get(serviceMethodId(serviceId.toString(), methodId.toString()));
-        apply(tarantoolSubscription, subscription -> subscription.publish(request, reader));
+        apply(tarantoolSubscription, subscription -> subscription.publish(orNull(() -> notificationValues.get(2), notificationValues.size() == 3), reader));
     }
 }

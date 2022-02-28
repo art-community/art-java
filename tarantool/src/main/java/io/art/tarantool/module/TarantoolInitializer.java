@@ -25,10 +25,10 @@ import io.art.core.module.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.storage.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
-import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.property.LazyProperty.*;
@@ -67,9 +67,9 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         Initial initial = new Initial(module.getRefresher());
 
         initial.storageConfigurations = communicatorConfigurator.storages();
-        initial.storages = initial.storageConfigurations.entrySet()
+        initial.clients = initial.storageConfigurations.entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolStorage(entry.getValue())));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolClients(entry.getValue())));
         initial.communicator = communicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
         initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
         initial.services = servicesConfigurator.configure();
@@ -85,7 +85,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         private ServerConfiguration server = super.getServer();
         private TarantoolServiceRegistry services = super.getServices();
         private TarantoolSubscriptionRegistry subscriptions = super.getSubscriptions();
-        private ImmutableMap<String, TarantoolStorage> storages = super.getStorages();
+        private ImmutableMap<String, TarantoolClients> clients = super.getClients();
 
         public Initial(TarantoolModuleRefresher refresher) {
             super(refresher);
