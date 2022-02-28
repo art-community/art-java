@@ -45,16 +45,21 @@ public interface TarantoolModuleConstants {
         int SCRAMBLE_SIZE = 20;
 
         ImmutableIntegerValue ZERO = newInteger(0);
-        ImmutableIntegerValue IPROTO_CODE = newInteger(0x00);
-        ImmutableIntegerValue IPROTO_SYNC = newInteger(0x01);
-        ImmutableIntegerValue IPROTO_CALL = newInteger(0x0a);
-        ImmutableIntegerValue IPROTO_USER_NAME = newInteger(0x23);
-        ImmutableIntegerValue IPROTO_AUTH_DATA = newInteger(0x21);
-        ImmutableIntegerValue IPROTO_TUPLE = newInteger(0x21);
-        ImmutableIntegerValue IPROTO_FUNCTION_NAME = newInteger(0x22);
-        ImmutableIntegerValue IPROTO_AUTH = newInteger(0x07);
-        ImmutableIntegerValue IPROTO_OK = newInteger(0x00);
-        ImmutableIntegerValue IPROTO_BODY_DATA = newInteger(0x30);
+        ImmutableIntegerValue IPROTO_CODE = newInteger(0);
+        ImmutableIntegerValue IPROTO_SYNC = newInteger(1);
+        ImmutableIntegerValue IPROTO_CALL = newInteger(10);
+        ImmutableIntegerValue IPROTO_USER_NAME = newInteger(35);
+        ImmutableIntegerValue IPROTO_AUTH_DATA = newInteger(33);
+        ImmutableIntegerValue IPROTO_TUPLE = newInteger(33);
+        ImmutableIntegerValue IPROTO_FUNCTION_NAME = newInteger(34);
+        ImmutableIntegerValue IPROTO_AUTH = newInteger(7);
+        ImmutableIntegerValue IPROTO_OK = newInteger(0);
+        ImmutableIntegerValue IPROTO_BODY_DATA = newInteger(48);
+        ImmutableIntegerValue IPROTO_CHUNK = newInteger(128);
+
+        ImmutableIntegerValue SERVICE_ID_KEY = newInteger(0x1);
+        ImmutableIntegerValue METHOD_ID_KEY = newInteger(0x2);
+        ImmutableIntegerValue SERVICE_METHOD_REQUEST_KEY = newInteger(0x3);
     }
 
     interface AuthenticationMechanism {

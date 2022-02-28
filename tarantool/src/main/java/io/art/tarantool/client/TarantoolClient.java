@@ -6,6 +6,7 @@ import io.art.logging.logger.*;
 import io.art.tarantool.authenticator.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.decoder.*;
+import io.art.tarantool.descriptor.*;
 import io.art.tarantool.exception.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.registry.*;
@@ -26,18 +27,21 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConsta
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
+import static io.art.tarantool.service.TarantoolSubscriptionService.*;
 import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Sinks.*;
 import java.util.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class TarantoolClient {
     private final static LazyProperty<Logger> logger = lazy(() -> logger(TARANTOOL_LOGGER));
 
-    private final TarantoolClientConfiguration configuration;
+    private final TarantoolClientConfiguration clientConfiguration;
+    private final TarantoolModuleConfiguration moduleConfiguration;
 
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connecting = new AtomicBoolean(false);
@@ -49,35 +53,53 @@ public class TarantoolClient {
     private volatile Disposable disposer;
 
     public Mono<Value> call(ImmutableStringValue name) {
-        return connector.asMono().flatMap(client -> client.executeCall(name)).doOnSubscribe(ignore -> connect());
+        TarantoolModelReader reader = moduleConfiguration.getReader();
+        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.getSubscriptions();
+        return call(name, payload -> publish(payload, subscriptions, reader));
     }
 
     public Mono<Value> call(ImmutableStringValue name, Mono<Value> input) {
-        return connector.asMono().flatMap(client -> client.executeCall(name, input)).doOnSubscribe(ignore -> connect());
+        TarantoolModelReader reader = moduleConfiguration.getReader();
+        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.getSubscriptions();
+        return call(name, input, payload -> publish(payload, subscriptions, reader));
     }
 
     public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments) {
-        return connector.asMono().flatMap(client -> client.executeCall(name, arguments)).doOnSubscribe(ignore -> connect());
+        TarantoolModelReader reader = moduleConfiguration.getReader();
+        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.getSubscriptions();
+        return call(name, arguments, payload -> publish(payload, subscriptions, reader));
+    }
+
+    public Mono<Value> call(ImmutableStringValue name, Consumer<Value> onChunk) {
+        return connector.asMono().flatMap(client -> client.executeCall(name, onChunk)).doOnSubscribe(ignore -> connect());
+    }
+
+    public Mono<Value> call(ImmutableStringValue name, Mono<Value> input, Consumer<Value> onChunk) {
+        return connector.asMono().flatMap(client -> client.executeCall(name, input, onChunk)).doOnSubscribe(ignore -> connect());
+    }
+
+    public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments, Consumer<Value> onChunk) {
+        return connector.asMono().flatMap(client -> client.executeCall(name, arguments, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
     public void dispose() {
         apply(disposer, Disposable::dispose);
     }
 
-    private Mono<Value> executeCall(ImmutableStringValue name) {
-        TarantoolReceiver receiver = receivers.allocate();
+    private Mono<Value> executeCall(ImmutableStringValue name, Consumer<Value> onChunk) {
+        TarantoolReceiver receiver = receivers.allocate(onChunk);
         emitCall(receiver.getId(), callRequest(name, newArray()));
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(ImmutableStringValue name, Mono<Value> argument) {
-        TarantoolReceiver receiver = receivers.allocate();
+    private Mono<Value> executeCall(ImmutableStringValue name, Mono<Value> argument, Consumer<Value> onChunk) {
+        TarantoolReceiver receiver = receivers.allocate(onChunk);
         subscribeInput(name, argument, receiver);
         return receiver.getSink().asMono();
     }
 
-    private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments) {
-        TarantoolReceiver receiver = receivers.allocate();
+    private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments, Consumer<Value> onChunk) {
+        TarantoolReceiver receiver = receivers.allocate(onChunk);
         emitCall(receiver.getId(), callRequest(name, arguments));
         return receiver.getSink().asMono();
     }
@@ -105,14 +127,21 @@ public class TarantoolClient {
     }
 
     private void receive(TarantoolResponse response) {
-        TarantoolReceiver receiver = receivers.free(response.getHeader().getSyncId().asInt());
+        int id = response.getHeader().getSyncId().asInt();
+        TarantoolReceiver receiver = receivers.get(id);
         if (isNull(receiver)) return;
         One<Value> sink = receiver.getSink();
         Value body = response.getBody();
         if (response.isError()) {
+            receivers.free(id);
             sink.tryEmitError(new TarantoolException(let(body, Value::toJson)));
             return;
         }
+        if (response.isChunk()) {
+            receiver.getOnChunk().accept(response.getBody());
+            return;
+        }
+        receivers.free(id);
         if (isNull(body) || !body.isMapValue()) {
             sink.tryEmitEmpty();
             return;
@@ -130,9 +159,9 @@ public class TarantoolClient {
     private void connect() {
         if (connecting.compareAndSet(false, true)) {
             disposer = TcpClient.create()
-                    .host(configuration.getHost())
-                    .port(configuration.getPort())
-                    .option(CONNECT_TIMEOUT_MILLIS, (int) configuration.getConnectionTimeout().toMillis())
+                    .host(clientConfiguration.getHost())
+                    .port(clientConfiguration.getPort())
+                    .option(CONNECT_TIMEOUT_MILLIS, (int) clientConfiguration.getConnectionTimeout().toMillis())
                     .connect()
                     .subscribe(this::setup);
         }
@@ -142,7 +171,7 @@ public class TarantoolClient {
         if (connected.compareAndSet(false, true)) {
             connection.markPersistent(true);
             connection
-                    .addHandlerLast(new TarantoolAuthenticationRequester(configuration.getUsername(), configuration.getPassword()))
+                    .addHandlerLast(new TarantoolAuthenticationRequester(clientConfiguration.getUsername(), clientConfiguration.getPassword()))
                     .addHandlerLast(new TarantoolResponseDecoder())
                     .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
             connection.inbound()

@@ -27,6 +27,7 @@ dependencies {
     api(project(":message-pack"))
     api(project(":transport"))
     api(project(":communicator"))
+    api(project(":server"))
     api(project(":storage"))
 
     implementation(project(":logging"))

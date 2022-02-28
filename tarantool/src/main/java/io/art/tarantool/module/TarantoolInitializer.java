@@ -23,6 +23,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.meta.model.*;
+import io.art.server.configuration.*;
 import io.art.storage.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
@@ -40,6 +41,7 @@ import java.util.function.*;
 public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleConfiguration, TarantoolModuleConfiguration.Configurator, TarantoolModule> {
     private final TarantoolCommunicatorConfigurator communicatorConfigurator = new TarantoolCommunicatorConfigurator();
     private final TarantoolServicesConfigurator servicesConfigurator = new TarantoolServicesConfigurator();
+    private final TarantoolSubscriptionsConfigurator subscriptionsConfigurator = new TarantoolSubscriptionsConfigurator();
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass) {
         return storage(storageClass, identity());
@@ -47,6 +49,11 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
         communicatorConfigurator.storage(storageClass, configurator);
+        return this;
+    }
+
+    public TarantoolInitializer subscribe(UnaryOperator<TarantoolSubscriptionsConfigurator> configurator) {
+        configurator.apply(subscriptionsConfigurator);
         return this;
     }
 
@@ -60,9 +67,13 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         Initial initial = new Initial(module.getRefresher());
 
         initial.storageConfigurations = communicatorConfigurator.storages();
-        initial.storages = initial.storageConfigurations.entrySet().stream().collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolStorage(entry.getValue())));
+        initial.storages = initial.storageConfigurations.entrySet()
+                .stream()
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolStorage(entry.getValue())));
         initial.communicator = communicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
+        initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
         initial.services = servicesConfigurator.configure();
+        initial.subscriptions = new TarantoolSubscriptionRegistry(lazy(subscriptionsConfigurator::configureSubscriptions));
 
         return initial;
     }
@@ -71,7 +82,9 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     public static class Initial extends TarantoolModuleConfiguration {
         private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = super.getStorageConfigurations();
         private CommunicatorConfiguration communicator = super.getCommunicator();
+        private ServerConfiguration server = super.getServer();
         private TarantoolServiceRegistry services = super.getServices();
+        private TarantoolSubscriptionRegistry subscriptions = super.getSubscriptions();
         private ImmutableMap<String, TarantoolStorage> storages = super.getStorages();
 
         public Initial(TarantoolModuleRefresher refresher) {

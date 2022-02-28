@@ -21,6 +21,7 @@ package io.art.tarantool.manager;
 
 import io.art.communicator.action.*;
 import io.art.tarantool.configuration.*;
+import io.art.tarantool.model.*;
 
 public class TarantoolManager {
     private final TarantoolModuleConfiguration configuration;
@@ -41,5 +42,9 @@ public class TarantoolManager {
                 .getPortals()
                 .actions()
                 .forEach(CommunicatorAction::dispose);
+    }
+
+    public void disposeSubscriptions() {
+        configuration.getSubscriptions().forEach(TarantoolSubscription::cancel);
     }
 }

@@ -43,5 +43,6 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
         if (!configuration.getStorageConfigurations().isEmpty()) {
             manager.disposeCommunicators();
         }
+        manager.disposeSubscriptions();
     }
 }

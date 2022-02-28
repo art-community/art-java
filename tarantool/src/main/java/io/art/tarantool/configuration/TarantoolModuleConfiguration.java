@@ -5,6 +5,8 @@ import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.core.source.*;
+import io.art.server.configuration.*;
+import io.art.server.refresher.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
@@ -17,6 +19,7 @@ import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.collector.SetCollector.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.property.LazyProperty.*;
+import static io.art.server.configuration.ServerConfiguration.*;
 import static io.art.tarantool.configuration.TarantoolStorageConfiguration.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ConfigurationKeys.*;
 import static java.util.Objects.*;
@@ -26,6 +29,7 @@ import java.util.*;
 public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private final TarantoolModuleRefresher refresher;
     private final CommunicatorRefresher communicatorRefresher;
+    private final ServerRefresher serverRefresher;
 
     @Getter
     private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations;
@@ -37,6 +41,9 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private TarantoolServiceRegistry services;
 
     @Getter
+    private TarantoolSubscriptionRegistry subscriptions;
+
+    @Getter
     private final TarantoolModelWriter writer = new TarantoolModelWriter();
 
     @Getter
@@ -46,15 +53,21 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private CommunicatorConfiguration communicator;
 
     @Getter
+    private ServerConfiguration server;
+
+    @Getter
     private boolean logging;
 
     public TarantoolModuleConfiguration(TarantoolModuleRefresher refresher) {
         this.refresher = refresher;
         communicatorRefresher = new CommunicatorRefresher();
+        serverRefresher = new ServerRefresher();
         communicator = communicatorConfiguration(communicatorRefresher);
+        server = serverConfiguration(serverRefresher);
         storageConfigurations = emptyImmutableMap();
         storages = emptyImmutableMap();
         services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
+        subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
     }
 
     @RequiredArgsConstructor
@@ -64,9 +77,11 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         @Override
         public Configurator initialize(TarantoolModuleConfiguration configuration) {
             this.configuration.communicator = configuration.getCommunicator();
+            this.configuration.server = configuration.getServer();
             this.configuration.storageConfigurations = configuration.getStorageConfigurations();
             this.configuration.storages = configuration.getStorages();
             this.configuration.services = configuration.getServices();
+            this.configuration.subscriptions = configuration.getSubscriptions();
             return this;
         }
 
@@ -103,6 +118,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
 
             configuration.refresher.produce();
             configuration.communicatorRefresher.produce();
+            configuration.serverRefresher.produce();
 
             return this;
         }

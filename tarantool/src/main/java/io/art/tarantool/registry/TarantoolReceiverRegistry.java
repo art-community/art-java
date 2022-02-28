@@ -3,11 +3,13 @@ package io.art.tarantool.registry;
 import io.art.tarantool.model.*;
 import io.netty.util.collection.*;
 import lombok.*;
+import org.msgpack.value.Value;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Sinks.*;
 import java.util.concurrent.atomic.*;
+import java.util.function.*;
 
 @RequiredArgsConstructor
 public class TarantoolReceiverRegistry {
@@ -16,11 +18,11 @@ public class TarantoolReceiverRegistry {
     private final AtomicInteger pools = new AtomicInteger(-1);
     private final ThreadLocal<LocalPool> pool = new ThreadLocal<>();
 
-    public TarantoolReceiver allocate() {
+    public TarantoolReceiver allocate(Consumer<Value> onChunk) {
         LocalPool localPool = pool.get();
         if (nonNull(localPool)) {
             int id = localPool.next();
-            TarantoolReceiver receiver = new TarantoolReceiver(newInteger(id), one());
+            TarantoolReceiver receiver = new TarantoolReceiver(newInteger(id), one(), onChunk);
             receivers.put(id, receiver);
             return receiver;
         }
@@ -28,13 +30,17 @@ public class TarantoolReceiverRegistry {
         localPool = new LocalPool(pools.incrementAndGet() * localPoolSize + 1, localPoolSize);
         this.pool.set(localPool);
         int id = localPool.next();
-        TarantoolReceiver receiver = new TarantoolReceiver(newInteger(id), one());
+        TarantoolReceiver receiver = new TarantoolReceiver(newInteger(id), one(), onChunk);
         receivers.put(id, receiver);
         return receiver;
     }
 
-    public TarantoolReceiver free(int id) {
-        return receivers.remove(id);
+    public TarantoolReceiver get(int id) {
+        return receivers.get(id);
+    }
+
+    public void free(int id) {
+        receivers.remove(id);
     }
 
     private class LocalPool {

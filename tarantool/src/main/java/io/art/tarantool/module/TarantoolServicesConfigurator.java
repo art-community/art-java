@@ -7,6 +7,7 @@ import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.service.*;
+import io.art.tarantool.storage.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
@@ -26,8 +27,8 @@ public class TarantoolServicesConfigurator {
     public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
-        schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(tarantoolModule().configuration().getStorages().get(storageId))));
-        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(idField.get().type(), declaration(spaceClass), tarantoolModule().configuration().getStorages().get(storageId))));
+        schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
+        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(idField.get().type(), declaration(spaceClass), storages().get(storageId))));
         return this;
     }
 
@@ -41,5 +42,9 @@ public class TarantoolServicesConfigurator {
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
         return new TarantoolServiceRegistry(spaces, schemas);
+    }
+
+    private static ImmutableMap<String, TarantoolStorage> storages() {
+        return tarantoolModule().configuration().getStorages();
     }
 }

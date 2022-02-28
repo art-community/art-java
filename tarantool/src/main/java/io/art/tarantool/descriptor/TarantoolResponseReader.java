@@ -21,9 +21,7 @@ public class TarantoolResponseReader {
                 IntegerValue syncId = header.get(IPROTO_SYNC).asIntegerValue();
                 IntegerValue code = header.get(IPROTO_CODE).asIntegerValue();
                 TarantoolHeader tarantoolHeader = new TarantoolHeader(syncId, code);
-                response = unpacker.hasNext()
-                        ? new TarantoolResponse(tarantoolHeader, code.asInt() != IPROTO_OK.asInt(), unpacker.unpackValue())
-                        : new TarantoolResponse(tarantoolHeader, code.asInt() != IPROTO_OK.asInt());
+                response = unpacker.hasNext() ? new TarantoolResponse(tarantoolHeader, unpacker.unpackValue()) : new TarantoolResponse(tarantoolHeader);
                 unpacker.close();
             }
             bodyBuffer.release();
