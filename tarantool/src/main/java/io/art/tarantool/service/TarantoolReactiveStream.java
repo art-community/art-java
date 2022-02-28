@@ -1,5 +1,6 @@
 package io.art.tarantool.service;
 
+import io.art.core.exception.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.SpaceStream.*;
@@ -15,9 +16,10 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.TerminalOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.TerminatingOptions.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
+import java.util.function.*;
 
 
 @RequiredArgsConstructor
@@ -29,8 +31,39 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         Mono<Value> result = service
                 .storage
                 .immutable()
-                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), COLLECT));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(COLLECT)));
         return service.parseSpaceFlux(result);
+    }
+
+    @Override
+    public Mono<Long> count() {
+        Mono<Value> result = service
+                .storage
+                .immutable()
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(COUNT)));
+        return service.parseLongMono(result);
+    }
+
+    @Override
+    public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
+        Filter<ModelType> newFilter = new Filter<>();
+        filter.accept(newFilter);
+        Mono<Value> result = service
+                .storage
+                .immutable()
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(ALL, serializeFilter(newFilter))));
+        return service.parseBooleanMono(result);
+    }
+
+    @Override
+    public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
+        Filter<ModelType> newFilter = new Filter<>();
+        filter.accept(newFilter);
+        Mono<Value> result = service
+                .storage
+                .immutable()
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(ANY, serializeFilter(newFilter))));
+        return service.parseBooleanMono(result);
     }
 
     private List<Value> serializeStream() {
@@ -47,66 +80,57 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     serialized.add(newArray(DISTINCT));
                     break;
                 case SORT:
-                    Sorter<ModelType, ?> sorter = cast(operator.getValue());
-                    SortComparator comparator = sorter.getComparator();
-                    MetaField<?, ?> field = sorter.getField();
-                    switch (comparator) {
-                        case MORE:
-                            serialized.add(newArray(SORT, newArray(COMPARATOR_MORE, newInteger(field.index() + 1))));
-                            break;
-                        case LESS:
-                            serialized.add(newArray(SORT, newArray(COMPARATOR_LESS, newInteger(field.index() + 1))));
-                            break;
-                    }
+                    serialized.add(newArray(SORT, serializeSort(cast(operator.getValue()))));
                     break;
                 case FILTER:
-                    Filter<ModelType> filter = cast(operator.getValue());
-                    FilterOperator filterOperator = filter.getOperator();
-                    field = filter.getField();
-                    List<Object> values = filter.getValues();
-                    switch (filterOperator) {
-                        case EQUALS:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_EQUALS, field, values)));
-                            break;
-                        case NOT_EQUALS:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_NOT_EQUALS, field, values)));
-                            break;
-                        case MORE:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_MORE, field, values)));
-                            break;
-                        case LESS:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_LESS, field, values)));
-                            break;
-                        case IN:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_IN, field, values)));
-                            break;
-                        case NOT_IN:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_NOT_IN, field, values)));
-                            break;
-                        case BETWEEN:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_BETWEEN, field, values)));
-                            break;
-                        case NOT_BETWEEN:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_NOT_BETWEEN, field, values)));
-                            break;
-                        case STARTS_WITH:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_STARTS_WITH, field, values)));
-                            break;
-                        case ENDS_WITH:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_ENDS_WITH, field, values)));
-                            break;
-                        case CONTAINS:
-                            serialized.add(newArray(FILTER, serializeFilterOperator(OPERATOR_CONTAINS, field, values)));
-                            break;
-                    }
+                    serialized.add(newArray(FILTER, serializeFilter(cast(operator.getValue()))));
                     break;
             }
         }
         return serialized;
     }
 
-    private ImmutableArrayValue serializeFilterOperator(ImmutableStringValue operator, MetaField<?, ?> field, List<Object> values) {
-        return newArray(operator, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+    private ImmutableArrayValue serializeSort(Sorter<ModelType, ?> sorter) {
+        SortComparator comparator = sorter.getComparator();
+        MetaField<?, ?> field = sorter.getField();
+        switch (comparator) {
+            case MORE:
+                return newArray(COMPARATOR_MORE, newInteger(field.index() + 1));
+            case LESS:
+                return newArray(COMPARATOR_LESS, newInteger(field.index() + 1));
+        }
+        throw new ImpossibleSituationException();
+    }
+
+    private ImmutableArrayValue serializeFilter(Filter<ModelType> filter) {
+        FilterOperator filterOperator = filter.getOperator();
+        MetaField<?, ?> field = filter.getField();
+        List<Object> values = filter.getValues();
+        switch (filterOperator) {
+            case EQUALS:
+                return newArray(OPERATOR_EQUALS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case NOT_EQUALS:
+                return newArray(OPERATOR_NOT_EQUALS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case MORE:
+                return newArray(OPERATOR_MORE, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case LESS:
+                return newArray(OPERATOR_LESS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case IN:
+                return newArray(OPERATOR_IN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case NOT_IN:
+                return newArray(OPERATOR_NOT_IN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case BETWEEN:
+                return newArray(OPERATOR_BETWEEN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case NOT_BETWEEN:
+                return newArray(OPERATOR_NOT_BETWEEN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case STARTS_WITH:
+                return newArray(OPERATOR_STARTS_WITH, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case ENDS_WITH:
+                return newArray(OPERATOR_ENDS_WITH, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+            case CONTAINS:
+                return newArray(OPERATOR_CONTAINS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
+        }
+        throw new ImpossibleSituationException();
     }
 
     private ImmutableArrayValue serializeFilterValues(MetaType<?> type, List<Object> values) {

@@ -51,6 +51,12 @@ public abstract class SpaceStream<Type> {
 
     public abstract ImmutableArray<Type> collect();
 
+    public abstract long count();
+
+    public abstract boolean all(Consumer<Filter<Type>> filter);
+
+    public abstract boolean any(Consumer<Filter<Type>> filter);
+
     @Getter
     @RequiredArgsConstructor
     public static class Sorter<Type, FieldType> {

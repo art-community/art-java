@@ -133,11 +133,11 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue OPERATOR_CONTAINS = newString("contains");
     }
 
-    interface TerminalOptions {
+    interface TerminatingOptions {
         ImmutableStringValue COLLECT = newString("collect");
         ImmutableStringValue COUNT = newString("count");
         ImmutableStringValue ANY = newString("any");
-        ImmutableStringValue NONE = newString("none");
+        ImmutableStringValue ALL = newString("all");
     }
 
     enum Engine {

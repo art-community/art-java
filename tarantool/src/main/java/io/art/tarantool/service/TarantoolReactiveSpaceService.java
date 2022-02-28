@@ -138,7 +138,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<Long> count() {
         Mono<Value> output = storage.immutable().call(SPACE_COUNT, newArray(spaceName));
-        return parseCountMono(output);
+        return parseLongMono(output);
     }
 
     @Override
@@ -165,11 +165,15 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
                 .build();
     }
 
-    private Mono<Long> parseCountMono(Mono<Value> value) {
+    Mono<Long> parseLongMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
+    Mono<Boolean> parseBooleanMono(Mono<Value> value) {
+        return value.map(element -> reader.read(booleanType(), element));
+    }
+
+    Mono<ModelType> parseSpaceMono(Mono<Value> value) {
         return value.map(element -> reader.read(spaceMetaType, element));
     }
 

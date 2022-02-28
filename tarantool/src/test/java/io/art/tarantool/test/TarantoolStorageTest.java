@@ -258,6 +258,33 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testStreamTerminatingOperations() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f6(true).build(),
+                generateTestingModel().toBuilder().f1(2).f6(true).f16("string").build(),
+                generateTestingModel().toBuilder().f1(3).f6(false).build()
+        );
+        space().put(data);
+        long result = space()
+                .stream()
+                .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .count();
+        assertEquals(1, result);
+
+        boolean all = space()
+                .stream()
+                .filter(filter -> filter.between(testingMetaModel().f1Field(), 1, 2))
+                .all(filter -> filter.equal(testingMetaModel().f6Field(), true));
+        assertTrue(all);
+
+        boolean any = space()
+                .stream()
+                .any(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"));
+
+        assertTrue(any);
+    }
+
+    @Test
     public void testSubscription() {
         Tarantool.tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
