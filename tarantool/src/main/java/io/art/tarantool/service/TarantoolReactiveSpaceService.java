@@ -30,14 +30,14 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     final MetaType<ModelType> spaceMetaType;
     final MetaClass<ModelType> spaceMetaClass;
     final MetaType<KeyType> keyMeta;
-    final TarantoolClients storage;
+    final TarantoolClients clients;
     final TarantoolModelWriter writer;
     final TarantoolModelReader reader;
     private ThreadLocalValue<TarantoolReactiveStream<ModelType>> stream;
 
-    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClients storage) {
+    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClients clients) {
         this.spaceType = spaceMeta.definition().type();
-        this.storage = storage;
+        this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.spaceMetaClass = spaceMeta;
         this.keyMeta = keyMeta;
@@ -50,7 +50,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> findFirst(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_FIRST, input);
+        Mono<Value> output = clients.immutable().call(SPACE_FIND_FIRST, input);
         return parseSpaceMono(output);
     }
 
@@ -58,14 +58,14 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Flux<ModelType> findAll(Collection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
+        Mono<Value> output = clients.immutable().call(SPACE_FIND_ALL, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> findAll(ImmutableCollection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
+        Mono<Value> output = clients.immutable().call(SPACE_FIND_ALL, input);
         return parseSpaceFlux(output);
     }
 
@@ -73,21 +73,21 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> delete(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = storage.immutable().call(SPACE_SINGLE_DELETE, input);
+        Mono<Value> output = clients.immutable().call(SPACE_SINGLE_DELETE, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> delete(Collection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = clients.immutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = clients.immutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
@@ -95,21 +95,21 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> insert(ModelType value) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = storage.mutable().call(SPACE_SINGLE_INSERT, input);
+        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_INSERT, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> insert(Collection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_INSERT, input);
+        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> insert(ImmutableCollection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_INSERT, input);
+        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
@@ -117,33 +117,33 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> put(ModelType value) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = storage.mutable().call(SPACE_SINGLE_PUT, input);
+        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_PUT, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> put(Collection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_PUT, input);
+        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> put(ImmutableCollection<ModelType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_PUT, input);
+        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count() {
-        Mono<Value> output = storage.immutable().call(SPACE_COUNT, newArray(spaceName));
+        Mono<Value> output = clients.immutable().call(SPACE_COUNT, newArray(spaceName));
         return parseLongMono(output);
     }
 
     @Override
     public Mono<Void> truncate() {
-        return storage.mutable().call(SPACE_TRUNCATE, newArray(spaceName)).then();
+        return clients.mutable().call(SPACE_TRUNCATE, newArray(spaceName)).then();
     }
 
     @Override
@@ -160,7 +160,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
                 .indexName(newString(Arrays.stream(fields).map(MetaField::name).collect(joining())))
                 .spaceMeta(spaceMetaType)
                 .keyMeta(keyMeta)
-                .storage(storage)
+                .storage(clients)
                 .spaceName(spaceName)
                 .build();
     }

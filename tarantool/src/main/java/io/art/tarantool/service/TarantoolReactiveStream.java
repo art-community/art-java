@@ -29,7 +29,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     @Override
     public Flux<ModelType> collect() {
         Mono<Value> result = service
-                .storage
+                .clients
                 .immutable()
                 .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(COLLECT)));
         return service.parseSpaceFlux(result);
@@ -38,7 +38,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     @Override
     public Mono<Long> count() {
         Mono<Value> result = service
-                .storage
+                .clients
                 .immutable()
                 .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(COUNT)));
         return service.parseLongMono(result);
@@ -49,7 +49,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         Filter<ModelType> newFilter = new Filter<>();
         filter.accept(newFilter);
         Mono<Value> result = service
-                .storage
+                .clients
                 .immutable()
                 .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(ALL, serializeFilter(newFilter))));
         return service.parseBooleanMono(result);
@@ -60,7 +60,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         Filter<ModelType> newFilter = new Filter<>();
         filter.accept(newFilter);
         Mono<Value> result = service
-                .storage
+                .clients
                 .immutable()
                 .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(ANY, serializeFilter(newFilter))));
         return service.parseBooleanMono(result);

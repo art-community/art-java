@@ -119,7 +119,7 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
                 .indexName(newString(Arrays.stream(fields).map(MetaField::name).collect(joining())))
                 .spaceMeta(reactive.spaceMetaType)
                 .keyMeta(reactive.keyMeta)
-                .storage(reactive.storage)
+                .storage(reactive.clients)
                 .spaceName(reactive.spaceName)
                 .build();
     }
