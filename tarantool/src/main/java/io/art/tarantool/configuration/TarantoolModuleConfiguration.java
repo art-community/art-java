@@ -7,7 +7,6 @@ import io.art.core.module.*;
 import io.art.core.source.*;
 import io.art.server.configuration.*;
 import io.art.server.refresher.*;
-import io.art.tarantool.client.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
@@ -35,7 +34,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations;
 
     @Getter
-    private ImmutableMap<String, TarantoolClients> clients;
+    private ImmutableMap<String, TarantoolClientRegistry> storageClients;
 
     @Getter
     private TarantoolServiceRegistry services;
@@ -65,7 +64,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         communicator = communicatorConfiguration(communicatorRefresher);
         server = serverConfiguration(serverRefresher);
         storageConfigurations = emptyImmutableMap();
-        clients = emptyImmutableMap();
+        storageClients = emptyImmutableMap();
         services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
         subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
     }
@@ -79,7 +78,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.server = configuration.getServer();
             this.configuration.storageConfigurations = configuration.getStorageConfigurations();
-            this.configuration.clients = configuration.getClients();
+            this.configuration.storageClients = configuration.getStorageClients();
             this.configuration.services = configuration.getServices();
             this.configuration.subscriptions = configuration.getSubscriptions();
             return this;

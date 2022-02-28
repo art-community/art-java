@@ -5,7 +5,7 @@ import io.art.core.collection.*;
 import io.art.core.local.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
-import io.art.tarantool.client.*;
+import io.art.tarantool.registry.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
@@ -20,7 +20,7 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
     private ThreadLocalValue<TarantoolStream<ModelType>> stream;
 
-    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClients clients) {
+    public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
         stream = threadLocal(() -> new TarantoolStream<>(reactive.stream()));
     }

@@ -1,4 +1,4 @@
-package io.art.tarantool.client;
+package io.art.tarantool.registry;
 
 import io.art.core.network.balancer.*;
 import io.art.tarantool.client.*;
@@ -8,11 +8,11 @@ import java.util.*;
 import java.util.function.*;
 
 
-public class TarantoolClients {
+public class TarantoolClientRegistry {
     private final Balancer<TarantoolClient> immutable;
     private final Balancer<TarantoolClient> mutable;
 
-    public TarantoolClients(TarantoolStorageConfiguration configuration) {
+    public TarantoolClientRegistry(TarantoolStorageConfiguration configuration) {
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
         initializeClients(configuration);

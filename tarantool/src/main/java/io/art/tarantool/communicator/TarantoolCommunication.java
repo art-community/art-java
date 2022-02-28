@@ -7,6 +7,7 @@ import io.art.meta.model.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.descriptor.*;
+import io.art.tarantool.registry.*;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -21,7 +22,7 @@ public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
-    private final TarantoolClients clients;
+    private final TarantoolClientRegistry clients;
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
     private ImmutableStringValue function;
@@ -30,7 +31,7 @@ public class TarantoolCommunication implements Communication {
 
     private final static ThreadLocal<TarantoolCommunicationDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolCommunication(TarantoolClients clients, TarantoolModuleConfiguration moduleConfiguration) {
+    public TarantoolCommunication(TarantoolClientRegistry clients, TarantoolModuleConfiguration moduleConfiguration) {
         this.clients = clients;
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();

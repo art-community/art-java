@@ -25,7 +25,6 @@ import io.art.core.module.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.storage.*;
-import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
@@ -67,11 +66,13 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         Initial initial = new Initial(module.getRefresher());
 
         initial.storageConfigurations = communicatorConfigurator.storages();
-        initial.clients = initial.storageConfigurations.entrySet()
+        initial.storageClients = initial.storageConfigurations.entrySet()
                 .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolClients(entry.getValue())));
+                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolClientRegistry(entry.getValue())));
+
         initial.communicator = communicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
         initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
+
         initial.services = servicesConfigurator.configure();
         initial.subscriptions = new TarantoolSubscriptionRegistry(lazy(subscriptionsConfigurator::configureSubscriptions));
 
@@ -81,11 +82,13 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
         private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = super.getStorageConfigurations();
+        private ImmutableMap<String, TarantoolClientRegistry> storageClients = super.getStorageClients();
+
         private CommunicatorConfiguration communicator = super.getCommunicator();
         private ServerConfiguration server = super.getServer();
+
         private TarantoolServiceRegistry services = super.getServices();
         private TarantoolSubscriptionRegistry subscriptions = super.getSubscriptions();
-        private ImmutableMap<String, TarantoolClients> clients = super.getClients();
 
         public Initial(TarantoolModuleRefresher refresher) {
             super(refresher);

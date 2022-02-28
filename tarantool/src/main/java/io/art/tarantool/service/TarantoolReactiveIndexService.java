@@ -4,8 +4,8 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
-import io.art.tarantool.client.*;
 import io.art.tarantool.descriptor.*;
+import io.art.tarantool.registry.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -22,7 +22,7 @@ import java.util.*;
 public class TarantoolReactiveIndexService<KeyType, ModelType> implements ReactiveIndexService<KeyType, ModelType> {
     private final StringValue spaceName;
     private final StringValue indexName;
-    private final TarantoolClients storage;
+    private final TarantoolClientRegistry storage;
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final MetaType<ModelType> spaceMeta;
@@ -33,7 +33,7 @@ public class TarantoolReactiveIndexService<KeyType, ModelType> implements Reacti
                                          MetaType<ModelType> spaceMeta,
                                          ImmutableStringValue spaceName,
                                          ImmutableStringValue indexName,
-                                         TarantoolClients storage) {
+                                         TarantoolClientRegistry storage) {
         this.spaceMeta = spaceMeta;
         this.keyMeta = keyMeta;
         this.storage = storage;
