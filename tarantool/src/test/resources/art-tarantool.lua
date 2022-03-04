@@ -795,24 +795,30 @@ processingFunctors["filter"] = function(generator, parameter, state, request)
 end
 
 processingFunctors["filterWith"] = function(generator, parameter, state, request)
-    local requestedMappers = request[1]
-    local requestedFilters = request[2]
 
     local filteringFunction = function(filtering)
-        for index, mapper in pairs(requestedMappers) do
+        for _, requestElement in pairs(request) do
+            local mapper = requestElement[1]
+            local filter = requestElement[2]
+
             local mode = mapper[1]
 
             if mode == "byKey" then
                 local mappedSpace = mapper[2]
                 local keyField = mapper[3]
                 local mapped = box.space[mappedSpace].get(filtering[keyField])
-                local filter = requestedFilters[index]
+                if mapped == nil then
+                    return false
+                end
                 local filterName = filter[1]
                 local filterCurrentField = filter[2]
                 local filterOtherFields = filter[3]
                 local filterOtherValues = {}
                 for _, otherField in pairs(filterOtherFields) do
                     table.insert(filterOtherValues, mapped[otherField])
+                end
+                if next(filterOtherValues) == nil then
+                    return false
                 end
                 return selectFilter(filterName, filtering, filterCurrentField, { filterCurrentField, filterOtherValues })
             end
@@ -823,16 +829,24 @@ processingFunctors["filterWith"] = function(generator, parameter, state, request
                 local keyFields = mapper[4]
                 local indexKeys = {}
                 for _, keyField in pairs(keyFields) do
-                    table.insert(keyFields, filtering[keyField])
+                    table.insert(indexKeys, filtering[keyField])
+                end
+                if next(indexKeys) == nil then
+                    return false
                 end
                 local mapped = box.space[mappedSpace]:index(mappedIndex).get(indexKeys)
-                local filter = requestedFilters[index]
+                if mapped == nil then
+                    return false
+                end
                 local filterName = filter[1]
                 local filterCurrentField = filter[2]
                 local filterOtherFields = filter[3]
                 local filterOtherValues = {}
                 for _, otherField in pairs(filterOtherFields) do
                     table.insert(filterOtherValues, mapped[otherField])
+                end
+                if next(filterOtherValues) == nil then
+                    return false
                 end
                 return selectFilter(filterName, filtering, filterCurrentField, { filterCurrentField, filterOtherValues })
             end
