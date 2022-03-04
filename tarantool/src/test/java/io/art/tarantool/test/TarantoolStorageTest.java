@@ -20,6 +20,7 @@ import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
+import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
@@ -39,6 +40,7 @@ public class TarantoolStorageTest {
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
                         .space(TestStorage.class, TestingMetaModel.class, () -> testingMetaModel().f1Field())
+                        .space(TestStorage.class, OtherSpace.class, () -> otherSpace().keyField())
                 )
         );
         Tarantool.tarantool()
@@ -46,6 +48,15 @@ public class TarantoolStorageTest {
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
                 .createIndex(indexFor(testingMetaModel())
                         .field(testingMetaModel().f1Field())
+                        .configure()
+                        .ifNotExists(true)
+                        .unique(true)
+                        .build());
+        Tarantool.tarantool()
+                .schema(TestStorage.class)
+                .createSpace(spaceFor(OtherSpace.class).ifNotExists(true).build())
+                .createIndex(indexFor(otherSpace())
+                        .field(otherSpace().keyField())
                         .configure()
                         .ifNotExists(true)
                         .unique(true)
@@ -60,13 +71,14 @@ public class TarantoolStorageTest {
 
     @AfterEach
     public void truncate() {
-        space().truncate();
+        current().truncate();
+        other().truncate();
     }
 
     @Test
     public void testSinglePut() {
         TestingMetaModel data = generateTestingModel();
-        data.assertEquals(space().put(data));
+        data.assertEquals(current().put(data));
     }
 
     @Test
@@ -76,7 +88,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        ImmutableArray<TestingMetaModel> result = space().put(data);
+        ImmutableArray<TestingMetaModel> result = current().put(data);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
@@ -86,7 +98,7 @@ public class TarantoolStorageTest {
     @Test
     public void testSingleInsert() {
         TestingMetaModel data = generateTestingModel();
-        data.assertEquals(space().insert(data));
+        data.assertEquals(current().insert(data));
     }
 
     @Test
@@ -96,7 +108,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        ImmutableArray<TestingMetaModel> result = space().insert(data);
+        ImmutableArray<TestingMetaModel> result = current().insert(data);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
@@ -106,10 +118,10 @@ public class TarantoolStorageTest {
     @Test
     public void testSingleDelete() {
         TestingMetaModel data = generateTestingModel();
-        space().insert(data);
-        assertEquals(1, space().count());
-        data.assertEquals(space().delete(data.getF1()));
-        assertEquals(0, space().count());
+        current().insert(data);
+        assertEquals(1, current().count());
+        data.assertEquals(current().delete(data.getF1()));
+        assertEquals(0, current().count());
     }
 
     @Test
@@ -119,9 +131,9 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().insert(data);
-        space().delete(1, 2, 3);
-        assertEquals(0, space().count());
+        current().insert(data);
+        current().delete(1, 2, 3);
+        assertEquals(0, current().count());
     }
 
     @Test
@@ -131,9 +143,9 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().insert(data);
-        space().truncate();
-        assertEquals(0, space().count());
+        current().insert(data);
+        current().truncate();
+        assertEquals(0, current().count());
     }
 
     @Test
@@ -143,15 +155,15 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().insert(data);
-        assertEquals(3, space().count());
+        current().insert(data);
+        assertEquals(3, current().count());
     }
 
     @Test
     public void testFindFirst() {
         TestingMetaModel data = generateTestingModel();
-        space().put(data);
-        data.assertEquals(space().findFirst(1));
+        current().put(data);
+        data.assertEquals(current().findFirst(1));
     }
 
     @Test
@@ -161,8 +173,8 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().put(data);
-        ImmutableArray<TestingMetaModel> result = space().findAll(1, 2, 3);
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current().findAll(1, 2, 3);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
@@ -176,12 +188,12 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().put(data);
-        ImmutableArray<TestingMetaModel> result = space()
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current()
                 .stream()
                 .limit(2)
                 .filter(filter -> filter.between(testingMetaModel().f1Field(), 1, 3))
-                .sort(testingMetaModel().f1Field(), SpaceStream.Sorter::descendant)
+                .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
         data.get(1).assertEquals(result.get(0));
@@ -195,15 +207,15 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).f16("string").build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().put(data);
-        ImmutableArray<TestingMetaModel> result = space()
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current()
                 .stream()
                 .filter(filter -> filter.equal(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
-        result = space()
+        result = current()
                 .stream()
                 .filter(filter -> filter.notEqual(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .collect();
@@ -211,7 +223,7 @@ public class TarantoolStorageTest {
         data.get(0).assertEquals(result.get(0));
         data.get(2).assertEquals(result.get(1));
 
-        result = space()
+        result = current()
                 .stream()
                 .filter(filter -> filter.in(testingMetaModel().f1Field(), data.get(0).getF1(), data.get(2).getF1()))
                 .collect();
@@ -219,7 +231,7 @@ public class TarantoolStorageTest {
         data.get(0).assertEquals(result.get(0));
         data.get(2).assertEquals(result.get(1));
 
-        result = space()
+        result = current()
                 .stream()
                 .filter(filter -> filter.notIn(testingMetaModel().f1Field(), data.get(0).getF1(), data.get(2).getF1()))
                 .collect();
@@ -234,27 +246,45 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).f16("string").build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
-        space().put(data);
-        ImmutableArray<TestingMetaModel> result = space()
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current()
                 .stream()
                 .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
-        result = space()
+        result = current()
                 .stream()
                 .filter(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
-        result = space()
+        result = current()
                 .stream()
                 .filter(filter -> filter.endsWith(testingMetaModel().f16Field(), "ng"))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
+    }
+
+    @Test
+    public void testStreamWith() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(2).f5(123).f16("string").f66("test").build()
+        );
+        current().put(data);
+        other().put(new OtherSpace(123, "test"));
+
+        ImmutableArray<TestingMetaModel> result = current()
+                .stream()
+                .filter(otherSpace(), filter -> filter
+                        .byKey(testingMetaModel().f5Field())
+                        .contains(testingMetaModel().f66Field(), otherSpace().valueField()))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(0).assertEquals(result.get(0));
     }
 
     @Test
@@ -264,20 +294,20 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(2).f6(true).f16("string").build(),
                 generateTestingModel().toBuilder().f1(3).f6(false).build()
         );
-        space().put(data);
-        long result = space()
+        current().put(data);
+        long result = current()
                 .stream()
                 .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
                 .count();
         assertEquals(1, result);
 
-        boolean all = space()
+        boolean all = current()
                 .stream()
                 .filter(filter -> filter.between(testingMetaModel().f1Field(), 1, 2))
                 .all(filter -> filter.equal(testingMetaModel().f6Field(), true));
         assertTrue(all);
 
-        boolean any = space()
+        boolean any = current()
                 .stream()
                 .any(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"));
 
@@ -300,7 +330,11 @@ public class TarantoolStorageTest {
         wrapExceptionCall(() -> waiter.await(30, TimeUnit.SECONDS), Assertions::fail);
     }
 
-    private static SpaceService<Integer, TestingMetaModel> space() {
+    private static SpaceService<Integer, TestingMetaModel> current() {
         return Tarantool.tarantool().space(TestingMetaModel.class);
+    }
+
+    private static SpaceService<Integer, OtherSpace> other() {
+        return Tarantool.tarantool().space(OtherSpace.class);
     }
 }

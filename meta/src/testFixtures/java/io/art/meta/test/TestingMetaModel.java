@@ -102,7 +102,7 @@ public class TestingMetaModel {
         Assertions.assertEquals(f2, model.f2, "f2");
         Assertions.assertEquals(f3, model.f3, "f3");
         Assertions.assertEquals(f4, model.f4, "f4");
-        Assertions.assertEquals(f5, model.f4, "f4");
+        Assertions.assertEquals(f5, model.f5, "f5");
         Assertions.assertEquals(f6, model.f6, "f6");
         Assertions.assertEquals(f7, model.f7, "f7");
         Assertions.assertEquals(f8, model.f8, "f8");

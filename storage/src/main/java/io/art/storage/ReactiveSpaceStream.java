@@ -4,8 +4,7 @@ import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.storage.SpaceStream.*;
-import static io.art.storage.SpaceStream.ProcessingOperation.*;
+import static io.art.storage.StorageConstants.ProcessingOperation.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -32,8 +31,8 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public <FieldType> ReactiveSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<SpaceStream.Sorter<Type, FieldType>> sorter) {
-        operators.add(new ProcessingOperator(SORT, sorter.apply(new SpaceStream.Sorter<>(current))));
+    public <FieldType> ReactiveSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
+        operators.add(new ProcessingOperator(SORT, sorter.apply(new Sorter<>(current))));
         return this;
     }
 

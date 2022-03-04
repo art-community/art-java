@@ -129,6 +129,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             private final MetaTestStreamByStringsMethod testStreamByStringsMethod = register(new MetaTestStreamByStringsMethod(this));
 
+            private final MetaTestStreamWithMethod testStreamWithMethod = register(new MetaTestStreamWithMethod(this));
+
+            private final MetaTestStreamTerminatingOperationsMethod testStreamTerminatingOperationsMethod = register(new MetaTestStreamTerminatingOperationsMethod(this));
+
             private final MetaTestSubscriptionMethod testSubscriptionMethod = register(new MetaTestSubscriptionMethod(this));
 
             private final MetaTestChannelMethod testChannelMethod = register(new MetaTestChannelMethod(this));
@@ -207,6 +211,15 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             public MetaTestStreamByStringsMethod testStreamByStringsMethod() {
               return testStreamByStringsMethod;
+            }
+
+            public MetaTestStreamWithMethod testStreamWithMethod() {
+              return testStreamWithMethod;
+            }
+
+            public MetaTestStreamTerminatingOperationsMethod testStreamTerminatingOperationsMethod(
+                ) {
+              return testStreamTerminatingOperationsMethod;
             }
 
             public MetaTestSubscriptionMethod testSubscriptionMethod() {
@@ -550,6 +563,47 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
             }
 
+            public final class MetaTestStreamWithMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
+              private MetaTestStreamWithMethod(MetaTarantoolStorageTestClass owner) {
+                super("testStreamWith",metaType(Void.class),owner);
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                instance.testStreamWith();
+                return null;
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance)
+                  throws Throwable {
+                instance.testStreamWith();
+                return null;
+              }
+            }
+
+            public final class MetaTestStreamTerminatingOperationsMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
+              private MetaTestStreamTerminatingOperationsMethod(
+                  MetaTarantoolStorageTestClass owner) {
+                super("testStreamTerminatingOperations",metaType(Void.class),owner);
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                instance.testStreamTerminatingOperations();
+                return null;
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance)
+                  throws Throwable {
+                instance.testStreamTerminatingOperations();
+                return null;
+              }
+            }
+
             public final class MetaTestSubscriptionMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
               private MetaTestSubscriptionMethod(MetaTarantoolStorageTestClass owner) {
                 super("testSubscription",metaType(Void.class),owner);
@@ -775,6 +829,8 @@ public class MetaTarantoolTest extends MetaLibrary {
           }
 
           public static final class MetaModelPackage extends MetaPackage {
+            private final MetaOtherSpaceClass otherSpaceClass = register(new MetaOtherSpaceClass());
+
             private final MetaTestDataClass testDataClass = register(new MetaTestDataClass());
 
             private final MetaTestStorageClass testStorageClass = register(new MetaTestStorageClass());
@@ -783,6 +839,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             private MetaModelPackage() {
               super("model");
+            }
+
+            public MetaOtherSpaceClass otherSpaceClass() {
+              return otherSpaceClass;
             }
 
             public MetaTestDataClass testDataClass() {
@@ -795,6 +855,252 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             public MetaTestServiceClass testServiceClass() {
               return testServiceClass;
+            }
+
+            public static final class MetaOtherSpaceClass extends MetaClass<io.art.tarantool.test.model.OtherSpace> {
+              private static final LazyProperty<MetaOtherSpaceClass> self = MetaClass.self(io.art.tarantool.test.model.OtherSpace.class);
+
+              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+
+              private final MetaField<MetaOtherSpaceClass, java.lang.Integer> keyField = register(new MetaField<>("key",metaType(int.class),false,this));
+
+              private final MetaField<MetaOtherSpaceClass, java.lang.String> valueField = register(new MetaField<>("value",metaType(java.lang.String.class),false,this));
+
+              private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod(this));
+
+              private final MetaGetKeyMethod getKeyMethod = register(new MetaGetKeyMethod(this));
+
+              private final MetaGetValueMethod getValueMethod = register(new MetaGetValueMethod(this));
+
+              private final MetaOtherSpaceBuilderClass otherSpaceBuilderClass = register(new MetaOtherSpaceBuilderClass());
+
+              private MetaOtherSpaceClass() {
+                super(metaType(io.art.tarantool.test.model.OtherSpace.class));
+              }
+
+              public static MetaOtherSpaceClass otherSpace() {
+                return self.get();
+              }
+
+              public MetaConstructorConstructor constructor() {
+                return constructor;
+              }
+
+              public MetaField<MetaOtherSpaceClass, java.lang.Integer> keyField() {
+                return keyField;
+              }
+
+              public MetaField<MetaOtherSpaceClass, java.lang.String> valueField() {
+                return valueField;
+              }
+
+              public MetaToBuilderMethod toBuilderMethod() {
+                return toBuilderMethod;
+              }
+
+              public MetaGetKeyMethod getKeyMethod() {
+                return getKeyMethod;
+              }
+
+              public MetaGetValueMethod getValueMethod() {
+                return getValueMethod;
+              }
+
+              public MetaOtherSpaceBuilderClass otherSpaceBuilderClass() {
+                return otherSpaceBuilderClass;
+              }
+
+              public final class MetaConstructorConstructor extends MetaConstructor<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace> {
+                private final MetaParameter<java.lang.Integer> keyParameter = register(new MetaParameter<>(0, "key",metaType(int.class)));
+
+                private final MetaParameter<java.lang.String> valueParameter = register(new MetaParameter<>(1, "value",metaType(java.lang.String.class)));
+
+                private MetaConstructorConstructor(MetaOtherSpaceClass owner) {
+                  super(metaType(io.art.tarantool.test.model.OtherSpace.class),owner);
+                }
+
+                @Override
+                public io.art.tarantool.test.model.OtherSpace invoke(java.lang.Object[] arguments)
+                    throws Throwable {
+                  return new io.art.tarantool.test.model.OtherSpace((int)(arguments[0]),(java.lang.String)(arguments[1]));
+                }
+
+                public MetaParameter<java.lang.Integer> keyParameter() {
+                  return keyParameter;
+                }
+
+                public MetaParameter<java.lang.String> valueParameter() {
+                  return valueParameter;
+                }
+              }
+
+              public final class MetaToBuilderMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
+                private MetaToBuilderMethod(MetaOtherSpaceClass owner) {
+                  super("toBuilder",metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.toBuilder();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance)
+                    throws Throwable {
+                  return instance.toBuilder();
+                }
+              }
+
+              public final class MetaGetKeyMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, java.lang.Integer> {
+                private MetaGetKeyMethod(MetaOtherSpaceClass owner) {
+                  super("getKey",metaType(int.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.getKey();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance)
+                    throws Throwable {
+                  return instance.getKey();
+                }
+              }
+
+              public final class MetaGetValueMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, java.lang.String> {
+                private MetaGetValueMethod(MetaOtherSpaceClass owner) {
+                  super("getValue",metaType(java.lang.String.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.getValue();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance)
+                    throws Throwable {
+                  return instance.getValue();
+                }
+              }
+
+              public static final class MetaOtherSpaceBuilderClass extends MetaClass<io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
+                private static final LazyProperty<MetaOtherSpaceBuilderClass> self = MetaClass.self(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class);
+
+                private final MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> keyField = register(new MetaField<>("key",metaType(int.class),false,this));
+
+                private final MetaField<MetaOtherSpaceBuilderClass, java.lang.String> valueField = register(new MetaField<>("value",metaType(java.lang.String.class),false,this));
+
+                private final MetaKeyMethod keyMethod = register(new MetaKeyMethod(this));
+
+                private final MetaValueMethod valueMethod = register(new MetaValueMethod(this));
+
+                private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
+
+                private MetaOtherSpaceBuilderClass() {
+                  super(metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class));
+                }
+
+                public static MetaOtherSpaceBuilderClass otherSpaceBuilder() {
+                  return self.get();
+                }
+
+                public MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> keyField() {
+                  return keyField;
+                }
+
+                public MetaField<MetaOtherSpaceBuilderClass, java.lang.String> valueField() {
+                  return valueField;
+                }
+
+                public MetaKeyMethod keyMethod() {
+                  return keyMethod;
+                }
+
+                public MetaValueMethod valueMethod() {
+                  return valueMethod;
+                }
+
+                public MetaBuildMethod buildMethod() {
+                  return buildMethod;
+                }
+
+                public final class MetaKeyMethod extends InstanceMetaMethod<MetaOtherSpaceBuilderClass, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
+                  private final MetaParameter<java.lang.Integer> keyParameter = register(new MetaParameter<>(0, "key",metaType(int.class)));
+
+                  private MetaKeyMethod(MetaOtherSpaceBuilderClass owner) {
+                    super("key",metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.key((int)(arguments[0]));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object argument) throws Throwable {
+                    return instance.key((int)(argument));
+                  }
+
+                  public MetaParameter<java.lang.Integer> keyParameter() {
+                    return keyParameter;
+                  }
+                }
+
+                public final class MetaValueMethod extends InstanceMetaMethod<MetaOtherSpaceBuilderClass, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
+                  private final MetaParameter<java.lang.String> valueParameter = register(new MetaParameter<>(0, "value",metaType(java.lang.String.class)));
+
+                  private MetaValueMethod(MetaOtherSpaceBuilderClass owner) {
+                    super("value",metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.value((java.lang.String)(arguments[0]));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object argument) throws Throwable {
+                    return instance.value((java.lang.String)(argument));
+                  }
+
+                  public MetaParameter<java.lang.String> valueParameter() {
+                    return valueParameter;
+                  }
+                }
+
+                public final class MetaBuildMethod extends InstanceMetaMethod<MetaOtherSpaceBuilderClass, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder, io.art.tarantool.test.model.OtherSpace> {
+                  private MetaBuildMethod(MetaOtherSpaceBuilderClass owner) {
+                    super("build",metaType(io.art.tarantool.test.model.OtherSpace.class),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.build();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance) throws
+                      Throwable {
+                    return instance.build();
+                  }
+                }
+              }
             }
 
             public static final class MetaTestDataClass extends MetaClass<io.art.tarantool.test.model.TestData> {

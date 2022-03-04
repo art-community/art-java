@@ -16,7 +16,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.WithOptions.TerminatingOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.TerminatingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.WithOptions.*;
 import static io.art.tarantool.factory.TarantoolNameFactory.*;
 import static org.msgpack.value.ValueFactory.*;

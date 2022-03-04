@@ -137,6 +137,7 @@ public interface TarantoolModuleConstants {
     interface WithOptions {
         ImmutableStringValue WITH_BY_KEY = newString("byKey");
         ImmutableStringValue WITH_BY_INDEX = newString("byIndex");
+    }
 
     interface TerminatingOptions {
         ImmutableStringValue COLLECT = newString("collect");
