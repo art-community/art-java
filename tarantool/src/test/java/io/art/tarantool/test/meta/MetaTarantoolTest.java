@@ -866,11 +866,15 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaField<MetaOtherSpaceClass, java.lang.String> valueField = register(new MetaField<>("value",metaType(java.lang.String.class),false,this));
 
+              private final MetaField<MetaOtherSpaceClass, java.lang.Integer> numberField = register(new MetaField<>("number",metaType(int.class),false,this));
+
               private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod(this));
 
               private final MetaGetKeyMethod getKeyMethod = register(new MetaGetKeyMethod(this));
 
               private final MetaGetValueMethod getValueMethod = register(new MetaGetValueMethod(this));
+
+              private final MetaGetNumberMethod getNumberMethod = register(new MetaGetNumberMethod(this));
 
               private final MetaOtherSpaceBuilderClass otherSpaceBuilderClass = register(new MetaOtherSpaceBuilderClass());
 
@@ -894,6 +898,10 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return valueField;
               }
 
+              public MetaField<MetaOtherSpaceClass, java.lang.Integer> numberField() {
+                return numberField;
+              }
+
               public MetaToBuilderMethod toBuilderMethod() {
                 return toBuilderMethod;
               }
@@ -906,6 +914,10 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return getValueMethod;
               }
 
+              public MetaGetNumberMethod getNumberMethod() {
+                return getNumberMethod;
+              }
+
               public MetaOtherSpaceBuilderClass otherSpaceBuilderClass() {
                 return otherSpaceBuilderClass;
               }
@@ -915,6 +927,8 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private final MetaParameter<java.lang.String> valueParameter = register(new MetaParameter<>(1, "value",metaType(java.lang.String.class)));
 
+                private final MetaParameter<java.lang.Integer> numberParameter = register(new MetaParameter<>(2, "number",metaType(int.class)));
+
                 private MetaConstructorConstructor(MetaOtherSpaceClass owner) {
                   super(metaType(io.art.tarantool.test.model.OtherSpace.class),owner);
                 }
@@ -922,7 +936,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 @Override
                 public io.art.tarantool.test.model.OtherSpace invoke(java.lang.Object[] arguments)
                     throws Throwable {
-                  return new io.art.tarantool.test.model.OtherSpace((int)(arguments[0]),(java.lang.String)(arguments[1]));
+                  return new io.art.tarantool.test.model.OtherSpace((int)(arguments[0]),(java.lang.String)(arguments[1]),(int)(arguments[2]));
                 }
 
                 public MetaParameter<java.lang.Integer> keyParameter() {
@@ -931,6 +945,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 public MetaParameter<java.lang.String> valueParameter() {
                   return valueParameter;
+                }
+
+                public MetaParameter<java.lang.Integer> numberParameter() {
+                  return numberParameter;
                 }
               }
 
@@ -988,6 +1006,24 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
+              public final class MetaGetNumberMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, java.lang.Integer> {
+                private MetaGetNumberMethod(MetaOtherSpaceClass owner) {
+                  super("getNumber",metaType(int.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.getNumber();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.OtherSpace instance)
+                    throws Throwable {
+                  return instance.getNumber();
+                }
+              }
+
               public static final class MetaOtherSpaceBuilderClass extends MetaClass<io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
                 private static final LazyProperty<MetaOtherSpaceBuilderClass> self = MetaClass.self(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class);
 
@@ -995,9 +1031,13 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private final MetaField<MetaOtherSpaceBuilderClass, java.lang.String> valueField = register(new MetaField<>("value",metaType(java.lang.String.class),false,this));
 
+                private final MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> numberField = register(new MetaField<>("number",metaType(int.class),false,this));
+
                 private final MetaKeyMethod keyMethod = register(new MetaKeyMethod(this));
 
                 private final MetaValueMethod valueMethod = register(new MetaValueMethod(this));
+
+                private final MetaNumberMethod numberMethod = register(new MetaNumberMethod(this));
 
                 private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
 
@@ -1017,12 +1057,20 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return valueField;
                 }
 
+                public MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> numberField() {
+                  return numberField;
+                }
+
                 public MetaKeyMethod keyMethod() {
                   return keyMethod;
                 }
 
                 public MetaValueMethod valueMethod() {
                   return valueMethod;
+                }
+
+                public MetaNumberMethod numberMethod() {
+                  return numberMethod;
                 }
 
                 public MetaBuildMethod buildMethod() {
@@ -1078,6 +1126,32 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                   public MetaParameter<java.lang.String> valueParameter() {
                     return valueParameter;
+                  }
+                }
+
+                public final class MetaNumberMethod extends InstanceMetaMethod<MetaOtherSpaceBuilderClass, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
+                  private final MetaParameter<java.lang.Integer> numberParameter = register(new MetaParameter<>(0, "number",metaType(int.class)));
+
+                  private MetaNumberMethod(MetaOtherSpaceBuilderClass owner) {
+                    super("number",metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.number((int)(arguments[0]));
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder instance,
+                      java.lang.Object argument) throws Throwable {
+                    return instance.number((int)(argument));
+                  }
+
+                  public MetaParameter<java.lang.Integer> numberParameter() {
+                    return numberParameter;
                   }
                 }
 

@@ -69,30 +69,30 @@ public class FilterWith<Current, Other> {
         notIn(field, asList(values));
     }
 
-    public void moreThan(MetaField<? extends MetaClass<Current>, String> current, MetaField<? extends MetaClass<Other>, Number> other) {
+    public void moreThan(MetaField<? extends MetaClass<Current>, ? extends Number> current, MetaField<? extends MetaClass<Other>, ? extends Number> other) {
         this.currentField = current;
         this.operator = MORE;
         filterableFields.add(other.index());
     }
 
-    public void lessThan(MetaField<? extends MetaClass<Current>, String> current, MetaField<? extends MetaClass<Other>, Number> other) {
+    public void lessThan(MetaField<? extends MetaClass<Current>, ? extends Number> current, MetaField<? extends MetaClass<Other>, ? extends Number> other) {
         this.currentField = current;
         this.operator = LESS;
         filterableFields.add(other.index());
     }
 
-    public void between(MetaField<? extends MetaClass<Current>, String> current,
-                        MetaField<? extends MetaClass<Other>, Number> otherStart,
-                        MetaField<? extends MetaClass<Other>, Number> otherEnd) {
+    public void between(MetaField<? extends MetaClass<Current>, ? extends Number> current,
+                        MetaField<? extends MetaClass<Other>, ? extends Number> otherStart,
+                        MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
         this.currentField = current;
         this.operator = BETWEEN;
         filterableFields.add(otherStart.index());
         filterableFields.add(otherEnd.index());
     }
 
-    public void notBetween(MetaField<? extends MetaClass<Current>, String> current,
-                           MetaField<? extends MetaClass<Other>, Number> otherStart,
-                           MetaField<? extends MetaClass<Other>, Number> otherEnd) {
+    public void notBetween(MetaField<? extends MetaClass<Current>, ? extends Number> current,
+                           MetaField<? extends MetaClass<Other>, ? extends Number> otherStart,
+                           MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
         this.currentField = current;
         this.operator = NOT_BETWEEN;
         filterableFields.add(otherStart.index());

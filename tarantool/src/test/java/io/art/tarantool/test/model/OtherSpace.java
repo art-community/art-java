@@ -8,4 +8,5 @@ import lombok.*;
 public class OtherSpace {
     int key;
     String value;
+    int number;
 }
