@@ -4,6 +4,7 @@ import io.art.core.exception.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.SpaceStream.*;
+import io.art.storage.StorageConstants.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -107,6 +108,8 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         MetaField<?, ?> field = filter.getField();
         List<Object> values = filter.getValues();
         switch (filterOperator) {
+            case WITH:
+
             case EQUALS:
                 return newArray(OPERATOR_EQUALS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
             case NOT_EQUALS:
