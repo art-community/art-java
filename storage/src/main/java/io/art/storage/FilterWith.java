@@ -3,7 +3,6 @@ package io.art.storage;
 import io.art.meta.model.*;
 import io.art.storage.StorageConstants.*;
 import lombok.*;
-import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.StorageConstants.FilterOperator.*;
 import static io.art.storage.StorageConstants.FilterWithMode.*;
@@ -16,15 +15,15 @@ public class FilterWith<Current, Other> {
     private FilterWithMode mode;
 
     private final MetaClass<Other> mappingSpace;
-    private int mappingFieldIndex;
+    private MetaField<? extends MetaClass<Current>, ?> mappingKeyField;
     private List<MetaField<? extends MetaClass<Current>, ?>> mappingIndexedFields = linkedList();
 
     private MetaField<? extends MetaClass<Current>, ?> currentField;
     private FilterOperator operator;
-    private final List<Integer> filterableFields = linkedList();
+    private final List<MetaField<? extends MetaClass<Other>, ?>> filterableFields = linkedList();
 
     public FilterWith<Current, Other> byKey(MetaField<? extends MetaClass<Current>, ?> field) {
-        this.mappingFieldIndex = field.index();
+        this.mappingKeyField = field;
         mode = KEY;
         return this;
     }
@@ -38,25 +37,25 @@ public class FilterWith<Current, Other> {
     public <FieldType> void equal(MetaField<? extends MetaClass<Current>, FieldType> field, MetaField<? extends MetaClass<Other>, FieldType> value) {
         this.currentField = field;
         operator = EQUALS;
-        this.filterableFields.add(value.index());
+        this.filterableFields.add(value);
     }
 
     public <FieldType> void notEqual(MetaField<? extends MetaClass<Current>, FieldType> field, MetaField<? extends MetaClass<Other>, FieldType> value) {
         this.currentField = field;
         operator = NOT_EQUALS;
-        this.filterableFields.add(value.index());
+        this.filterableFields.add(value);
     }
 
     public <FieldType> void in(MetaField<? extends MetaClass<Current>, FieldType> field, List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
         this.currentField = field;
         this.operator = IN;
-        this.filterableFields.addAll(values.stream().map(MetaField::index).collect(listCollector()));
+        this.filterableFields.addAll(values);
     }
 
     public <FieldType> void notIn(MetaField<? extends MetaClass<Current>, FieldType> field, List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
         this.currentField = field;
         this.operator = NOT_IN;
-        this.filterableFields.addAll(values.stream().map(MetaField::index).collect(listCollector()));
+        this.filterableFields.addAll(values);
     }
 
     @SafeVarargs
@@ -72,13 +71,13 @@ public class FilterWith<Current, Other> {
     public void moreThan(MetaField<? extends MetaClass<Current>, ? extends Number> current, MetaField<? extends MetaClass<Other>, ? extends Number> other) {
         this.currentField = current;
         this.operator = MORE;
-        filterableFields.add(other.index());
+        filterableFields.add(other);
     }
 
     public void lessThan(MetaField<? extends MetaClass<Current>, ? extends Number> current, MetaField<? extends MetaClass<Other>, ? extends Number> other) {
         this.currentField = current;
         this.operator = LESS;
-        filterableFields.add(other.index());
+        filterableFields.add(other);
     }
 
     public void between(MetaField<? extends MetaClass<Current>, ? extends Number> current,
@@ -86,8 +85,8 @@ public class FilterWith<Current, Other> {
                         MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
         this.currentField = current;
         this.operator = BETWEEN;
-        filterableFields.add(otherStart.index());
-        filterableFields.add(otherEnd.index());
+        filterableFields.add(otherStart);
+        filterableFields.add(otherEnd);
     }
 
     public void notBetween(MetaField<? extends MetaClass<Current>, ? extends Number> current,
@@ -95,25 +94,25 @@ public class FilterWith<Current, Other> {
                            MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
         this.currentField = current;
         this.operator = NOT_BETWEEN;
-        filterableFields.add(otherStart.index());
-        filterableFields.add(otherEnd.index());
+        filterableFields.add(otherStart);
+        filterableFields.add(otherEnd);
     }
 
     public void startsWith(MetaField<? extends MetaClass<Current>, String> current, MetaField<? extends MetaClass<Other>, String> other) {
         this.currentField = current;
         this.operator = STARTS_WITH;
-        filterableFields.add(other.index());
+        filterableFields.add(other);
     }
 
     public void endsWith(MetaField<? extends MetaClass<Current>, String> current, MetaField<? extends MetaClass<Other>, String> other) {
         this.currentField = current;
         this.operator = ENDS_WITH;
-        filterableFields.add(other.index());
+        filterableFields.add(other);
     }
 
     public void contains(MetaField<? extends MetaClass<Current>, String> current, MetaField<? extends MetaClass<Other>, String> other) {
         this.currentField = current;
         this.operator = CONTAINS;
-        filterableFields.add(other.index());
+        filterableFields.add(other);
     }
 }

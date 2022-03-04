@@ -65,7 +65,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        shutdownStorage();
+        //shutdownStorage();
         shutdown();
     }
 
