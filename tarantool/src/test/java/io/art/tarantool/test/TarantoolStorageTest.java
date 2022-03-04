@@ -304,7 +304,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f5(3).f1(3).build()
         );
         List<OtherSpace> otherData = fixedArrayOf(
-                new OtherSpace(1, "st", 3),
+                new OtherSpace(1, "str", 3),
                 new OtherSpace(2, "string", 3),
                 new OtherSpace(3, "ng", 3)
         );
