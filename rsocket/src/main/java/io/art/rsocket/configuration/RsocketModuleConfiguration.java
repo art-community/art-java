@@ -19,6 +19,7 @@
 package io.art.rsocket.configuration;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
@@ -35,8 +36,8 @@ import static io.art.communicator.configuration.CommunicatorConfiguration.*;
 import static io.art.communicator.constants.CommunicatorConstants.ConfigurationKeys.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.extensions.CollectionExtensions.*;
-import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpConnectorConfiguration.*;
-import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.*;
+import static io.art.rsocket.configuration.communicator.tcp.RsocketTcpConnectorConfiguration.tcpConnectorConfiguration;
+import static io.art.rsocket.configuration.communicator.ws.RsocketWsConnectorConfiguration.wsConnectorConfiguration;
 import static io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import static io.art.rsocket.configuration.server.RsocketWsServerConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
@@ -79,6 +80,13 @@ public class RsocketModuleConfiguration implements ModuleConfiguration {
     @Getter
     private ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors;
 
+    public RsocketTcpConnectorConfiguration tcpConnector(ConnectorIdentifier id) {
+        return tcpConnectors.get(id.id());
+    }
+
+    public RsocketWsConnectorConfiguration wsConnector(ConnectorIdentifier id) {
+        return wsConnectors.get(id.id());
+    }
 
     public RsocketModuleConfiguration(RsocketModuleRefresher refresher) {
         this.refresher = refresher;

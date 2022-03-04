@@ -2,6 +2,7 @@ package io.art.http.module;
 
 import io.art.communicator.*;
 import io.art.communicator.configurator.*;
+import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.http.configuration.*;
@@ -9,6 +10,7 @@ import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.http.communicator.HttpCommunicationFactory.*;
 import static io.art.http.configuration.HttpConnectorConfiguration.*;
+import static io.art.http.module.HttpModule.*;
 import static io.art.http.path.HttpCommunicationUri.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.*;
@@ -30,12 +32,11 @@ public class HttpCommunicatorConfigurator extends CommunicatorConfigurator<HttpC
         return connector(() -> idByDash(communicatorClass), communicatorClass, configurator);
     }
 
-    public HttpCommunicatorConfigurator connector(ConnectorIdentifier connector,
-                                                  Class<? extends Communicator> communicatorClass,
-                                                  UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+    public HttpCommunicatorConfigurator connector(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
         HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(connector.id()).toBuilder().uri(byCommunicatorAction())).build();
         connectors.put(connector.id(), configuration);
-        register(communicatorClass, identifier -> createManagedHttpCommunication(configuration));
+        CommunicatorActionFactory factory = (connectorId, actionId) -> createManagedHttpCommunication(httpModule().configuration().connector(connectorId));
+        register(connector, communicatorClass, factory);
         return this;
     }
 

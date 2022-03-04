@@ -1,12 +1,14 @@
 package io.art.rsocket;
 
 import io.art.communicator.*;
+import io.art.communicator.model.*;
 import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import io.art.rsocket.communicator.*;
 import io.art.rsocket.state.RsocketModuleState.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static lombok.AccessLevel.*;
 
@@ -16,7 +18,11 @@ public class Rsocket {
     private final static RsocketProvider provider = new RsocketProvider();
 
     public static <T extends Communicator> T rsocket(Class<T> communicatorClass) {
-        return rsocketModule().configuration().getCommunicator().getCommunicators().getCommunicator(communicatorClass).getCommunicator();
+        return rsocket(() -> idByDash(communicatorClass), communicatorClass);
+    }
+
+    public static <T extends Communicator> T rsocket(ConnectorIdentifier connector, Class<T> communicatorClass) {
+        return rsocketModule().configuration().getCommunicator().getCommunicators().getCommunicator(connector, communicatorClass).getCommunicator();
     }
 
     public static RsocketProvider rsocket() {

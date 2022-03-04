@@ -7,6 +7,7 @@ import io.art.tarantool.service.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static lombok.AccessLevel.*;
 
@@ -19,7 +20,7 @@ public class Tarantool {
         Communicator communicator = tarantoolModule().configuration()
                 .getCommunicator()
                 .getCommunicators()
-                .getCommunicator(storageClass)
+                .getCommunicator(() -> idByDash(storageClass), storageClass)
                 .getCommunicator();
         return cast(communicator);
     }

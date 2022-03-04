@@ -39,7 +39,7 @@ public class CommunicatorProxyFactory {
         return preconfiguredCommunicatorProxy(Meta.declaration(proxyClass), communication);
     }
 
-    public static <T extends Communicator> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, Function<MetaMethod<MetaClass<?>, ?>, CommunicatorAction> provider) {
+    public static <T extends Communicator> CommunicatorProxy<T> createCommunicatorProxy(MetaClass<T> proxyClass, CommunicatorActionProvider provider) {
         Function<CommunicatorAction, Object> noArguments = CommunicatorAction::communicate;
         BiFunction<CommunicatorAction, Object, Object> oneArgument = CommunicatorAction::communicate;
 

@@ -1,6 +1,7 @@
 package io.art.tarantool.configuration;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
@@ -67,6 +68,10 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         storageClients = emptyImmutableMap();
         services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
         subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
+    }
+
+    public TarantoolStorageConfiguration storage(ConnectorIdentifier identifier) {
+        return storageConfigurations.get(identifier.id());
     }
 
     @RequiredArgsConstructor

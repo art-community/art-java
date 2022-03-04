@@ -1,6 +1,5 @@
 package io.art.http.communicator;
 
-import io.art.communicator.*;
 import io.art.communicator.action.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;

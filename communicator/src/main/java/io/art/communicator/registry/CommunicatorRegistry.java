@@ -11,10 +11,10 @@ import static io.art.core.collection.ImmutableArray.*;
 
 @RequiredArgsConstructor
 public class CommunicatorRegistry {
-    private final LazyProperty<ImmutableMap<Class<? extends Communicator>, CommunicatorProxy<? extends Communicator>>> communicators;
+    private final LazyProperty<ImmutableMap<CommunicatorKey, CommunicatorProxy<? extends Communicator>>> communicators;
 
-    public <T extends Communicator> CommunicatorProxy<T> getCommunicator(Class<T> communicatorClass) {
-        return cast(communicators.get().get(communicatorClass));
+    public <T extends Communicator> CommunicatorProxy<T> getCommunicator(ConnectorIdentifier connector, Class<T> communicatorClass) {
+        return cast(communicators.get().get(new CommunicatorKey(connector, communicatorClass)));
     }
 
     public ImmutableArray<CommunicatorProxy<? extends Communicator>> communicators() {

@@ -19,6 +19,7 @@
 package io.art.http.configuration;
 
 import io.art.communicator.configuration.*;
+import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
@@ -77,6 +78,10 @@ public class HttpModuleConfiguration implements ModuleConfiguration {
 
         communicator = communicatorConfiguration(communicatorRefresher);
         connectors = emptyImmutableMap();
+    }
+
+    public HttpConnectorConfiguration connector(ConnectorIdentifier id) {
+        return connectors.get(id.id());
     }
 
     @RequiredArgsConstructor
