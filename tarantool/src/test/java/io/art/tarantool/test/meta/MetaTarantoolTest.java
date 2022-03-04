@@ -129,7 +129,9 @@ public class MetaTarantoolTest extends MetaLibrary {
 
             private final MetaTestStreamByStringsMethod testStreamByStringsMethod = register(new MetaTestStreamByStringsMethod(this));
 
-            private final MetaTestStreamWithMethod testStreamWithMethod = register(new MetaTestStreamWithMethod(this));
+            private final MetaTestStreamWithByNumbersMethod testStreamWithByNumbersMethod = register(new MetaTestStreamWithByNumbersMethod(this));
+
+            private final MetaTestStreamWithByStringsMethod testStreamWithByStringsMethod = register(new MetaTestStreamWithByStringsMethod(this));
 
             private final MetaTestStreamTerminatingOperationsMethod testStreamTerminatingOperationsMethod = register(new MetaTestStreamTerminatingOperationsMethod(this));
 
@@ -213,8 +215,12 @@ public class MetaTarantoolTest extends MetaLibrary {
               return testStreamByStringsMethod;
             }
 
-            public MetaTestStreamWithMethod testStreamWithMethod() {
-              return testStreamWithMethod;
+            public MetaTestStreamWithByNumbersMethod testStreamWithByNumbersMethod() {
+              return testStreamWithByNumbersMethod;
+            }
+
+            public MetaTestStreamWithByStringsMethod testStreamWithByStringsMethod() {
+              return testStreamWithByStringsMethod;
             }
 
             public MetaTestStreamTerminatingOperationsMethod testStreamTerminatingOperationsMethod(
@@ -563,22 +569,42 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
             }
 
-            public final class MetaTestStreamWithMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
-              private MetaTestStreamWithMethod(MetaTarantoolStorageTestClass owner) {
-                super("testStreamWith",metaType(Void.class),owner);
+            public final class MetaTestStreamWithByNumbersMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
+              private MetaTestStreamWithByNumbersMethod(MetaTarantoolStorageTestClass owner) {
+                super("testStreamWithByNumbers",metaType(Void.class),owner);
               }
 
               @Override
               public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance,
                   java.lang.Object[] arguments) throws Throwable {
-                instance.testStreamWith();
+                instance.testStreamWithByNumbers();
                 return null;
               }
 
               @Override
               public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance)
                   throws Throwable {
-                instance.testStreamWith();
+                instance.testStreamWithByNumbers();
+                return null;
+              }
+            }
+
+            public final class MetaTestStreamWithByStringsMethod extends InstanceMetaMethod<MetaTarantoolStorageTestClass, io.art.tarantool.test.TarantoolStorageTest, Void> {
+              private MetaTestStreamWithByStringsMethod(MetaTarantoolStorageTestClass owner) {
+                super("testStreamWithByStrings",metaType(Void.class),owner);
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance,
+                  java.lang.Object[] arguments) throws Throwable {
+                instance.testStreamWithByStrings();
+                return null;
+              }
+
+              @Override
+              public java.lang.Object invoke(io.art.tarantool.test.TarantoolStorageTest instance)
+                  throws Throwable {
+                instance.testStreamWithByStrings();
                 return null;
               }
             }
