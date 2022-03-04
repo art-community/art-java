@@ -23,8 +23,7 @@ public interface StorageConstants {
         NOT_IN,
         STARTS_WITH,
         ENDS_WITH,
-        CONTAINS,
-        WITH
+        CONTAINS
     }
 
     enum FilterWithMode {
@@ -32,4 +31,13 @@ public interface StorageConstants {
         INDEX
     }
 
+
+    public enum ProcessingOperation {
+        LIMIT,
+        OFFSET,
+        DISTINCT,
+        SORT,
+        FILTER,
+        FILTER_WITH
+    }
 }
