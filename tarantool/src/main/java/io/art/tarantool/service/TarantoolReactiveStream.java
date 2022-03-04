@@ -3,7 +3,6 @@ package io.art.tarantool.service;
 import io.art.core.exception.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
-import io.art.storage.SpaceStream.*;
 import io.art.storage.StorageConstants.*;
 import lombok.*;
 import org.msgpack.value.Value;
@@ -17,7 +16,9 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.TerminatingOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.WithOptions.TerminatingOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.WithOptions.*;
+import static io.art.tarantool.factory.TarantoolNameFactory.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 import java.util.function.*;
@@ -86,12 +87,15 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                 case FILTER:
                     serialized.add(newArray(FILTER, serializeFilter(cast(operator.getValue()))));
                     break;
+                case FILTER_WITH:
+                    serialized.add(newArray(FILTER_WITH, serializeFilterWith(cast(operator.getValue()))));
+                    break;
             }
         }
         return serialized;
     }
 
-    private ImmutableArrayValue serializeSort(Sorter<ModelType, ?> sorter) {
+    private ImmutableArrayValue serializeSort(Sorter<?, ?> sorter) {
         SortComparator comparator = sorter.getComparator();
         MetaField<?, ?> field = sorter.getField();
         switch (comparator) {
@@ -103,7 +107,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         throw new ImpossibleSituationException();
     }
 
-    private ImmutableArrayValue serializeFilter(Filter<ModelType> filter) {
+    private ImmutableArrayValue serializeFilter(Filter<?> filter) {
         FilterOperator filterOperator = filter.getOperator();
         MetaField<?, ?> field = filter.getField();
         List<Object> values = filter.getValues();
@@ -132,6 +136,55 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                 return newArray(OPERATOR_CONTAINS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
         }
         throw new ImpossibleSituationException();
+    }
+
+    private ImmutableArrayValue serializeFilterWith(FilterWith<?, ?> filter) {
+        FilterOperator filterOperator = filter.getOperator();
+        MetaField<?, ?> field = filter.getCurrentField();
+
+        int mappingFieldIndex = filter.getMappingFieldIndex();
+        List<MetaField<MetaClass<?>, ?>> mappingIndexedFields = cast(filter.getMappingIndexedFields());
+        List<Integer> filterableFields = filter.getFilterableFields();
+        FilterWithMode mode = filter.getMode();
+        MetaClass<?> mappingSpace = filter.getMappingSpace();
+
+        List<ImmutableArrayValue> serialized = linkedList();
+
+        switch (mode) {
+            case KEY:
+                serialized.add(newArray(WITH_BY_KEY, spaceName(mappingSpace), newInteger(mappingFieldIndex)));
+                break;
+            case INDEX:
+                serialized.add(newArray(WITH_BY_INDEX, spaceName(mappingSpace), indexName(mappingIndexedFields), newInteger(mappingFieldIndex)));
+                break;
+        }
+
+        switch (filterOperator) {
+            case EQUALS:
+                serialized.add(newArray(OPERATOR_EQUALS, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case NOT_EQUALS:
+                serialized.add(newArray(OPERATOR_NOT_EQUALS, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case MORE:
+                serialized.add(newArray(OPERATOR_MORE, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case LESS:
+                serialized.add(newArray(OPERATOR_LESS, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case IN:
+                serialized.add(newArray(OPERATOR_IN, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case NOT_IN:
+                serialized.add(newArray(OPERATOR_NOT_IN, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case BETWEEN:
+                serialized.add(newArray(OPERATOR_BETWEEN, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case NOT_BETWEEN:
+                serialized.add(newArray(OPERATOR_NOT_BETWEEN, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case STARTS_WITH:
+                serialized.add(newArray(OPERATOR_STARTS_WITH, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case ENDS_WITH:
+                serialized.add(newArray(OPERATOR_ENDS_WITH, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+            case CONTAINS:
+                serialized.add(newArray(OPERATOR_CONTAINS, newInteger(field.index() + 1), serializeFilterValues(integerType(), cast(filterableFields))));
+        }
+
+        return newArray(serialized);
     }
 
     private ImmutableArrayValue serializeFilterValues(MetaType<?> type, List<Object> values) {

@@ -110,6 +110,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue LIMIT = newString("limit");
         ImmutableStringValue OFFSET = newString("offset");
         ImmutableStringValue FILTER = newString("filter");
+        ImmutableStringValue FILTER_WITH = newString("filterWith");
         ImmutableStringValue SORT = newString("sort");
         ImmutableStringValue DISTINCT = newString("distinct");
     }
@@ -132,6 +133,10 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue OPERATOR_ENDS_WITH = newString("endsWith");
         ImmutableStringValue OPERATOR_CONTAINS = newString("contains");
     }
+
+    interface WithOptions {
+        ImmutableStringValue WITH_BY_KEY = newString("byKey");
+        ImmutableStringValue WITH_BY_INDEX = newString("byIndex");
 
     interface TerminatingOptions {
         ImmutableStringValue COLLECT = newString("collect");

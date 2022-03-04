@@ -10,7 +10,7 @@ import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.local.ThreadLocalValue.*;
-import static io.art.tarantool.factory.TarantoolIndexNameFactory.*;
+import static io.art.tarantool.factory.TarantoolNameFactory.*;
 import java.util.*;
 
 @Public
