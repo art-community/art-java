@@ -28,7 +28,8 @@ public class FilterWith<Current, Other> {
         return this;
     }
 
-    public FilterWith<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
+    @SafeVarargs
+    public final FilterWith<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
         this.mappingIndexedFields = asList(indexedFields);
         mode = INDEX;
         return this;
