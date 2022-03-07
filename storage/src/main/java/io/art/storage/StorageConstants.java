@@ -29,7 +29,13 @@ public interface StorageConstants {
         FIELD,
         FUNCTION,
         SPACE,
-        INDEX
+        INDEX,
+        NESTED
+    }
+
+    enum FilterExpressionType {
+        FIELD,
+        VALUE
     }
 
     enum FilterCondition {
