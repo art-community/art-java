@@ -50,7 +50,7 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <Other> SpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterWith<Type, Other>> filterWithConsumer) {
+    public <Other> SpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterBySpace<Type, Other>> filterWithConsumer) {
         stream.filter(spaceType, filterWithConsumer);
         return this;
     }

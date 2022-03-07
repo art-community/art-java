@@ -43,13 +43,6 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
-    public <Other> SpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterWith<Type, Other>> filter) {
-        FilterWith<Type, Other> newFilter = new FilterWith<>(spaceType);
-        filter.accept(newFilter);
-        operators.add(new ProcessingOperator(FILTER_WITH, newFilter));
-        return this;
-    }
-
     public SpaceStream<Type> refresh() {
         operators = linkedList();
         return this;

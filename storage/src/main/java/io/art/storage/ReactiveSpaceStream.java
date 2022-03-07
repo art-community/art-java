@@ -43,8 +43,8 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public <Other> ReactiveSpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterWith<Type, Other>> filter) {
-        FilterWith<Type, Other> newFilter = new FilterWith<>(spaceType);
+    public <Other> ReactiveSpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterBySpace<Type, Other>> filter) {
+        FilterBySpace<Type, Other> newFilter = new FilterBySpace<>(spaceType);
         filter.accept(newFilter);
         operators.add(new ProcessingOperator(FILTER_WITH, newFilter));
         return this;

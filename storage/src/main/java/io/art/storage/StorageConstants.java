@@ -1,7 +1,6 @@
 package io.art.storage;
 
 public interface StorageConstants {
-
     enum SortOrder {
         DESCENDANT,
         ASCENDANT
@@ -26,18 +25,31 @@ public interface StorageConstants {
         CONTAINS
     }
 
-    enum FilterWithMode {
-        KEY,
+    enum FilterMode {
+        FIELD,
+        FUNCTION,
+        SPACE,
         INDEX
     }
 
+    enum FilterCondition {
+        AND,
+        OR
+    }
 
-    public enum ProcessingOperation {
+    enum MappingMode {
+        FIELD,
+        FUNCTION,
+        SPACE,
+        INDEX
+    }
+
+    enum ProcessingOperation {
         LIMIT,
         OFFSET,
         DISTINCT,
         SORT,
         FILTER,
-        FILTER_WITH
+        MAP
     }
 }

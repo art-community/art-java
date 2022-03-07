@@ -138,7 +138,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         throw new ImpossibleSituationException();
     }
 
-    private ImmutableArrayValue serializeFilterWith(FilterWith<?, ?> filter) {
+    private ImmutableArrayValue serializeFilterWith(FilterBySpace<?, ?> filter) {
         FilterOperator filterOperator = filter.getOperator();
         MetaField<?, ?> field = filter.getCurrentField();
 
@@ -148,7 +148,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                 .stream()
                 .map(filterable -> filterable.index() + 1)
                 .collect(listCollector());
-        FilterWithMode mode = filter.getMode();
+        FilterMode mode = filter.getMode();
         MetaClass<?> mappingSpace = filter.getMappingSpace();
 
         List<ImmutableArrayValue> serialized = linkedList();
