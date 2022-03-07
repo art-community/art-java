@@ -180,7 +180,7 @@ public class TarantoolStreamTest {
     }
 
     @Test
-    public void testStreamWithByNumbers() {
+    public void testStreamBySpaceWithNumbers() {
         List<TestingMetaModel> currentData = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f5(1).build(),
                 generateTestingModel().toBuilder().f1(2).f5(2).build(),
@@ -207,7 +207,7 @@ public class TarantoolStreamTest {
     }
 
     @Test
-    public void testStreamWithByStrings() {
+    public void testStreamBySpaceWithStrings() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f5(1).f1(1).build(),
                 generateTestingModel().toBuilder().f5(2).f1(2).f16("string").build(),
