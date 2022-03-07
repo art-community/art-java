@@ -88,9 +88,7 @@ public class TarantoolStreamTest {
                         .byNumber(testingMetaModel().f1Field()).between(1, 3)
                         .and()
                         .byString(testingMetaModel().f16Field()).contains("test")
-                        .or()
-                        .byString(testingMetaModel().f16Field()).contains("test 2")
-                )
+                        .or())
                 .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
@@ -108,14 +106,18 @@ public class TarantoolStreamTest {
         current().put(data);
         ImmutableArray<TestingMetaModel> result = current()
                 .stream()
-                .filter(filter -> filter.equal(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .filter(filter -> filter
+                        .byField(testingMetaModel().f16Field())
+                        .equal(data.get(1).getF16()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = current()
                 .stream()
-                .filter(filter -> filter.notEqual(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .filter(filter -> filter
+                        .byField(testingMetaModel().f16Field())
+                        .notEqual(data.get(1).getF16()))
                 .collect();
         assertEquals(2, result.size());
         data.get(0).assertEquals(result.get(0));
@@ -123,7 +125,9 @@ public class TarantoolStreamTest {
 
         result = current()
                 .stream()
-                .filter(filter -> filter.in(testingMetaModel().f1Field(), data.get(0).getF1(), data.get(2).getF1()))
+                .filter(filter -> filter
+                        .byField(testingMetaModel().f1Field())
+                        .in(data.get(0).getF1(), data.get(2).getF1()))
                 .collect();
         assertEquals(2, result.size());
         data.get(0).assertEquals(result.get(0));
@@ -131,7 +135,9 @@ public class TarantoolStreamTest {
 
         result = current()
                 .stream()
-                .filter(filter -> filter.notIn(testingMetaModel().f1Field(), data.get(0).getF1(), data.get(2).getF1()))
+                .filter(filter -> filter
+                        .byField(testingMetaModel().f1Field())
+                        .notIn(data.get(0).getF1(), data.get(2).getF1()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
@@ -147,21 +153,27 @@ public class TarantoolStreamTest {
         current().put(data);
         ImmutableArray<TestingMetaModel> result = current()
                 .stream()
-                .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .filter(filter -> filter
+                        .byString(testingMetaModel().f16Field())
+                        .contains(data.get(1).getF16()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = current()
                 .stream()
-                .filter(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"))
+                .filter(filter -> filter
+                        .byString(testingMetaModel().f16Field())
+                        .startsWith("st"))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
 
         result = current()
                 .stream()
-                .filter(filter -> filter.endsWith(testingMetaModel().f16Field(), "ng"))
+                .filter(filter -> filter
+                        .byString(testingMetaModel().f16Field())
+                        .endsWith("ng"))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
@@ -184,9 +196,9 @@ public class TarantoolStreamTest {
         ImmutableArray<TestingMetaModel> result = current()
                 .stream()
                 .limit(2)
-                .filter(otherSpace(), filter -> filter
-                        .byKey(testingMetaModel().f5Field())
-                        .lessThan(testingMetaModel().f1Field(), otherSpace().numberField()))
+                .filter(filter -> filter
+                        .bySpace(testingMetaModel().f1Field(), otherSpace(), testingMetaModel().f5Field())
+                        .lessThan(otherSpace().numberField()))
                 .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
@@ -210,27 +222,9 @@ public class TarantoolStreamTest {
         other().put(otherData);
         ImmutableArray<TestingMetaModel> result = current()
                 .stream()
-                .filter(otherSpace(), filter -> filter
-                        .byKey(testingMetaModel().f5Field())
-                        .contains(testingMetaModel().f16Field(), otherSpace().valueField()))
-                .collect();
-        assertEquals(1, result.size());
-        data.get(1).assertEquals(result.get(0));
-
-        result = current()
-                .stream()
-                .filter(otherSpace(), filter -> filter
-                        .byKey(testingMetaModel().f5Field())
-                        .endsWith(testingMetaModel().f16Field(), otherSpace().valueField()))
-                .collect();
-        assertEquals(1, result.size());
-        data.get(1).assertEquals(result.get(0));
-
-        result = current()
-                .stream()
-                .filter(otherSpace(), filter -> filter
-                        .byKey(testingMetaModel().f5Field())
-                        .startsWith(testingMetaModel().f16Field(), otherSpace().valueField()))
+                .filter(filter -> filter
+                        .bySpace(testingMetaModel().f16Field(), otherSpace(), testingMetaModel().f5Field())
+                        .contains(otherSpace().valueField()))
                 .collect();
         assertEquals(1, result.size());
         data.get(1).assertEquals(result.get(0));
@@ -246,20 +240,27 @@ public class TarantoolStreamTest {
         current().put(data);
         long result = current()
                 .stream()
-                .filter(filter -> filter.contains(testingMetaModel().f16Field(), data.get(1).getF16()))
+                .filter(filter -> filter
+                        .byString(testingMetaModel().f16Field())
+                        .contains(data.get(1).getF16()))
                 .count();
         assertEquals(1, result);
 
         boolean all = current()
                 .stream()
-                .filter(filter -> filter.between(testingMetaModel().f1Field(), 1, 2))
-                .all(filter -> filter.equal(testingMetaModel().f6Field(), true));
+                .filter(filter -> filter
+                        .byNumber(testingMetaModel().f1Field())
+                        .between(1, 2))
+                .all(filter -> filter
+                        .byField(testingMetaModel().f6Field())
+                        .equal(true));
         assertTrue(all);
 
         boolean any = current()
                 .stream()
-                .any(filter -> filter.startsWith(testingMetaModel().f16Field(), "st"));
-
+                .any(filter -> filter
+                        .byString(testingMetaModel().f16Field())
+                        .startsWith("st"));
         assertTrue(any);
     }
 
