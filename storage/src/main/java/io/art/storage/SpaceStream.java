@@ -43,6 +43,26 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
+    public <Mapped> SpaceStream<Type> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
+        return this;
+    }
+
+    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
+        return this;
+    }
+
+    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
+        return this;
+    }
+
+    public <Mapped> SpaceStream<Type> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
+        return this;
+    }
+
     public SpaceStream<Type> refresh() {
         operators = linkedList();
         return this;
