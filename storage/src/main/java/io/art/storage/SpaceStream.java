@@ -3,10 +3,12 @@ package io.art.storage;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.StorageConstants.ProcessingOperation.*;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 @Public
 public abstract class SpaceStream<Type> {
@@ -43,24 +45,24 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
-    public <Mapped> SpaceStream<Type> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+    public <Mapped> SpaceStream<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
-        return this;
+        return cast(this);
     }
 
-    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+    public <Mapped> Stream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
-        return this;
+        return cast(collect().stream());
     }
 
-    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
-        return this;
+        return cast(this);
     }
 
-    public <Mapped> SpaceStream<Type> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+    public <Mapped> SpaceStream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
-        return this;
+        return cast(this);
     }
 
     public SpaceStream<Type> refresh() {

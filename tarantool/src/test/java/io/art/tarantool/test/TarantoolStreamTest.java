@@ -87,7 +87,10 @@ public class TarantoolStreamTest {
                 .filter(filter -> filter
                         .byNumber(testingMetaModel().f1Field()).between(1, 3)
                         .and()
-                        .byString(testingMetaModel().f16Field()).contains("test"))
+                        .byString(testingMetaModel().f16Field()).contains("test")
+                        .or()
+                        .byString(testingMetaModel().f16Field()).contains("test 2")
+                )
                 .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
