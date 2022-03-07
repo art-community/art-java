@@ -87,8 +87,8 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                 case FILTER:
                     serialized.add(newArray(FILTER, serializeFilter(cast(operator.getValue()))));
                     break;
-                case FILTER_WITH:
-                    serialized.add(newArray(FILTER_WITH, serializeFilterWith(cast(operator.getValue()))));
+                case MAP:
+                    serialized.add(newArray(FILTER, serializeFilter(cast(operator.getValue()))));
                     break;
             }
         }

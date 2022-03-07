@@ -43,10 +43,23 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public <Other> ReactiveSpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterBySpace<Type, Other>> filter) {
-        FilterBySpace<Type, Other> newFilter = new FilterBySpace<>(spaceType);
-        filter.accept(newFilter);
-        operators.add(new ProcessingOperator(FILTER_WITH, newFilter));
+    public <Mapped> ReactiveSpaceStream<Type> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
+        return this;
+    }
+
+    public <Mapped> ReactiveSpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
+        return this;
+    }
+
+    public <Mapped> ReactiveSpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
+        return this;
+    }
+
+    public <Mapped> ReactiveSpaceStream<Type> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
         return this;
     }
 

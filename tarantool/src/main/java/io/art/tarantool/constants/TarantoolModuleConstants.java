@@ -110,7 +110,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue LIMIT = newString("limit");
         ImmutableStringValue OFFSET = newString("offset");
         ImmutableStringValue FILTER = newString("filter");
-        ImmutableStringValue FILTER_WITH = newString("filterWith");
+        ImmutableStringValue MAP = newString("filterWith");
         ImmutableStringValue SORT = newString("sort");
         ImmutableStringValue DISTINCT = newString("distinct");
     }

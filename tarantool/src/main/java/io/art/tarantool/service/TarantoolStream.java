@@ -50,8 +50,26 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <Other> SpaceStream<Type> filter(MetaClass<Other> spaceType, Consumer<FilterBySpace<Type, Other>> filterWithConsumer) {
-        stream.filter(spaceType, filterWithConsumer);
+    public <Mapped> SpaceStream<Type> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+        stream.map(field);
+        return this;
+    }
+
+    @Override
+    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+        stream.map(space, field);
+        return this;
+    }
+
+    @Override
+    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+        stream.map(space, indexedFields);
+        return this;
+    }
+
+    @Override
+    public <Mapped> SpaceStream<Type> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+        stream.map(function);
         return this;
     }
 
