@@ -98,4 +98,12 @@ public class FilterBySpace<Current, Other> {
         this.operator = CONTAINS;
         filterableFields.add(other);
     }
+
+    public Filter<Current> and() {
+        return owner.and();
+    }
+
+    public Filter<Current> or() {
+        return owner.or();
+    }
 }
