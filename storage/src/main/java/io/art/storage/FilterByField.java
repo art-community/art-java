@@ -10,9 +10,9 @@ import java.util.*;
 
 @Getter
 @RequiredArgsConstructor
-public class FilterByValue<Type> {
+public class FilterByField<Type> {
+    private final Filter<Type> owner;
     private final MetaField<? extends MetaClass<Type>, ?> field;
-    private final FilterCondition condition;
     private FilterOperator operator;
     private final List<Object> values = linkedList();
 
@@ -81,5 +81,13 @@ public class FilterByValue<Type> {
     public void contains(String pattern) {
         operator = CONTAINS;
         values.add(pattern);
+    }
+
+    public Filter<Type> and() {
+        return owner.and();
+    }
+
+    public Filter<Type> or() {
+        return owner.or();
     }
 }

@@ -1,18 +1,75 @@
 package io.art.storage;
 
 import io.art.meta.model.*;
+import io.art.storage.StorageConstants.*;
 import lombok.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.StorageConstants.FilterCondition.*;
+import static lombok.AccessLevel.*;
+import java.util.*;
 
 @Getter
-@RequiredArgsConstructor
 public class Filter<Type> {
-    public <FieldType> FilterByValue<Type> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
-        return new FilterByValue<>(field, AND);
+    private FilterCondition currentCondition = AND;
+    private final List<FilterPart> filters = linkedList();
+
+    public <FieldType> FilterByField<Type> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
+        FilterByField<Type> filter = new FilterByField<>(this, field);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.FIELD);
+        part.byField = filter;
+        filters.add(part);
+        return filter;
     }
 
-    public <FieldType> FilterByValue<Type> bySpace(MetaField<? extends MetaClass<Type>, FieldType> field) {
-        return new FilterByValue<>(field, AND);
+    public <Other> FilterBySpace<Type, Other> bySpace(MetaClass<Other> otherSpace,
+                                                      MetaField<? extends MetaClass<Type>, ?> currentField,
+                                                      MetaField<? extends MetaClass<Type>, ?> mappingField) {
+        FilterBySpace<Type, Other> filter = new FilterBySpace<>(this, otherSpace, currentField).bySpace(mappingField);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.SPACE);
+        part.bySpace = filter;
+        filters.add(part);
+        return filter;
+    }
+
+    @SafeVarargs
+    public final <Other> FilterBySpace<Type, Other> byIndex(MetaClass<Other> otherSpace,
+                                                            MetaField<? extends MetaClass<Type>, ?> currentField,
+                                                            MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+        FilterBySpace<Type, Other> filter = new FilterBySpace<>(this, otherSpace, currentField).byIndex(indexedFields);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
+        part.byIndex = filter;
+        filters.add(part);
+        return filter;
+    }
+
+
+    public FilterByFunction<Type> byFunction(MetaMethod<MetaClass<? extends Storage>, Boolean> function) {
+        FilterByFunction<Type> filter = new FilterByFunction<>(this, function);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.FUNCTION);
+        part.byFunction = filter;
+        filters.add(part);
+        return filter;
+    }
+
+    Filter<Type> and() {
+        currentCondition = AND;
+        return this;
+    }
+
+    Filter<Type> or() {
+        currentCondition = OR;
+        return this;
+    }
+
+    @Getter
+    @RequiredArgsConstructor(access = PRIVATE)
+    public static class FilterPart {
+        private final FilterCondition condition;
+        private final FilterMode mode;
+        private FilterByField<?> byField;
+        private FilterBySpace<?, ?> bySpace;
+        private FilterBySpace<?, ?> byIndex;
+        private FilterByFunction<?> byFunction;
     }
 }
 
