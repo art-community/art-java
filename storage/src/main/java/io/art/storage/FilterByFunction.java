@@ -6,14 +6,14 @@ import lombok.*;
 @Getter
 @RequiredArgsConstructor
 public class FilterByFunction<Type> {
-    private final Filter<Type> owner;
+    private final FilterRule<Type> rule;
     private final MetaMethod<MetaClass<? extends Storage>, Boolean> function;
 
     public Filter<Type> and() {
-        return owner.and();
+        return rule.and();
     }
 
     public Filter<Type> or() {
-        return owner.or();
+        return rule.or();
     }
 }

@@ -14,7 +14,7 @@ public class Filter<Type> {
     private final List<FilterPart> filters = linkedList();
 
     public <FieldType> FilterByField<Type> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
-        FilterByField<Type> filter = new FilterByField<>(this, field);
+        FilterByField<Type> filter = new FilterByField<>(new FilterRule<>(this), field);
         FilterPart part = new FilterPart(condition, FilterMode.FIELD);
         part.byField = filter;
         filters.add(part);
@@ -24,7 +24,7 @@ public class Filter<Type> {
     public <Other> FilterBySpace<Type, Other> bySpace(MetaClass<Other> otherSpace,
                                                       MetaField<? extends MetaClass<Type>, ?> currentField,
                                                       MetaField<? extends MetaClass<Type>, ?> mappingField) {
-        FilterBySpace<Type, Other> filter = new FilterBySpace<>(this, otherSpace, currentField).bySpace(mappingField);
+        FilterBySpace<Type, Other> filter = new FilterBySpace<>(new FilterRule<>(this), otherSpace, currentField).bySpace(mappingField);
         FilterPart part = new FilterPart(condition, FilterMode.SPACE);
         part.bySpace = filter;
         filters.add(part);
@@ -35,7 +35,7 @@ public class Filter<Type> {
     public final <Other> FilterBySpace<Type, Other> byIndex(MetaClass<Other> otherSpace,
                                                             MetaField<? extends MetaClass<Type>, ?> currentField,
                                                             MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
-        FilterBySpace<Type, Other> filter = new FilterBySpace<>(this, otherSpace, currentField).byIndex(indexedFields);
+        FilterBySpace<Type, Other> filter = new FilterBySpace<>(new FilterRule<>(this), otherSpace, currentField).byIndex(indexedFields);
         FilterPart part = new FilterPart(condition, FilterMode.INDEX);
         part.byIndex = filter;
         filters.add(part);
@@ -44,7 +44,7 @@ public class Filter<Type> {
 
 
     public FilterByFunction<Type> byFunction(MetaMethod<MetaClass<? extends Storage>, Boolean> function) {
-        FilterByFunction<Type> filter = new FilterByFunction<>(this, function);
+        FilterByFunction<Type> filter = new FilterByFunction<>(new FilterRule<>(this), function);
         FilterPart part = new FilterPart(condition, FilterMode.FUNCTION);
         part.byFunction = filter;
         filters.add(part);

@@ -11,83 +11,86 @@ import java.util.*;
 @Getter
 @RequiredArgsConstructor
 public class FilterByField<Type> {
-    private final Filter<Type> owner;
+    private final FilterRule<Type> rule;
     private final MetaField<? extends MetaClass<Type>, ?> field;
     private FilterOperator operator;
     private final List<Object> values = linkedList();
 
-    public <FieldType> void equal(FieldType value) {
+    public <FieldType> FilterRule<Type> equal(FieldType value) {
         operator = EQUALS;
         values.add(value);
+        return rule;
     }
 
-    public <FieldType> void notEqual(FieldType value) {
+    public <FieldType> FilterRule<Type> notEqual(FieldType value) {
         operator = NOT_EQUALS;
         values.add(value);
+        return rule;
     }
 
-    public <FieldType> void in(List<FieldType> values) {
+    public <FieldType> FilterRule<Type> in(List<FieldType> values) {
         operator = IN;
         this.values.addAll(values);
+        return rule;
     }
 
-    public <FieldType> void notIn(List<FieldType> values) {
+    public <FieldType> FilterRule<Type> notIn(List<FieldType> values) {
         operator = NOT_IN;
         this.values.addAll(values);
+        return rule;
     }
 
     @SafeVarargs
-    public final <FieldType> void in(FieldType... values) {
-        in(asList(values));
+    public final <FieldType> FilterRule<Type> in(FieldType... values) {
+        return in(asList(values));
     }
 
     @SafeVarargs
-    public final <FieldType> void notIn(FieldType... values) {
-        notIn(asList(values));
+    public final <FieldType> FilterRule<Type> notIn(FieldType... values) {
+        return notIn(asList(values));
     }
 
-    public void moreThan(Number value) {
+    public FilterRule<Type> moreThan(Number value) {
         operator = FilterOperator.MORE;
         values.add(value);
+        return rule;
     }
 
-    public void lessThan(Number value) {
+    public FilterRule<Type> lessThan(Number value) {
         operator = FilterOperator.LESS;
         values.add(value);
+        return rule;
     }
 
-    public void between(Number startValue, Number endValue) {
+    public FilterRule<Type> between(Number startValue, Number endValue) {
         operator = BETWEEN;
         values.add(startValue);
         values.add(endValue);
+        return rule;
     }
 
-    public void notBetween(Number startValue, Number endValue) {
+    public FilterRule<Type> notBetween(Number startValue, Number endValue) {
         operator = NOT_BETWEEN;
         values.add(startValue);
         values.add(endValue);
+        return rule;
     }
 
-    public void startsWith(String pattern) {
+    public FilterRule<Type> startsWith(String pattern) {
         operator = STARTS_WITH;
         values.add(pattern);
+        return rule;
     }
 
-    public void endsWith(String pattern) {
+    public FilterRule<Type> endsWith(String pattern) {
         operator = ENDS_WITH;
         values.add(pattern);
+        return rule;
     }
 
-    public void contains(String pattern) {
+    public FilterRule<Type> contains(String pattern) {
         operator = CONTAINS;
         values.add(pattern);
-    }
-
-    public Filter<Type> and() {
-        return owner.and();
-    }
-
-    public Filter<Type> or() {
-        return owner.or();
+        return rule;
     }
 }

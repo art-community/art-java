@@ -12,7 +12,7 @@ import java.util.*;
 @Getter
 @RequiredArgsConstructor(access = PACKAGE)
 public class FilterBySpace<Current, Other> {
-    private final Filter<Current> owner;
+    private final FilterRule<Current> rule;
     private final MetaClass<Other> mappingSpace;
     private final MetaField<? extends MetaClass<Current>, ?> currentField;
 
@@ -32,78 +32,81 @@ public class FilterBySpace<Current, Other> {
         return this;
     }
 
-    public <FieldType> void equal(MetaField<? extends MetaClass<Other>, FieldType> value) {
+    public <FieldType> FilterRule<Current> equal(MetaField<? extends MetaClass<Other>, FieldType> value) {
         operator = EQUALS;
         this.filterableFields.add(value);
+        return rule;
     }
 
-    public <FieldType> void notEqual(MetaField<? extends MetaClass<Other>, FieldType> value) {
+    public <FieldType> FilterRule<Current> notEqual(MetaField<? extends MetaClass<Other>, FieldType> value) {
         operator = NOT_EQUALS;
         this.filterableFields.add(value);
+        return rule;
     }
 
-    public <FieldType> void in(List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
+    public <FieldType> FilterRule<Current> in(List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
         this.operator = IN;
         this.filterableFields.addAll(values);
+        return rule;
     }
 
-    public <FieldType> void notIn(List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
+    public <FieldType> FilterRule<Current> notIn(List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
         this.operator = NOT_IN;
         this.filterableFields.addAll(values);
+        return rule;
     }
 
     @SafeVarargs
-    public final <FieldType> void in(MetaField<? extends MetaClass<Other>, FieldType>... values) {
-        in(asList(values));
+    public final <FieldType> FilterRule<Current> in(MetaField<? extends MetaClass<Other>, FieldType>... values) {
+        return in(asList(values));
     }
 
     @SafeVarargs
-    public final <FieldType> void notIn(MetaField<? extends MetaClass<Other>, FieldType>... values) {
-        notIn(asList(values));
+    public final <FieldType> FilterRule<Current> notIn(MetaField<? extends MetaClass<Other>, FieldType>... values) {
+        return notIn(asList(values));
     }
 
-    public void moreThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {
+    public FilterRule<Current> moreThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {
         this.operator = MORE;
         filterableFields.add(other);
+        return rule;
     }
 
-    public void lessThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {
+    public FilterRule<Current> lessThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {
         this.operator = LESS;
         filterableFields.add(other);
+        return rule;
     }
 
-    public void between(MetaField<? extends MetaClass<Other>, ? extends Number> otherStart, MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
+    public FilterRule<Current> between(MetaField<? extends MetaClass<Other>, ? extends Number> otherStart, MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
         this.operator = BETWEEN;
         filterableFields.add(otherStart);
         filterableFields.add(otherEnd);
+        return rule;
     }
 
-    public void notBetween(MetaField<? extends MetaClass<Other>, ? extends Number> otherStart, MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
+    public FilterRule<Current> notBetween(MetaField<? extends MetaClass<Other>, ? extends Number> otherStart, MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
         this.operator = NOT_BETWEEN;
         filterableFields.add(otherStart);
         filterableFields.add(otherEnd);
+        return rule;
     }
 
-    public void startsWith(MetaField<? extends MetaClass<Other>, String> other) {
+    public FilterRule<Current> startsWith(MetaField<? extends MetaClass<Other>, String> other) {
         this.operator = STARTS_WITH;
         filterableFields.add(other);
+        return rule;
     }
 
-    public void endsWith(MetaField<? extends MetaClass<Other>, String> other) {
+    public FilterRule<Current> endsWith(MetaField<? extends MetaClass<Other>, String> other) {
         this.operator = ENDS_WITH;
         filterableFields.add(other);
+        return rule;
     }
 
-    public void contains(MetaField<? extends MetaClass<Other>, String> other) {
+    public FilterRule<Current> contains(MetaField<? extends MetaClass<Other>, String> other) {
         this.operator = CONTAINS;
         filterableFields.add(other);
-    }
-
-    public Filter<Current> and() {
-        return owner.and();
-    }
-
-    public Filter<Current> or() {
-        return owner.or();
+        return rule;
     }
 }
