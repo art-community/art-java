@@ -13,8 +13,24 @@ public class Filter<Type> {
     private FilterCondition condition = AND;
     private final List<FilterPart> filters = linkedList();
 
-    public <FieldType> FilterByField<Type> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
-        FilterByField<Type> filter = new FilterByField<>(new FilterRule<>(this), field);
+    public <FieldType> FilterByField<Type, FieldType> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
+        FilterByField<Type, FieldType> filter = new FilterByField<>(new FilterRule<>(this), field);
+        FilterPart part = new FilterPart(condition, FilterMode.FIELD);
+        part.byField = filter;
+        filters.add(part);
+        return filter;
+    }
+
+    public FilterByString<Type> byString(MetaField<? extends MetaClass<Type>, String> field) {
+        FilterByString<Type> filter = new FilterByString<>(new FilterRule<>(this), field);
+        FilterPart part = new FilterPart(condition, FilterMode.FIELD);
+        part.byField = filter;
+        filters.add(part);
+        return filter;
+    }
+
+    public FilterByNumber<Type> byNumber(MetaField<? extends MetaClass<Type>, ? extends Number> field) {
+        FilterByNumber<Type> filter = new FilterByNumber<>(new FilterRule<>(this), field);
         FilterPart part = new FilterPart(condition, FilterMode.FIELD);
         part.byField = filter;
         filters.add(part);
@@ -66,7 +82,7 @@ public class Filter<Type> {
     public static class FilterPart {
         private final FilterCondition condition;
         private final FilterMode mode;
-        private FilterByField<?> byField;
+        private FilterByField<?, ?> byField;
         private FilterBySpace<?, ?> bySpace;
         private FilterBySpace<?, ?> byIndex;
         private FilterByFunction<?> byFunction;

@@ -84,7 +84,10 @@ public class TarantoolStreamTest {
         ImmutableArray<TestingMetaModel> result = current()
                 .stream()
                 .limit(2)
-                .filter(filter -> filter.between(testingMetaModel().f1Field(), 1, 3))
+                .filter(filter -> filter
+                        .byNumber(testingMetaModel().f1Field()).between(1, 3)
+                        .and()
+                        .byString(testingMetaModel().f16Field()).contains("test"))
                 .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
