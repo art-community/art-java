@@ -12,8 +12,6 @@ import static java.util.Arrays.*;
 import java.util.*;
 
 public class FilterBySpaceImplementation<Current, Other> implements FilterBySpace<Current, Other> {
-    private final FilterRule<Current> rule;
-
     @Getter
     private FilterExpressionType expressionType;
 
@@ -51,7 +49,6 @@ public class FilterBySpaceImplementation<Current, Other> implements FilterBySpac
     private final FilterBySpaceUseValuesImplementation<Current, ?> bySpaceUseValues;
 
     public FilterBySpaceImplementation(FilterRule<Current> rule, MetaClass<Other> mappingSpace) {
-        this.rule = rule;
         this.mappingSpace = mappingSpace;
         bySpaceUseFields = new FilterBySpaceUseFieldsImplementation<>(rule);
         bySpaceUseStringFields = new FilterBySpaceUseStringFieldsImplementation<>(rule);
