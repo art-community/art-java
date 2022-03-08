@@ -14,7 +14,6 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.Filter.*;
 import static io.art.storage.StorageConstants.FilterCondition.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
@@ -124,40 +123,11 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     break;
                 case INDEX:
                     FilterBySpace<?, ?> byIndex = part.getByIndex();
-
                     break;
                 case NESTED:
                     NestedFilter<?> nested = part.getNested();
                     break;
             }
-        }
-
-        FilterOperator filterOperator = filter.getOperator();
-        MetaField<?, ?> field = filter.getField();
-        List<Object> values = filter.getValues();
-        switch (filterOperator) {
-            case EQUALS:
-                return newArray(OPERATOR_EQUALS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case NOT_EQUALS:
-                return newArray(OPERATOR_NOT_EQUALS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case MORE:
-                return newArray(OPERATOR_MORE, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case LESS:
-                return newArray(OPERATOR_LESS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case IN:
-                return newArray(OPERATOR_IN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case NOT_IN:
-                return newArray(OPERATOR_NOT_IN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case BETWEEN:
-                return newArray(OPERATOR_BETWEEN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case NOT_BETWEEN:
-                return newArray(OPERATOR_NOT_BETWEEN, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case STARTS_WITH:
-                return newArray(OPERATOR_STARTS_WITH, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case ENDS_WITH:
-                return newArray(OPERATOR_ENDS_WITH, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
-            case CONTAINS:
-                return newArray(OPERATOR_CONTAINS, newInteger(field.index() + 1), serializeFilterValues(field.type(), values));
         }
         throw new ImpossibleSituationException();
     }
