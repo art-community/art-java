@@ -1,7 +1,9 @@
 package io.art.storage.filter.model;
 
+import io.art.core.annotation.*;
 import io.art.meta.model.*;
 
+@Public
 public interface FilterBySpace<Current, Other> {
     <FieldType> FilterBySpaceUseFields<Current, Other, FieldType> currentField(MetaField<? extends MetaClass<Current>, FieldType> currentField);
 
