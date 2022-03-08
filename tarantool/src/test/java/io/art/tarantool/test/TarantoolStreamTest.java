@@ -200,7 +200,14 @@ public class TarantoolStreamTest {
                 .filter(filter -> filter
                         .bySpace(otherSpace(), testingMetaModel().f5Field())
                         .currentNumber(testingMetaModel().f1Field())
-                        .lessThan(otherSpace().numberField()))
+                        .lessThan(otherSpace().numberField())
+
+                        .and()
+
+                        .bySpace(otherSpace(), testingMetaModel().f5Field())
+                        .otherString(otherSpace().valueField())
+                        .contains("test")
+                )
                 .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
         assertEquals(2, result.size());
