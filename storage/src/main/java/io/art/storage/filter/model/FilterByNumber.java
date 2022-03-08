@@ -7,7 +7,11 @@ import io.art.storage.filter.implementation.*;
 public interface FilterByNumber<Type> extends FilterByField<Type, Number> {
     FilterRule<Type> moreThan(Number value);
 
+    FilterRule<Type> moreThanEquals(Number value);
+
     FilterRule<Type> lessThan(Number value);
+
+    FilterRule<Type> lessThanEqual(Number value);
 
     FilterRule<Type> between(Number startValue, Number endValue);
 

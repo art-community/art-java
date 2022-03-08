@@ -21,8 +21,22 @@ public class FilterByNumberImplementation<Type> extends FilterByFieldImplementat
     }
 
     @Override
+    public FilterRule<Type> moreThanEquals(Number value) {
+        operator = MORE_EQUALS;
+        values.add(value);
+        return rule;
+    }
+
+    @Override
     public FilterRule<Type> lessThan(Number value) {
         operator = FilterOperator.LESS;
+        values.add(value);
+        return rule;
+    }
+
+    @Override
+    public FilterRule<Type> lessThanEqual(Number value) {
+        operator = LESS_EQUALS;
         values.add(value);
         return rule;
     }
