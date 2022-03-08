@@ -51,7 +51,7 @@ import java.util.function.*;
 public abstract class MetaClass<T> {
     private final MetaType<T> definition;
     private final Set<MetaConstructor<MetaClass<?>, T>> constructors;
-    private final Map<String, MetaField<MetaClass<?>, ?>> fieldMap;
+    private final Map<String, MetaField<MetaClass<?>, ?>> fieldsMap;
     private final Set<MetaMethod<MetaClass<?>, ?>> methods;
     private final Map<Class<?>, MetaClass<?>> classes;
     private final static Map<Class<?>, MetaClass<?>> mutableRegistry = map();
@@ -63,14 +63,14 @@ public abstract class MetaClass<T> {
     protected MetaClass(MetaType<T> definition) {
         this.definition = definition;
         constructors = set();
-        fieldMap = map();
+        fieldsMap = map();
         methods = set();
         classes = map();
         mutableRegistry.put(definition().type(), this);
     }
 
     protected <Meta extends MetaClass<?>, F> MetaField<Meta, F> register(MetaField<Meta, F> field) {
-        return cast(computeIfAbsent(fieldMap, field.name(), () -> cast(field)));
+        return cast(computeIfAbsent(fieldsMap, field.name(), () -> cast(field)));
     }
 
     protected <Meta extends MetaClass<?>, M extends MetaMethod<Meta, ?>> M register(M method) {
@@ -89,9 +89,9 @@ public abstract class MetaClass<T> {
     protected void beginComputation() {
         definition.beginComputation();
 
-        fieldsArray = fixedArrayOf(fieldMap.values());
+        fieldsArray = fixedArrayOf(fieldsMap.values());
 
-        for (MetaField<MetaClass<?>, ?> field : fieldMap.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fieldsMap.values()) {
             field.type().beginComputation();
         }
 
@@ -115,7 +115,7 @@ public abstract class MetaClass<T> {
         List<MetaProperty<?>> gettableProperties = linkedList();
         List<MetaProperty<?>> constructableProperties = linkedList();
 
-        for (MetaField<MetaClass<?>, ?> field : fieldMap.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fieldsMap.values()) {
             MetaPropertyBuilder<?> builder = MetaProperty.builder()
                     .name(field.name())
                     .type(cast(field.type()));
@@ -175,7 +175,7 @@ public abstract class MetaClass<T> {
 
     private MetaConstructor<MetaClass<?>, T> selectLocalPropertiesConstructor() {
         for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
-            List<MetaField<MetaClass<?>, ?>> localFields = this.fieldMap.values()
+            List<MetaField<MetaClass<?>, ?>> localFields = this.fieldsMap.values()
                     .stream()
                     .filter(field -> !field.inherited())
                     .collect(listCollector());
@@ -196,7 +196,7 @@ public abstract class MetaClass<T> {
 
     private MetaConstructor<MetaClass<?>, T> selectAllPropertiesConstructor() {
         for (MetaConstructor<MetaClass<?>, T> constructor : constructors) {
-            Collection<MetaField<MetaClass<?>, ?>> fields = this.fieldMap.values();
+            Collection<MetaField<MetaClass<?>, ?>> fields = this.fieldsMap.values();
             MetaParameter<?>[] parameters = constructor.parameters().values().toArray(new MetaParameter[0]);
             if (fields.size() != parameters.length) continue;
             for (int index = 0; index < fields.size(); index++) {
@@ -215,7 +215,7 @@ public abstract class MetaClass<T> {
     protected void completeComputation() {
         definition.completeComputation();
 
-        for (MetaField<MetaClass<?>, ?> field : fieldMap.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fieldsMap.values()) {
             field.compute();
             field.type().completeComputation();
         }
@@ -260,7 +260,7 @@ public abstract class MetaClass<T> {
     }
 
     public <F> MetaField<MetaClass<?>, F> field(String name) {
-        return cast(fieldMap.get(name));
+        return cast(fieldsMap.get(name));
     }
 
     public int index(MetaField<MetaClass<?>, ?> field) {
@@ -268,7 +268,7 @@ public abstract class MetaClass<T> {
     }
 
     public ImmutableMap<String, MetaField<MetaClass<?>, ?>> fields() {
-        return immutableMapOf(fieldMap);
+        return immutableMapOf(fieldsMap);
     }
 
     public ImmutableSet<MetaMethod<MetaClass<?>, ?>> methods() {
@@ -296,7 +296,7 @@ public abstract class MetaClass<T> {
 
         known = true;
 
-        for (MetaField<MetaClass<?>, ?> field : fieldMap.values()) {
+        for (MetaField<MetaClass<?>, ?> field : fieldsMap.values()) {
             if (!field.isKnown()) return known = false;
         }
 
