@@ -44,11 +44,6 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public <Mapped> Flux<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
-        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
-        return cast(collect());
-    }
-
     public <Mapped> ReactiveSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
         return cast(this);
@@ -61,6 +56,11 @@ public abstract class ReactiveSpaceStream<Type> {
 
     public <Mapped> Flux<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
+        return cast(collect());
+    }
+
+    public <Mapped> Flux<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
         return cast(collect());
     }
 
