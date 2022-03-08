@@ -119,6 +119,20 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     break;
                 case SPACE:
                     FilterBySpace<?, ?> bySpace = part.getBySpace();
+                    switch (bySpace.getExpressionType()) {
+                        case FIELD:
+                            break;
+                        case STRING_FIELD:
+                            break;
+                        case NUMBER_FIELD:
+                            break;
+                        case VALUE:
+                            break;
+                        case STRING_VALUE:
+                            break;
+                        case NUMBER_VALUE:
+                            break;
+                    }
 
                     break;
                 case INDEX:

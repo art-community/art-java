@@ -59,7 +59,7 @@ public class Filter<Type> {
 
 
     public FilterByFunction<Type> byFunction(MetaMethod<MetaClass<? extends Storage>, Boolean> function) {
-        FilterByFunction<Type> filter = new FilterByFunction<>(this, function, rule);
+        FilterByFunction<Type> filter = new FilterByFunction<>(rule, function);
         FilterPart part = new FilterPart(currentCondition, FilterMode.FUNCTION);
         part.byFunction = filter;
         parts.add(part);

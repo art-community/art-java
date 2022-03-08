@@ -6,8 +6,8 @@ import lombok.experimental.Delegate;
 
 @AllArgsConstructor
 public class FilterByFunction<Type> {
-    @Getter
-    private final MetaMethod<MetaClass<? extends Storage>, Boolean> function;
     @Delegate
     private final FilterRule<Type> rule;
+    @Getter
+    private final MetaMethod<MetaClass<? extends Storage>, Boolean> function;
 }
