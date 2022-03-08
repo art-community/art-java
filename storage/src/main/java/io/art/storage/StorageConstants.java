@@ -35,7 +35,11 @@ public interface StorageConstants {
 
     enum FilterExpressionType {
         FIELD,
-        VALUE
+        STRING_FIELD,
+        NUMBER_FIELD,
+        VALUE,
+        STRING_VALUE,
+        NUMBER_VALUE,
     }
 
     enum FilterCondition {

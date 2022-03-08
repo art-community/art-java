@@ -69,25 +69,25 @@ public class FilterBySpace<Current, Other> {
     }
 
     public FilterBySpaceUseStringFields<Current, Other> currentString(MetaField<? extends MetaClass<Current>, String> currentField) {
-        expressionType = FIELD;
+        expressionType = STRING_FIELD;
         this.currentField = currentField;
         return bySpaceUseStringFields;
     }
 
     public FilterBySpaceUseNumberFields<Current, Other> currentNumber(MetaField<? extends MetaClass<Current>, ? extends Number> currentField) {
-        expressionType = FIELD;
+        expressionType = NUMBER_FIELD;
         this.currentField = currentField;
         return bySpaceUseNumberFields;
     }
 
     public FilterBySpaceUseNumbers<Current> otherNumber(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
-        expressionType = VALUE;
+        expressionType = NUMBER_VALUE;
         this.otherField = otherField;
         return bySpaceUseNumbers;
     }
 
     public FilterBySpaceUseStrings<Current> otherString(MetaField<? extends MetaClass<Other>, String> otherField) {
-        expressionType = VALUE;
+        expressionType = STRING_VALUE;
         this.otherField = otherField;
         return bySpaceUseStrings;
     }
