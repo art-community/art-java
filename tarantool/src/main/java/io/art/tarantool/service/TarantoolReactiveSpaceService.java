@@ -2,7 +2,6 @@ package io.art.tarantool.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.local.*;
 import io.art.meta.model.*;
 import io.art.storage.service.*;
 import io.art.tarantool.descriptor.*;
@@ -12,7 +11,6 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
-import static io.art.core.local.ThreadLocalValue.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -33,7 +31,6 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     final TarantoolClientRegistry clients;
     final TarantoolModelWriter writer;
     final TarantoolModelReader reader;
-    private ThreadLocalValue<TarantoolReactiveStream<ModelType>> stream;
 
     public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.spaceType = spaceMeta.definition().type();
@@ -42,7 +39,6 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         this.spaceMetaClass = spaceMeta;
         this.keyMeta = keyMeta;
         this.spaceName = newString(idByDash(spaceType));
-        stream = threadLocal(() -> new TarantoolReactiveStream<>(this));
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
     }
@@ -148,9 +144,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public TarantoolReactiveStream<ModelType> stream() {
-        TarantoolReactiveStream<ModelType> stream = this.stream.get();
-        stream.clear();
-        return stream;
+        return new TarantoolReactiveStream<>(this);
     }
 
     @Override

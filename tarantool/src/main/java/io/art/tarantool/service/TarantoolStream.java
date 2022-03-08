@@ -76,11 +76,6 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
         return cast(this);
     }
 
-    @Override
-    public SpaceStream<Type> clear() {
-        stream.clear();
-        return this;
-    }
 
     @Override
     public ImmutableArray<Type> collect() {

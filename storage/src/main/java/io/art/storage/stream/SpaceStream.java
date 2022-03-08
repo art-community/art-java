@@ -72,11 +72,6 @@ public abstract class SpaceStream<Type> {
         return cast(collect().stream());
     }
 
-    public SpaceStream<Type> clear() {
-        operators = linkedList();
-        return this;
-    }
-
     public abstract ImmutableArray<Type> collect();
 
     public abstract long count();

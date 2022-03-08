@@ -71,11 +71,6 @@ public abstract class ReactiveSpaceStream<Type> {
         return cast(collect());
     }
 
-    public ReactiveSpaceStream<Type> clear() {
-        operators = linkedList();
-        return this;
-    }
-
     public abstract Flux<Type> collect();
 
     public abstract Mono<Long> count();

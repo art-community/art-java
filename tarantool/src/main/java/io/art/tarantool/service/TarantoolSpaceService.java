@@ -2,14 +2,12 @@ package io.art.tarantool.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.core.local.*;
 import io.art.meta.model.*;
 import io.art.storage.service.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.local.ThreadLocalValue.*;
 import static io.art.tarantool.factory.TarantoolNameFactory.*;
 import java.util.*;
 
@@ -17,11 +15,9 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<KeyType, ModelType> {
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
-    private ThreadLocalValue<TarantoolStream<ModelType>> stream;
 
     public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
-        stream = threadLocal(() -> new TarantoolStream<>(reactive.stream()));
     }
 
     @Override
@@ -101,9 +97,7 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
 
     @Override
     public TarantoolStream<ModelType> stream() {
-        TarantoolStream<ModelType> stream = this.stream.get();
-        stream.clear();
-        return stream;
+        return new TarantoolStream<>(reactive.stream());
     }
 
     @Override
