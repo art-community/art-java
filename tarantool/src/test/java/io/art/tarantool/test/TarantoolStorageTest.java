@@ -3,7 +3,7 @@ package io.art.tarantool.test;
 import io.art.core.collection.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
-import io.art.storage.*;
+import io.art.storage.service.*;
 import io.art.tarantool.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;

@@ -3,6 +3,7 @@ package io.art.tarantool;
 import io.art.communicator.*;
 import io.art.core.annotation.*;
 import io.art.storage.*;
+import io.art.storage.service.*;
 import io.art.tarantool.service.*;
 import lombok.*;
 import lombok.experimental.*;

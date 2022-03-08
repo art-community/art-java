@@ -2,8 +2,10 @@ package io.art.tarantool.service;
 
 import io.art.core.exception.*;
 import io.art.meta.model.*;
-import io.art.storage.*;
-import io.art.storage.StorageConstants.*;
+import io.art.storage.constants.StorageConstants.*;
+import io.art.storage.filter.implementation.*;
+import io.art.storage.sorter.implementation.*;
+import io.art.storage.stream.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -12,8 +14,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
-import static io.art.storage.Filter.*;
-import static io.art.storage.StorageConstants.FilterCondition.*;
+import static io.art.storage.filter.implementation.FilterImplementation.*;
+import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
@@ -46,8 +48,8 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     }
 
     @Override
-    public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
-        Filter<ModelType> newFilter = new Filter<>(AND, linkedList());
+    public Mono<Boolean> all(Consumer<FilterImplementation<ModelType>> filter) {
+        FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         Mono<Value> result = service
                 .clients
@@ -57,8 +59,8 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     }
 
     @Override
-    public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
-        Filter<ModelType> newFilter = new Filter<>(AND, linkedList());
+    public Mono<Boolean> any(Consumer<FilterImplementation<ModelType>> filter) {
+        FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         Mono<Value> result = service
                 .clients
@@ -94,7 +96,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         return serialized;
     }
 
-    private ImmutableArrayValue serializeSort(Sorter<?, ?> sorter) {
+    private ImmutableArrayValue serializeSort(SorterImplementation<?, ?> sorter) {
         SortComparator comparator = sorter.getComparator();
         MetaField<?, ?> field = sorter.getField();
         switch (comparator) {
@@ -106,13 +108,13 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         throw new ImpossibleSituationException();
     }
 
-    private ImmutableArrayValue serializeFilter(Filter<?> filter) {
+    private ImmutableArrayValue serializeFilter(FilterImplementation<?> filter) {
         List<FilterPart> parts = filter.getParts();
         for (FilterPart part : parts) {
             FilterCondition condition = part.getCondition();
             switch (part.getMode()) {
                 case FIELD:
-                    FilterByField<?, ?> byField = part.getByField();
+                    FilterByFieldImplementation<?, ?> byField = part.getByField();
                     switch (byField.getOperator()) {
                         case EQUALS:
                             break;
@@ -139,10 +141,10 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     }
                     break;
                 case FUNCTION:
-                    FilterByFunction<?> byFunction = part.getByFunction();
+                    FilterByFunctionImplementation<?> byFunction = part.getByFunction();
                     break;
                 case SPACE:
-                    FilterBySpace<?, ?> bySpace = part.getBySpace();
+                    FilterBySpaceImplementation<?, ?> bySpace = part.getBySpace();
                     switch (bySpace.getExpressionType()) {
                         case FIELD:
                             switch (bySpace.getBySpaceUseFields().getOperator()) {
@@ -163,10 +165,10 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
 
                     break;
                 case INDEX:
-                    FilterBySpace<?, ?> byIndex = part.getByIndex();
+                    FilterBySpaceImplementation<?, ?> byIndex = part.getByIndex();
                     break;
                 case NESTED:
-                    NestedFilter<?> nested = part.getNested();
+                    NestedFilter nested = part.getNested();
                     break;
             }
         }

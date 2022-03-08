@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.local.*;
 import io.art.meta.model.*;
-import io.art.storage.*;
+import io.art.storage.service.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableArray.*;

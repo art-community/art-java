@@ -3,7 +3,8 @@ package io.art.tarantool.test;
 import io.art.core.collection.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
-import io.art.storage.*;
+import io.art.storage.service.*;
+import io.art.storage.sorter.implementation.*;
 import io.art.tarantool.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
@@ -90,7 +91,7 @@ public class TarantoolStreamTest {
                                 .byString(testingMetaModel().f16Field()).contains("test")
                                 .or()
                                 .byString(testingMetaModel().f16Field()).contains("test 2")))
-                .sort(testingMetaModel().f1Field(), Sorter::descendant)
+                .sort(testingMetaModel().f1Field(), SorterImplementation::descendant)
                 .collect();
         assertEquals(2, result.size());
         data.get(1).assertEquals(result.get(0));
@@ -208,7 +209,7 @@ public class TarantoolStreamTest {
                         .otherString(otherSpace().valueField())
                         .contains("test")
                 )
-                .sort(testingMetaModel().f1Field(), Sorter::descendant)
+                .sort(testingMetaModel().f1Field(), SorterImplementation::descendant)
                 .collect();
         assertEquals(2, result.size());
         currentData.get(1).assertEquals(result.get(0));
