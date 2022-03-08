@@ -37,10 +37,8 @@ public class Filter<Type> {
         return filter;
     }
 
-    public <Other> FilterBySpace<Type, Other> bySpace(MetaField<? extends MetaClass<Type>, ?> currentField,
-                                                      MetaClass<Other> otherSpace,
-                                                      MetaField<? extends MetaClass<Type>, ?> mappingField) {
-        FilterBySpace<Type, Other> filter = new FilterBySpace<>(new FilterRule<>(this), otherSpace, currentField).bySpace(mappingField);
+    public <Other> FilterBySpace<Type, Other> bySpace(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?> mappingField) {
+        FilterBySpace<Type, Other> filter = new FilterBySpace<>(new FilterRule<>(this), otherSpace).bySpace(mappingField);
         FilterPart part = new FilterPart(condition, FilterMode.SPACE);
         part.bySpace = filter;
         filters.add(part);
@@ -48,10 +46,8 @@ public class Filter<Type> {
     }
 
     @SafeVarargs
-    public final <Other> FilterBySpace<Type, Other> byIndex(MetaField<? extends MetaClass<Type>, ?> currentField,
-                                                            MetaClass<Other> otherSpace,
-                                                            MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
-        FilterBySpace<Type, Other> filter = new FilterBySpace<>(new FilterRule<>(this), otherSpace, currentField).byIndex(indexedFields);
+    public final <Other> FilterBySpace<Type, Other> byIndex(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+        FilterBySpace<Type, Other> filter = new FilterBySpace<>(new FilterRule<>(this), otherSpace).byIndex(indexedFields);
         FilterPart part = new FilterPart(condition, FilterMode.INDEX);
         part.byIndex = filter;
         filters.add(part);

@@ -197,7 +197,8 @@ public class TarantoolStreamTest {
                 .stream()
                 .limit(2)
                 .filter(filter -> filter
-                        .bySpace(testingMetaModel().f1Field(), otherSpace(), testingMetaModel().f5Field())
+                        .bySpace(otherSpace(), testingMetaModel().f5Field())
+                        .currentNumber(testingMetaModel().f1Field())
                         .lessThan(otherSpace().numberField()))
                 .sort(testingMetaModel().f1Field(), Sorter::descendant)
                 .collect();
@@ -223,7 +224,8 @@ public class TarantoolStreamTest {
         ImmutableArray<TestingMetaModel> result = current()
                 .stream()
                 .filter(filter -> filter
-                        .bySpace(testingMetaModel().f16Field(), otherSpace(), testingMetaModel().f5Field())
+                        .bySpace(otherSpace(), testingMetaModel().f5Field())
+                        .currentString(testingMetaModel().f16Field())
                         .contains(otherSpace().valueField()))
                 .collect();
         assertEquals(1, result.size());

@@ -138,7 +138,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         throw new ImpossibleSituationException();
     }
 
-    private ImmutableArrayValue serializeFilterWith(FilterBySpace<?, ?> filter) {
+    private ImmutableArrayValue serializeFilterWith(FilterBySpaceUseFields<?, ?> filter) {
         FilterOperator filterOperator = filter.getOperator();
         MetaField<?, ?> field = filter.getCurrentField();
 
