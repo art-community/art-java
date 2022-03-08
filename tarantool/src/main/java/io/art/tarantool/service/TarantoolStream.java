@@ -77,8 +77,8 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public SpaceStream<Type> refresh() {
-        stream.refresh();
+    public SpaceStream<Type> clear() {
+        stream.clear();
         return this;
     }
 

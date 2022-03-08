@@ -149,7 +149,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     @Override
     public TarantoolReactiveStream<ModelType> stream() {
         TarantoolReactiveStream<ModelType> stream = this.stream.get();
-        stream.refresh();
+        stream.clear();
         return stream;
     }
 

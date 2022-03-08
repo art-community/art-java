@@ -102,7 +102,7 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     @Override
     public TarantoolStream<ModelType> stream() {
         TarantoolStream<ModelType> stream = this.stream.get();
-        stream.refresh();
+        stream.clear();
         return stream;
     }
 

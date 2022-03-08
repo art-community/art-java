@@ -71,7 +71,7 @@ public abstract class ReactiveSpaceStream<Type> {
         return cast(collect());
     }
 
-    public ReactiveSpaceStream<Type> refresh() {
+    public ReactiveSpaceStream<Type> clear() {
         operators = linkedList();
         return this;
     }
