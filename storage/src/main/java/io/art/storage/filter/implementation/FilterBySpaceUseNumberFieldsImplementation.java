@@ -30,6 +30,20 @@ public class FilterBySpaceUseNumberFieldsImplementation<Current, Other>
     }
 
     @Override
+    public FilterRule<Current> moreThanEquals(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
+        this.operator = MORE_EQUALS;
+        fields.add(cast(otherField));
+        return rule;
+    }
+
+    @Override
+    public FilterRule<Current> lessThanEquals(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
+        this.operator = LESS_EQUALS;
+        fields.add(cast(otherField));
+        return rule;
+    }
+
+    @Override
     public FilterRule<Current> between(MetaField<? extends MetaClass<Other>, ? extends Number> otherStartField, MetaField<? extends MetaClass<Other>, ? extends Number> otherEndField) {
         this.operator = BETWEEN;
         fields.add(cast(otherStartField));

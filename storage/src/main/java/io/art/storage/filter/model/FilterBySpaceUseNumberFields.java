@@ -10,6 +10,10 @@ public interface FilterBySpaceUseNumberFields<Current, Other> extends FilterBySp
 
     FilterRule<Current> lessThan(MetaField<? extends MetaClass<Other>, ? extends Number> otherField);
 
+    FilterRule<Current> moreThanEquals(MetaField<? extends MetaClass<Other>, ? extends Number> otherField);
+
+    FilterRule<Current> lessThanEquals(MetaField<? extends MetaClass<Other>, ? extends Number> otherField);
+
     FilterRule<Current> between(MetaField<? extends MetaClass<Other>, ? extends Number> otherStartField, MetaField<? extends MetaClass<Other>, ? extends Number> otherEndField);
 
     FilterRule<Current> notBetween(MetaField<? extends MetaClass<Other>, ? extends Number> otherStartField, MetaField<? extends MetaClass<Other>, ? extends Number> otherEndField);

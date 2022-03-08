@@ -25,6 +25,20 @@ public class FilterBySpaceUseNumbersImplementation<Type> extends FilterBySpaceUs
     }
 
     @Override
+    public FilterRule<Type> moreThanEquals(Number value) {
+        this.operator = MORE_EQUALS;
+        values.add(value);
+        return rule;
+    }
+
+    @Override
+    public FilterRule<Type> lessThanEquals(Number value) {
+        this.operator = LESS_EQUALS;
+        values.add(value);
+        return rule;
+    }
+
+    @Override
     public FilterRule<Type> between(Number start, Number end) {
         this.operator = BETWEEN;
         values.add(start);

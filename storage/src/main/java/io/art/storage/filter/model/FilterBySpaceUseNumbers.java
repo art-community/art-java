@@ -9,6 +9,10 @@ public interface FilterBySpaceUseNumbers<Type> extends FilterBySpaceUseValues<Ty
 
     FilterRule<Type> lessThan(Number value);
 
+    FilterRule<Type> moreThanEquals(Number value);
+
+    FilterRule<Type> lessThanEquals(Number value);
+
     FilterRule<Type> between(Number start, Number end);
 
     FilterRule<Type> notBetween(Number start, Number end);
