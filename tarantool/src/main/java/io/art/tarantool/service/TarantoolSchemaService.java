@@ -94,10 +94,10 @@ public class TarantoolSchemaService {
         return block(spaces);
     }
 
-    public ImmutableArray<String> indicies(String space) {
+    public ImmutableArray<String> indices(String space) {
         Mono<ImmutableArray<String>> spaces = storage
                 .immutable()
-                .call(SCHEMA_INDICIES, newArray(newString(space)))
+                .call(SCHEMA_INDICES, newArray(newString(space)))
                 .map(value -> value.asArrayValue()
                         .list()
                         .stream()
@@ -112,11 +112,11 @@ public class TarantoolSchemaService {
     }
 
     public boolean hasIndex(String space, String index) {
-        return indicies(space).stream().anyMatch(index::equals);
+        return indices(space).stream().anyMatch(index::equals);
     }
 
     public boolean hasIndex(String index) {
-        return spaces().stream().flatMap(space -> indicies(space).stream()).anyMatch(index::equals);
+        return spaces().stream().flatMap(space -> indices(space).stream()).anyMatch(index::equals);
     }
 
     private ImmutableMapValue writeFormat(TarantoolFormatConfiguration configuration) {

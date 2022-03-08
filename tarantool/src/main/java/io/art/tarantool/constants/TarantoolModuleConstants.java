@@ -101,7 +101,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SCHEMA_DROP_INDEX = newString("art.schema.dropIndex");
         ImmutableStringValue SCHEMA_RENAME_SPACE = newString("art.schema.renameSpace");
         ImmutableStringValue SCHEMA_DROP_SPACE = newString("art.schema.dropSpace");
-        ImmutableStringValue SCHEMA_INDICIES = newString("art.schema.indicies");
+        ImmutableStringValue SCHEMA_INDICES = newString("art.schema.indices");
         ImmutableStringValue SCHEMA_FORMAT = newString("art.schema.format");
 
     }

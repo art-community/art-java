@@ -110,59 +110,19 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     }
 
     private ImmutableArrayValue serializeFilter(FilterImplementation<?> filter) {
+        List<ImmutableArrayValue> serialized = linkedList();
         List<FilterPart> parts = filter.getParts();
         for (FilterPart part : parts) {
             FilterCondition condition = part.getCondition();
             switch (part.getMode()) {
                 case FIELD:
-                    FilterByFieldImplementation<?, ?> byField = part.getByField();
-                    switch (byField.getOperator()) {
-                        case EQUALS:
-                            break;
-                        case NOT_EQUALS:
-                            break;
-                        case MORE:
-                            break;
-                        case LESS:
-                            break;
-                        case BETWEEN:
-                            break;
-                        case NOT_BETWEEN:
-                            break;
-                        case IN:
-                            break;
-                        case NOT_IN:
-                            break;
-                        case STARTS_WITH:
-                            break;
-                        case ENDS_WITH:
-                            break;
-                        case CONTAINS:
-                            break;
-                    }
+                    part.getByField();
                     break;
                 case FUNCTION:
                     FilterByFunctionImplementation<?> byFunction = part.getByFunction();
                     break;
                 case SPACE:
                     FilterBySpaceImplementation<?, ?> bySpace = part.getBySpace();
-                    switch (bySpace.getExpressionType()) {
-                        case FIELD:
-                            switch (bySpace.getBySpaceUseFields().getOperator()) {
-
-                            }
-                            break;
-                        case STRING_FIELD:
-                            break;
-                        case NUMBER_FIELD:
-                            break;
-                        case VALUE:
-                            break;
-                        case STRING_VALUE:
-                            break;
-                        case NUMBER_VALUE:
-                            break;
-                    }
 
                     break;
                 case INDEX:
@@ -173,7 +133,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     break;
             }
         }
-        throw new ImpossibleSituationException();
+        return newArray(serialized);
     }
 
 

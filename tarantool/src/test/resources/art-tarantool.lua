@@ -602,7 +602,7 @@ local schema = {
         return result
     end,
 
-    indicies = function(space)
+    indices = function(space)
         local result = {}
         for _, value in pairs(box.space[space].index) do
             table.insert(result, value.name)
