@@ -2,9 +2,11 @@ package io.art.storage.filter.model;
 
 import io.art.core.annotation.*;
 import io.art.storage.filter.implementation.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import java.util.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface FilterByField<Type, FieldType> {
     FilterRule<Type> equal(FieldType value);
 

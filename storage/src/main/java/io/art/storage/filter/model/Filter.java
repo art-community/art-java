@@ -4,8 +4,10 @@ import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.filter.implementation.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface Filter<Type> {
     <FieldType> FilterByField<Type, FieldType> byField(MetaField<? extends MetaClass<Type>, FieldType> field);
 
