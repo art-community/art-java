@@ -113,6 +113,30 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
             switch (part.getMode()) {
                 case FIELD:
                     FilterByField<?, ?> byField = part.getByField();
+                    switch (byField.getOperator()) {
+                        case EQUALS:
+                            break;
+                        case NOT_EQUALS:
+                            break;
+                        case MORE:
+                            break;
+                        case LESS:
+                            break;
+                        case BETWEEN:
+                            break;
+                        case NOT_BETWEEN:
+                            break;
+                        case IN:
+                            break;
+                        case NOT_IN:
+                            break;
+                        case STARTS_WITH:
+                            break;
+                        case ENDS_WITH:
+                            break;
+                        case CONTAINS:
+                            break;
+                    }
                     break;
                 case FUNCTION:
                     FilterByFunction<?> byFunction = part.getByFunction();
@@ -121,6 +145,9 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                     FilterBySpace<?, ?> bySpace = part.getBySpace();
                     switch (bySpace.getExpressionType()) {
                         case FIELD:
+                            switch (bySpace.getBySpaceUseFields().getOperator()) {
+
+                            }
                             break;
                         case STRING_FIELD:
                             break;

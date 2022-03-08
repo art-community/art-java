@@ -14,7 +14,7 @@ import java.util.*;
 public class FilterBySpaceUseFields<Current, Other, FieldType> {
     protected final FilterRule<Current> rule;
     protected FilterOperator operator;
-    protected final List<MetaField<? extends MetaClass<Other>, ?>> fields = linkedList();
+    protected final List<MetaField<? extends MetaClass<Other>, FieldType>> fields = linkedList();
 
     public FilterRule<Current> equal(MetaField<? extends MetaClass<Other>, FieldType> value) {
         operator = EQUALS;
