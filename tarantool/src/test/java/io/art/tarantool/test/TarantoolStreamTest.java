@@ -199,6 +199,10 @@ public class TarantoolStreamTest {
                 .stream()
                 .limit(2)
                 .filter(filter -> filter
+                        .byNumber(testingMetaModel().f1Field())
+                        .moreThan(10)
+                        .and()
+
                         .bySpace(otherSpace(), testingMetaModel().f5Field())
                         .currentNumber(testingMetaModel().f1Field())
                         .lessThan(otherSpace().numberField())

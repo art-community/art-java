@@ -15,13 +15,13 @@ public class MapperBySpace<Current, Other> {
     private MetaField<? extends MetaClass<Current>, ?> mappingKeyField;
     private List<MetaField<? extends MetaClass<Current>, ?>> mappingIndexedFields = linkedList();
 
-    public MapperBySpace<Current, Other> bySpace(MetaField<? extends MetaClass<Current>, ?> mappingField) {
+    MapperBySpace<Current, Other> bySpace(MetaField<? extends MetaClass<Current>, ?> mappingField) {
         mappingKeyField = mappingField;
         return this;
     }
 
     @SafeVarargs
-    public final MapperBySpace<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
+    final MapperBySpace<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
         mappingIndexedFields = asList(indexedFields);
         return this;
     }
