@@ -12,6 +12,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
+import static io.art.storage.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FilterOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
@@ -48,7 +49,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
 
     @Override
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
-        Filter<ModelType> newFilter = new Filter<>();
+        Filter<ModelType> newFilter = new Filter<>(AND, linkedList());
         filter.accept(newFilter);
         Mono<Value> result = service
                 .clients
@@ -59,7 +60,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
 
     @Override
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
-        Filter<ModelType> newFilter = new Filter<>();
+        Filter<ModelType> newFilter = new Filter<>(AND, linkedList());
         filter.accept(newFilter);
         Mono<Value> result = service
                 .clients

@@ -27,7 +27,7 @@ public class Mapper<Current, Mapped> {
 
     @SafeVarargs
     final Mapper<Current, Mapped> byIndex(MetaClass<Mapped> otherSpace, MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
-        mode = SPACE;
+        mode = INDEX;
         bySpace = new MapperBySpace<Current, Mapped>(otherSpace).byIndex(indexedFields);
         return this;
     }
