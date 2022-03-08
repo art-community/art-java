@@ -5,6 +5,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.storage.StorageConstants.FilterCondition.AND;
 import static io.art.storage.StorageConstants.ProcessingOperation.*;
 import java.util.*;
 import java.util.function.*;
@@ -39,7 +40,7 @@ public abstract class SpaceStream<Type> {
     }
 
     public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
-        Filter<Type> newFilter = new Filter<>();
+        Filter<Type> newFilter = new Filter<>(AND, linkedList());
         filter.accept(newFilter);
         operators.add(new ProcessingOperator(FILTER, newFilter));
         return this;

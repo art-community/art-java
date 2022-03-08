@@ -4,16 +4,11 @@ import io.art.meta.model.*;
 import lombok.*;
 
 @Getter
-@RequiredArgsConstructor
-public class FilterByFunction<Type> {
-    private final FilterRule<Type> rule;
+public class FilterByFunction<Type> extends FilterRule<Type> {
     private final MetaMethod<MetaClass<? extends Storage>, Boolean> function;
 
-    public Filter<Type> and() {
-        return rule.and();
-    }
-
-    public Filter<Type> or() {
-        return rule.or();
+    public FilterByFunction(Filter<Type> owner, MetaMethod<MetaClass<? extends Storage>, Boolean> function) {
+        super(owner);
+        this.function = function;
     }
 }
