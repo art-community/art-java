@@ -4,6 +4,7 @@ import io.art.core.exception.*;
 import io.art.meta.model.*;
 import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.filter.implementation.*;
+import io.art.storage.filter.model.*;
 import io.art.storage.sorter.implementation.*;
 import io.art.storage.stream.*;
 import lombok.*;
@@ -14,8 +15,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
-import static io.art.storage.filter.implementation.FilterImplementation.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
+import static io.art.storage.filter.implementation.FilterImplementation.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
@@ -48,7 +49,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     }
 
     @Override
-    public Mono<Boolean> all(Consumer<FilterImplementation<ModelType>> filter) {
+    public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         Mono<Value> result = service
@@ -59,7 +60,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     }
 
     @Override
-    public Mono<Boolean> any(Consumer<FilterImplementation<ModelType>> filter) {
+    public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         Mono<Value> result = service

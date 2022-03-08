@@ -3,8 +3,8 @@ package io.art.tarantool.service;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
-import io.art.storage.filter.implementation.*;
-import io.art.storage.sorter.implementation.*;
+import io.art.storage.filter.model.*;
+import io.art.storage.sorter.model.*;
 import io.art.storage.stream.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -43,13 +43,13 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<SorterImplementation<Type, FieldType>> sorter) {
+    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
         stream.sort(current, sorter);
         return this;
     }
 
     @Override
-    public SpaceStream<Type> filter(Consumer<FilterImplementation<Type>> filter) {
+    public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         stream.filter(filter);
         return this;
     }
@@ -93,12 +93,12 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public boolean all(Consumer<FilterImplementation<Type>> filter) {
+    public boolean all(Consumer<Filter<Type>> filter) {
         return orElse(block(stream.all(filter)), false);
     }
 
     @Override
-    public boolean any(Consumer<FilterImplementation<Type>> filter) {
+    public boolean any(Consumer<Filter<Type>> filter) {
         return orElse(block(stream.any(filter)), false);
     }
 }
