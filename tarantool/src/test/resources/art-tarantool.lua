@@ -162,7 +162,7 @@ local api = {
         for _,part in pairs(box.space[space].index[0].parts) do
             key_fields_mapping[part.fieldno] = true
         end
-999
+
 
         local gen, param, state = box.space[space].index[index]:pairs(request, {iterator = iter})
         for _, operation in pairs(stream) do
