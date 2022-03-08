@@ -4,8 +4,10 @@ import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.filter.implementation.*;
+import io.art.storage.filter.model.*;
 import io.art.storage.mapper.*;
 import io.art.storage.sorter.implementation.*;
+import io.art.storage.sorter.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
@@ -37,12 +39,12 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public <FieldType> ReactiveSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<SorterImplementation<Type, FieldType>> sorter) {
+    public <FieldType> ReactiveSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
         operators.add(new ProcessingOperator(SORT, sorter.apply(new SorterImplementation<>(current))));
         return this;
     }
 
-    public ReactiveSpaceStream<Type> filter(Consumer<FilterImplementation<Type>> filter) {
+    public ReactiveSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         FilterImplementation<Type> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         operators.add(new ProcessingOperator(FILTER, newFilter));
@@ -78,7 +80,7 @@ public abstract class ReactiveSpaceStream<Type> {
 
     public abstract Mono<Long> count();
 
-    public abstract Mono<Boolean> all(Consumer<FilterImplementation<Type>> filter);
+    public abstract Mono<Boolean> all(Consumer<Filter<Type>> filter);
 
-    public abstract Mono<Boolean> any(Consumer<FilterImplementation<Type>> filter);
+    public abstract Mono<Boolean> any(Consumer<Filter<Type>> filter);
 }

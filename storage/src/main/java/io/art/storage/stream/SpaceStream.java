@@ -8,6 +8,7 @@ import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.mapper.*;
 import io.art.storage.sorter.implementation.*;
+import io.art.storage.sorter.model.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
@@ -39,7 +40,7 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
-    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<SorterImplementation<Type, FieldType>> sorter) {
+    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
         operators.add(new ProcessingOperator(SORT, sorter.apply(new SorterImplementation<>(current))));
         return this;
     }
