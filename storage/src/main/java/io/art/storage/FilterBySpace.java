@@ -8,12 +8,14 @@ import static java.util.Arrays.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
 
-@Getter
 @RequiredArgsConstructor(access = PACKAGE)
 public class FilterBySpace<Current, Other> {
     private final FilterRule<Current> rule;
+    @Getter
     private final MetaClass<Other> mappingSpace;
+    @Getter
     private MetaField<? extends MetaClass<Current>, ?> mappingKeyField;
+    @Getter
     private List<MetaField<? extends MetaClass<Current>, ?>> mappingIndexedFields = linkedList();
 
     FilterBySpace<Current, Other> bySpace(MetaField<? extends MetaClass<Current>, ?> mappingField) {
@@ -25,6 +27,10 @@ public class FilterBySpace<Current, Other> {
     final FilterBySpace<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
         mappingIndexedFields = asList(indexedFields);
         return this;
+    }
+
+    public <FieldType> FilterBySpaceUseFields<Current, Other, FieldType> currentField(MetaField<? extends MetaClass<Current>, FieldType> currentField) {
+        return new FilterBySpaceUseFields<>(rule, currentField);
     }
 
     public FilterBySpaceUseStringFields<Current, Other> currentString(MetaField<? extends MetaClass<Current>, String> currentField) {

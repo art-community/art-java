@@ -8,12 +8,14 @@ import static io.art.storage.StorageConstants.FilterOperator.*;
 import static java.util.Arrays.*;
 import java.util.*;
 
-@Getter
 @RequiredArgsConstructor
 public class FilterByField<Type, FieldType> {
     protected final FilterRule<Type> rule;
+    @Getter
     protected final MetaField<? extends MetaClass<Type>, FieldType> field;
+    @Getter
     protected FilterOperator operator;
+    @Getter
     protected final List<Object> values = linkedList();
 
     public FilterRule<Type> equal(FieldType value) {

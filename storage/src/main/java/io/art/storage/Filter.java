@@ -9,16 +9,16 @@ import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
-@Getter
 @RequiredArgsConstructor
 public class Filter<Type> {
-    private final FilterCondition condition;
+    private final FilterCondition currentCondition;
+    @Getter
     private final List<FilterPart> parts;
     private final FilterRule<Type> rule = new FilterRule<>(this);
 
     public <FieldType> FilterByField<Type, FieldType> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
         FilterByField<Type, FieldType> filter = new FilterByField<>(rule, field);
-        FilterPart part = new FilterPart(condition, FilterMode.FIELD);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.FIELD);
         part.byField = filter;
         parts.add(part);
         return filter;
@@ -26,7 +26,7 @@ public class Filter<Type> {
 
     public FilterByString<Type> byString(MetaField<? extends MetaClass<Type>, String> field) {
         FilterByString<Type> filter = new FilterByString<>(rule, field);
-        FilterPart part = new FilterPart(condition, FilterMode.FIELD);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.FIELD);
         part.byField = filter;
         parts.add(part);
         return filter;
@@ -34,7 +34,7 @@ public class Filter<Type> {
 
     public FilterByNumber<Type> byNumber(MetaField<? extends MetaClass<Type>, ? extends Number> field) {
         FilterByNumber<Type> filter = new FilterByNumber<>(rule, field);
-        FilterPart part = new FilterPart(condition, FilterMode.FIELD);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.FIELD);
         part.byField = filter;
         parts.add(part);
         return filter;
@@ -42,7 +42,7 @@ public class Filter<Type> {
 
     public <Other> FilterBySpace<Type, Other> bySpace(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?> mappingField) {
         FilterBySpace<Type, Other> filter = new FilterBySpace<>(rule, otherSpace).bySpace(mappingField);
-        FilterPart part = new FilterPart(condition, FilterMode.SPACE);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.SPACE);
         part.bySpace = filter;
         parts.add(part);
         return filter;
@@ -51,7 +51,7 @@ public class Filter<Type> {
     @SafeVarargs
     public final <Other> FilterBySpace<Type, Other> byIndex(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
         FilterBySpace<Type, Other> filter = new FilterBySpace<>(rule, otherSpace).byIndex(indexedFields);
-        FilterPart part = new FilterPart(condition, FilterMode.INDEX);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
         part.byIndex = filter;
         parts.add(part);
         return filter;
@@ -59,8 +59,8 @@ public class Filter<Type> {
 
 
     public FilterByFunction<Type> byFunction(MetaMethod<MetaClass<? extends Storage>, Boolean> function) {
-        FilterByFunction<Type> filter = new FilterByFunction<>(this, function);
-        FilterPart part = new FilterPart(condition, FilterMode.FUNCTION);
+        FilterByFunction<Type> filter = new FilterByFunction<>(this, function, rule);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.FUNCTION);
         part.byFunction = filter;
         parts.add(part);
         return filter;
@@ -70,7 +70,7 @@ public class Filter<Type> {
         Filter<Type> resolved = new Filter<>(AND, linkedList());
         nested.accept(resolved);
         NestedFilter<Type> filter = new NestedFilter<>(resolved.parts);
-        FilterPart part = new FilterPart(condition, FilterMode.NESTED);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.NESTED);
         part.nested = filter;
         parts.add(part);
         return this;
@@ -80,7 +80,7 @@ public class Filter<Type> {
         Filter<Type> resolved = new Filter<>(OR, linkedList());
         nested.accept(resolved);
         NestedFilter<Type> filter = new NestedFilter<>(resolved.parts);
-        FilterPart part = new FilterPart(condition, FilterMode.NESTED);
+        FilterPart part = new FilterPart(currentCondition, FilterMode.NESTED);
         part.nested = filter;
         parts.add(part);
         return this;
