@@ -311,6 +311,112 @@ end
 
 do
 local _ENV = _ENV
+package.preload[ "art.storage.constants" ] = function( ... ) local arg = _G.arg;
+local stream = {
+    filters = {
+        filterEquals = 1,
+        filterNotEquals = 2,
+        filterMore = 3,
+        filterMoreEquals = 4,
+        filterLess = 5,
+        filterLessEquals = 6,
+        filterBetween = 7,
+        filterNotBetween = 8,
+        filterIn = 9,
+        filterNotIn = 10,
+        filterStartsWith = 11,
+        filterEndsWith = 12,
+        filterContains = 13,
+    },
+    conditions = {
+        conditionAnd = 1,
+        conditionOr = 2
+    },
+    filterModes = {
+        filterBySpace = 1,
+        filterByIndex = 2,
+        filterByField = 3,
+        filterByFunction = 4,
+        nestedFilter = 5
+    },
+    filterExpressions = {
+        filterExpressionField = 1,
+        filterExpressionValue = 2,
+    },
+    mappingModes = {
+        mapBySpace = 1,
+        mapByIndex = 2,
+        mapByFunction = 3,
+        mapByField = 4
+    },
+    comparators = {
+        comparatorMore = 1,
+        comparatorLess = 2,
+    },
+    processingFunctions = {
+        limit = 1,
+        offset = 2,
+        filter = 3,
+        sort = 4,
+        distinct = 5,
+        map = 6
+    },
+    terminatingFunctions = {
+        collect = 1,
+        count = 2,
+        all = 3,
+        any = 4
+    }
+}
+return {
+    stream = stream
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.storage.deep-equal" ] = function( ... ) local arg = _G.arg;
+return function(first, second)
+    if first == second then
+        return true
+    end
+
+    if type(first) == "table" and type(second) == "table" then
+        for key1, value1 in pairs(first) do
+            local value2 = second[key1]
+
+            if value2 == nil then
+                return false
+            end
+
+            if value1 ~= value2 then
+                if type(value1) == "table" and type(value2) == "table" then
+                    if not deepEqual(value1, value2) then
+                        return false
+                    end
+                end
+
+                return false
+            end
+        end
+
+        for key2, _ in pairs(second) do
+            if first[key2] == nil then
+                return false
+            end
+        end
+
+        return true
+    end
+
+    return false
+end
+end
+end
+
+do
+local _ENV = _ENV
 package.preload[ "art.storage.index" ] = function( ... ) local arg = _G.arg;
 local index = {
     findFirst = function(space, index, key)
@@ -633,134 +739,29 @@ do
 local _ENV = _ENV
 package.preload[ "art.storage.stream" ] = function( ... ) local arg = _G.arg;
 local functional = require('fun')
-
-local function deepEqual(first, second)
-    if first == second then
-        return true
-    end
-
-    if type(first) == "table" and type(second) == "table" then
-        for key1, value1 in pairs(first) do
-            local value2 = second[key1]
-
-            if value2 == nil then
-                return false
-            end
-
-            if value1 ~= value2 then
-                if type(value1) == "table" and type(value2) == "table" then
-                    if not deepEqual(value1, value2) then
-                        return false
-                    end
-                end
-
-                return false
-            end
-        end
-
-        for key2, _ in pairs(second) do
-            if first[key2] == nil then
-                return false
-            end
-        end
-
-        return true
-    end
-
-    return false
-end
-
-local applyFilter = function(filter, generator, parameter, state)
-    return functional.filter(filter, generator, parameter, state)
-end
-
-local filters = {}
-
-filters["equals"] = function(filtering, field, request)
-    return deepEqual(filtering[field], request[1])
-end
-
-filters["notEquals"] = function(filtering, field, request)
-    return not deepEqual(filtering[field], request[1])
-end
-
-filters["more"] = function(filtering, field, request)
-    return filtering[field] > request[1]
-end
-
-filters["less"] = function(filtering, field, request)
-    return filtering[field] < request[1]
-end
-
-filters["between"] = function(filtering, field, request)
-    return (filtering[field] >= request[1]) and (filtering[field] <= request[2])
-end
-
-filters["notBetween"] = function(filtering, field, request)
-    return not ((filtering[field] >= request[1]) and (filtering[field] <= request[2]))
-end
-
-filters["in"] = function(filtering, field, values)
-    for _, value in pairs(values) do
-        if deepEqual(filtering[field], value) then
-            return true
-        end
-    end
-
-    return false
-end
-
-filters["notIn"] = function(filtering, field, values)
-    for _, value in pairs(values) do
-        if deepEqual(filtering[field], value) then
-            return false
-        end
-    end
-
-    return true
-end
-
-filters["startsWith"] = function(filtering, field, request)
-    return string.startswith(filtering[field], request[1])
-end
-
-filters["endsWith"] = function(filtering, field, request)
-    return string.endswith(filtering[field], request[1])
-end
-
-filters["contains"] = function(filtering, field, request)
-    return string.find(filtering[field], request[1])
-end
-
-local selectFilter = function(name, filtering, field, request)
-    return filters[name](filtering, field, request)
-end
-
-local filterSelector = function(name, field, request)
-    return function(filtering)
-        return selectFilter(name, filtering, field, request)
-    end
-end
+local constants = require("art.storage.constants").stream
+local streamFilter = require("art.storage.stream-filter")
+local streamMapper = require("art.storage.stream-mapper")
 
 local comparators = {}
 
-comparators["more"] = function(first, second, field)
+comparators[constants.comparators.comparatorMore] = function(first, second, field)
     return first[field] > second[field]
 end
 
-comparators["less"] = function(first, second, field)
+comparators[constants.comparators.comparatorLess] = function(first, second, field)
     return first[field] < second[field]
 end
 
-local comparatorSelector = function(name, field)
+local comparatorSelector = function(id, field)
     return function(first, second)
-        return comparators[name](first, second, field)
+        return comparators[id](first, second, field)
     end
 end
 
 local terminatingFunctors = {}
 
-terminatingFunctors["collect"] = function(generator, parameter, state)
+terminatingFunctors[constants.terminatingFunctions.collect] = function(generator, parameter, state)
     local results = {}
     for _, item in functional.iter(generator, parameter, state) do
         table.insert(results, item)
@@ -768,107 +769,47 @@ terminatingFunctors["collect"] = function(generator, parameter, state)
     return results
 end
 
-terminatingFunctors["count"] = function(generator, parameter, state)
+local collect = terminatingFunctors[constants.terminatingFunctions.collect]
+
+terminatingFunctors[constants.terminatingFunctions.count] = function(generator, parameter, state)
     return functional.length(generator, parameter, state)
 end
 
-terminatingFunctors["all"] = function(generator, parameter, state, request)
-    return functional.all(filterSelector(unpack(request)), generator, parameter, state)
+terminatingFunctors[constants.terminatingFunctions.all] = function(generator, parameter, state, request)
+    return functional.all(streamFilter.selector(unpack(request)), generator, parameter, state)
 end
 
-terminatingFunctors["any"] = function(generator, parameter, state, request)
-    return functional.any(filterSelector(unpack(request)), generator, parameter, state)
+terminatingFunctors[constants.terminatingFunctions.any] = function(generator, parameter, state, request)
+    return functional.any(streamFilter.selector(unpack(request)), generator, parameter, state)
 end
 
 local processingFunctors = {}
 
-processingFunctors["limit"] = function(generator, parameter, state, count)
+processingFunctors[constants.processingFunctions.limit] = function(generator, parameter, state, count)
     return functional.take_n(count, generator, parameter, state)
 end
 
-processingFunctors["offset"] = function(generator, parameter, state, count)
+processingFunctors[constants.processingFunctions.offset] = function(generator, parameter, state, count)
     return functional.drop_n(count, generator, parameter, state)
 end
 
-processingFunctors["filter"] = function(generator, parameter, state, request)
-    return applyFilter(filterSelector(unpack(request)), generator, parameter, state)
-end
-
-processingFunctors["filterWith"] = function(generator, parameter, state, request)
-    local filteringFunction = function(filtering)
-        local mapper = request[1]
-        local filter = request[2]
-
-        local mode = mapper[1]
-
-
-        if mode == "byKey" then
-            local mappedSpace = mapper[2]
-            local keyField = mapper[3]
-            local mapped = box.space[mappedSpace]:get(filtering[keyField])
-            if mapped == nil then
-                return false
-            end
-            local filterName = filter[1]
-            local filterCurrentField = filter[2]
-            local filterOtherFields = filter[3]
-            local filterOtherValues = {}
-            for _, otherField in pairs(filterOtherFields) do
-                table.insert(filterOtherValues, mapped[otherField])
-            end
-            require("log").error(filterName)
-            if next(filterOtherValues) == nil then
-                return false
-            end
-            return selectFilter(filterName, filtering, filterCurrentField, filterOtherValues)
-        end
-
-        if mode == "byIndex" then
-            local mappedSpace = mapper[2]
-            local mappedIndex = mapper[3]
-            local keyFields = mapper[4]
-            local indexKeys = {}
-            for _, keyField in pairs(keyFields) do
-                table.insert(indexKeys, filtering[keyField])
-            end
-            if next(indexKeys) == nil then
-                return false
-            end
-            local mapped = box.space[mappedSpace]:index(mappedIndex):get(indexKeys)
-            if mapped == nil then
-                return false
-            end
-            local filterName = filter[1]
-            local filterCurrentField = filter[2]
-            local filterOtherFields = filter[3]
-            local filterOtherValues = {}
-            for _, otherField in pairs(filterOtherFields) do
-                table.insert(filterOtherValues, mapped[otherField])
-            end
-            if next(filterOtherValues) == nil then
-                return false
-            end
-            return selectFilter(filterName, filtering, filterCurrentField, filterOtherValues)
-        end
-    end
-
-    return applyFilter(filteringFunction, generator, parameter, state)
-end
-
-local collect = terminatingFunctors["collect"]
-processingFunctors["sort"] = function(generator, parameter, state, request)
-    local values = collect(generator, parameter, state)
-    table.sort(values, comparatorSelector(unpack(request)))
-    return functional.iter(values)
-end
-
-processingFunctors["distinct"] = function(generator, parameter, state, field)
+processingFunctors[constants.processingFunctions.distinct] = function(generator, parameter, state, field)
     local result = {}
     for _, item in functional.iter(generator, parameter, state) do
         result[item[field]] = item
     end
     return pairs(result)
 end
+
+processingFunctors[constants.processingFunctions.sort] = function(generator, parameter, state, request)
+    local values = collect(generator, parameter, state)
+    table.sort(values, comparatorSelector(unpack(request)))
+    return functional.iter(values)
+end
+
+processingFunctors[constants.processingFunctions.filter] = streamFilter.functor
+
+processingFunctors[constants.processingFunctions.map] = streamMapper
 
 return {
     processingFunctor = function(stream)
@@ -879,6 +820,249 @@ return {
         return terminatingFunctors[stream]
     end,
 }
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.storage.stream-filter" ] = function( ... ) local arg = _G.arg;
+local deepEqual = require('art.storage.deep-equal')
+local constants = require("art.storage.constants").stream
+local functional = require('fun')
+
+local filters = {}
+
+filters[constants.filters.filterEquals] = function(filtering, field, request)
+    return deepEqual(filtering[field], request[1])
+end
+
+filters[constants.filters.filterNotEquals] = function(filtering, field, request)
+    return not deepEqual(filtering[field], request[1])
+end
+
+filters[constants.filters.filterMore] = function(filtering, field, request)
+    return filtering[field] > request[1]
+end
+
+filters[constants.filters.filterLess] = function(filtering, field, request)
+    return filtering[field] < request[1]
+end
+
+filters[constants.filters.filterMoreEquals] = function(filtering, field, request)
+    return filtering[field] >= request[1]
+end
+
+filters[constants.filters.filterLessEquals] = function(filtering, field, request)
+    return filtering[field] <= request[1]
+end
+
+filters[constants.filters.filterBetween] = function(filtering, field, request)
+    return (filtering[field] >= request[1]) and (filtering[field] <= request[2])
+end
+
+filters[constants.filters.filterNotBetween] = function(filtering, field, request)
+    return not ((filtering[field] >= request[1]) and (filtering[field] <= request[2]))
+end
+
+filters[constants.filters.filterIn] = function(filtering, field, values)
+    for _, value in pairs(values) do
+        if deepEqual(filtering[field], value) then
+            return true
+        end
+    end
+
+    return false
+end
+
+filters[constants.filters.filterNotIn] = function(filtering, field, values)
+    for _, value in pairs(values) do
+        if deepEqual(filtering[field], value) then
+            return false
+        end
+    end
+
+    return true
+end
+
+filters[constants.filters.filterStartsWith] = function(filtering, field, request)
+    return string.startswith(filtering[field], request[1])
+end
+
+filters[constants.filters.filterEndsWith] = function(filtering, field, request)
+    return string.endswith(filtering[field], request[1])
+end
+
+filters[constants.filters.filterContains] = function(filtering, field, request)
+    return string.find(filtering[field], request[1])
+end
+
+local applyFilter = function(id, filtering, field, request)
+    return filters[id](filtering, field, request)
+end
+
+local selector = function(id, field, request)
+    return function(filtering)
+        return applyFilter(id, filtering, field, request)
+    end
+end
+
+local applyCondition = function(condition, currentResult, newResult)
+    if condition == constants.conditions.conditionAnd then
+        return currentResult & newResult
+    end
+
+    if condition == constants.conditions.conditionOr then
+        return currentResult | newResult
+    end
+end
+
+local processExpressions = function(expressions, filtering, mapped, currentResult)
+    local result = currentResult
+    for _, expression in pairs(expressions) do
+        local expressionType = expression[1]
+        local expressionCondition = expression[2]
+        local expressionName = expression[3]
+        local expressionField = expression[4]
+
+        local expressionTarget
+        local expressionValues
+
+        if expressionType == constants.filterExpressions.filterExpressionField then
+            expressionTarget = filtering
+            for _, mappedField in pairs(expression[5]) do
+                table.insert(expressionValues, mapped[mappedField])
+            end
+        end
+
+        if expressionType == constants.filterExpressions.filterExpressionValue then
+            expressionTarget = mapped
+            expressionValues = expression[5]
+        end
+
+        local newResult = applyFilter(expressionName, expressionTarget, expressionField, expressionValues)
+        result = applyCondition(expressionCondition, result, newResult);
+    end
+    return result
+end
+
+local processFilters
+processFilters = function(filtering, inputFilters)
+    local result = true
+    for _, filter in pairs(inputFilters) do
+        local condition = filter[1]
+        local mode = filter[2]
+
+        if mode == constants.filterModes.nestedFilter then
+            result = applyCondition(condition, result, processFilters(filter[3]));
+        end
+
+        if mode == constants.filterModes.filterByField then
+            local parameters = filter[3]
+            local field = parameters[1]
+            local id = parameters[2]
+            local values = parameters[3]
+            result = applyCondition(condition, result, applyFilter(id, filtering, field, values));
+        end
+
+        if mode == constants.filterModes.filterByFunction then
+            local functionName = filter[3]
+            result = applyCondition(condition, result, box.func[functionName]:call(filtering));
+        end
+
+        if mode == constants.filterModes.filterBySpace then
+            local parameters = filter[3]
+            local otherSpace = parameters[1]
+            local filteringField = parameters[2]
+            local mapped = box.space[otherSpace]:get(filtering[filteringField])
+            if mapped ~= nil then
+                result = processExpressions(filter[4], filtering, mapped, result)
+            else
+                result = applyCondition(condition, result, false)
+            end
+        end
+
+        if mode == constants.filterModes.filterByIndex then
+            local parameters = filter[3]
+            local otherSpace = parameters[1]
+            local currentFields = parameters[2]
+            local otherIndex = parameters[3]
+            local indexKeys = {}
+            for _, keyField in pairs(currentFields) do
+                table.insert(indexKeys, filtering[keyField])
+            end
+            if next(indexKeys) ~= nil then
+                local mapped = box.space[otherSpace]:index(otherIndex):get(indexKeys)
+                if mapped ~= nil then
+                    result = processExpressions(filter[4], filtering, mapped, result)
+                else
+                    result = applyCondition(condition, result, false)
+                end
+            else
+                result = applyCondition(condition, result, false)
+            end
+        end
+    end
+    return result
+end
+
+local filter = function(generator, parameter, state, request)
+    local filteringFunction = function(filtering)
+        return processFilters(filtering, request)
+    end
+    return functional.filter(filteringFunction, generator, parameter, state)
+end
+
+return {
+    selector = selector,
+
+    functor = filter
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.storage.stream-mapper" ] = function( ... ) local arg = _G.arg;
+local constants = require("art.storage.constants").stream
+local functional = require('fun')
+
+return function(generator, parameter, state, request)
+    local mappingFunction = function(mapping)
+        local mode = request[1]
+
+        if mode == constants.mappingModes.mapByFunction then
+            local functionName = request[2]
+            return box.func[functionName]:call(mapping)
+        end
+
+        if mode == constants.mappingModes.mapByField then
+            local field = request[2]
+            return mapping[field]
+        end
+
+        if mode == constants.mappingModes.mapBySpace then
+            local otherSpace = request[3]
+            local currentField = request[4]
+            return box.space[otherSpace]:get(mapping[currentField])
+        end
+
+        if mode == constants.mappingModes.mapByIndex then
+            local otherSpace = request[3]
+            local currentFields = request[4]
+            local otherIndex = request[5]
+            local indexKeys = {}
+            for _, keyField in pairs(currentFields) do
+                table.insert(indexKeys, mapping[keyField])
+            end
+            if next(indexKeys) == nil then
+                return nil
+            end
+            return box.space[otherSpace]:index(otherIndex):get(indexKeys)
+        end
+    end
+
+    return functional.map(mappingFunction, generator, parameter, state)
+end
 end
 end
 
