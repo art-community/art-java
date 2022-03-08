@@ -14,6 +14,7 @@ public class Filter<Type> {
     private final FilterCondition currentCondition;
     @Getter
     private final List<FilterPart> parts;
+
     private final FilterRule<Type> rule = new FilterRule<>(this);
 
     public <FieldType> FilterByField<Type, FieldType> byField(MetaField<? extends MetaClass<Type>, FieldType> field) {
