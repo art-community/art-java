@@ -44,6 +44,14 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
+    public <FieldType> Mono<Type> max(MetaField<? extends MetaClass<Type>, FieldType> byField) {
+        return sort(byField, Sorter::descendant).first();
+    }
+
+    public <FieldType> Mono<Type> min(MetaField<? extends MetaClass<Type>, FieldType> byField) {
+        return sort(byField, Sorter::ascendant).first();
+    }
+
     public ReactiveSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         FilterImplementation<Type> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);

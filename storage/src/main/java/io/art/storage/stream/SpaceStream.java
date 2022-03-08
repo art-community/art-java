@@ -46,6 +46,14 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
+    public <FieldType> Optional<Type> max(MetaField<? extends MetaClass<Type>, FieldType> byField) {
+        return sort(byField, Sorter::descendant).first();
+    }
+
+    public <FieldType> Optional<Type> min(MetaField<? extends MetaClass<Type>, FieldType> byField) {
+        return sort(byField, Sorter::ascendant).first();
+    }
+
     public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         FilterImplementation<Type> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
