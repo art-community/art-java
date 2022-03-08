@@ -11,6 +11,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
+import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -76,6 +77,20 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
         return cast(this);
     }
 
+    @Override
+    public <FieldType> Optional<Type> max(MetaField<? extends MetaClass<Type>, FieldType> byField) {
+        return stream.max(byField).blockOptional();
+    }
+
+    @Override
+    public <FieldType> Optional<Type> min(MetaField<? extends MetaClass<Type>, FieldType> byField) {
+        return stream.min(byField).blockOptional();
+    }
+
+    @Override
+    public Optional<Type> first() {
+        return stream.first().blockOptional();
+    }
 
     @Override
     public ImmutableArray<Type> collect() {
