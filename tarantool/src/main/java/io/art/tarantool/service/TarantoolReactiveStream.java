@@ -98,12 +98,12 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     }
 
     private ImmutableArrayValue serializeSort(SorterImplementation<?, ?> sorter) {
-        SortComparator comparator = sorter.getComparator();
+        SortOrder order = sorter.getOrder();
         MetaField<?, ?> field = sorter.getField();
-        switch (comparator) {
-            case MORE:
+        switch (order) {
+            case ASCENDANT:
                 return newArray(COMPARATOR_MORE, newInteger(field.index() + 1));
-            case LESS:
+            case DESCENDANT:
                 return newArray(COMPARATOR_LESS, newInteger(field.index() + 1));
         }
         throw new ImpossibleSituationException();
