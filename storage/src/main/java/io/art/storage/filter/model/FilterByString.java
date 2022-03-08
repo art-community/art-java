@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import io.art.storage.filter.implementation.*;
 
 @Public
-public interface FilterByString<Type> {
+public interface FilterByString<Type> extends FilterByField<Type, String> {
     FilterRule<Type> startsWith(String pattern);
 
     FilterRule<Type> endsWith(String pattern);

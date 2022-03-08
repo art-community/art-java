@@ -5,7 +5,7 @@ import io.art.meta.model.*;
 import io.art.storage.filter.implementation.*;
 
 @Public
-public interface FilterBySpaceUseNumberFields<Current, Other> {
+public interface FilterBySpaceUseNumberFields<Current, Other> extends FilterBySpaceUseFields<Current, Other, Number> {
     FilterRule<Current> moreThan(MetaField<? extends MetaClass<Other>, ? extends Number> otherField);
 
     FilterRule<Current> lessThan(MetaField<? extends MetaClass<Other>, ? extends Number> otherField);

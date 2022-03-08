@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import io.art.storage.filter.implementation.*;
 
 @Public
-public interface FilterBySpaceUseStrings<Type> {
+public interface FilterBySpaceUseStrings<Type> extends FilterBySpaceUseValues<Type, String> {
     FilterRule<Type> startsWith(String pattern);
 
     FilterRule<Type> endsWith(String pattern);

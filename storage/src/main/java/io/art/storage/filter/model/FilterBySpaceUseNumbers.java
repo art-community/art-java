@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import io.art.storage.filter.implementation.*;
 
 @Public
-public interface FilterBySpaceUseNumbers<Type> {
+public interface FilterBySpaceUseNumbers<Type> extends FilterBySpaceUseValues<Type, Number> {
     FilterRule<Type> moreThan(Number value);
 
     FilterRule<Type> lessThan(Number value);
