@@ -15,11 +15,13 @@ public class FilterRule<Type> {
         return owner.or();
     }
 
-    public NestedFilter<Type> or(UnaryOperator<Filter<Type>> nested) {
-        return owner.or(nested);
+    public Filter<Type> or(Consumer<Filter<Type>> nested) {
+        owner.or(nested);
+        return owner;
     }
 
-    public NestedFilter<Type> and(UnaryOperator<Filter<Type>> nested) {
-        return owner.and(nested);
+    public Filter<Type> and(Consumer<Filter<Type>> nested) {
+        owner.and(nested);
+        return owner;
     }
 }

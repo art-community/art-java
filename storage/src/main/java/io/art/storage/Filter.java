@@ -66,22 +66,24 @@ public class Filter<Type> {
         return filter;
     }
 
-    public NestedFilter<Type> and(UnaryOperator<Filter<Type>> nested) {
-        Filter<Type> resolved = nested.apply(new Filter<>(AND, linkedList()));
-        NestedFilter<Type> filter = new NestedFilter<>(rule, resolved.parts);
+    Filter<Type> and(Consumer<Filter<Type>> nested) {
+        Filter<Type> resolved = new Filter<>(AND, linkedList());
+        nested.accept(resolved);
+        NestedFilter<Type> filter = new NestedFilter<>(resolved.parts);
         FilterPart part = new FilterPart(condition, FilterMode.NESTED);
         part.nested = filter;
         parts.add(part);
-        return filter;
+        return this;
     }
 
-    public NestedFilter<Type> or(UnaryOperator<Filter<Type>> nested) {
-        Filter<Type> resolved = nested.apply(new Filter<>(OR, linkedList()));
-        NestedFilter<Type> filter = new NestedFilter<>(rule, resolved.parts);
+    Filter<Type> or(Consumer<Filter<Type>> nested) {
+        Filter<Type> resolved = new Filter<>(OR, linkedList());
+        nested.accept(resolved);
+        NestedFilter<Type> filter = new NestedFilter<>(resolved.parts);
         FilterPart part = new FilterPart(condition, FilterMode.NESTED);
         part.nested = filter;
         parts.add(part);
-        return filter;
+        return this;
     }
 
     Filter<Type> and() {
