@@ -71,6 +71,10 @@ public abstract class ReactiveSpaceStream<Type> {
         return cast(collect());
     }
 
+    public Mono<Type> first() {
+        return limit(1).offset(1).collect().next();
+    }
+
     public abstract Flux<Type> collect();
 
     public abstract Mono<Long> count();

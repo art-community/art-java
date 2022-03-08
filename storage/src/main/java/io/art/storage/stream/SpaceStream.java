@@ -13,6 +13,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.storage.constants.StorageConstants.ProcessingOperation.*;
+import static java.util.Optional.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -70,6 +71,11 @@ public abstract class SpaceStream<Type> {
     public <Mapped> Stream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
         return cast(collect().stream());
+    }
+
+    public Optional<Type> first() {
+        ImmutableArray<Type> array = limit(1).offset(1).collect();
+        return array.isEmpty() ? empty() : of(array.get(0));
     }
 
     public abstract ImmutableArray<Type> collect();
