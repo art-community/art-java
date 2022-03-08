@@ -45,14 +45,9 @@ public abstract class SpaceStream<Type> {
         return this;
     }
 
-    public <Mapped> SpaceStream<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
-        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
-        return cast(this);
-    }
-
-    public <Mapped> Stream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
-        return cast(collect().stream());
+        return cast(this);
     }
 
     public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
@@ -60,9 +55,14 @@ public abstract class SpaceStream<Type> {
         return cast(this);
     }
 
-    public <Mapped> SpaceStream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+    public <Mapped> Stream<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
+        return cast(collect().stream());
+    }
+
+    public <Mapped> Stream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
-        return cast(this);
+        return cast(collect().stream());
     }
 
     public SpaceStream<Type> refresh() {

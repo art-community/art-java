@@ -4,10 +4,12 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 @AllArgsConstructor
 public class TarantoolStream<Type> extends SpaceStream<Type> {
@@ -50,27 +52,25 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <Mapped> SpaceStream<Type> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
-        stream.map(field);
-        return this;
+    public <Mapped> Stream<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+        return stream.map(field).toStream();
     }
 
     @Override
-    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+    public <Mapped> Stream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+        return stream.map(function).toStream();
+    }
+
+    @Override
+    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         stream.map(space, field);
-        return this;
+        return cast(this);
     }
 
     @Override
-    public <Mapped> SpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
         stream.map(space, indexedFields);
-        return this;
-    }
-
-    @Override
-    public <Mapped> SpaceStream<Type> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
-        stream.map(function);
-        return this;
+        return cast(this);
     }
 
     @Override

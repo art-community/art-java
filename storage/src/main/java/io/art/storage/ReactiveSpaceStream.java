@@ -3,6 +3,7 @@ package io.art.storage;
 import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.StorageConstants.ProcessingOperation.*;
 import java.util.*;
@@ -43,24 +44,24 @@ public abstract class ReactiveSpaceStream<Type> {
         return this;
     }
 
-    public <Mapped> ReactiveSpaceStream<Type> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
+    public <Mapped> Flux<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
-        return this;
+        return cast(collect());
     }
 
-    public <Mapped> ReactiveSpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+    public <Mapped> ReactiveSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
-        return this;
+        return cast(this);
     }
 
-    public <Mapped> ReactiveSpaceStream<Type> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
+    public <Mapped> ReactiveSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
-        return this;
+        return cast(this);
     }
 
-    public <Mapped> ReactiveSpaceStream<Type> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+    public <Mapped> Flux<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
-        return this;
+        return cast(collect());
     }
 
     public ReactiveSpaceStream<Type> refresh() {
