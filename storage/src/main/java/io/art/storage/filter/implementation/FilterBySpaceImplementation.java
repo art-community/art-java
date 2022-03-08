@@ -9,10 +9,8 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.constants.StorageConstants.FilterExpressionType.*;
 import static java.util.Arrays.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 
-@RequiredArgsConstructor(access = PACKAGE)
 public class FilterBySpaceImplementation<Current, Other> implements FilterBySpace<Current, Other> {
     private final FilterRule<Current> rule;
 
@@ -35,22 +33,33 @@ public class FilterBySpaceImplementation<Current, Other> implements FilterBySpac
     private MetaField<? extends MetaClass<Other>, ?> otherField;
 
     @Getter
-    private final FilterBySpaceUseFieldsImplementation<Current, Other, ?> bySpaceUseFields = new FilterBySpaceUseFieldsImplementation<>(rule);
+    private final FilterBySpaceUseFieldsImplementation<Current, Other, ?> bySpaceUseFields;
 
     @Getter
-    private final FilterBySpaceUseStringFieldsImplementation<Current, Other> bySpaceUseStringFields = new FilterBySpaceUseStringFieldsImplementation<>(rule);
+    private final FilterBySpaceUseStringFieldsImplementation<Current, Other> bySpaceUseStringFields;
 
     @Getter
-    private final FilterBySpaceUseNumberFieldsImplementation<Current, Other> bySpaceUseNumberFields = new FilterBySpaceUseNumberFieldsImplementation<>(rule);
+    private final FilterBySpaceUseNumberFieldsImplementation<Current, Other> bySpaceUseNumberFields;
 
     @Getter
-    private final FilterBySpaceUseNumbersImplementation<Current> bySpaceUseNumbers = new FilterBySpaceUseNumbersImplementation<>(rule);
+    private final FilterBySpaceUseNumbersImplementation<Current> bySpaceUseNumbers;
 
     @Getter
-    private final FilterBySpaceUseStringsImplementation<Current> bySpaceUseStrings = new FilterBySpaceUseStringsImplementation<>(rule);
+    private final FilterBySpaceUseStringsImplementation<Current> bySpaceUseStrings;
 
     @Getter
-    private final FilterBySpaceUseValuesImplementation<Current, ?> bySpaceUseValues = new FilterBySpaceUseValuesImplementation<>(rule);
+    private final FilterBySpaceUseValuesImplementation<Current, ?> bySpaceUseValues;
+
+    public FilterBySpaceImplementation(FilterRule<Current> rule, MetaClass<Other> mappingSpace) {
+        this.rule = rule;
+        this.mappingSpace = mappingSpace;
+        bySpaceUseFields = new FilterBySpaceUseFieldsImplementation<>(rule);
+        bySpaceUseStringFields = new FilterBySpaceUseStringFieldsImplementation<>(rule);
+        bySpaceUseNumberFields = new FilterBySpaceUseNumberFieldsImplementation<>(rule);
+        bySpaceUseNumbers = new FilterBySpaceUseNumbersImplementation<>(rule);
+        bySpaceUseStrings = new FilterBySpaceUseStringsImplementation<>(rule);
+        bySpaceUseValues = new FilterBySpaceUseValuesImplementation<>(rule);
+    }
 
     FilterBySpaceImplementation<Current, Other> bySpace(MetaField<? extends MetaClass<Current>, ?> mappingField) {
         mappingKeyField = mappingField;

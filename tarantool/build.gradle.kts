@@ -42,6 +42,6 @@ generator {
         sourcesPattern {
             include("src/test/**")
         }
-        excludeClasses("**TarantoolTest**")
+        includeClasses("**model**")
     }
 }
