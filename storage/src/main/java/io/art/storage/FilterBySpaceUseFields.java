@@ -16,37 +16,37 @@ public class FilterBySpaceUseFields<Current, Other, FieldType> {
     protected FilterOperator operator;
     protected final List<MetaField<? extends MetaClass<Other>, FieldType>> fields = linkedList();
 
-    public FilterRule<Current> equal(MetaField<? extends MetaClass<Other>, FieldType> value) {
+    public FilterRule<Current> equal(MetaField<? extends MetaClass<Other>, FieldType> otherField) {
         operator = EQUALS;
-        this.fields.add(value);
+        this.fields.add(otherField);
         return rule;
     }
 
-    public FilterRule<Current> notEqual(MetaField<? extends MetaClass<Other>, FieldType> value) {
+    public FilterRule<Current> notEqual(MetaField<? extends MetaClass<Other>, FieldType> otherField) {
         operator = NOT_EQUALS;
-        this.fields.add(value);
+        this.fields.add(otherField);
         return rule;
     }
 
-    public FilterRule<Current> in(List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
+    public FilterRule<Current> in(List<MetaField<? extends MetaClass<Other>, FieldType>> otherFields) {
         this.operator = IN;
-        this.fields.addAll(values);
+        this.fields.addAll(otherFields);
         return rule;
     }
 
-    public FilterRule<Current> notIn(List<MetaField<? extends MetaClass<Other>, FieldType>> values) {
+    public FilterRule<Current> notIn(List<MetaField<? extends MetaClass<Other>, FieldType>> otherFields) {
         this.operator = NOT_IN;
-        this.fields.addAll(values);
+        this.fields.addAll(otherFields);
         return rule;
     }
 
     @SafeVarargs
-    public final FilterRule<Current> in(MetaField<? extends MetaClass<Other>, FieldType>... values) {
-        return in(asList(values));
+    public final FilterRule<Current> in(MetaField<? extends MetaClass<Other>, FieldType>... otherFields) {
+        return in(asList(otherFields));
     }
 
     @SafeVarargs
-    public final FilterRule<Current> notIn(MetaField<? extends MetaClass<Other>, FieldType>... values) {
-        return notIn(asList(values));
+    public final FilterRule<Current> notIn(MetaField<? extends MetaClass<Other>, FieldType>... otherFields) {
+        return notIn(asList(otherFields));
     }
 }

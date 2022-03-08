@@ -21,17 +21,17 @@ public class FilterBySpaceUseNumbers<Type> extends FilterBySpaceUseValues<Type, 
         return rule;
     }
 
-    public FilterRule<Type> between(Number otherStart, Number otherEnd) {
+    public FilterRule<Type> between(Number start, Number end) {
         this.operator = BETWEEN;
-        values.add(otherStart);
-        values.add(otherEnd);
+        values.add(start);
+        values.add(end);
         return rule;
     }
 
-    public FilterRule<Type> notBetween(Number otherStart, Number otherEnd) {
+    public FilterRule<Type> notBetween(Number start, Number end) {
         this.operator = NOT_BETWEEN;
-        values.add(otherStart);
-        values.add(otherEnd);
+        values.add(start);
+        values.add(end);
         return rule;
     }
 }

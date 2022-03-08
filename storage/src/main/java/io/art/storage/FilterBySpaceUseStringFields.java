@@ -10,21 +10,21 @@ public class FilterBySpaceUseStringFields<Current, Other> extends FilterBySpaceU
         super(rule);
     }
 
-    public FilterRule<Current> startsWith(MetaField<? extends MetaClass<Other>, String> other) {
+    public FilterRule<Current> startsWith(MetaField<? extends MetaClass<Other>, String> otherField) {
         this.operator = STARTS_WITH;
-        fields.add(other);
+        fields.add(otherField);
         return rule;
     }
 
-    public FilterRule<Current> endsWith(MetaField<? extends MetaClass<Other>, String> other) {
+    public FilterRule<Current> endsWith(MetaField<? extends MetaClass<Other>, String> otherField) {
         this.operator = ENDS_WITH;
-        fields.add(other);
+        fields.add(otherField);
         return rule;
     }
 
-    public FilterRule<Current> contains(MetaField<? extends MetaClass<Other>, String> other) {
+    public FilterRule<Current> contains(MetaField<? extends MetaClass<Other>, String> otherField) {
         this.operator = CONTAINS;
-        fields.add(other);
+        fields.add(otherField);
         return rule;
     }
 }

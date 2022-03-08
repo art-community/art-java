@@ -11,29 +11,29 @@ public class FilterBySpaceUseNumberFields<Current, Other> extends FilterBySpaceU
         super(rule);
     }
 
-    public FilterRule<Current> moreThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {
+    public FilterRule<Current> moreThan(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
         this.operator = MORE;
-        fields.add(cast(other));
+        fields.add(cast(otherField));
         return rule;
     }
 
-    public FilterRule<Current> lessThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {
+    public FilterRule<Current> lessThan(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
         this.operator = LESS;
-        fields.add(cast(other));
+        fields.add(cast(otherField));
         return rule;
     }
 
-    public FilterRule<Current> between(MetaField<? extends MetaClass<Other>, ? extends Number> otherStart, MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
+    public FilterRule<Current> between(MetaField<? extends MetaClass<Other>, ? extends Number> otherStartField, MetaField<? extends MetaClass<Other>, ? extends Number> otherEndField) {
         this.operator = BETWEEN;
-        fields.add(cast(otherStart));
-        fields.add(cast(otherEnd));
+        fields.add(cast(otherStartField));
+        fields.add(cast(otherEndField));
         return rule;
     }
 
-    public FilterRule<Current> notBetween(MetaField<? extends MetaClass<Other>, ? extends Number> otherStart, MetaField<? extends MetaClass<Other>, ? extends Number> otherEnd) {
+    public FilterRule<Current> notBetween(MetaField<? extends MetaClass<Other>, ? extends Number> otherStartField, MetaField<? extends MetaClass<Other>, ? extends Number> otherEndField) {
         this.operator = NOT_BETWEEN;
-        fields.add(cast(otherStart));
-        fields.add(cast(otherEnd));
+        fields.add(cast(otherStartField));
+        fields.add(cast(otherEndField));
         return rule;
     }
 }
