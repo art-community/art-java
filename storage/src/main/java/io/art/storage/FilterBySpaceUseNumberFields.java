@@ -2,13 +2,12 @@ package io.art.storage;
 
 import io.art.meta.model.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.storage.StorageConstants.FilterOperator.*;
 
 @Getter
 public class FilterBySpaceUseNumberFields<Current, Other> extends FilterBySpaceUseFields<Current, Other, Number> {
-    FilterBySpaceUseNumberFields(FilterRule<Current> rule, MetaField<? extends MetaClass<Current>, ? extends Number> field) {
-        super(rule, cast(field));
+    FilterBySpaceUseNumberFields(FilterRule<Current> rule) {
+        super(rule);
     }
 
     public FilterRule<Current> moreThan(MetaField<? extends MetaClass<Other>, ? extends Number> other) {

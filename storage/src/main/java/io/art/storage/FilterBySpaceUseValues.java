@@ -1,6 +1,5 @@
 package io.art.storage;
 
-import io.art.meta.model.*;
 import io.art.storage.StorageConstants.*;
 import lombok.*;
 import static io.art.core.factory.ListFactory.*;
@@ -11,43 +10,42 @@ import java.util.*;
 
 @Getter
 @RequiredArgsConstructor(access = PACKAGE)
-public class FilterBySpaceUseValues<Current, Other, FieldType> {
-    protected final FilterRule<Current> rule;
-    protected final MetaField<? extends MetaClass<Other>, ?> field;
+public class FilterBySpaceUseValues<Type, FieldType> {
+    protected final FilterRule<Type> rule;
     protected FilterOperator operator;
     protected final List<FieldType> values = linkedList();
 
-    public FilterRule<Current> equal(FieldType value) {
+    public FilterRule<Type> equal(FieldType value) {
         operator = EQUALS;
         this.values.add(value);
         return rule;
     }
 
-    public FilterRule<Current> notEqual(FieldType value) {
+    public FilterRule<Type> notEqual(FieldType value) {
         operator = NOT_EQUALS;
         this.values.add(value);
         return rule;
     }
 
-    public FilterRule<Current> in(List<FieldType> values) {
+    public FilterRule<Type> in(List<FieldType> values) {
         this.operator = IN;
         this.values.addAll(values);
         return rule;
     }
 
-    public FilterRule<Current> notIn(List<FieldType> values) {
+    public FilterRule<Type> notIn(List<FieldType> values) {
         this.operator = NOT_IN;
         this.values.addAll(values);
         return rule;
     }
 
     @SafeVarargs
-    public final FilterRule<Current> in(FieldType... values) {
+    public final FilterRule<Type> in(FieldType... values) {
         return in(asList(values));
     }
 
     @SafeVarargs
-    public final FilterRule<Current> notIn(FieldType... values) {
+    public final FilterRule<Type> notIn(FieldType... values) {
         return notIn(asList(values));
     }
 }

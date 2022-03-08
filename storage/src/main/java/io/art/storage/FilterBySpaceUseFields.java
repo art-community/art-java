@@ -13,7 +13,6 @@ import java.util.*;
 @RequiredArgsConstructor(access = PACKAGE)
 public class FilterBySpaceUseFields<Current, Other, FieldType> {
     protected final FilterRule<Current> rule;
-    protected final MetaField<? extends MetaClass<Current>, FieldType> field;
     protected FilterOperator operator;
     protected final List<MetaField<? extends MetaClass<Other>, ?>> fields = linkedList();
 

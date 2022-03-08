@@ -6,8 +6,8 @@ import static io.art.storage.StorageConstants.FilterOperator.*;
 
 @Getter
 public class FilterBySpaceUseStringFields<Current, Other> extends FilterBySpaceUseFields<Current, Other, String> {
-    FilterBySpaceUseStringFields(FilterRule<Current> rule, MetaField<? extends MetaClass<Current>, String> field) {
-        super(rule, field);
+    FilterBySpaceUseStringFields(FilterRule<Current> rule) {
+        super(rule);
     }
 
     public FilterRule<Current> startsWith(MetaField<? extends MetaClass<Other>, String> other) {
