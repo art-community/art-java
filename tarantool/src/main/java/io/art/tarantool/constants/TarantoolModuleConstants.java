@@ -106,6 +106,70 @@ public interface TarantoolModuleConstants {
 
     }
 
+    public class StreamProtocol {
+        public static class Filters {
+            public int filterEquals = 1;
+            public int filterNotEquals = 2;
+            public int filterMore = 3;
+            public int filterMoreEquals = 4;
+            public int filterLess = 5;
+            public int filterLessEquals = 6;
+            public int filterBetween = 7;
+            public int filterNotBetween = 8;
+            public int filterIn = 9;
+            public int filterNotIn = 10;
+            public int filterStartsWith = 11;
+            public int filterEndsWith = 12;
+            public int filterContains = 13;
+        }
+
+        public static class Conditions {
+            public int conditionAnd = 1;
+            public int conditionOr = 2;
+        }
+
+        public static class FilterModes {
+            public int filterBySpace = 1;
+            public int filterByIndex = 2;
+            public int filterByField = 3;
+            public int filterByFunction = 4;
+            public int nestedFilter = 5;
+        }
+
+        public static class FilterExpressions {
+            public int filterExpressionField = 1;
+            public int filterExpressionValue = 2;
+        }
+
+        public static class MappingModes {
+            public int mapBySpace = 1;
+            public int mapByIndex = 2;
+            public int mapByFunction = 3;
+            public int mapByField = 4;
+        }
+
+        public static class Comparators {
+            public int comparatorMore = 1;
+            public int comparatorLess = 2;
+        }
+
+        public static class ProcessingFunctions {
+            public int processingLimit = 1;
+            public int processingOffset = 2;
+            public int processingFilter = 3;
+            public int processingSort = 4;
+            public int processingDistinct = 5;
+            public int processingMap = 6;
+        }
+
+        public static class TerminatingFunctions {
+            public int terminatingCollect = 1;
+            public int terminatingCount = 2;
+            public int terminatingAll = 3;
+            public int terminatingAny = 4;
+        }
+    }
+
     interface ProcessingOptions {
         ImmutableStringValue LIMIT = newString("limit");
         ImmutableStringValue OFFSET = newString("offset");
