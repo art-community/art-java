@@ -64,42 +64,42 @@ public class FilterBySpaceImplementation<Current, Other> implements FilterBySpac
     }
 
     @Override
-    public <FieldType> FilterBySpaceUseFieldsImplementation<Current, Other, FieldType> currentField(MetaField<? extends MetaClass<Current>, FieldType> currentField) {
+    public <FieldType> FilterBySpaceUseFields<Current, Other, FieldType> currentField(MetaField<? extends MetaClass<Current>, FieldType> currentField) {
         expressionType = FIELD;
         this.currentField = currentField;
         return cast(bySpaceUseFields);
     }
 
     @Override
-    public FilterBySpaceUseStringFieldsImplementation<Current, Other> currentString(MetaField<? extends MetaClass<Current>, String> currentField) {
+    public FilterBySpaceUseStringFields<Current, Other> currentString(MetaField<? extends MetaClass<Current>, String> currentField) {
         expressionType = STRING_FIELD;
         this.currentField = currentField;
         return bySpaceUseStringFields;
     }
 
     @Override
-    public FilterBySpaceUseNumberFieldsImplementation<Current, Other> currentNumber(MetaField<? extends MetaClass<Current>, ? extends Number> currentField) {
+    public FilterBySpaceUseNumberFields<Current, Other> currentNumber(MetaField<? extends MetaClass<Current>, ? extends Number> currentField) {
         expressionType = NUMBER_FIELD;
         this.currentField = currentField;
         return bySpaceUseNumberFields;
     }
 
     @Override
-    public FilterBySpaceUseNumbersImplementation<Current> otherNumber(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
+    public FilterBySpaceUseNumbers<Current> otherNumber(MetaField<? extends MetaClass<Other>, ? extends Number> otherField) {
         expressionType = NUMBER_VALUE;
         this.otherField = otherField;
         return bySpaceUseNumbers;
     }
 
     @Override
-    public FilterBySpaceUseStringsImplementation<Current> otherString(MetaField<? extends MetaClass<Other>, String> otherField) {
+    public FilterBySpaceUseStrings<Current> otherString(MetaField<? extends MetaClass<Other>, String> otherField) {
         expressionType = STRING_VALUE;
         this.otherField = otherField;
         return bySpaceUseStrings;
     }
 
     @Override
-    public <FieldType> FilterBySpaceUseValuesImplementation<Current, FieldType> otherField(MetaField<? extends MetaClass<Other>, FieldType> otherField) {
+    public <FieldType> FilterBySpaceUseValues<Current, FieldType> otherField(MetaField<? extends MetaClass<Other>, FieldType> otherField) {
         expressionType = VALUE;
         this.otherField = otherField;
         return cast(bySpaceUseValues);
