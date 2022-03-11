@@ -43,8 +43,10 @@ public class TestTarantoolInstanceManager {
     }
 
     public static void shutdownStorage() {
+        Path pid = get(STORAGE_DIRECTORY).resolve(STORAGE_PID);
+        if (!pid.toFile().exists()) return;
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
-                KILL_COMMAND + readFile(get(STORAGE_DIRECTORY).resolve(STORAGE_PID)) +
+                KILL_COMMAND + readFile(pid) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] command = {
                 BASH,
