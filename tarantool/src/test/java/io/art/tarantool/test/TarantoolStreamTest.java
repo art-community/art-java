@@ -341,6 +341,41 @@ public class TarantoolStreamTest {
 
     }
 
+    @Test
+    public void testFilterJoinKey() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
+                generateTestingModel().toBuilder().f1(2).f16("test 2").f9(1).build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").f9(1).build(),
+                generateTestingModel().toBuilder().f1(4).f16("test 3").f9(2).build()
+        );
+        List<OtherSpace> otherData = fixedArrayOf(
+                new OtherSpace(1, "test", 1),
+                new OtherSpace(2, "test 3", 2)
+        );
+        current().insert(data);
+        other().insert(otherData);
+        ImmutableArray<TestingMetaModel> result = current().stream()
+                .filter(filter -> filter
+                        .bySpace(otherSpace(), testingMetaModel().f9Field())
+                        .currentString(testingMetaModel().f16Field())
+                        .equal(otherSpace().valueField()))
+                .collect();
+        assertEquals(3, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+        data.get(3).assertEquals(result.get(2));
+
+        result = current().stream()
+                .filter(filter -> filter
+                        .bySpace(otherSpace(), testingMetaModel().f9Field())
+                        .otherField(otherSpace().valueField())
+                        .equal("test 3"))
+                .collect();
+        assertEquals(1, result.size());
+        data.get(3).assertEquals(result.get(0));
+    }
+
     private static SpaceService<Integer, TestingMetaModel> current() {
         return Tarantool.tarantool().space(TestingMetaModel.class);
     }

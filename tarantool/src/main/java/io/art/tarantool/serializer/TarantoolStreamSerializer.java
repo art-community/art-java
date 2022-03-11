@@ -141,6 +141,7 @@ public class TarantoolStreamSerializer {
                 ? new FilterExpressionCacheKey(spaceName, bySpace.getMappingKeyField(), emptyList())
                 : new FilterExpressionCacheKey(spaceName, null, cast(bySpace.getMappingIndexedFields()));
         List<ImmutableValue> expressions = computeIfAbsent(expressionsCache, key, ListFactory::linkedList);
+        List<ImmutableValue> expresion = linkedList();
         switch (bySpace.getExpressionType()) {
             case FIELD:
                 FilterBySpaceUseFieldsImplementation<?, ?, ?> bySpaceUseFields = bySpace.getBySpaceUseFields();
@@ -149,11 +150,11 @@ public class TarantoolStreamSerializer {
                         .map(field -> serializeValue(integerType(), field.index() + 1))
                         .collect(listCollector())
                 );
-                expressions.add(filterExpressions.filterExpressionField);
-                expressions.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
-                expressions.add(filters.filtersMapping.get(bySpaceUseFields.getOperator()));
-                expressions.add(newInteger(bySpace.getCurrentField().index() + 1));
-                expressions.add(expressionFields);
+                expresion.add(filterExpressions.filterExpressionField);
+                expresion.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+                expresion.add(filters.filtersMapping.get(bySpaceUseFields.getOperator()));
+                expresion.add(newInteger(bySpace.getCurrentField().index() + 1));
+                expresion.add(expressionFields);
                 break;
             case STRING_FIELD:
                 FilterBySpaceUseStringFieldsImplementation<?, ?> bySpaceUseStringFields = bySpace.getBySpaceUseStringFields();
@@ -162,11 +163,11 @@ public class TarantoolStreamSerializer {
                         .map(field -> serializeValue(integerType(), field.index() + 1))
                         .collect(listCollector())
                 );
-                expressions.add(filterExpressions.filterExpressionField);
-                expressions.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
-                expressions.add(filters.filtersMapping.get(bySpaceUseStringFields.getOperator()));
-                expressions.add(newInteger(bySpace.getCurrentField().index() + 1));
-                expressions.add(expressionFields);
+                expresion.add(filterExpressions.filterExpressionField);
+                expresion.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+                expresion.add(filters.filtersMapping.get(bySpaceUseStringFields.getOperator()));
+                expresion.add(newInteger(bySpace.getCurrentField().index() + 1));
+                expresion.add(expressionFields);
                 break;
             case NUMBER_FIELD:
                 FilterBySpaceUseNumberFieldsImplementation<?, ?> bySpaceUseNumberFields = bySpace.getBySpaceUseNumberFields();
@@ -175,40 +176,41 @@ public class TarantoolStreamSerializer {
                         .map(field -> serializeValue(integerType(), field.index() + 1))
                         .collect(listCollector())
                 );
-                expressions.add(filterExpressions.filterExpressionField);
-                expressions.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
-                expressions.add(filters.filtersMapping.get(bySpaceUseNumberFields.getOperator()));
-                expressions.add(newInteger(bySpace.getCurrentField().index() + 1));
-                expressions.add(expressionFields);
+                expresion.add(filterExpressions.filterExpressionField);
+                expresion.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+                expresion.add(filters.filtersMapping.get(bySpaceUseNumberFields.getOperator()));
+                expresion.add(newInteger(bySpace.getCurrentField().index() + 1));
+                expresion.add(expressionFields);
                 break;
             case VALUE:
                 FilterBySpaceUseValuesImplementation<?, ?> bySpaceUseValues = bySpace.getBySpaceUseValues();
                 ImmutableArrayValue expressionValues = serializeValues(bySpace.getOtherField().type(), cast(bySpaceUseValues.getValues()));
-                expressions.add(filterExpressions.filterExpressionValue);
-                expressions.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
-                expressions.add(filters.filtersMapping.get(bySpaceUseValues.getOperator()));
-                expressions.add(newInteger(bySpace.getOtherField().index() + 1));
-                expressions.add(expressionValues);
+                expresion.add(filterExpressions.filterExpressionValue);
+                expresion.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+                expresion.add(filters.filtersMapping.get(bySpaceUseValues.getOperator()));
+                expresion.add(newInteger(bySpace.getOtherField().index() + 1));
+                expresion.add(expressionValues);
                 break;
             case STRING_VALUE:
                 FilterBySpaceUseStringsImplementation<?> bySpaceUseStrings = bySpace.getBySpaceUseStrings();
                 expressionValues = serializeValues(bySpace.getOtherField().type(), cast(bySpaceUseStrings.getValues()));
-                expressions.add(filterExpressions.filterExpressionValue);
-                expressions.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
-                expressions.add(filters.filtersMapping.get(bySpaceUseStrings.getOperator()));
-                expressions.add(newInteger(bySpace.getOtherField().index() + 1));
-                expressions.add(expressionValues);
+                expresion.add(filterExpressions.filterExpressionValue);
+                expresion.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+                expresion.add(filters.filtersMapping.get(bySpaceUseStrings.getOperator()));
+                expresion.add(newInteger(bySpace.getOtherField().index() + 1));
+                expresion.add(expressionValues);
                 break;
             case NUMBER_VALUE:
                 FilterBySpaceUseNumbersImplementation<?> bySpaceUseNumbers = bySpace.getBySpaceUseNumbers();
                 expressionValues = serializeValues(bySpace.getOtherField().type(), cast(bySpaceUseNumbers.getValues()));
-                expressions.add(filterExpressions.filterExpressionValue);
-                expressions.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
-                expressions.add(filters.filtersMapping.get(bySpaceUseNumbers.getOperator()));
-                expressions.add(newInteger(bySpace.getOtherField().index() + 1));
-                expressions.add(expressionValues);
+                expresion.add(filterExpressions.filterExpressionValue);
+                expresion.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+                expresion.add(filters.filtersMapping.get(bySpaceUseNumbers.getOperator()));
+                expresion.add(newInteger(bySpace.getOtherField().index() + 1));
+                expresion.add(expressionValues);
                 break;
         }
+        expressions.add(newArray(expresion));
     }
 
     private ImmutableArrayValue serializeMap(Mapper<?, ?> mapper) {
