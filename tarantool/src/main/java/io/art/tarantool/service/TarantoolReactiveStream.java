@@ -25,7 +25,6 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         serializer = new TarantoolStreamSerializer(service.writer);
     }
 
-
     @Override
     public Flux<ModelType> collect() {
         ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCollect;
