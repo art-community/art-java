@@ -57,7 +57,8 @@ public class TarantoolStreamSerializer {
                     serialized.add(newArray(processingFunctions.processingSort, serializeSort(cast(operator.getValue()))));
                     break;
                 case FILTER:
-                    serialized.add(newArray(processingFunctions.processingFilter, serializeFilter(cast(operator.getValue()))));
+                    FilterImplementation<?> filter = cast(operator.getValue());
+                    serialized.add(newArray(processingFunctions.processingFilter, serializeFilter(filter.getParts())));
                     break;
                 case MAP:
                     serialized.add(newArray(processingFunctions.processingMap, serializeMap(cast(operator.getValue()))));

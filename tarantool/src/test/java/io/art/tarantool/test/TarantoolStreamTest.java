@@ -8,8 +8,10 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
+import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.meta.module.MetaActivator.*;
+import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
@@ -18,6 +20,8 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.transport.module.TransportActivator.*;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.*;
 
 public class TarantoolStreamTest {
     @BeforeAll
@@ -58,7 +62,7 @@ public class TarantoolStreamTest {
 
     @AfterAll
     public static void cleanup() {
-        shutdownStorage();
+        //shutdownStorage();
         shutdown();
     }
 
@@ -69,8 +73,36 @@ public class TarantoolStreamTest {
     }
 
     @Test
-    public void testStreamByNumbers() {
+    public void testAny() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().insert(data);
+        assertTrue(current().stream().any(filter -> filter.byNumber(testingMetaModel().f1Field()).equal(2)));
+    }
 
+    @Test
+    public void testAll() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f16("test").build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").build()
+        );
+        current().insert(data);
+        assertTrue(current().stream().all(filter -> filter.byString(testingMetaModel().f16Field()).equal("test")));
+    }
+
+    @Test
+    public void testNone() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f16("test").build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").build()
+        );
+        current().insert(data);
+        assertTrue(current().stream().none(filter -> filter.byString(testingMetaModel().f16Field()).equal("string")));
     }
 
     private static SpaceService<Integer, TestingMetaModel> current() {
