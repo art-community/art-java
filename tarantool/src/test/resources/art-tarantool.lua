@@ -354,22 +354,25 @@ local stream = {
         comparatorLess = 2,
     },
     processingFunctions = {
-        limit = 1,
-        offset = 2,
-        filter = 3,
-        sort = 4,
-        distinct = 5,
-        map = 6
+        processingLimit = 1,
+        processingOffset = 2,
+        processingFilter = 3,
+        processingSort = 4,
+        processingDistinct = 5,
+        processingMap = 6
     },
     terminatingFunctions = {
-        collect = 1,
-        count = 2,
-        all = 3,
-        any = 4
+        terminatingCollect = 1,
+        terminatingCount = 2,
+        terminatingAll = 3,
+        terminatingAny = 4,
+        terminatingNone = 5
     }
 }
 return {
-    stream = stream
+    stream = stream,
+
+    table = "table"
 }
 end
 end
@@ -377,12 +380,14 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.deep-equal" ] = function( ... ) local arg = _G.arg;
+local constants = require("art.storage.constants")
+
 return function(first, second)
     if first == second then
         return true
     end
 
-    if type(first) == "table" and type(second) == "table" then
+    if type(first) == constants.table and type(second) == constants.table then
         for key1, value1 in pairs(first) do
             local value2 = second[key1]
 
@@ -391,7 +396,7 @@ return function(first, second)
             end
 
             if value1 ~= value2 then
-                if type(value1) == "table" and type(value2) == "table" then
+                if type(value1) == constants.table and type(value2) == constants.table then
                     if not deepEqual(value1, value2) then
                         return false
                     end
@@ -761,7 +766,7 @@ end
 
 local terminatingFunctors = {}
 
-terminatingFunctors[constants.terminatingFunctions.collect] = function(generator, parameter, state)
+terminatingFunctors[constants.terminatingFunctions.terminatingCollect] = function(generator, parameter, state)
     local results = {}
     for _, item in functional.iter(generator, parameter, state) do
         table.insert(results, item)
@@ -769,31 +774,35 @@ terminatingFunctors[constants.terminatingFunctions.collect] = function(generator
     return results
 end
 
-local collect = terminatingFunctors[constants.terminatingFunctions.collect]
+local collect = terminatingFunctors[constants.terminatingFunctions.terminatingCollect]
 
 terminatingFunctors[constants.terminatingFunctions.count] = function(generator, parameter, state)
     return functional.length(generator, parameter, state)
 end
 
-terminatingFunctors[constants.terminatingFunctions.all] = function(generator, parameter, state, request)
+terminatingFunctors[constants.terminatingFunctions.terminatingAll] = function(generator, parameter, state, request)
     return functional.all(streamFilter.selector(unpack(request)), generator, parameter, state)
 end
 
-terminatingFunctors[constants.terminatingFunctions.any] = function(generator, parameter, state, request)
+terminatingFunctors[constants.terminatingFunctions.terminatingAny] = function(generator, parameter, state, request)
     return functional.any(streamFilter.selector(unpack(request)), generator, parameter, state)
+end
+
+terminatingFunctors[constants.terminatingFunctions.terminatingNone] = function(generator, parameter, state, request)
+    return not functional.any(streamFilter.selector(unpack(request)), generator, parameter, state)
 end
 
 local processingFunctors = {}
 
-processingFunctors[constants.processingFunctions.limit] = function(generator, parameter, state, count)
+processingFunctors[constants.processingFunctions.processingLimit] = function(generator, parameter, state, count)
     return functional.take_n(count, generator, parameter, state)
 end
 
-processingFunctors[constants.processingFunctions.offset] = function(generator, parameter, state, count)
+processingFunctors[constants.processingFunctions.processingOffset] = function(generator, parameter, state, count)
     return functional.drop_n(count, generator, parameter, state)
 end
 
-processingFunctors[constants.processingFunctions.distinct] = function(generator, parameter, state, field)
+processingFunctors[constants.processingFunctions.processingDistinct] = function(generator, parameter, state, field)
     local result = {}
     for _, item in functional.iter(generator, parameter, state) do
         result[item[field]] = item
@@ -801,15 +810,15 @@ processingFunctors[constants.processingFunctions.distinct] = function(generator,
     return pairs(result)
 end
 
-processingFunctors[constants.processingFunctions.sort] = function(generator, parameter, state, request)
+processingFunctors[constants.processingFunctions.processingSort] = function(generator, parameter, state, request)
     local values = collect(generator, parameter, state)
     table.sort(values, comparatorSelector(unpack(request)))
     return functional.iter(values)
 end
 
-processingFunctors[constants.processingFunctions.filter] = streamFilter.functor
+processingFunctors[constants.processingFunctions.processingFilter] = streamFilter.functor
 
-processingFunctors[constants.processingFunctions.map] = streamMapper
+processingFunctors[constants.processingFunctions.processingMap] = streamMapper
 
 return {
     processingFunctor = function(stream)
@@ -908,11 +917,11 @@ end
 
 local applyCondition = function(condition, currentResult, newResult)
     if condition == constants.conditions.conditionAnd then
-        return currentResult & newResult
+        return currentResult and newResult
     end
 
     if condition == constants.conditions.conditionOr then
-        return currentResult | newResult
+        return currentResult or newResult
     end
 end
 
@@ -984,10 +993,10 @@ processFilters = function(filtering, inputFilters)
         if mode == constants.filterModes.filterByIndex then
             local parameters = filter[3]
             local otherSpace = parameters[1]
-            local currentFields = parameters[2]
+            local filteringFields = parameters[2]
             local otherIndex = parameters[3]
             local indexKeys = {}
-            for _, keyField in pairs(currentFields) do
+            for _, keyField in pairs(filteringFields) do
                 table.insert(indexKeys, filtering[keyField])
             end
             if next(indexKeys) ~= nil then
