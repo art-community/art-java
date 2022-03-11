@@ -18,8 +18,11 @@
 
 package io.art.tarantool.constants;
 
+import io.art.core.collection.*;
+import io.art.storage.constants.StorageConstants.*;
 import lombok.*;
 import org.msgpack.value.*;
+import static io.art.storage.constants.StorageConstants.FilterOperator.*;
 import static java.lang.Integer.*;
 import static java.time.Duration.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -121,6 +124,22 @@ public interface TarantoolModuleConstants {
             public ImmutableIntegerValue filterStartsWith = newInteger(11);
             public ImmutableIntegerValue filterEndsWith = newInteger(12);
             public ImmutableIntegerValue filterContains = newInteger(13);
+
+            public ImmutableMap<FilterOperator, ImmutableIntegerValue> filtersMapping = ImmutableMap.<FilterOperator, ImmutableIntegerValue>immutableMapBuilder()
+                    .put(EQUALS, filterEquals)
+                    .put(NOT_EQUALS, filterNotEquals)
+                    .put(MORE, filterMore)
+                    .put(MORE_EQUALS, filterMoreEquals)
+                    .put(LESS, filterLess)
+                    .put(LESS_EQUALS, filterLessEquals)
+                    .put(BETWEEN, filterBetween)
+                    .put(NOT_BETWEEN, filterNotBetween)
+                    .put(IN, filterIn)
+                    .put(NOT_IN, filterNotIn)
+                    .put(STARTS_WITH, filterStartsWith)
+                    .put(ENDS_WITH, filterEndsWith)
+                    .put(CONTAINS, filterContains)
+                    .build();
         }
 
         public final Filters filters = new Filters();
