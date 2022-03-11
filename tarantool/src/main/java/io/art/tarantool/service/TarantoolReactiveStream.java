@@ -69,7 +69,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingNone;
+        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingAny;
         Mono<Value> result = service
                 .clients
                 .immutable()
