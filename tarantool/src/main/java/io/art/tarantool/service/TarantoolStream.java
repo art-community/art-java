@@ -7,6 +7,7 @@ import io.art.storage.filter.model.*;
 import io.art.storage.sorter.model.*;
 import io.art.storage.stream.*;
 import lombok.*;
+import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
@@ -110,5 +111,10 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     @Override
     public boolean any(Consumer<Filter<Type>> filter) {
         return orElse(block(stream.any(filter)), false);
+    }
+
+    @Override
+    public boolean none(Consumer<Filter<Type>> filter) {
+        return orElse(block(stream.none(filter)), false);
     }
 }

@@ -93,4 +93,6 @@ public abstract class SpaceStream<Type> {
     public abstract boolean all(Consumer<Filter<Type>> filter);
 
     public abstract boolean any(Consumer<Filter<Type>> filter);
+
+    public abstract boolean none(Consumer<Filter<Type>> filter);
 }

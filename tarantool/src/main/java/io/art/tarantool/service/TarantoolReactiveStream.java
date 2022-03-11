@@ -131,7 +131,6 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         List<FilterPart> parts = filter.getParts();
         for (FilterPart part : parts) {
             FilterCondition condition = part.getCondition();
-            STREAM_PROTOCOL.filterModes.filterByField
             switch (part.getMode()) {
                 case FIELD:
                     part.getByField();
