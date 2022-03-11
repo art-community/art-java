@@ -73,7 +73,7 @@ public class TarantoolStreamTest {
 
     @AfterAll
     public static void cleanup() {
-        //shutdownStorage();
+        shutdownStorage();
         shutdown();
     }
 
