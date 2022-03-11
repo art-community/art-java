@@ -956,7 +956,7 @@ processFilters = function(filtering, inputFilters)
         local mode = filter[2]
 
         if mode == constants.filterModes.nestedFilter then
-            result = applyCondition(condition, result, processFilters(filter[3]));
+            result = applyCondition(condition, result, processFilters(filtering, filter[3]));
         end
 
         if mode == constants.filterModes.filterByField then

@@ -376,6 +376,50 @@ public class TarantoolStreamTest {
         data.get(3).assertEquals(result.get(0));
     }
 
+    @Test
+    public void testFilterJoinKeyConditioned() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
+                generateTestingModel().toBuilder().f1(2).f16("test 2").f9(1).build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").f9(1).build(),
+                generateTestingModel().toBuilder().f1(4).f16("test 3").f9(2).build(),
+                generateTestingModel().toBuilder().f1(5).f16("any").f9(3).build()
+        );
+        List<OtherSpace> otherData = fixedArrayOf(
+                new OtherSpace(1, "test", 1),
+                new OtherSpace(2, "test 3", 2),
+                new OtherSpace(3, "test 4", 3),
+                new OtherSpace(4, "test 4", 4)
+        );
+        current().insert(data);
+        other().insert(otherData);
+        ImmutableArray<TestingMetaModel> result = current().stream()
+                .filter(filter -> filter
+                        .bySpace(otherSpace(), testingMetaModel().f9Field())
+                        .currentString(testingMetaModel().f16Field())
+                        .equal(otherSpace().valueField())
+
+                        .or(nested -> nested
+                                .bySpace(otherSpace(), testingMetaModel().f9Field())
+                                .otherField(otherSpace().valueField())
+                                .equal("test 4")
+
+                                .and()
+                                .bySpace(otherSpace(), testingMetaModel().f9Field())
+                                .otherField(otherSpace().numberField())
+                                .equal(3)
+                        )
+                )
+
+                .collect();
+
+        assertEquals(4, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+        data.get(3).assertEquals(result.get(2));
+        data.get(4).assertEquals(result.get(3));
+    }
+
     private static SpaceService<Integer, TestingMetaModel> current() {
         return Tarantool.tarantool().space(TestingMetaModel.class);
     }

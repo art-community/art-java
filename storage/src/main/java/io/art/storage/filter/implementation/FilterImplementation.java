@@ -78,17 +78,17 @@ public class FilterImplementation<Type> implements Filter<Type> {
         FilterImplementation<Type> resolved = new FilterImplementation<>(AND, linkedList());
         nested.accept(resolved);
         NestedFilter filter = new NestedFilter(resolved.parts);
-        FilterPart part = new FilterPart(currentCondition, FilterMode.NESTED);
+        FilterPart part = new FilterPart(AND, FilterMode.NESTED);
         part.nested = filter;
         parts.add(part);
         return this;
     }
 
     Filter<Type> or(Consumer<Filter<Type>> nested) {
-        FilterImplementation<Type> resolved = new FilterImplementation<>(OR, linkedList());
+        FilterImplementation<Type> resolved = new FilterImplementation<>(AND, linkedList());
         nested.accept(resolved);
         NestedFilter filter = new NestedFilter(resolved.parts);
-        FilterPart part = new FilterPart(currentCondition, FilterMode.NESTED);
+        FilterPart part = new FilterPart(OR, FilterMode.NESTED);
         part.nested = filter;
         parts.add(part);
         return this;
