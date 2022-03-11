@@ -257,9 +257,9 @@ public class TarantoolStreamTest {
     @Test
     public void testFilterField() {
         List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).f16("started").f9(1).build(),
-                generateTestingModel().toBuilder().f1(2).f16("test").f9(3).build(),
-                generateTestingModel().toBuilder().f1(3).f16("end").f9(2).build()
+                generateTestingModel().toBuilder().f1(1).f16("started").f9(2).build(),
+                generateTestingModel().toBuilder().f1(2).f16("test").f9(4).build(),
+                generateTestingModel().toBuilder().f1(3).f16("end").f9(6).build()
         );
         current().insert(data);
 
@@ -292,6 +292,37 @@ public class TarantoolStreamTest {
         result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).notIn("started", "test")).collect();
         assertEquals(1, result.size());
         data.get(2).assertEquals(result.get(0));
+
+        result = current().stream().filter(filter -> filter.byNumber(testingMetaModel().f9Field()).lessThan(5)).collect();
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+
+        result = current().stream().filter(filter -> filter.byNumber(testingMetaModel().f9Field()).lessThanEqual(6)).collect();
+        assertEquals(3, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+        data.get(2).assertEquals(result.get(2));
+
+        result = current().stream().filter(filter -> filter.byNumber(testingMetaModel().f9Field()).moreThan(2)).collect();
+        assertEquals(2, result.size());
+        data.get(1).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+
+        result = current().stream().filter(filter -> filter.byNumber(testingMetaModel().f9Field()).moreThanEquals(1)).collect();
+        assertEquals(3, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+        data.get(2).assertEquals(result.get(2));
+
+        result = current().stream().filter(filter -> filter.byNumber(testingMetaModel().f9Field()).between(3, 5)).collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = current().stream().filter(filter -> filter.byNumber(testingMetaModel().f9Field()).notBetween(3, 5)).collect();
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
     }
 
     private static SpaceService<Integer, TestingMetaModel> current() {
