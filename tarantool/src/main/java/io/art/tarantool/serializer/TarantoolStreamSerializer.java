@@ -73,7 +73,6 @@ public class TarantoolStreamSerializer {
                     break;
                 case SPACE:
                     FilterBySpaceImplementation<?, ?> bySpace = part.getBySpace();
-
                     break;
                 case INDEX:
                     FilterBySpaceImplementation<?, ?> byIndex = part.getByIndex();
@@ -86,8 +85,19 @@ public class TarantoolStreamSerializer {
         return newArray(serialized);
     }
 
-    private static ImmutableArrayValue serializeMap(Mapper<?, ?> filter) {
-        return null;
+    private static ImmutableArrayValue serializeMap(Mapper<?, ?> mapper) {
+        List<ImmutableArrayValue> serialized = linkedList();
+        switch (mapper.getMode()) {
+            case FIELD:
+                break;
+            case FUNCTION:
+                break;
+            case SPACE:
+                break;
+            case INDEX:
+                break;
+        }
+        return newArray(serialized);
     }
 
 
