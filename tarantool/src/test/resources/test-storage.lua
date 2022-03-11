@@ -27,3 +27,8 @@ testMapper = function(data)
     return data[16] .. " - mapped"
 end
 box.schema.func.create("testMapper", { if_not_exists = true })
+
+testFilter = function(data)
+    return data[9] > 3
+end
+box.schema.func.create("testFilter", { if_not_exists = true })

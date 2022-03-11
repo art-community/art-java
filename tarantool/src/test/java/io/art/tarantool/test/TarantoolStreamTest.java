@@ -325,6 +325,22 @@ public class TarantoolStreamTest {
         data.get(2).assertEquals(result.get(1));
     }
 
+    @Test
+    public void testFilterFunction() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("started").f9(2).build(),
+                generateTestingModel().toBuilder().f1(2).f16("test").f9(4).build(),
+                generateTestingModel().toBuilder().f1(3).f16("end").f9(6).build()
+        );
+        current().insert(data);
+
+        ImmutableArray<TestingMetaModel> result = current().stream().filter(filter -> filter.byFunction(testStorage().testFilterMethod())).collect();
+        assertEquals(2, result.size());
+        data.get(1).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+
+    }
+
     private static SpaceService<Integer, TestingMetaModel> current() {
         return Tarantool.tarantool().space(TestingMetaModel.class);
     }

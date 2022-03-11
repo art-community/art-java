@@ -19,5 +19,5 @@ public interface Filter<Type> {
 
     <Other> FilterBySpace<Type, Other> byIndex(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?>... indexedFields);
 
-    FilterRule<Type> byFunction(MetaMethod<MetaClass<? extends Storage>, Boolean> function);
+    FilterRule<Type> byFunction(MetaMethod<? extends MetaClass<? extends Storage>, Boolean> function);
 }

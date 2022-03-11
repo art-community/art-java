@@ -941,6 +941,8 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaTestMapperMethod testMapperMethod = register(new MetaTestMapperMethod(this));
 
+              private final MetaTestFilterMethod testFilterMethod = register(new MetaTestFilterMethod(this));
+
               private MetaTestStorageClass() {
                 super(metaType(io.art.tarantool.test.model.TestStorage.class));
               }
@@ -959,6 +961,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaTestMapperMethod testMapperMethod() {
                 return testMapperMethod;
+              }
+
+              public MetaTestFilterMethod testFilterMethod() {
+                return testFilterMethod;
               }
 
               @Override
@@ -1006,6 +1012,8 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               public final class MetaTestMapperMethod extends InstanceMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage, java.lang.String> {
+                private final MetaParameter<io.art.tarantool.test.model.TestData> inputParameter = register(new MetaParameter<>(0, "input",metaType(io.art.tarantool.test.model.TestData.class)));
+
                 private MetaTestMapperMethod(MetaTestStorageClass owner) {
                   super("testMapper",metaType(java.lang.String.class),owner);
                 }
@@ -1013,13 +1021,41 @@ public class MetaTarantoolTest extends MetaLibrary {
                 @Override
                 public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance,
                     java.lang.Object[] arguments) throws Throwable {
-                  return instance.testMapper();
+                  return instance.testMapper((io.art.tarantool.test.model.TestData)(arguments[0]));
                 }
 
                 @Override
-                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance)
-                    throws Throwable {
-                  return instance.testMapper();
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance,
+                    java.lang.Object argument) throws Throwable {
+                  return instance.testMapper((io.art.tarantool.test.model.TestData)(argument));
+                }
+
+                public MetaParameter<io.art.tarantool.test.model.TestData> inputParameter() {
+                  return inputParameter;
+                }
+              }
+
+              public final class MetaTestFilterMethod extends InstanceMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage, Boolean> {
+                private final MetaParameter<io.art.tarantool.test.model.TestData> inputParameter = register(new MetaParameter<>(0, "input",metaType(io.art.tarantool.test.model.TestData.class)));
+
+                private MetaTestFilterMethod(MetaTestStorageClass owner) {
+                  super("testFilter",metaType(boolean.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.testFilter((io.art.tarantool.test.model.TestData)(arguments[0]));
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance,
+                    java.lang.Object argument) throws Throwable {
+                  return instance.testFilter((io.art.tarantool.test.model.TestData)(argument));
+                }
+
+                public MetaParameter<io.art.tarantool.test.model.TestData> inputParameter() {
+                  return inputParameter;
                 }
               }
 
@@ -1030,12 +1066,15 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private final Function<java.lang.Object, java.lang.Object> testMapperInvocation;
 
+                private final Function<java.lang.Object, java.lang.Object> testFilterInvocation;
+
                 public MetaTestStorageProxy(
                     Map<MetaMethod<MetaClass<?>, ?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                   super(invocations);
                   testSubscriptionInvocation = invocations.get(testSubscriptionMethod);
                   testChannelInvocation = invocations.get(testChannelMethod);
                   testMapperInvocation = invocations.get(testMapperMethod);
+                  testFilterInvocation = invocations.get(testFilterMethod);
                 }
 
                 @Override
@@ -1049,8 +1088,13 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 @Override
-                public java.lang.String testMapper() {
-                  return (java.lang.String)(testMapperInvocation.apply(null));
+                public java.lang.String testMapper(io.art.tarantool.test.model.TestData input) {
+                  return (java.lang.String)(testMapperInvocation.apply(input));
+                }
+
+                @Override
+                public boolean testFilter(io.art.tarantool.test.model.TestData input) {
+                  return (boolean)(testFilterInvocation.apply(input));
                 }
               }
             }

@@ -8,5 +8,7 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
 
     Flux<String> testChannel();
 
-    String testMapper();
+    String testMapper(TestData input);
+
+    boolean testFilter(TestData input);
 }

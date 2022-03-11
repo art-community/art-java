@@ -66,7 +66,7 @@ public class FilterImplementation<Type> implements Filter<Type> {
     }
 
     @Override
-    public FilterRule<Type> byFunction(MetaMethod<MetaClass<? extends Storage>, Boolean> function) {
+    public FilterRule<Type> byFunction(MetaMethod<? extends MetaClass<? extends Storage>, Boolean> function) {
         FilterByFunctionImplementation<Type> filter = new FilterByFunctionImplementation<>(rule, function);
         FilterPart part = new FilterPart(currentCondition, FilterMode.FUNCTION);
         part.byFunction = filter;

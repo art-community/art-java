@@ -10,5 +10,5 @@ public class FilterByFunctionImplementation<Type> {
     @Delegate
     private final FilterRule<Type> rule;
     @Getter
-    private final MetaMethod<MetaClass<? extends Storage>, Boolean> function;
+    private final MetaMethod<? extends MetaClass<? extends Storage>, Boolean> function;
 }
