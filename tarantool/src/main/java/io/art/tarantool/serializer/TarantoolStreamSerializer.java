@@ -117,13 +117,9 @@ public class TarantoolStreamSerializer {
                 case INDEX:
                     serialized.add(filterModes.filterByIndex);
                     FilterBySpaceImplementation<?, ?> byIndex = part.getByIndex();
+                    List<MetaField<? extends MetaClass<?>, ?>> indexedFields = cast(byIndex.getMappingIndexedFields());
                     expressionKey = new FilterExpressionCacheKey(byIndex.getMappingSpace(), null, cast(byIndex.getMappingIndexedFields()));
-                    ImmutableArrayValue indexedFields = newArray(byIndex.getMappingIndexedFields()
-                            .stream()
-                            .map(indexedField -> serializeValue(integerType(), indexedField.index() + 1))
-                            .collect(listCollector())
-                    );
-                    serialized.add(newArray(spaceName(byIndex.getMappingSpace()), indexedFields));
+                    serialized.add(newArray(spaceName(byIndex.getMappingSpace()), indexName(indexedFields)));
                     serialized.add(newArray(expressionsCache.get(expressionKey)));
                     break;
             }
@@ -229,12 +225,8 @@ public class TarantoolStreamSerializer {
                 serialized.add(mappingModes.mapByIndex);
                 MapperBySpace<?, ?> byIndex = mapper.getByIndex();
                 serialized.add(spaceName(byIndex.getMappingSpace()));
-                ImmutableArrayValue indexedFields = newArray(byIndex.getMappingIndexedFields()
-                        .stream()
-                        .map(indexedField -> serializeValue(integerType(), indexedField.index() + 1))
-                        .collect(listCollector())
-                );
-                serialized.add(indexedFields);
+                List<MetaField<? extends MetaClass<?>, ?>> indexedFields = cast(byIndex.getMappingIndexedFields());
+                serialized.add(indexName(indexedFields));
                 break;
         }
         return newArray(serialized);

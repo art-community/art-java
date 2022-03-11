@@ -12,11 +12,11 @@ import java.util.*;
 @UtilityClass
 public class TarantoolNameFactory {
     @SafeVarargs
-    public static <ModelType> ImmutableStringValue indexName(MetaField<MetaClass<ModelType>, ?>... fields) {
+    public static <ModelType> ImmutableStringValue indexName(MetaField<? extends MetaClass<ModelType>, ?>... fields) {
         return newString(stream(fields).map(MetaField::name).collect(joining()));
     }
 
-    public static ImmutableStringValue indexName(List<MetaField<MetaClass<?>, ?>> fields) {
+    public static ImmutableStringValue indexName(List<MetaField<? extends MetaClass<?>, ?>> fields) {
         return newString(fields.stream().map(MetaField::name).collect(joining()));
     }
 
