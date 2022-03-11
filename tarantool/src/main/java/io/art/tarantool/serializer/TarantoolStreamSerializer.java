@@ -7,8 +7,11 @@ import io.art.storage.filter.implementation.*;
 import io.art.storage.mapper.*;
 import io.art.storage.sorter.implementation.*;
 import io.art.storage.stream.*;
+import io.art.tarantool.constants.TarantoolModuleConstants.StreamProtocol.Comparators;
+import io.art.tarantool.constants.TarantoolModuleConstants.StreamProtocol.*;
 import io.art.tarantool.descriptor.*;
-import lombok.experimental.*;
+import lombok.*;
+import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
@@ -18,29 +21,33 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
-@UtilityClass
+@RequiredArgsConstructor
 public class TarantoolStreamSerializer {
-    public static List<Value> serializeStream(TarantoolModelWriter writer, List<ProcessingOperator> operators) {
+    private final TarantoolModelWriter writer;
+    private final static ProcessingFunctions processingFunctions = STREAM_PROTOCOL.processingFunctions;
+    private final static Comparators comparators = STREAM_PROTOCOL.comparators;
+
+    public List<Value> serializeStream(List<ProcessingOperator> operators) {
         List<Value> serialized = linkedList();
         for (ProcessingOperator operator : operators) {
             switch (operator.getOperation()) {
                 case LIMIT:
-                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingLimit, serializeValue(writer, longPrimitiveType(), operator.getValue())));
+                    serialized.add(newArray(processingFunctions.processingLimit, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingOffset, serializeValue(writer, longPrimitiveType(), operator.getValue())));
+                    serialized.add(newArray(processingFunctions.processingOffset, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case DISTINCT:
-                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingDistinct));
+                    serialized.add(newArray(processingFunctions.processingDistinct));
                     break;
                 case SORT:
-                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingSort, serializeSort(cast(operator.getValue()))));
+                    serialized.add(newArray(processingFunctions.processingSort, serializeSort(cast(operator.getValue()))));
                     break;
                 case FILTER:
-                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingFilter, serializeFilter(cast(operator.getValue()))));
+                    serialized.add(newArray(processingFunctions.processingFilter, serializeFilter(cast(operator.getValue()))));
                     break;
                 case MAP:
-                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingMap, serializeMap(cast(operator.getValue()))));
+                    serialized.add(newArray(processingFunctions.processingMap, serializeMap(cast(operator.getValue()))));
                     break;
             }
         }
@@ -52,9 +59,9 @@ public class TarantoolStreamSerializer {
         MetaField<?, ?> field = sorter.getField();
         switch (order) {
             case ASCENDANT:
-                return newArray(STREAM_PROTOCOL.comparators.comparatorLess, newInteger(field.index() + 1));
+                return newArray(comparators.comparatorLess, newInteger(field.index() + 1));
             case DESCENDANT:
-                return newArray(STREAM_PROTOCOL.comparators.comparatorMore, newInteger(field.index() + 1));
+                return newArray(comparators.comparatorMore, newInteger(field.index() + 1));
         }
         throw new ImpossibleSituationException();
     }
@@ -69,7 +76,7 @@ public class TarantoolStreamSerializer {
                     part.getByField();
                     break;
                 case FUNCTION:
-                    FilterByFunctionImplementation<?> byFunction = part.getByFunction();
+                    FILTERBYFUNCTIONIMPLEMENTATION<?> byFunction = part.getByFunction();
                     break;
                 case SPACE:
                     FilterBySpaceImplementation<?, ?> bySpace = part.getBySpace();
@@ -101,11 +108,11 @@ public class TarantoolStreamSerializer {
     }
 
 
-    private static ImmutableArrayValue serializeFilterValues(TarantoolModelWriter writer, MetaType<?> type, List<Object> values) {
-        return newArray(values.stream().map(value -> serializeValue(writer, type, value)).collect(listCollector()));
+    private ImmutableArrayValue serializeFilterValues(MetaType<?> type, List<Object> values) {
+        return newArray(values.stream().map(value -> serializeValue(type, value)).collect(listCollector()));
     }
 
-    private static Value serializeValue(TarantoolModelWriter writer, MetaType<?> type, Object value) {
+    private Value serializeValue(MetaType<?> type, Object value) {
         return writer.write(type, value);
     }
 }
