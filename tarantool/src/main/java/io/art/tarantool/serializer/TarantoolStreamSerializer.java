@@ -36,6 +36,7 @@ public class TarantoolStreamSerializer {
     private final static Comparators comparators = STREAM_PROTOCOL.comparators;
     private final static Conditions conditions = STREAM_PROTOCOL.conditions;
     private final static FilterModes filterModes = STREAM_PROTOCOL.filterModes;
+    private final static MappingModes mappingModes = STREAM_PROTOCOL.mappingModes;
     private final static Filters filters = STREAM_PROTOCOL.filters;
     private final static FilterExpressions filterExpressions = STREAM_PROTOCOL.filterExpressions;
 
@@ -207,16 +208,33 @@ public class TarantoolStreamSerializer {
         }
     }
 
-    private static ImmutableArrayValue serializeMap(Mapper<?, ?> mapper) {
-        List<ImmutableArrayValue> serialized = linkedList();
+    private ImmutableArrayValue serializeMap(Mapper<?, ?> mapper) {
+        List<ImmutableValue> serialized = linkedList();
         switch (mapper.getMode()) {
-            case FIELD:
-                break;
             case FUNCTION:
+                serialized.add(mappingModes.mapByFunction);
+                serialized.add(newString(mapper.getByFunction().getFunction().name()));
+                break;
+            case FIELD:
+                serialized.add(mappingModes.mapByField);
+                serialized.add(newInteger(mapper.getByField().getField().index() + 1));
                 break;
             case SPACE:
+                serialized.add(mappingModes.mapBySpace);
+                MapperBySpace<?, ?> bySpace = mapper.getBySpace();
+                serialized.add(spaceName(bySpace.getMappingSpace()));
+                serialized.add(newInteger(bySpace.getMappingKeyField().index() + 1));
                 break;
             case INDEX:
+                serialized.add(mappingModes.mapByIndex);
+                MapperBySpace<?, ?> byIndex = mapper.getByIndex();
+                serialized.add(spaceName(byIndex.getMappingSpace()));
+                ImmutableArrayValue indexedFields = newArray(byIndex.getMappingIndexedFields()
+                        .stream()
+                        .map(indexedField -> serializeValue(integerType(), indexedField.index() + 1))
+                        .collect(listCollector())
+                );
+                serialized.add(indexedFields);
                 break;
         }
         return newArray(serialized);
