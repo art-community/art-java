@@ -781,7 +781,6 @@ terminatingFunctors[constants.terminatingFunctions.terminatingCount] = function(
 end
 
 terminatingFunctors[constants.terminatingFunctions.terminatingAll] = function(generator, parameter, state, request)
-    require("log").info(require("yaml").encode(request))
     return functional.all(streamFilter.functor(request), generator, parameter, state)
 end
 
@@ -790,7 +789,6 @@ terminatingFunctors[constants.terminatingFunctions.terminatingAny] = function(ge
 end
 
 terminatingFunctors[constants.terminatingFunctions.terminatingNone] = function(generator, parameter, state, request)
-
     return not functional.any(streamFilter.functor(request), generator, parameter, state)
 end
 
@@ -954,7 +952,6 @@ local processFilters
 processFilters = function(filtering, inputFilters)
     local result = true
     for _, filter in pairs(inputFilters) do
-        require("log").info(require("yaml").encode(filter))
         local condition = filter[1]
         local mode = filter[2]
 
@@ -1050,15 +1047,16 @@ return function(generator, parameter, state, request)
         end
 
         if mode == constants.mappingModes.mapBySpace then
-            local otherSpace = request[3]
-            local currentField = request[4]
+            local otherSpace = request[2]
+            local currentField = request[3]
+            require("log").info(require("yaml").encode(mapping[currentField]))
             return box.space[otherSpace]:get(mapping[currentField])
         end
 
         if mode == constants.mappingModes.mapByIndex then
-            local otherSpace = request[3]
-            local currentFields = request[4]
-            local otherIndex = request[5]
+            local otherSpace = request[2]
+            local currentFields = request[3]
+            local otherIndex = request[4]
             local indexKeys = {}
             for _, keyField in pairs(currentFields) do
                 table.insert(indexKeys, mapping[keyField])

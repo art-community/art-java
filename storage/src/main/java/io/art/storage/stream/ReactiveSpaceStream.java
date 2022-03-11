@@ -19,6 +19,11 @@ import java.util.function.*;
 @Public
 public abstract class ReactiveSpaceStream<Type> {
     protected List<ProcessingOperator> operators = linkedList();
+    protected MetaType<Type> returningType;
+
+    public ReactiveSpaceStream(MetaType<Type> returningType) {
+        this.returningType = returningType;
+    }
 
     public ReactiveSpaceStream<Type> limit(long value) {
         operators.add(new ProcessingOperator(LIMIT, value));
@@ -61,11 +66,13 @@ public abstract class ReactiveSpaceStream<Type> {
 
     public <Mapped> ReactiveSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
+        returningType = cast(space.definition());
         return cast(this);
     }
 
     public <Mapped> ReactiveSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
+        returningType = cast(space.definition());
         return cast(this);
     }
 
@@ -80,7 +87,7 @@ public abstract class ReactiveSpaceStream<Type> {
     }
 
     public Mono<Type> first() {
-        return limit(1).offset(1).collect().next();
+        return limit(1).collect().next();
     }
 
     public abstract Flux<Type> collect();

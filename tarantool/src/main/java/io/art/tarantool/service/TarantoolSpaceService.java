@@ -97,7 +97,7 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
 
     @Override
     public TarantoolStream<ModelType> stream() {
-        return new TarantoolStream<>(reactive.stream());
+        return new TarantoolStream<>(reactive.spaceMetaType, reactive.stream());
     }
 
     @Override

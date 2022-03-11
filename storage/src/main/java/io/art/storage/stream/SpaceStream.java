@@ -21,6 +21,11 @@ import java.util.stream.*;
 @Public
 public abstract class SpaceStream<Type> {
     protected List<ProcessingOperator> operators = linkedList();
+    protected MetaType<Type> returningType;
+
+    public SpaceStream(MetaType<Type> returningType) {
+        this.returningType = returningType;
+    }
 
     public SpaceStream<Type> limit(long value) {
         operators.add(new ProcessingOperator(LIMIT, value));
@@ -63,11 +68,13 @@ public abstract class SpaceStream<Type> {
 
     public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
+        returningType = cast(space.definition());
         return cast(this);
     }
 
     public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
+        returningType = cast(space.definition());
         return cast(this);
     }
 
@@ -82,7 +89,7 @@ public abstract class SpaceStream<Type> {
     }
 
     public Optional<Type> first() {
-        ImmutableArray<Type> array = limit(1).offset(1).collect();
+        ImmutableArray<Type> array = limit(1).collect();
         return array.isEmpty() ? empty() : of(array.get(0));
     }
 

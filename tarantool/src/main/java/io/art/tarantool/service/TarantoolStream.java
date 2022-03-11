@@ -6,8 +6,6 @@ import io.art.storage.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.sorter.model.*;
 import io.art.storage.stream.*;
-import lombok.*;
-import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
@@ -16,9 +14,13 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-@AllArgsConstructor
 public class TarantoolStream<Type> extends SpaceStream<Type> {
     private final TarantoolReactiveStream<Type> stream;
+
+    public TarantoolStream(MetaType<Type> returningType, TarantoolReactiveStream<Type> stream) {
+        super(returningType);
+        this.stream = stream;
+    }
 
     @Override
     public SpaceStream<Type> limit(long value) {

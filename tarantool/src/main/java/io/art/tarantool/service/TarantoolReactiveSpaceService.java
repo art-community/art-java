@@ -167,14 +167,21 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         return value.map(element -> reader.read(booleanType(), element));
     }
 
-    Mono<ModelType> parseSpaceMono(Mono<Value> value) {
-        return value.map(element -> reader.read(spaceMetaType, element));
+    Flux<ModelType> parseSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
+        return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
+                .list()
+                .stream()
+                .map(element -> reader.read(type, element))));
     }
 
-    Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
+    private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
                 .map(element -> reader.read(spaceMetaType, element))));
+    }
+
+    private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
+        return value.map(element -> reader.read(spaceMetaType, element));
     }
 }

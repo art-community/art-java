@@ -21,6 +21,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     private final static TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
 
     public TarantoolReactiveStream(TarantoolReactiveSpaceService<?, ModelType> service) {
+        super(service.spaceMetaType);
         this.service = service;
         serializer = new TarantoolStreamSerializer(service.writer);
     }
@@ -33,7 +34,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
                 newArray(operator)
         );
         Mono<Value> result = service.clients.immutable().call(SPACE_STREAM, stream);
-        return service.parseSpaceFlux(result);
+        return service.parseSpaceFlux(returningType, result);
     }
 
     @Override
