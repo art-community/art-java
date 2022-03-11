@@ -5,6 +5,7 @@ import io.art.meta.model.*;
 import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.mapper.*;
 import io.art.storage.sorter.implementation.*;
 import io.art.storage.stream.*;
 import lombok.*;
@@ -91,22 +92,22 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         for (ProcessingOperator operator : operators) {
             switch (operator.getOperation()) {
                 case LIMIT:
-                    serialized.add(newArray(LIMIT, serializeValue(longPrimitiveType(), operator.getValue())));
+                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingLimit, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case OFFSET:
-                    serialized.add(newArray(OFFSET, serializeValue(longPrimitiveType(), operator.getValue())));
+                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingOffset, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case DISTINCT:
-                    serialized.add(newArray(DISTINCT));
+                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingDistinct));
                     break;
                 case SORT:
-                    serialized.add(newArray(SORT, serializeSort(cast(operator.getValue()))));
+                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingSort, serializeSort(cast(operator.getValue()))));
                     break;
                 case FILTER:
-                    serialized.add(newArray(FILTER, serializeFilter(cast(operator.getValue()))));
+                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingFilter, serializeFilter(cast(operator.getValue()))));
                     break;
                 case MAP:
-                    serialized.add(newArray(FILTER, serializeFilter(cast(operator.getValue()))));
+                    serialized.add(newArray(STREAM_PROTOCOL.processingFunctions.processingMap, serializeMap(cast(operator.getValue()))));
                     break;
             }
         }
@@ -151,6 +152,10 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
             }
         }
         return newArray(serialized);
+    }
+
+    private ImmutableArrayValue serializeMap(Mapper<?, ?> filter) {
+
     }
 
 
