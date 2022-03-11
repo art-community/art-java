@@ -108,80 +108,80 @@ public interface TarantoolModuleConstants {
 
     static class StreamProtocol {
         public static class Filters {
-            public int filterEquals = 1;
-            public int filterNotEquals = 2;
-            public int filterMore = 3;
-            public int filterMoreEquals = 4;
-            public int filterLess = 5;
-            public int filterLessEquals = 6;
-            public int filterBetween = 7;
-            public int filterNotBetween = 8;
-            public int filterIn = 9;
-            public int filterNotIn = 10;
-            public int filterStartsWith = 11;
-            public int filterEndsWith = 12;
-            public int filterContains = 13;
+            public ImmutableIntegerValue filterEquals = newInteger(1);
+            public ImmutableIntegerValue filterNotEquals = newInteger(2);
+            public ImmutableIntegerValue filterMore = newInteger(3);
+            public ImmutableIntegerValue filterMoreEquals = newInteger(4);
+            public ImmutableIntegerValue filterLess = newInteger(5);
+            public ImmutableIntegerValue filterLessEquals = newInteger(6);
+            public ImmutableIntegerValue filterBetween = newInteger(7);
+            public ImmutableIntegerValue filterNotBetween = newInteger(8);
+            public ImmutableIntegerValue filterIn = newInteger(9);
+            public ImmutableIntegerValue filterNotIn = newInteger(10);
+            public ImmutableIntegerValue filterStartsWith = newInteger(11);
+            public ImmutableIntegerValue filterEndsWith = newInteger(12);
+            public ImmutableIntegerValue filterContains = newInteger(13);
         }
 
         public final Filters filters = new Filters();
 
         public static class Conditions {
-            public int conditionAnd = 1;
-            public int conditionOr = 2;
+            public ImmutableIntegerValue conditionAnd = newInteger(1);
+            public ImmutableIntegerValue conditionOr = newInteger(2);
         }
 
         public final Conditions conditions = new Conditions();
 
         public static class FilterModes {
-            public int filterBySpace = 1;
-            public int filterByIndex = 2;
-            public int filterByField = 3;
-            public int filterByFunction = 4;
-            public int nestedFilter = 5;
+            public ImmutableIntegerValue filterBySpace = newInteger(1);
+            public ImmutableIntegerValue filterByIndex = newInteger(2);
+            public ImmutableIntegerValue filterByField = newInteger(3);
+            public ImmutableIntegerValue filterByFunction = newInteger(4);
+            public ImmutableIntegerValue nestedFilter = newInteger(5);
         }
 
         public final FilterModes filterModes = new FilterModes();
 
         public static class FilterExpressions {
-            public int filterExpressionField = 1;
-            public int filterExpressionValue = 2;
+            public ImmutableIntegerValue filterExpressionField = newInteger(1);
+            public ImmutableIntegerValue filterExpressionValue = newInteger(2);
         }
 
         public final FilterExpressions filterExpressions = new FilterExpressions();
 
         public static class MappingModes {
-            public int mapBySpace = 1;
-            public int mapByIndex = 2;
-            public int mapByFunction = 3;
-            public int mapByField = 4;
+            public ImmutableIntegerValue mapBySpace = newInteger(1);
+            public ImmutableIntegerValue mapByIndex = newInteger(2);
+            public ImmutableIntegerValue mapByFunction = newInteger(3);
+            public ImmutableIntegerValue mapByField = newInteger(4);
         }
 
         public final MappingModes mappingModes = new MappingModes();
 
         public static class Comparators {
-            public int comparatorMore = 1;
-            public int comparatorLess = 2;
+            public ImmutableIntegerValue comparatorMore = newInteger(1);
+            public ImmutableIntegerValue comparatorLess = newInteger(2);
         }
 
         public final Comparators comparators = new Comparators();
 
         public static class ProcessingFunctions {
-            public int processingLimit = 1;
-            public int processingOffset = 2;
-            public int processingFilter = 3;
-            public int processingSort = 4;
-            public int processingDistinct = 5;
-            public int processingMap = 6;
+            public ImmutableIntegerValue processingLimit = newInteger(1);
+            public ImmutableIntegerValue processingOffset = newInteger(2);
+            public ImmutableIntegerValue processingFilter = newInteger(3);
+            public ImmutableIntegerValue processingSort = newInteger(4);
+            public ImmutableIntegerValue processingDistinct = newInteger(5);
+            public ImmutableIntegerValue processingMap = newInteger(6);
         }
 
         public final ProcessingFunctions processingFunctions = new ProcessingFunctions();
 
         public static class TerminatingFunctions {
-            public int terminatingCollect = 1;
-            public int terminatingCount = 2;
-            public int terminatingAll = 3;
-            public int terminatingAny = 4;
-            public int terminatingNone = 5;
+            public ImmutableIntegerValue terminatingCollect = newInteger(1);
+            public ImmutableIntegerValue terminatingCount = newInteger(2);
+            public ImmutableIntegerValue terminatingAll = newInteger(3);
+            public ImmutableIntegerValue terminatingAny = newInteger(4);
+            public ImmutableIntegerValue terminatingNone = newInteger(5);
         }
 
         public final TerminatingFunctions terminatingFunctions = new TerminatingFunctions();
@@ -220,13 +220,6 @@ public interface TarantoolModuleConstants {
     interface WithOptions {
         ImmutableStringValue WITH_BY_KEY = newString("byKey");
         ImmutableStringValue WITH_BY_INDEX = newString("byIndex");
-    }
-
-    interface TerminatingOptions {
-        ImmutableStringValue COLLECT = newString("collect");
-        ImmutableStringValue COUNT = newString("count");
-        ImmutableStringValue ANY = newString("any");
-        ImmutableStringValue ALL = newString("all");
     }
 
     enum Engine {

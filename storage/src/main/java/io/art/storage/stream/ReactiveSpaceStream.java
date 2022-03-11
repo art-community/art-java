@@ -90,4 +90,6 @@ public abstract class ReactiveSpaceStream<Type> {
     public abstract Mono<Boolean> all(Consumer<Filter<Type>> filter);
 
     public abstract Mono<Boolean> any(Consumer<Filter<Type>> filter);
+
+    public abstract Mono<Boolean> none(Consumer<Filter<Type>> filter);
 }

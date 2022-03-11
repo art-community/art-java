@@ -7,7 +7,6 @@ import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.sorter.implementation.*;
 import io.art.storage.stream.*;
-import io.art.tarantool.constants.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -18,11 +17,10 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.storage.filter.implementation.FilterImplementation.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.TerminatingOptions.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 import java.util.function.*;
@@ -34,19 +32,21 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
 
     @Override
     public Flux<ModelType> collect() {
+        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCollect;
         Mono<Value> result = service
                 .clients
                 .immutable()
-                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(COLLECT)));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(operator)));
         return service.parseSpaceFlux(result);
     }
 
     @Override
     public Mono<Long> count() {
+        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCount;
         Mono<Value> result = service
                 .clients
                 .immutable()
-                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(COUNT)));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(operator)));
         return service.parseLongMono(result);
     }
 
@@ -54,10 +54,11 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
+        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingAll;
         Mono<Value> result = service
                 .clients
                 .immutable()
-                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(ALL, serializeFilter(newFilter))));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(operator, serializeFilter(newFilter))));
         return service.parseBooleanMono(result);
     }
 
@@ -65,10 +66,23 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
+        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingNone;
         Mono<Value> result = service
                 .clients
                 .immutable()
-                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(ANY, serializeFilter(newFilter))));
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(operator, serializeFilter(newFilter))));
+        return service.parseBooleanMono(result);
+    }
+
+    @Override
+    public Mono<Boolean> none(Consumer<Filter<ModelType>> filter) {
+        FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
+        filter.accept(newFilter);
+        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingNone;
+        Mono<Value> result = service
+                .clients
+                .immutable()
+                .call(SPACE_STREAM, newArray(service.spaceName, newArray(serializeStream()), newArray(operator, serializeFilter(newFilter))));
         return service.parseBooleanMono(result);
     }
 
@@ -104,9 +118,9 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         MetaField<?, ?> field = sorter.getField();
         switch (order) {
             case ASCENDANT:
-                return newArray(COMPARATOR_MORE, newInteger(field.index() + 1));
+                return newArray(STREAM_PROTOCOL.comparators.comparatorLess, newInteger(field.index() + 1));
             case DESCENDANT:
-                return newArray(COMPARATOR_LESS, newInteger(field.index() + 1));
+                return newArray(STREAM_PROTOCOL.comparators.comparatorMore, newInteger(field.index() + 1));
         }
         throw new ImpossibleSituationException();
     }
