@@ -338,7 +338,6 @@ public class TarantoolStreamTest {
         assertEquals(2, result.size());
         data.get(1).assertEquals(result.get(0));
         data.get(2).assertEquals(result.get(1));
-
     }
 
     @Test
