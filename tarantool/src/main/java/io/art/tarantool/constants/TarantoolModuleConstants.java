@@ -208,39 +208,6 @@ public interface TarantoolModuleConstants {
 
     StreamProtocol STREAM_PROTOCOL = new StreamProtocol();
 
-    interface ProcessingOptions {
-        ImmutableStringValue LIMIT = newString("limit");
-        ImmutableStringValue OFFSET = newString("offset");
-        ImmutableStringValue FILTER = newString("filter");
-        ImmutableStringValue MAP = newString("filterWith");
-        ImmutableStringValue SORT = newString("sort");
-        ImmutableStringValue DISTINCT = newString("distinct");
-    }
-
-    interface SortOptions {
-        ImmutableStringValue COMPARATOR_MORE = newString("more");
-        ImmutableStringValue COMPARATOR_LESS = newString("less");
-    }
-
-    interface FilterOptions {
-        ImmutableStringValue OPERATOR_EQUALS = newString("equals");
-        ImmutableStringValue OPERATOR_NOT_EQUALS = newString("notEquals");
-        ImmutableStringValue OPERATOR_MORE = newString("more");
-        ImmutableStringValue OPERATOR_LESS = newString("less");
-        ImmutableStringValue OPERATOR_BETWEEN = newString("between");
-        ImmutableStringValue OPERATOR_NOT_BETWEEN = newString("notBetween");
-        ImmutableStringValue OPERATOR_IN = newString("in");
-        ImmutableStringValue OPERATOR_NOT_IN = newString("notIn");
-        ImmutableStringValue OPERATOR_STARTS_WITH = newString("startsWith");
-        ImmutableStringValue OPERATOR_ENDS_WITH = newString("endsWith");
-        ImmutableStringValue OPERATOR_CONTAINS = newString("contains");
-    }
-
-    interface WithOptions {
-        ImmutableStringValue WITH_BY_KEY = newString("byKey");
-        ImmutableStringValue WITH_BY_INDEX = newString("byIndex");
-    }
-
     enum Engine {
         MEMTEX,
         VINYL
