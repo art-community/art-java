@@ -89,43 +89,45 @@ public class TarantoolStreamSerializer {
             serializeFilterSpaceExpressions(expressionsCache, part);
         }
         for (FilterImplementation.FilterPart part : parts) {
-            serialized.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
+            List<ImmutableValue> serializedPart = linkedList();
+            serializedPart.add(part.getCondition() == AND ? conditions.conditionAnd : conditions.conditionOr);
             switch (part.getMode()) {
                 case NESTED:
-                    serialized.add(filterModes.nestedFilter);
-                    serialized.add(serializeFilter(part.getNested().getParts()));
+                    serializedPart.add(filterModes.nestedFilter);
+                    serializedPart.add(serializeFilter(part.getNested().getParts()));
                     break;
                 case FIELD:
-                    serialized.add(filterModes.filterByField);
+                    serializedPart.add(filterModes.filterByField);
                     FilterByFieldImplementation<?, ?> byField = part.getByField();
                     MetaField<? extends MetaClass<?>, ?> field = byField.getField();
                     ImmutableIntegerValue index = newInteger(field.index() + 1);
                     ImmutableIntegerValue operator = filters.filtersMapping.get(byField.getOperator());
                     List<Object> values = byField.getValues();
-                    serialized.add(newArray(index, operator, serializeValues(field.type(), values)));
+                    serializedPart.add(newArray(index, operator, serializeValues(field.type(), values)));
                     break;
                 case FUNCTION:
-                    serialized.add(filterModes.filterByFunction);
-                    serialized.add(newString(part.getByFunction().getFunction().name()));
+                    serializedPart.add(filterModes.filterByFunction);
+                    serializedPart.add(newString(part.getByFunction().getFunction().name()));
                     break;
                 case SPACE:
-                    serialized.add(filterModes.filterBySpace);
+                    serializedPart.add(filterModes.filterBySpace);
                     FilterBySpaceImplementation<?, ?> bySpace = part.getBySpace();
                     ImmutableStringValue spaceName = spaceName(bySpace.getMappingSpace());
                     FilterExpressionCacheKey expressionKey = new FilterExpressionCacheKey(spaceName, bySpace.getMappingKeyField(), emptyList());
-                    serialized.add(newArray(spaceName(bySpace.getMappingSpace()), newInteger(bySpace.getMappingKeyField().index() + 1)));
-                    serialized.add(newArray(expressionsCache.get(expressionKey)));
+                    serializedPart.add(newArray(spaceName(bySpace.getMappingSpace()), newInteger(bySpace.getMappingKeyField().index() + 1)));
+                    serializedPart.add(newArray(expressionsCache.get(expressionKey)));
                     break;
                 case INDEX:
-                    serialized.add(filterModes.filterByIndex);
+                    serializedPart.add(filterModes.filterByIndex);
                     FilterBySpaceImplementation<?, ?> byIndex = part.getByIndex();
                     spaceName = spaceName(byIndex.getMappingSpace());
                     List<MetaField<? extends MetaClass<?>, ?>> indexedFields = cast(byIndex.getMappingIndexedFields());
                     expressionKey = new FilterExpressionCacheKey(spaceName, null, cast(byIndex.getMappingIndexedFields()));
-                    serialized.add(newArray(spaceName, indexName(indexedFields)));
-                    serialized.add(newArray(expressionsCache.get(expressionKey)));
+                    serializedPart.add(newArray(spaceName, indexName(indexedFields)));
+                    serializedPart.add(newArray(expressionsCache.get(expressionKey)));
                     break;
             }
+            serialized.add(newArray(serializedPart));
         }
         return newArray(serialized);
     }
