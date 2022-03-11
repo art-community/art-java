@@ -22,7 +22,7 @@ import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
-import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.testStorage;
+import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
@@ -252,6 +252,46 @@ public class TarantoolStreamTest {
         assertEquals("test 2 - mapped", result.get(1));
         assertEquals("test - mapped", result.get(2));
         assertEquals("test 2 - mapped", result.get(3));
+    }
+
+    @Test
+    public void testFilterField() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("started").f9(1).build(),
+                generateTestingModel().toBuilder().f1(2).f16("test").f9(3).build(),
+                generateTestingModel().toBuilder().f1(3).f16("end").f9(2).build()
+        );
+        current().insert(data);
+
+        ImmutableArray<TestingMetaModel> result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).startsWith("st")).collect();
+        assertEquals(1, result.size());
+        data.get(0).assertEquals(result.get(0));
+
+        result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).endsWith("nd")).collect();
+        assertEquals(1, result.size());
+        data.get(2).assertEquals(result.get(0));
+
+        result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).contains("es")).collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).equal("test")).collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+
+        result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).notEqual("test")).collect();
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+
+        result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).in("started", "test")).collect();
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+
+        result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).notIn("started", "test")).collect();
+        assertEquals(1, result.size());
+        data.get(2).assertEquals(result.get(0));
     }
 
     private static SpaceService<Integer, TestingMetaModel> current() {
