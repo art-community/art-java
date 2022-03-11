@@ -235,7 +235,6 @@ public class TarantoolStreamSerializer {
         return newArray(serialized);
     }
 
-
     private ImmutableArrayValue serializeValues(MetaType<?> type, List<Object> values) {
         return newArray(values.stream().map(value -> serializeValue(type, value)).collect(listCollector()));
     }
