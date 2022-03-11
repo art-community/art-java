@@ -34,8 +34,8 @@ public abstract class ReactiveSpaceStream<Type> {
         return offset(offset).limit(limit);
     }
 
-    public ReactiveSpaceStream<Type> distinct() {
-        operators.add(new ProcessingOperator(DISTINCT, null));
+    public ReactiveSpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
+        operators.add(new ProcessingOperator(DISTINCT, field));
         return this;
     }
 

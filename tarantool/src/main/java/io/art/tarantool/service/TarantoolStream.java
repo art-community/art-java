@@ -39,8 +39,8 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public SpaceStream<Type> distinct() {
-        stream.distinct();
+    public SpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
+        stream.distinct(field);
         return this;
     }
 

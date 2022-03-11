@@ -51,7 +51,8 @@ public class TarantoolStreamSerializer {
                     serialized.add(newArray(processingFunctions.processingOffset, serializeValue(longPrimitiveType(), operator.getValue())));
                     break;
                 case DISTINCT:
-                    serialized.add(newArray(processingFunctions.processingDistinct));
+                    MetaField<?, ?> distinctField = cast(operator.getValue());
+                    serialized.add(newArray(processingFunctions.processingDistinct, serializeValue(integerPrimitiveType(), distinctField.index() + 1)));
                     break;
                 case SORT:
                     serialized.add(newArray(processingFunctions.processingSort, serializeSort(cast(operator.getValue()))));

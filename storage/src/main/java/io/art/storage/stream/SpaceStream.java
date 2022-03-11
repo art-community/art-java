@@ -36,8 +36,8 @@ public abstract class SpaceStream<Type> {
         return offset(offset).limit(limit);
     }
 
-    public SpaceStream<Type> distinct() {
-        operators.add(new ProcessingOperator(DISTINCT, null));
+    public SpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
+        operators.add(new ProcessingOperator(DISTINCT, field));
         return this;
     }
 

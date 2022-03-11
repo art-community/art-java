@@ -1,5 +1,6 @@
 package io.art.tarantool.test;
 
+import io.art.core.collection.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import io.art.storage.service.*;
@@ -103,6 +104,51 @@ public class TarantoolStreamTest {
         );
         current().insert(data);
         assertTrue(current().stream().none(filter -> filter.byString(testingMetaModel().f16Field()).equal("string")));
+    }
+
+    @Test
+    public void testRange() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f16("test").build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").build(),
+                generateTestingModel().toBuilder().f1(4).f16("test").build()
+        );
+        current().insert(data);
+        ImmutableArray<TestingMetaModel> result = current().stream().range(1, 2).collect();
+        assertEquals(2, result.size());
+        data.get(1).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
+    }
+
+    @Test
+    public void testDistinct() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f16("test 2").build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").build(),
+                generateTestingModel().toBuilder().f1(4).f16("test 2").build()
+        );
+        current().insert(data);
+        ImmutableArray<TestingMetaModel> result = current().stream().distinct(testingMetaModel().f16Field()).collect();
+        assertEquals(2, result.size());
+        data.get(2).assertEquals(result.get(0));
+        data.get(3).assertEquals(result.get(1));
+    }
+
+    @Test
+    public void testDistinct() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f16("test 2").build(),
+                generateTestingModel().toBuilder().f1(3).f16("test").build(),
+                generateTestingModel().toBuilder().f1(4).f16("test 2").build()
+        );
+        current().insert(data);
+        ImmutableArray<TestingMetaModel> result = current().stream().distinct(testingMetaModel().f16Field()).collect();
+        assertEquals(2, result.size());
+        data.get(2).assertEquals(result.get(0));
+        data.get(3).assertEquals(result.get(1));
     }
 
     private static SpaceService<Integer, TestingMetaModel> current() {
