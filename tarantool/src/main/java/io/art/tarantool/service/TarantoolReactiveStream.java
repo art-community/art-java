@@ -7,6 +7,7 @@ import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.sorter.implementation.*;
 import io.art.storage.stream.*;
+import io.art.tarantool.constants.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -17,6 +18,7 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.storage.filter.implementation.FilterImplementation.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.ProcessingOptions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.SortOptions.*;
@@ -114,6 +116,7 @@ public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<Mode
         List<FilterPart> parts = filter.getParts();
         for (FilterPart part : parts) {
             FilterCondition condition = part.getCondition();
+            STREAM_PROTOCOL.filterModes.filterByField
             switch (part.getMode()) {
                 case FIELD:
                     part.getByField();

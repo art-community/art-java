@@ -122,13 +122,15 @@ public interface TarantoolModuleConstants {
             public int filterEndsWith = 12;
             public int filterContains = 13;
         }
-        public static final Filters filters = new Filters();
+
+        public final Filters filters = new Filters();
 
         public static class Conditions {
             public int conditionAnd = 1;
             public int conditionOr = 2;
         }
-        public static final Conditions conditions = new Conditions();
+
+        public final Conditions conditions = new Conditions();
 
         public static class FilterModes {
             public int filterBySpace = 1;
@@ -137,13 +139,15 @@ public interface TarantoolModuleConstants {
             public int filterByFunction = 4;
             public int nestedFilter = 5;
         }
-        public static final FilterModes filterModes = new FilterModes();
+
+        public final FilterModes filterModes = new FilterModes();
 
         public static class FilterExpressions {
             public int filterExpressionField = 1;
             public int filterExpressionValue = 2;
         }
-        public static final FilterExpressions filterExpressions = new FilterExpressions();
+
+        public final FilterExpressions filterExpressions = new FilterExpressions();
 
         public static class MappingModes {
             public int mapBySpace = 1;
@@ -151,13 +155,15 @@ public interface TarantoolModuleConstants {
             public int mapByFunction = 3;
             public int mapByField = 4;
         }
-        public static final MappingModes mappingModes = new MappingModes();
+
+        public final MappingModes mappingModes = new MappingModes();
 
         public static class Comparators {
             public int comparatorMore = 1;
             public int comparatorLess = 2;
         }
-        public static final Comparators comparators = new Comparators();
+
+        public final Comparators comparators = new Comparators();
 
         public static class ProcessingFunctions {
             public int processingLimit = 1;
@@ -167,16 +173,20 @@ public interface TarantoolModuleConstants {
             public int processingDistinct = 5;
             public int processingMap = 6;
         }
-        public static final ProcessingFunctions processingFunctions = new ProcessingFunctions();
+
+        public final ProcessingFunctions processingFunctions = new ProcessingFunctions();
 
         public static class TerminatingFunctions {
             public int terminatingCollect = 1;
             public int terminatingCount = 2;
             public int terminatingAll = 3;
             public int terminatingAny = 4;
+            public int terminatingNone = 5;
         }
-        public static final TerminatingFunctions terminatingFunctions = new TerminatingFunctions();
+
+        public final TerminatingFunctions terminatingFunctions = new TerminatingFunctions();
     }
+
     StreamProtocol STREAM_PROTOCOL = new StreamProtocol();
 
     interface ProcessingOptions {
