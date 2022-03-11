@@ -969,7 +969,7 @@ processFilters = function(filtering, inputFilters)
 
         if mode == constants.filterModes.filterByFunction then
             local functionName = filter[3]
-            result = applyCondition(condition, result, box.func[functionName]:call(filtering));
+            result = applyCondition(condition, result, box.func[functionName]:call({filtering}));
         end
 
         if mode == constants.filterModes.filterBySpace then
@@ -1038,7 +1038,7 @@ return function(generator, parameter, state, request)
 
         if mode == constants.mappingModes.mapByFunction then
             local functionName = request[2]
-            return box.func[functionName]:call(mapping)
+            return box.func[functionName]:call({mapping})
         end
 
         if mode == constants.mappingModes.mapByField then
@@ -1049,7 +1049,6 @@ return function(generator, parameter, state, request)
         if mode == constants.mappingModes.mapBySpace then
             local otherSpace = request[2]
             local currentField = request[3]
-            require("log").info(require("yaml").encode(mapping[currentField]))
             return box.space[otherSpace]:get(mapping[currentField])
         end
 

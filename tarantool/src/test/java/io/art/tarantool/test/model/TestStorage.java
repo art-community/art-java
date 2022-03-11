@@ -7,4 +7,6 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     void testSubscription();
 
     Flux<String> testChannel();
+
+    String testMapper();
 }

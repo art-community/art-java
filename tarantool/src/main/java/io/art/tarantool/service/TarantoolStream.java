@@ -64,7 +64,7 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <Mapped> Stream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+    public <Mapped> Stream<Mapped> map(MetaMethod<? extends MetaClass<? extends Storage>, Mapped> function) {
         return stream.map(function).toStream();
     }
 

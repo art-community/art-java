@@ -939,6 +939,8 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaTestChannelMethod testChannelMethod = register(new MetaTestChannelMethod(this));
 
+              private final MetaTestMapperMethod testMapperMethod = register(new MetaTestMapperMethod(this));
+
               private MetaTestStorageClass() {
                 super(metaType(io.art.tarantool.test.model.TestStorage.class));
               }
@@ -953,6 +955,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaTestChannelMethod testChannelMethod() {
                 return testChannelMethod;
+              }
+
+              public MetaTestMapperMethod testMapperMethod() {
+                return testMapperMethod;
               }
 
               @Override
@@ -999,16 +1005,37 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
+              public final class MetaTestMapperMethod extends InstanceMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage, java.lang.String> {
+                private MetaTestMapperMethod(MetaTestStorageClass owner) {
+                  super("testMapper",metaType(java.lang.String.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance,
+                    java.lang.Object[] arguments) throws Throwable {
+                  return instance.testMapper();
+                }
+
+                @Override
+                public java.lang.Object invoke(io.art.tarantool.test.model.TestStorage instance)
+                    throws Throwable {
+                  return instance.testMapper();
+                }
+              }
+
               public class MetaTestStorageProxy extends MetaProxy implements io.art.tarantool.test.model.TestStorage {
                 private final Function<java.lang.Object, java.lang.Object> testSubscriptionInvocation;
 
                 private final Function<java.lang.Object, java.lang.Object> testChannelInvocation;
+
+                private final Function<java.lang.Object, java.lang.Object> testMapperInvocation;
 
                 public MetaTestStorageProxy(
                     Map<MetaMethod<MetaClass<?>, ?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                   super(invocations);
                   testSubscriptionInvocation = invocations.get(testSubscriptionMethod);
                   testChannelInvocation = invocations.get(testChannelMethod);
+                  testMapperInvocation = invocations.get(testMapperMethod);
                 }
 
                 @Override
@@ -1019,6 +1046,11 @@ public class MetaTarantoolTest extends MetaLibrary {
                 @Override
                 public reactor.core.publisher.Flux<java.lang.String> testChannel() {
                   return (reactor.core.publisher.Flux<java.lang.String>)(testChannelInvocation.apply(null));
+                }
+
+                @Override
+                public java.lang.String testMapper() {
+                  return (java.lang.String)(testMapperInvocation.apply(null));
                 }
               }
             }

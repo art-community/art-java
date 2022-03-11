@@ -7,5 +7,5 @@ import lombok.*;
 @Getter
 @RequiredArgsConstructor
 public class MapperByFunction<Type> {
-    private final MetaMethod<MetaClass<? extends Storage>, Type> function;
+    private final MetaMethod<? extends MetaClass<? extends Storage>, Type> function;
 }

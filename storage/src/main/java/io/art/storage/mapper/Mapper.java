@@ -33,7 +33,7 @@ public class Mapper<Current, Mapped> {
         return this;
     }
 
-    public Mapper<Current, Mapped> byFunction(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+    public Mapper<Current, Mapped> byFunction(MetaMethod<? extends MetaClass<? extends Storage>, Mapped> function) {
         mode = FUNCTION;
         byFunction = new MapperByFunction<>(function);
         return this;

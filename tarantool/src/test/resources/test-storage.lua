@@ -22,3 +22,8 @@ testChannel = function()
     box.session.push("test")
 end
 box.schema.func.create("testChannel", { if_not_exists = true })
+
+testMapper = function(data)
+    return data[16] .. " - mapped"
+end
+box.schema.func.create("testMapper", { if_not_exists = true })

@@ -80,11 +80,13 @@ public abstract class SpaceStream<Type> {
 
     public <Mapped> Stream<Mapped> map(MetaField<? extends MetaClass<Type>, Mapped> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byField(field)));
+        returningType = cast(field.type());
         return cast(collect().stream());
     }
 
-    public <Mapped> Stream<Mapped> map(MetaMethod<MetaClass<? extends Storage>, Mapped> function) {
+    public <Mapped> Stream<Mapped> map(MetaMethod<? extends MetaClass<? extends Storage>, Mapped> function) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byFunction(function)));
+        returningType = cast(function.returnType());
         return cast(collect().stream());
     }
 
