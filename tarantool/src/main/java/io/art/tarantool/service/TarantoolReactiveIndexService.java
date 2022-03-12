@@ -96,7 +96,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
         for (Object key : keys) {
             writer.write(fields.get(index++).type(), key);
         }
-        return newArray(serialized);
+        return newArray(spaceName, indexName, newArray(serialized));
     }
 
     private ArrayValue serializeKeys(ImmutableCollection<Object> keys) {
