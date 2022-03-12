@@ -46,55 +46,55 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     @Override
     public Mono<ModelType> findFirst(Collection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_FIRST, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIND_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Mono<ModelType> findFirst(ImmutableCollection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_FIRST, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIND_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> findAll(Collection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIND_ALL, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> findAll(ImmutableCollection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(SPACE_FIND_ALL, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIND_ALL, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(Collection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.mutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count() {
-        return parseCountMono(storage.immutable().call(SPACE_COUNT, newArray(spaceName)));
+        return parseCountMono(storage.immutable().call(INDEX_COUNT, newArray(spaceName)));
     }
 
     private ArrayValue serializeKeys(Collection<Object> keys) {
         List<ImmutableValue> serialized = linkedList();
         int index = 0;
         for (Object key : keys) {
-            writer.write(fields.get(index++).type(), keys);
+            writer.write(fields.get(index++).type(), key);
         }
         return newArray(serialized);
     }

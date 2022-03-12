@@ -90,6 +90,12 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SPACE_FIND_ALL = newString("art.space.findAll");
         ImmutableStringValue SPACE_STREAM = newString("art.space.stream");
         ImmutableStringValue SPACE_COUNT = newString("art.space.count");
+        ImmutableStringValue INDEX_FIND_FIRST = newString("art.index.findFirst");
+        ImmutableStringValue INDEX_FIND_ALL = newString("art.index.findAll");
+        ImmutableStringValue INDEX_STREAM = newString("art.index.stream");
+        ImmutableStringValue INDEX_COUNT = newString("art.index.count");
+        ImmutableStringValue INDEX_SINGLE_DELETE = newString("art.space.index.multiple.delete");
+        ImmutableStringValue INDEX_MULTIPLE_DELETE = newString("art.space.index.multiple.delete");
         ImmutableStringValue SPACE_TRUNCATE = newString("art.space.truncate");
         ImmutableStringValue SPACE_SINGLE_DELETE = newString("art.space.single.delete");
         ImmutableStringValue SPACE_SINGLE_INSERT = newString("art.space.single.insert");

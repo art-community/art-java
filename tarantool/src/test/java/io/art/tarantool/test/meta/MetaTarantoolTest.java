@@ -108,11 +108,11 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-              private final MetaField<MetaOtherSpaceClass, Integer> keyField = register(new MetaField<>("key",metaType(int.class),false,this));
+              private final MetaField<MetaOtherSpaceClass, java.lang.Integer> keyField = register(new MetaField<>("key",metaType(int.class),false,this));
 
               private final MetaField<MetaOtherSpaceClass, java.lang.String> valueField = register(new MetaField<>("value",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaOtherSpaceClass, Integer> numberField = register(new MetaField<>("number",metaType(int.class),false,this));
+              private final MetaField<MetaOtherSpaceClass, java.lang.Integer> numberField = register(new MetaField<>("number",metaType(int.class),false,this));
 
               private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod(this));
 
@@ -136,7 +136,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return constructor;
               }
 
-              public MetaField<MetaOtherSpaceClass, Integer> keyField() {
+              public MetaField<MetaOtherSpaceClass, java.lang.Integer> keyField() {
                 return keyField;
               }
 
@@ -144,7 +144,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return valueField;
               }
 
-              public MetaField<MetaOtherSpaceClass, Integer> numberField() {
+              public MetaField<MetaOtherSpaceClass, java.lang.Integer> numberField() {
                 return numberField;
               }
 
@@ -169,11 +169,11 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               public final class MetaConstructorConstructor extends MetaConstructor<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace> {
-                private final MetaParameter<Integer> keyParameter = register(new MetaParameter<>(0, "key",metaType(int.class)));
+                private final MetaParameter<java.lang.Integer> keyParameter = register(new MetaParameter<>(0, "key",metaType(int.class)));
 
                 private final MetaParameter<java.lang.String> valueParameter = register(new MetaParameter<>(1, "value",metaType(java.lang.String.class)));
 
-                private final MetaParameter<Integer> numberParameter = register(new MetaParameter<>(2, "number",metaType(int.class)));
+                private final MetaParameter<java.lang.Integer> numberParameter = register(new MetaParameter<>(2, "number",metaType(int.class)));
 
                 private MetaConstructorConstructor(MetaOtherSpaceClass owner) {
                   super(metaType(io.art.tarantool.test.model.OtherSpace.class),owner);
@@ -185,7 +185,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return new io.art.tarantool.test.model.OtherSpace((int)(arguments[0]),(java.lang.String)(arguments[1]),(int)(arguments[2]));
                 }
 
-                public MetaParameter<Integer> keyParameter() {
+                public MetaParameter<java.lang.Integer> keyParameter() {
                   return keyParameter;
                 }
 
@@ -193,7 +193,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return valueParameter;
                 }
 
-                public MetaParameter<Integer> numberParameter() {
+                public MetaParameter<java.lang.Integer> numberParameter() {
                   return numberParameter;
                 }
               }
@@ -216,7 +216,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaGetKeyMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, Integer> {
+              public final class MetaGetKeyMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, java.lang.Integer> {
                 private MetaGetKeyMethod(MetaOtherSpaceClass owner) {
                   super("getKey",metaType(int.class),owner);
                 }
@@ -252,7 +252,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaGetNumberMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, Integer> {
+              public final class MetaGetNumberMethod extends InstanceMetaMethod<MetaOtherSpaceClass, io.art.tarantool.test.model.OtherSpace, java.lang.Integer> {
                 private MetaGetNumberMethod(MetaOtherSpaceClass owner) {
                   super("getNumber",metaType(int.class),owner);
                 }
@@ -273,11 +273,11 @@ public class MetaTarantoolTest extends MetaLibrary {
               public static final class MetaOtherSpaceBuilderClass extends MetaClass<io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
                 private static final LazyProperty<MetaOtherSpaceBuilderClass> self = MetaClass.self(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class);
 
-                private final MetaField<MetaOtherSpaceBuilderClass, Integer> keyField = register(new MetaField<>("key",metaType(int.class),false,this));
+                private final MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> keyField = register(new MetaField<>("key",metaType(int.class),false,this));
 
                 private final MetaField<MetaOtherSpaceBuilderClass, java.lang.String> valueField = register(new MetaField<>("value",metaType(java.lang.String.class),false,this));
 
-                private final MetaField<MetaOtherSpaceBuilderClass, Integer> numberField = register(new MetaField<>("number",metaType(int.class),false,this));
+                private final MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> numberField = register(new MetaField<>("number",metaType(int.class),false,this));
 
                 private final MetaKeyMethod keyMethod = register(new MetaKeyMethod(this));
 
@@ -295,7 +295,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return self.get();
                 }
 
-                public MetaField<MetaOtherSpaceBuilderClass, Integer> keyField() {
+                public MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> keyField() {
                   return keyField;
                 }
 
@@ -303,7 +303,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return valueField;
                 }
 
-                public MetaField<MetaOtherSpaceBuilderClass, Integer> numberField() {
+                public MetaField<MetaOtherSpaceBuilderClass, java.lang.Integer> numberField() {
                   return numberField;
                 }
 
@@ -324,7 +324,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 public final class MetaKeyMethod extends InstanceMetaMethod<MetaOtherSpaceBuilderClass, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
-                  private final MetaParameter<Integer> keyParameter = register(new MetaParameter<>(0, "key",metaType(int.class)));
+                  private final MetaParameter<java.lang.Integer> keyParameter = register(new MetaParameter<>(0, "key",metaType(int.class)));
 
                   private MetaKeyMethod(MetaOtherSpaceBuilderClass owner) {
                     super("key",metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class),owner);
@@ -344,7 +344,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                     return instance.key((int)(argument));
                   }
 
-                  public MetaParameter<Integer> keyParameter() {
+                  public MetaParameter<java.lang.Integer> keyParameter() {
                     return keyParameter;
                   }
                 }
@@ -376,7 +376,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 public final class MetaNumberMethod extends InstanceMetaMethod<MetaOtherSpaceBuilderClass, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder, io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder> {
-                  private final MetaParameter<Integer> numberParameter = register(new MetaParameter<>(0, "number",metaType(int.class)));
+                  private final MetaParameter<java.lang.Integer> numberParameter = register(new MetaParameter<>(0, "number",metaType(int.class)));
 
                   private MetaNumberMethod(MetaOtherSpaceBuilderClass owner) {
                     super("number",metaType(io.art.tarantool.test.model.OtherSpace.OtherSpaceBuilder.class),owner);
@@ -396,7 +396,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                     return instance.number((int)(argument));
                   }
 
-                  public MetaParameter<Integer> numberParameter() {
+                  public MetaParameter<java.lang.Integer> numberParameter() {
                     return numberParameter;
                   }
                 }
@@ -428,7 +428,7 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-              private final MetaField<MetaTestDataClass, Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+              private final MetaField<MetaTestDataClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
 
               private final MetaField<MetaTestDataClass, java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false,this));
 
@@ -458,7 +458,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return constructor;
               }
 
-              public MetaField<MetaTestDataClass, Integer> idField() {
+              public MetaField<MetaTestDataClass, java.lang.Integer> idField() {
                 return idField;
               }
 
@@ -496,7 +496,7 @@ public class MetaTarantoolTest extends MetaLibrary {
               }
 
               public final class MetaConstructorConstructor extends MetaConstructor<MetaTestDataClass, io.art.tarantool.test.model.TestData> {
-                private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+                private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                 private final MetaParameter<java.lang.String> contentParameter = register(new MetaParameter<>(1, "content",metaType(java.lang.String.class)));
 
@@ -512,7 +512,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return new io.art.tarantool.test.model.TestData((int)(arguments[0]),(java.lang.String)(arguments[1]),(io.art.tarantool.test.model.TestData.Inner)(arguments[2]));
                 }
 
-                public MetaParameter<Integer> idParameter() {
+                public MetaParameter<java.lang.Integer> idParameter() {
                   return idParameter;
                 }
 
@@ -543,7 +543,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
               }
 
-              public final class MetaGetIdMethod extends InstanceMetaMethod<MetaTestDataClass, io.art.tarantool.test.model.TestData, Integer> {
+              public final class MetaGetIdMethod extends InstanceMetaMethod<MetaTestDataClass, io.art.tarantool.test.model.TestData, java.lang.Integer> {
                 private MetaGetIdMethod(MetaTestDataClass owner) {
                   super("getId",metaType(int.class),owner);
                 }
@@ -600,7 +600,7 @@ public class MetaTarantoolTest extends MetaLibrary {
               public static final class MetaTestDataBuilderClass extends MetaClass<io.art.tarantool.test.model.TestData.TestDataBuilder> {
                 private static final LazyProperty<MetaTestDataBuilderClass> self = MetaClass.self(io.art.tarantool.test.model.TestData.TestDataBuilder.class);
 
-                private final MetaField<MetaTestDataBuilderClass, Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+                private final MetaField<MetaTestDataBuilderClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
 
                 private final MetaField<MetaTestDataBuilderClass, java.lang.String> contentField = register(new MetaField<>("content",metaType(java.lang.String.class),false,this));
 
@@ -622,7 +622,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return self.get();
                 }
 
-                public MetaField<MetaTestDataBuilderClass, Integer> idField() {
+                public MetaField<MetaTestDataBuilderClass, java.lang.Integer> idField() {
                   return idField;
                 }
 
@@ -652,7 +652,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 public final class MetaIdMethod extends InstanceMetaMethod<MetaTestDataBuilderClass, io.art.tarantool.test.model.TestData.TestDataBuilder, io.art.tarantool.test.model.TestData.TestDataBuilder> {
-                  private final MetaParameter<Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
+                  private final MetaParameter<java.lang.Integer> idParameter = register(new MetaParameter<>(0, "id",metaType(int.class)));
 
                   private MetaIdMethod(MetaTestDataBuilderClass owner) {
                     super("id",metaType(io.art.tarantool.test.model.TestData.TestDataBuilder.class),owner);
@@ -672,7 +672,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                     return instance.id((int)(argument));
                   }
 
-                  public MetaParameter<Integer> idParameter() {
+                  public MetaParameter<java.lang.Integer> idParameter() {
                     return idParameter;
                   }
                 }
@@ -943,6 +943,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaTestFilterMethod testFilterMethod = register(new MetaTestFilterMethod(this));
 
+              private final MetaOtherSpaceIndexesClass otherSpaceIndexesClass = register(new MetaOtherSpaceIndexesClass());
+
+              private final MetaTestModelIndexesClass testModelIndexesClass = register(new MetaTestModelIndexesClass());
+
               private MetaTestStorageClass() {
                 super(metaType(io.art.tarantool.test.model.TestStorage.class));
               }
@@ -971,6 +975,14 @@ public class MetaTarantoolTest extends MetaLibrary {
               public MetaProxy proxy(
                   Map<MetaMethod<MetaClass<?>, ?>, Function<java.lang.Object, java.lang.Object>> invocations) {
                 return new MetaTestStorageProxy(invocations);
+              }
+
+              public MetaOtherSpaceIndexesClass otherSpaceIndexesClass() {
+                return otherSpaceIndexesClass;
+              }
+
+              public MetaTestModelIndexesClass testModelIndexesClass() {
+                return testModelIndexesClass;
               }
 
               public final class MetaTestSubscriptionMethod extends InstanceMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage, Void> {
@@ -1095,6 +1107,210 @@ public class MetaTarantoolTest extends MetaLibrary {
                 @Override
                 public boolean testFilter(io.art.tarantool.test.model.TestData input) {
                   return (boolean)(testFilterInvocation.apply(input));
+                }
+              }
+
+              public static final class MetaOtherSpaceIndexesClass extends MetaClass<io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes> {
+                private static final LazyProperty<MetaOtherSpaceIndexesClass> self = MetaClass.self(io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes.class);
+
+                private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+
+                private final MetaField<MetaOtherSpaceIndexesClass, io.art.storage.index.Index1<io.art.tarantool.test.model.OtherSpace, java.lang.Integer>> idField = register(new MetaField<>("id",metaType(io.art.storage.index.Index1.class,metaType(io.art.tarantool.test.model.OtherSpace.class),metaType(java.lang.Integer.class)),false,this));
+
+                private final MetaField<MetaOtherSpaceIndexesClass, io.art.storage.index.Index2<io.art.tarantool.test.model.OtherSpace, java.lang.String, java.lang.Integer>> valueNumberField = register(new MetaField<>("valueNumber",metaType(io.art.storage.index.Index2.class,metaType(io.art.tarantool.test.model.OtherSpace.class),metaType(java.lang.String.class),metaType(java.lang.Integer.class)),false,this));
+
+                private final MetaIdMethod idMethod = register(new MetaIdMethod(this));
+
+                private final MetaValueNumberMethod valueNumberMethod = register(new MetaValueNumberMethod(this));
+
+                private MetaOtherSpaceIndexesClass() {
+                  super(metaType(io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes.class));
+                }
+
+                public static MetaOtherSpaceIndexesClass otherSpaceIndexes() {
+                  return self.get();
+                }
+
+                public MetaConstructorConstructor constructor() {
+                  return constructor;
+                }
+
+                public MetaField<MetaOtherSpaceIndexesClass, io.art.storage.index.Index1<io.art.tarantool.test.model.OtherSpace, java.lang.Integer>> idField(
+                    ) {
+                  return idField;
+                }
+
+                public MetaField<MetaOtherSpaceIndexesClass, io.art.storage.index.Index2<io.art.tarantool.test.model.OtherSpace, java.lang.String, java.lang.Integer>> valueNumberField(
+                    ) {
+                  return valueNumberField;
+                }
+
+                public MetaIdMethod idMethod() {
+                  return idMethod;
+                }
+
+                public MetaValueNumberMethod valueNumberMethod() {
+                  return valueNumberMethod;
+                }
+
+                public final class MetaConstructorConstructor extends MetaConstructor<MetaOtherSpaceIndexesClass, io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes> {
+                  private MetaConstructorConstructor(MetaOtherSpaceIndexesClass owner) {
+                    super(metaType(io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes.class),owner);
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes invoke(
+                      java.lang.Object[] arguments) throws Throwable {
+                    return new io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes();
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes invoke() throws
+                      Throwable {
+                    return new io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes();
+                  }
+                }
+
+                public final class MetaIdMethod extends InstanceMetaMethod<MetaOtherSpaceIndexesClass, io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes, io.art.storage.index.Index1<io.art.tarantool.test.model.OtherSpace, java.lang.Integer>> {
+                  private MetaIdMethod(MetaOtherSpaceIndexesClass owner) {
+                    super("id",metaType(io.art.storage.index.Index1.class,metaType(io.art.tarantool.test.model.OtherSpace.class),metaType(java.lang.Integer.class)),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.id();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes instance) throws
+                      Throwable {
+                    return instance.id();
+                  }
+                }
+
+                public final class MetaValueNumberMethod extends InstanceMetaMethod<MetaOtherSpaceIndexesClass, io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes, io.art.storage.index.Index2<io.art.tarantool.test.model.OtherSpace, java.lang.String, java.lang.Integer>> {
+                  private MetaValueNumberMethod(MetaOtherSpaceIndexesClass owner) {
+                    super("valueNumber",metaType(io.art.storage.index.Index2.class,metaType(io.art.tarantool.test.model.OtherSpace.class),metaType(java.lang.String.class),metaType(java.lang.Integer.class)),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.valueNumber();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes instance) throws
+                      Throwable {
+                    return instance.valueNumber();
+                  }
+                }
+              }
+
+              public static final class MetaTestModelIndexesClass extends MetaClass<io.art.tarantool.test.model.TestStorage.TestModelIndexes> {
+                private static final LazyProperty<MetaTestModelIndexesClass> self = MetaClass.self(io.art.tarantool.test.model.TestStorage.TestModelIndexes.class);
+
+                private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+
+                private final MetaField<MetaTestModelIndexesClass, io.art.storage.index.Index1<io.art.meta.test.TestingMetaModel, java.lang.Integer>> idField = register(new MetaField<>("id",metaType(io.art.storage.index.Index1.class,metaType(io.art.meta.test.TestingMetaModel.class),metaType(java.lang.Integer.class)),false,this));
+
+                private final MetaField<MetaTestModelIndexesClass, io.art.storage.index.Index2<io.art.meta.test.TestingMetaModel, java.lang.Integer, java.lang.String>> f9f16Field = register(new MetaField<>("f9f16",metaType(io.art.storage.index.Index2.class,metaType(io.art.meta.test.TestingMetaModel.class),metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
+
+                private final MetaIdMethod idMethod = register(new MetaIdMethod(this));
+
+                private final MetaF9f16Method f9f16Method = register(new MetaF9f16Method(this));
+
+                private MetaTestModelIndexesClass() {
+                  super(metaType(io.art.tarantool.test.model.TestStorage.TestModelIndexes.class));
+                }
+
+                public static MetaTestModelIndexesClass testModelIndexes() {
+                  return self.get();
+                }
+
+                public MetaConstructorConstructor constructor() {
+                  return constructor;
+                }
+
+                public MetaField<MetaTestModelIndexesClass, io.art.storage.index.Index1<io.art.meta.test.TestingMetaModel, java.lang.Integer>> idField(
+                    ) {
+                  return idField;
+                }
+
+                public MetaField<MetaTestModelIndexesClass, io.art.storage.index.Index2<io.art.meta.test.TestingMetaModel, java.lang.Integer, java.lang.String>> f9f16Field(
+                    ) {
+                  return f9f16Field;
+                }
+
+                public MetaIdMethod idMethod() {
+                  return idMethod;
+                }
+
+                public MetaF9f16Method f9f16Method() {
+                  return f9f16Method;
+                }
+
+                public final class MetaConstructorConstructor extends MetaConstructor<MetaTestModelIndexesClass, io.art.tarantool.test.model.TestStorage.TestModelIndexes> {
+                  private MetaConstructorConstructor(MetaTestModelIndexesClass owner) {
+                    super(metaType(io.art.tarantool.test.model.TestStorage.TestModelIndexes.class),owner);
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.TestStorage.TestModelIndexes invoke(
+                      java.lang.Object[] arguments) throws Throwable {
+                    return new io.art.tarantool.test.model.TestStorage.TestModelIndexes();
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.TestStorage.TestModelIndexes invoke() throws
+                      Throwable {
+                    return new io.art.tarantool.test.model.TestStorage.TestModelIndexes();
+                  }
+                }
+
+                public final class MetaIdMethod extends InstanceMetaMethod<MetaTestModelIndexesClass, io.art.tarantool.test.model.TestStorage.TestModelIndexes, io.art.storage.index.Index1<io.art.meta.test.TestingMetaModel, java.lang.Integer>> {
+                  private MetaIdMethod(MetaTestModelIndexesClass owner) {
+                    super("id",metaType(io.art.storage.index.Index1.class,metaType(io.art.meta.test.TestingMetaModel.class),metaType(java.lang.Integer.class)),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.TestModelIndexes instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.id();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.TestModelIndexes instance) throws
+                      Throwable {
+                    return instance.id();
+                  }
+                }
+
+                public final class MetaF9f16Method extends InstanceMetaMethod<MetaTestModelIndexesClass, io.art.tarantool.test.model.TestStorage.TestModelIndexes, io.art.storage.index.Index2<io.art.meta.test.TestingMetaModel, java.lang.Integer, java.lang.String>> {
+                  private MetaF9f16Method(MetaTestModelIndexesClass owner) {
+                    super("f9f16",metaType(io.art.storage.index.Index2.class,metaType(io.art.meta.test.TestingMetaModel.class),metaType(java.lang.Integer.class),metaType(java.lang.String.class)),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.TestModelIndexes instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.f9f16();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.TestModelIndexes instance) throws
+                      Throwable {
+                    return instance.f9f16();
+                  }
                 }
               }
             }
@@ -1265,7 +1481,7 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
 
-                private final MetaField<MetaTestRequestClass, Integer> intValueField = register(new MetaField<>("intValue",metaType(int.class),false,this));
+                private final MetaField<MetaTestRequestClass, java.lang.Integer> intValueField = register(new MetaField<>("intValue",metaType(int.class),false,this));
 
                 private final MetaField<MetaTestRequestClass, java.lang.String> stringValueField = register(new MetaField<>("stringValue",metaType(java.lang.String.class),false,this));
 
@@ -1285,7 +1501,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   return constructor;
                 }
 
-                public MetaField<MetaTestRequestClass, Integer> intValueField() {
+                public MetaField<MetaTestRequestClass, java.lang.Integer> intValueField() {
                   return intValueField;
                 }
 
@@ -1302,7 +1518,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                 }
 
                 public final class MetaConstructorConstructor extends MetaConstructor<MetaTestRequestClass, io.art.tarantool.test.model.TestService.TestRequest> {
-                  private final MetaParameter<Integer> intValueParameter = register(new MetaParameter<>(0, "intValue",metaType(int.class)));
+                  private final MetaParameter<java.lang.Integer> intValueParameter = register(new MetaParameter<>(0, "intValue",metaType(int.class)));
 
                   private final MetaParameter<java.lang.String> stringValueParameter = register(new MetaParameter<>(1, "stringValue",metaType(java.lang.String.class)));
 
@@ -1316,7 +1532,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                     return new io.art.tarantool.test.model.TestService.TestRequest((int)(arguments[0]),(java.lang.String)(arguments[1]));
                   }
 
-                  public MetaParameter<Integer> intValueParameter() {
+                  public MetaParameter<java.lang.Integer> intValueParameter() {
                     return intValueParameter;
                   }
 
@@ -1325,7 +1541,7 @@ public class MetaTarantoolTest extends MetaLibrary {
                   }
                 }
 
-                public final class MetaGetIntValueMethod extends InstanceMetaMethod<MetaTestRequestClass, io.art.tarantool.test.model.TestService.TestRequest, Integer> {
+                public final class MetaGetIntValueMethod extends InstanceMetaMethod<MetaTestRequestClass, io.art.tarantool.test.model.TestService.TestRequest, java.lang.Integer> {
                   private MetaGetIntValueMethod(MetaTestRequestClass owner) {
                     super("getIntValue",metaType(int.class),owner);
                   }

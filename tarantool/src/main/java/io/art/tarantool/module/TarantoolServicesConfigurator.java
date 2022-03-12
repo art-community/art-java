@@ -23,7 +23,7 @@ import java.util.function.*;
 public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
-    private final Map<Class<? extends Indexes<?>>, LazyProperty<Indexes<?>>> indexes = map();
+    private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
 
     public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
         String storageId = idByDash(storageClass);
@@ -38,7 +38,7 @@ public class TarantoolServicesConfigurator {
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
         spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(declaration(indexes).creator().<Indexes<?>>singleton().id().first().type(), declaration(spaceClass), storages().get(storageId))));
-        this.indexes.put(indexes, lazy(() -> declaration(indexes).creator().singleton()));
+        this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
         return this;
     }
 
@@ -51,7 +51,7 @@ public class TarantoolServicesConfigurator {
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<Class<? extends Indexes<?>>, Indexes<?>>> indexes = lazy(() -> this.indexes
+        LazyProperty<ImmutableMap<String, Indexes<?>>> indexes = lazy(() -> this.indexes
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
