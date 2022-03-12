@@ -1,27 +1,27 @@
 package io.art.tarantool.test;
 
 import io.art.core.collection.*;
+import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import io.art.storage.service.*;
-import io.art.tarantool.*;
+import io.art.tarantool.module.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
+import io.art.tarantool.test.model.TestStorage.*;
+import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
+import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
-import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
-import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -31,35 +31,29 @@ public class TarantoolStorageTest {
     public static void setup() {
         initializeStorage();
         initialize(
-                meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
-                transport(),
-                tarantool(tarantool -> tarantool
+                MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
+                TransportActivator.transport(),
+                TarantoolActivator.tarantool(tarantool -> tarantool
                         .storage(TestStorage.class, storage -> storage.client(client -> client
                                 .port(STORAGE_PORT)
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, () -> testingMetaModel().f1Field())
-                        .space(TestStorage.class, OtherSpace.class, () -> otherSpace().keyField())
+                        .space(TestStorage.class, TestingMetaModel.class, TestModelIndexes.class)
                 )
         );
-        Tarantool.tarantool()
+        tarantool()
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
-                .createIndex(indexFor(testingMetaModel())
-                        .field(testingMetaModel().f1Field())
+                .createIndex(indexFor(testingMetaModel(), tarantool().index(TestingMetaModel.class, TestModelIndexes::id))
                         .configure()
                         .ifNotExists(true)
                         .unique(true)
-                        .build());
-        Tarantool.tarantool()
-                .schema(TestStorage.class)
-                .createSpace(spaceFor(OtherSpace.class).ifNotExists(true).build())
-                .createIndex(indexFor(otherSpace())
-                        .field(otherSpace().keyField())
+                        .build())
+                .createIndex(indexFor(testingMetaModel(), tarantool().index(TestingMetaModel.class, TestModelIndexes::f9f16))
                         .configure()
                         .ifNotExists(true)
-                        .unique(true)
+                        .unique(false)
                         .build());
     }
 
@@ -182,14 +176,14 @@ public class TarantoolStorageTest {
 
     @Test
     public void testSubscription() {
-        Tarantool.tarantool(TestStorage.class).testSubscription();
+        tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
     }
 
     @Test
     public void testChannel() {
         CountDownLatch waiter = new CountDownLatch(2);
-        Tarantool.tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {
+        tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {
             assertEquals("test", value);
             waiter.countDown();
         });
@@ -197,6 +191,6 @@ public class TarantoolStorageTest {
     }
 
     private static SpaceService<Integer, TestingMetaModel> current() {
-        return Tarantool.tarantool().space(TestingMetaModel.class);
+        return tarantool().space(TestingMetaModel.class);
     }
 }

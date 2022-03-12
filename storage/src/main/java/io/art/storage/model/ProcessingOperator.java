@@ -1,4 +1,4 @@
-package io.art.storage.stream;
+package io.art.storage.model;
 
 import lombok.*;
 import static io.art.storage.constants.StorageConstants.*;

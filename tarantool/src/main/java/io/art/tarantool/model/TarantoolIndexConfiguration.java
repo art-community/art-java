@@ -1,10 +1,13 @@
 package io.art.tarantool.model;
 
 import io.art.core.annotation.*;
+import io.art.core.caster.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import lombok.*;
 import lombok.experimental.*;
+import static io.art.core.caster.Caster.cast;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.tarantool.model.TarantoolIndexPartConfiguration.*;
@@ -89,6 +92,13 @@ public class TarantoolIndexConfiguration<C, M extends MetaClass<C>> {
     public static <C, M extends MetaClass<C>> TarantoolIndexConfigurator<C, M> indexFor(M type, MetaField<M, ?>... fields) {
         TarantoolIndexConfigurator<C, M> configurator = new TarantoolIndexConfigurator<>(type);
         stream(fields).forEach(configurator::field);
+        return configurator;
+    }
+
+    @SafeVarargs
+    public static <C, M extends MetaClass<C>> TarantoolIndexConfigurator<C, M> indexFor(M type, Index index) {
+        TarantoolIndexConfigurator<C, M> configurator = new TarantoolIndexConfigurator<>(type);
+        index.fields().forEach(field -> configurator.field(cast(field)));
         return configurator;
     }
 }

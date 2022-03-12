@@ -8,6 +8,7 @@ import io.art.storage.sorter.model.*;
 import io.art.tarantool.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
+import io.art.tarantool.test.model.TestStorage.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.context.Context.*;
@@ -40,8 +41,8 @@ public class TarantoolStreamTest {
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, () -> testingMetaModel().f1Field())
-                        .space(TestStorage.class, OtherSpace.class, () -> otherSpace().keyField())
+                        .space(TestStorage.class, TestingMetaModel.class, TestModelIndexes.class)
+                        .space(TestStorage.class, OtherSpace.class, OtherSpaceIndexes.class)
                 )
         );
         Tarantool.tarantool()

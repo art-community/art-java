@@ -19,8 +19,10 @@
 package io.art.meta.schema;
 
 import io.art.core.collection.*;
+import io.art.core.singleton.*;
 import io.art.meta.model.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.meta.constants.MetaConstants.Errors.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
@@ -36,6 +38,10 @@ public class MetaCreatorTemplate {
     private final MetaConstructor<MetaClass<?>, ?> localPropertiesConstructor;
     private final MetaConstructor<MetaClass<?>, ?> noPropertiesConstructor;
     private int localPropertiesCount;
+
+    public <T> T singleton() {
+        return SingletonsRegistry.singleton(owner.definition().type(), () -> cast(noPropertiesConstructor().invokeCatched()));
+    }
 
     public MetaConstructor<MetaClass<?>, ?> allPropertiesConstructor() {
         return allPropertiesConstructor;

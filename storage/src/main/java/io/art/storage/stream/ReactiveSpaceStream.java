@@ -6,6 +6,7 @@ import io.art.storage.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.mapper.*;
+import io.art.storage.model.*;
 import io.art.storage.sorter.implementation.*;
 import io.art.storage.sorter.model.*;
 import reactor.core.publisher.*;

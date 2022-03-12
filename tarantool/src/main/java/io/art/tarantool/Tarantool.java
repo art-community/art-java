@@ -3,6 +3,7 @@ package io.art.tarantool;
 import io.art.communicator.*;
 import io.art.core.annotation.*;
 import io.art.storage.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.tarantool.service.*;
 import lombok.*;
@@ -11,6 +12,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static lombok.AccessLevel.*;
+import java.util.function.*;
 
 @Public
 @UtilityClass
@@ -33,12 +35,20 @@ public class Tarantool {
     @Public
     @NoArgsConstructor(access = PRIVATE)
     public static class TarantoolProvider {
-        public <KeyType, ValueType> SpaceService<KeyType, ValueType> space(Class<ValueType> type) {
-            return tarantoolModule().configuration().getServices().getSpace(type);
+        public <KeyType, ModelType> SpaceService<KeyType, ModelType> space(Class<ModelType> spaceType) {
+            return tarantoolModule().configuration().getServices().getSpace(spaceType);
         }
 
         public TarantoolSchemaService schema(Class<? extends Storage> type) {
             return tarantoolModule().configuration().getServices().getSchema(type);
+        }
+
+        public <ModelType, IndexesType extends Indexes<ModelType>> IndexesType indexes(Class<ModelType> spaceType) {
+            return tarantoolModule().configuration().getServices().getIndexes(spaceType);
+        }
+
+        public <ModelType, IndexesType extends Indexes<ModelType>> Index index(Class<ModelType> spaceType, Function<IndexesType, Index> provider) {
+            return provider.apply(indexes(spaceType));
         }
     }
 }

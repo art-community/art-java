@@ -25,6 +25,7 @@ import io.art.core.module.*;
 import io.art.meta.model.*;
 import io.art.server.configuration.*;
 import io.art.storage.*;
+import io.art.storage.index.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
@@ -58,6 +59,11 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
 
     public <C, M extends MetaClass<C>> TarantoolInitializer space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
         servicesConfigurator.space(storageClass, spaceClass, idField);
+        return this;
+    }
+
+    public <C, I extends Indexes<C>> TarantoolInitializer space(Class<? extends Storage> storageClass, Class<C> spaceClass, Class<I> indexes) {
+        servicesConfigurator.space(storageClass, spaceClass, indexes);
         return this;
     }
 

@@ -105,7 +105,6 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
         return reactive;
     }
 
-    @Override
     @SafeVarargs
     public final IndexService<KeyType, ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields) {
         return TarantoolIndexService.<KeyType, ModelType>builder()

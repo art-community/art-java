@@ -3,7 +3,9 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.stream.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
@@ -59,5 +61,10 @@ public interface SpaceService<KeyType, ModelType> {
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 
-    IndexService<KeyType, ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields);
+    default <F1> Index1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
+        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
+        return new Index1Service<>(index(fields));
+    }
+
+    IndexService<ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields);
 }
