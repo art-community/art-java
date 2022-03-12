@@ -86,12 +86,14 @@ public interface TarantoolModuleConstants {
     }
 
     interface Functions {
-        ImmutableStringValue SPACE_FIND_FIRST = newString("art.space.findFirst");
-        ImmutableStringValue SPACE_FIND_ALL = newString("art.space.findAll");
+        ImmutableStringValue SPACE_FIRST = newString("art.space.first");
+        ImmutableStringValue SPACE_SELECT = newString("art.space.select");
+        ImmutableStringValue SPACE_FIND = newString("art.space.find");
         ImmutableStringValue SPACE_STREAM = newString("art.space.stream");
         ImmutableStringValue SPACE_COUNT = newString("art.space.count");
-        ImmutableStringValue INDEX_FIND_FIRST = newString("art.index.findFirst");
-        ImmutableStringValue INDEX_FIND_ALL = newString("art.index.findAll");
+        ImmutableStringValue INDEX_FIRST = newString("art.index.first");
+        ImmutableStringValue INDEX_FIND = newString("art.index.find");
+        ImmutableStringValue INDEX_SELECT = newString("art.index.select");
         ImmutableStringValue INDEX_STREAM = newString("art.index.stream");
         ImmutableStringValue INDEX_COUNT = newString("art.index.count");
         ImmutableStringValue INDEX_SINGLE_DELETE = newString("art.space.index.multiple.delete");

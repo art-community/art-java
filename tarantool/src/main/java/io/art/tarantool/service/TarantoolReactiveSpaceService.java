@@ -45,24 +45,30 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public Mono<ModelType> findFirst(KeyType key) {
+    public Mono<ModelType> first(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.immutable().call(SPACE_FIND_FIRST, input);
+        Mono<Value> output = clients.immutable().call(SPACE_FIRST, input);
         return parseSpaceMono(output);
     }
 
-
     @Override
-    public Flux<ModelType> findAll(Collection<KeyType> keys) {
-        ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(SPACE_FIND_ALL, input);
+    public Flux<ModelType> select(KeyType key) {
+        ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
+        Mono<Value> output = clients.immutable().call(SPACE_SELECT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> findAll(ImmutableCollection<KeyType> keys) {
+    public Flux<ModelType> find(Collection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(SPACE_FIND_ALL, input);
+        Mono<Value> output = clients.immutable().call(SPACE_FIND, input);
+        return parseSpaceFlux(output);
+    }
+
+    @Override
+    public Flux<ModelType> find(ImmutableCollection<KeyType> keys) {
+        ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
+        Mono<Value> output = clients.immutable().call(SPACE_FIND, input);
         return parseSpaceFlux(output);
     }
 

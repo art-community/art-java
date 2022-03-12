@@ -77,6 +77,6 @@ public class TarantoolBenchmark {
 
     @Benchmark
     public void putBenchmark(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.space.reactive().findFirst(1).subscribe(blackhole::consume));
+        blackhole.consume(state.space.reactive().first(1).subscribe(blackhole::consume));
     }
 }

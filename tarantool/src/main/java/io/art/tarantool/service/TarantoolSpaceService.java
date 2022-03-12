@@ -23,18 +23,18 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
-    public ModelType findFirst(KeyType key) {
-        return block(reactive.findFirst(key));
+    public ModelType first(KeyType key) {
+        return block(reactive.first(key));
     }
 
     @Override
-    public ImmutableArray<ModelType> findAll(Collection<KeyType> keys) {
-        return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
+    public ImmutableArray<ModelType> find(Collection<KeyType> keys) {
+        return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys) {
-        return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
+    public ImmutableArray<ModelType> find(ImmutableCollection<KeyType> keys) {
+        return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
 

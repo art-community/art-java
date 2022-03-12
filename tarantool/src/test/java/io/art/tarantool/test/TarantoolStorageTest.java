@@ -156,7 +156,7 @@ public class TarantoolStorageTest {
     public void testFindFirst() {
         TestingMetaModel data = generateTestingModel();
         current().put(data);
-        data.assertEquals(current().findFirst(1));
+        data.assertEquals(current().first(1));
     }
 
     @Test
@@ -190,7 +190,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().put(data);
-        ImmutableArray<TestingMetaModel> result = current().findAll(1, 2, 3);
+        ImmutableArray<TestingMetaModel> result = current().find(1, 2, 3);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));

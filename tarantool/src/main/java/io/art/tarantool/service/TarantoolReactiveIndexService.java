@@ -46,28 +46,28 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     @Override
     public Mono<ModelType> findFirst(Collection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(INDEX_FIND_FIRST, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Mono<ModelType> findFirst(ImmutableCollection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(INDEX_FIND_FIRST, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> findAll(Collection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(INDEX_FIND_ALL, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> findAll(ImmutableCollection<Object> keys) {
         ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(INDEX_FIND_ALL, input);
+        Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 

@@ -12,15 +12,17 @@ import java.util.*;
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
 public interface ReactiveSpaceService<KeyType, ModelType> {
-    Mono<ModelType> findFirst(KeyType key);
+    Mono<ModelType> first(KeyType key);
 
-    default Flux<ModelType> findAll(KeyType... keys) {
-        return findAll(asList(keys));
+    Flux<ModelType> select(KeyType key);
+
+    default Flux<ModelType> find(KeyType... keys) {
+        return find(asList(keys));
     }
 
-    Flux<ModelType> findAll(Collection<KeyType> keys);
+    Flux<ModelType> find(Collection<KeyType> keys);
 
-    Flux<ModelType> findAll(ImmutableCollection<KeyType> keys);
+    Flux<ModelType> find(ImmutableCollection<KeyType> keys);
 
     Mono<ModelType> delete(KeyType key);
 

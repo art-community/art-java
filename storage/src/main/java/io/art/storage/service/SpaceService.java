@@ -11,15 +11,17 @@ import java.util.*;
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
 public interface SpaceService<KeyType, ModelType> {
-    ModelType findFirst(KeyType key);
+    ModelType first(KeyType key);
 
-    default ImmutableArray<ModelType> findAll(KeyType... keys) {
-        return findAll(asList(keys));
+    ImmutableArray<ModelType> select(KeyType key);
+
+    default ImmutableArray<ModelType> find(KeyType... keys) {
+        return find(asList(keys));
     }
 
-    ImmutableArray<ModelType> findAll(Collection<KeyType> keys);
+    ImmutableArray<ModelType> find(Collection<KeyType> keys);
 
-    ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys);
+    ImmutableArray<ModelType> find(ImmutableCollection<KeyType> keys);
 
     ModelType delete(KeyType key);
 
