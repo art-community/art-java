@@ -2,6 +2,7 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import java.util.*;
 
 @Public
 public class Index1Service<ModelType, F1> {
@@ -17,8 +18,17 @@ public class Index1Service<ModelType, F1> {
         return delegate.findFirst(key1);
     }
 
-    public ImmutableArray<ModelType> findAll(F1 key1) {
-        return delegate.findAll(key1);
+    @SafeVarargs
+    public final ImmutableArray<ModelType> findAll(F1... keys1) {
+        return delegate.findAll((Object[]) keys1);
+    }
+
+    public ImmutableArray<ModelType> findAll(Collection<F1> keys1) {
+        return delegate.findAll(keys1);
+    }
+
+    public ImmutableArray<ModelType> findAll(ImmutableCollection<F1> keys1) {
+        return delegate.findAll(keys1);
     }
 
     public ImmutableArray<ModelType> delete(F1 key1) {
