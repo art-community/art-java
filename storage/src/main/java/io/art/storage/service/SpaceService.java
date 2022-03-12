@@ -66,5 +66,25 @@ public interface SpaceService<KeyType, ModelType> {
         return new Index1Service<>(index(fields));
     }
 
+    default <F1, F2> Index2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
+        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
+        return new Index2Service<>(index(fields));
+    }
+
+    default <F1, F2, F3> Index3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
+        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
+        return new Index3Service<>(index(fields));
+    }
+
+    default <F1, F2, F3, F4> Index4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
+        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
+        return new Index4Service<>(index(fields));
+    }
+
+    default <F1, F2, F3, F4, F5> Index5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
+        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
+        return new Index5Service<>(index(fields));
+    }
+
     IndexService<ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields);
 }
