@@ -26,11 +26,10 @@ import io.art.core.module.*;
 import io.art.core.property.*;
 import lombok.*;
 import static io.art.core.constants.StringConstants.*;
-import static java.util.Objects.*;
 
 @Public
 public class ConfiguratorInitializer implements ModuleInitializer<ConfiguratorModuleConfiguration, ConfiguratorModuleConfiguration.Configurator, ConfiguratorModule> {
-    private CustomConfigurationsConfigurator registry = new CustomConfigurationsConfigurator();
+    private final CustomConfigurationsConfigurator registry = new CustomConfigurationsConfigurator();
 
     public ConfiguratorInitializer configuration(Class<?> type) {
         return configuration(EMPTY_STRING, type);
@@ -42,7 +41,6 @@ public class ConfiguratorInitializer implements ModuleInitializer<ConfiguratorMo
     }
 
     public ConfiguratorModuleConfiguration initialize(ConfiguratorModule module) {
-        if (isNull(registry)) registry = new CustomConfigurationsConfigurator();
         return new Initial(registry.configure(module.orderedSources()));
     }
 
