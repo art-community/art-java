@@ -6,7 +6,7 @@ import static io.art.core.factory.ListFactory.*;
 import java.util.*;
 
 @RequiredArgsConstructor
-public class IndexFiveFields<C, F1, F2, F3, F4, F5> implements Index5<F1, F2, F3, F4, F5> {
+public class IndexFiveFields<C, F1, F2, F3, F4, F5> implements Index5<C, F1, F2, F3, F4, F5> {
     private final MetaField<? extends MetaClass<C>, F1> field1;
     private final MetaField<? extends MetaClass<C>, F2> field2;
     private final MetaField<? extends MetaClass<C>, F3> field3;

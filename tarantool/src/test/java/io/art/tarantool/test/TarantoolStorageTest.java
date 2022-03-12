@@ -160,6 +160,13 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testIndexFindFirst() {
+        TestingMetaModel data = generateTestingModel();
+        current().put(data);
+        data.assertEquals(current().index(currentIndexes().id()).findFirst(1));
+    }
+
+    @Test
     public void testFindAll() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -192,5 +199,9 @@ public class TarantoolStorageTest {
 
     private static SpaceService<Integer, TestingMetaModel> current() {
         return tarantool().space(TestingMetaModel.class);
+    }
+
+    private static TestModelIndexes currentIndexes() {
+        return tarantool().indexes(TestingMetaModel.class);
     }
 }

@@ -22,13 +22,13 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     @Accessors(fluent = true)
     class TestModelIndexes implements Indexes<TestingMetaModel> {
         private final Index1<TestingMetaModel, Integer> id = index(testingMetaModel().f1Field());
-        private final Index2<Integer, String> f9f16 = index(testingMetaModel().f9Field(), testingMetaModel().f16Field());
+        private final Index2<TestingMetaModel, Integer, String> f9f16 = index(testingMetaModel().f9Field(), testingMetaModel().f16Field());
     }
 
     @Getter
     @Accessors(fluent = true)
     class OtherSpaceIndexes implements Indexes<OtherSpace> {
         private final Index1<OtherSpace, Integer> id = index(otherSpace().keyField());
-        private final Index2<String, Integer> valueNumber = index(otherSpace().valueField(), otherSpace().numberField());
+        private final Index2<OtherSpace, String, Integer> valueNumber = index(otherSpace().valueField(), otherSpace().numberField());
     }
 }
