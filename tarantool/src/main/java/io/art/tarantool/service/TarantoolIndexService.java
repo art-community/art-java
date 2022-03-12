@@ -14,37 +14,52 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolIndexService<KeyType, ModelType> implements IndexService<KeyType, ModelType> {
-    private ReactiveIndexService<KeyType, ModelType> reactive;
+public class TarantoolIndexService<ModelType> implements IndexService<ModelType> {
+    private ReactiveIndexService<ModelType> reactive;
 
     @Builder
-    public TarantoolIndexService(MetaType<KeyType> keyMeta,
+    public TarantoolIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
                                  MetaType<ModelType> spaceMeta,
                                  ImmutableStringValue spaceName,
                                  ImmutableStringValue indexName,
                                  TarantoolClientRegistry storage) {
-        reactive = TarantoolReactiveIndexService.<KeyType, ModelType>builder()
+        reactive = TarantoolReactiveIndexService.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceMeta(spaceMeta)
-                .keyMeta(keyMeta)
+                .fields(fields)
                 .indexName(indexName)
                 .storage(storage)
                 .build();
     }
 
     @Override
-    public ModelType findFirst(KeyType key) {
-        return block(reactive.findFirst(key));
+    public ModelType findFirst(Collection<Object> keys) {
+        return block(reactive.findFirst(keys));
     }
 
     @Override
-    public ImmutableArray<ModelType> findAll(Collection<KeyType> keys) {
+    public ModelType findFirst(ImmutableCollection<Object> keys) {
+        return block(reactive.findFirst(keys));
+    }
+
+    @Override
+    public ImmutableArray<ModelType> findAll(Collection<Object> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> findAll(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<ModelType> findAll(ImmutableCollection<Object> keys) {
         return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
+    public ImmutableArray<ModelType> delete(Collection<Object> keys) {
+        return reactive.delete(keys).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
+    public ImmutableArray<ModelType> delete(ImmutableCollection<Object> keys) {
+        return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
@@ -53,7 +68,7 @@ public class TarantoolIndexService<KeyType, ModelType> implements IndexService<K
     }
 
     @Override
-    public ReactiveIndexService<KeyType, ModelType> reactive() {
+    public ReactiveIndexService<ModelType> reactive() {
         return reactive;
     }
 }

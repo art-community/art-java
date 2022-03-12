@@ -2,7 +2,7 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.stream.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
@@ -58,5 +58,25 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     ReactiveSpaceStream<ModelType> stream();
 
-    ReactiveIndexService<KeyType, ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields);
+    default <F1> ReactiveIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
+        return new ReactiveIndex1Service<>(index((Index) index));
+    }
+
+    default <F1, F2> ReactiveIndex2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
+        return new ReactiveIndex2Service<>(index((Index) index));
+    }
+
+    default <F1, F2, F3> ReactiveIndex3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
+        return new ReactiveIndex3Service<>(index((Index) index));
+    }
+
+    default <F1, F2, F3, F4> ReactiveIndex4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
+        return new ReactiveIndex4Service<>(index((Index) index));
+    }
+
+    default <F1, F2, F3, F4, F5> ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
+        return new ReactiveIndex5Service<>(index((Index) index));
+    }
+
+    ReactiveIndexService<ModelType> index(Index index);
 }

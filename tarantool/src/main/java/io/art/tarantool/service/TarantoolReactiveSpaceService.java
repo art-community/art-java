@@ -3,6 +3,7 @@ package io.art.tarantool.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
@@ -10,12 +11,12 @@ import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
-import static java.util.stream.Collectors.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -148,12 +149,11 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    @SafeVarargs
-    public final ReactiveIndexService<KeyType, ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields) {
-        return TarantoolReactiveIndexService.<KeyType, ModelType>builder()
-                .indexName(newString(Arrays.stream(fields).map(MetaField::name).collect(joining())))
+    public final ReactiveIndexService<ModelType> index(Index index) {
+        return TarantoolReactiveIndexService.<ModelType>builder()
+                .indexName(newString(index.name()))
                 .spaceMeta(spaceMetaType)
-                .keyMeta(keyMeta)
+                .fields(cast(index.fields()))
                 .storage(clients)
                 .spaceName(spaceName)
                 .build();

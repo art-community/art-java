@@ -10,7 +10,13 @@ import java.util.*;
 @Public
 @SuppressWarnings({VARARGS})
 public interface ReactiveIndexService<ModelType> {
-    Mono<ModelType> findFirst(Object... keys);
+    default Mono<ModelType> findFirst(Object... keys) {
+        return findFirst(asList(keys));
+    }
+
+    Mono<ModelType> findFirst(Collection<Object> keys);
+
+    Mono<ModelType> findFirst(ImmutableCollection<Object> keys);
 
     default Flux<ModelType> findAll(Object... keys) {
         return findAll(asList(keys));

@@ -2,10 +2,8 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.stream.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
@@ -62,29 +60,24 @@ public interface SpaceService<KeyType, ModelType> {
     ReactiveSpaceService<KeyType, ModelType> reactive();
 
     default <F1> Index1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
-        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
-        return new Index1Service<>(index(fields));
+        return new Index1Service<>(index((Index) index));
     }
 
     default <F1, F2> Index2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
-        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
-        return new Index2Service<>(index(fields));
+        return new Index2Service<>(index((Index) index));
     }
 
     default <F1, F2, F3> Index3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
-        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
-        return new Index3Service<>(index(fields));
+        return new Index3Service<>(index((Index) index));
     }
 
     default <F1, F2, F3, F4> Index4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
-        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
-        return new Index4Service<>(index(fields));
+        return new Index4Service<>(index((Index) index));
     }
 
     default <F1, F2, F3, F4, F5> Index5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
-        MetaField<MetaClass<ModelType>, ?> fields = cast(index.fields());
-        return new Index5Service<>(index(fields));
+        return new Index5Service<>(index((Index) index));
     }
 
-    IndexService<ModelType> index(MetaField<MetaClass<ModelType>, ?>... fields);
+    IndexService<ModelType> index(Index index);
 }

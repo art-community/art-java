@@ -2,7 +2,6 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
@@ -10,7 +9,13 @@ import java.util.*;
 @Public
 @SuppressWarnings({VARARGS})
 public interface IndexService<ModelType> {
-    ModelType findFirst(Object... keys);
+    default ModelType findFirst(Object... keys) {
+        return findFirst(asList(keys));
+    }
+
+    ModelType findFirst(Collection<Object> keys);
+
+    ModelType findFirst(ImmutableCollection<Object> keys);
 
     default ImmutableArray<ModelType> findAll(Object... keys) {
         return findAll(asList(keys));
