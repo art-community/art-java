@@ -66,7 +66,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         server = serverConfiguration(serverRefresher);
         storageConfigurations = emptyImmutableMap();
         storageClients = emptyImmutableMap();
-        services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
+        services = new TarantoolServiceRegistry(lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap), lazy(ImmutableMap::emptyImmutableMap));
         subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
     }
 
