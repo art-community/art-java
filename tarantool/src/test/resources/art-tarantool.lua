@@ -424,14 +424,25 @@ do
 local _ENV = _ENV
 package.preload[ "art.storage.index" ] = function( ... ) local arg = _G.arg;
 local index = {
-    findFirst = function(space, index, key)
-        return box.space[space].index[index]:get(key)
+    findFirst = function(space, index, keys)
+        local foundIndex = box.space[space].index[index]
+        if foundIndex.unique and #keys == 1 then
+            return foundIndex:get(keys)
+        end
+        return next(foundIndex:select(keys, { limit = 1 }))
     end,
 
     findAll = function(space, index, keys)
         local result = {}
         for _, key in pairs(keys) do
-            table.insert(result, box.space[space].index[index]:get(key))
+            local foundIndex = box.space[space].index[index]
+            if foundIndex.unique and #key == 1 then
+                table.insert(result, foundIndex:get(key))
+            end
+            local found = next(foundIndex:select(key, { limit = 1 }))
+            if found then
+                table.insert(result, found)
+            end
         end
         return result
     end,
