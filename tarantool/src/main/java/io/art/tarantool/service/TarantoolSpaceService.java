@@ -163,7 +163,7 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
                 .indexName(newString(index.name()))
                 .spaceType(spaceMetaType)
                 .fields(cast(index.fields()))
-                .storage(clients)
+                .clients(clients)
                 .spaceName(spaceName)
                 .build();
     }

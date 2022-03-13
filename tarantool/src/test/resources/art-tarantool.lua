@@ -451,8 +451,8 @@ local index = {
         return result
     end,
 
-    stream = function(space, index, processingOperators, terminatingOperator)
-        local generator, param, state = box.space[space].index[index]:pairs()
+    stream = function(space, index, processingOperators, terminatingOperator, baseKey)
+        local generator, param, state = box.space[space].index[index]:pairs(baseKey)
 
         for _, operator in pairs(processingOperators) do
             local name = operator[1]
@@ -690,8 +690,8 @@ local space = {
         return result
     end,
 
-    stream = function(space, processingOperators, terminatingOperator)
-        local generator, parameter, state = box.space[space]:pairs()
+    stream = function(space, processingOperators, terminatingOperator, baseKey)
+        local generator, parameter, state = box.space[space]:pairs(baseKey)
 
         for _, operator in pairs(processingOperators) do
             local name = operator[1]
