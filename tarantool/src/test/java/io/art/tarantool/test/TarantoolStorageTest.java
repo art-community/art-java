@@ -161,10 +161,13 @@ public class TarantoolStorageTest {
         Integer finalExpectedF9 = expectedF9;
         current().update(keys, updater -> updater
                 .add(testingMetaModel().f9Field(), 4)
+                .set(testingMetaModel().f16Field(), "updated")
                 .subtract(testingMetaModel().f9Field(), 2)
                 .bitwiseAnd(testingMetaModel().f9Field(), 2)
                 .bitwiseOr(testingMetaModel().f9Field(), 2)
                 .bitwiseXor(testingMetaModel().f9Field(), 2))
+                .stream()
+                .peek(element -> assertEquals("updated", element.getF16()))
                 .forEach(element -> assertEquals(finalExpectedF9, element.getF9()));
         current().update(keys, updater -> updater
                 .set(testingMetaModel().f9Field(), 20)
