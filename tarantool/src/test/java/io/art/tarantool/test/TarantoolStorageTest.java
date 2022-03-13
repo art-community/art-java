@@ -131,6 +131,18 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testMultipleIndexDelete() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().insert(data);
+        current().index(currentIndexes().id()).delete(1, 2, 3);
+        assertEquals(1, current().size());
+    }
+
+    @Test
     public void testTruncate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
