@@ -18,24 +18,7 @@
 
 package io.art.tarantool.benchmark;
 
-import io.art.meta.test.*;
-import io.art.meta.test.meta.*;
-import io.art.storage.service.*;
-import io.art.tarantool.*;
-import io.art.tarantool.test.meta.*;
-import io.art.tarantool.test.model.*;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.infra.*;
-import static io.art.core.initializer.Initializer.*;
-import static io.art.logging.module.LoggingActivator.*;
-import static io.art.meta.module.MetaActivator.*;
-import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingShortMetaModelClass.*;
-import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
-import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolActivator.*;
-import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
-import static io.art.transport.module.TransportActivator.*;
 import static java.util.concurrent.TimeUnit.*;
 import static org.openjdk.jmh.annotations.Mode.*;
 
@@ -47,36 +30,8 @@ import static org.openjdk.jmh.annotations.Mode.*;
 public class TarantoolBenchmark {
     @State(value = Scope.Benchmark)
     public static class BenchmarkState {
-        SpaceService<Integer, TestingShortMetaModel> space;
-        TestingShortMetaModel model;
-
         @Setup
         public void setup() {
-            initializeStorage();
-            initialize(logging(),
-                    meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
-                    transport(),
-                    tarantool(tarantool -> tarantool
-                            .storage(TestStorage.class, storage -> storage.client(client -> client
-                                    .port(STORAGE_PORT)
-                                    .username(USERNAME)
-                                    .logging(true)
-                                    .password(PASSWORD)))
-                            .space(TestStorage.class, TestingShortMetaModel.class, () -> testingShortMetaModel().idField())
-                    )
-            );
-            Tarantool.tarantool()
-                    .schema(TestStorage.class)
-                    .createSpace(spaceFor(TestingShortMetaModel.class).ifNotExists(true).build())
-                    .createIndex(indexFor(testingShortMetaModel(), testingShortMetaModel().idField()).configure().ifNotExists(true).unique(true).build());
-            space = Tarantool.tarantool().space(TestingShortMetaModel.class);
-            model = TestingShortMetaModel.builder().id(1).name("test").inner(TestingShortMetaModel.Inner.builder().id(2).name("test").build()).build();
-            space.put(model);
         }
-    }
-
-    @Benchmark
-    public void putBenchmark(Blackhole blackhole, BenchmarkState state) {
-        blackhole.consume(state.space.reactive().first(1).subscribe(blackhole::consume));
     }
 }
