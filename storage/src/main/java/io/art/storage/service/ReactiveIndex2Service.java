@@ -6,6 +6,7 @@ import io.art.core.model.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import lombok.*;
+import lombok.experimental.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.listCollector;
 import static io.art.core.model.Tuple.*;
@@ -13,6 +14,8 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
+@Getter
+@Accessors(fluent = true)
 @RequiredArgsConstructor
 public class ReactiveIndex2Service<ModelType, F1, F2> {
     private final ReactiveIndexService<ModelType> delegate;

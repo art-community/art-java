@@ -77,10 +77,6 @@ public class Index4Service<ModelType, F1, F2, F3, F4> {
         return delegate.count(tuple(key1, key2, key3, key4));
     }
 
-    public ReactiveIndex4Service<ModelType, F1, F2, F3, F4> reactive() {
-        return reactive;
-    }
-
     public SpaceStream<ModelType> stream() {
         return delegate.stream();
     }

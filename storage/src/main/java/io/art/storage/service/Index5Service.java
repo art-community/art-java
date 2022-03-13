@@ -5,11 +5,15 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
+import lombok.*;
+import lombok.experimental.*;
 import static io.art.core.model.Tuple.*;
 import java.util.*;
 import java.util.function.*;
 
 @Public
+@Getter
+@Accessors(fluent = true)
 public class Index5Service<ModelType, F1, F2, F3, F4, F5> {
     private final IndexService<ModelType> delegate;
     private final ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> reactive;
@@ -75,10 +79,6 @@ public class Index5Service<ModelType, F1, F2, F3, F4, F5> {
 
     public long count(F1 key1, F2 key2, F3 key3, F4 key4, F5 key5) {
         return delegate.count(tuple(key1, key2, key3, key4, key5));
-    }
-
-    public ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> reactive() {
-        return reactive;
     }
 
     public SpaceStream<ModelType> stream() {
