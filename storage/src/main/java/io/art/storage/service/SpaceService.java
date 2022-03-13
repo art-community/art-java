@@ -75,6 +75,18 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater);
 
+    default ImmutableArray<ModelType> update(Collection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
+    default ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
     SpaceStream<ModelType> stream();
 
     ReactiveSpaceService<KeyType, ModelType> reactive();

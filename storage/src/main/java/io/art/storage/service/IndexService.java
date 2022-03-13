@@ -36,6 +36,22 @@ public interface IndexService<ModelType> {
 
     ModelType update(Tuple key, Updater<ModelType> updater);
 
+    ImmutableArray<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater);
+
+    ImmutableArray<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater);
+
+    default ImmutableArray<ModelType> update(Collection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
+    default ImmutableArray<ModelType> update(ImmutableCollection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
     default ImmutableArray<ModelType> delete(Tuple... keys) {
         return delete(asList(keys));
     }

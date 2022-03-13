@@ -95,6 +95,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SPACE_SINGLE_INSERT = newString("art.space.single.insert");
         ImmutableStringValue SPACE_SINGLE_PUT = newString("art.space.single.put");
         ImmutableStringValue SPACE_SINGLE_UPDATE = newString("art.space.single.update");
+        ImmutableStringValue SPACE_MULTIPLE_UPDATE = newString("art.space.mutiple.update");
         ImmutableStringValue SPACE_MULTIPLE_PUT = newString("art.space.multiple.put");
         ImmutableStringValue SPACE_MULTIPLE_DELETE = newString("art.space.multiple.delete");
         ImmutableStringValue SPACE_MULTIPLE_INSERT = newString("art.space.multiple.insert");
@@ -105,6 +106,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue INDEX_STREAM = newString("art.index.stream");
         ImmutableStringValue INDEX_COUNT = newString("art.index.count");
         ImmutableStringValue INDEX_SINGLE_UPDATE = newString("art.index.single.update");
+        ImmutableStringValue INDEX_MULTIPLE_UPDATE = newString("art.index.multiple.update");
         ImmutableStringValue INDEX_SINGLE_DELETE = newString("art.index.single.delete");
         ImmutableStringValue INDEX_MULTIPLE_DELETE = newString("art.index.multiple.delete");
 

@@ -70,6 +70,18 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater);
 
+    default Flux<ModelType> update(Collection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
+    default Flux<ModelType> update(ImmutableCollection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
     Mono<Long> count(KeyType key);
 
     Mono<Long> size();

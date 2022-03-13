@@ -70,6 +70,16 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
+    public ImmutableArray<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater) {
+        return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
+    public ImmutableArray<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater) {
+        return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
     public ImmutableArray<ModelType> delete(Collection<? extends Tuple> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }

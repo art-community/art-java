@@ -73,9 +73,36 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
 
     @Override
     public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
-        ArrayValue input = newArray(spaceName, indexName, serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = storage.mutable().call(INDEX_SINGLE_UPDATE, input);
-        return parseSpaceMono(output);
+        if (key.size() == 1) {
+            ArrayValue input = newArray(spaceName, indexName, serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
+            Mono<Value> output = storage.mutable().call(INDEX_SINGLE_UPDATE, input);
+            return parseSpaceMono(output);
+        }
+        return update(linkedListOf(key), updater).next();
+    }
+
+    @Override
+    public Flux<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater) {
+        ArrayValue input = newArray(
+                spaceName,
+                indexName,
+                newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
+                updateSerializer.serializeUpdate(cast(updater))
+        );
+        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        return parseSpaceFlux(output);
+    }
+
+    @Override
+    public Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater) {
+        ArrayValue input = newArray(
+                spaceName,
+                indexName,
+                newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
+                updateSerializer.serializeUpdate(cast(updater))
+        );
+        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        return parseSpaceFlux(output);
     }
 
     @Override
@@ -94,9 +121,12 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
 
     @Override
     public Mono<ModelType> delete(Tuple key) {
-        ArrayValue input = wrapRequest(serializeTuple(key));
-        Mono<Value> output = storage.mutable().call(INDEX_SINGLE_DELETE, input);
-        return parseSpaceMono(output);
+        if (key.size() == 1) {
+            ArrayValue input = wrapRequest(serializeTuple(key));
+            Mono<Value> output = storage.mutable().call(INDEX_SINGLE_DELETE, input);
+            return parseSpaceMono(output);
+        }
+        return delete(linkedListOf(key)).next();
     }
 
     @Override

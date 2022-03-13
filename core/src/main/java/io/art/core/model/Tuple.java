@@ -5,6 +5,10 @@ import java.util.*;
 public interface Tuple {
     List<Object> values();
 
+    default int size() {
+        return values().size();
+    }
+
     static <V1> Tuple1<V1> tuple(V1 value1) {
         return new Tuple1<>(value1);
     }

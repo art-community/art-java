@@ -27,6 +27,22 @@ public interface ReactiveIndexService<ModelType> {
 
     Mono<ModelType> update(Tuple key, Updater<ModelType> updater);
 
+    Flux<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater);
+
+    Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater);
+
+    default Flux<ModelType> update(Collection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
+    default Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(keys, spaceUpdater);
+    }
+
     default Flux<ModelType> find(Tuple... keys) {
         return find(asList(keys));
     }
