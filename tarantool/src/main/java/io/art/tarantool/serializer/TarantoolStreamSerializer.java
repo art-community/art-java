@@ -126,7 +126,13 @@ public class TarantoolStreamSerializer {
                     serializedPart.add(filterModes.filterByIndex);
                     spaceName = spaceName(mappingIndex.owner());
                     expressionKey = new FilterExpressionCacheKey(spaceName, null, cast(mappingFields));
-                    serializedPart.add(newArray(spaceName, newString(mappingIndex.name())));
+                    ImmutableArrayValue indexedFields = newArray(byIndex.getMappingIndexTuple()
+                            .values()
+                            .stream()
+                            .map(indexedField -> serializeValue(integerType(), ((MetaField<?, ?>) indexedField).index() + 1))
+                            .collect(listCollector())
+                    );
+                    serializedPart.add(newArray(spaceName, indexedFields, newString(mappingIndex.name())));
                     serializedPart.add(newArray(expressionsCache.get(expressionKey)));
                     break;
             }
@@ -136,9 +142,11 @@ public class TarantoolStreamSerializer {
     }
 
     private void serializeFilterSpaceExpressions(Map<FilterExpressionCacheKey, List<ImmutableValue>> expressionsCache, FilterImplementation.FilterPart part) {
-        FilterBySpaceImplementation<?, ?> bySpace = part.getBySpace();
         FilterMode mode = part.getMode();
-        ImmutableStringValue spaceName = spaceName(bySpace.getMappingSpace());
+        FilterBySpaceImplementation<?, ?> bySpace = mode == SPACE ? part.getBySpace() : part.getByIndex();
+        ImmutableStringValue spaceName = mode == SPACE
+                ? spaceName(bySpace.getMappingSpace())
+                : spaceName(bySpace.getMappingIndex().owner());
         FilterExpressionCacheKey key = mode == SPACE
                 ? new FilterExpressionCacheKey(spaceName, bySpace.getMappingKeyField(), emptyList())
                 : new FilterExpressionCacheKey(spaceName, null, cast(bySpace.getMappingIndexTuple().values()));
