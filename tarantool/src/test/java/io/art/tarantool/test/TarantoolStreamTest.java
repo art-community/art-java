@@ -54,6 +54,13 @@ public class TarantoolStreamTest {
                         .ifNotExists(true)
                         .unique(true)
                         .build())
+                .createIndex(indexFor(testingMetaModel())
+                        .field(testingMetaModel().f9Field())
+                        .field(testingMetaModel().f16Field())
+                        .configure()
+                        .ifNotExists(true)
+                        .unique(false)
+                        .build())
                 .createSpace(spaceFor(OtherSpace.class).ifNotExists(true).build())
                 .createIndex(indexFor(otherSpace())
                         .field(otherSpace().keyField())
@@ -492,6 +499,20 @@ public class TarantoolStreamTest {
         current().insert(data);
 
         ImmutableArray<TestingMetaModel> result = current().stream(2).collect();
+        assertEquals(1, result.size());
+        data.get(1).assertEquals(result.get(0));
+    }
+
+    @Test
+    public void testIndexStream() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f9(10).f16("not base").build(),
+                generateTestingModel().toBuilder().f1(2).f9(12).f16("base").build(),
+                generateTestingModel().toBuilder().f1(3).f9(12).f16("base").build()
+        );
+        current().insert(data);
+
+        ImmutableArray<TestingMetaModel> result = current().index(testModelIndexes().f9f16()).stream(12, "base").collect();
         assertEquals(2, result.size());
         data.get(1).assertEquals(result.get(0));
         data.get(2).assertEquals(result.get(1));

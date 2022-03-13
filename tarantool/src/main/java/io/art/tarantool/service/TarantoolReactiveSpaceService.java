@@ -189,8 +189,8 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public TarantoolReactiveStream<ModelType> stream() {
-        return TarantoolReactiveStream.<ModelType>builder()
+    public TarantoolReactiveSpaceStream<ModelType> stream() {
+        return TarantoolReactiveSpaceStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)
@@ -198,8 +198,8 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public TarantoolReactiveStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveStream.<ModelType>builder()
+    public TarantoolReactiveSpaceStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveSpaceStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)

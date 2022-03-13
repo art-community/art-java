@@ -149,18 +149,20 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     @Override
-    public TarantoolReactiveStream<ModelType> stream() {
-        return TarantoolReactiveStream.<ModelType>builder()
+    public TarantoolReactiveIndexStream<ModelType> stream() {
+        return TarantoolReactiveIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
+                .indexName(indexName)
                 .spaceType(spaceType)
                 .clients(clients)
                 .build();
     }
 
     @Override
-    public TarantoolReactiveStream<ModelType> stream(Tuple baseKey) {
-        return TarantoolReactiveStream.<ModelType>builder()
+    public TarantoolReactiveIndexStream<ModelType> stream(Tuple baseKey) {
+        return TarantoolReactiveIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
+                .indexName(indexName)
                 .spaceType(spaceType)
                 .clients(clients)
                 .baseKey(baseKey)

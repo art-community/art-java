@@ -18,9 +18,9 @@ import java.util.stream.*;
 
 @SuppressWarnings({VARARGS})
 public class TarantoolStream<Type> extends SpaceStream<Type> {
-    private final TarantoolReactiveStream<Type> stream;
+    private final ReactiveSpaceStream<Type> stream;
 
-    public TarantoolStream(MetaType<Type> returningType, TarantoolReactiveStream<Type> stream) {
+    public TarantoolStream(MetaType<Type> returningType, ReactiveSpaceStream<Type> stream) {
         super(returningType);
         this.stream = stream;
     }
