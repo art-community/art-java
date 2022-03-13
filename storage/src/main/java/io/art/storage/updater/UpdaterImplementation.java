@@ -48,20 +48,8 @@ public class UpdaterImplementation<T> implements Updater<T> {
     }
 
     @Override
-    public <F> Updater<T> insert(MetaField<? extends MetaClass<T>, F> field, F value) {
-        operators.add(new UpdateOperator(INSERT, field, linkedListOf(value)));
-        return this;
-    }
-
-    @Override
     public <F> Updater<T> set(MetaField<? extends MetaClass<T>, F> field, F value) {
         operators.add(new UpdateOperator(SET, field, linkedListOf(value)));
-        return this;
-    }
-
-    @Override
-    public Updater<T> delete(MetaField<? extends MetaClass<T>, ?> startField, int count) {
-        operators.add(new UpdateOperator(DELETE, startField, linkedListOf(count)));
         return this;
     }
 

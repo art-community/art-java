@@ -7,7 +7,7 @@ import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.UpdateOperatation.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.UpdateOperation.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
@@ -54,23 +54,9 @@ public class TarantoolUpdateSerializer {
                             serializeValue(operator.getField().type(), operator.getValues().get(0))
                     ));
                     break;
-                case INSERT:
-                    serialized.add(newArray(
-                            INSERTION,
-                            newInteger(operator.getField().index() + 1),
-                            serializeValue(operator.getField().type(), operator.getValues().get(0))
-                    ));
-                    break;
                 case SET:
                     serialized.add(newArray(
                             ASSIGMENT,
-                            newInteger(operator.getField().index() + 1),
-                            serializeValue(operator.getField().type(), operator.getValues().get(0))
-                    ));
-                    break;
-                case DELETE:
-                    serialized.add(newArray(
-                            DELETION,
                             newInteger(operator.getField().index() + 1),
                             serializeValue(operator.getField().type(), operator.getValues().get(0))
                     ));

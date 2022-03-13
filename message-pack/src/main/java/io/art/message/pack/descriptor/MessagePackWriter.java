@@ -64,7 +64,7 @@ public class MessagePackWriter implements Writer {
     }
 
     public org.msgpack.value.Value write(MetaType<?> type, Object value) {
-        if (isNull(value)) return null;
+        if (isNull(value)) return newNil();
         MetaTransformer<?> transformer = type.outputTransformer();
         switch (type.externalKind()) {
             case MAP:
@@ -120,7 +120,6 @@ public class MessagePackWriter implements Writer {
         ImmutableMap<String, MetaProperty<?>> properties = provider.propertyMap();
         for (MetaProperty<?> property : properties.values()) {
             Object propertyValue = provider.getValue(property);
-            if (isNull(propertyValue)) continue;
             mapBuilder.put(newString(property.name()), write(property.type(), propertyValue));
         }
         return mapBuilder.build();
@@ -131,7 +130,7 @@ public class MessagePackWriter implements Writer {
         for (Map.Entry<?, ?> entry : value.entrySet()) {
             Object entryKey = entry.getKey();
             Object entryValue = entry.getValue();
-            if (isNull(entryKey) || isNull(entryValue)) continue;
+            if (isNull(entryKey)) continue;
             mapBuilder.put(write(keyType, entryKey), write(valueType, entryValue));
         }
         return mapBuilder.build();

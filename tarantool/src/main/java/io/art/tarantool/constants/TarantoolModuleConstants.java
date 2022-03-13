@@ -294,15 +294,13 @@ public interface TarantoolModuleConstants {
         NEIGHBOR
     }
 
-    interface UpdateOperatation {
+    interface UpdateOperation {
         ImmutableStringValue ADDITION = newString("+");
         ImmutableStringValue SUBTRACTION = newString("-");
         ImmutableStringValue BITWISE_AND = newString("&");
         ImmutableStringValue BITWISE_OR = newString("|");
         ImmutableStringValue BITWISE_XOR = newString("^");
         ImmutableStringValue SPLICE = newString(":");
-        ImmutableStringValue INSERTION = newString("!");
-        ImmutableStringValue DELETION = newString("#");
         ImmutableStringValue ASSIGMENT = newString("=");
     }
 }

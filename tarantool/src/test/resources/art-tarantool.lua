@@ -504,7 +504,7 @@ local transformer = {
     end,
 
     update = function(space, index, key, commands)
-        return box.space[space].index[index]:update(space, key, commands)
+        return box.space[space].index[index]:update(key, commands)
     end,
 }
 
@@ -743,8 +743,7 @@ local transformer = {
     replace = put,
 
     update = function(space, key, commands)
-        require("log").info(require("yaml").encode(commands))
-        return box.space[space]:update(space, key, commands)
+        return box.space[space]:update(key, commands)
     end
 }
 

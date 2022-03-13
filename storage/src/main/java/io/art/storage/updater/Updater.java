@@ -23,13 +23,9 @@ public interface Updater<T> {
 
     Updater<T> splice(MetaField<? extends MetaClass<T>, String> field, int startIndex, int endIndex, String delimiter);
 
-    <F> Updater<T> insert(MetaField<? extends MetaClass<T>, F> field, F value);
-
     <F> Updater<T> set(MetaField<? extends MetaClass<T>, F> field, F value);
 
     default Updater<T> delete(MetaField<? extends MetaClass<T>, ?> field) {
-        return delete(field, 1);
+        return set(field, null);
     }
-
-    Updater<T> delete(MetaField<? extends MetaClass<T>, ?> startField, int count);
 }

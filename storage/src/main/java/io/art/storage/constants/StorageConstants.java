@@ -71,9 +71,7 @@ public interface StorageConstants {
         BITWISE_AND,
         BITWISE_OR,
         BITWISE_XOR,
-        INSERT,
         SET,
-        DELETE,
         SPLICE
     }
 }

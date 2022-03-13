@@ -9,14 +9,13 @@ import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.ArrayFactory.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 public class TarantoolModelWriter {
     public org.msgpack.value.Value write(MetaType<?> type, Object value) {
-        if (isNull(value)) return null;
+        if (isNull(value)) return newNil();
         MetaTransformer<?> transformer = type.outputTransformer();
         switch (type.externalKind()) {
             case MAP:
@@ -88,7 +87,7 @@ public class TarantoolModelWriter {
         for (Map.Entry<?, ?> entry : value.entrySet()) {
             Object entryKey = entry.getKey();
             Object entryValue = entry.getValue();
-            if (isNull(entryKey) || isNull(entryValue)) continue;
+            if (isNull(entryKey)) continue;
             mapBuilder.put(write(keyType, entryKey), write(valueType, entryValue));
         }
         return mapBuilder.build();
