@@ -153,14 +153,14 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testFindFirst() {
+    public void testFirst() {
         TestingMetaModel data = generateTestingModel();
         current().put(data);
         data.assertEquals(current().first(1));
     }
 
     @Test
-    public void testIndexFindFirst() {
+    public void testIndexFirst() {
         TestingMetaModel data = generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build();
         current().put(data);
         data.assertEquals(current().index(currentIndexes().id()).first(1));
@@ -168,22 +168,7 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testFindAll() {
-        List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
-                generateTestingModel().toBuilder().f1(2).f9(10).f16("test").build(),
-                generateTestingModel().toBuilder().f1(3).f9(10).f16("test").build()
-        );
-        current().put(data);
-        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).find(1, 2, 3);
-        assertEquals(data.size(), result.size());
-        data.get(0).assertEquals(result.get(0));
-        data.get(1).assertEquals(result.get(1));
-        data.get(2).assertEquals(result.get(2));
-    }
-
-    @Test
-    public void testIndexFindAll() {
+    public void testFind() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
                 generateTestingModel().toBuilder().f1(2).build(),
@@ -191,6 +176,21 @@ public class TarantoolStorageTest {
         );
         current().put(data);
         ImmutableArray<TestingMetaModel> result = current().find(1, 2, 3);
+        assertEquals(data.size(), result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+        data.get(2).assertEquals(result.get(2));
+    }
+
+    @Test
+    public void testIndexFind() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(3).f9(10).f16("test").build()
+        );
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).find(1, 2, 3);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
