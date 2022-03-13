@@ -23,29 +23,29 @@ public class ReactiveIndex1Service<ModelType, F1> {
     }
 
     @SafeVarargs
-    public final Flux<ModelType> find(F1... keys1) {
-        return delegate.find(stream(keys1).map(Tuple1::new).collect(listCollector()));
+    public final Flux<ModelType> find(F1... keys) {
+        return delegate.find(stream(keys).map(Tuple1::new).collect(listCollector()));
     }
 
-    public Flux<ModelType> find(Collection<F1> keys1) {
-        return delegate.find(keys1.stream().map(Tuple1::new).collect(listCollector()));
+    public Flux<ModelType> find(Collection<F1> keys) {
+        return delegate.find(keys.stream().map(Tuple1::new).collect(listCollector()));
     }
 
-    public Flux<ModelType> find(ImmutableCollection<F1> keys1) {
-        return delegate.find(keys1.stream().map(Tuple1::new).collect(listCollector()));
+    public Flux<ModelType> find(ImmutableCollection<F1> keys) {
+        return delegate.find(keys.stream().map(Tuple1::new).collect(listCollector()));
     }
 
     @SafeVarargs
-    public final Flux<ModelType> delete(F1... keys1) {
-        return delegate.delete(stream(keys1).map(Tuple1::new).collect(listCollector()));
+    public final Flux<ModelType> delete(F1... keys) {
+        return delegate.delete(stream(keys).map(Tuple1::new).collect(listCollector()));
     }
 
-    public Flux<ModelType> delete(Collection<F1> keys1) {
-        return delegate.delete(keys1.stream().map(Tuple1::new).collect(listCollector()));
+    public Flux<ModelType> delete(Collection<F1> keys) {
+        return delegate.delete(keys.stream().map(Tuple1::new).collect(listCollector()));
     }
 
-    public Flux<ModelType> delete(ImmutableCollection<F1> keys1) {
-        return delegate.delete(keys1.stream().map(Tuple1::new).collect(listCollector()));
+    public Flux<ModelType> delete(ImmutableCollection<F1> keys) {
+        return delegate.delete(keys.stream().map(Tuple1::new).collect(listCollector()));
     }
 
     public Mono<Long> count() {
