@@ -743,6 +743,7 @@ local transformer = {
     replace = put,
 
     update = function(space, key, commands)
+        require("log").info(require("yaml").encode(commands))
         return box.space[space]:update(space, key, commands)
     end
 }
