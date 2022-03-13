@@ -285,7 +285,10 @@ public class TarantoolStreamTest {
         );
         current().insert(data);
 
-        ImmutableArray<TestingMetaModel> result = current().stream().filter(filter -> filter.byString(testingMetaModel().f16Field()).startsWith("st")).collect();
+        ImmutableArray<TestingMetaModel> result = current().stream().filter(filter -> filter
+                .byString(testingMetaModel().f16Field())
+                .startsWith("st"))
+                .collect();
         assertEquals(1, result.size());
         data.get(0).assertEquals(result.get(0));
 
