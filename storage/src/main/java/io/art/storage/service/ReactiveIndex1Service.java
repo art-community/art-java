@@ -48,7 +48,7 @@ public class ReactiveIndex1Service<ModelType, F1> {
         return delegate.delete(keys.stream().map(Tuple1::new).collect(listCollector()));
     }
 
-    public Mono<Long> count() {
-        return delegate.count();
+    public Mono<Long> count(F1 key1) {
+        return delegate.count(key1);
     }
 }

@@ -5,8 +5,6 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
-import static io.art.core.collector.ArrayCollector.*;
-import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
@@ -48,7 +46,7 @@ public class ReactiveIndex2Service<ModelType, F1, F2> {
         return delegate.delete(keys);
     }
 
-    public Mono<Long> count() {
-        return delegate.count();
+    public Mono<Long> count(F1 key1, F2 key2) {
+        return delegate.count(key1, key2);
     }
 }

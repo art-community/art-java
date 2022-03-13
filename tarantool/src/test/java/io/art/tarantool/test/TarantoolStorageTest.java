@@ -113,9 +113,9 @@ public class TarantoolStorageTest {
     public void testSingleDelete() {
         TestingMetaModel data = generateTestingModel();
         current().insert(data);
-        assertEquals(1, current().count());
+        assertEquals(1, current().size());
         data.assertEquals(current().delete(data.getF1()));
-        assertEquals(0, current().count());
+        assertEquals(0, current().size());
     }
 
     @Test
@@ -127,7 +127,7 @@ public class TarantoolStorageTest {
         );
         current().insert(data);
         current().delete(1, 2, 3);
-        assertEquals(0, current().count());
+        assertEquals(0, current().size());
     }
 
     @Test
@@ -139,7 +139,7 @@ public class TarantoolStorageTest {
         );
         current().insert(data);
         current().truncate();
-        assertEquals(0, current().count());
+        assertEquals(0, current().size());
     }
 
     @Test
@@ -150,7 +150,19 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().insert(data);
-        assertEquals(3, current().count());
+        assertEquals(3, current().size());
+        assertEquals(1, current().count(1));
+    }
+
+    @Test
+    public void testIndexCount() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().insert(data);
+        assertEquals(1, current().index(currentIndexes().f9f16()).count(10, "test"));
     }
 
     @Test

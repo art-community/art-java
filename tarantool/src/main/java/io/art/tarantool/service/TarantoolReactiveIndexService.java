@@ -89,8 +89,8 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     @Override
-    public Mono<Long> count() {
-        return parseCountMono(storage.immutable().call(INDEX_COUNT, newArray(spaceName, indexName)));
+    public Mono<Long> count(Object... keyFields) {
+        return parseCountMono(storage.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeKeys(asList(keyFields)))));
     }
 
     private ImmutableValue serializeKeys(Collection<Object> keys) {

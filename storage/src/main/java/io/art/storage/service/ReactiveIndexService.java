@@ -31,5 +31,5 @@ public interface ReactiveIndexService<ModelType> {
 
     Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
 
-    Mono<Long> count();
+    Mono<Long> count(Object... keyFields);
 }

@@ -54,7 +54,9 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Flux<ModelType> put(ImmutableCollection<ModelType> value);
 
-    Mono<Long> count();
+    Mono<Long> count(KeyType key);
+
+    Mono<Long> size();
 
     Mono<Void> truncate();
 

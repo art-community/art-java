@@ -33,7 +33,9 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> delete(ImmutableCollection<KeyType> keys);
 
-    long count();
+    long count(KeyType key);
+
+    long size();
 
     void truncate();
 

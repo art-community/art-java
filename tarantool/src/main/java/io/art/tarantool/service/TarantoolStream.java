@@ -9,11 +9,13 @@ import io.art.storage.stream.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.collection.ImmutableArray.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+@SuppressWarnings({UNCHECKED, VARARGS})
 public class TarantoolStream<Type> extends SpaceStream<Type> {
     private final TarantoolReactiveStream<Type> stream;
 

@@ -51,8 +51,8 @@ public class Index1Service<ModelType, F1> {
         return delegate.delete(keys1.stream().map(Tuple1::new).collect(listCollector()));
     }
 
-    public long count() {
-        return delegate.count();
+    public long count(F1 key1) {
+        return delegate.count(key1);
     }
 
     public ReactiveIndex1Service<ModelType, F1> reactive() {

@@ -60,8 +60,13 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
 
 
     @Override
-    public long count() {
-        return block(reactive.count());
+    public long count(KeyType key) {
+        return block(reactive.count(key));
+    }
+
+    @Override
+    public long size() {
+        return block(reactive.size());
     }
 
     @Override

@@ -30,7 +30,7 @@ public interface IndexService<ModelType> {
 
     ImmutableArray<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
 
-    long count();
+    long count(Object... keyFields);
 
     ReactiveIndexService<ModelType> reactive();
 }

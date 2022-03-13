@@ -139,7 +139,13 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public Mono<Long> count() {
+    public Mono<Long> count(KeyType key) {
+        Mono<Value> output = clients.immutable().call(SPACE_COUNT, newArray(spaceName, writer.write(keyMeta, key)));
+        return parseLongMono(output);
+    }
+
+    @Override
+    public Mono<Long> size() {
         Mono<Value> output = clients.immutable().call(SPACE_COUNT, newArray(spaceName));
         return parseLongMono(output);
     }

@@ -49,8 +49,8 @@ public class Index4Service<ModelType, F1, F2, F3, F4> {
         return delegate.delete(keys);
     }
 
-    public long count() {
-        return delegate.count();
+    public long count(F1 key1, F2 key2, F3 key3, F4 key4) {
+        return delegate.count(key1, key2, key3, key4);
     }
 
     public ReactiveIndex4Service<ModelType, F1, F2, F3, F4> reactive() {

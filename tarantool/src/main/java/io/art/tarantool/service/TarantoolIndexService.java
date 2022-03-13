@@ -64,8 +64,8 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
-    public long count() {
-        return block(reactive.count());
+    public long count(Object... keys) {
+        return block(reactive.count(keys));
     }
 
     @Override
