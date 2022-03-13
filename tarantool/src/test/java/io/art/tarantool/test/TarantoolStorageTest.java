@@ -211,14 +211,19 @@ public class TarantoolStorageTest {
     @Test
     public void testIndexSelect() {
         List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).build(),
-                generateTestingModel().toBuilder().f1(2).build(),
-                generateTestingModel().toBuilder().f1(3).build()
+                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(3).f9(10).f16("test").build()
         );
         current().put(data);
         ImmutableArray<TestingMetaModel> result = current().index(testModelIndexes().id()).select(1);
         assertEquals(1, result.size());
         data.get(0).assertEquals(result.get(0));
+
+        result = current().index(testModelIndexes().f9f16()).select(10, "test", 1, 2);
+        assertEquals(2, result.size());
+        data.get(1).assertEquals(result.get(0));
+        data.get(2).assertEquals(result.get(1));
     }
 
     @Test
