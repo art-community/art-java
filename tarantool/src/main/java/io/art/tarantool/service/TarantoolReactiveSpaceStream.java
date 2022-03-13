@@ -1,7 +1,6 @@
 package io.art.tarantool.service;
 
 import io.art.core.model.*;
-import io.art.meta.*;
 import io.art.meta.model.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
@@ -16,6 +15,7 @@ import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.meta.Meta.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -134,7 +134,7 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         if (isNull(baseKey)) return newNil();
         List<Value> serialized = baseKey.values()
                 .stream()
-                .map(key -> writer.write(Meta.definition(key.getClass()), key))
+                .map(key -> writer.write(definition(key.getClass()), key))
                 .collect(listCollector());
         return newArray(serialized);
     }
