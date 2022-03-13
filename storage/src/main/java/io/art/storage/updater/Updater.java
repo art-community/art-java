@@ -9,11 +9,11 @@ public interface Updater<T> {
 
     Updater<T> subtract(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value);
 
-    default Updater<T> increment(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
+    default Updater<T> increment(MetaField<? extends MetaClass<T>, ? extends Number> field) {
         return add(field, 1);
     }
 
-    default Updater<T> decrement(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
+    default Updater<T> decrement(MetaField<? extends MetaClass<T>, ? extends Number> field) {
         return subtract(field, 1);
     }
 
