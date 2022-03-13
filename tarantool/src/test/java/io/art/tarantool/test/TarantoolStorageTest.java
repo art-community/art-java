@@ -14,6 +14,7 @@ import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
+import static io.art.core.model.Tuple.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
@@ -160,11 +161,37 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testSelect() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current().select(1);
+        assertEquals(1, result.size());
+        data.get(0).assertEquals(result.get(0));
+    }
+
+    @Test
     public void testIndexFirst() {
         TestingMetaModel data = generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build();
         current().put(data);
         data.assertEquals(current().index(currentIndexes().id()).first(1));
         data.assertEquals(current().index(currentIndexes().f9f16()).first(10, "test"));
+    }
+
+    @Test
+    public void testIndexSelect() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).select(1);
+        assertEquals(1, result.size());
+        data.get(0).assertEquals(result.get(0));
     }
 
     @Test
@@ -191,6 +218,12 @@ public class TarantoolStorageTest {
         );
         current().put(data);
         ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).find(1, 2, 3);
+        assertEquals(data.size(), result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+        data.get(2).assertEquals(result.get(2));
+
+        result = current().index(currentIndexes().f9f16()).find(tuple(10, "test"));
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
