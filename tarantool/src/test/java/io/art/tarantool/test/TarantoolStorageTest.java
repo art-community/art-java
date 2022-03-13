@@ -164,7 +164,7 @@ public class TarantoolStorageTest {
         TestingMetaModel data = generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build();
         current().put(data);
         data.assertEquals(current().index(currentIndexes().id()).first(1));
-        data.assertEquals(current().index(currentIndexes().f9f16()).findFirst(10, "test"));
+        data.assertEquals(current().index(currentIndexes().f9f16()).first(10, "test"));
     }
 
     @Test
