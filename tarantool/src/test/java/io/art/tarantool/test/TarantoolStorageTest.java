@@ -131,18 +131,6 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testMultipleIndexDelete() {
-        List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).build(),
-                generateTestingModel().toBuilder().f1(2).build(),
-                generateTestingModel().toBuilder().f1(3).build()
-        );
-        current().insert(data);
-        current().index(currentIndexes().id()).delete(1, 2, 3);
-        assertEquals(1, current().size());
-    }
-
-    @Test
     public void testTruncate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -167,17 +155,6 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testIndexCount() {
-        List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
-                generateTestingModel().toBuilder().f1(2).build(),
-                generateTestingModel().toBuilder().f1(3).build()
-        );
-        current().insert(data);
-        assertEquals(1, current().index(currentIndexes().f9f16()).count(10, "test"));
-    }
-
-    @Test
     public void testFirst() {
         TestingMetaModel data = generateTestingModel();
         current().put(data);
@@ -195,6 +172,33 @@ public class TarantoolStorageTest {
         ImmutableArray<TestingMetaModel> result = current().select(1);
         assertEquals(1, result.size());
         data.get(0).assertEquals(result.get(0));
+    }
+
+    @Test
+    public void testFind() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().put(data);
+        ImmutableArray<TestingMetaModel> result = current().find(1, 2, 3);
+        assertEquals(data.size(), result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+        data.get(2).assertEquals(result.get(2));
+    }
+
+
+    @Test
+    public void testIndexCount() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().insert(data);
+        assertEquals(1, current().index(currentIndexes().f9f16()).count(10, "test"));
     }
 
     @Test
@@ -219,21 +223,6 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testFind() {
-        List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).build(),
-                generateTestingModel().toBuilder().f1(2).build(),
-                generateTestingModel().toBuilder().f1(3).build()
-        );
-        current().put(data);
-        ImmutableArray<TestingMetaModel> result = current().find(1, 2, 3);
-        assertEquals(data.size(), result.size());
-        data.get(0).assertEquals(result.get(0));
-        data.get(1).assertEquals(result.get(1));
-        data.get(2).assertEquals(result.get(2));
-    }
-
-    @Test
     public void testIndexFind() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
@@ -253,6 +242,22 @@ public class TarantoolStorageTest {
         data.get(1).assertEquals(result.get(1));
         data.get(2).assertEquals(result.get(2));
     }
+
+    @Test
+    public void testIndexMultipleDelete() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().insert(data);
+        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).delete(1, 2);
+        assertEquals(2, result.size());
+        data.get(0).assertEquals(result.get(0));
+        data.get(1).assertEquals(result.get(1));
+        assertEquals(1, current().size());
+    }
+
 
     @Test
     public void testSubscription() {

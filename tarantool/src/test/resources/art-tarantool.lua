@@ -537,18 +537,6 @@ local function initialize()
         for name in pairs(art.schema) do
             box.schema.func.create("art.schema." .. name, { if_not_exists = true })
         end
-        for name in pairs(art.space.single) do
-            box.schema.func.create("art.space.single." .. name, { if_not_exists = true })
-        end
-        for name in pairs(art.space.multiple) do
-            box.schema.func.create("art.space.multiple." .. name, { if_not_exists = true })
-        end
-        for name in pairs(art.index.single) do
-            box.schema.func.create("art.index.single." .. name, { if_not_exists = true })
-        end
-        for name in pairs(art.index.multiple) do
-            box.schema.func.create("art.index.multiple." .. name, { if_not_exists = true })
-        end
     end)
 end
 
@@ -667,8 +655,8 @@ local space = {
         return stream.terminatingFunctor(terminatingOperator[1])(generator, parameter, state, terminatingOperator[2])
     end,
 
-    count = function(space)
-        return box.space[space]:count()
+    count = function(space, key)
+        return box.space[space]:count(key)
     end,
 
     truncate = function(space)
