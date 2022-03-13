@@ -2,9 +2,11 @@ package io.art.tarantool.test;
 
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.meta.model.*;
 import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
+import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.service.*;
 import io.art.tarantool.module.*;
 import io.art.tarantool.test.meta.*;
@@ -307,11 +309,10 @@ public class TarantoolStorageTest {
         TestingMetaModel result = current().index(testModelIndexes().f9f16()).delete(10, "test");
         data.get(0).assertEquals(result);
         assertEquals(2, current().size());
-        current().insert(data);
 
-        result = current().index(testModelIndexes().id()).delete(1);
-        data.get(0).assertEquals(result);
-        assertEquals(2, current().size());
+        result = current().index(testModelIndexes().id()).delete(2);
+        data.get(1).assertEquals(result);
+        assertEquals(1, current().size());
     }
 
     @Test
@@ -331,16 +332,17 @@ public class TarantoolStorageTest {
 
     @Test
     public void testIndexSingleUpdate() {
-        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).f16("test").build();
+        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f10((short) 10).f9(10).f16("test").build();
         current().insert(data);
-        Integer f9 = data.getF9();
+        short f10 = data.getF10();
+        MetaField<MetaTestingMetaModelClass, Short> f10Field = testingMetaModel().f10Field();
         Index2Service<TestingMetaModel, Integer, String> index = current().index(testModelIndexes().f9f16());
-        assertEquals(f9 + 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.add(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 - 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.subtract(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 & 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseAnd(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 | 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 ^ 2, index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(2, index.update(data.getF9(), data.getF16(), updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f10 + 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.add(f10Field, (short) 2)).getF10());
+        assertEquals(f10 - 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.subtract(f10Field, (short) 2)).getF10());
+        assertEquals(f10 & 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseAnd(f10Field, (short) 2)).getF10());
+        assertEquals(f10 | 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseOr(f10Field, (short) 2)).getF10());
+        assertEquals(f10 ^ 2, (short) index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseXor(f10Field, (short) 2)).getF10());
+        assertEquals((short) 2, index.update(data.getF9(), data.getF16(), updater -> updater.set(f10Field, (short) 2)).getF10());
         assertNull(index.update(data.getF9(), data.getF16(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
     }
 
