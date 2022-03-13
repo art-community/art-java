@@ -5,6 +5,7 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.model.Tuple.*;
 import java.util.*;
 
 @Public
@@ -13,11 +14,11 @@ public class ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> {
     private final ReactiveIndexService<ModelType> delegate;
 
     public Mono<ModelType> first(F1 key1, F2 key2, F3 key3, F4 key4, F5 key5) {
-        return delegate.first(key1, key2, key3, key4, key5);
+        return delegate.first(tuple(key1, key2, key3, key4, key5));
     }
 
     public Flux<ModelType> select(F1 key1, F2 key2, F3 key3, F4 key4, F5 key5) {
-        return delegate.select(key1, key2, key3, key4, key5);
+        return delegate.select(tuple(key1, key2, key3, key4, key5));
     }
 
     @SafeVarargs
@@ -31,6 +32,10 @@ public class ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> {
 
     public Flux<ModelType> find(ImmutableCollection<Tuple5<F1, F2, F3, F4, F5>> keys) {
         return delegate.find(keys);
+    }
+
+    public final Mono<ModelType> delete(F1 key1, F2 key2, F3 key3, F4 key4, F4 key5) {
+        return delegate.delete(tuple(key1, key2, key3, key4, key5));
     }
 
     @SafeVarargs
@@ -47,6 +52,6 @@ public class ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> {
     }
 
     public Mono<Long> count(F1 key1, F2 key2, F3 key3, F4 key4, F5 key5) {
-        return delegate.count(key1, key2, key3, key4, key5);
+        return delegate.count(tuple(key1, key2, key3, key4, key5));
     }
 }

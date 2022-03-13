@@ -34,13 +34,13 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
-    public ModelType first(Object... keys) {
-        return block(reactive.first(keys));
+    public ModelType first(Tuple tuple) {
+        return block(reactive.first(tuple));
     }
 
     @Override
-    public ImmutableArray<ModelType> select(Object... keys) {
-        return reactive.select(keys).toStream().collect(immutableArrayCollector());
+    public ImmutableArray<ModelType> select(Tuple tuple) {
+        return reactive.select(tuple).toStream().collect(immutableArrayCollector());
     }
 
     @Override
@@ -54,6 +54,11 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
+    public ModelType delete(Tuple key) {
+        return block(reactive.delete(key));
+    }
+
+    @Override
     public ImmutableArray<ModelType> delete(Collection<? extends Tuple> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
@@ -64,8 +69,8 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
-    public long count(Object... keys) {
-        return block(reactive.count(keys));
+    public long count(Tuple tuple) {
+        return block(reactive.count(tuple));
     }
 
     @Override

@@ -3,6 +3,7 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import static io.art.core.model.Tuple.*;
 import java.util.*;
 
 @Public
@@ -16,11 +17,11 @@ public class Index2Service<ModelType, F1, F2> {
     }
 
     public ModelType first(F1 key1, F2 key2) {
-        return delegate.first(key1, key2);
+        return delegate.first(tuple(key1, key2));
     }
 
     public ImmutableArray<ModelType> select(F1 key1, F2 key2) {
-        return delegate.select(key1, key2);
+        return delegate.select(tuple(key1, key2));
     }
 
     @SafeVarargs
@@ -34,6 +35,10 @@ public class Index2Service<ModelType, F1, F2> {
 
     public ImmutableArray<ModelType> find(ImmutableCollection<Tuple2<F1, F2>> keys) {
         return delegate.find(keys);
+    }
+
+    public final ModelType delete(F1 key1, F2 key2) {
+        return delegate.delete(tuple(key1, key2));
     }
 
     @SafeVarargs
@@ -50,7 +55,7 @@ public class Index2Service<ModelType, F1, F2> {
     }
 
     public long count(F1 key1, F2 key2) {
-        return delegate.count(key1, key2);
+        return delegate.count(tuple(key1, key2));
     }
 
     public ReactiveIndex2Service<ModelType, F1, F2> reactive() {

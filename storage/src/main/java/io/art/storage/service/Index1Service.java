@@ -4,6 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.model.Tuple.*;
 import static java.util.Arrays.*;
 import java.util.*;
 
@@ -18,11 +19,11 @@ public class Index1Service<ModelType, F1> {
     }
 
     public ModelType first(F1 key1) {
-        return delegate.first(key1);
+        return delegate.first(tuple(key1));
     }
 
     public ImmutableArray<ModelType> select(F1 key1) {
-        return delegate.select(key1);
+        return delegate.select(tuple(key1));
     }
 
     @SafeVarargs
@@ -36,6 +37,10 @@ public class Index1Service<ModelType, F1> {
 
     public ImmutableArray<ModelType> find(ImmutableCollection<F1> keys1) {
         return delegate.find(keys1.stream().map(Tuple1::new).collect(listCollector()));
+    }
+
+    public final ModelType delete(F1 key1) {
+        return delegate.delete(tuple(key1));
     }
 
     @SafeVarargs
@@ -52,7 +57,7 @@ public class Index1Service<ModelType, F1> {
     }
 
     public long count(F1 key1) {
-        return delegate.count(key1);
+        return delegate.count(tuple(key1));
     }
 
     public ReactiveIndex1Service<ModelType, F1> reactive() {

@@ -11,9 +11,9 @@ import java.util.*;
 @Public
 @SuppressWarnings({VARARGS})
 public interface ReactiveIndexService<ModelType> {
-    Mono<ModelType> first(Object... keyFields);
+    Mono<ModelType> first(Tuple tuple);
 
-    Flux<ModelType> select(Object... keyFields);
+    Flux<ModelType> select(Tuple tuple);
 
     default Flux<ModelType> find(Tuple... keys) {
         return find(asList(keys));
@@ -23,6 +23,8 @@ public interface ReactiveIndexService<ModelType> {
 
     Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys);
 
+    Mono<ModelType> delete(Tuple key);
+
     default Flux<ModelType> delete(Tuple... keys) {
         return delete(asList(keys));
     }
@@ -31,5 +33,5 @@ public interface ReactiveIndexService<ModelType> {
 
     Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
 
-    Mono<Long> count(Object... keyFields);
+    Mono<Long> count(Tuple tuple);
 }

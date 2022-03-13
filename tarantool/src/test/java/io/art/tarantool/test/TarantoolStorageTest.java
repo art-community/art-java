@@ -244,6 +244,19 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testIndexSingleDelete() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(2).build(),
+                generateTestingModel().toBuilder().f1(3).build()
+        );
+        current().insert(data);
+        TestingMetaModel result = current().index(currentIndexes().id()).delete(1);
+        data.get(0).assertEquals(result);
+        assertEquals(2, current().size());
+    }
+
+    @Test
     public void testIndexMultipleDelete() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),

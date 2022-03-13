@@ -10,9 +10,9 @@ import java.util.*;
 @Public
 @SuppressWarnings({VARARGS})
 public interface IndexService<ModelType> {
-    ModelType first(Object... keyFields);
+    ModelType first(Tuple tuple);
 
-    ImmutableArray<ModelType> select(Object... keyFields);
+    ImmutableArray<ModelType> select(Tuple tuple);
 
     default ImmutableArray<ModelType> find(Tuple... keys) {
         return find(asList(keys));
@@ -22,6 +22,8 @@ public interface IndexService<ModelType> {
 
     ImmutableArray<ModelType> find(ImmutableCollection<? extends Tuple> keys);
 
+    ModelType delete(Tuple key);
+
     default ImmutableArray<ModelType> delete(Tuple... keys) {
         return delete(asList(keys));
     }
@@ -30,7 +32,7 @@ public interface IndexService<ModelType> {
 
     ImmutableArray<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
 
-    long count(Object... keyFields);
+    long count(Tuple tuple);
 
     ReactiveIndexService<ModelType> reactive();
 }

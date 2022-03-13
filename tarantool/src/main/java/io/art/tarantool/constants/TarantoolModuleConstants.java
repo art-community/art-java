@@ -91,12 +91,6 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SPACE_FIND = newString("art.space.find");
         ImmutableStringValue SPACE_STREAM = newString("art.space.stream");
         ImmutableStringValue SPACE_COUNT = newString("art.space.count");
-        ImmutableStringValue INDEX_FIRST = newString("art.index.first");
-        ImmutableStringValue INDEX_FIND = newString("art.index.find");
-        ImmutableStringValue INDEX_SELECT = newString("art.index.select");
-        ImmutableStringValue INDEX_STREAM = newString("art.index.stream");
-        ImmutableStringValue INDEX_COUNT = newString("art.index.count");
-        ImmutableStringValue INDEX_MULTIPLE_DELETE = newString("art.index.multiple.delete");
         ImmutableStringValue SPACE_TRUNCATE = newString("art.space.truncate");
         ImmutableStringValue SPACE_SINGLE_DELETE = newString("art.space.single.delete");
         ImmutableStringValue SPACE_SINGLE_INSERT = newString("art.space.single.insert");
@@ -105,6 +99,15 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SPACE_MULTIPLE_PUT = newString("art.space.multiple.put");
         ImmutableStringValue SPACE_MULTIPLE_DELETE = newString("art.space.multiple.delete");
         ImmutableStringValue SPACE_MULTIPLE_INSERT = newString("art.space.multiple.insert");
+
+        ImmutableStringValue INDEX_FIRST = newString("art.index.first");
+        ImmutableStringValue INDEX_FIND = newString("art.index.find");
+        ImmutableStringValue INDEX_SELECT = newString("art.index.select");
+        ImmutableStringValue INDEX_STREAM = newString("art.index.stream");
+        ImmutableStringValue INDEX_COUNT = newString("art.index.count");
+        ImmutableStringValue INDEX_SINGLE_DELETE = newString("art.index.single.delete");
+        ImmutableStringValue INDEX_MULTIPLE_DELETE = newString("art.index.multiple.delete");
+
         ImmutableStringValue SCHEMA_CREATE_INDEX = newString("art.schema.createIndex");
         ImmutableStringValue SCHEMA_CREATE_SPACE = newString("art.schema.createSpace");
         ImmutableStringValue SCHEMA_SPACES = newString("art.schema.spaces");

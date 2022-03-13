@@ -6,6 +6,7 @@ import io.art.core.model.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.model.Tuple.*;
 import static java.util.Arrays.*;
 import java.util.*;
 
@@ -15,11 +16,11 @@ public class ReactiveIndex1Service<ModelType, F1> {
     private final ReactiveIndexService<ModelType> delegate;
 
     public Mono<ModelType> first(F1 key1) {
-        return delegate.first(key1);
+        return delegate.first(tuple(key1));
     }
 
     public Flux<ModelType> select(F1 key1) {
-        return delegate.select(key1);
+        return delegate.select(tuple(key1));
     }
 
     @SafeVarargs
@@ -33,6 +34,10 @@ public class ReactiveIndex1Service<ModelType, F1> {
 
     public Flux<ModelType> find(ImmutableCollection<F1> keys) {
         return delegate.find(keys.stream().map(Tuple1::new).collect(listCollector()));
+    }
+
+    public final Mono<ModelType> delete(F1 key1) {
+        return delegate.delete(tuple(key1));
     }
 
     @SafeVarargs
@@ -49,6 +54,6 @@ public class ReactiveIndex1Service<ModelType, F1> {
     }
 
     public Mono<Long> count(F1 key1) {
-        return delegate.count(key1);
+        return delegate.count(tuple(key1));
     }
 }

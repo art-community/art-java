@@ -16,7 +16,6 @@ import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
-import static java.util.Arrays.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -47,56 +46,63 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     @Override
-    public Mono<ModelType> first(Object... keyFields) {
-        ArrayValue input = wrapRequest(serializeKeys(asList(keyFields)));
+    public Mono<ModelType> first(Tuple tuple) {
+        ArrayValue input = wrapRequest(serializeTuple(tuple));
         Mono<Value> output = storage.immutable().call(INDEX_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> select(Object... keyFields) {
-        ArrayValue input = wrapRequest(serializeKeys(asList(keyFields)));
+    public Flux<ModelType> select(Tuple tuple) {
+        ArrayValue input = wrapRequest(serializeTuple(tuple));
         Mono<Value> output = storage.immutable().call(INDEX_SELECT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(Collection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector())));
+        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector())));
+        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
+    public Mono<ModelType> delete(Tuple key) {
+        ArrayValue input = wrapRequest(serializeTuple(key));
+        Mono<Value> output = storage.mutable().call(INDEX_SINGLE_DELETE, input);
+        return parseSpaceMono(output);
+    }
+
+    @Override
     public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector())));
+        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector())));
+        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Mono<Long> count(Object... keyFields) {
-        return parseCountMono(storage.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeKeys(asList(keyFields)))));
+    public Mono<Long> count(Tuple tuple) {
+        return parseCountMono(storage.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeTuple(tuple))));
     }
 
-    private ImmutableValue serializeKeys(Collection<Object> keys) {
+    private ImmutableValue serializeTuple(Tuple tuple) {
         List<Value> serialized = linkedList();
         int index = 0;
-        for (Object key : keys) {
+        for (Object key : tuple.values()) {
             serialized.add(writer.write(fields.get(index++).type(), key));
         }
         return newArray(serialized);
