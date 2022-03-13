@@ -137,7 +137,7 @@ public class TarantoolStorageTest {
 
     @Test
     public void testSingleUpdate() {
-        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).build();
+        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f16("test").f9(10).build();
         current().insert(data);
         Integer f9 = data.getF9();
         assertEquals(f9 + 2, f9 = current().update(data.getF1(), updater -> updater.add(testingMetaModel().f9Field(), 2)).getF9());
@@ -146,6 +146,7 @@ public class TarantoolStorageTest {
         assertEquals(f9 | 2, f9 = current().update(data.getF1(), updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2)).getF9());
         assertEquals(f9 ^ 2, current().update(data.getF1(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
         assertEquals(2, current().update(data.getF1(), updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals("t!!st", current().update(data.getF1(), updater -> updater.splice(testingMetaModel().f16Field(), 2, 1, "!!")).getF16());
         assertNull(current().update(data.getF1(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
     }
 

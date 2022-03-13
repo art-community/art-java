@@ -9,6 +9,7 @@ import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.SetFactory.*;
+import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.UpdateOperation.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
@@ -93,10 +94,9 @@ public class TarantoolUpdateSerializer {
                         serializedGroup.add(newArray(
                                 SPLICE,
                                 newInteger(operator.getField().index() + 1),
-                                serializeValue(operator.getField().type(), operator.getValues().get(0)),
-                                serializeValue(operator.getField().type(), operator.getValues().get(1)),
-                                serializeValue(operator.getField().type(), operator.getValues().get(2)),
-                                serializeValue(operator.getField().type(), operator.getValues().get(3))
+                                serializeValue(integerType(), operator.getValues().get(0)),
+                                serializeValue(integerType(), operator.getValues().get(1)),
+                                serializeValue(operator.getField().type(), operator.getValues().get(2))
                         ));
                         break;
                 }
