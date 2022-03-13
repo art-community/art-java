@@ -1,30 +1,30 @@
 package io.art.tarantool.test;
 
 import io.art.core.collection.*;
+import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import io.art.storage.service.*;
 import io.art.storage.sorter.model.*;
-import io.art.tarantool.*;
+import io.art.tarantool.module.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.tarantool.test.model.TestStorage.*;
+import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.meta.module.MetaActivator.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
+import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolActivator.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
-import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
@@ -33,9 +33,9 @@ public class TarantoolStreamTest {
     public static void setup() {
         initializeStorage();
         initialize(
-                meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
-                transport(),
-                tarantool(tarantool -> tarantool
+                MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
+                TransportActivator.transport(),
+                TarantoolActivator.tarantool(tarantool -> tarantool
                         .storage(TestStorage.class, storage -> storage.client(client -> client
                                 .port(STORAGE_PORT)
                                 .username(USERNAME)
@@ -45,7 +45,7 @@ public class TarantoolStreamTest {
                         .space(TestStorage.class, OtherSpace.class, OtherSpaceIndexes.class)
                 )
         );
-        Tarantool.tarantool()
+        tarantool()
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
                 .createIndex(indexFor(testingMetaModel())
@@ -53,9 +53,7 @@ public class TarantoolStreamTest {
                         .configure()
                         .ifNotExists(true)
                         .unique(true)
-                        .build());
-        Tarantool.tarantool()
-                .schema(TestStorage.class)
+                        .build())
                 .createSpace(spaceFor(OtherSpace.class).ifNotExists(true).build())
                 .createIndex(indexFor(otherSpace())
                         .field(otherSpace().keyField())
@@ -479,14 +477,14 @@ public class TarantoolStreamTest {
     }
 
     private static SpaceService<Integer, TestingMetaModel> current() {
-        return Tarantool.tarantool().space(TestingMetaModel.class);
+        return tarantool().space(TestingMetaModel.class);
     }
 
     private static SpaceService<Integer, OtherSpace> other() {
-        return Tarantool.tarantool().space(OtherSpace.class);
+        return tarantool().space(OtherSpace.class);
     }
 
     private static OtherSpaceIndexes otherIndexes() {
-        return Tarantool.tarantool().indexes(OtherSpace.class);
+        return tarantool().indexes(OtherSpace.class);
     }
 }
