@@ -398,5 +398,4 @@ public class TarantoolStorageTest {
     private static SpaceService<Integer, TestingMetaModel> current() {
         return tarantool().space(TestingMetaModel.class);
     }
-
 }

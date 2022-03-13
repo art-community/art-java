@@ -525,5 +525,4 @@ public class TarantoolStreamTest {
     private static SpaceService<Integer, OtherSpace> other() {
         return tarantool().space(OtherSpace.class);
     }
-
 }
