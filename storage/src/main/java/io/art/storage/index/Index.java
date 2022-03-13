@@ -6,7 +6,7 @@ import static java.util.stream.Collectors.*;
 import java.util.*;
 
 @Public
-public interface INDEX {
+public interface Index {
     List<MetaField<?, ?>> fields();
 
     default MetaClass<?> owner() {
