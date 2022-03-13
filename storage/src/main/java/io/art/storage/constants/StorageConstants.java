@@ -64,4 +64,16 @@ public interface StorageConstants {
         FILTER,
         MAP
     }
+
+    enum UpdateOpration {
+        ADD,
+        SUBTRACT,
+        BITWISE_AND,
+        BITWISE_OR,
+        BITWISE_XOR,
+        INSERT,
+        SET,
+        DELETE,
+        SPLICE
+    }
 }
