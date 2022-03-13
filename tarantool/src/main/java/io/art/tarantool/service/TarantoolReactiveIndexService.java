@@ -94,10 +94,10 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     private ImmutableValue serializeKeys(Collection<Object> keys) {
-        List<ImmutableValue> serialized = linkedList();
+        List<Value> serialized = linkedList();
         int index = 0;
         for (Object key : keys) {
-            writer.write(fields.get(index++).type(), key);
+            serialized.add(writer.write(fields.get(index++).type(), key));
         }
         return newArray(serialized);
     }
