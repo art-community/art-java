@@ -361,7 +361,7 @@ public class TarantoolStorageTest {
         short finalExpectedF10 = expectedF10;
         current().index(testModelIndexes().f9f16()).update(keys, updater -> updater
                 .add(testingMetaModel().f10Field(), (short) 4)
-                .set(testingMetaModel().f33Field(), linkedListOf("test"))
+                .set(testingMetaModel().f33Field(), linkedListOf("updated"))
                 .subtract(testingMetaModel().f10Field(), (short) 2)
                 .bitwiseAnd(testingMetaModel().f10Field(), (short) 2)
                 .bitwiseOr(testingMetaModel().f10Field(), (short) 2)

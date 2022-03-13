@@ -426,7 +426,7 @@ package.preload[ "art.storage.index" ] = function( ... ) local arg = _G.arg;
 local index = {
     first = function(space, index, keys)
         local foundIndex = box.space[space].index[index]
-        if foundIndex.unique and #keys == 1 then
+        if foundIndex.unique or #keys == 1 then
             return foundIndex:get(keys)
         end
         return foundIndex:select(keys, { limit = 1 })[1]
@@ -485,7 +485,7 @@ local transformer = {
             local results = {}
             local foundIndex = box.space[space].index[index]
             for _, key in pairs(keys) do
-                if not foundIndex.unique and #key == 1 then
+                if foundIndex.unique or #key == 1 then
                     table.insert(results, box.space[space].index[index]:delete(key))
                 else
                     for _, element in foundIndex:pairs(key) do
@@ -502,7 +502,7 @@ local transformer = {
             local results = {}
             local foundIndex = box.space[space].index[index]
             for _, key in pairs(keys) do
-                if not foundIndex.unique and #key == 1 then
+                if foundIndex.unique or #key == 1 then
                     local result
                     for _, commands in pairs(commandGroups) do
                         result = box.space[space].index[index]:update(key, commands)
