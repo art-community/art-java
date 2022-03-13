@@ -843,6 +843,7 @@ package.preload[ "art.storage.stream-filter" ] = function( ... ) local arg = _G.
 local deepEqual = require('art.storage.deep-equal')
 local constants = require("art.storage.constants").stream
 local functional = require('fun')
+local storageIndex = require('art.storage.index')
 
 local filters = {}
 
@@ -999,7 +1000,7 @@ processFilters = function(filtering, inputFilters)
                 table.insert(indexKeys, filtering[keyField])
             end
             if next(indexKeys) ~= nil then
-                local mapped = box.space[otherSpace]:index(otherIndex):get(indexKeys)
+                local mapped = storageIndex.first(otherSpace, otherIndex, indexKeys)
                 if mapped ~= nil then
                     result = processExpressions(filter[4], filtering, mapped, result)
                 else
@@ -1036,6 +1037,7 @@ local _ENV = _ENV
 package.preload[ "art.storage.stream-mapper" ] = function( ... ) local arg = _G.arg;
 local constants = require("art.storage.constants").stream
 local functional = require('fun')
+local storageIndex = require('art.storage.index')
 
 return function(generator, parameter, state, request)
     local mappingFunction = function(mapping)
@@ -1043,7 +1045,7 @@ return function(generator, parameter, state, request)
 
         if mode == constants.mappingModes.mapByFunction then
             local functionName = request[2]
-            return box.func[functionName]:call({mapping})
+            return box.func[functionName]:call({ mapping })
         end
 
         if mode == constants.mappingModes.mapByField then
@@ -1068,7 +1070,7 @@ return function(generator, parameter, state, request)
             if next(indexKeys) == nil then
                 return nil
             end
-            return box.space[otherSpace]:index(otherIndex):get(indexKeys)
+            return storageIndex.first(otherSpace, otherIndex, indexKeys)
         end
     end
 
