@@ -5,12 +5,15 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.service.*;
+import io.art.storage.updater.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.serializer.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
@@ -29,6 +32,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     private final TarantoolModelReader reader;
     private final MetaType<ModelType> spaceMeta;
     private final List<MetaField<? extends MetaClass<ModelType>, ?>> fields;
+    private final TarantoolUpdateSerializer updateSerializer;
 
     @Builder
     public TarantoolReactiveIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
@@ -43,6 +47,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
         this.indexName = indexName;
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
+        updateSerializer = new TarantoolUpdateSerializer(writer);
     }
 
     @Override
@@ -64,6 +69,13 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
         ArrayValue input = newArray(spaceName, indexName, serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
         Mono<Value> output = storage.immutable().call(INDEX_SELECT, input);
         return parseSpaceFlux(output);
+    }
+
+    @Override
+    public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
+        ArrayValue input = newArray(spaceName, indexName, serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
+        Mono<Value> output = storage.immutable().call(INDEX_SINGLE_UPDATE, input);
+        return parseSpaceMono(output);
     }
 
     @Override

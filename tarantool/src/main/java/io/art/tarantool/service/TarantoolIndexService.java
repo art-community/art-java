@@ -5,6 +5,7 @@ import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.service.*;
+import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import lombok.Builder;
 import lombok.*;
@@ -61,6 +62,11 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     @Override
     public ModelType delete(Tuple key) {
         return block(reactive.delete(key));
+    }
+
+    @Override
+    public ModelType update(Tuple key, Updater<ModelType> updater) {
+        return block(reactive.update(key, updater));
     }
 
     @Override

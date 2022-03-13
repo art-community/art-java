@@ -3,9 +3,11 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.updater.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
+import java.util.function.*;
 
 @Public
 @SuppressWarnings({VARARGS})
@@ -25,6 +27,14 @@ public interface IndexService<ModelType> {
     ImmutableArray<ModelType> find(ImmutableCollection<? extends Tuple> keys);
 
     ModelType delete(Tuple key);
+
+    default ModelType update(Tuple key, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(key, spaceUpdater);
+    }
+
+    ModelType update(Tuple key, Updater<ModelType> updater);
 
     default ImmutableArray<ModelType> delete(Tuple... keys) {
         return delete(asList(keys));

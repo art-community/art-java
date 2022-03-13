@@ -1,7 +1,9 @@
 package io.art.storage.updater;
 
+import io.art.core.annotation.*;
 import io.art.meta.model.*;
 
+@Public
 public interface Updater<T> {
     Updater<T> add(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value);
 
