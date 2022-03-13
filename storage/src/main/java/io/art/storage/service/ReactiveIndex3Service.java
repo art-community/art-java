@@ -10,7 +10,7 @@ public class ReactiveIndex3Service<ModelType, F1, F2, F3> {
     private final ReactiveIndexService<ModelType> delegate;
 
     public Mono<ModelType> findFirst(F1 key1, F2 key2, F3 key3) {
-        return delegate.findFirst(key1, key2, key3);
+        return delegate.first(key1, key2, key3);
     }
 
     public Flux<ModelType> delete(F1 key1, F2 key2, F3 key3) {

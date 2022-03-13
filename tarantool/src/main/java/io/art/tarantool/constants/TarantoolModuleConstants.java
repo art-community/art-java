@@ -96,7 +96,6 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue INDEX_SELECT = newString("art.index.select");
         ImmutableStringValue INDEX_STREAM = newString("art.index.stream");
         ImmutableStringValue INDEX_COUNT = newString("art.index.count");
-        ImmutableStringValue INDEX_SINGLE_DELETE = newString("art.space.index.multiple.delete");
         ImmutableStringValue INDEX_MULTIPLE_DELETE = newString("art.space.index.multiple.delete");
         ImmutableStringValue SPACE_TRUNCATE = newString("art.space.truncate");
         ImmutableStringValue SPACE_SINGLE_DELETE = newString("art.space.single.delete");

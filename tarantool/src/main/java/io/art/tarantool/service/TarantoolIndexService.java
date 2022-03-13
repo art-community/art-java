@@ -2,6 +2,7 @@ package io.art.tarantool.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.service.*;
 import io.art.tarantool.registry.*;
@@ -33,32 +34,32 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
-    public ModelType findFirst(Collection<Object> keys) {
-        return block(reactive.findFirst(keys));
+    public ModelType first(Object... keys) {
+        return block(reactive.first(keys));
     }
 
     @Override
-    public ModelType findFirst(ImmutableCollection<Object> keys) {
-        return block(reactive.findFirst(keys));
+    public ImmutableArray<ModelType> select(Object... keys) {
+        return reactive.select(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> findAll(Collection<Object> keys) {
-        return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
+    public ImmutableArray<ModelType> find(Collection<Tuple> keys) {
+        return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> findAll(ImmutableCollection<Object> keys) {
-        return reactive.findAll(keys).toStream().collect(immutableArrayCollector());
+    public ImmutableArray<ModelType> find(ImmutableCollection<Tuple> keys) {
+        return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> delete(Collection<Object> keys) {
+    public ImmutableArray<ModelType> delete(Collection<Tuple> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> delete(ImmutableCollection<Object> keys) {
+    public ImmutableArray<ModelType> delete(ImmutableCollection<Tuple> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 

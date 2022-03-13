@@ -2,6 +2,7 @@ package io.art.tarantool.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.service.*;
 import io.art.tarantool.descriptor.*;
@@ -10,10 +11,12 @@ import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
+import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
+import static java.util.Arrays.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
@@ -44,43 +47,43 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     @Override
-    public Mono<ModelType> findFirst(Collection<Object> keys) {
-        ArrayValue input = serializeKeys(keys);
+    public Mono<ModelType> first(Object... keyFields) {
+        ArrayValue input = serializeKeys(asList(keyFields));
         Mono<Value> output = storage.immutable().call(INDEX_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Mono<ModelType> findFirst(ImmutableCollection<Object> keys) {
-        ArrayValue input = serializeKeys(keys);
-        Mono<Value> output = storage.immutable().call(INDEX_FIRST, input);
-        return parseSpaceMono(output);
+    public Flux<ModelType> select(Object... keyFields) {
+        ArrayValue input = serializeKeys(asList(keyFields));
+        Mono<Value> output = storage.immutable().call(INDEX_SELECT, input);
+        return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> findAll(Collection<Object> keys) {
-        ArrayValue input = serializeKeys(keys);
+    public Flux<ModelType> find(Collection<Tuple> keys) {
+        ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> findAll(ImmutableCollection<Object> keys) {
-        ArrayValue input = serializeKeys(keys);
+    public Flux<ModelType> find(ImmutableCollection<Tuple> keys) {
+        ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(Collection<Object> keys) {
-        ArrayValue input = serializeKeys(keys);
+    public Flux<ModelType> delete(Collection<Tuple> keys) {
+        ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(ImmutableCollection<Object> keys) {
-        ArrayValue input = serializeKeys(keys);
+    public Flux<ModelType> delete(ImmutableCollection<Tuple> keys) {
+        ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
@@ -91,15 +94,6 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     private ArrayValue serializeKeys(Collection<Object> keys) {
-        List<ImmutableValue> serialized = linkedList();
-        int index = 0;
-        for (Object key : keys) {
-            writer.write(fields.get(index++).type(), key);
-        }
-        return newArray(spaceName, indexName, newArray(serialized));
-    }
-
-    private ArrayValue serializeKeys(ImmutableCollection<Object> keys) {
         List<ImmutableValue> serialized = linkedList();
         int index = 0;
         for (Object key : keys) {

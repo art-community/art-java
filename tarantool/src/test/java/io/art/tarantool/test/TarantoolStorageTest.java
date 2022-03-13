@@ -163,7 +163,7 @@ public class TarantoolStorageTest {
     public void testIndexFindFirst() {
         TestingMetaModel data = generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build();
         current().put(data);
-        data.assertEquals(current().index(currentIndexes().id()).findFirst(1));
+        data.assertEquals(current().index(currentIndexes().id()).first(1));
         data.assertEquals(current().index(currentIndexes().f9f16()).findFirst(10, "test"));
     }
 
@@ -175,7 +175,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).f9(10).f16("test").build()
         );
         current().put(data);
-        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).findAll(1, 2, 3);
+        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).find(1, 2, 3);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));

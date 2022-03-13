@@ -2,6 +2,9 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
+import static io.art.core.collector.ArrayCollector.*;
+import static java.util.Arrays.*;
 import java.util.*;
 
 @Public
@@ -14,25 +17,38 @@ public class Index1Service<ModelType, F1> {
         reactive = new ReactiveIndex1Service<>(delegate.reactive());
     }
 
-    public ModelType findFirst(F1 key1) {
-        return delegate.findFirst(key1);
+    public ModelType first(F1 key1) {
+        return delegate.first(key1);
+    }
+
+    public ImmutableArray<ModelType> select(F1 key1) {
+        return delegate.select(key1);
     }
 
     @SafeVarargs
-    public final ImmutableArray<ModelType> findAll(F1... keys1) {
-        return delegate.findAll((Object[]) keys1);
+    public final ImmutableArray<ModelType> find(F1... keys1) {
+        return delegate.find(stream(keys1).map(Tuple1::new).collect(listCollector()));
     }
 
-    public ImmutableArray<ModelType> findAll(Collection<F1> keys1) {
-        return delegate.findAll(keys1);
+    public ImmutableArray<ModelType> find(Collection<F1> keys1) {
+        return delegate.find(keys1.stream().map(Tuple1::new).collect(listCollector()));
     }
 
-    public ImmutableArray<ModelType> findAll(ImmutableCollection<F1> keys1) {
-        return delegate.findAll(keys1);
+    public ImmutableArray<ModelType> find(ImmutableCollection<F1> keys1) {
+        return delegate.find(keys1.stream().map(Tuple1::new).collect(listCollector()));
     }
 
-    public ImmutableArray<ModelType> delete(F1 key1) {
-        return delegate.delete(key1);
+    @SafeVarargs
+    public final ImmutableArray<ModelType> delete(F1... keys1) {
+        return delegate.delete(stream(keys1).map(Tuple1::new).collect(listCollector()));
+    }
+
+    public ImmutableArray<ModelType> delete(Collection<F1> keys1) {
+        return delegate.delete(keys1.stream().map(Tuple1::new).collect(listCollector()));
+    }
+
+    public ImmutableArray<ModelType> delete(ImmutableCollection<F1> keys1) {
+        return delegate.delete(keys1.stream().map(Tuple1::new).collect(listCollector()));
     }
 
     public long count() {

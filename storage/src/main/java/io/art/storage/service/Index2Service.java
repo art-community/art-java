@@ -2,26 +2,58 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
-import lombok.*;
+import io.art.core.model.*;
+import java.util.*;
 
 @Public
-@RequiredArgsConstructor
 public class Index2Service<ModelType, F1, F2> {
     private final IndexService<ModelType> delegate;
+    private final ReactiveIndex2Service<ModelType, F1, F2> reactive;
 
-    public ModelType findFirst(F1 key1, F2 key2) {
-        return delegate.findFirst(key1, key2);
+    public Index2Service(IndexService<ModelType> delegate) {
+        this.delegate = delegate;
+        reactive = new ReactiveIndex2Service<>(delegate.reactive());
     }
 
-    public ImmutableArray<ModelType> findAll(F1 key1, F2 key2) {
-        return delegate.findAll(key1, key2);
+    public ModelType first(F1 key1, F2 key2) {
+        return delegate.first(key1, key2);
     }
 
-    public ImmutableArray<ModelType> delete(F1 key1, F2 key2) {
-        return delegate.delete(key1, key2);
+    public ImmutableArray<ModelType> select(F1 key1, F2 key2) {
+        return delegate.select(key1, key2);
+    }
+
+    @SafeVarargs
+    public final ImmutableArray<ModelType> find(Tuple2<F1, F2>... keys) {
+        return delegate.find(keys);
+    }
+
+    public ImmutableArray<ModelType> find(Collection<Tuple2<F1, F2>> keys) {
+        return delegate.find(keys);
+    }
+
+    public ImmutableArray<ModelType> find(ImmutableCollection<Tuple2<F1, F2>> keys) {
+        return delegate.find(keys);
+    }
+
+    @SafeVarargs
+    public final ImmutableArray<ModelType> delete(Tuple2<F1, F2>... keys) {
+        return delegate.delete(keys);
+    }
+
+    public ImmutableArray<ModelType> delete(Collection<Tuple2<F1, F2>> keys) {
+        return delegate.delete(keys);
+    }
+
+    public ImmutableArray<ModelType> delete(ImmutableCollection<Tuple2<F1, F2>> keys) {
+        return delegate.delete(keys);
     }
 
     public long count() {
         return delegate.count();
+    }
+
+    public ReactiveIndex2Service<ModelType, F1, F2> reactive() {
+        return reactive;
     }
 }

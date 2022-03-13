@@ -2,6 +2,7 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
@@ -10,29 +11,25 @@ import java.util.*;
 @Public
 @SuppressWarnings({VARARGS})
 public interface ReactiveIndexService<ModelType> {
-    default Mono<ModelType> findFirst(Object... keys) {
-        return findFirst(asList(keys));
+    Mono<ModelType> first(Object... keyFields);
+
+    Flux<ModelType> select(Object... keyFields);
+
+    default Flux<ModelType> find(Tuple... keys) {
+        return find(asList(keys));
     }
 
-    Mono<ModelType> findFirst(Collection<Object> keys);
+    Flux<ModelType> find(Collection<? extends Tuple> keys);
 
-    Mono<ModelType> findFirst(ImmutableCollection<Object> keys);
+    Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys);
 
-    default Flux<ModelType> findAll(Object... keys) {
-        return findAll(asList(keys));
-    }
-
-    Flux<ModelType> findAll(Collection<Object> keys);
-
-    Flux<ModelType> findAll(ImmutableCollection<Object> keys);
-
-    default Flux<ModelType> delete(Object... keys) {
+    default Flux<ModelType> delete(Tuple... keys) {
         return delete(asList(keys));
     }
 
-    Flux<ModelType> delete(Collection<Object> keys);
+    Flux<ModelType> delete(Collection<? extends Tuple> keys);
 
-    Flux<ModelType> delete(ImmutableCollection<Object> keys);
+    Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
 
     Mono<Long> count();
 }
