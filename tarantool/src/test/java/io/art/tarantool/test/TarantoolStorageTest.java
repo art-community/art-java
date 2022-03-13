@@ -149,6 +149,20 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testUpsert() {
+        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).build();
+        Integer f9 = data.getF9();
+        data.assertEquals(current().upsert(data, updater -> updater.add(testingMetaModel().f9Field(), 2)));
+        assertEquals(f9 + 2, f9 = current().upsert(data, updater -> updater.add(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 - 2, f9 = current().upsert(data, updater -> updater.subtract(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 & 2, f9 = current().upsert(data, updater -> updater.bitwiseAnd(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 | 2, f9 = current().upsert(data, updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 ^ 2, current().upsert(data, updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(2, current().upsert(data, updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
+        assertNull(current().upsert(data, updater -> updater.delete(testingMetaModel().f33Field())).getF33());
+    }
+
+    @Test
     public void testMultipleUpdate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).build(),
