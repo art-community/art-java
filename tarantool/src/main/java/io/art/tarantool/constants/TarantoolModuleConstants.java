@@ -284,18 +284,6 @@ public interface TarantoolModuleConstants {
         RTREE
     }
 
-    enum TarantoolIndexIterator {
-        EQ,
-        REQ,
-        GT,
-        GE,
-        ALL,
-        LT,
-        LE,
-        OVERLAPS,
-        NEIGHBOR
-    }
-
     interface UpdateOperation {
         ImmutableStringValue ADDITION = newString("+");
         ImmutableStringValue SUBTRACTION = newString("-");
