@@ -4,6 +4,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.index.*;
 import io.art.storage.sorter.model.*;
 import io.art.storage.stream.*;
 import static io.art.core.caster.Caster.*;
@@ -77,8 +78,46 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
-        stream.map(space, indexedFields);
+    public <Mapped, F1> SpaceStream<Mapped> map(Index1<Mapped, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
+        stream.map(index, field1);
+        return cast(this);
+    }
+
+    @Override
+    public <Mapped, F1, F2> SpaceStream<Mapped> map(Index2<Mapped, F1, F2> index,
+                                                    MetaField<? extends MetaClass<Type>, F1> field1,
+                                                    MetaField<? extends MetaClass<Type>, F2> field2) {
+        stream.map(index, field1, field2);
+        return cast(this);
+    }
+
+    @Override
+    public <Mapped, F1, F2, F3> SpaceStream<Mapped> map(Index3<Mapped, F1, F2, F3> index,
+                                                        MetaField<? extends MetaClass<Type>, F1> field1,
+                                                        MetaField<? extends MetaClass<Type>, F2> field2,
+                                                        MetaField<? extends MetaClass<Type>, F3> field3) {
+        stream.map(index, field1, field2, field3);
+        return cast(this);
+    }
+
+    @Override
+    public <Mapped, F1, F2, F3, F4> SpaceStream<Mapped> map(Index4<Mapped, F1, F2, F3, F4> index,
+                                                            MetaField<? extends MetaClass<Type>, F1> field1,
+                                                            MetaField<? extends MetaClass<Type>, F2> field2,
+                                                            MetaField<? extends MetaClass<Type>, F3> field3,
+                                                            MetaField<? extends MetaClass<Type>, F4> field4) {
+        stream.map(index, field1, field2, field3, field4);
+        return cast(this);
+    }
+
+    @Override
+    public <Mapped, F1, F2, F3, F4, F5> SpaceStream<Mapped> map(Index5<Mapped, F1, F2, F3, F4, F5> index,
+                                                                MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                MetaField<? extends MetaClass<Type>, F4> field4,
+                                                                MetaField<? extends MetaClass<Type>, F5> field5) {
+        stream.map(index, field1, field2, field3, field4, field5);
         return cast(this);
     }
 
