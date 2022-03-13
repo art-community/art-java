@@ -18,7 +18,8 @@ public interface Filter<Type> {
 
     <Other> FilterBySpace<Type, Other> bySpace(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?> mappingField);
 
-    <Other, F1> FilterBySpace<Type, Other> byIndex(Index1<Other, F1> index, MetaField<? extends MetaClass<Type>, F1> field1);
+    <Other, F1> FilterBySpace<Type, Other> byIndex(Index1<Other, F1> index,
+                                                   MetaField<? extends MetaClass<Type>, F1> field1);
 
     <Other, F1, F2> FilterBySpace<Type, Other> byIndex(Index2<Other, F1, F2> index,
                                                        MetaField<? extends MetaClass<Type>, F1> field1,
