@@ -71,6 +71,14 @@ public interface SpaceService<KeyType, ModelType> {
 
     ModelType update(KeyType key, Updater<ModelType> updater);
 
+    ModelType upsert(ModelType model, Updater<ModelType> updater);
+
+    default ModelType upsert(ModelType model, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return upsert(model, spaceUpdater);
+    }
+
     ImmutableArray<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater);
 
     ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater);

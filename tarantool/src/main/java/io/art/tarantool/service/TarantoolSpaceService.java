@@ -133,6 +133,11 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
+    public ModelType upsert(ModelType model, Updater<ModelType> updater) {
+        return block(reactive.upsert(model, updater));
+    }
+
+    @Override
     public ImmutableArray<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
     }

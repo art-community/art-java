@@ -95,6 +95,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SPACE_SINGLE_INSERT = newString("art.space.single.insert");
         ImmutableStringValue SPACE_SINGLE_PUT = newString("art.space.single.put");
         ImmutableStringValue SPACE_SINGLE_UPDATE = newString("art.space.single.update");
+        ImmutableStringValue SPACE_SINGLE_UPSERT = newString("art.space.single.upsert");
         ImmutableStringValue SPACE_MULTIPLE_UPDATE = newString("art.space.multiple.update");
         ImmutableStringValue SPACE_MULTIPLE_PUT = newString("art.space.multiple.put");
         ImmutableStringValue SPACE_MULTIPLE_DELETE = newString("art.space.multiple.delete");

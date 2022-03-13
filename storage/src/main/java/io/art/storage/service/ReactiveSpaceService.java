@@ -66,6 +66,14 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Mono<ModelType> update(KeyType key, Updater<ModelType> updater);
 
+    Mono<ModelType> upsert(ModelType model, Updater<ModelType> updater);
+
+    default Mono<ModelType> upsert(ModelType model, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return upsert(model, spaceUpdater);
+    }
+
     Flux<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater);
 
     Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater);
