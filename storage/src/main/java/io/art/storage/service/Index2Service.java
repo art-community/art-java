@@ -26,6 +26,14 @@ public class Index2Service<ModelType, F1, F2> {
         return delegate.update(tuple(key1, key2), updater);
     }
 
+    public ImmutableArray<ModelType> update(Collection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys, updater);
+    }
+
+    public ImmutableArray<ModelType> update(ImmutableCollection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys, updater);
+    }
+
     public ImmutableArray<ModelType> select(F1 key1, F2 key2) {
         return delegate.select(tuple(key1, key2));
     }

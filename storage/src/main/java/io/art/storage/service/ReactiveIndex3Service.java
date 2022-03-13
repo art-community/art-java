@@ -23,6 +23,14 @@ public class ReactiveIndex3Service<ModelType, F1, F2, F3> {
         return delegate.update(tuple(key1, key2, key3), updater);
     }
 
+    public Flux<ModelType> update(Collection<Tuple3<F1, F2, F3>> keys, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys, updater);
+    }
+
+    public Flux<ModelType> update(ImmutableCollection<Tuple3<F1, F2, F3>> keys, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys, updater);
+    }
+
     public Flux<ModelType> select(F1 key1, F2 key2, F3 key3) {
         return delegate.select(tuple(key1, key2, key3));
     }

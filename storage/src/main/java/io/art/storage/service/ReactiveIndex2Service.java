@@ -6,6 +6,7 @@ import io.art.core.model.*;
 import io.art.storage.updater.*;
 import lombok.*;
 import reactor.core.publisher.*;
+import static io.art.core.collector.ArrayCollector.listCollector;
 import static io.art.core.model.Tuple.*;
 import java.util.*;
 import java.util.function.*;
@@ -21,6 +22,14 @@ public class ReactiveIndex2Service<ModelType, F1, F2> {
 
     public Mono<ModelType> update(F1 key1,F2 key2, UnaryOperator<Updater<ModelType>> updater) {
         return delegate.update(tuple(key1, key2), updater);
+    }
+
+    public Flux<ModelType> update(Collection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys, updater);
+    }
+
+    public Flux<ModelType> update(ImmutableCollection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys, updater);
     }
 
     public Flux<ModelType> select(F1 key1, F2 key2) {

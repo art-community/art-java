@@ -28,6 +28,14 @@ public class Index1Service<ModelType, F1> {
         return delegate.update(tuple(key1), updater);
     }
 
+    public ImmutableArray<ModelType> update(Collection<F1> keys1, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys1.stream().map(Tuple1::new).collect(listCollector()), updater);
+    }
+
+    public ImmutableArray<ModelType> update(ImmutableCollection<F1> keys1, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(keys1.stream().map(Tuple1::new).collect(listCollector()), updater);
+    }
+
     public ImmutableArray<ModelType> select(F1 key1) {
         return delegate.select(tuple(key1));
     }
