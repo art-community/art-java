@@ -51,11 +51,10 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
 
     @Override
     public Flux<ModelType> collect() {
-        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCollect;
         ImmutableArrayValue stream = newArray(
                 spaceName,
                 newArray(serializer.serializeStream(operators)),
-                newArray(operator),
+                newArray(terminatingFunctions.terminatingCollect),
                 writeBaseKey()
         );
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
