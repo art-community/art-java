@@ -158,10 +158,10 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public Mono<ModelType> upsert(ModelType model, Updater<ModelType> updater) {
+    public Mono<Void> upsert(ModelType model, Updater<ModelType> updater) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, model), updateSerializer.serializeUpdate(cast(updater)));
         Mono<Value> output = clients.mutable().call(SPACE_SINGLE_UPSERT, input);
-        return parseSpaceMono(output);
+        return output.then();
     }
 
     @Override

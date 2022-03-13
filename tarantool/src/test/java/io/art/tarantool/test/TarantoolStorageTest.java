@@ -30,6 +30,7 @@ import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.*;
 
 public class TarantoolStorageTest {
     @BeforeAll
@@ -150,16 +151,34 @@ public class TarantoolStorageTest {
 
     @Test
     public void testUpsert() {
-        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).build();
+        Supplier<TestingMetaModel> generate = () -> generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).build();
+        TestingMetaModel data = generate.get();
+
         Integer f9 = data.getF9();
-        data.assertEquals(current().upsert(data, updater -> updater.add(testingMetaModel().f9Field(), 2)));
-        assertEquals(f9 + 2, f9 = current().upsert(data, updater -> updater.add(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 - 2, f9 = current().upsert(data, updater -> updater.subtract(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 & 2, f9 = current().upsert(data, updater -> updater.bitwiseAnd(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 | 2, f9 = current().upsert(data, updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(f9 ^ 2, current().upsert(data, updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
-        assertEquals(2, current().upsert(data, updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
-        assertNull(current().upsert(data, updater -> updater.delete(testingMetaModel().f33Field())).getF33());
+
+        current().upsert(generate.get(), updater -> updater.add(testingMetaModel().f9Field(), 2));
+        data.assertEquals(current().first(data.getF1()));
+
+        current().upsert(generate.get(), updater -> updater.add(testingMetaModel().f9Field(), 2));
+        assertEquals(f9 + 2, f9 = current().first(data.getF1()).getF9());
+
+        current().upsert(generate.get().toBuilder().build(), updater -> updater.subtract(testingMetaModel().f9Field(), 2));
+        assertEquals(f9 - 2, f9 = current().first(data.getF1()).getF9());
+
+        current().upsert(generate.get().toBuilder().build(), updater -> updater.bitwiseAnd(testingMetaModel().f9Field(), 2));
+        assertEquals(f9 & 2, f9 = current().first(data.getF1()).getF9());
+
+        current().upsert(generate.get(), updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2));
+        assertEquals(f9 | 2, f9 = current().first(data.getF1()).getF9());
+
+        current().upsert(generate.get(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2));
+        assertEquals(f9 ^ 2, current().first(data.getF1()).getF9());
+
+        current().upsert(generate.get(), updater -> updater.set(testingMetaModel().f9Field(), 2));
+        assertEquals(2, current().first(data.getF1()).getF9());
+
+        current().upsert(generate.get(), updater -> updater.delete(testingMetaModel().f33Field()));
+        assertNull(current().first(data.getF1()).getF33());
     }
 
     @Test

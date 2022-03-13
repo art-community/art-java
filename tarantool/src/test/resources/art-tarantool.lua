@@ -804,7 +804,7 @@ local transformer = {
         end)
     end,
 
-    upsert = function(space, key, data, commandGroups)
+    upsert = function(space, data, commandGroups)
         return box.atomic(function()
             local result
             for _, commands in pairs(commandGroups) do

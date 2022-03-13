@@ -133,8 +133,8 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
-    public ModelType upsert(ModelType model, Updater<ModelType> updater) {
-        return block(reactive.upsert(model, updater));
+    public void upsert(ModelType model, Updater<ModelType> updater) {
+        block(reactive.upsert(model, updater));
     }
 
     @Override

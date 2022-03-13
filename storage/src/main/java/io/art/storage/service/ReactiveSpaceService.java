@@ -66,9 +66,9 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Mono<ModelType> update(KeyType key, Updater<ModelType> updater);
 
-    Mono<ModelType> upsert(ModelType model, Updater<ModelType> updater);
+    Mono<Void> upsert(ModelType model, Updater<ModelType> updater);
 
-    default Mono<ModelType> upsert(ModelType model, UnaryOperator<Updater<ModelType>> updater) {
+    default Mono<Void> upsert(ModelType model, UnaryOperator<Updater<ModelType>> updater) {
         Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return upsert(model, spaceUpdater);
