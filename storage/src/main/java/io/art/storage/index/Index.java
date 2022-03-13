@@ -7,6 +7,10 @@ import java.util.*;
 public interface Index {
     List<MetaField<?, ?>> fields();
 
+    default MetaClass<?> owner() {
+        return first().owner();
+    }
+
     default MetaField<?, ?> field(int id) {
         return fields().get(id);
     }

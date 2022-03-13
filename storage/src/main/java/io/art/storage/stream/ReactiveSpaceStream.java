@@ -5,6 +5,7 @@ import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.index.*;
 import io.art.storage.mapper.*;
 import io.art.storage.model.*;
 import io.art.storage.sorter.implementation.*;
@@ -12,6 +13,7 @@ import io.art.storage.sorter.model.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.model.Tuple.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.storage.constants.StorageConstants.ProcessingOperation.*;
 import java.util.*;
@@ -71,9 +73,47 @@ public abstract class ReactiveSpaceStream<Type> {
         return cast(this);
     }
 
-    public <Mapped> ReactiveSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
-        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(space, indexedFields)));
-        returningType = cast(space.definition());
+    public <Mapped, F1> ReactiveSpaceStream<Mapped> map(Index1<Mapped, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1))));
+        returningType = cast(index.owner().definition());
+        return cast(this);
+    }
+
+    public <Mapped, F1, F2> ReactiveSpaceStream<Mapped> map(Index2<Mapped, F1, F2> index,
+                                                            MetaField<? extends MetaClass<Type>, F1> field1,
+                                                            MetaField<? extends MetaClass<Type>, F2> field2) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2))));
+        returningType = cast(index.owner().definition());
+        return cast(this);
+    }
+
+    public <Mapped, F1, F2, F3> ReactiveSpaceStream<Mapped> map(Index3<Mapped, F1, F2, F3> index,
+                                                                MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                MetaField<? extends MetaClass<Type>, F3> field3) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2, field3))));
+        returningType = cast(index.owner().definition());
+        return cast(this);
+    }
+
+    public <Mapped, F1, F2, F3, F4> ReactiveSpaceStream<Mapped> map(Index4<Mapped, F1, F2, F3, F4> index,
+                                                                    MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                    MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                    MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                    MetaField<? extends MetaClass<Type>, F4> field4) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2, field3, field4))));
+        returningType = cast(index.owner().definition());
+        return cast(this);
+    }
+
+    public <Mapped, F1, F2, F3, F4, F5> ReactiveSpaceStream<Mapped> map(Index5<Mapped, F1, F2, F3, F4, F5> index,
+                                                                        MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                        MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                        MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                        MetaField<? extends MetaClass<Type>, F4> field4,
+                                                                        MetaField<? extends MetaClass<Type>, F5> field5) {
+        operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2, field3, field4, field5))));
+        returningType = cast(index.owner().definition());
         return cast(this);
     }
 

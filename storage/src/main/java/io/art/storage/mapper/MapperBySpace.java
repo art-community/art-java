@@ -1,28 +1,28 @@
 package io.art.storage.mapper;
 
+import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import lombok.*;
-import static io.art.core.factory.ListFactory.*;
-import static java.util.Arrays.*;
 import static lombok.AccessLevel.*;
-import java.util.*;
 
 @Getter
 @RequiredArgsConstructor(access = PACKAGE)
 public class MapperBySpace<Current, Other> {
     private final MetaClass<Other> mappingSpace;
-
     private MetaField<? extends MetaClass<Current>, ?> mappingKeyField;
-    private List<MetaField<? extends MetaClass<Current>, ?>> mappingIndexedFields = linkedList();
+
+    private Index mappingIndex;
+    private Tuple mappingIndexTuple;
 
     MapperBySpace<Current, Other> bySpace(MetaField<? extends MetaClass<Current>, ?> mappingField) {
         mappingKeyField = mappingField;
         return this;
     }
 
-    @SafeVarargs
-    final MapperBySpace<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
-        mappingIndexedFields = asList(indexedFields);
+    final MapperBySpace<Current, Other> byIndex(Index index, Tuple tuple) {
+        mappingIndex = index;
+        mappingIndexTuple = tuple;
         return this;
     }
 }

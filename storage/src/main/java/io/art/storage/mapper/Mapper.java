@@ -1,9 +1,12 @@
 package io.art.storage.mapper;
 
+import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.constants.StorageConstants.*;
+import io.art.storage.index.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.storage.constants.StorageConstants.MappingMode.*;
 
 @Getter
@@ -26,10 +29,9 @@ public class Mapper<Current, Mapped> {
         return this;
     }
 
-    @SafeVarargs
-    public final Mapper<Current, Mapped> byIndex(MetaClass<Mapped> otherSpace, MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
+    public final Mapper<Current, Mapped> byIndex(Index index, Tuple tuple) {
         mode = INDEX;
-        bySpace = new MapperBySpace<Current, Mapped>(otherSpace).byIndex(indexedFields);
+        byIndex = new MapperBySpace<Current, Mapped>(cast(index.owner())).byIndex(index, tuple);
         return this;
     }
 

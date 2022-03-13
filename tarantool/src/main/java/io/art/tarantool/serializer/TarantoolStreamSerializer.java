@@ -233,9 +233,15 @@ public class TarantoolStreamSerializer {
             case INDEX:
                 serialized.add(mappingModes.mapByIndex);
                 MapperBySpace<?, ?> byIndex = mapper.getByIndex();
+                ImmutableArrayValue fields = newArray(byIndex.getMappingIndexTuple()
+                        .values()
+                        .stream()
+                        .map(field -> serializeValue(integerType(), ((MetaField<?, ?>) field).index() + 1))
+                        .collect(listCollector())
+                );
                 serialized.add(spaceName(byIndex.getMappingSpace()));
-                List<MetaField<? extends MetaClass<?>, ?>> indexedFields = cast(byIndex.getMappingIndexedFields());
-                serialized.add(indexName(indexedFields));
+                serialized.add(fields);
+                serialized.add(newString(byIndex.getMappingIndex().name()));
                 break;
         }
         return newArray(serialized);
