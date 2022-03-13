@@ -25,12 +25,12 @@ import java.util.*;
 
 @Public
 public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexService<ModelType> {
-    private final StringValue spaceName;
-    private final StringValue indexName;
-    private final TarantoolClientRegistry storage;
+    private final ImmutableStringValue spaceName;
+    private final ImmutableStringValue indexName;
+    private final TarantoolClientRegistry clients;
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
-    private final MetaType<ModelType> spaceMeta;
+    private final MetaType<ModelType> spaceType;
     private final List<MetaField<? extends MetaClass<ModelType>, ?>> fields;
     private final TarantoolUpdateSerializer updateSerializer;
 
@@ -39,10 +39,10 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
                                          MetaType<ModelType> spaceType,
                                          ImmutableStringValue spaceName,
                                          ImmutableStringValue indexName,
-                                         TarantoolClientRegistry storage) {
+                                         TarantoolClientRegistry clients) {
         this.fields = fields;
-        this.spaceMeta = spaceType;
-        this.storage = storage;
+        this.spaceType = spaceType;
+        this.clients = clients;
         this.spaceName = spaceName;
         this.indexName = indexName;
         writer = tarantoolModule().configuration().getWriter();
@@ -53,21 +53,21 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     @Override
     public Mono<ModelType> first(Tuple tuple) {
         ArrayValue input = wrapRequest(serializeTuple(tuple));
-        Mono<Value> output = storage.immutable().call(INDEX_FIRST, input);
+        Mono<Value> output = clients.immutable().call(INDEX_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple) {
         ArrayValue input = wrapRequest(serializeTuple(tuple));
-        Mono<Value> output = storage.immutable().call(INDEX_SELECT, input);
+        Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple, int offset, int limit) {
         ArrayValue input = newArray(spaceName, indexName, serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
-        Mono<Value> output = storage.immutable().call(INDEX_SELECT, input);
+        Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
         return parseSpaceFlux(output);
     }
 
@@ -75,7 +75,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
         if (key.size() == 1) {
             ArrayValue input = newArray(spaceName, indexName, serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
-            Mono<Value> output = storage.mutable().call(INDEX_SINGLE_UPDATE, input);
+            Mono<Value> output = clients.mutable().call(INDEX_SINGLE_UPDATE, input);
             return parseSpaceMono(output);
         }
         return update(linkedListOf(key), updater).next();
@@ -89,7 +89,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
                 updateSerializer.serializeUpdate(cast(updater))
         );
-        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
         return parseSpaceFlux(output);
     }
 
@@ -101,21 +101,21 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
                 updateSerializer.serializeUpdate(cast(updater))
         );
-        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(Collection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
+        Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
+        Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
@@ -123,7 +123,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     public Mono<ModelType> delete(Tuple key) {
         if (key.size() == 1) {
             ArrayValue input = wrapRequest(serializeTuple(key));
-            Mono<Value> output = storage.mutable().call(INDEX_SINGLE_DELETE, input);
+            Mono<Value> output = clients.mutable().call(INDEX_SINGLE_DELETE, input);
             return parseSpaceMono(output);
         }
         return delete(linkedListOf(key)).next();
@@ -132,20 +132,39 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     @Override
     public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
+        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
+        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(Tuple tuple) {
-        return parseCountMono(storage.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeTuple(tuple))));
+        return parseCountMono(clients.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeTuple(tuple))));
+    }
+
+    @Override
+    public TarantoolReactiveStream<ModelType> stream() {
+        return TarantoolReactiveStream.<ModelType>builder()
+                .spaceName(spaceName)
+                .spaceType(spaceType)
+                .clients(clients)
+                .build();
+    }
+
+    @Override
+    public TarantoolReactiveStream<ModelType> stream(Tuple baseKey) {
+        return TarantoolReactiveStream.<ModelType>builder()
+                .spaceName(spaceName)
+                .spaceType(spaceType)
+                .clients(clients)
+                .baseKey(baseKey)
+                .build();
     }
 
     private ImmutableValue serializeTuple(Tuple tuple) {
@@ -166,13 +185,13 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
-        return value.map(element -> reader.read(spaceMeta, element));
+        return value.map(element -> reader.read(spaceType, element));
     }
 
     private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
-                .map(element -> reader.read(spaceMeta, element))));
+                .map(element -> reader.read(spaceType, element))));
     }
 }

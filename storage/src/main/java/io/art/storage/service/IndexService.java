@@ -3,6 +3,7 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
@@ -63,4 +64,8 @@ public interface IndexService<ModelType> {
     long count(Tuple tuple);
 
     ReactiveIndexService<ModelType> reactive();
+
+    SpaceStream<ModelType> stream();
+
+    SpaceStream<ModelType> stream(Tuple baseKey);
 }

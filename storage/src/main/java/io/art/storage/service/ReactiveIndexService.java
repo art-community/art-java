@@ -3,6 +3,7 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import reactor.core.publisher.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
@@ -62,4 +63,8 @@ public interface ReactiveIndexService<ModelType> {
     Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
 
     Mono<Long> count(Tuple tuple);
+
+    ReactiveSpaceStream<ModelType> stream();
+
+    ReactiveSpaceStream<ModelType> stream(Tuple baseKey);
 }

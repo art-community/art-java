@@ -17,20 +17,22 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolIndexService<ModelType> implements IndexService<ModelType> {
-    private ReactiveIndexService<ModelType> reactive;
+    private final MetaType<ModelType> spaceType;
+    private TarantoolReactiveIndexService<ModelType> reactive;
 
     @Builder
     public TarantoolIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
                                  MetaType<ModelType> spaceType,
                                  ImmutableStringValue spaceName,
                                  ImmutableStringValue indexName,
-                                 TarantoolClientRegistry storage) {
+                                 TarantoolClientRegistry clients) {
+        this.spaceType = spaceType;
         reactive = TarantoolReactiveIndexService.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceType)
                 .fields(fields)
                 .indexName(indexName)
-                .storage(storage)
+                .clients(clients)
                 .build();
     }
 
@@ -97,5 +99,15 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     @Override
     public ReactiveIndexService<ModelType> reactive() {
         return reactive;
+    }
+
+    @Override
+    public TarantoolStream<ModelType> stream() {
+        return new TarantoolStream<>(spaceType, reactive.stream());
+    }
+
+    @Override
+    public TarantoolStream<ModelType> stream(Tuple baseKey) {
+        return new TarantoolStream<>(spaceType, reactive.stream(baseKey));
     }
 }
