@@ -485,7 +485,7 @@ local transformer = {
             local results = {}
             local foundIndex = box.space[space].index[index]
             for _, key in pairs(keys) do
-                if foundIndex.unique and #key == 1 then
+                if not foundIndex.unique and #key == 1 then
                     table.insert(results, box.space[space].index[index]:delete(key))
                 else
                     for _, element in foundIndex:pairs(key) do
@@ -502,7 +502,7 @@ local transformer = {
             local results = {}
             local foundIndex = box.space[space].index[index]
             for _, key in pairs(keys) do
-                if foundIndex.unique and #key == 1 then
+                if not foundIndex.unique and #key == 1 then
                     local result
                     for _, commands in pairs(commandGroups) do
                         result = box.space[space].index[index]:update(key, commands)
@@ -512,7 +512,7 @@ local transformer = {
                     for _, element in foundIndex:pairs(key) do
                         local result
                         for _, commands in pairs(commandGroups) do
-                            result = box.space[space].index[index]:update(element[1], commands)
+                            result = box.space[space]:update(element[1], commands)
                         end
                         table.insert(results, result)
                     end
