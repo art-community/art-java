@@ -9,7 +9,6 @@ import io.art.storage.sorter.model.*;
 import io.art.tarantool.module.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
-import io.art.tarantool.test.model.TestStorage.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.collection.ImmutableArray.*;
@@ -357,7 +356,10 @@ public class TarantoolStreamTest {
         );
         current().insert(data);
 
-        ImmutableArray<TestingMetaModel> result = current().stream().filter(filter -> filter.byFunction(testStorage().testFilterMethod())).collect();
+        ImmutableArray<TestingMetaModel> result = current()
+                .stream()
+                .filter(filter -> filter.byFunction(testStorage().testFilterMethod()))
+                .collect();
         assertEquals(2, result.size());
         data.get(1).assertEquals(result.get(0));
         data.get(2).assertEquals(result.get(1));

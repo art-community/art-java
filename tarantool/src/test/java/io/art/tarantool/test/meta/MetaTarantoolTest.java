@@ -943,6 +943,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaTestFilterMethod testFilterMethod = register(new MetaTestFilterMethod(this));
 
+              private final MetaTestModelIndexesMethod testModelIndexesMethod = register(new MetaTestModelIndexesMethod(this));
+
+              private final MetaOtherSpaceIndexesMethod otherSpaceIndexesMethod = register(new MetaOtherSpaceIndexesMethod(this));
+
               private final MetaOtherSpaceIndexesClass otherSpaceIndexesClass = register(new MetaOtherSpaceIndexesClass());
 
               private final MetaTestModelIndexesClass testModelIndexesClass = register(new MetaTestModelIndexesClass());
@@ -969,6 +973,14 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaTestFilterMethod testFilterMethod() {
                 return testFilterMethod;
+              }
+
+              public MetaTestModelIndexesMethod testModelIndexesMethod() {
+                return testModelIndexesMethod;
+              }
+
+              public MetaOtherSpaceIndexesMethod otherSpaceIndexesMethod() {
+                return otherSpaceIndexesMethod;
               }
 
               @Override
@@ -1068,6 +1080,38 @@ public class MetaTarantoolTest extends MetaLibrary {
 
                 public MetaParameter<io.art.tarantool.test.model.TestData> inputParameter() {
                   return inputParameter;
+                }
+              }
+
+              public final class MetaTestModelIndexesMethod extends StaticMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage.TestModelIndexes> {
+                private MetaTestModelIndexesMethod(MetaTestStorageClass owner) {
+                  super("testModelIndexes",metaType(io.art.tarantool.test.model.TestStorage.TestModelIndexes.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(java.lang.Object[] arguments) throws Throwable {
+                  return io.art.tarantool.test.model.TestStorage.testModelIndexes();
+                }
+
+                @Override
+                public java.lang.Object invoke() throws Throwable {
+                  return io.art.tarantool.test.model.TestStorage.testModelIndexes();
+                }
+              }
+
+              public final class MetaOtherSpaceIndexesMethod extends StaticMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes> {
+                private MetaOtherSpaceIndexesMethod(MetaTestStorageClass owner) {
+                  super("otherSpaceIndexes",metaType(io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(java.lang.Object[] arguments) throws Throwable {
+                  return io.art.tarantool.test.model.TestStorage.otherSpaceIndexes();
+                }
+
+                @Override
+                public java.lang.Object invoke() throws Throwable {
+                  return io.art.tarantool.test.model.TestStorage.otherSpaceIndexes();
                 }
               }
 
