@@ -2,6 +2,7 @@ package io.art.storage.stream;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.filter.implementation.*;
@@ -25,9 +26,15 @@ import java.util.stream.*;
 public abstract class SpaceStream<Type> {
     protected List<ProcessingOperator> operators = linkedList();
     protected MetaType<Type> returningType;
+    protected Tuple baseKey;
 
     public SpaceStream(MetaType<Type> returningType) {
         this.returningType = returningType;
+    }
+
+    public SpaceStream(MetaType<Type> returningType, Tuple baseKey) {
+        this.returningType = returningType;
+        this.baseKey = baseKey;
     }
 
     public SpaceStream<Type> limit(long value) {

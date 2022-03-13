@@ -6,20 +6,34 @@ import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
+import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
+import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 @Public
 @RequiredArgsConstructor
 public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<KeyType, ModelType> {
+    private final Class<ModelType> spaceType;
+    private final ImmutableStringValue spaceName;
+    private final MetaType<ModelType> spaceMetaType;
+    private final TarantoolClientRegistry clients;
+    private final TarantoolModelWriter writer;
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
 
     public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
+        this.spaceType = spaceMeta.definition().type();
+        this.clients = clients;
+        this.spaceMetaType = spaceMeta.definition();
+        this.spaceName = newString(idByDash(spaceType));
+        writer = tarantoolModule().configuration().getWriter();
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
     }
 
@@ -130,7 +144,12 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
 
     @Override
     public TarantoolStream<ModelType> stream() {
-        return new TarantoolStream<>(reactive.spaceMetaType, reactive.stream());
+        return new TarantoolStream<>(spaceMetaType, reactive.stream());
+    }
+
+    @Override
+    public TarantoolStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override
@@ -142,10 +161,10 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     public final IndexService<ModelType> index(Index index) {
         return TarantoolIndexService.<ModelType>builder()
                 .indexName(newString(index.name()))
-                .spaceMeta(reactive.spaceMetaType)
+                .spaceType(spaceMetaType)
                 .fields(cast(index.fields()))
-                .storage(reactive.clients)
-                .spaceName(reactive.spaceName)
+                .storage(clients)
+                .spaceName(spaceName)
                 .build();
     }
 }

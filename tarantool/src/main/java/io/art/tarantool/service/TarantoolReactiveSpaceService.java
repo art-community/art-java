@@ -15,6 +15,7 @@ import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
+import static io.art.core.model.Tuple.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
@@ -26,15 +27,15 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
-    final Class<ModelType> spaceType;
-    final ImmutableStringValue spaceName;
-    final MetaType<ModelType> spaceMetaType;
-    final MetaClass<ModelType> spaceMetaClass;
-    final MetaType<KeyType> keyMeta;
-    final TarantoolClientRegistry clients;
-    final TarantoolModelWriter writer;
-    final TarantoolModelReader reader;
-    final TarantoolUpdateSerializer updateSerializer;
+    private final MetaClass<ModelType> spaceMetaClass;
+    private final TarantoolModelReader reader;
+    private final TarantoolUpdateSerializer updateSerializer;
+    private final Class<ModelType> spaceType;
+    private final ImmutableStringValue spaceName;
+    private final MetaType<ModelType> spaceMetaType;
+    private final TarantoolClientRegistry clients;
+    private final TarantoolModelWriter writer;
+    private final MetaType<KeyType> keyMeta;
 
     public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.spaceType = spaceMeta.definition().type();
@@ -189,33 +190,36 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public TarantoolReactiveStream<ModelType> stream() {
-        return new TarantoolReactiveStream<>(this);
+        return TarantoolReactiveStream.<ModelType>builder()
+                .spaceName(spaceName)
+                .spaceType(spaceMetaType)
+                .clients(clients)
+                .build();
+    }
+
+    @Override
+    public TarantoolReactiveStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveStream.<ModelType>builder()
+                .spaceName(spaceName)
+                .spaceType(spaceMetaType)
+                .clients(clients)
+                .baseKey(tuple(baseKey))
+                .build();
     }
 
     @Override
     public final ReactiveIndexService<ModelType> index(Index index) {
         return TarantoolReactiveIndexService.<ModelType>builder()
                 .indexName(newString(index.name()))
-                .spaceMeta(spaceMetaType)
+                .spaceType(spaceMetaType)
                 .fields(cast(index.fields()))
                 .storage(clients)
                 .spaceName(spaceName)
                 .build();
     }
 
-    Mono<Long> parseLongMono(Mono<Value> value) {
+    private Mono<Long> parseLongMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
-    }
-
-    Mono<Boolean> parseBooleanMono(Mono<Value> value) {
-        return value.map(element -> reader.read(booleanType(), element));
-    }
-
-    Flux<ModelType> parseSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
-        return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
-                .list()
-                .stream()
-                .map(element -> reader.read(type, element))));
     }
 
     private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {

@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
-@SuppressWarnings({UNCHECKED, VARARGS})
+@SuppressWarnings({VARARGS})
 public class TarantoolStream<Type> extends SpaceStream<Type> {
     private final TarantoolReactiveStream<Type> stream;
 

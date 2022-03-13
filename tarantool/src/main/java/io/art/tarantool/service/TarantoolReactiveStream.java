@@ -1,85 +1,117 @@
 package io.art.tarantool.service;
 
+import io.art.core.model.*;
+import io.art.meta.model.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.stream.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.StreamProtocol.*;
+import io.art.tarantool.descriptor.*;
+import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
+import lombok.*;
+import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
+import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
+import static reactor.core.publisher.Flux.*;
 import java.util.function.*;
 
 
 public class TarantoolReactiveStream<ModelType> extends ReactiveSpaceStream<ModelType> {
-    private final TarantoolReactiveSpaceService<?, ModelType> service;
     private final TarantoolStreamSerializer serializer;
     private final static TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
+    private final TarantoolModelReader reader;
+    private final ImmutableStringValue spaceName;
+    private final TarantoolClientRegistry clients;
 
-    public TarantoolReactiveStream(TarantoolReactiveSpaceService<?, ModelType> service) {
-        super(service.spaceMetaType);
-        this.service = service;
-        serializer = new TarantoolStreamSerializer(service.writer);
+    @Builder
+    public TarantoolReactiveStream(MetaType<ModelType> spaceType,
+                                   ImmutableStringValue spaceName,
+                                   TarantoolClientRegistry clients,
+                                   Tuple baseKey) {
+        super(spaceType, baseKey);
+        this.spaceName = spaceName;
+        this.clients = clients;
+        reader = tarantoolModule().configuration().getReader();
+        serializer = new TarantoolStreamSerializer(tarantoolModule().configuration().getWriter());
     }
 
     @Override
     public Flux<ModelType> collect() {
         ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCollect;
-        ImmutableArrayValue stream = newArray(service.spaceName,
+        ImmutableArrayValue stream = newArray(spaceName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(operator)
         );
-        Mono<Value> result = service.clients.immutable().call(SPACE_STREAM, stream);
-        return service.parseSpaceFlux(returningType, result);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
+        return parseSpaceFlux(returningType, result);
     }
 
     @Override
     public Mono<Long> count() {
-        ImmutableArrayValue stream = newArray(service.spaceName,
+        ImmutableArrayValue stream = newArray(spaceName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingCount)
         );
-        Mono<Value> result = service.clients.immutable().call(SPACE_STREAM, stream);
-        return service.parseLongMono(result);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
+        return parseLongMono(result);
     }
 
     @Override
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(service.spaceName,
+        ImmutableArrayValue stream = newArray(spaceName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()))
         );
-        Mono<Value> result = service.clients.immutable().call(SPACE_STREAM, stream);
-        return service.parseBooleanMono(result);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
+        return parseBooleanMono(result);
     }
 
     @Override
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(service.spaceName, newArray(
+        ImmutableArrayValue stream = newArray(spaceName, newArray(
                 serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()))
         );
-        Mono<Value> result = service.clients.immutable().call(SPACE_STREAM, stream);
-        return service.parseBooleanMono(result);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
+        return parseBooleanMono(result);
     }
 
     @Override
     public Mono<Boolean> none(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(service.spaceName,
+        ImmutableArrayValue stream = newArray(spaceName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()))
         );
-        Mono<Value> result = service.clients.immutable().call(SPACE_STREAM, stream);
-        return service.parseBooleanMono(result);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
+        return parseBooleanMono(result);
+    }
+
+    private Mono<Long> parseLongMono(Mono<Value> value) {
+        return value.map(element -> reader.read(longType(), element));
+    }
+
+    private Mono<Boolean> parseBooleanMono(Mono<Value> value) {
+        return value.map(element -> reader.read(booleanType(), element));
+    }
+
+    private Flux<ModelType> parseSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
+        return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
+                .list()
+                .stream()
+                .map(element -> reader.read(type, element))));
     }
 }

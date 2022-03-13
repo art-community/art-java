@@ -89,6 +89,8 @@ public interface SpaceService<KeyType, ModelType> {
 
     SpaceStream<ModelType> stream();
 
+    SpaceStream<ModelType> stream(KeyType baseKey);
+
     ReactiveSpaceService<KeyType, ModelType> reactive();
 
     default <F1> Index1Service<ModelType, F1> index(Index1<ModelType, F1> index) {

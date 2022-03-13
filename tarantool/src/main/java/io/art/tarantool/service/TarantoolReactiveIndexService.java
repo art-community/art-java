@@ -36,12 +36,12 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
 
     @Builder
     public TarantoolReactiveIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
-                                         MetaType<ModelType> spaceMeta,
+                                         MetaType<ModelType> spaceType,
                                          ImmutableStringValue spaceName,
                                          ImmutableStringValue indexName,
                                          TarantoolClientRegistry storage) {
         this.fields = fields;
-        this.spaceMeta = spaceMeta;
+        this.spaceMeta = spaceType;
         this.storage = storage;
         this.spaceName = spaceName;
         this.indexName = indexName;

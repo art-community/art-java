@@ -21,13 +21,13 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
 
     @Builder
     public TarantoolIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
-                                 MetaType<ModelType> spaceMeta,
+                                 MetaType<ModelType> spaceType,
                                  ImmutableStringValue spaceName,
                                  ImmutableStringValue indexName,
                                  TarantoolClientRegistry storage) {
         reactive = TarantoolReactiveIndexService.<ModelType>builder()
                 .spaceName(spaceName)
-                .spaceMeta(spaceMeta)
+                .spaceType(spaceType)
                 .fields(fields)
                 .indexName(indexName)
                 .storage(storage)

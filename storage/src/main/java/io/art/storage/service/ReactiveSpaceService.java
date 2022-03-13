@@ -90,6 +90,8 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     ReactiveSpaceStream<ModelType> stream();
 
+    ReactiveSpaceStream<ModelType> stream(KeyType baseKey);
+
     default <F1> ReactiveIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
         return new ReactiveIndex1Service<>(index((Index) index));
     }
