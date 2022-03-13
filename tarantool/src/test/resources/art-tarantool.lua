@@ -442,10 +442,11 @@ local index = {
             local foundIndex = box.space[space].index[index]
             if foundIndex.unique and #key == 1 then
                 table.insert(result, foundIndex:get(key))
-            end
-            local found = foundIndex:select(key, { limit = 1 })[1]
-            if found then
-                table.insert(result, found)
+            else
+                local found = foundIndex:select(key, { limit = 1 })[1]
+                if found then
+                    table.insert(result, found)
+                end
             end
         end
         return result
