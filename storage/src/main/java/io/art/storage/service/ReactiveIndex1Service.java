@@ -3,12 +3,12 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import lombok.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.model.Tuple.*;
-import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -43,7 +43,7 @@ public class ReactiveIndex1Service<ModelType, F1> {
 
     @SafeVarargs
     public final Flux<ModelType> find(F1... keys) {
-        return delegate.find(stream(keys).map(Tuple1::new).collect(listCollector()));
+        return delegate.find(Arrays.stream(keys).map(Tuple1::new).collect(listCollector()));
     }
 
     public Flux<ModelType> find(Collection<F1> keys) {
@@ -60,7 +60,7 @@ public class ReactiveIndex1Service<ModelType, F1> {
 
     @SafeVarargs
     public final Flux<ModelType> delete(F1... keys) {
-        return delegate.delete(stream(keys).map(Tuple1::new).collect(listCollector()));
+        return delegate.delete(Arrays.stream(keys).map(Tuple1::new).collect(listCollector()));
     }
 
     public Flux<ModelType> delete(Collection<F1> keys) {
@@ -73,5 +73,13 @@ public class ReactiveIndex1Service<ModelType, F1> {
 
     public Mono<Long> count(F1 key1) {
         return delegate.count(tuple(key1));
+    }
+
+    public ReactiveSpaceStream<ModelType> stream() {
+        return delegate.stream();
+    }
+
+    public ReactiveSpaceStream<ModelType> stream(F1 key1) {
+        return delegate.stream(tuple(key1));
     }
 }

@@ -3,6 +3,7 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import lombok.*;
 import reactor.core.publisher.*;
@@ -71,5 +72,13 @@ public class ReactiveIndex4Service<ModelType, F1, F2, F3, F4> {
 
     public Mono<Long> count(F1 key1, F2 key2, F3 key3, F4 key4) {
         return delegate.count(tuple(key1, key2, key3, key4));
+    }
+
+    public ReactiveSpaceStream<ModelType> stream() {
+        return delegate.stream();
+    }
+
+    public ReactiveSpaceStream<ModelType> stream(F1 key1, F2 key2, F3 key3, F4 key4) {
+        return delegate.stream(tuple(key1, key2, key3, key4));
     }
 }

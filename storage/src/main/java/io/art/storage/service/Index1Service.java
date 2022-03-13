@@ -3,10 +3,10 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.model.Tuple.*;
-import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
 
@@ -46,7 +46,7 @@ public class Index1Service<ModelType, F1> {
 
     @SafeVarargs
     public final ImmutableArray<ModelType> find(F1... keys1) {
-        return delegate.find(stream(keys1).map(Tuple1::new).collect(listCollector()));
+        return delegate.find(Arrays.stream(keys1).map(Tuple1::new).collect(listCollector()));
     }
 
     public ImmutableArray<ModelType> find(Collection<F1> keys1) {
@@ -63,7 +63,7 @@ public class Index1Service<ModelType, F1> {
 
     @SafeVarargs
     public final ImmutableArray<ModelType> delete(F1... keys1) {
-        return delegate.delete(stream(keys1).map(Tuple1::new).collect(listCollector()));
+        return delegate.delete(Arrays.stream(keys1).map(Tuple1::new).collect(listCollector()));
     }
 
     public ImmutableArray<ModelType> delete(Collection<F1> keys1) {
@@ -80,5 +80,13 @@ public class Index1Service<ModelType, F1> {
 
     public ReactiveIndex1Service<ModelType, F1> reactive() {
         return reactive;
+    }
+
+    public SpaceStream<ModelType> stream() {
+        return delegate.stream();
+    }
+
+    public SpaceStream<ModelType> stream(F1 key1) {
+        return delegate.stream(tuple(key1));
     }
 }
