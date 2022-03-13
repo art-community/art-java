@@ -6,6 +6,7 @@ import io.art.meta.model.*;
 import io.art.storage.constants.*;
 import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.filter.implementation.*;
+import io.art.storage.index.*;
 import io.art.storage.mapper.*;
 import io.art.storage.model.*;
 import io.art.storage.sorter.implementation.*;
@@ -119,12 +120,13 @@ public class TarantoolStreamSerializer {
                     serializedPart.add(newArray(expressionsCache.get(expressionKey)));
                     break;
                 case INDEX:
-                    serializedPart.add(filterModes.filterByIndex);
                     FilterBySpaceImplementation<?, ?> byIndex = part.getByIndex();
-                    spaceName = spaceName(byIndex.getMappingSpace());
-                    List<MetaField<? extends MetaClass<?>, ?>> indexedFields = cast(byIndex.getMappingIndexedFields());
-                    expressionKey = new FilterExpressionCacheKey(spaceName, null, cast(byIndex.getMappingIndexedFields()));
-                    serializedPart.add(newArray(spaceName, indexName(indexedFields)));
+                    Index mappingIndex = byIndex.getMappingIndex();
+                    List<Object> mappingFields = byIndex.getMappingIndexTuple().values();
+                    serializedPart.add(filterModes.filterByIndex);
+                    spaceName = spaceName(mappingIndex.owner());
+                    expressionKey = new FilterExpressionCacheKey(spaceName, null, cast(mappingFields));
+                    serializedPart.add(newArray(spaceName, newString(mappingIndex.name())));
                     serializedPart.add(newArray(expressionsCache.get(expressionKey)));
                     break;
             }
@@ -139,7 +141,7 @@ public class TarantoolStreamSerializer {
         ImmutableStringValue spaceName = spaceName(bySpace.getMappingSpace());
         FilterExpressionCacheKey key = mode == SPACE
                 ? new FilterExpressionCacheKey(spaceName, bySpace.getMappingKeyField(), emptyList())
-                : new FilterExpressionCacheKey(spaceName, null, cast(bySpace.getMappingIndexedFields()));
+                : new FilterExpressionCacheKey(spaceName, null, cast(bySpace.getMappingIndexTuple().values()));
         List<ImmutableValue> expressions = computeIfAbsent(expressionsCache, key, ListFactory::linkedList);
         List<ImmutableValue> expresion = linkedList();
         switch (bySpace.getExpressionType()) {

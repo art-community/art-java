@@ -1,28 +1,30 @@
 
 package io.art.storage.filter.implementation;
 
+import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.index.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
-import static io.art.core.factory.ListFactory.*;
 import static io.art.storage.constants.StorageConstants.FilterExpressionType.*;
-import static java.util.Arrays.*;
-import java.util.*;
 
 public class FilterBySpaceImplementation<Current, Other> implements FilterBySpace<Current, Other> {
     @Getter
     private FilterExpressionType expressionType;
 
     @Getter
-    private final MetaClass<Other> mappingSpace;
+    private MetaClass<Other> mappingSpace;
 
     @Getter
     private MetaField<? extends MetaClass<Current>, ?> mappingKeyField;
 
     @Getter
-    private List<MetaField<? extends MetaClass<Current>, ?>> mappingIndexedFields = linkedList();
+    private Index mappingIndex;
+
+    @Getter
+    private Tuple mappingIndexTuple;
 
     @Getter
     private MetaField<? extends MetaClass<Current>, ?> currentField;
@@ -48,8 +50,7 @@ public class FilterBySpaceImplementation<Current, Other> implements FilterBySpac
     @Getter
     private final FilterBySpaceUseValuesImplementation<Current, ?> bySpaceUseValues;
 
-    public FilterBySpaceImplementation(FilterRule<Current> rule, MetaClass<Other> mappingSpace) {
-        this.mappingSpace = mappingSpace;
+    public FilterBySpaceImplementation(FilterRule<Current> rule) {
         bySpaceUseFields = new FilterBySpaceUseFieldsImplementation<>(rule);
         bySpaceUseStringFields = new FilterBySpaceUseStringFieldsImplementation<>(rule);
         bySpaceUseNumberFields = new FilterBySpaceUseNumberFieldsImplementation<>(rule);
@@ -58,14 +59,15 @@ public class FilterBySpaceImplementation<Current, Other> implements FilterBySpac
         bySpaceUseValues = new FilterBySpaceUseValuesImplementation<>(rule);
     }
 
-    FilterBySpaceImplementation<Current, Other> bySpace(MetaField<? extends MetaClass<Current>, ?> mappingField) {
+    FilterBySpaceImplementation<Current, Other> bySpace(MetaClass<Other> mappingSpace, MetaField<? extends MetaClass<Current>, ?> mappingField) {
+        this.mappingSpace = mappingSpace;
         mappingKeyField = mappingField;
         return this;
     }
 
-    @SafeVarargs
-    final FilterBySpaceImplementation<Current, Other> byIndex(MetaField<? extends MetaClass<Current>, ?>... indexedFields) {
-        mappingIndexedFields = asList(indexedFields);
+    final FilterBySpaceImplementation<Current, Other> byIndex(Index index, Tuple tuple) {
+        mappingIndex = index;
+        mappingIndexTuple = tuple;
         return this;
     }
 

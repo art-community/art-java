@@ -4,8 +4,11 @@ import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.index.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.core.model.Tuple.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static lombok.AccessLevel.*;
 import java.util.*;
@@ -48,7 +51,7 @@ public class FilterImplementation<Type> implements Filter<Type> {
 
     @Override
     public <Other> FilterBySpace<Type, Other> bySpace(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?> mappingField) {
-        FilterBySpaceImplementation<Type, Other> filter = new FilterBySpaceImplementation<>(rule, otherSpace).bySpace(mappingField);
+        FilterBySpaceImplementation<Type, Other> filter = cast(new FilterBySpaceImplementation<>(rule).bySpace(cast(otherSpace), mappingField));
         FilterPart part = new FilterPart(currentCondition, FilterMode.SPACE);
         part.bySpace = filter;
         parts.add(part);
@@ -56,9 +59,59 @@ public class FilterImplementation<Type> implements Filter<Type> {
     }
 
     @Override
-    @SafeVarargs
-    public final <Other> FilterBySpace<Type, Other> byIndex(MetaClass<Other> otherSpace, MetaField<? extends MetaClass<Type>, ?>... indexedFields) {
-        FilterBySpaceImplementation<Type, Other> filter = new FilterBySpaceImplementation<>(rule, otherSpace).byIndex(indexedFields);
+    public <Other, F1> FilterBySpace<Type, Other> byIndex(Index1<Other, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
+        FilterBySpaceImplementation<Type, Other> filter = cast(new FilterBySpaceImplementation<>(rule).byIndex(index, tuple(field1)));
+        FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
+        part.byIndex = filter;
+        parts.add(part);
+        return filter;
+    }
+
+    @Override
+    public <Other, F1, F2> FilterBySpace<Type, Other> byIndex(Index2<Other, F1, F2> index,
+                                                              MetaField<? extends MetaClass<Type>, F1> field1,
+                                                              MetaField<? extends MetaClass<Type>, F2> field2) {
+        FilterBySpaceImplementation<Type, Other> filter = cast(new FilterBySpaceImplementation<>(rule).byIndex(index, tuple(field1, field2)));
+        FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
+        part.byIndex = filter;
+        parts.add(part);
+        return filter;
+    }
+
+    @Override
+    public <Other, F1, F2, F3> FilterBySpace<Type, Other> byIndex(Index3<Other, F1, F2, F3> index,
+                                                                  MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                  MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                  MetaField<? extends MetaClass<Type>, F3> field3) {
+        FilterBySpaceImplementation<Type, Other> filter = cast(new FilterBySpaceImplementation<>(rule).byIndex(index, tuple(field1, field2, field3)));
+        FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
+        part.byIndex = filter;
+        parts.add(part);
+        return filter;
+    }
+
+
+    @Override
+    public <Other, F1, F2, F3, F4> FilterBySpace<Type, Other> byIndex(Index4<Other, F1, F2, F3, F4> index,
+                                                                      MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                      MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                      MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                      MetaField<? extends MetaClass<Type>, F4> field4) {
+        FilterBySpaceImplementation<Type, Other> filter = cast(new FilterBySpaceImplementation<>(rule).byIndex(index, tuple(field1, field2, field3, field4)));
+        FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
+        part.byIndex = filter;
+        parts.add(part);
+        return filter;
+    }
+
+    @Override
+    public <Other, F1, F2, F3, F4, F5> FilterBySpace<Type, Other> byIndex(Index5<Other, F1, F2, F3, F4, F5> index,
+                                                                          MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                          MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                          MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                          MetaField<? extends MetaClass<Type>, F4> field4,
+                                                                          MetaField<? extends MetaClass<Type>, F5> field5) {
+        FilterBySpaceImplementation<Type, Other> filter = cast(new FilterBySpaceImplementation<>(rule).byIndex(index, tuple(field1, field2, field3, field4, field5)));
         FilterPart part = new FilterPart(currentCondition, FilterMode.INDEX);
         part.byIndex = filter;
         parts.add(part);
