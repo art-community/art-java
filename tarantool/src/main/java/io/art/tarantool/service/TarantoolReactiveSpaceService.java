@@ -151,7 +151,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public Mono<ModelType> update(KeyType key, Updater<ModelType> updater) {
-        ArrayValue input = newArray(spaceName, updateSerializer.serializeUpdate(cast(updater)));
+        ArrayValue input = newArray(spaceName, writer.write(keyMeta, key), updateSerializer.serializeUpdate(cast(updater)));
         Mono<Value> output = clients.mutable().call(SPACE_SINGLE_UPDATE, input);
         return parseSpaceMono(output);
     }

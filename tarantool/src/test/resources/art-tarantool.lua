@@ -504,7 +504,7 @@ local transformer = {
     end,
 
     update = function(space, index, key, commands)
-        return box.space[space].index[index].update(space, key, commands)
+        return box.space[space].index[index]:update(space, key, commands)
     end,
 }
 
@@ -743,7 +743,7 @@ local transformer = {
     replace = put,
 
     update = function(space, key, commands)
-        return box.space[space].update(space, key, commands)
+        return box.space[space]:update(space, key, commands)
     end
 }
 
