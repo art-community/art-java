@@ -189,7 +189,6 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(2));
     }
 
-
     @Test
     public void testIndexCount() {
         List<TestingMetaModel> data = fixedArrayOf(
@@ -270,7 +269,6 @@ public class TarantoolStorageTest {
         data.get(1).assertEquals(result.get(1));
         assertEquals(1, current().size());
     }
-
 
     @Test
     public void testSubscription() {
