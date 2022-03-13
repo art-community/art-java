@@ -61,28 +61,28 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     @Override
-    public Flux<ModelType> find(Collection<Tuple> keys) {
+    public Flux<ModelType> find(Collection<? extends Tuple> keys) {
         ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(ImmutableCollection<Tuple> keys) {
+    public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
         ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(Collection<Tuple> keys) {
+    public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
         ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(ImmutableCollection<Tuple> keys) {
+    public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
         ArrayValue input = newArray(keys.stream().map(tuple -> serializeKeys(tuple.values())).collect(listCollector()));
         Mono<Value> output = storage.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
