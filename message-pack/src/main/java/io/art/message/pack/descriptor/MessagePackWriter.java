@@ -28,10 +28,10 @@ import io.art.meta.schema.MetaProviderTemplate.*;
 import io.art.meta.transformer.*;
 import io.netty.buffer.*;
 import org.msgpack.core.*;
+import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.StringConstants.*;
-import static io.art.core.factory.ArrayFactory.*;
 import static java.nio.channels.Channels.*;
 import static java.util.Objects.*;
 import static org.msgpack.core.MessagePack.*;
@@ -103,15 +103,10 @@ public class MessagePackWriter implements Writer {
 
 
     private org.msgpack.value.ArrayValue writeArray(MetaType<?> elementType, List<?> array) {
-        List<org.msgpack.value.Value> values = dynamicArray(array.size());
-        for (Object element : array) {
-            if (isNull(element)) {
-                values.add(newNil());
-                continue;
-            }
-            values.add(write(elementType, element));
-        }
-        return newArray(values);
+        org.msgpack.value.Value[] values = new Value[array.size()];
+        int index = 0;
+        for (Object element : array) values[index++] = write(elementType, element);
+        return newArray(values, true);
     }
 
     private org.msgpack.value.MapValue writeEntity(MetaType<?> type, Object value) {
@@ -119,8 +114,7 @@ public class MessagePackWriter implements Writer {
         MetaProviderInstance provider = type.declaration().provider().instantiate(value);
         ImmutableMap<String, MetaProperty<?>> properties = provider.propertyMap();
         for (MetaProperty<?> property : properties.values()) {
-            Object propertyValue = provider.getValue(property);
-            mapBuilder.put(newString(property.name()), write(property.type(), propertyValue));
+            mapBuilder.put(newString(property.name()), write(property.type(), provider.getValue(property)));
         }
         return mapBuilder.build();
     }

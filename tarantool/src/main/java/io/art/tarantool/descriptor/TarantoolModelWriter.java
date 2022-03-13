@@ -56,13 +56,7 @@ public class TarantoolModelWriter {
     private org.msgpack.value.ArrayValue writeArray(MetaType<?> elementType, List<?> array) {
         org.msgpack.value.Value[] values = new Value[array.size()];
         int index = 0;
-        for (Object element : array) {
-            if (isNull(element)) {
-                values[index++] = newNil();
-                continue;
-            }
-            values[index++] = write(elementType, element);
-        }
+        for (Object element : array) values[index++] = write(elementType, element);
         return newArray(values, true);
     }
 
@@ -72,12 +66,7 @@ public class TarantoolModelWriter {
         org.msgpack.value.Value[] values = new Value[properties.size()];
         int index = 0;
         for (MetaProperty<?> property : properties) {
-            Object propertyValue = provider.getValue(property);
-            if (isNull(propertyValue)) {
-                values[index++] = newNil();
-                continue;
-            }
-            values[index++] = write(property.type(), propertyValue);
+            values[index++] = write(property.type(), provider.getValue(property));
         }
         return newArray(values, true);
     }
