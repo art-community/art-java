@@ -144,7 +144,6 @@ public class TarantoolStorageTest {
         assertNull(current().update(data.getF1(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
     }
 
-
     @Test
     public void testTruncate() {
         List<TestingMetaModel> data = fixedArrayOf(
@@ -265,12 +264,17 @@ public class TarantoolStorageTest {
     @Test
     public void testIndexSingleDelete() {
         List<TestingMetaModel> data = fixedArrayOf(
-                generateTestingModel().toBuilder().f1(1).build(),
+                generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
                 generateTestingModel().toBuilder().f1(2).build(),
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().insert(data);
-        TestingMetaModel result = current().index(testModelIndexes().id()).delete(1);
+        TestingMetaModel result = current().index(testModelIndexes().f9f16()).delete(10, "test");
+        data.get(0).assertEquals(result);
+        assertEquals(2, current().size());
+        current().insert(data);
+
+        result = current().index(testModelIndexes().id()).delete(1);
         data.get(0).assertEquals(result);
         assertEquals(2, current().size());
     }
@@ -288,6 +292,21 @@ public class TarantoolStorageTest {
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
         assertEquals(1, current().size());
+    }
+
+    @Test
+    public void testIndexUpdate() {
+        TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).f16("test").build();
+        current().insert(data);
+        Integer f9 = data.getF9();
+        Index2Service<TestingMetaModel, Integer, String> index = current().index(testModelIndexes().f9f16());
+        assertEquals(f9 + 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.add(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 - 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.subtract(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 & 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseAnd(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 | 2, f9 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 ^ 2, index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(2, index.update(data.getF9(), data.getF16(), updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
+        assertNull(index.update(data.getF9(), data.getF16(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
     }
 
     @Test

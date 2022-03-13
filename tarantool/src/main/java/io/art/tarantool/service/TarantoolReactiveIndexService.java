@@ -74,7 +74,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     @Override
     public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
         ArrayValue input = newArray(spaceName, indexName, serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = storage.immutable().call(INDEX_SINGLE_UPDATE, input);
+        Mono<Value> output = storage.mutable().call(INDEX_SINGLE_UPDATE, input);
         return parseSpaceMono(output);
     }
 
