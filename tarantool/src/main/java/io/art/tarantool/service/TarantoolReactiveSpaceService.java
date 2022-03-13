@@ -59,6 +59,13 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
+    public Flux<ModelType> select(KeyType key, long offset, long limit) {
+        ArrayValue input = newArray(spaceName, writer.write(keyMeta, key), newArray(newInteger(offset), newInteger(limit)));
+        Mono<Value> output = clients.immutable().call(SPACE_SELECT, input);
+        return parseSpaceFlux(output);
+    }
+
+    @Override
     public Flux<ModelType> find(Collection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
         Mono<Value> output = clients.immutable().call(SPACE_FIND, input);

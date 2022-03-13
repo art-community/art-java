@@ -15,6 +15,8 @@ public interface SpaceService<KeyType, ModelType> {
 
     ImmutableArray<ModelType> select(KeyType key);
 
+    ImmutableArray<ModelType> select(KeyType key, long offset, long limit);
+
     default ImmutableArray<ModelType> find(KeyType... keys) {
         return find(asList(keys));
     }

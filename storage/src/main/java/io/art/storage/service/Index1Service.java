@@ -26,6 +26,10 @@ public class Index1Service<ModelType, F1> {
         return delegate.select(tuple(key1));
     }
 
+    public ImmutableArray<ModelType> select(F1 key1, int offset, int limit) {
+        return delegate.select(tuple(key1), offset, limit);
+    }
+
     @SafeVarargs
     public final ImmutableArray<ModelType> find(F1... keys1) {
         return delegate.find(stream(keys1).map(Tuple1::new).collect(listCollector()));

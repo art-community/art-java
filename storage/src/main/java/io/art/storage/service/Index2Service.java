@@ -24,6 +24,10 @@ public class Index2Service<ModelType, F1, F2> {
         return delegate.select(tuple(key1, key2));
     }
 
+    public ImmutableArray<ModelType> select(F1 key1, F2 key2, int offset, int limit) {
+        return delegate.select(tuple(key1, key2), offset, limit);
+    }
+
     @SafeVarargs
     public final ImmutableArray<ModelType> find(Tuple2<F1, F2>... keys) {
         return delegate.find(keys);

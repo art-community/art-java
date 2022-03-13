@@ -16,6 +16,8 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Flux<ModelType> select(KeyType key);
 
+    Flux<ModelType> select(KeyType key, long offset, long limit);
+
     default Flux<ModelType> find(KeyType... keys) {
         return find(asList(keys));
     }

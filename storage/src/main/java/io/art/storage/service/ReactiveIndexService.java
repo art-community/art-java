@@ -15,6 +15,8 @@ public interface ReactiveIndexService<ModelType> {
 
     Flux<ModelType> select(Tuple tuple);
 
+    Flux<ModelType> select(Tuple tuple, int offset, int limit);
+
     default Flux<ModelType> find(Tuple... keys) {
         return find(asList(keys));
     }

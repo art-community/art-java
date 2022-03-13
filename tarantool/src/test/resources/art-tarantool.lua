@@ -432,8 +432,11 @@ local index = {
         return foundIndex:select(keys, { limit = 1 })[1]
     end,
 
-    select = function(space, index, keys)
-        return box.space[space].index[index]:select(keys)
+    select = function(space, index, keys, options)
+        if options == nil then
+            return box.space[space].index[index]:select(keys)
+        end
+        return box.space[space].index[index]:select(keys, { offset = options[1], limit = options[2] })
     end,
 
     find = function(space, index, keys)
@@ -630,8 +633,11 @@ local space = {
         return box.space[space]:get(key)
     end,
 
-    select = function(space, key)
-        return box.space[space]:select(key)
+    select = function(space, key, options)
+        if options == nil then
+            return box.space[space]:select(key)
+        end
+        return box.space[space]:select(key, { offset = options[1], limit = options[2] })
     end,
 
     find = function(space, keys)

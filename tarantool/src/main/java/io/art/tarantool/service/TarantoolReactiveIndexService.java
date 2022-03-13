@@ -60,6 +60,13 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     }
 
     @Override
+    public Flux<ModelType> select(Tuple tuple, int offset, int limit) {
+        ArrayValue input = newArray(spaceName, indexName, serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
+        Mono<Value> output = storage.immutable().call(INDEX_SELECT, input);
+        return parseSpaceFlux(output);
+    }
+
+    @Override
     public Flux<ModelType> find(Collection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = storage.immutable().call(INDEX_FIND, input);

@@ -21,6 +21,10 @@ public class ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> {
         return delegate.select(tuple(key1, key2, key3, key4, key5));
     }
 
+    public Flux<ModelType> select(F1 key1, F2 key2, F3 key3, F4 key4, F5 key5, int offset, int limit) {
+        return delegate.select(tuple(key1, key2, key3, key4, key5), offset, limit);
+    }
+
     @SafeVarargs
     public final Flux<ModelType> find(Tuple5<F1, F2, F3, F4, F5>... keys) {
         return delegate.find(keys);

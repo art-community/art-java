@@ -14,6 +14,8 @@ public interface IndexService<ModelType> {
 
     ImmutableArray<ModelType> select(Tuple tuple);
 
+    ImmutableArray<ModelType> select(Tuple tuple, int offset, int limit);
+
     default ImmutableArray<ModelType> find(Tuple... keys) {
         return find(asList(keys));
     }

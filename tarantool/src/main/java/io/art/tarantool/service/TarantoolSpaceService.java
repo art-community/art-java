@@ -33,6 +33,11 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     }
 
     @Override
+    public ImmutableArray<ModelType> select(KeyType key, long offset, long limit) {
+        return reactive.select(key, limit, offset).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
     public ImmutableArray<ModelType> find(Collection<KeyType> keys) {
         return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }

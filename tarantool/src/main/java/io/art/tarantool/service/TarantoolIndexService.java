@@ -44,6 +44,11 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
+    public ImmutableArray<ModelType> select(Tuple tuple, int offset, int limit) {
+        return reactive.select(tuple, offset, limit).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
     public ImmutableArray<ModelType> find(Collection<? extends Tuple> keys) {
         return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
