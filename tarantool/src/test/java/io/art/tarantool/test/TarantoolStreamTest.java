@@ -25,6 +25,7 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
+import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
@@ -252,7 +253,7 @@ public class TarantoolStreamTest {
         other().insert(otherData);
         ImmutableArray<OtherSpace> result = current()
                 .stream()
-                .map(otherIndexes().valueNumber(), testingMetaModel().f16Field(), testingMetaModel().f9Field())
+                .map(otherSpaceIndexes().valueNumber(), testingMetaModel().f16Field(), testingMetaModel().f9Field())
                 .collect();
         assertEquals(2, result.size());
         assertEquals(otherData.get(0), result.get(0));
@@ -413,7 +414,7 @@ public class TarantoolStreamTest {
         other().insert(otherData);
         ImmutableArray<TestingMetaModel> result = current().stream()
                 .filter(filter -> filter
-                        .byIndex(otherIndexes().valueNumber(), testingMetaModel().f16Field(), testingMetaModel().f9Field())
+                        .byIndex(otherSpaceIndexes().valueNumber(), testingMetaModel().f16Field(), testingMetaModel().f9Field())
                         .currentString(testingMetaModel().f16Field())
                         .equal(otherSpace().valueField()))
                 .collect();
@@ -424,7 +425,7 @@ public class TarantoolStreamTest {
 
         result = current().stream()
                 .filter(filter -> filter
-                        .byIndex(otherIndexes().valueNumber(), testingMetaModel().f16Field(), testingMetaModel().f9Field())
+                        .byIndex(otherSpaceIndexes().valueNumber(), testingMetaModel().f16Field(), testingMetaModel().f9Field())
                         .otherField(otherSpace().valueField())
                         .equal("test 3"))
                 .collect();
@@ -484,7 +485,4 @@ public class TarantoolStreamTest {
         return tarantool().space(OtherSpace.class);
     }
 
-    private static OtherSpaceIndexes otherIndexes() {
-        return tarantool().indexes(OtherSpace.class);
-    }
 }

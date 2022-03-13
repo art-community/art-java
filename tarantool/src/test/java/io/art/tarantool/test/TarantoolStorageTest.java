@@ -8,7 +8,6 @@ import io.art.storage.service.*;
 import io.art.tarantool.module.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
-import io.art.tarantool.test.model.TestStorage.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
@@ -23,6 +22,7 @@ import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
+import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 import java.util.concurrent.*;
@@ -46,12 +46,12 @@ public class TarantoolStorageTest {
         tarantool()
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
-                .createIndex(indexFor(testingMetaModel(), currentIndexes().id())
+                .createIndex(indexFor(testingMetaModel(), testModelIndexes().id())
                         .configure()
                         .ifNotExists(true)
                         .unique(true)
                         .build())
-                .createIndex(indexFor(testingMetaModel(), currentIndexes().f9f16())
+                .createIndex(indexFor(testingMetaModel(), testModelIndexes().f9f16())
                         .configure()
                         .ifNotExists(true)
                         .unique(false)
@@ -197,15 +197,15 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().insert(data);
-        assertEquals(1, current().index(currentIndexes().f9f16()).count(10, "test"));
+        assertEquals(1, current().index(testModelIndexes().f9f16()).count(10, "test"));
     }
 
     @Test
     public void testIndexFirst() {
         TestingMetaModel data = generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build();
         current().put(data);
-        data.assertEquals(current().index(currentIndexes().id()).first(1));
-        data.assertEquals(current().index(currentIndexes().f9f16()).first(10, "test"));
+        data.assertEquals(current().index(testModelIndexes().id()).first(1));
+        data.assertEquals(current().index(testModelIndexes().f9f16()).first(10, "test"));
     }
 
     @Test
@@ -216,7 +216,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().put(data);
-        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).select(1);
+        ImmutableArray<TestingMetaModel> result = current().index(testModelIndexes().id()).select(1);
         assertEquals(1, result.size());
         data.get(0).assertEquals(result.get(0));
     }
@@ -229,13 +229,13 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).f9(10).f16("test").build()
         );
         current().put(data);
-        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).find(1, 2, 3);
+        ImmutableArray<TestingMetaModel> result = current().index(testModelIndexes().id()).find(1, 2, 3);
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
         data.get(2).assertEquals(result.get(2));
 
-        result = current().index(currentIndexes().f9f16()).find(tuple(10, "test"));
+        result = current().index(testModelIndexes().f9f16()).find(tuple(10, "test"));
         assertEquals(data.size(), result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
@@ -250,7 +250,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().insert(data);
-        TestingMetaModel result = current().index(currentIndexes().id()).delete(1);
+        TestingMetaModel result = current().index(testModelIndexes().id()).delete(1);
         data.get(0).assertEquals(result);
         assertEquals(2, current().size());
     }
@@ -263,7 +263,7 @@ public class TarantoolStorageTest {
                 generateTestingModel().toBuilder().f1(3).build()
         );
         current().insert(data);
-        ImmutableArray<TestingMetaModel> result = current().index(currentIndexes().id()).delete(1, 2);
+        ImmutableArray<TestingMetaModel> result = current().index(testModelIndexes().id()).delete(1, 2);
         assertEquals(2, result.size());
         data.get(0).assertEquals(result.get(0));
         data.get(1).assertEquals(result.get(1));
@@ -290,7 +290,4 @@ public class TarantoolStorageTest {
         return tarantool().space(TestingMetaModel.class);
     }
 
-    private static TestModelIndexes currentIndexes() {
-        return tarantool().indexes(TestingMetaModel.class);
-    }
 }
