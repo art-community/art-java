@@ -131,6 +131,22 @@ public class TarantoolStorageTest {
     }
 
     @Test
+    public void testUpdate() {
+        TestingMetaModel data = generateTestingModel().toBuilder().f9(10).build();
+        current().insert(data);
+        Integer f9 = data.getF9();
+        assertEquals(f9 + 2, current().update(data.getF1(), updater -> updater.add(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 - 1, current().update(data.getF1(), updater -> updater.subtract(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 & 2, current().update(data.getF1(), updater -> updater.bitwiseAnd(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 | 2, current().update(data.getF1(), updater -> updater.bitwiseOr(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(f9 ^ 2, current().update(data.getF1(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(2, current().update(data.getF1(), updater -> updater.insert(testingMetaModel().f9Field(), 2)).getF9());
+        assertEquals(2, current().update(data.getF1(), updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
+        assertNull(current().update(data.getF1(), updater -> updater.delete(testingMetaModel().f9Field())).getF9());
+    }
+
+
+    @Test
     public void testTruncate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),

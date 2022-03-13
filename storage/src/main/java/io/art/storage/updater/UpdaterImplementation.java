@@ -12,31 +12,31 @@ public class UpdaterImplementation<T> implements Updater<T> {
     private final List<UpdateOperator> operators = linkedList();
 
     @Override
-    public Updater<T> add(MetaField<? extends MetaClass<T>, Number> field, Number value) {
+    public Updater<T> add(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
         operators.add(new UpdateOperator(ADD, field, linkedListOf(value)));
         return this;
     }
 
     @Override
-    public Updater<T> subtract(MetaField<? extends MetaClass<T>, Number> field, Number value) {
+    public Updater<T> subtract(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
         operators.add(new UpdateOperator(SUBTRACT, field, linkedListOf(value)));
         return this;
     }
 
     @Override
-    public Updater<T> bitwiseAnd(MetaField<? extends MetaClass<T>, Number> field, Number value) {
+    public Updater<T> bitwiseAnd(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
         operators.add(new UpdateOperator(BITWISE_AND, field, linkedListOf(value)));
         return this;
     }
 
     @Override
-    public Updater<T> bitwiseOr(MetaField<? extends MetaClass<T>, Number> field, Number value) {
+    public Updater<T> bitwiseOr(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
         operators.add(new UpdateOperator(BITWISE_OR, field, linkedListOf(value)));
         return this;
     }
 
     @Override
-    public Updater<T> bitwiseXor(MetaField<? extends MetaClass<T>, Number> field, Number value) {
+    public Updater<T> bitwiseXor(MetaField<? extends MetaClass<T>, ? extends Number> field, Number value) {
         operators.add(new UpdateOperator(BITWISE_XOR, field, linkedListOf(value)));
         return this;
     }
