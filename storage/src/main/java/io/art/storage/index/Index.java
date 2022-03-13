@@ -1,10 +1,12 @@
 package io.art.storage.index;
 
+import io.art.core.annotation.*;
 import io.art.meta.model.*;
 import static java.util.stream.Collectors.*;
 import java.util.*;
 
-public interface Index {
+@Public
+public interface INDEX {
     List<MetaField<?, ?>> fields();
 
     default MetaClass<?> owner() {

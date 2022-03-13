@@ -1,7 +1,9 @@
 package io.art.storage.index;
 
+import io.art.core.annotation.*;
 import io.art.meta.model.*;
 
+@Public
 public interface Indexes<T> {
     Index1<T, ?> id();
 
