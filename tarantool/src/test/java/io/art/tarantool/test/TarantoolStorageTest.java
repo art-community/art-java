@@ -1,6 +1,7 @@
 package io.art.tarantool.test;
 
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
@@ -12,6 +13,7 @@ import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
+import static io.art.core.factory.ListFactory.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.model.Tuple.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
@@ -328,7 +330,7 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testIndexUpdate() {
+    public void testIndexSingleUpdate() {
         TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).f16("test").build();
         current().insert(data);
         Integer f9 = data.getF9();
@@ -340,6 +342,39 @@ public class TarantoolStorageTest {
         assertEquals(f9 ^ 2, index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
         assertEquals(2, index.update(data.getF9(), data.getF16(), updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
         assertNull(index.update(data.getF9(), data.getF16(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
+    }
+
+    @Test
+    public void testIndexMultipleUpdate() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f10((short) 10).f33(fixedArrayOf("test")).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(2).f10((short) 10).f33(fixedArrayOf("test")).f9(10).f16("test").build(),
+                generateTestingModel().toBuilder().f1(3).f10((short) 10).f33(fixedArrayOf("test")).f9(10).f16("test").build()
+        );
+        current().insert(data);
+        short expectedF10 = data.get(0).getF10();
+        expectedF10 += 2;
+        expectedF10 &= 2;
+        expectedF10 |= 2;
+        expectedF10 ^= 2;
+        ImmutableArray<Tuple2<Integer, String>> keys = immutableArrayOf(tuple(10, "test"));
+        short finalExpectedF10 = expectedF10;
+        current().index(testModelIndexes().f9f16()).update(keys, updater -> updater
+                .add(testingMetaModel().f10Field(), (short) 4)
+                .set(testingMetaModel().f33Field(), linkedListOf("test"))
+                .subtract(testingMetaModel().f10Field(), (short) 2)
+                .bitwiseAnd(testingMetaModel().f10Field(), (short) 2)
+                .bitwiseOr(testingMetaModel().f10Field(), (short) 2)
+                .bitwiseXor(testingMetaModel().f10Field(), (short) 2))
+                .stream()
+                .peek(element -> assertEquals("updated", element.getF33().get(0)))
+                .forEach(element -> assertEquals(finalExpectedF10, element.getF10()));
+        current().index(testModelIndexes().f9f16()).update(keys, updater -> updater
+                .set(testingMetaModel().f10Field(), (short) 20)
+                .delete(testingMetaModel().f33Field()))
+                .stream()
+                .peek(element -> assertEquals((short) 20, element.getF10()))
+                .forEach(element -> assertNull(element.getF33()));
     }
 
     @Test
