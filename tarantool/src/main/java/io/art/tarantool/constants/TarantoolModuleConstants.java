@@ -121,7 +121,7 @@ public interface TarantoolModuleConstants {
 
     }
 
-    static class StreamProtocol {
+    class StreamProtocol {
         public static class Filters {
             public ImmutableIntegerValue filterEquals = newInteger(1);
             public ImmutableIntegerValue filterNotEquals = newInteger(2);
