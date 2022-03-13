@@ -60,7 +60,7 @@ public class TarantoolStorageTest {
 
     @AfterAll
     public static void cleanup() {
-        shutdownStorage();
+        //shutdownStorage();
         shutdown();
     }
 
@@ -131,7 +131,7 @@ public class TarantoolStorageTest {
     }
 
     @Test
-    public void testUpdate() {
+    public void testSingleUpdate() {
         TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).build();
         current().insert(data);
         Integer f9 = data.getF9();
@@ -142,6 +142,36 @@ public class TarantoolStorageTest {
         assertEquals(f9 ^ 2, current().update(data.getF1(), updater -> updater.bitwiseXor(testingMetaModel().f9Field(), 2)).getF9());
         assertEquals(2, current().update(data.getF1(), updater -> updater.set(testingMetaModel().f9Field(), 2)).getF9());
         assertNull(current().update(data.getF1(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
+    }
+
+    @Test
+    public void testMultipleUpdate() {
+        List<TestingMetaModel> data = fixedArrayOf(
+                generateTestingModel().toBuilder().f1(1).f9(10).build(),
+                generateTestingModel().toBuilder().f1(2).f9(10).build(),
+                generateTestingModel().toBuilder().f1(3).f9(10).build()
+        );
+        current().insert(data);
+        Integer expectedF9 = data.get(0).getF9();
+        expectedF9 += 2;
+        expectedF9 &= 2;
+        expectedF9 |= 2;
+        expectedF9 ^= 2;
+        ImmutableArray<Integer> keys = immutableArrayOf(1, 2, 3);
+        Integer finalExpectedF9 = expectedF9;
+        current().update(keys, updater -> updater
+                .add(testingMetaModel().f9Field(), 4)
+                .subtract(testingMetaModel().f9Field(), 2)
+                .bitwiseAnd(testingMetaModel().f9Field(), 2)
+                .bitwiseOr(testingMetaModel().f9Field(), 2)
+                .bitwiseXor(testingMetaModel().f9Field(), 2))
+                .forEach(element -> assertEquals(finalExpectedF9, element.getF9()));
+        current().update(keys, updater -> updater
+                .set(testingMetaModel().f9Field(), 20)
+                .delete(testingMetaModel().f33Field()))
+                .stream()
+                .peek(element -> assertEquals(20, element.getF9()))
+                .forEach(element -> assertNull(element.getF33()));
     }
 
     @Test
