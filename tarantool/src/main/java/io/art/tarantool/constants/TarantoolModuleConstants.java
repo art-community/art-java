@@ -20,7 +20,6 @@ package io.art.tarantool.constants;
 
 import io.art.core.collection.*;
 import io.art.storage.constants.StorageConstants.*;
-import lombok.*;
 import org.msgpack.value.*;
 import static io.art.storage.constants.StorageConstants.FilterOperator.*;
 import static java.lang.Integer.*;
@@ -294,19 +293,15 @@ public interface TarantoolModuleConstants {
         NEIGHBOR
     }
 
-    @Getter
-    @AllArgsConstructor
-    enum TarantoolUpdateOperator {
-        ADDITION("+"),
-        SUBTRACTION("-"),
-        AND("&"),
-        OR("|"),
-        XOR("^"),
-        STRING_SPLICE(":"),
-        INSERTION("!"),
-        DELETION("#"),
-        ASSIGMENT("=");
-
-        private final String operator;
+    interface UpdateOperatation {
+        ImmutableStringValue ADDITION = newString("+");
+        ImmutableStringValue SUBTRACTION = newString("-");
+        ImmutableStringValue BITWISE_AND = newString("&");
+        ImmutableStringValue BITWISE_OR = newString("|");
+        ImmutableStringValue BITWISE_XOR = newString("^");
+        ImmutableStringValue SPLICE = newString(":");
+        ImmutableStringValue INSERTION = newString("!");
+        ImmutableStringValue DELETION = newString("#");
+        ImmutableStringValue ASSIGMENT = newString("=");
     }
 }

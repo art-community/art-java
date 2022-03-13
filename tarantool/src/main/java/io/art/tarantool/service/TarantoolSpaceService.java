@@ -5,6 +5,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
@@ -110,6 +111,11 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     @Override
     public ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value) {
         return reactive.put(value).toStream().collect(immutableArrayCollector());
+    }
+
+    @Override
+    public ModelType update(KeyType key, Updater<ModelType> updater) {
+        return block(reactive.update(key, updater));
     }
 
     @Override

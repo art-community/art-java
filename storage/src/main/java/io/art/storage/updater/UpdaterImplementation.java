@@ -65,10 +65,11 @@ public class UpdaterImplementation<T> implements Updater<T> {
         return this;
     }
 
+    @Getter
     @AllArgsConstructor
     public static class UpdateOperator {
-        UpdateOpration operation;
-        MetaField<?, ?> field;
-        List<?> values;
+        private final UpdateOpration operation;
+        private final MetaField<?, ?> field;
+        private final List<?> values;
     }
 }

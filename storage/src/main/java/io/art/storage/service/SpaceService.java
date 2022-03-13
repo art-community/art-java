@@ -4,9 +4,11 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.storage.index.*;
 import io.art.storage.stream.*;
+import io.art.storage.updater.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
 import static java.util.Arrays.*;
 import java.util.*;
+import java.util.function.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
@@ -60,6 +62,14 @@ public interface SpaceService<KeyType, ModelType> {
     ImmutableArray<ModelType> put(Collection<ModelType> value);
 
     ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
+
+    default ModelType update(KeyType key, UnaryOperator<Updater<ModelType>> updater) {
+        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+        updater.apply(spaceUpdater);
+        return update(key, spaceUpdater);
+    }
+
+    ModelType update(KeyType key, Updater<ModelType> updater);
 
     SpaceStream<ModelType> stream();
 

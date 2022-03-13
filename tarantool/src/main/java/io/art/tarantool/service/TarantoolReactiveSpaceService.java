@@ -5,8 +5,10 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.updater.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.serializer.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -32,6 +34,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     final TarantoolClientRegistry clients;
     final TarantoolModelWriter writer;
     final TarantoolModelReader reader;
+    final TarantoolUpdateSerializer updateSerializer;
 
     public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.spaceType = spaceMeta.definition().type();
@@ -42,6 +45,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         this.spaceName = newString(idByDash(spaceType));
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
+        updateSerializer = new TarantoolUpdateSerializer(writer);
     }
 
     @Override
@@ -143,6 +147,13 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
         Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
+    }
+
+    @Override
+    public Mono<ModelType> update(KeyType key, Updater<ModelType> updater) {
+        ArrayValue input = newArray(spaceName, updateSerializer.serializeUpdate(cast(updater)));
+        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_PUT, input);
+        return parseSpaceMono(output);
     }
 
     @Override
