@@ -157,6 +157,20 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
+    public Flux<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater) {
+        ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())), updateSerializer.serializeUpdate(cast(updater)));
+        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_UPDATE, input);
+        return parseSpaceFlux(output);
+    }
+
+    @Override
+    public Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
+        ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())), updateSerializer.serializeUpdate(cast(updater)));
+        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_UPDATE, input);
+        return parseSpaceFlux(output);
+    }
+
+    @Override
     public Mono<Long> count(KeyType key) {
         Mono<Value> output = clients.immutable().call(SPACE_COUNT, newArray(spaceName, writer.write(keyMeta, key)));
         return parseLongMono(output);
