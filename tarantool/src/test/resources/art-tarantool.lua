@@ -497,16 +497,24 @@ local transformer = {
         end)
     end,
 
-    update = function(space, index, keys, commands)
+    update = function(space, index, keys, commandGroups)
         return box.atomic(function()
             local results = {}
             local foundIndex = box.space[space].index[index]
             for _, key in pairs(keys) do
                 if foundIndex.unique and #key == 1 then
-                    table.insert(results, box.space[space].index[index]:update(key, commands))
+                    local result
+                    for _, commands in pairs(commandGroups) do
+                        result = box.space[space].index[index]:update(key, commands)
+                    end
+                    table.insert(results, result)
                 else
                     for _, element in foundIndex:pairs(key) do
-                        table.insert(results, box.space[space]:update(element[1], commands))
+                        local result
+                        for _, commands in pairs(commandGroups) do
+                            result = box.space[space].index[index]:update(element[1], commands)
+                        end
+                        table.insert(results, result)
                     end
                 end
             end
@@ -527,8 +535,14 @@ local transformer = {
         return box.space[space].index[index]:delete(key)
     end,
 
-    update = function(space, index, key, commands)
-        return box.space[space].index[index]:update(key, commands)
+    update = function(space, index, key, commandGroups)
+        return box.atomic(function()
+            local result
+            for _, commands in pairs(commandGroups) do
+                result = box.space[space].index[index]:update(key, commands)
+            end
+            return result
+        end)
     end,
 }
 
@@ -741,11 +755,15 @@ local transformer = {
         end)
     end,
 
-    update = function(space, keys, commands)
+    update = function(space, keys, commandGroups)
         return box.atomic(function()
             local results = {}
             for _, key in pairs(keys) do
-                table.insert(results, box.space[space]:update(key, commands))
+                local result
+                for _, commands in pairs(commandGroups) do
+                    result = box.space[space]:update(key, commands)
+                end
+                table.insert(results, result)
             end
             return results
         end)
@@ -776,8 +794,14 @@ local transformer = {
 
     replace = put,
 
-    update = function(space, key, commands)
-        return box.space[space]:update(key, commands)
+    update = function(space, key, commandGroups)
+        return box.atomic(function()
+            local result
+            for _, commands in pairs(commandGroups) do
+                result = box.space[space]:update(key, commands)
+            end
+            return result
+        end)
     end
 }
 
