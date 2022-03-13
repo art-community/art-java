@@ -15,9 +15,9 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
 
     Flux<String> testChannel();
 
-    String testMapper(TestData input);
+    String testMapper(TestingMetaModel input);
 
-    boolean testFilter(TestData input);
+    boolean testFilter(TestingMetaModel input);
 
     @Getter
     @Accessors(fluent = true)
