@@ -3,8 +3,10 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
+import io.art.storage.updater.*;
 import static io.art.core.model.Tuple.*;
 import java.util.*;
+import java.util.function.*;
 
 @Public
 public class Index4Service<ModelType, F1, F2, F3, F4> {
@@ -18,6 +20,10 @@ public class Index4Service<ModelType, F1, F2, F3, F4> {
 
     public ModelType first(F1 key1, F2 key2, F3 key3, F4 key4) {
         return delegate.first(tuple(key1, key2, key3, key4));
+    }
+
+    public ModelType update(F1 key1, F2 key2, F3 key3, F4 key4, UnaryOperator<Updater<ModelType>> updater) {
+        return delegate.update(tuple(key1, key2, key3, key4), updater);
     }
 
     public ImmutableArray<ModelType> select(F1 key1, F2 key2, F3 key3, F4 key4) {
