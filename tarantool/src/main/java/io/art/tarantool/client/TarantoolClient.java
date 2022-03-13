@@ -135,7 +135,12 @@ public class TarantoolClient {
         Value body = response.getBody();
         if (response.isError()) {
             receivers.free(id);
-            sink.tryEmitError(new TarantoolException(let(body, Value::toJson)));
+            if (isNull(body) || !body.isMapValue()) {
+                sink.tryEmitError(new TarantoolException(let(body, Value::toJson)));
+                return;
+            }
+            Map<Value, Value> mapValue = body.asMapValue().map();
+            sink.tryEmitError(new TarantoolException(let(mapValue.get(IPROTO_ERROR), Value::toJson)));
             return;
         }
         if (response.isChunk()) {

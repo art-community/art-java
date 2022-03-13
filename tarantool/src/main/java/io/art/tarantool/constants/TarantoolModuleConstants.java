@@ -58,6 +58,7 @@ public interface TarantoolModuleConstants {
         ImmutableIntegerValue IPROTO_OK = newInteger(0);
         ImmutableIntegerValue IPROTO_BODY_DATA = newInteger(48);
         ImmutableIntegerValue IPROTO_CHUNK = newInteger(128);
+        ImmutableIntegerValue IPROTO_ERROR = newInteger(49);
     }
 
     interface AuthenticationMechanism {
