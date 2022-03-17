@@ -8,7 +8,10 @@ import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
 import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.service.*;
+import io.art.storage.sharder.*;
+import io.art.tarantool.*;
 import io.art.tarantool.module.*;
+import io.art.tarantool.service.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
@@ -45,7 +48,7 @@ public class TarantoolStorageTest {
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
+                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class).sharded(testingModelSharder))
                 )
         );
         tarantool()
@@ -76,6 +79,9 @@ public class TarantoolStorageTest {
 
     @Test
     public void testSinglePut() {
+        ShardProvider1<Integer, TestingMetaModel, OtherSpace, TarantoolBlockingShardService<Integer, TestingMetaModel>> sharder = tarantool().sharder(testingModelSharder);
+        sharder.by(new OtherSpace(1, "test", 123)).count(123);
+
         TestingMetaModel data = generateTestingModel();
         data.assertEquals(current().put(data));
     }

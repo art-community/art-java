@@ -5,6 +5,7 @@ import io.art.core.annotation.*;
 import io.art.storage.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.sharder.*;
 import io.art.tarantool.service.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -37,6 +38,10 @@ public class Tarantool {
     public static class TarantoolProvider {
         public <KeyType, ModelType> BlockingSpaceService<KeyType, ModelType> space(Class<ModelType> spaceType) {
             return tarantoolModule().configuration().getServices().getSpace(spaceType);
+        }
+
+        public <KeyType, ModelType, P1> ShardProvider1<KeyType, ModelType, P1, TarantoolBlockingShardService<KeyType, ModelType>> sharder(ShardFunction1<ModelType, P1> functor1) {
+            return new ShardProvider1<>(tarantoolModule().configuration().getServices().getSharder(functor1));
         }
 
         public TarantoolSchemaService schema(Class<? extends Storage> type) {

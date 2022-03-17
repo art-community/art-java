@@ -2,11 +2,13 @@ package io.art.tarantool.test.model;
 
 import io.art.meta.test.*;
 import io.art.storage.index.*;
+import io.art.storage.sharder.*;
 import io.art.tarantool.communicator.*;
 import lombok.*;
 import lombok.experimental.*;
 import reactor.core.publisher.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
+import static io.art.storage.sharder.Sharding.*;
 import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 
@@ -29,6 +31,8 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     static TestModelIndexes testModelIndexes() {
         return tarantool().indexes(TestingMetaModel.class);
     }
+
+    ShardFunction1<TestingMetaModel, OtherSpace> testingModelSharder = other -> sharder(other.getValue());
 
     @Getter
     @Accessors(fluent = true)

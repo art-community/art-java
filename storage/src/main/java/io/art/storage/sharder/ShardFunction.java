@@ -2,9 +2,13 @@ package io.art.storage.sharder;
 
 import io.art.core.annotation.*;
 import io.art.core.model.*;
+import lombok.*;
+import java.util.function.*;
 
 @Public
-@FunctionalInterface
-public interface ShardFunction {
-    Sharder shard(Tuple key);
+@Getter
+@AllArgsConstructor
+public class ShardFunction {
+    private final Object source;
+    private final Function<Tuple, Sharder> functor;
 }
