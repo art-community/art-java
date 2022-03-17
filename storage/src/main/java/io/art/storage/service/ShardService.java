@@ -1,7 +1,7 @@
 package io.art.storage.service;
 
-import io.art.core.model.*;
+import io.art.core.annotation.*;
 
-public interface ShardService<KeyType, ModelType, ServiceType extends SpaceService<KeyType, ModelType>> {
-    ServiceType sharded(Tuple key);
+@Public
+public interface ShardService<KeyType, ModelType> {
 }
