@@ -28,10 +28,8 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
-    private final MetaClass<ModelType> spaceMetaClass;
     private final TarantoolModelReader reader;
     private final TarantoolUpdateSerializer updateSerializer;
-    private final Class<ModelType> spaceType;
     private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
@@ -39,12 +37,10 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     private final MetaType<KeyType> keyMeta;
 
     public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
-        this.spaceType = spaceMeta.definition().type();
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
-        this.spaceMetaClass = spaceMeta;
         this.keyMeta = keyMeta;
-        this.spaceName = newString(idByDash(spaceType));
+        this.spaceName = newString(idByDash(spaceMeta.definition().type()));
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
