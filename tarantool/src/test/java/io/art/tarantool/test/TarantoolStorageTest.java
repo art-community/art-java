@@ -429,7 +429,7 @@ public class TarantoolStorageTest {
         wrapExceptionCall(() -> waiter.await(30, TimeUnit.SECONDS), Assertions::fail);
     }
 
-    private static SpaceService<Integer, TestingMetaModel> current() {
+    private static BlockingSpaceService<Integer, TestingMetaModel> current() {
         return tarantool().space(TestingMetaModel.class);
     }
 }

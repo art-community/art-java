@@ -11,11 +11,11 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 
 @RequiredArgsConstructor
 public class TarantoolServiceRegistry {
-    private final LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces;
+    private final LazyProperty<ImmutableMap<String, TarantoolBlockingSpaceService<?, ?>>> spaces;
     private final LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas;
     private final LazyProperty<ImmutableMap<String, Indexes<?>>> indexes;
 
-    public <KeyType, ValueType> TarantoolSpaceService<KeyType, ValueType> getSpace(Class<ValueType> type) {
+    public <KeyType, ValueType> TarantoolBlockingSpaceService<KeyType, ValueType> getSpace(Class<ValueType> type) {
         return cast(spaces.get().get(idByDash(type)));
     }
 

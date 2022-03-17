@@ -19,14 +19,14 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolShardedSpaceService<KeyType, ModelType> implements SpaceService<KeyType, ModelType> {
+public class TarantoolBlockingShardedSpaceService<KeyType, ModelType> implements BlockingSpaceService<KeyType, ModelType> {
     private final Class<ModelType> spaceType;
     private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
 
-    public TarantoolShardedSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
+    public TarantoolBlockingShardedSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.spaceType = spaceMeta.definition().type();
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();

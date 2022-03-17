@@ -518,11 +518,11 @@ public class TarantoolStreamTest {
         data.get(2).assertEquals(result.get(1));
     }
 
-    private static SpaceService<Integer, TestingMetaModel> current() {
+    private static BlockingSpaceService<Integer, TestingMetaModel> current() {
         return tarantool().space(TestingMetaModel.class);
     }
 
-    private static SpaceService<Integer, OtherSpace> other() {
+    private static BlockingSpaceService<Integer, OtherSpace> other() {
         return tarantool().space(OtherSpace.class);
     }
 }

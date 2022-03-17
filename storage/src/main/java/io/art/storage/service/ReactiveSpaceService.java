@@ -13,7 +13,7 @@ import java.util.function.*;
 
 @Public
 @SuppressWarnings({UNCHECKED, VARARGS})
-public interface ReactiveSpaceService<KeyType, ModelType> {
+public interface ReactiveSpaceService<KeyType, ModelType> extends SpaceService<KeyType, ModelType> {
     Mono<ModelType> first(KeyType key);
 
     Flux<ModelType> select(KeyType key);

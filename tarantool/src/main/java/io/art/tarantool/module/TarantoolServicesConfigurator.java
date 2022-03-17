@@ -21,7 +21,7 @@ import java.util.function.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolServicesConfigurator {
-    private final Map<String, LazyProperty<TarantoolSpaceService<?, ?>>> spaceServices = map();
+    private final Map<String, LazyProperty<TarantoolBlockingSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
 
@@ -29,7 +29,7 @@ public class TarantoolServicesConfigurator {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
-        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(idField.get().type(), declaration(spaceClass), storages().get(storageId))));
+        spaceServices.put(spaceId, lazy(() -> new TarantoolBlockingSpaceService<>(idField.get().type(), declaration(spaceClass), storages().get(storageId))));
         return this;
     }
 
@@ -37,7 +37,7 @@ public class TarantoolServicesConfigurator {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
-        spaceServices.put(spaceId, lazy(() -> new TarantoolSpaceService<>(declaration(indexes).creator().<Indexes<?>>singleton().id().first().type(), declaration(spaceClass), storages().get(storageId))));
+        spaceServices.put(spaceId, lazy(() -> new TarantoolBlockingSpaceService<>(declaration(indexes).creator().<Indexes<?>>singleton().id().first().type(), declaration(spaceClass), storages().get(storageId))));
         this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
         return this;
     }
@@ -47,7 +47,7 @@ public class TarantoolServicesConfigurator {
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<String, TarantoolSpaceService<?, ?>>> spaces = lazy(() -> spaceServices
+        LazyProperty<ImmutableMap<String, TarantoolBlockingSpaceService<?, ?>>> spaces = lazy(() -> spaceServices
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
