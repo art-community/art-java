@@ -6,14 +6,16 @@ import io.art.storage.index.*;
 import io.art.storage.sharder.*;
 import lombok.*;
 import static io.art.core.caster.Caster.*;
+import static lombok.AccessLevel.*;
 import java.util.function.*;
 
+@Getter(value = PACKAGE)
 @RequiredArgsConstructor
 public class TarantoolSpaceConfigurator<C> {
-    final Class<? extends Storage> storageClass;
-    final Class<C> spaceClass;
-    Supplier<MetaField<? extends MetaClass<C>, ?>> field;
-    Class<? extends Indexes<C>> indexes;
+    private final Class<? extends Storage> storageClass;
+    private final Class<C> spaceClass;
+    private Supplier<MetaField<? extends MetaClass<C>, ?>> field;
+    private Class<? extends Indexes<C>> indexes;
 
     public <M extends MetaClass<C>> TarantoolSpaceConfigurator<C> id(Supplier<MetaField<M, ?>> field) {
         this.field = cast(field);
