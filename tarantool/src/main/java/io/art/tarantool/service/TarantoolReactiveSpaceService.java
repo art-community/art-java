@@ -9,6 +9,7 @@ import io.art.storage.updater.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
+import io.art.tarantool.stream.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;

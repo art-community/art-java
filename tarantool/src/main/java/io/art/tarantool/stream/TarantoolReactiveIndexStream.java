@@ -1,4 +1,4 @@
-package io.art.tarantool.service;
+package io.art.tarantool.stream;
 
 import io.art.core.model.*;
 import io.art.meta.*;

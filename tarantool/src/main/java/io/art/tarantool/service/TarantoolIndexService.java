@@ -7,6 +7,7 @@ import io.art.meta.model.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.stream.*;
 import lombok.Builder;
 import lombok.*;
 import org.msgpack.value.*;

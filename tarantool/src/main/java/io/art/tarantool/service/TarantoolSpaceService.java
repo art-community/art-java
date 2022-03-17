@@ -6,15 +6,14 @@ import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
-import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.stream.*;
 import lombok.*;
 import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
@@ -25,7 +24,6 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
     private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
-    private final TarantoolModelWriter writer;
     private TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
 
     public TarantoolSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
@@ -33,7 +31,6 @@ public class TarantoolSpaceService<KeyType, ModelType> implements SpaceService<K
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.spaceName = newString(idByDash(spaceType));
-        writer = tarantoolModule().configuration().getWriter();
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
     }
 
