@@ -6,9 +6,11 @@ import io.art.core.property.*;
 import io.art.meta.model.*;
 import io.art.storage.*;
 import io.art.storage.index.*;
+import io.art.storage.sharder.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.service.*;
 import lombok.*;
+import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -25,24 +27,47 @@ public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolBlockingSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
+    private final Map<String, LazyProperty<TarantoolBlockingShardService<?, ?>>> shardServices = map();
 
-    public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(TarantoolSpaceConfigurator<C> configurator) {
+    public <C> TarantoolServicesConfigurator space(TarantoolSpaceConfigurator<C> configurator) {
         Supplier<MetaField<? extends MetaClass<C>, ?>> idField = configurator.getField();
         Class<? extends Indexes<C>> indexes = configurator.getIndexes();
         Class<C> spaceClass = configurator.getSpaceClass();
         Class<? extends Storage> storageClass = configurator.getStorageClass();
+        ShardFunction shardFunction = configurator.getShardFunction();
 
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
 
         if (nonNull(indexes)) {
-            spaceServices.put(spaceId, lazy(() -> serviceByField(idFieldByIndexes(indexes), spaceClass, storageId)));
+            if (nonNull(shardFunction)) {
+                shardServices.put(spaceId, lazy(() -> TarantoolBlockingShardService.builder()
+                        .shardFunction(shardFunction)
+                        .clients(storages().get(storageId))
+                        .spaceMeta(cast(declaration(spaceClass)))
+                        .keyMeta(cast(idFieldByIndexes(indexes)))
+                        .build()));
+                this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
+                return this;
+            }
+
+            spaceServices.put(spaceId, lazy(() -> spaceServiceByField(idFieldByIndexes(indexes), spaceClass, storageId)));
             this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
             return this;
         }
 
-        spaceServices.put(spaceId, lazy(() -> serviceByField(idField.get().type(), spaceClass, storageId)));
+        if (nonNull(shardFunction)) {
+            shardServices.put(spaceId, lazy(() -> TarantoolBlockingShardService.builder()
+                    .shardFunction(shardFunction)
+                    .clients(storages().get(storageId))
+                    .spaceMeta(cast(declaration(spaceClass)))
+                    .keyMeta(cast(idField.get().type()))
+                    .build()));
+            return this;
+        }
+
+        spaceServices.put(spaceId, lazy(() -> spaceServiceByField(idField.get().type(), spaceClass, storageId)));
         return this;
     }
 
@@ -74,7 +99,7 @@ public class TarantoolServicesConfigurator {
                 .type();
     }
 
-    private <C> TarantoolBlockingSpaceService<?, C> serviceByField(MetaType<?> field, Class<C> spaceClass, String storageId) {
+    private <C> TarantoolBlockingSpaceService<?, C> spaceServiceByField(MetaType<?> field, Class<C> spaceClass, String storageId) {
         MetaClass<C> spaceDeclaration = declaration(spaceClass);
         TarantoolClientRegistry clients = storages().get(storageId);
         return new TarantoolBlockingSpaceService<>(field, spaceDeclaration, clients);

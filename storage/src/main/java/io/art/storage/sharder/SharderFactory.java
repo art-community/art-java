@@ -14,12 +14,8 @@ public class SharderFactory {
         return sharder(p1, CRC_32);
     }
 
-    public <P1, P2> Sharder sharder(P1 p1, P2 p2) {
-        return sharder(p1, p2, CRC_32);
-    }
-
-    public <P1> Sharder sharder(P1 p2, ShardAlgorithm algorithm) {
-        return new Sharder(algorithm, tuple(p2));
+    public <P1> Sharder sharder(P1 p1, ShardAlgorithm algorithm) {
+        return new Sharder(algorithm, tuple(p1));
     }
 
     public <P1, P2> Sharder sharder(P1 P1, P2 p2, ShardAlgorithm algorithm) {

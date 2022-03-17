@@ -16,6 +16,7 @@ public class TarantoolSpaceConfigurator<C> {
     private final Class<C> spaceClass;
     private Supplier<MetaField<? extends MetaClass<C>, ?>> field;
     private Class<? extends Indexes<C>> indexes;
+    private ShardFunction shardFunction;
 
     public <M extends MetaClass<C>> TarantoolSpaceConfigurator<C> id(Supplier<MetaField<M, ?>> field) {
         this.field = cast(field);
@@ -27,11 +28,8 @@ public class TarantoolSpaceConfigurator<C> {
         return this;
     }
 
-    public <P1> TarantoolSpaceConfigurator<C> sharded(ShardFunctionOperator1<C, P1> operator) {
-        return this;
-    }
-
-    public <P1, P2> TarantoolSpaceConfigurator<C> sharded(ShardFunctionOperator2<C, P1, P2> operator) {
+    public <P1> TarantoolSpaceConfigurator<C> sharded(ShardFunction1<C, P1> operator) {
+        shardFunction = parameters -> operator.shard(cast(parameters.values().get(0)));
         return this;
     }
 }

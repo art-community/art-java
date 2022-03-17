@@ -56,7 +56,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     }
 
     public <C> TarantoolInitializer space(Class<? extends Storage> storageClass, Class<C> spaceClass, UnaryOperator<TarantoolSpaceConfigurator<C>> configurator) {
-        servicesConfigurator.space(storageClass, spaceClass, configurator.apply(new TarantoolSpaceConfigurator<>(storageClass, spaceClass)));
+        servicesConfigurator.space(configurator.apply(new TarantoolSpaceConfigurator<>(storageClass, spaceClass)));
         return this;
     }
 
