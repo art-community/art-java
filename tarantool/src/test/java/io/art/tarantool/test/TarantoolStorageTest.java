@@ -45,7 +45,7 @@ public class TarantoolStorageTest {
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, TestModelIndexes.class)
+                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
                 )
         );
         tarantool()

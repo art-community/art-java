@@ -16,7 +16,6 @@ import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.Meta.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import java.util.*;
-import java.util.function.*;
 
 @Public
 @RequiredArgsConstructor
@@ -25,22 +24,17 @@ public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
 
-    public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Supplier<MetaField<M, ?>> idField) {
+    public <C, M extends MetaClass<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, TarantoolSpaceConfigurator<C> configurator) {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
         spaceServices.put(spaceId, lazy(() -> new TarantoolBlockingSpaceService<>(idField.get().type(), declaration(spaceClass), storages().get(storageId))));
-        return this;
-    }
 
-    public <C, I extends Indexes<C>> TarantoolServicesConfigurator space(Class<? extends Storage> storageClass, Class<C> spaceClass, Class<I> indexes) {
-        String storageId = idByDash(storageClass);
-        String spaceId = idByDash(spaceClass);
-        schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
         spaceServices.put(spaceId, lazy(() -> new TarantoolBlockingSpaceService<>(declaration(indexes).creator().<Indexes<?>>singleton().id().first().type(), declaration(spaceClass), storages().get(storageId))));
         this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
         return this;
     }
+
 
     TarantoolServiceRegistry configure() {
         LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices
