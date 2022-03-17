@@ -13,6 +13,6 @@ public class TarantoolReactiveShardProvider<KeyType, ModelType> implements Shard
 
     @Override
     public TarantoolReactiveShardService<KeyType, ModelType> sharded(Tuple key) {
-        return service;
+        return service.use(key);
     }
 }
