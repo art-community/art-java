@@ -4,5 +4,5 @@ import io.art.core.model.*;
 import io.art.storage.service.*;
 
 public interface ShardProvider<KeyType, ModelType, ServiceType extends ShardService<KeyType, ModelType, ServiceType>> {
-    ServiceType sharded(Tuple key);
+    ServiceType by(Tuple key);
 }

@@ -10,5 +10,5 @@ import lombok.*;
 @AllArgsConstructor
 public class Sharder {
     private final ShardAlgorithm algorithm;
-    private final Tuple key;
+    private final Tuple data;
 }

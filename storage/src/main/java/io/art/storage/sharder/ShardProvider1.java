@@ -8,10 +8,10 @@ import static io.art.core.model.Tuple.*;
 
 @Public
 @RequiredArgsConstructor
-public class ShardProvider1<KeyType, ModelType, P1, ServiceType extends ShardService<KeyType, ModelType>> {
+public class ShardProvider1<KeyType, ModelType, P1, ServiceType extends ShardService<KeyType, ModelType, ServiceType>> {
     private final ShardProvider<KeyType, ModelType, ServiceType> provider;
 
-    public ServiceType sharded(P1 p1) {
-        return provider.sharded(tuple(p1));
+    public ServiceType by(P1 p1) {
+        return provider.by(tuple(p1));
     }
 }

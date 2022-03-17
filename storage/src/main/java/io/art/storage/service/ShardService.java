@@ -5,5 +5,5 @@ import io.art.core.model.*;
 
 @Public
 public interface ShardService<KeyType, ModelType, ServiceType extends ShardService<KeyType, ModelType, ServiceType>> {
-    ServiceType use(Tuple shard);
+    ServiceType use(Tuple parameters);
 }
