@@ -2,6 +2,7 @@ package io.art.storage.service;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.core.model.*;
 import io.art.storage.index.*;
 import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
@@ -99,6 +100,7 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     ReactiveSpaceStream<ModelType> stream(KeyType baseKey);
 
+
     default <F1> ReactiveIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
         return new ReactiveIndex1Service<>(index((Index) index));
     }
@@ -121,9 +123,30 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     ReactiveIndexService<ModelType> index(Index index);
 
-    ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request);
 
-    default <P1> ReactiveShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> sharder1, P1 input) {
-        return sharded(sharder1.shard(input));
+    default <P1> ReactiveShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> sharder, P1 input) {
+        return sharded(sharder.shard(input));
     }
+
+    default <P1, P2> ReactiveShardService<KeyType, ModelType> sharded(Sharder2<ModelType, P1, P2> sharder, P1 input1, P2 input2) {
+        return sharded(sharder.shard(input1, input2));
+    }
+
+    default <P1, P2, P3> ReactiveShardService<KeyType, ModelType> sharded(Sharder3<ModelType, P1, P2, P3> sharder, P1 input1, P2 input2, P3 input3) {
+        return sharded(sharder.shard(input1, input2, input3));
+    }
+
+    default <P1, P2, P3, P4> ReactiveShardService<KeyType, ModelType> sharded(Sharder4<ModelType, P1, P2, P3, P4> sharder, P1 input1, P2 input2, P3 input3, P4 input4) {
+        return sharded(sharder.shard(input1, input2, input3, input4));
+    }
+
+    default <P1, P2, P3, P4, P5> ReactiveShardService<KeyType, ModelType> sharded(Sharder5<ModelType, P1, P2, P3, P4, P5> sharder, P1 input1, P2 input2, P3 input3, P4 input4, P5 input5) {
+        return sharded(sharder.shard(input1, input2, input3, input4, input5));
+    }
+
+    default ReactiveShardService<KeyType, ModelType> sharded(Sharder<ModelType> sharder, Tuple input) {
+        return sharded(sharder.shard(input));
+    }
+
+    ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request);
 }
