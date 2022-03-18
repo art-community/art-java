@@ -122,6 +122,9 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SCHEMA_INDICES = newString("art.schema.indices");
         ImmutableStringValue SCHEMA_FORMAT = newString("art.schema.format");
 
+        ImmutableStringValue ROUTER_MUTABLE_CALL = newString("art.router.mutable.call");
+        ImmutableStringValue ROUTER_IMMUTABLE_CALL = newString("art.router.immutable.call");
+
     }
 
     class StreamProtocol {
