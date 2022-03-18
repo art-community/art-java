@@ -1,17 +1,14 @@
 package io.art.storage.service;
 
-import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.storage.index.*;
-import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
 
-@Public
-public interface BlockingSpaceService<KeyType, ModelType> {
+public interface BlockingShardService<KeyType, ModelType> {
     ModelType first(KeyType key);
 
     ImmutableArray<ModelType> select(KeyType key);
@@ -98,7 +95,8 @@ public interface BlockingSpaceService<KeyType, ModelType> {
 
     SpaceStream<ModelType> stream(KeyType baseKey);
 
-    ReactiveSpaceService<KeyType, ModelType> reactive();
+    ReactiveShardService<KeyType, ModelType> reactive();
+
 
     default <F1> Index1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
         return new Index1Service<>(index((Index) index));
@@ -121,10 +119,4 @@ public interface BlockingSpaceService<KeyType, ModelType> {
     }
 
     IndexService<ModelType> index(Index index);
-
-    BlockingShardService<KeyType, ModelType> sharded(Sharder shardFunction);
-
-    default <P1> BlockingShardService<KeyType, ModelType> sharded(ShardFunction1<ModelType, P1> function1, P1 input) {
-        return sharded(function1.shard(input));
-    }
 }

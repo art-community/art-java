@@ -5,6 +5,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
@@ -224,6 +225,11 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
                 .build();
     }
 
+    @Override
+    public ReactiveShardService<KeyType, ModelType> sharded(Sharder shardFunction) {
+        return null;
+    }
+
     private Mono<Long> parseLongMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
     }
@@ -238,4 +244,5 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
         return value.map(element -> reader.read(spaceMetaType, element));
     }
+
 }

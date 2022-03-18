@@ -3,7 +3,6 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.storage.index.*;
-import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import reactor.core.publisher.*;
@@ -12,7 +11,7 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
-public interface ReactiveSpaceService<KeyType, ModelType> {
+public interface ReactiveShardService<KeyType, ModelType> {
     Mono<ModelType> first(KeyType key);
 
     Flux<ModelType> select(KeyType key);
@@ -120,10 +119,4 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
     }
 
     ReactiveIndexService<ModelType> index(Index index);
-
-    ReactiveShardService<KeyType, ModelType> sharded(Sharder shardFunction);
-
-    default <P1> ReactiveShardService<KeyType, ModelType> sharded(ShardFunction1<ModelType, P1> function1, P1 input) {
-        return sharded(function1.shard(input));
-    }
 }
