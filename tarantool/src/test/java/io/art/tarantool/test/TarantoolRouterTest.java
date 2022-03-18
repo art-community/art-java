@@ -73,6 +73,9 @@ public class TarantoolRouterTest {
 
         ImmutableArray<TestingMetaModel> result1 = current().sharded(testModelSharders().byf16(), "bucket-1").select(1);
         ImmutableArray<TestingMetaModel> result2 = current().sharded(testModelSharders().byf16(), "bucket-2").select(2);
+        ImmutableArray<TestingMetaModel> emptyResult = current().sharded(testModelSharders().byf16(), "bucket-2").select(1);
+
+        assertEquals(0, emptyResult.size());
 
         assertEquals(1, result1.size());
         data1.assertEquals(result1.get(0));
