@@ -27,7 +27,7 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
     private TarantoolBlockingShardService(MetaType<KeyType> keyMeta,
                                           MetaClass<ModelType> spaceMeta,
                                           TarantoolClientRegistry clients,
-                                          Sharder sharder) {
+                                          ShardRequest request) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.spaceName = newString(idByDash(spaceMeta.definition().type()));
@@ -35,7 +35,7 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
                 .keyMeta(keyMeta)
                 .spaceMeta(spaceMeta)
                 .clients(clients)
-                .sharder(sharder)
+                .request(request)
                 .build();
     }
 

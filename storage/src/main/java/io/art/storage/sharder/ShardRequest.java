@@ -8,7 +8,7 @@ import lombok.*;
 @Public
 @Getter
 @AllArgsConstructor
-public class Sharder {
+public class ShardRequest {
     private final ShardAlgorithm algorithm;
     private final Tuple data;
 }

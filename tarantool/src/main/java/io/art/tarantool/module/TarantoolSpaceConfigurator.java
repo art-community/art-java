@@ -33,7 +33,7 @@ public class TarantoolSpaceConfigurator<C> {
         return this;
     }
 
-    public <P1, P2> TarantoolSpaceConfigurator<C> sharded(ShardFunction2<C, P1, P2> operator) {
+    public <P1, P2> TarantoolSpaceConfigurator<C> sharded(Sharder2<C, P1, P2> operator) {
         shardFunction = new ShardFunction(operator, parameters -> operator.shard(cast(parameters.values().get(0)), cast(parameters.values().get(1))));
         return this;
     }

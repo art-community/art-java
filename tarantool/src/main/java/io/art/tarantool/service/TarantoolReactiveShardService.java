@@ -33,13 +33,13 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     private final TarantoolClientRegistry clients;
     private final TarantoolModelWriter writer;
     private final MetaType<KeyType> keyMeta;
-    private final Sharder sharder;
+    private final ShardRequest shardRequest;
 
     @Builder
     private TarantoolReactiveShardService(MetaType<KeyType> keyMeta,
                                           MetaClass<ModelType> spaceMeta,
                                           TarantoolClientRegistry clients,
-                                          Sharder sharder) {
+                                          ShardRequest request) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.keyMeta = keyMeta;
@@ -47,7 +47,7 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
-        this.sharder = sharder;
+        this.shardRequest = request;
     }
 
 

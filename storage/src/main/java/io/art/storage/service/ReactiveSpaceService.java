@@ -121,9 +121,9 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     ReactiveIndexService<ModelType> index(Index index);
 
-    ReactiveShardService<KeyType, ModelType> sharded(Sharder shardFunction);
+    ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request);
 
-    default <P1> ReactiveShardService<KeyType, ModelType> sharded(ShardFunction1<ModelType, P1> function1, P1 input) {
-        return sharded(function1.shard(input));
+    default <P1> ReactiveShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> sharder1, P1 input) {
+        return sharded(sharder1.shard(input));
     }
 }

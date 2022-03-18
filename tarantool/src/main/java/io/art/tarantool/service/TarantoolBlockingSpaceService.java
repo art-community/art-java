@@ -170,7 +170,7 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolBlockingShardService<KeyType, ModelType> sharded(Sharder sharder) {
+    public TarantoolBlockingShardService<KeyType, ModelType> sharded(ShardRequest request) {
         return TarantoolBlockingShardService.<KeyType, ModelType>builder().build();
     }
 }

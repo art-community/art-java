@@ -226,7 +226,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public ReactiveShardService<KeyType, ModelType> sharded(Sharder shardFunction) {
+    public ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request) {
         return null;
     }
 

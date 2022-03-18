@@ -122,9 +122,9 @@ public interface BlockingSpaceService<KeyType, ModelType> {
 
     IndexService<ModelType> index(Index index);
 
-    BlockingShardService<KeyType, ModelType> sharded(Sharder shardFunction);
+    BlockingShardService<KeyType, ModelType> sharded(ShardRequest request);
 
-    default <P1> BlockingShardService<KeyType, ModelType> sharded(ShardFunction1<ModelType, P1> function1, P1 input) {
+    default <P1> BlockingShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> function1, P1 input) {
         return sharded(function1.shard(input));
     }
 }
