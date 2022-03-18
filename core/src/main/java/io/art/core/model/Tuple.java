@@ -5,6 +5,10 @@ import java.util.*;
 public interface Tuple {
     List<Object> values();
 
+    default Object get(int index) {
+        return values().get(index);
+    }
+
     default int size() {
         return values().size();
     }

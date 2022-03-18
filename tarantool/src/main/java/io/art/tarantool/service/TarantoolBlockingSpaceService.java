@@ -5,6 +5,7 @@ import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.stream.*;
@@ -166,5 +167,10 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
                 .clients(clients)
                 .spaceName(spaceName)
                 .build();
+    }
+
+    @Override
+    public ShardService<ModelType> sharded(Sharder sharder) {
+        return TarantoolBlockingShardService.<KeyType, ModelType>builder().build();
     }
 }

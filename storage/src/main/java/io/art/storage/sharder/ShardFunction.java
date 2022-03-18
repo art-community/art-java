@@ -9,6 +9,5 @@ import java.util.function.*;
 @Getter
 @AllArgsConstructor
 public class ShardFunction {
-    private final Object source;
     private final Function<Tuple, Sharder> functor;
 }

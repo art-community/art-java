@@ -3,6 +3,7 @@ package io.art.storage.service;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.storage.index.*;
+import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import static io.art.core.constants.CompilerSuppressingWarnings.*;
@@ -101,6 +102,7 @@ public interface BlockingSpaceService<KeyType, ModelType> extends SpaceService<K
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 
+
     default <F1> Index1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
         return new Index1Service<>(index((Index) index));
     }
@@ -122,4 +124,10 @@ public interface BlockingSpaceService<KeyType, ModelType> extends SpaceService<K
     }
 
     IndexService<ModelType> index(Index index);
+
+    ShardService<ModelType> sharded(Sharder shardFunction);
+
+    default <P1> ShardService<ModelType> sharded(ShardFunction1<ModelType, P1> function1, P1 input) {
+        return sharded(function1.shard(input));
+    }
 }
