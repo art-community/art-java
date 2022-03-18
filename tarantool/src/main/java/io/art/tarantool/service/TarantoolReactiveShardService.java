@@ -18,6 +18,7 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.model.Tuple.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.meta.Meta.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
@@ -27,11 +28,11 @@ import java.util.*;
 
 public class TarantoolReactiveShardService<KeyType, ModelType> implements ReactiveShardService<KeyType, ModelType> {
     private final TarantoolModelReader reader;
+    private final TarantoolModelWriter writer;
     private final TarantoolUpdateSerializer updateSerializer;
     private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
-    private final TarantoolModelWriter writer;
     private final MetaType<KeyType> keyMeta;
     private final ShardRequest shardRequest;
 
@@ -53,7 +54,15 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
 
     @Override
     public Mono<ModelType> first(KeyType key) {
-        ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
+        ImmutableArrayValue shardData = newArray(shardRequest.getData()
+                .values()
+                .stream()
+                .map(element -> writer.write(definition(element.getClass()), element))
+                .collect(listCollector()));
+        ArrayValue input = newArray(
+                newArray(shardData, newInteger(shardRequest.getAlgorithm().ordinal())),
+                newArray(spaceName, writer.write(keyMeta, key))
+        );
         Mono<Value> output = clients.immutable().call(SPACE_FIRST, input);
         return parseSpaceMono(output);
     }
