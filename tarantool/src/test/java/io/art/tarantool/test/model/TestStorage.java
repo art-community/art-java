@@ -30,6 +30,7 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     @Getter
     @Accessors(fluent = true)
     class TestModelSharders implements Sharders<TestingMetaModel> {
+        private final ShardFunction1<TestingMetaModel, Integer> byConstant = constant(1);
         private final ShardFunction1<TestingMetaModel, OtherSpace> byOtherSpace = other -> sharder(other.getValue());
     }
 

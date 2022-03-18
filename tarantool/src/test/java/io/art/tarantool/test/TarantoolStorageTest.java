@@ -77,8 +77,8 @@ public class TarantoolStorageTest {
     @Test
     public void testSinglePut() {
         current()
-                .sharded(testModelSharders().byOtherSpace(), OtherSpace.builder().build())
-                .
+                .sharded(testModelSharders().byOtherSpace(), OtherSpace.builder().value("test").build())
+                .count(123);
 
         TestingMetaModel data = generateTestingModel();
         data.assertEquals(current().put(data));

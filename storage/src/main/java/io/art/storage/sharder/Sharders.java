@@ -7,6 +7,14 @@ import static io.art.storage.constants.StorageConstants.ShardAlgorithm.*;
 
 @Public
 public interface Sharders<T> {
+    default <C> ShardFunction1<T, C> constant(C constant) {
+        return ignore -> sharder(constant, CRC_32);
+    }
+
+    default <C> ShardFunction1<T, C> constant(C constant, ShardAlgorithm algorithm) {
+        return ignore -> sharder(constant, algorithm);
+    }
+
     default <P1> Sharder sharder(P1 p1) {
         return sharder(p1, CRC_32);
     }
