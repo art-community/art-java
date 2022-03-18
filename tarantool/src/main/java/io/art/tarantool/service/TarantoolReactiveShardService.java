@@ -235,7 +235,7 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
                 .values()
                 .stream()
                 .map(element -> writer.write(definition(element.getClass()), element))
-                .collect(listCollector()));
+                .toArray(Value[]::new), true);
         ImmutableArrayValue bucket = newArray(shardData, newInteger(shardRequest.getAlgorithm().ordinal()));
         return newArray(bucket, input);
     }
