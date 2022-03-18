@@ -30,7 +30,7 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     @Getter
     @Accessors(fluent = true)
     class TestModelSharders implements Sharders<TestingMetaModel> {
-        private final Sharder1<TestingMetaModel, String> byf16 = this::sharder;
+        private final Sharder1<TestingMetaModel, String> string = this::sharder;
     }
 
     static TestModelIndexes testModelIndexes() {

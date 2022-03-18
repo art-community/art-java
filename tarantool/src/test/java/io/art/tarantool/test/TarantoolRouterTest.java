@@ -68,12 +68,12 @@ public class TarantoolRouterTest {
         TestingMetaModel data1 = generateTestingModel().toBuilder().f16("bucket-1").f1(1).build();
         TestingMetaModel data2 = generateTestingModel().toBuilder().f16("bucket-2").f1(2).build();
 
-        data1.assertEquals(current().sharded(testModelSharders().byf16(), "bucket-1").put(data1));
-        data2.assertEquals(current().sharded(testModelSharders().byf16(), "bucket-2").put(data2));
+        data1.assertEquals(current().sharded(testModelSharders().string(), "bucket-1").put(data1));
+        data2.assertEquals(current().sharded(testModelSharders().string(), "bucket-2").put(data2));
 
-        ImmutableArray<TestingMetaModel> result1 = current().sharded(testModelSharders().byf16(), "bucket-1").select(1);
-        ImmutableArray<TestingMetaModel> result2 = current().sharded(testModelSharders().byf16(), "bucket-2").select(2);
-        ImmutableArray<TestingMetaModel> emptyResult = current().sharded(testModelSharders().byf16(), "bucket-2").select(1);
+        ImmutableArray<TestingMetaModel> result1 = current().sharded(testModelSharders().string(), "bucket-1").select(1);
+        ImmutableArray<TestingMetaModel> result2 = current().sharded(testModelSharders().string(), "bucket-2").select(2);
+        ImmutableArray<TestingMetaModel> emptyResult = current().sharded(testModelSharders().string(), "bucket-2").select(1);
 
         assertEquals(0, emptyResult.size());
 
