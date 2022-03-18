@@ -25,12 +25,14 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
     private final TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
+    private final TarantoolBlockingShardService<KeyType, ModelType> sharded;
 
     public TarantoolBlockingSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.spaceName = newString(idByDash(spaceMeta.definition().type()));
         reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
+        sharded = new TarantoolBlockingShardService<>(keyMeta, spaceMeta, clients);
     }
 
     @Override
@@ -171,6 +173,6 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
 
     @Override
     public TarantoolBlockingShardService<KeyType, ModelType> sharded(ShardRequest request) {
-        return TarantoolBlockingShardService.<KeyType, ModelType>builder().build();
+        return sharded.shard(request);
     }
 }

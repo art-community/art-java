@@ -10,8 +10,6 @@ import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
 import io.art.tarantool.stream.*;
-import lombok.*;
-import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -34,13 +32,9 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
     private final MetaType<KeyType> keyMeta;
-    private final ShardRequest shardRequest;
+    private final ThreadLocal<ShardRequest> shard = new ThreadLocal<>();
 
-    @Builder
-    private TarantoolReactiveShardService(MetaType<KeyType> keyMeta,
-                                          MetaClass<ModelType> spaceMeta,
-                                          TarantoolClientRegistry clients,
-                                          ShardRequest request) {
+    public TarantoolReactiveShardService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.keyMeta = keyMeta;
@@ -48,9 +42,12 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
-        this.shardRequest = request;
     }
 
+    TarantoolReactiveShardService<KeyType, ModelType> shard(ShardRequest request) {
+        shard.set(request);
+        return this;
+    }
 
     @Override
     public Mono<ModelType> first(KeyType key) {
@@ -231,12 +228,13 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     }
 
     private ImmutableArrayValue wrapInput(ImmutableValue input) {
-        ImmutableArrayValue shardData = newArray(shardRequest.getData()
+        ShardRequest request = this.shard.get();
+        ImmutableArrayValue shardData = newArray(request.getData()
                 .values()
                 .stream()
                 .map(element -> writer.write(definition(element.getClass()), element))
                 .toArray(Value[]::new), true);
-        ImmutableArrayValue bucket = newArray(shardData, newInteger(shardRequest.getAlgorithm().ordinal()));
+        ImmutableArrayValue bucket = newArray(shardData, newInteger(request.getAlgorithm().ordinal()));
         return newArray(bucket, input);
     }
 

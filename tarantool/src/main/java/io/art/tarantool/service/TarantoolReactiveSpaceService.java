@@ -36,6 +36,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     private final TarantoolClientRegistry clients;
     private final TarantoolModelWriter writer;
     private final MetaType<KeyType> keyMeta;
+    private final TarantoolReactiveShardService<KeyType, ModelType> sharded;
 
     public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
@@ -45,6 +46,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
+        sharded = new TarantoolReactiveShardService<>(keyMeta, spaceMeta, clients);
     }
 
     @Override
@@ -227,7 +229,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request) {
-        return null;
+        return sharded.shard(request);
     }
 
     private Mono<Long> parseLongMono(Mono<Value> value) {

@@ -8,7 +8,6 @@ import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.stream.*;
-import lombok.Builder;
 import org.msgpack.value.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
@@ -23,20 +22,16 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
     private final TarantoolClientRegistry clients;
     private final TarantoolReactiveShardService<KeyType, ModelType> reactive;
 
-    @Builder
-    private TarantoolBlockingShardService(MetaType<KeyType> keyMeta,
-                                          MetaClass<ModelType> spaceMeta,
-                                          TarantoolClientRegistry clients,
-                                          ShardRequest request) {
+    public TarantoolBlockingShardService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.spaceName = newString(idByDash(spaceMeta.definition().type()));
-        reactive = TarantoolReactiveShardService.<KeyType, ModelType>builder()
-                .keyMeta(keyMeta)
-                .spaceMeta(spaceMeta)
-                .clients(clients)
-                .request(request)
-                .build();
+        reactive = new TarantoolReactiveShardService<>(keyMeta, spaceMeta, clients);
+    }
+
+    TarantoolBlockingShardService<KeyType, ModelType> shard(ShardRequest request) {
+        reactive.shard(request);
+        return this;
     }
 
     @Override
