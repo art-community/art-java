@@ -9,9 +9,7 @@ import io.art.storage.index.*;
 import io.art.storage.sharder.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.service.*;
-import io.art.tarantool.sharder.*;
 import lombok.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -28,43 +26,27 @@ public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolBlockingSpaceService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
-    private final Map<Object, LazyProperty<TarantoolBlockingShardProvider<?, ?>>> shardProviders = map();
+    private final Map<String, LazyProperty<Sharders<?>>> sharders = map();
 
     public <C> TarantoolServicesConfigurator space(TarantoolSpaceConfigurator<C> configurator) {
         Supplier<MetaField<? extends MetaClass<C>, ?>> idField = configurator.getField();
         Class<? extends Indexes<C>> indexes = configurator.getIndexes();
         Class<C> spaceClass = configurator.getSpaceClass();
         Class<? extends Storage> storageClass = configurator.getStorageClass();
-        ShardFunction shardFunction = configurator.getShardFunction();
+        Class<? extends Sharders<C>> sharders = configurator.getSharders();
 
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
 
-        if (nonNull(indexes)) {
-            if (nonNull(shardFunction)) {
-                shardProviders.put(shardFunction.getSource(), lazy(() -> new TarantoolBlockingShardProvider<>(TarantoolBlockingShardService.builder()
-                        .shardFunction(shardFunction)
-                        .clients(storages().get(storageId))
-                        .spaceMeta(cast(declaration(spaceClass)))
-                        .keyMeta(cast(idFieldByIndexes(indexes)))
-                        .build())));
-                this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
-                return this;
-            }
-
-            spaceServices.put(spaceId, lazy(() -> spaceServiceByField(idFieldByIndexes(indexes), spaceClass, storageId)));
-            this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
+        if (nonNull(sharders)) {
+            this.sharders.put(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
             return this;
         }
 
-        if (nonNull(shardFunction)) {
-            shardProviders.put(shardFunction.getSource(), lazy(() -> new TarantoolBlockingShardProvider<>(TarantoolBlockingShardService.builder()
-                    .shardFunction(shardFunction)
-                    .clients(storages().get(storageId))
-                    .spaceMeta(cast(declaration(spaceClass)))
-                    .keyMeta(cast(idField.get().type()))
-                    .build())));
+        if (nonNull(indexes)) {
+            spaceServices.put(spaceId, lazy(() -> spaceServiceByField(idFieldByIndexes(indexes), spaceClass, storageId)));
+            this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
             return this;
         }
 
@@ -85,11 +67,11 @@ public class TarantoolServicesConfigurator {
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<Object, TarantoolBlockingShardProvider<?, ?>>> sharders = lazy(() -> this.shardProviders
+        LazyProperty<ImmutableMap<String, Sharders<?>>> sharders = lazy(() -> this.sharders
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        return new TarantoolServiceRegistry(spaces, schemas, indexes, cast(sharders));
+        return TarantoolServiceRegistry.builder().spaces(spaces).schemas(schemas).indexes(indexes).sharders(sharders).build();
     }
 
     private static ImmutableMap<String, TarantoolClientRegistry> storages() {

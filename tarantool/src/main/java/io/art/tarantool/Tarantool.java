@@ -5,6 +5,7 @@ import io.art.core.annotation.*;
 import io.art.storage.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.sharder.*;
 import io.art.tarantool.service.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -12,7 +13,6 @@ import static io.art.core.caster.Caster.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static lombok.AccessLevel.*;
-import java.util.function.*;
 
 @Public
 @UtilityClass
@@ -47,8 +47,8 @@ public class Tarantool {
             return tarantoolModule().configuration().getServices().getIndexes(spaceType);
         }
 
-        public <ModelType, IndexesType extends Indexes<ModelType>> Index index(Class<ModelType> spaceType, Function<IndexesType, Index> provider) {
-            return provider.apply(indexes(spaceType));
+        public <ModelType, IndexesType extends Sharders<ModelType>> IndexesType sharders(Class<ModelType> spaceType) {
+            return tarantoolModule().configuration().getServices().getSharders(spaceType);
         }
     }
 }

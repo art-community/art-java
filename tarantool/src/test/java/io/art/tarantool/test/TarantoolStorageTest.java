@@ -76,6 +76,8 @@ public class TarantoolStorageTest {
 
     @Test
     public void testSinglePut() {
+
+
         current()
                 .sharded(testModelSharders().byOtherSpace(), OtherSpace.builder().value("test").build())
                 .count(123);

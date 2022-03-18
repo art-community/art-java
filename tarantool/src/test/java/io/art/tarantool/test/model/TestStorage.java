@@ -39,7 +39,7 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     }
 
     static TestModelSharders testModelSharders() {
-        return tarantool().indexes(TestingMetaModel.class);
+        return tarantool().sharders(TestingMetaModel.class);
     }
 
     @Getter

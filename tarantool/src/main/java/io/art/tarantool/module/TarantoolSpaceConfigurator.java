@@ -11,30 +11,25 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor
-public class TarantoolSpaceConfigurator<C> {
+public class TarantoolSpaceConfigurator<ModelType> {
     private final Class<? extends Storage> storageClass;
-    private final Class<C> spaceClass;
-    private Supplier<MetaField<? extends MetaClass<C>, ?>> field;
-    private Class<? extends Indexes<C>> indexes;
-    private ShardFunction shardFunction;
+    private final Class<ModelType> spaceClass;
+    private Supplier<MetaField<? extends MetaClass<ModelType>, ?>> field;
+    private Class<? extends Indexes<ModelType>> indexes;
+    private Class<? extends Sharders<ModelType>> sharders;
 
-    public <M extends MetaClass<C>> TarantoolSpaceConfigurator<C> id(Supplier<MetaField<M, ?>> field) {
+    public <M extends MetaClass<ModelType>> TarantoolSpaceConfigurator<ModelType> id(Supplier<MetaField<M, ?>> field) {
         this.field = cast(field);
         return this;
     }
 
-    public <I extends Indexes<C>> TarantoolSpaceConfigurator<C> indexes(Class<I> indexes) {
+    public <I extends Indexes<ModelType>> TarantoolSpaceConfigurator<ModelType> indexes(Class<I> indexes) {
         this.indexes = indexes;
         return this;
     }
 
-    public <P1> TarantoolSpaceConfigurator<C> sharded(ShardFunction1<C, P1> operator) {
-        shardFunction = new ShardFunction(operator, parameters -> operator.shard(cast(parameters.values().get(0))));
-        return this;
-    }
-
-    public <P1, P2> TarantoolSpaceConfigurator<C> sharded(Sharder2<C, P1, P2> operator) {
-        shardFunction = new ShardFunction(operator, parameters -> operator.shard(cast(parameters.values().get(0)), cast(parameters.values().get(1))));
+    public <S extends Sharders<ModelType>> TarantoolSpaceConfigurator<ModelType> sharders(Class<S> sharders) {
+        this.sharders = sharders;
         return this;
     }
 }

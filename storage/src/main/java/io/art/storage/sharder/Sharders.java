@@ -23,6 +23,10 @@ public interface Sharders<T> {
         return new ShardRequest(algorithm, tuple(p1));
     }
 
+    default <P1, P2> ShardRequest sharder(P1 p1, P2 p2) {
+        return sharder(p1, p2, CRC_32);
+    }
+
     default <P1, P2> ShardRequest sharder(P1 P1, P2 p2, ShardAlgorithm algorithm) {
         return new ShardRequest(algorithm, tuple(P1, p2));
     }
