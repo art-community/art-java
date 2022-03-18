@@ -54,15 +54,7 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
 
     @Override
     public Mono<ModelType> first(KeyType key) {
-        ImmutableArrayValue shardData = newArray(shardRequest.getData()
-                .values()
-                .stream()
-                .map(element -> writer.write(definition(element.getClass()), element))
-                .collect(listCollector()));
-        ArrayValue input = newArray(
-                newArray(shardData, newInteger(shardRequest.getAlgorithm().ordinal())),
-                newArray(spaceName, writer.write(keyMeta, key))
-        );
+        ArrayValue input = wrapInput(newArray(spaceName, writer.write(keyMeta, key)));
         Mono<Value> output = clients.immutable().call(SPACE_FIRST, input);
         return parseSpaceMono(output);
     }
@@ -236,6 +228,16 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
                 .clients(clients)
                 .spaceName(spaceName)
                 .build();
+    }
+
+    private ImmutableArrayValue wrapInput(ImmutableValue input) {
+        ImmutableArrayValue shardData = newArray(shardRequest.getData()
+                .values()
+                .stream()
+                .map(element -> writer.write(definition(element.getClass()), element))
+                .collect(listCollector()));
+        ImmutableArrayValue bucket = newArray(shardData, newInteger(shardRequest.getAlgorithm().ordinal()));
+        return newArray(bucket, input);
     }
 
     private Mono<Long> parseLongMono(Mono<Value> value) {
