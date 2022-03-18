@@ -45,7 +45,7 @@ public class TarantoolStorageTest {
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class).sharded(testingModelSharder))
+                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
                 )
         );
         tarantool()
@@ -76,12 +76,6 @@ public class TarantoolStorageTest {
 
     @Test
     public void testSinglePut() {
-
-
-        current()
-                .sharded(testModelSharders().byOtherSpace(), OtherSpace.builder().value("test").build())
-                .count(123);
-
         TestingMetaModel data = generateTestingModel();
         data.assertEquals(current().put(data));
     }

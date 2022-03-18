@@ -41,8 +41,8 @@ public class TarantoolStreamTest {
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, TestModelIndexes.class)
-                        .space(TestStorage.class, OtherSpace.class, OtherSpaceIndexes.class)
+                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
+                        .space(TestStorage.class, OtherSpace.class, space -> space.indexes(OtherSpaceIndexes.class))
                 )
         );
         tarantool()
