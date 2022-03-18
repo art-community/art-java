@@ -73,6 +73,7 @@ public interface TarantoolModuleConstants {
         String TARANTOOL_INSTANCE_HOST_KEY = "host";
         String TARANTOOL_INSTANCE_PORT_KEY = "port";
         String TARANTOOL_INSTANCE_IMMUTABLE_KEY = "immutable";
+        String TARANTOOL_INSTANCE_ROUTER_KEY = "router";
         String TARANTOOL_INSTANCE_USERNAME_KEY = "username";
         String TARANTOOL_INSTANCE_PASSWORD_KEY = "password";
         String TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY = "connection_timeout";

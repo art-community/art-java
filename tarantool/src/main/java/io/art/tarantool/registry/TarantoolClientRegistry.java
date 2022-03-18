@@ -10,16 +10,22 @@ import java.util.function.*;
 
 public class TarantoolClientRegistry {
     private final Balancer<TarantoolClient> immutable;
+    private final Balancer<TarantoolClient> routers;
     private final Balancer<TarantoolClient> mutable;
 
     public TarantoolClientRegistry(TarantoolStorageConfiguration configuration) {
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
+        routers = new RoundRobinBalancer<>();
         initializeClients(configuration);
     }
 
     public TarantoolClient immutable() {
         return immutable.select();
+    }
+
+    public TarantoolClient router() {
+        return routers.select();
     }
 
     public TarantoolClient mutable() {
@@ -37,10 +43,16 @@ public class TarantoolClientRegistry {
     public void dispose() {
         immutable.endpoints().forEach(TarantoolClient::dispose);
         mutable.endpoints().forEach(TarantoolClient::dispose);
+        routers.endpoints().forEach(TarantoolClient::dispose);
     }
 
     private void initializeClients(TarantoolStorageConfiguration configuration) {
         for (TarantoolClientConfiguration client : configuration.getClients()) {
+            if (client.isRouter()) {
+                routers.addEndpoint(new TarantoolClient(client));
+                continue;
+            }
+
             if (client.isImmutable()) {
                 immutable.addEndpoint(new TarantoolClient(client));
                 continue;
