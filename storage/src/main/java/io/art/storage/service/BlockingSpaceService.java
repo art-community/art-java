@@ -127,4 +127,8 @@ public interface BlockingSpaceService<KeyType, ModelType> {
     default <P1> BlockingShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> function1, P1 input) {
         return sharded(function1.shard(input));
     }
+
+    default <P1, P2> BlockingShardService<KeyType, ModelType> sharded(Sharder2<ModelType, P1, P2> function2, P1 input1, P2 input2) {
+        return sharded(function2.shard(input1, input2));
+    }
 }
