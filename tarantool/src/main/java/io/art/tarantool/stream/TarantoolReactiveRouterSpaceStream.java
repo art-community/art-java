@@ -32,8 +32,9 @@ import java.util.function.*;
 
 
 public class TarantoolReactiveRouterSpaceStream<ModelType> extends ReactiveSpaceStream<ModelType> {
-    private final TarantoolStreamSerializer serializer;
     private final static TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
+
+    private final TarantoolStreamSerializer serializer;
     private final TarantoolModelReader reader;
     private final ImmutableStringValue spaceName;
     private final TarantoolClientRegistry clients;

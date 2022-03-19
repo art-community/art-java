@@ -31,6 +31,8 @@ import java.util.function.*;
 
 
 public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpaceStream<ModelType> {
+    private final static StreamProtocol.TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
+
     private final TarantoolStreamSerializer serializer;
     private final TarantoolModelReader reader;
     private final ImmutableStringValue spaceName;
@@ -58,7 +60,7 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
 
     @Override
     public Flux<ModelType> collect() {
-        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingCollect);
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCollect);
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
@@ -67,7 +69,7 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
 
     @Override
     public Mono<Long> count() {
-        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingCount);
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCount);
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
@@ -79,7 +81,7 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
         ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readBooleanMono(result);
@@ -90,7 +92,7 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
         ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readBooleanMono(result);
@@ -101,7 +103,7 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
         ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readBooleanMono(result);
