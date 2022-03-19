@@ -65,7 +65,7 @@ public interface StorageConstants {
         MAP
     }
 
-    enum UpdateOpration {
+    enum UpdateOperation {
         ADD,
         SUBTRACT,
         BITWISE_AND,

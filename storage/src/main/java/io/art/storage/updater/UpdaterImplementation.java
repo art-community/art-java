@@ -4,7 +4,7 @@ import io.art.meta.model.*;
 import io.art.storage.constants.StorageConstants.*;
 import lombok.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.storage.constants.StorageConstants.UpdateOpration.*;
+import static io.art.storage.constants.StorageConstants.UpdateOperation.*;
 import java.util.*;
 
 @Getter
@@ -56,7 +56,7 @@ public class UpdaterImplementation<T> implements Updater<T> {
     @Getter
     @AllArgsConstructor
     public static class UpdateOperator {
-        private final UpdateOpration operation;
+        private final UpdateOperation operation;
         private final MetaField<?, ?> field;
         private final List<?> values;
     }
