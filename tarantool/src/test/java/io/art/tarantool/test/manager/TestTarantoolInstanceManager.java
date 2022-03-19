@@ -21,29 +21,27 @@ import java.nio.file.*;
 @UtilityClass
 public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
-        if (!TCP.isPortAvailable(STORAGE_PORT)) return;
-        Path working = touchDirectory(get(STORAGE_DIRECTORY));
-        InputStream script = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(STORAGE_SCRIPT);
-        if (isNull(script)) throw new ImpossibleSituationException();
-        InputStream module = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
-        if (isNull(module)) throw new ImpossibleSituationException();
-        Path scriptPath = working.resolve(STORAGE_SCRIPT).toAbsolutePath();
-        writeFile(scriptPath, toByteArray(script));
-        writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
-        String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
-                STORAGE_COMMAND + SPACE + convertToWslPath(scriptPath.toString()) +
-                (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
-        String[] command = {
-                BASH,
-                BASH_ARGUMENT,
-                executable
-        };
-        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
+        initialize(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_SCRIPT);
+    }
+
+    public static void initializeRouter() {
+        initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
+        initialize(SHARD_1_PORT, SHARD_1_DIRECTORY, SHARD_1_SCRIPT);
+        initialize(SHARD_2_PORT, SHARD_2_DIRECTORY, SHARD_2_SCRIPT);
     }
 
     public static void shutdownStorage() {
-        Path pid = get(STORAGE_DIRECTORY).resolve(STORAGE_PID);
+        shutdown(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_PID);
+    }
+
+    public static void shutdownRouter() {
+        shutdown(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_PID);
+        shutdown(SHARD_1_PORT, SHARD_1_DIRECTORY, SHARD_1_PID);
+        shutdown(SHARD_2_PORT, SHARD_2_DIRECTORY, SHARD_2_PID);
+    }
+
+    private static void shutdown(int port, String directory, String pidPath) {
+        Path pid = get(directory).resolve(pidPath);
         if (!pid.toFile().exists()) return;
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 KILL_COMMAND + readFile(pid) +
@@ -54,7 +52,29 @@ public class TestTarantoolInstanceManager {
                 executable
         };
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitCondition(() -> TCP.isPortAvailable(STORAGE_PORT));
-        recursiveDelete(get(STORAGE_DIRECTORY));
+        waitCondition(() -> TCP.isPortAvailable(port));
+        recursiveDelete(get(directory));
+    }
+
+    private static void initialize(int port, String directory, String scriptFile) {
+        if (!TCP.isPortAvailable(port)) return;
+        Path working = touchDirectory(get(directory));
+        InputStream script = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(scriptFile);
+        if (isNull(script)) throw new ImpossibleSituationException();
+        InputStream module = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
+        if (isNull(module)) throw new ImpossibleSituationException();
+        Path scriptPath = working.resolve(scriptFile).toAbsolutePath();
+        writeFile(scriptPath, toByteArray(script));
+        writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
+        String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
+                instanceCommand(directory) + SPACE + convertToWslPath(scriptPath.toString()) +
+                (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
+        String[] command = {
+                BASH,
+                BASH_ARGUMENT,
+                executable
+        };
+        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        waitCondition(() -> !TCP.isPortAvailable(port));
     }
 }
