@@ -62,7 +62,7 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
                 writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
-        return parseSpaceFlux(returningType, result);
+        return readSpaceFlux(returningType, result);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
                 writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
-        return parseLongMono(result);
+        return readLongMono(result);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
                 writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
-        return parseBooleanMono(result);
+        return readBooleanMono(result);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
                 writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
-        return parseBooleanMono(result);
+        return readBooleanMono(result);
     }
 
     @Override
@@ -119,18 +119,18 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
                 writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
-        return parseBooleanMono(result);
+        return readBooleanMono(result);
     }
 
-    private Mono<Long> parseLongMono(Mono<Value> value) {
+    private Mono<Long> readLongMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Mono<Boolean> parseBooleanMono(Mono<Value> value) {
+    private Mono<Boolean> readBooleanMono(Mono<Value> value) {
         return value.map(element -> reader.read(booleanType(), element));
     }
 
-    private Flux<ModelType> parseSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
+    private Flux<ModelType> readSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
