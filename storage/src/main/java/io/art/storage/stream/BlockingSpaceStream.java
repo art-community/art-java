@@ -23,40 +23,40 @@ import java.util.function.*;
 import java.util.stream.*;
 
 @Public
-public abstract class SpaceStream<Type> {
+public abstract class BlockingSpaceStream<Type> {
     protected List<ProcessingOperator> operators = linkedList();
     protected MetaType<Type> returningType;
     protected Tuple baseKey;
 
-    public SpaceStream(MetaType<Type> returningType) {
+    public BlockingSpaceStream(MetaType<Type> returningType) {
         this.returningType = returningType;
     }
 
-    public SpaceStream(MetaType<Type> returningType, Tuple baseKey) {
+    public BlockingSpaceStream(MetaType<Type> returningType, Tuple baseKey) {
         this.returningType = returningType;
         this.baseKey = baseKey;
     }
 
-    public SpaceStream<Type> limit(long value) {
+    public BlockingSpaceStream<Type> limit(long value) {
         operators.add(new ProcessingOperator(LIMIT, value));
         return this;
     }
 
-    public SpaceStream<Type> offset(long value) {
+    public BlockingSpaceStream<Type> offset(long value) {
         operators.add(new ProcessingOperator(OFFSET, value));
         return this;
     }
 
-    public SpaceStream<Type> range(long offset, long limit) {
+    public BlockingSpaceStream<Type> range(long offset, long limit) {
         return offset(offset).limit(limit);
     }
 
-    public SpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
+    public BlockingSpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(DISTINCT, field));
         return this;
     }
 
-    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
+    public <FieldType> BlockingSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
         operators.add(new ProcessingOperator(SORT, sorter.apply(new SorterImplementation<>(current))));
         return this;
     }
@@ -69,58 +69,58 @@ public abstract class SpaceStream<Type> {
         return sort(byField, Sorter::ascendant).first();
     }
 
-    public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
+    public BlockingSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         FilterImplementation<Type> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         operators.add(new ProcessingOperator(FILTER, newFilter));
         return this;
     }
 
-    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+    public <Mapped> BlockingSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().bySpace(space, field)));
         returningType = cast(space.definition());
         return cast(this);
     }
 
-    public <Mapped, F1> SpaceStream<Mapped> map(Index1<Mapped, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
+    public <Mapped, F1> BlockingSpaceStream<Mapped> map(Index1<Mapped, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1))));
         returningType = cast(index.owner().definition());
         return cast(this);
     }
 
-    public <Mapped, F1, F2> SpaceStream<Mapped> map(Index2<Mapped, F1, F2> index,
-                                                    MetaField<? extends MetaClass<Type>, F1> field1,
-                                                    MetaField<? extends MetaClass<Type>, F2> field2) {
+    public <Mapped, F1, F2> BlockingSpaceStream<Mapped> map(Index2<Mapped, F1, F2> index,
+                                                            MetaField<? extends MetaClass<Type>, F1> field1,
+                                                            MetaField<? extends MetaClass<Type>, F2> field2) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2))));
         returningType = cast(index.owner().definition());
         return cast(this);
     }
 
-    public <Mapped, F1, F2, F3> SpaceStream<Mapped> map(Index3<Mapped, F1, F2, F3> index,
-                                                        MetaField<? extends MetaClass<Type>, F1> field1,
-                                                        MetaField<? extends MetaClass<Type>, F2> field2,
-                                                        MetaField<? extends MetaClass<Type>, F3> field3) {
+    public <Mapped, F1, F2, F3> BlockingSpaceStream<Mapped> map(Index3<Mapped, F1, F2, F3> index,
+                                                                MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                MetaField<? extends MetaClass<Type>, F3> field3) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2, field3))));
         returningType = cast(index.owner().definition());
         return cast(this);
     }
 
-    public <Mapped, F1, F2, F3, F4> SpaceStream<Mapped> map(Index4<Mapped, F1, F2, F3, F4> index,
-                                                            MetaField<? extends MetaClass<Type>, F1> field1,
-                                                            MetaField<? extends MetaClass<Type>, F2> field2,
-                                                            MetaField<? extends MetaClass<Type>, F3> field3,
-                                                            MetaField<? extends MetaClass<Type>, F4> field4) {
+    public <Mapped, F1, F2, F3, F4> BlockingSpaceStream<Mapped> map(Index4<Mapped, F1, F2, F3, F4> index,
+                                                                    MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                    MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                    MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                    MetaField<? extends MetaClass<Type>, F4> field4) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2, field3, field4))));
         returningType = cast(index.owner().definition());
         return cast(this);
     }
 
-    public <Mapped, F1, F2, F3, F4, F5> SpaceStream<Mapped> map(Index5<Mapped, F1, F2, F3, F4, F5> index,
-                                                                MetaField<? extends MetaClass<Type>, F1> field1,
-                                                                MetaField<? extends MetaClass<Type>, F2> field2,
-                                                                MetaField<? extends MetaClass<Type>, F3> field3,
-                                                                MetaField<? extends MetaClass<Type>, F4> field4,
-                                                                MetaField<? extends MetaClass<Type>, F5> field5) {
+    public <Mapped, F1, F2, F3, F4, F5> BlockingSpaceStream<Mapped> map(Index5<Mapped, F1, F2, F3, F4, F5> index,
+                                                                        MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                        MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                        MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                        MetaField<? extends MetaClass<Type>, F4> field4,
+                                                                        MetaField<? extends MetaClass<Type>, F5> field5) {
         operators.add(new ProcessingOperator(MAP, new Mapper<Type, Mapped>().byIndex(index, tuple(field1, field2, field3, field4, field5))));
         returningType = cast(index.owner().definition());
         return cast(this);

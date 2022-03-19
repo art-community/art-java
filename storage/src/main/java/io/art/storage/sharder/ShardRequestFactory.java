@@ -4,12 +4,12 @@ import io.art.core.annotation.*;
 import io.art.core.model.*;
 import io.art.storage.constants.StorageConstants.*;
 import lombok.experimental.*;
-import static io.art.storage.constants.StorageConstants.ShardAlgorithm.*;
+import static io.art.storage.constants.StorageConstants.ShardingAlgorithm.*;
 
 @Public
 @UtilityClass
 public class ShardRequestFactory {
-    public static ShardRequest shard(ShardAlgorithm algorithm, Tuple data) {
+    public static ShardRequest shard(ShardingAlgorithm algorithm, Tuple data) {
         return new ShardRequest(algorithm, data);
     }
 

@@ -103,12 +103,12 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
-    public TarantoolStream<ModelType> stream() {
-        return new TarantoolStream<>(spaceType, reactive.stream());
+    public TarantoolBlockingStream<ModelType> stream() {
+        return new TarantoolBlockingStream<>(spaceType, reactive.stream());
     }
 
     @Override
-    public TarantoolStream<ModelType> stream(Tuple baseKey) {
-        return new TarantoolStream<>(spaceType, reactive.stream(baseKey));
+    public TarantoolBlockingStream<ModelType> stream(Tuple baseKey) {
+        return new TarantoolBlockingStream<>(spaceType, reactive.stream(baseKey));
     }
 }

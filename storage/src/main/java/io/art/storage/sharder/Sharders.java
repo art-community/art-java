@@ -4,7 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.model.*;
 import io.art.storage.constants.StorageConstants.*;
 import static io.art.core.model.Tuple.*;
-import static io.art.storage.constants.StorageConstants.ShardAlgorithm.*;
+import static io.art.storage.constants.StorageConstants.ShardingAlgorithm.*;
 
 @Public
 public interface Sharders<T> {
@@ -12,7 +12,7 @@ public interface Sharders<T> {
         return ignore -> sharder(constant, CRC_32);
     }
 
-    default <C> Sharder1<T, C> constant(C constant, ShardAlgorithm algorithm) {
+    default <C> Sharder1<T, C> constant(C constant, ShardingAlgorithm algorithm) {
         return ignore -> sharder(constant, algorithm);
     }
 
@@ -20,7 +20,7 @@ public interface Sharders<T> {
         return sharder(CRC_32, tuple);
     }
 
-    default <P1> ShardRequest sharder(ShardAlgorithm algorithm, Tuple tuple) {
+    default <P1> ShardRequest sharder(ShardingAlgorithm algorithm, Tuple tuple) {
         return new ShardRequest(algorithm, tuple);
     }
 
@@ -28,7 +28,7 @@ public interface Sharders<T> {
         return sharder(CRC_32, p1);
     }
 
-    default <P1> ShardRequest sharder(ShardAlgorithm algorithm, P1 p1) {
+    default <P1> ShardRequest sharder(ShardingAlgorithm algorithm, P1 p1) {
         return new ShardRequest(algorithm, tuple(p1));
     }
 
@@ -36,7 +36,7 @@ public interface Sharders<T> {
         return sharder(CRC_32, p1, p2);
     }
 
-    default <P1, P2> ShardRequest sharder(ShardAlgorithm algorithm, P1 P1, P2 p2) {
+    default <P1, P2> ShardRequest sharder(ShardingAlgorithm algorithm, P1 P1, P2 p2) {
         return new ShardRequest(algorithm, tuple(P1, p2));
     }
 
@@ -44,7 +44,7 @@ public interface Sharders<T> {
         return sharder(CRC_32, p1, p2, p3);
     }
 
-    default <P1, P2, P3> ShardRequest sharder(ShardAlgorithm algorithm, P1 P1, P2 p2, P3 p3) {
+    default <P1, P2, P3> ShardRequest sharder(ShardingAlgorithm algorithm, P1 P1, P2 p2, P3 p3) {
         return new ShardRequest(algorithm, tuple(P1, p2, p3));
     }
 
@@ -52,7 +52,7 @@ public interface Sharders<T> {
         return sharder(CRC_32, p1, p2, p3, p4);
     }
 
-    default <P1, P2, P3, P4> ShardRequest sharder(ShardAlgorithm algorithm, P1 P1, P2 p2, P3 p3, P4 p4) {
+    default <P1, P2, P3, P4> ShardRequest sharder(ShardingAlgorithm algorithm, P1 P1, P2 p2, P3 p3, P4 p4) {
         return new ShardRequest(algorithm, tuple(P1, p2, p3, p4));
     }
 
@@ -60,7 +60,7 @@ public interface Sharders<T> {
         return sharder(CRC_32, p1, p2, p3, p4, p5);
     }
 
-    default <P1, P2, P3, P4, P5> ShardRequest sharder(ShardAlgorithm algorithm, P1 P1, P2 p2, P3 p3, P4 p4, P5 p5) {
+    default <P1, P2, P3, P4, P5> ShardRequest sharder(ShardingAlgorithm algorithm, P1 P1, P2 p2, P3 p3, P4 p4, P5 p5) {
         return new ShardRequest(algorithm, tuple(P1, p2, p3, p4, p5));
     }
 }

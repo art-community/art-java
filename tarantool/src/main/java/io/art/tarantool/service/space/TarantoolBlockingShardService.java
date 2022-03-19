@@ -7,23 +7,16 @@ import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.stream.*;
-import org.msgpack.value.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
-import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 public class TarantoolBlockingShardService<KeyType, ModelType> implements BlockingShardService<KeyType, ModelType> {
-    private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
-    private final TarantoolClientRegistry clients;
     private final TarantoolReactiveShardService<KeyType, ModelType> reactive;
 
     public TarantoolBlockingShardService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
-        this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
-        this.spaceName = newString(idByDash(spaceMeta.definition().type()));
         reactive = new TarantoolReactiveShardService<>(keyMeta, spaceMeta, clients);
     }
 
@@ -143,13 +136,13 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolStream<ModelType> stream() {
-        return new TarantoolStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingStream<ModelType> stream() {
+        return new TarantoolBlockingStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override

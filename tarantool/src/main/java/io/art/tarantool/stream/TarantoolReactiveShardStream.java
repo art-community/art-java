@@ -4,6 +4,7 @@ import io.art.core.model.*;
 import io.art.meta.model.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.StreamProtocol.*;
 import io.art.tarantool.descriptor.*;
@@ -28,22 +29,25 @@ import java.util.*;
 import java.util.function.*;
 
 
-public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream<ModelType> {
+public class TarantoolReactiveShardStream<ModelType> extends ReactiveSpaceStream<ModelType> {
     private final TarantoolStreamSerializer serializer;
     private final static TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
     private final TarantoolModelReader reader;
     private final ImmutableStringValue spaceName;
     private final TarantoolClientRegistry clients;
+    private final ShardRequest shardRequest;
     private final TarantoolModelWriter writer;
 
     @Builder
-    public TarantoolReactiveSpaceStream(MetaType<ModelType> spaceType,
+    public TarantoolReactiveShardStream(MetaType<ModelType> spaceType,
                                         ImmutableStringValue spaceName,
                                         TarantoolClientRegistry clients,
+                                        ShardRequest shardRequest,
                                         Tuple baseKey) {
         super(spaceType, baseKey);
         this.spaceName = spaceName;
         this.clients = clients;
+        this.shardRequest = shardRequest;
         reader = tarantoolModule().configuration().getReader();
         writer = tarantoolModule().configuration().getWriter();
         serializer = new TarantoolStreamSerializer(writer);
@@ -51,85 +55,91 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
 
     @Override
     public Flux<ModelType> collect() {
-        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCollect);
-        ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
-        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
-        return readSpaceFlux(returningType, result);
-    }
-
-    private ImmutableArrayValue writeStream(ImmutableArrayValue processing, ImmutableArrayValue terminating, ImmutableValue options) {
-        return newArray(spaceName, newArray(processing, terminating), options);
+        ImmutableArrayValue stream = newArray(
+                spaceName,
+                newArray(serializer.serializeStream(operators)),
+                newArray(terminatingFunctions.terminatingCollect),
+                writeBaseKey()
+        );
+        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
+        return parseSpaceFlux(returningType, result);
     }
 
     @Override
     public Mono<Long> count() {
-        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCount);
-        ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
-        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
-        return readLongMono(result);
+        ImmutableArrayValue stream = newArray(
+                spaceName,
+                newArray(serializer.serializeStream(operators)),
+                newArray(terminatingFunctions.terminatingCount),
+                writeBaseKey()
+        );
+        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
+        return parseLongMono(result);
     }
 
     @Override
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
-        ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
-        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
-        return readBooleanMono(result);
+        ImmutableArrayValue stream = newArray(
+                spaceName,
+                newArray(serializer.serializeStream(operators)),
+                newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts())),
+                writeBaseKey()
+        );
+        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
+        return parseBooleanMono(result);
     }
 
     @Override
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
-        ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
-        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
-        return readBooleanMono(result);
+        ImmutableArrayValue stream = newArray(
+                spaceName,
+                newArray(serializer.serializeStream(operators)),
+                newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts())),
+                writeBaseKey()
+        );
+        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
+        return parseBooleanMono(result);
     }
 
     @Override
     public Mono<Boolean> none(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingNone, SERIALIZER.serializeFilter(newFilter.getParts()));
-        ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
-        Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
-        return readBooleanMono(result);
+        ImmutableArrayValue stream = newArray(
+                spaceName,
+                newArray(serializer.serializeStream(operators)),
+                newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts())),
+                writeBaseKey()
+        );
+        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
+        return parseBooleanMono(result);
     }
 
-    private Mono<Long> readLongMono(Mono<Value> value) {
+    private Mono<Long> parseLongMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Mono<Boolean> readBooleanMono(Mono<Value> value) {
+    private Mono<Boolean> parseBooleanMono(Mono<Value> value) {
         return value.map(element -> reader.read(booleanType(), element));
     }
 
-    private Flux<ModelType> readSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
+    private Flux<ModelType> parseSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
                 .map(element -> reader.read(type, element))));
     }
 
-    private ImmutableValue writeOptions() {
-        if (isNull(baseKey)) return newArray();
+    private ImmutableValue writeBaseKey() {
+        if (isNull(baseKey)) return newNil();
         List<Value> serialized = baseKey.values()
                 .stream()
                 .map(key -> writer.write(definition(key.getClass()), key))
                 .collect(listCollector());
-        return newArray(newArray(serialized));
+        return newArray(serialized);
     }
 }

@@ -75,7 +75,7 @@ public interface StorageConstants {
         SPLICE
     }
 
-    enum ShardAlgorithm {
+    enum ShardingAlgorithm {
         CRC_32
     }
 }

@@ -17,46 +17,46 @@ import java.util.function.*;
 import java.util.stream.*;
 
 @SuppressWarnings({VARARGS})
-public class TarantoolStream<Type> extends SpaceStream<Type> {
+public class TarantoolBlockingStream<Type> extends BlockingSpaceStream<Type> {
     private final ReactiveSpaceStream<Type> stream;
 
-    public TarantoolStream(MetaType<Type> returningType, ReactiveSpaceStream<Type> stream) {
+    public TarantoolBlockingStream(MetaType<Type> returningType, ReactiveSpaceStream<Type> stream) {
         super(returningType);
         this.stream = stream;
     }
 
     @Override
-    public SpaceStream<Type> limit(long value) {
+    public BlockingSpaceStream<Type> limit(long value) {
         stream.limit(value);
         return this;
     }
 
     @Override
-    public SpaceStream<Type> offset(long value) {
+    public BlockingSpaceStream<Type> offset(long value) {
         stream.offset(value);
         return this;
     }
 
     @Override
-    public SpaceStream<Type> range(long offset, long limit) {
+    public BlockingSpaceStream<Type> range(long offset, long limit) {
         stream.range(offset, limit);
         return this;
     }
 
     @Override
-    public SpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
+    public BlockingSpaceStream<Type> distinct(MetaField<? extends MetaClass<Type>, ?> field) {
         stream.distinct(field);
         return this;
     }
 
     @Override
-    public <FieldType> SpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
+    public <FieldType> BlockingSpaceStream<Type> sort(MetaField<? extends MetaClass<Type>, FieldType> current, UnaryOperator<Sorter<Type, FieldType>> sorter) {
         stream.sort(current, sorter);
         return this;
     }
 
     @Override
-    public SpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
+    public BlockingSpaceStream<Type> filter(Consumer<Filter<Type>> filter) {
         stream.filter(filter);
         return this;
     }
@@ -72,51 +72,51 @@ public class TarantoolStream<Type> extends SpaceStream<Type> {
     }
 
     @Override
-    public <Mapped> SpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
+    public <Mapped> BlockingSpaceStream<Mapped> map(MetaClass<Mapped> space, MetaField<? extends MetaClass<Type>, ?> field) {
         stream.map(space, field);
         return cast(this);
     }
 
     @Override
-    public <Mapped, F1> SpaceStream<Mapped> map(Index1<Mapped, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
+    public <Mapped, F1> BlockingSpaceStream<Mapped> map(Index1<Mapped, F1> index, MetaField<? extends MetaClass<Type>, F1> field1) {
         stream.map(index, field1);
         return cast(this);
     }
 
     @Override
-    public <Mapped, F1, F2> SpaceStream<Mapped> map(Index2<Mapped, F1, F2> index,
-                                                    MetaField<? extends MetaClass<Type>, F1> field1,
-                                                    MetaField<? extends MetaClass<Type>, F2> field2) {
+    public <Mapped, F1, F2> BlockingSpaceStream<Mapped> map(Index2<Mapped, F1, F2> index,
+                                                            MetaField<? extends MetaClass<Type>, F1> field1,
+                                                            MetaField<? extends MetaClass<Type>, F2> field2) {
         stream.map(index, field1, field2);
         return cast(this);
     }
 
     @Override
-    public <Mapped, F1, F2, F3> SpaceStream<Mapped> map(Index3<Mapped, F1, F2, F3> index,
-                                                        MetaField<? extends MetaClass<Type>, F1> field1,
-                                                        MetaField<? extends MetaClass<Type>, F2> field2,
-                                                        MetaField<? extends MetaClass<Type>, F3> field3) {
+    public <Mapped, F1, F2, F3> BlockingSpaceStream<Mapped> map(Index3<Mapped, F1, F2, F3> index,
+                                                                MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                MetaField<? extends MetaClass<Type>, F3> field3) {
         stream.map(index, field1, field2, field3);
         return cast(this);
     }
 
     @Override
-    public <Mapped, F1, F2, F3, F4> SpaceStream<Mapped> map(Index4<Mapped, F1, F2, F3, F4> index,
-                                                            MetaField<? extends MetaClass<Type>, F1> field1,
-                                                            MetaField<? extends MetaClass<Type>, F2> field2,
-                                                            MetaField<? extends MetaClass<Type>, F3> field3,
-                                                            MetaField<? extends MetaClass<Type>, F4> field4) {
+    public <Mapped, F1, F2, F3, F4> BlockingSpaceStream<Mapped> map(Index4<Mapped, F1, F2, F3, F4> index,
+                                                                    MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                    MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                    MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                    MetaField<? extends MetaClass<Type>, F4> field4) {
         stream.map(index, field1, field2, field3, field4);
         return cast(this);
     }
 
     @Override
-    public <Mapped, F1, F2, F3, F4, F5> SpaceStream<Mapped> map(Index5<Mapped, F1, F2, F3, F4, F5> index,
-                                                                MetaField<? extends MetaClass<Type>, F1> field1,
-                                                                MetaField<? extends MetaClass<Type>, F2> field2,
-                                                                MetaField<? extends MetaClass<Type>, F3> field3,
-                                                                MetaField<? extends MetaClass<Type>, F4> field4,
-                                                                MetaField<? extends MetaClass<Type>, F5> field5) {
+    public <Mapped, F1, F2, F3, F4, F5> BlockingSpaceStream<Mapped> map(Index5<Mapped, F1, F2, F3, F4, F5> index,
+                                                                        MetaField<? extends MetaClass<Type>, F1> field1,
+                                                                        MetaField<? extends MetaClass<Type>, F2> field2,
+                                                                        MetaField<? extends MetaClass<Type>, F3> field3,
+                                                                        MetaField<? extends MetaClass<Type>, F4> field4,
+                                                                        MetaField<? extends MetaClass<Type>, F5> field5) {
         stream.map(index, field1, field2, field3, field4, field5);
         return cast(this);
     }

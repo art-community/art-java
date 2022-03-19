@@ -81,11 +81,11 @@ public class Index3Service<ModelType, F1, F2, F3> {
         return delegate.count(tuple(key1, key2, key3));
     }
 
-    public SpaceStream<ModelType> stream() {
+    public BlockingSpaceStream<ModelType> stream() {
         return delegate.stream();
     }
 
-    public SpaceStream<ModelType> stream(F1 key1, F2 key2, F3 key3) {
+    public BlockingSpaceStream<ModelType> stream(F1 key1, F2 key2, F3 key3) {
         return delegate.stream(tuple(key1, key2, key3));
     }
 }

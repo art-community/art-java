@@ -2,6 +2,7 @@ package io.art.tarantool.service.space;
 
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
@@ -18,6 +19,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
@@ -51,35 +53,35 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> first(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_FIRST, wrapInput(input));
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> select(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SELECT, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> select(KeyType key, long offset, long limit) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key), newArray(newInteger(offset), newInteger(limit)));
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SELECT, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(Collection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_FIND, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(ImmutableCollection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_FIND, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
@@ -87,21 +89,21 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> delete(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SINGLE_DELETE, wrapInput(input));
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> delete(Collection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_DELETE, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_DELETE, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
@@ -109,21 +111,21 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> insert(ModelType value) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SINGLE_INSERT, wrapInput(input));
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> insert(Collection<ModelType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_INSERT, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> insert(ImmutableCollection<ModelType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_INSERT, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
@@ -131,35 +133,35 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     @Override
     public Mono<ModelType> put(ModelType value) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SINGLE_PUT, wrapInput(input));
         return parseSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> put(Collection<ModelType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_PUT, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> put(ImmutableCollection<ModelType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_PUT, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<ModelType> update(KeyType key, Updater<ModelType> updater) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SINGLE_UPDATE, wrapInput(input));
         return parseSpaceMono(output);
     }
 
     @Override
     public Mono<Void> upsert(ModelType model, Updater<ModelType> updater) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(spaceMetaType, model), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_SINGLE_UPDATE, wrapInput(input));
         return output.then();
     }
 
@@ -167,7 +169,7 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     public Flux<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater) {
         List<Value> serializedKeys = keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector());
         ImmutableArrayValue input = newArray(spaceName, newArray(serializedKeys), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_UPDATE, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
@@ -175,25 +177,25 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     public Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
         List<Value> serializedKeys = keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector());
         ImmutableArrayValue input = newArray(spaceName, newArray(serializedKeys), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(input));
+        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_UPDATE, wrapInput(input));
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(KeyType key) {
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(newArray(spaceName, writer.write(keyMeta, key))));
+        Mono<Value> output = clients.router().call(SPACE_COUNT, wrapInput(newArray(spaceName, writer.write(keyMeta, key))));
         return parseLongMono(output);
     }
 
     @Override
     public Mono<Long> size() {
-        Mono<Value> output = clients.router().call(ROUTER_IMMUTABLE_CALL, wrapInput(newArray(spaceName)));
+        Mono<Value> output = clients.router().call(SPACE_COUNT, wrapInput(newArray(spaceName)));
         return parseLongMono(output);
     }
 
     @Override
     public Mono<Void> truncate() {
-        return clients.router().call(ROUTER_MUTABLE_CALL, wrapInput(newArray(spaceName))).then();
+        return clients.router().call(SPACE_TRUNCATE, wrapInput(newArray(spaceName))).then();
     }
 
     @Override
@@ -222,8 +224,9 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
                 .stream()
                 .map(element -> writer.write(definition(element.getClass()), element))
                 .toArray(Value[]::new), true);
-        ImmutableArrayValue bucket = newArray(shardData, newInteger(request.getAlgorithm().ordinal()));
-        return newArray(bucket, input);
+        ImmutableIntegerValue algorithm = newInteger(0);
+        if (request.getAlgorithm() == ShardingAlgorithm.CRC_32) algorithm = CRC_32;
+        return newArray(newArray(shardData, algorithm), input);
     }
 
     private Mono<Long> parseLongMono(Mono<Value> value) {

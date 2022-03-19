@@ -95,9 +95,9 @@ public interface BlockingSpaceService<KeyType, ModelType> {
         return update(keys, spaceUpdater);
     }
 
-    SpaceStream<ModelType> stream();
+    BlockingSpaceStream<ModelType> stream();
 
-    SpaceStream<ModelType> stream(KeyType baseKey);
+    BlockingSpaceStream<ModelType> stream(KeyType baseKey);
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 

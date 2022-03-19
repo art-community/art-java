@@ -65,7 +65,7 @@ public interface IndexService<ModelType> {
 
     ReactiveIndexService<ModelType> reactive();
 
-    SpaceStream<ModelType> stream();
+    BlockingSpaceStream<ModelType> stream();
 
-    SpaceStream<ModelType> stream(Tuple baseKey);
+    BlockingSpaceStream<ModelType> stream(Tuple baseKey);
 }
