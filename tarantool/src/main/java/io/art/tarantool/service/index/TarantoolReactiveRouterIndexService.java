@@ -159,8 +159,8 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
     }
 
     @Override
-    public TarantoolReactiveStorageIndexStream<ModelType> stream() {
-        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
+    public TarantoolReactiveRouterIndexStream<ModelType> stream() {
+        return TarantoolReactiveRouterIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .indexName(newString(this.index.get().name()))
                 .spaceType(spaceType)
@@ -169,8 +169,8 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
     }
 
     @Override
-    public TarantoolReactiveStorageIndexStream<ModelType> stream(Tuple baseKey) {
-        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
+    public TarantoolReactiveRouterIndexStream<ModelType> stream(Tuple baseKey) {
+        return TarantoolReactiveRouterIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .indexName(newString(this.index.get().name()))
                 .spaceType(spaceType)
