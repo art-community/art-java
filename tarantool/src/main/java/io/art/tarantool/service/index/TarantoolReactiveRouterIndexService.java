@@ -62,30 +62,30 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
 
     @Override
     public Mono<ModelType> first(Tuple tuple) {
-        ArrayValue input = wrapRequest(serializeTuple(tuple));
-        Mono<Value> output = clients.immutable().call(INDEX_FIRST, input);
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
+        Mono<Value> output = clients.router().call(INDEX_FIRST, writeRequest(input));
         return readSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple) {
-        ArrayValue input = wrapRequest(serializeTuple(tuple));
-        Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
+        Mono<Value> output = clients.router().call(INDEX_SELECT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple, int offset, int limit) {
-        ArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
-        Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
+        Mono<Value> output = clients.router().call(INDEX_SELECT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
         if (key.size() == 1) {
-            ArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
-            Mono<Value> output = clients.mutable().call(INDEX_SINGLE_UPDATE, input);
+            ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
+            Mono<Value> output = clients.router().call(INDEX_SINGLE_UPDATE, writeRequest(input));
             return readSpaceMono(output);
         }
         return update(linkedListOf(key), updater).next();
@@ -93,47 +93,49 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
 
     @Override
     public Flux<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater) {
-        ArrayValue input = newArray(
+        ImmutableArrayValue input = newArray(
                 spaceName,
                 newString(this.index.get().name()),
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
                 updateSerializer.serializeUpdate(cast(updater))
         );
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        Mono<Value> output = clients.router().call(INDEX_MULTIPLE_UPDATE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater) {
-        ArrayValue input = newArray(
+        ImmutableArrayValue input = newArray(
                 spaceName,
                 newString(this.index.get().name()),
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
                 updateSerializer.serializeUpdate(cast(updater))
         );
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        Mono<Value> output = clients.router().call(INDEX_MULTIPLE_UPDATE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(Collection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
+        Mono<Value> output = clients.router().call(INDEX_FIND, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
+        Mono<Value> output = clients.router().call(INDEX_FIND, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Mono<ModelType> delete(Tuple key) {
         if (key.size() == 1) {
-            ArrayValue input = wrapRequest(serializeTuple(key));
-            Mono<Value> output = clients.mutable().call(INDEX_SINGLE_DELETE, input);
+            ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key));
+            Mono<Value> output = clients.router().call(INDEX_SINGLE_DELETE, writeRequest(input));
             return readSpaceMono(output);
         }
         return delete(linkedListOf(key)).next();
@@ -141,21 +143,24 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
 
     @Override
     public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
+        Mono<Value> output = clients.router().call(INDEX_MULTIPLE_DELETE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
+        Mono<Value> output = clients.router().call(INDEX_MULTIPLE_DELETE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(Tuple tuple) {
-        return readCountMono(clients.immutable().call(INDEX_COUNT, newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple))));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
+        return readCountMono(clients.router().call(INDEX_COUNT, writeRequest(input)));
     }
 
     @Override
@@ -179,7 +184,7 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
                 .build();
     }
 
-    private ImmutableValue serializeTuple(Tuple tuple) {
+    private ImmutableArrayValue serializeTuple(Tuple tuple) {
         List<Value> serialized = linkedList();
         int index = 0;
         for (Object key : tuple.values()) {
@@ -188,8 +193,16 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
         return newArray(serialized);
     }
 
-    private ImmutableArrayValue wrapRequest(ImmutableValue serialized) {
-        return newArray(spaceName, newString(this.index.get().name()), serialized);
+    private ImmutableArrayValue writeRequest(ImmutableValue input) {
+        ShardRequest shardRequest = this.shard.get();
+        ImmutableArrayValue shardData = newArray(shardRequest.getData()
+                .values()
+                .stream()
+                .map(element -> writer.write(definition(element.getClass()), element))
+                .toArray(Value[]::new), true);
+        ImmutableIntegerValue algorithm = newInteger(0);
+        if (shardRequest.getAlgorithm() == StorageConstants.ShardingAlgorithm.CRC_32) algorithm = CRC_32;
+        return newArray(newArray(shardData, algorithm), input);
     }
 
     private Mono<Long> readCountMono(Mono<Value> value) {
@@ -205,17 +218,5 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
                 .list()
                 .stream()
                 .map(element -> reader.read(spaceType, element))));
-    }
-
-    private ImmutableArrayValue writeRequest(ImmutableValue input) {
-        ShardRequest request = this.shard.get();
-        ImmutableArrayValue shardData = newArray(request.getData()
-                .values()
-                .stream()
-                .map(element -> writer.write(definition(element.getClass()), element))
-                .toArray(Value[]::new), true);
-        ImmutableIntegerValue algorithm = newInteger(0);
-        if (request.getAlgorithm() == StorageConstants.ShardingAlgorithm.CRC_32) algorithm = CRC_32;
-        return newArray(newArray(shardData, algorithm), input);
     }
 }

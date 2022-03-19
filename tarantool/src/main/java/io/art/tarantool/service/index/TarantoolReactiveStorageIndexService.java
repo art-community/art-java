@@ -49,21 +49,21 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
 
     @Override
     public Mono<ModelType> first(Tuple tuple) {
-        ArrayValue input = wrapRequest(serializeTuple(tuple));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
         Mono<Value> output = clients.immutable().call(INDEX_FIRST, input);
         return readSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple) {
-        ArrayValue input = wrapRequest(serializeTuple(tuple));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
         Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple, int offset, int limit) {
-        ArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
         Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
         return readSpaceFlux(output);
     }
@@ -71,7 +71,7 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
     @Override
     public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
         if (key.size() == 1) {
-            ArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
+            ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
             Mono<Value> output = clients.mutable().call(INDEX_SINGLE_UPDATE, input);
             return readSpaceMono(output);
         }
@@ -80,7 +80,7 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
 
     @Override
     public Flux<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater) {
-        ArrayValue input = newArray(
+        ImmutableArrayValue input = newArray(
                 spaceName,
                 newString(this.index.get().name()),
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
@@ -92,7 +92,7 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
 
     @Override
     public Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater) {
-        ArrayValue input = newArray(
+        ImmutableArrayValue input = newArray(
                 spaceName,
                 newString(this.index.get().name()),
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
@@ -104,14 +104,16 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
 
     @Override
     public Flux<ModelType> find(Collection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
         Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
         Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
         return readSpaceFlux(output);
     }
@@ -119,7 +121,7 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
     @Override
     public Mono<ModelType> delete(Tuple key) {
         if (key.size() == 1) {
-            ArrayValue input = wrapRequest(serializeTuple(key));
+            ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key));
             Mono<Value> output = clients.mutable().call(INDEX_SINGLE_DELETE, input);
             return readSpaceMono(output);
         }
@@ -128,21 +130,24 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
 
     @Override
     public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
         Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
-        ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
+        ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
         Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return readSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(Tuple tuple) {
-        return readCountMono(clients.immutable().call(INDEX_COUNT, newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple))));
+        ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
+        return readCountMono(clients.immutable().call(INDEX_COUNT, input));
     }
 
     @Override
@@ -173,10 +178,6 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
             serialized.add(writer.write(this.index.get().fields().get(index++).type(), key));
         }
         return newArray(serialized);
-    }
-
-    private ImmutableArrayValue wrapRequest(ImmutableValue serialized) {
-        return newArray(spaceName, newString(this.index.get().name()), serialized);
     }
 
     private Mono<Long> readCountMono(Mono<Value> value) {
