@@ -58,9 +58,8 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue stream = newArray(
                 spaceName,
                 indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(operator),
-                writeBaseKey()
+                newArray(newArray(serializer.serializeStream(operators)), newArray(operator)),
+                writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return parseSpaceFlux(returningType, result);
@@ -71,9 +70,8 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue stream = newArray(
                 spaceName,
                 indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingCount),
-                writeBaseKey()
+                newArray(newArray(serializer.serializeStream(operators)), newArray(terminatingFunctions.terminatingCount)),
+                writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return parseLongMono(result);
@@ -88,7 +86,7 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
                 indexName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts())),
-                writeBaseKey()
+                writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return parseBooleanMono(result);
@@ -103,7 +101,7 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
                 indexName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts())),
-                writeBaseKey()
+                writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return parseBooleanMono(result);
@@ -118,7 +116,7 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
                 indexName,
                 newArray(serializer.serializeStream(operators)),
                 newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts())),
-                writeBaseKey()
+                writeOptions()
         );
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return parseBooleanMono(result);
@@ -139,12 +137,12 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
                 .map(element -> reader.read(type, element))));
     }
 
-    private ImmutableValue writeBaseKey() {
+    private ImmutableValue writeOptions() {
         if (isNull(baseKey)) return newNil();
-        List<Value> serialized = baseKey.values()
+        List<Value> serializedKey = baseKey.values()
                 .stream()
                 .map(key -> writer.write(Meta.definition(key.getClass()), key))
                 .collect(listCollector());
-        return newArray(serialized);
+        return newArray(newArray(serializedKey));
     }
 }
