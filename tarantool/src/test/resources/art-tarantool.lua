@@ -887,8 +887,6 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.index" ] = function( ... ) local arg = _G.arg;
-local stream = require("art.storage").stream
-
 local index = {
     first = function(space, index, keys)
         local foundIndex = box.space[space].index[index]
@@ -1149,8 +1147,6 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.space" ] = function( ... ) local arg = _G.arg;
-local stream = require("art.storage").stream
-
 local space = {
     first = function(space, key)
         return box.space[space]:get(key)
