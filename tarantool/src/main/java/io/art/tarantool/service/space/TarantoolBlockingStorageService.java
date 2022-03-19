@@ -147,13 +147,13 @@ public class TarantoolBlockingStorageService<KeyType, ModelType> implements Bloc
     }
 
     @Override
-    public TarantoolBlockingStorageStream<ModelType> stream() {
-        return new TarantoolBlockingStorageStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingStorageSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStorageStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingStorageStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingStorageSpaceStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override

@@ -136,13 +136,13 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
     }
 
     @Override
-    public TarantoolBlockingRouterStream<ModelType> stream() {
-        return new TarantoolBlockingRouterStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingRouterSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingRouterSpaceStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingRouterStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingRouterStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingRouterSpaceStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingRouterSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override

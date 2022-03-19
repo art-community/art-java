@@ -38,6 +38,7 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
     private final TarantoolModelWriter writer;
     private final MetaType<KeyType> keyMeta;
     private final TarantoolReactiveRouterService<KeyType, ModelType> sharded;
+    private final TarantoolReactiveStorageIndexService<ModelType> index;
 
     public TarantoolReactiveStorageService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
@@ -48,6 +49,7 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
         sharded = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, clients);
+        index = TarantoolReactiveStorageIndexService.<ModelType>builder().spaceType(spaceMetaType).clients(clients).spaceName(spaceName).build();
     }
 
     @Override
@@ -199,8 +201,8 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
     }
 
     @Override
-    public TarantoolReactiveStorageStream<ModelType> stream() {
-        return TarantoolReactiveStorageStream.<ModelType>builder()
+    public TarantoolReactiveStorageSpaceStream<ModelType> stream() {
+        return TarantoolReactiveStorageSpaceStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)
@@ -208,8 +210,8 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
     }
 
     @Override
-    public TarantoolReactiveStorageStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveStorageStream.<ModelType>builder()
+    public TarantoolReactiveStorageSpaceStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveStorageSpaceStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)
@@ -219,13 +221,7 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
 
     @Override
     public final ReactiveIndexService<ModelType> index(Index index) {
-        return TarantoolReactiveStorageIndexService.<ModelType>builder()
-                .indexName(newString(index.name()))
-                .spaceType(spaceMetaType)
-                .fields(cast(index.fields()))
-                .clients(clients)
-                .spaceName(spaceName)
-                .build();
+        return this.index.use(index);
     }
 
     @Override

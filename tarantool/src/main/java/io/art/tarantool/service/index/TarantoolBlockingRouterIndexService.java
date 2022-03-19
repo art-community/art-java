@@ -17,12 +17,16 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolBlockingStorageIndexService<ModelType> implements BlockingIndexService<ModelType> {
+public class TarantoolBlockingRouterIndexService<ModelType> implements BlockingIndexService<ModelType> {
     private final MetaType<ModelType> spaceType;
     private TarantoolReactiveStorageIndexService<ModelType> reactive;
 
     @Builder
-    public TarantoolBlockingStorageIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
+    public TarantoolBlockingRouterIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
+                                               MetaType<ModelType> spaceType,
+                                               ImmutableStringValue spaceName,
+                                               ImmutableStringValue indexName,
+                                               TarantoolClientRegistry clients) {
         this.spaceType = spaceType;
         reactive = TarantoolReactiveStorageIndexService.<ModelType>builder()
                 .spaceName(spaceName)

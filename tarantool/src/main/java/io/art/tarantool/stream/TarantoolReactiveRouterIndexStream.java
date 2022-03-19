@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.function.*;
 
 
-public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream<ModelType> {
+public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpaceStream<ModelType> {
     private final TarantoolStreamSerializer serializer;
     private final static TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
     private final TarantoolModelReader reader;
@@ -38,11 +38,11 @@ public class TarantoolReactiveIndexStream<ModelType> extends ReactiveSpaceStream
     private final TarantoolModelWriter writer;
 
     @Builder
-    public TarantoolReactiveIndexStream(MetaType<ModelType> spaceType,
-                                        ImmutableStringValue spaceName,
-                                        ImmutableStringValue indexName,
-                                        TarantoolClientRegistry clients,
-                                        Tuple baseKey) {
+    public TarantoolReactiveRouterIndexStream(MetaType<ModelType> spaceType,
+                                              ImmutableStringValue spaceName,
+                                              ImmutableStringValue indexName,
+                                              TarantoolClientRegistry clients,
+                                              Tuple baseKey) {
         super(spaceType, baseKey);
         this.spaceName = spaceName;
         this.indexName = indexName;

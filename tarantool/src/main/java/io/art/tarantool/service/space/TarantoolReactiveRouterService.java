@@ -199,8 +199,8 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
     }
 
     @Override
-    public TarantoolReactiveRouterStream<ModelType> stream() {
-        return TarantoolReactiveRouterStream.<ModelType>builder()
+    public TarantoolReactiveRouterSpaceStream<ModelType> stream() {
+        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
                 .shardRequest(this.shard.get())
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
@@ -209,8 +209,8 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
     }
 
     @Override
-    public TarantoolReactiveRouterStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveRouterStream.<ModelType>builder()
+    public TarantoolReactiveRouterSpaceStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
                 .shardRequest(this.shard.get())
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)

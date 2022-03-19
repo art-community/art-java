@@ -4,6 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.descriptor.*;
@@ -27,28 +28,27 @@ import java.util.*;
 @Public
 public class TarantoolReactiveStorageIndexService<ModelType> implements ReactiveIndexService<ModelType> {
     private final ImmutableStringValue spaceName;
-    private final ImmutableStringValue indexName;
     private final TarantoolClientRegistry clients;
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final MetaType<ModelType> spaceType;
-    private final List<MetaField<? extends MetaClass<ModelType>, ?>> fields;
     private final TarantoolUpdateSerializer updateSerializer;
+    private final TarantoolReactiveRouterIndexService<ModelType> sharded;
+    private final ThreadLocal<Index> index = new ThreadLocal<>();
 
     @Builder
-    public TarantoolReactiveStorageIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
-                                                MetaType<ModelType> spaceType,
-                                                ImmutableStringValue spaceName,
-                                                ImmutableStringValue indexName,
-                                                TarantoolClientRegistry clients) {
-        this.fields = fields;
+    public TarantoolReactiveStorageIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
         this.spaceType = spaceType;
         this.clients = clients;
         this.spaceName = spaceName;
-        this.indexName = indexName;
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
+        sharded = TarantoolReactiveRouterIndexService.<ModelType>builder()
+                .clients(clients)
+                .spaceName(spaceName)
+                .spaceType(spaceType)
+                .build();
     }
 
     @Override
@@ -150,20 +150,18 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
     }
 
     @Override
-    public TarantoolReactiveIndexStream<ModelType> stream() {
-        return TarantoolReactiveIndexStream.<ModelType>builder()
+    public TarantoolReactiveStorageIndexStream<ModelType> stream() {
+        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
-                .indexName(indexName)
                 .spaceType(spaceType)
                 .clients(clients)
                 .build();
     }
 
     @Override
-    public TarantoolReactiveIndexStream<ModelType> stream(Tuple baseKey) {
-        return TarantoolReactiveIndexStream.<ModelType>builder()
+    public TarantoolReactiveStorageIndexStream<ModelType> stream(Tuple baseKey) {
+        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
-                .indexName(indexName)
                 .spaceType(spaceType)
                 .clients(clients)
                 .baseKey(baseKey)
@@ -196,5 +194,10 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
                 .list()
                 .stream()
                 .map(element -> reader.read(spaceType, element))));
+    }
+
+    public ReactiveIndexService<ModelType> use(Index index) {
+        this.index.set(index);
+        return this;
     }
 }

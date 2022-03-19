@@ -19,10 +19,10 @@ import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
-import static io.art.meta.Meta.definition;
+import static io.art.meta.Meta.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.CRC_32;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
@@ -54,6 +54,11 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
+    }
+
+    TarantoolReactiveRouterIndexService<ModelType> shard(ShardRequest request) {
+        shard.set(request);
+        return this;
     }
 
     @Override
@@ -155,8 +160,8 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
     }
 
     @Override
-    public TarantoolReactiveIndexStream<ModelType> stream() {
-        return TarantoolReactiveIndexStream.<ModelType>builder()
+    public TarantoolReactiveStorageIndexStream<ModelType> stream() {
+        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .indexName(indexName)
                 .spaceType(spaceType)
@@ -165,8 +170,8 @@ public class TarantoolReactiveRouterIndexService<ModelType> implements ReactiveI
     }
 
     @Override
-    public TarantoolReactiveIndexStream<ModelType> stream(Tuple baseKey) {
-        return TarantoolReactiveIndexStream.<ModelType>builder()
+    public TarantoolReactiveStorageIndexStream<ModelType> stream(Tuple baseKey) {
+        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .indexName(indexName)
                 .spaceType(spaceType)
