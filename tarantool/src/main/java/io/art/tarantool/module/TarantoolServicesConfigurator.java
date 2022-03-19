@@ -40,8 +40,8 @@ public class TarantoolServicesConfigurator {
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
         schemaServices.put(storageId, lazy(() -> router
-                ? new TarantoolStorageSchemaService(clients().get(storageId))
-                : new TarantoolRouterSchemaService(clients().get(storageId))));
+                ? new TarantoolRouterSchemaService(clients().get(storageId))
+                : new TarantoolStorageSchemaService(clients().get(storageId))));
 
         if (nonNull(sharders)) {
             this.sharders.put(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
