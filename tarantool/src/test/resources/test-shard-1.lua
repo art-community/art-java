@@ -24,7 +24,7 @@ local cfg = {
 require("art-tarantool")
 
 vshard = require('vshard')
-vshard.storage.cfg(cfg, '8a274925-a26d-47fc-9e1b-af88ce939412')
+vshard.storage.cfg(cfg, '1e02ae8a-afc0-4e91-ba34-843a356b8ed7')
 
 require("art.storage").initialize()
 
