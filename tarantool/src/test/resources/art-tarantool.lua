@@ -1,311 +1,775 @@
 do
 local _ENV = _ENV
-package.preload[ "art.router.api" ] = function( ... ) local arg = _G.arg;
-local api = {
-    space = {
-        create = function(name, config)
-            if not config then config = {} end
-            local result = art.cluster.space.execute('createVsharded', {name, config})
-            if (result[1]) then
-                art.cluster.mapping.space.create(name, config)
-            end
-            return result
-        end,
-
-        format = function(space, format)
-            local result = art.cluster.space.execute('format', {space, format})
-            if (result[1]) then
-                art.cluster.mapping.space.format(space, format)
-            end
-            return result
-        end,
-
-        createIndex = function(space, index_name, index)
-            local result = art.cluster.space.execute('createIndex', {space, index_name, index})
-            if (result[1]) then
-                art.cluster.mapping.space.createIndex(space, index_name, index)
-            end
-            return result
-        end,
-
-        dropIndex = function(space, index_name)
-            local result = art.cluster.space.execute('dropIndex', {space, index_name})
-            if result[1] then
-                art.cluster.mapping.space.dropIndex(space, index_name)
-            end
-            return result
-        end,
-
-        rename = function(space, new_name)
-            local result = art.cluster.space.execute('rename', {space, new_name})
-            if (result[1]) then
-                box.atomic(art.cluster.mapping.space.rename, space, new_name)
-            end
-            return result
-        end,
-
-        truncate = function(space)
-            local result = art.cluster.space.execute('truncate', {space})
-            if (result[1]) then
-                art.cluster.mapping.space.truncate(space)
-            end
-            return result
-        end,
-
-        drop = function(space)
-            local result = art.cluster.space.execute('drop', {space})
-            if (result[1]) then
-                art.cluster.mapping.space.drop(space)
-            end
-            return result
-        end,
-
-        count = function(space)
-            local counts = art.cluster.space.execute('count', {space})
-            local result = 0
-            if (not counts[1]) then return counts end
-            for _,v in pairs(counts[2]) do
-                result = result + v[2]
-            end
-            return result
-        end,
-
-        len = function(space)
-            local counts = art.cluster.space.execute('len', {space})
-            local result = 0
-            if (not counts[1]) then return counts end
-            for _,v in pairs(counts[2]) do
-                result = result + v[2]
-            end
-            return result
-        end,
-
-        list = function()
-            local result = {}
-            for _,v in pairs(box.space._space:select()) do
-                if not (string.startswith(v[3], '_')) then table.insert(result, v[3]) end
-            end
-            return result
-        end,
-
-        listIndices = function(space)
-            local temp = {}
-            local result = {}
-            for _, v in pairs(box.space[space].index) do
-                temp[v.name] = true
-            end
-            for k in pairs(temp) do
-                table.insert(result, k)
-            end
-            return result
-        end
-    },
-
-    transaction = function(requests, bucket_id)
-        return unpack(art.transaction.execute(requests, bucket_id))
-    end,
-
-    get = function(space, key, index)
-        local bucket_id = art.core.mapBucket(space, key)
-        if not(bucket_id) then return {{}} end
-        return art.core.removeBucket(space, vshard.router.callro(bucket_id, 'art.api.get', {space, key, index}))
-    end,
-
-    delete = function(space, key)
-        local bucket_id = art.core.mapBucket(space, key)
-        if not(bucket_id) then return {{}} end
-        return art.core.removeBucket(space, vshard.router.callrw(bucket_id, 'art.api.delete', {space, key}))
-    end,
-
-    insert = function(space, data, bucket_id)
-        local response = vshard.router.callrw(bucket_id, 'art.api.insert', {space, art.core.insertBucket(space, data, bucket_id)})
-        return art.core.removeBucket(space, response)
-    end,
-
-    autoIncrement = function(space, data, bucket_id)
-        local response = vshard.router.callrw(bucket_id, 'art.api.autoIncrement', {space, art.core.insertBucket(space, data, bucket_id)})
-        return art.core.removeBucket(space, response)
-    end,
-
-    put = function(space, data, bucket_id)
-        local response = vshard.router.callrw(bucket_id, 'art.api.put', {space, art.core.insertBucket(space, data, bucket_id)})
-        return art.core.removeBucket(space, response)
-    end,
-
-    update = function(space, key, commands)
-        local bucket_id = art.core.mapBucket(space, key)
-        if not(bucket_id) then return {{}} end
-        art.core.correctUpdateOperations(space, commands)
-        return art.core.removeBucket(vshard.router.callrw(bucket_id, 'art.api.update', {space, key, commands}))
-    end,
-
-    upsert = function(space, data, commands, bucket_id)
-        art.core.correctUpdateOperations(space, commands)
-        return art.core.removeBucket(space, vshard.router.callrw(bucket_id, 'art.api.upsert', {space, art.core.insertBucket(space, data, bucket_id), commands}))
-    end,
-
-    replace = function(space, data, bucket_id)
-        local response = vshard.router.callrw(bucket_id, 'art.api.replace', {space, art.core.insertBucket(space, data, bucket_id)})
-        return art.core.removeBucket(space, response)
-    end,
-
-    select = function(space, request, index, iter, stream)
-        if not (index) then index = 0 end
-        if not (iter) then iter = 'EQ' end
-        if not (stream) then stream = {} end
-        local get_requests = {}
-        local key_fields_mapping = {}
-        local request_entry
-        local result = {}
-        local bucketFieldNumber = art.core.bucketFieldNumber(space)
-
-        for _,part in pairs(box.space[space].index[0].parts) do
-            key_fields_mapping[part.fieldno] = true
-        end
-
-
-        local gen, param, state = box.space[space].index[index]:pairs(request, {iterator = iter})
-        for _, operation in pairs(stream) do
-            if ((operation[1] == 'filter') or (operation[1] == 'sort')) and (operation[2][2] >= bucketFieldNumber) then
-                operation[2][2] = operation[2][2] + 1
-            end
-            gen, param, state = art.core.stream[operation[1]](gen, param, state, operation[2])
-        end
-        local mappingResponse = art.core.stream.collect(gen, param, state)
-        if mappingResponse[1] == nil then return {} end
-
-
-        for _,mapping_entry in pairs(mappingResponse) do
-            if not (get_requests[mapping_entry.bucket_id]) then get_requests[mapping_entry.bucket_id] = {} end
-            request_entry = {}
-            for k in pairs(key_fields_mapping) do
-                request_entry[k] = mapping_entry[k]
-            end
-            table.insert(get_requests[mapping_entry.bucket_id], request_entry)
-        end
-
-        for bucket_id, batch_req in pairs(get_requests) do
-            local response = vshard.router.callro(bucket_id, 'art.api.getBatch', {space, batch_req})
-            if (response) then for _,v in pairs(response) do table.insert(result, art.core.removeBucket(space, v)) end end
-        end
-        if not (result[1]) then return {} end
-        return result
+package.preload[ "art.router.bucket-generator" ] = function( ... ) local arg = _G.arg;
+local algorithms = require("art.router.constants").algorithms
+return function(request)
+    local algorithm = request[1]
+    local data = request[2]
+    if algorithm == algorithms.crc32 then
+        return vshard.router.bucket_id_mpcrc32(data)
     end
-}
-
-return api
+    return vshard.router.bucket_id_mpcrc32(data)
+end
 end
 end
 
 do
 local _ENV = _ENV
-package.preload[ "art.router.config" ] = function( ... ) local arg = _G.arg;
-local config = {
-    mapping = {
-        batchesPerTime = 100,
-        timeout = 0.02
-    }
+package.preload[ "art.router.bucket-id-modifier" ] = function( ... ) local arg = _G.arg;
+local configuration = require("art.router.configuration").configuration
+
+local removeSingleBucketId = function(item)
+    table.remove(item, configuration.bucketIdField)
+    return item
+end
+
+local removeMultipleBucketIds = function(items)
+    for _, item in pairs(items) do
+        removeSingleBucketId(item)
+    end
+    return items
+end
+
+local insertSingleBucketId = function(item, id)
+    table.insert(item, configuration.bucketIdField, id)
+    return item
+end
+
+local insertMultipleBucketIds = function(items, id)
+    for _, item in pairs(items) do
+        insertSingleBucketId(item, id)
+    end
+    return items
+end
+
+return {
+    removeSingleBucketId = removeSingleBucketId,
+
+    insertSingleBucketId = insertSingleBucketId,
+
+    removeMultipleBucketIds = removeMultipleBucketIds,
+
+    insertMultipleBucketIds = insertMultipleBucketIds,
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.configuration" ] = function( ... ) local arg = _G.arg;
+local configuration = {
+    bucketIdField = 2
 }
 
-return config
+local configure = function(newConfiguration)
+    configuration.bucketIdField = newConfiguration.bucketIdField
+end
+
+return {
+    configuration = configuration,
+    configure = configure
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.constants" ] = function( ... ) local arg = _G.arg;
+local algorithms = {
+    crc32 = 0
+}
+
+local storageFunctions = {
+    spaceFirst = "art.storage.space.first",
+    spaceSelect = "art.storage.space.select",
+    spaceFind = "art.storage.space.find",
+    spaceCount = "art.storage.space.count",
+    spaceTruncate = "art.storage.space.truncate",
+    spaceStream = "art.storage.space.stream",
+    spaceMultiple = {
+        delete = "art.storage.space.multiple.delete",
+        insert = "art.storage.space.multiple.insert",
+        put = "art.storage.space.multiple.put",
+        update = "art.storage.space.multiple.update",
+    },
+    spaceSingle = {
+        delete = "art.storage.space.single.delete",
+        insert = "art.storage.space.single.insert",
+        put = "art.storage.space.single.put",
+        update = "art.storage.space.single.update",
+        upsert = "art.storage.space.single.upsert"
+    },
+    indexFirst = "art.storage.index.first",
+    indexSelect = "art.storage.index.select",
+    indexFind = "art.storage.index.find",
+    indexStream = "art.storage.index.stream",
+    indexCount = "art.storage.index.count",
+    indexMultiple = {
+        delete = "art.storage.index.multiple.delete",
+        update = "art.storage.index.multiple.update",
+    },
+    indexSingle = {
+        delete = "art.storage.index.single.delete",
+        update = "art.storage.index.single.update",
+    },
+    schemaCreateIndex = "art.schema.createIndex",
+    schemaCreateStorageSpace = "art.schema.createStorageSpace",
+    schemaCreateShardSpace = "art.schema.createShardSpace",
+    schemaSpaces = "art.schema.spaces",
+    schemaDropIndex = "art.schema.dropIndex",
+    schemaRenameSpace = "art.schema.renameSpace",
+    schemaDropSpace = "art.schema.dropSpace",
+    schemaIndices = "art.schema.indices",
+    schemaFormat = "art.schema.format"
+}
+
+local stream = {
+    terminatingFunctions = {
+        terminatingCollect = 1,
+        terminatingCount = 2,
+        terminatingAll = 3,
+        terminatingAny = 4,
+        terminatingNone = 5
+    },
+    processingFunctions = {
+        processingMap = 6
+    },
+    mappingModes = {
+        mapBySpace = 1,
+        mapByIndex = 2,
+        mapByFunction = 3,
+        mapByField = 4
+    },
+}
+
+return {
+    algorithms = algorithms,
+    storageFunctions = storageFunctions,
+    stream = stream,
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.error-thrower" ] = function( ... ) local arg = _G.arg;
+local encode = require("json").encode
+
+return function(payload)
+    error(encode(payload))
+end
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.index" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
+local generateBucket = require("art.router.bucket-generator")
+local storageFunctions = require("art.router.constants").storageFunctions
+local bucketModifier = require("art.router.bucket-id-modifier")
+local indexStream = require("art.router.stream").indexStream
+
+local index = {
+    first = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexFirst, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    select = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexSelect, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    find = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexFind, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    stream = indexStream,
+
+    count = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexCount, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return result
+    end,
+
+    multiple = require("art.router.index-multiple-transformer"),
+
+    single = require("art.router.index-single-transformer"),
+}
+
+return index
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.index-multiple-transformer" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
+local generateBucket = require("art.router.bucket-generator")
+local indexMultiple = require("art.router.constants").storageFunctions.indexMultiple
+local bucketModifier = require("art.router.bucket-id-modifier")
+
+local transformer = {
+    delete = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexMultiple.delete, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    update = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexMultiple.update, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+}
+
+return transformer
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.index-single-transformer" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
+local generateBucket = require("art.router.bucket-generator")
+local indexSingle = require("art.router.constants").storageFunctions.indexSingle
+local bucketModifier = require("art.router.bucket-id-modifier")
+
+local transformer = {
+    delete = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexSingle.delete, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    update = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceSingle.update, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+}
+
+return transformer
 end
 end
 
 do
 local _ENV = _ENV
 package.preload[ "art.router" ] = function( ... ) local arg = _G.arg;
+local configure = require("art.router.configuration").configure
+
+local function initialize(configuration)
+    if configuration ~= nil then
+        configure(configuration)
+    end
+
+    box.once("art:main", function()
+        for name in pairs(art.space) do
+            if name ~= "multiple" and name ~= "single" then
+                box.schema.func.create("art.space." .. name, { if_not_exists = true })
+            end
+        end
+        for name in pairs(art.space.single) do
+            box.schema.func.create("art.space.single." .. name, { if_not_exists = true })
+        end
+        for name in pairs(art.space.multiple) do
+            box.schema.func.create("art.space.multiple." .. name, { if_not_exists = true })
+        end
+
+        for name in pairs(art.index) do
+            if name ~= "multiple" and name ~= "single" then
+                box.schema.func.create("art.index." .. name, { if_not_exists = true })
+            end
+        end
+        for name in pairs(art.index.single) do
+            box.schema.func.create("art.index.single." .. name, { if_not_exists = true })
+        end
+        for name in pairs(art.index.multiple) do
+            box.schema.func.create("art.index.multiple." .. name, { if_not_exists = true })
+        end
+
+        for name in pairs(art.schema) do
+            box.schema.func.create("art.schema." .. name, { if_not_exists = true })
+        end
+    end)
+end
+
 art = {
-    core = require('art.core'),
+    space = require("art.router.space"),
 
-    config = require('art.router.config'),
+    index = require("art.router.index"),
 
-    cluster = require('art.router.cluster'),
+    schema = require("art.router.schema"),
 
-    transaction = require('art.router.transaction'),
+    stream = require("art.router.stream"),
 
-    api = require('art.router.api')
+    subscription = require("art.router.subscription"),
+
+    initialize = initialize
 }
 
-art.cluster.mapping()
 return art
 end
 end
 
 do
 local _ENV = _ENV
-package.preload[ "art.router.transaction" ] = function( ... ) local arg = _G.arg;
---transaction request format: {string function, {arg1, ... argN} }
---arg format: {arg} or {dependency:{prev_response_index}} or {dependency:{prev_response_index, fieldname}}
+package.preload[ "art.router.schema" ] = function( ... ) local arg = _G.arg;
+local storageFunctions = require("art.router.constants").storageFunctions
+local configuration = require("art.router.configuration").configuration
+local shards = require("art.router.shard-service")
 
-
-local transaction = {
-    execute = function(transaction, bucket_id)
-        if not(bucket_id) then return false, 'Missing bucketId' end
-        if not(art.transaction.isSafe(transaction)) then return false, 'Transaction contains unsafe operations for sharded cluster' end
-        transaction = art.transaction.insertBuckets(transaction)
-        local response = vshard.router.callrw(bucket_id, 'art.transaction.execute', { transaction})
-        if response[1] then art.transaction.removeBuckets(transaction, response) end
-        return response
+local schema = {
+    createIndex = function(request)
+        shards.forEach(function(shard)
+            shard:callrw(storageFunctions.schemaCreateIndex, request)
+        end)
     end,
 
-    isSafe = function(transaction)
-        for _, operation in pairs(transaction) do
-            if (string.startswith(operation[1], 'art.api.space')) then return false end
-            if (operation[1] == 'art.api.select') then return false end
+    dropIndex = function(request)
+        shards.forEach(function(shard)
+            shard:callrw(storageFunctions.schemaDropIndex, request)
+        end)
+    end,
+
+    renameSpace = function(request)
+        shards.forEach(function(shard)
+            shard:callrw(storageFunctions.schemaRenameSpace, request)
+        end)
+    end,
+
+    formatSpace = function(request)
+        shards.forEach(function(shard)
+            shard:callrw(storageFunctions.schemaFormat, request)
+        end)
+    end,
+
+    dropSpace = function(request)
+        shards.forEach(function(shard)
+            shard:callrw(storageFunctions.schemaDropIndex, request)
+        end)
+    end,
+
+    createSpace = function(request, sharded)
+        if (sharded) then
+            table.insert(request, configuration.bucketIdField)
+            shards.forEach(function(shard)
+                shard:callrw(storageFunctions.schemaCreateShardSpace, request)
+            end)
+            return
         end
-        return true
+
+        shards.forEach(function(shard)
+            shard:callrw(storageFunctions.schemaCreateStorageSpace, request)
+        end)
     end,
 
-    insertBuckets = function(transaction)
-        local results = {}
-        for _, operation in pairs(transaction) do
-            local updatedArgs = art.transaction.bucketInserters[operation[1]](operation[2])
-            table.insert(results, {operation[1], updatedArgs})
-        end
-        return results
+    spaces = function(request)
+        return shards.flatMap(function(shard)
+            shard:callro(storageFunctions.schemaSpaces, request)
+        end)
     end,
 
-    removeBuckets = function(transaction, response)
-        for index, tuple in pairs(response[2]) do
-            response[2][index] = {art.core.removeBucket(transaction[index][2][1], tuple[1])}
-        end
+    indices = function(request)
+        return shards.flatMap(function(shard)
+            shard:callro(storageFunctions.schemaIndices, request)
+        end)
     end,
-
-    bucketInserters = {},
 }
 
-local inserters = {}
-
-local function insertBucket(args)
-    if (args[2].dependency) then return args end
-    args[2] = art.core.insertBucket(args[1], args[2], args[3])
-    return args
+return schema
+end
 end
 
-local function identity(args)
-    return args
+do
+local _ENV = _ENV
+package.preload[ "art.router.shard-service" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
+
+local forEach = function(functor)
+    local shards, error = vshard.router.routeall()
+
+    if error ~= nil then
+        throw(error)
+    end
+
+    for _, shard in pairs(shards) do
+        functor(shard)
+    end
 end
 
-inserters['art.api.get'] = identity
-inserters['art.api.delete'] = identity
-inserters['art.api.update'] = function(args)
-    args[3] = art.core.correctUpdateOperations(args[1], args[3])
-    return args
+local map = function(mapper)
+    local results = {}
+    local shards, error = vshard.router.routeall()
+
+    if error ~= nil then
+        throw(error)
+    end
+
+    for _, shard in pairs(shards) do
+        table.insert(results, mapper(shard))
+    end
+
+    return results
 end
 
-inserters['art.api.insert'] = insertBucket
-inserters['art.api.put'] = insertBucket
-inserters['art.api.autoIncrement'] = insertBucket
-inserters['art.api.replace'] = insertBucket
-inserters['art.api.upsert'] = function(args)
-    args = insertBucket(args)
-    args[3] = art.core.correctUpdateOperations(args[1], args[3])
-    return args
+local flatMap = function(mapper)
+    local results = {}
+    local shards, error = vshard.router.routeall()
+
+    if error ~= nil then
+        throw(error)
+    end
+
+    for _, shard in pairs(shards) do
+        for _, result in pairs(mapper(shard)) do
+            table.insert(results, result)
+        end
+    end
+
+    return results
 end
 
-transaction.bucketInserters = inserters
+return {
+    forEach = forEach,
+    map = map,
+    flatMap = flatMap
+}
+end
+end
 
-return transaction
+do
+local _ENV = _ENV
+package.preload[ "art.router.space" ] = function( ... ) local arg = _G.arg;
+local generateBucket = require("art.router.bucket-generator")
+local storageFunctions = require("art.router.constants").storageFunctions
+local bucketModifier = require("art.router.bucket-id-modifier")
+local throw = require("art.router.error-thrower")
+local spaceStream = require("art.router.stream").spaceStream
+
+local space = {
+    first = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceFirst, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    select = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceSelect, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    find = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceFind, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    stream = spaceStream,
+
+    count = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceCount, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return result
+    end,
+
+    truncate = function(bucketRequest, functionRequest)
+        local _, error = vshard.rouder.callrw(generateBucket(bucketRequest), storageFunctions.spaceTruncate, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+    end,
+
+    multiple = require("art.router.space-multiple-transformer"),
+
+    single = require("art.router.space-single-transformer"),
+}
+
+return space
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.space-multiple-transformer" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
+local generateBucket = require("art.router.bucket-generator")
+local spaceMultiple = require("art.router.constants").storageFunctions.spaceMultiple
+local bucketModifier = require("art.router.bucket-id-modifier")
+
+local transformer = {
+    delete = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceMultiple.delete, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    insert = function(bucketRequest, functionRequest)
+        local bucket = generateBucket(bucketRequest)
+        bucketModifier.insertMultipleBucketIds(functionRequest[1], bucket)
+
+        local result, error = vshard.rouder.callrw(bucket, spaceMultiple.insert, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    put = function(bucketRequest, functionRequest)
+        local bucket = generateBucket(bucketRequest)
+        bucketModifier.insertMultipleBucketIds(functionRequest[1], bucket)
+
+        local result, error = vshard.rouder.callrw(bucket, spaceMultiple.put, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+
+    update = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceMultiple.update, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeMultipleBucketIds(result)
+    end,
+}
+
+return transformer
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.space-single-transformer" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
+local generateBucket = require("art.router.bucket-generator")
+local spaceSingle = require("art.router.constants").storageFunctions.spaceSingle
+local bucketModifier = require("art.router.bucket-id-modifier")
+
+local transformer = {
+    delete = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceSingle.delete, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    insert = function(bucketRequest, functionRequest)
+        local bucket = generateBucket(bucketRequest)
+        bucketModifier.insertSingleBucketId(functionRequest[1], bucket)
+
+        local result, error = vshard.rouder.callrw(bucket, spaceSingle.insert, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    put = function(bucketRequest, functionRequest)
+        local bucket = generateBucket(bucketRequest)
+        bucketModifier.insertSingleBucketId(functionRequest[1], bucket)
+
+        local result, error = vshard.rouder.callrw(bucket, spaceSingle.put, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    update = function(bucketRequest, functionRequest)
+        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceSingle.update, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+        return bucketModifier.removeSingleBucketId(result)
+    end,
+
+    upsert = function(bucketRequest, functionRequest)
+        local bucket = generateBucket(bucketRequest)
+        bucketModifier.insertSingleBucketId(functionRequest[1], bucket)
+
+        local result, error = vshard.rouder.callrw(bucket, spaceSingle.upsert, functionRequest)
+        if error ~= nil then
+            throw(error)
+        end
+
+        return bucketModifier.removeSingleBucketId(result)
+    end
+}
+
+return transformer
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.stream" ] = function( ... ) local arg = _G.arg;
+local stream = require("art.router.constants").stream
+local generateBucket = require("art.router.bucket-generator")
+local storageFunctions = require("art.router.constants").storageFunctions
+local bucketModifier = require("art.router.bucket-id-modifier")
+local throw = require("art.router.error-thrower")
+
+local removeBucket = function(operators)
+    local processingOperators = operators[1]
+    local terminatingOperator = operators[2]
+
+    local removeBucket = terminatingOperator[1] == stream.terminatingFunctions.terminatingCollect
+
+    for _, operator in ipairs(processingOperators) do
+        if operator[1] == stream.processingFunctions.processingMap then
+            local request = operator[2]
+            if request[1] ~= stream.mappingModes.mapBySpace or request[1] ~= stream.mappingModes.mapByIndex then
+                return false
+            end
+        end
+    end
+
+    return removeBucket
+end
+
+local spaceStream = function(bucketRequest, functionRequest)
+    local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceStream, functionRequest)
+    if error ~= nil then
+        throw(error)
+    end
+
+    if removeBucket(functionRequest[2]) then
+        return bucketModifier.removeMultipleBucketIds(result)
+    end
+
+    return result
+end
+
+local indexStream = function(bucketRequest, functionRequest)
+    local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexStream, functionRequest)
+    if error ~= nil then
+        throw(error)
+    end
+
+    if removeBucket(functionRequest[3]) then
+        return bucketModifier.removeMultipleBucketIds(result)
+    end
+
+    return result
+end
+
+return {
+    spaceStream = spaceStream,
+
+    indexStream = indexStream
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.router.subscription" ] = function( ... ) local arg = _G.arg;
+local subscription = {
+    publish = function(serviceId, methodId, value)
+        box.session.push({ serviceId, methodId, value })
+    end
+}
+return subscription
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.storage.bucket-id-modifier" ] = function( ... ) local arg = _G.arg;
+local shard = require("art.storage.configuration").configuration.shard
+
+local removeSingleBucketId = function(item)
+    table.remove(item, shard.bucketIdField)
+    return item
+end
+
+local removeMultipleBucketIds = function(items)
+    for _, item in pairs(items) do
+        removeSingleBucketId(item)
+    end
+    return items
+end
+
+local insertSingleBucketId = function(item, id)
+    table.insert(item, shard.bucketIdField, id)
+    return item
+end
+
+local insertMultipleBucketIds = function(items, id)
+    for _, item in pairs(items) do
+        insertSingleBucketId(item, id)
+    end
+    return items
+end
+
+return {
+    removeSingleBucketId = removeSingleBucketId,
+
+    insertSingleBucketId = insertSingleBucketId,
+
+    removeMultipleBucketIds = removeMultipleBucketIds,
+
+    insertMultipleBucketIds = insertMultipleBucketIds,
+}
+end
+end
+
+do
+local _ENV = _ENV
+package.preload[ "art.storage.configuration" ] = function( ... ) local arg = _G.arg;
+local configuration = {
+    shard = {
+        bucketIdField = 2
+    }
+}
+
+local configure = function(newConfiguration)
+    configuration.shard = newConfiguration.shard
+end
+
+return {
+    configuration = configuration,
+    configure = configure
+}
 end
 end
 
@@ -423,6 +887,8 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.index" ] = function( ... ) local arg = _G.arg;
+local stream = require("art.storage.stream")
+
 local index = {
     first = function(space, index, keys)
         local foundIndex = box.space[space].index[index]
@@ -451,7 +917,11 @@ local index = {
         return result
     end,
 
-    stream = function(space, index, processingOperators, terminatingOperator, baseKey)
+    stream = function(space, index, operators, options)
+        local processingOperators = operators[1]
+        local terminatingOperators = operators[2]
+        local baseKey = options[1]
+
         local generator, param, state = box.space[space].index[index]:pairs(baseKey)
 
         for _, operator in pairs(processingOperators) do
@@ -460,7 +930,7 @@ local index = {
             generator, param, state = stream.processingFunctor(name)(generator, param, state, parameters)
         end
 
-        return stream.terminatingFunctor(terminatingOperator[1])(generator, param, state, terminatingOperator[2])
+        return stream.terminatingFunctor(terminatingOperators[1])(generator, param, state, terminatingOperators[2])
     end,
 
     count = function(space, index, key)
@@ -553,7 +1023,12 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage" ] = function( ... ) local arg = _G.arg;
-local function initialize()
+local configure = require("art.storage.configuration").configure
+
+local function initialize(configuration)
+    if configuration ~= nil then
+        configure(configuration)
+    end
     box.once("art:main", function()
         for name in pairs(art.space) do
             if name ~= "multiple" and name ~= "single" then
@@ -631,11 +1106,21 @@ local schema = {
         box.space[space]:drop()
     end,
 
-    createSpace = function(name, configuration)
+    createStorageSpace = function(name, configuration)
         if not configuration then
             configuration = {}
         end
         box.schema.space.create(name, configuration)
+    end,
+
+    createShardSpace = function(name, configuration, bucketIdField)
+        if not configuration then
+            configuration = {}
+        end
+        box.schema.space.create(name, configuration):create_index(vshard.storage.internal.shard_index, {
+            parts = { { field = bucketIdField, type = 'unsigned' } },
+            unique = true
+        })
     end,
 
     spaces = function()
@@ -664,7 +1149,7 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.space" ] = function( ... ) local arg = _G.arg;
-stream = require("art.storage.stream")
+local stream = require("art.storage.stream")
 
 local space = {
     first = function(space, key)
@@ -690,7 +1175,11 @@ local space = {
         return result
     end,
 
-    stream = function(space, processingOperators, terminatingOperator, baseKey)
+    stream = function(space, operators, options)
+        local processingOperators = operators[1]
+        local terminatingOperator = operators[2]
+        local baseKey = options[1]
+
         local generator, parameter, state = box.space[space]:pairs(baseKey)
 
         for _, operator in pairs(processingOperators) do
@@ -768,8 +1257,6 @@ local transformer = {
             return results
         end)
     end,
-
-    replace = put
 }
 
 return transformer
@@ -791,8 +1278,6 @@ local transformer = {
     put = function(space, data)
         return box.space[space]:put(data)
     end,
-
-    replace = put,
 
     update = function(space, key, commandGroups)
         return box.atomic(function()
@@ -900,12 +1385,12 @@ processingFunctors[constants.processingFunctions.processingFilter] = streamFilte
 processingFunctors[constants.processingFunctions.processingMap] = streamMapper
 
 return {
-    processingFunctor = function(stream)
-        return processingFunctors[stream]
+    processingFunctor = function(id)
+        return processingFunctors[id]
     end,
 
-    terminatingFunctor = function(stream)
-        return terminatingFunctors[stream]
+    terminatingFunctor = function(id)
+        return terminatingFunctors[id]
     end,
 }
 end
