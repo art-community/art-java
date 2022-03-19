@@ -101,27 +101,27 @@ public interface BlockingSpaceService<KeyType, ModelType> {
 
     ReactiveSpaceService<KeyType, ModelType> reactive();
 
-    default <F1> Index1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
-        return new Index1Service<>(index((Index) index));
+    default <F1> BlockingIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
+        return new BlockingIndex1Service<>(index((Index) index));
     }
 
-    default <F1, F2> Index2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
-        return new Index2Service<>(index((Index) index));
+    default <F1, F2> BlockingIndex2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
+        return new BlockingIndex2Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3> Index3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
-        return new Index3Service<>(index((Index) index));
+    default <F1, F2, F3> BlockingIndex3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
+        return new BlockingIndex3Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3, F4> Index4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
-        return new Index4Service<>(index((Index) index));
+    default <F1, F2, F3, F4> BlockingIndex4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
+        return new BlockingIndex4Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3, F4, F5> Index5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
-        return new Index5Service<>(index((Index) index));
+    default <F1, F2, F3, F4, F5> BlockingIndex5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
+        return new BlockingIndex5Service<>(index((Index) index));
     }
 
-    IndexService<ModelType> index(Index index);
+    BlockingIndexService<ModelType> index(Index index);
 
     default <P1> BlockingShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> sharder, P1 input) {
         return sharded(sharder.shard(input));

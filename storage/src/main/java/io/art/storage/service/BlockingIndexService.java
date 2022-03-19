@@ -12,7 +12,7 @@ import java.util.function.*;
 
 @Public
 @SuppressWarnings({VARARGS})
-public interface IndexService<ModelType> {
+public interface BlockingIndexService<ModelType> {
     ModelType first(Tuple tuple);
 
     ImmutableArray<ModelType> select(Tuple tuple);

@@ -136,13 +136,13 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolBlockingStream<ModelType> stream() {
-        return new TarantoolBlockingStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingSpaceStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override

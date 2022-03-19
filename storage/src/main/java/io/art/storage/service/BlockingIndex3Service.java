@@ -14,11 +14,11 @@ import java.util.function.*;
 @Public
 @Getter
 @Accessors(fluent = true)
-public class Index3Service<ModelType, F1, F2, F3> {
-    private final IndexService<ModelType> delegate;
+public class BlockingIndex3Service<ModelType, F1, F2, F3> {
+    private final BlockingIndexService<ModelType> delegate;
     private final ReactiveIndex3Service<ModelType, F1, F2, F3> reactive;
 
-    public Index3Service(IndexService<ModelType> delegate) {
+    public BlockingIndex3Service(BlockingIndexService<ModelType> delegate) {
         this.delegate = delegate;
         reactive = new ReactiveIndex3Service<>(delegate.reactive());
     }

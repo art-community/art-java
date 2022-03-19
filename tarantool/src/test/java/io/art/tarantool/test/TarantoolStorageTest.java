@@ -370,7 +370,7 @@ public class TarantoolStorageTest {
         current().insert(data);
         short f10 = data.getF10();
         MetaField<MetaTestingMetaModelClass, Short> f10Field = testingMetaModel().f10Field();
-        Index2Service<TestingMetaModel, Integer, String> index = current().index(testModelIndexes().f9f16());
+        BlockingIndex2Service<TestingMetaModel, Integer, String> index = current().index(testModelIndexes().f9f16());
         assertEquals(f10 + 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.add(f10Field, (short) 2)).getF10());
         assertEquals(f10 - 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.subtract(f10Field, (short) 2)).getF10());
         assertEquals(f10 & 2, f10 = index.update(data.getF9(), data.getF16(), updater -> updater.bitwiseAnd(f10Field, (short) 2)).getF10());

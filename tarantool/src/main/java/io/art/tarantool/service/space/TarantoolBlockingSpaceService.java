@@ -147,13 +147,13 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolBlockingStream<ModelType> stream() {
-        return new TarantoolBlockingStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingSpaceStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override
@@ -162,7 +162,7 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public final IndexService<ModelType> index(Index index) {
+    public final BlockingIndexService<ModelType> index(Index index) {
         return TarantoolIndexService.<ModelType>builder()
                 .indexName(newString(index.name()))
                 .spaceType(spaceMetaType)

@@ -17,7 +17,7 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolIndexService<ModelType> implements IndexService<ModelType> {
+public class TarantoolIndexService<ModelType> implements BlockingIndexService<ModelType> {
     private final MetaType<ModelType> spaceType;
     private TarantoolReactiveIndexService<ModelType> reactive;
 
@@ -103,12 +103,12 @@ public class TarantoolIndexService<ModelType> implements IndexService<ModelType>
     }
 
     @Override
-    public TarantoolBlockingStream<ModelType> stream() {
-        return new TarantoolBlockingStream<>(spaceType, reactive.stream());
+    public TarantoolBlockingSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingSpaceStream<>(spaceType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStream<ModelType> stream(Tuple baseKey) {
-        return new TarantoolBlockingStream<>(spaceType, reactive.stream(baseKey));
+    public TarantoolBlockingSpaceStream<ModelType> stream(Tuple baseKey) {
+        return new TarantoolBlockingSpaceStream<>(spaceType, reactive.stream(baseKey));
     }
 }

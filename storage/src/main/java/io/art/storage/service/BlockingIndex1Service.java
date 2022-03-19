@@ -15,11 +15,11 @@ import java.util.function.*;
 @Public
 @Getter
 @Accessors(fluent = true)
-public class Index1Service<ModelType, F1> {
-    private final IndexService<ModelType> delegate;
+public class BlockingIndex1Service<ModelType, F1> {
+    private final BlockingIndexService<ModelType> delegate;
     private final ReactiveIndex1Service<ModelType, F1> reactive;
 
-    public Index1Service(IndexService<ModelType> delegate) {
+    public BlockingIndex1Service(BlockingIndexService<ModelType> delegate) {
         this.delegate = delegate;
         reactive = new ReactiveIndex1Service<>(delegate.reactive());
     }
