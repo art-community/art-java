@@ -21,14 +21,15 @@ local cfg = {
         },
     },
 }
+require("art-tarantool")
+
 vshard = require('vshard')
-vshard.storage.cfg(cfg, 'cbf06940-0790-498b-948d-042b62cf3d29')
+vshard.storage.cfg(cfg, '8a274925-a26d-47fc-9e1b-af88ce939412')
+
+require("art.storage").initialize()
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })
 box.schema.user.grant('username', 'read,write,execute,create,alter,drop', 'universe', nil, { if_not_exists = true })
-
-require("art-tarantool")
-require("art.storage").initialize()
 
 testChannel = function()
     box.session.push("test")
