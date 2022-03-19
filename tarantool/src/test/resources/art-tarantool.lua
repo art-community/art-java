@@ -887,7 +887,7 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.index" ] = function( ... ) local arg = _G.arg;
-local stream = require("art.storage.stream")
+local stream = art.stream
 
 local index = {
     first = function(space, index, keys)
@@ -1149,7 +1149,7 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.storage.space" ] = function( ... ) local arg = _G.arg;
-local stream = require("art.storage.stream")
+local stream = art.stream
 
 local space = {
     first = function(space, key)
