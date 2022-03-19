@@ -10,6 +10,7 @@ import io.art.storage.updater.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
+import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
@@ -35,6 +36,7 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
     private final TarantoolClientRegistry clients;
     private final MetaType<KeyType> keyMeta;
     private final ThreadLocal<ShardRequest> shard = new ThreadLocal<>();
+    private final TarantoolReactiveRouterIndexService<ModelType> index;
 
     public TarantoolReactiveRouterService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
@@ -44,11 +46,18 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
+        index = new TarantoolReactiveRouterIndexService<>(spaceMetaType, spaceName, clients);
     }
 
     public TarantoolReactiveRouterService<KeyType, ModelType> sharded(ShardRequest request) {
         shard.set(request);
+        index.sharded(request);
         return this;
+    }
+
+    @Override
+    public TarantoolReactiveRouterIndexService<ModelType> index(Index index) {
+        return this.index.indexed(index);
     }
 
     @Override
@@ -218,11 +227,6 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
                 .clients(clients)
                 .baseKey(tuple(baseKey))
                 .build();
-    }
-
-    @Override
-    public ReactiveIndexService<ModelType> index(Index index) {
-        return null;
     }
 
     private ImmutableArrayValue writeRequest(ImmutableValue input) {

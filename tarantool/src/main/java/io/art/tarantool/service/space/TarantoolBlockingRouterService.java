@@ -35,6 +35,11 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
     }
 
     @Override
+    public TarantoolBlockingRouterIndexService<ModelType> index(Index index) {
+        return this.index.indexed(index);
+    }
+
+    @Override
     public ModelType first(KeyType key) {
         return block(reactive.first(key));
     }
@@ -157,10 +162,5 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
     @Override
     public TarantoolReactiveRouterService<KeyType, ModelType> reactive() {
         return reactive;
-    }
-
-    @Override
-    public TarantoolBlockingRouterIndexService<ModelType> index(Index index) {
-        return this.index.indexed(index);
     }
 }
