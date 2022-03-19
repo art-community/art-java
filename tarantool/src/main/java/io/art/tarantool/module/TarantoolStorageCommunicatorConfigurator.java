@@ -15,23 +15,23 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
-public class TarantoolCommunicatorConfigurator extends CommunicatorConfigurator<TarantoolCommunicatorConfigurator> {
+public class TarantoolStorageCommunicatorConfigurator extends CommunicatorConfigurator<TarantoolStorageCommunicatorConfigurator> {
     private final Map<String, TarantoolStorageConfiguration> storages = map();
 
-    public TarantoolCommunicatorConfigurator storage(Class<? extends Storage> storageClass) {
+    public TarantoolStorageCommunicatorConfigurator storage(Class<? extends Storage> storageClass) {
         return storage(() -> idByDash(storageClass), storageClass, identity());
     }
 
-    public TarantoolCommunicatorConfigurator storage(ConnectorIdentifier connector, Class<? extends Storage> storageClass) {
+    public TarantoolStorageCommunicatorConfigurator storage(ConnectorIdentifier connector, Class<? extends Storage> storageClass) {
         return storage(connector, storageClass, identity());
     }
 
-    public TarantoolCommunicatorConfigurator storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
+    public TarantoolStorageCommunicatorConfigurator storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConnectorConfigurator> configurator) {
         return storage(() -> idByDash(storageClass), storageClass, configurator);
     }
 
-    public TarantoolCommunicatorConfigurator storage(ConnectorIdentifier connector, Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
-        TarantoolStorageConfiguration configuration = configurator.apply(new TarantoolStorageConfigurator(connector.id())).configure();
+    public TarantoolStorageCommunicatorConfigurator storage(ConnectorIdentifier connector, Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConnectorConfigurator> configurator) {
+        TarantoolStorageConfiguration configuration = configurator.apply(new TarantoolStorageConnectorConfigurator(connector.id())).configure();
         storages.put(connector.id(), configuration);
         CommunicatorActionFactory factory = (connectorId, actionId) -> createTarantoolCommunication(tarantoolModule().configuration().storage(connectorId));
         register(connector, storageClass, factory);

@@ -37,7 +37,7 @@ import java.util.function.*;
 
 @Public
 public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleConfiguration, TarantoolModuleConfiguration.Configurator, TarantoolModule> {
-    private final TarantoolCommunicatorConfigurator communicatorConfigurator = new TarantoolCommunicatorConfigurator();
+    private final TarantoolStorageCommunicatorConfigurator storageCommunicatorConfigurator = new TarantoolStorageCommunicatorConfigurator();
     private final TarantoolServicesConfigurator servicesConfigurator = new TarantoolServicesConfigurator();
     private final TarantoolSubscriptionsConfigurator subscriptionsConfigurator = new TarantoolSubscriptionsConfigurator();
 
@@ -45,8 +45,8 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         return storage(storageClass, identity());
     }
 
-    public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConfigurator> configurator) {
-        communicatorConfigurator.storage(storageClass, configurator);
+    public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConnectorConfigurator> configurator) {
+        storageCommunicatorConfigurator.storage(storageClass, configurator);
         return this;
     }
 
@@ -64,12 +64,12 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.storageConfigurations = communicatorConfigurator.storages();
+        initial.storageConfigurations = storageCommunicatorConfigurator.storages();
         initial.storageClients = initial.storageConfigurations.entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolClientRegistry(entry.getValue())));
 
-        initial.communicator = communicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
+        initial.communicator = storageCommunicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
         initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
 
         initial.services = servicesConfigurator.configure();

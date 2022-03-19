@@ -11,21 +11,21 @@ import java.util.function.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolStorageConfigurator {
+public class TarantoolStorageConnectorConfigurator {
     private final String connector;
     private final Set<TarantoolClientConfiguration> clients = set();
     private boolean logging = false;
 
-    public TarantoolStorageConfigurator client(UnaryOperator<TarantoolClientConfigurationBuilder> configurator) {
+    public TarantoolStorageConnectorConfigurator client(UnaryOperator<TarantoolClientConfigurationBuilder> configurator) {
         clients.add(configurator.apply(tarantoolClientConfiguration().toBuilder()).build());
         return this;
     }
 
-    public TarantoolStorageConfigurator logging() {
+    public TarantoolStorageConnectorConfigurator logging() {
         return logging(true);
     }
 
-    public TarantoolStorageConfigurator logging(boolean logging) {
+    public TarantoolStorageConnectorConfigurator logging(boolean logging) {
         this.logging = logging;
         return this;
     }
