@@ -1,4 +1,4 @@
-package io.art.tarantool.service;
+package io.art.tarantool.service.subscription;
 
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.model.*;

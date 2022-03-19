@@ -1,4 +1,4 @@
-package io.art.tarantool.service;
+package io.art.tarantool.service.index;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;

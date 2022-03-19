@@ -8,7 +8,8 @@ import io.art.storage.*;
 import io.art.storage.index.*;
 import io.art.storage.sharder.*;
 import io.art.tarantool.registry.*;
-import io.art.tarantool.service.*;
+import io.art.tarantool.service.schema.*;
+import io.art.tarantool.service.space.*;
 import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
@@ -24,7 +25,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolBlockingSpaceService<?, ?>>> spaceServices = map();
-    private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
+    private final Map<String, LazyProperty<TarantoolStorageSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
     private final Map<String, LazyProperty<Sharders<?>>> sharders = map();
 
@@ -37,7 +38,7 @@ public class TarantoolServicesConfigurator {
 
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
-        schemaServices.put(storageId, lazy(() -> new TarantoolSchemaService(storages().get(storageId))));
+        schemaServices.put(storageId, lazy(() -> new TarantoolStorageSchemaService(storages().get(storageId))));
 
         if (nonNull(sharders)) {
             this.sharders.put(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
@@ -55,7 +56,7 @@ public class TarantoolServicesConfigurator {
     }
 
     TarantoolServiceRegistry configure() {
-        LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices
+        LazyProperty<ImmutableMap<String, TarantoolStorageSchemaService>> schemas = lazy(() -> schemaServices
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));

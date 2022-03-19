@@ -1,4 +1,4 @@
-package io.art.tarantool.service;
+package io.art.tarantool.service.space;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
@@ -8,6 +8,7 @@ import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
 import lombok.*;
 import org.msgpack.value.*;

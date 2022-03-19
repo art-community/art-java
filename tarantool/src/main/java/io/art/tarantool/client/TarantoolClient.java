@@ -28,7 +28,7 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
 import static io.art.tarantool.module.TarantoolModule.*;
-import static io.art.tarantool.service.TarantoolSubscriptionService.*;
+import static io.art.tarantool.service.subscription.TarantoolSubscriptionService.*;
 import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;

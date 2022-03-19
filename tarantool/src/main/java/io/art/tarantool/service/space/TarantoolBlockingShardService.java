@@ -1,15 +1,13 @@
-package io.art.tarantool.service;
+package io.art.tarantool.service.space;
 
 import io.art.core.collection.*;
 import io.art.meta.model.*;
-import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.stream.*;
 import org.msgpack.value.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -157,16 +155,5 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
     @Override
     public TarantoolReactiveShardService<KeyType, ModelType> reactive() {
         return reactive;
-    }
-
-    @Override
-    public final IndexService<ModelType> index(Index index) {
-        return TarantoolIndexService.<ModelType>builder()
-                .indexName(newString(index.name()))
-                .spaceType(spaceMetaType)
-                .fields(cast(index.fields()))
-                .clients(clients)
-                .spaceName(spaceName)
-                .build();
     }
 }

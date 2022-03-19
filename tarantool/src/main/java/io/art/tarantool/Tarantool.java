@@ -6,7 +6,7 @@ import io.art.storage.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
-import io.art.tarantool.service.*;
+import io.art.tarantool.service.schema.*;
 import lombok.*;
 import lombok.experimental.*;
 import static io.art.core.caster.Caster.*;
@@ -39,7 +39,7 @@ public class Tarantool {
             return tarantoolModule().configuration().getServices().getSpace(spaceType);
         }
 
-        public TarantoolSchemaService schema(Class<? extends Storage> type) {
+        public TarantoolStorageSchemaService schema(Class<? extends Storage> type) {
             return tarantoolModule().configuration().getServices().getSchema(type);
         }
 
