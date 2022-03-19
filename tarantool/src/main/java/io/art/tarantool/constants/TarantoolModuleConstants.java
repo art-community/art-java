@@ -115,6 +115,7 @@ public interface TarantoolModuleConstants {
 
         ImmutableStringValue SCHEMA_CREATE_INDEX = newString("art.schema.createIndex");
         ImmutableStringValue SCHEMA_CREATE_STORAGE_SPACE = newString("art.schema.createStorageSpace");
+        ImmutableStringValue SCHEMA_CREATE_SHARD_SPACE = newString("art.schema.createShardSpace");
         ImmutableStringValue SCHEMA_SPACES = newString("art.schema.spaces");
         ImmutableStringValue SCHEMA_DROP_INDEX = newString("art.schema.dropIndex");
         ImmutableStringValue SCHEMA_RENAME_SPACE = newString("art.schema.renameSpace");
