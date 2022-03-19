@@ -4,6 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.model.*;
+import io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
 import org.msgpack.value.Value;
@@ -21,10 +22,11 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolStorageSchemaService {
-    private final TarantoolClientRegistry storage;
+public class TarantoolStorageSchemaService implements TarantoolSchemaService {
+    private final TarantoolClientRegistry clients;
 
-    public TarantoolStorageSchemaService createSpace(TarantoolSpaceConfiguration configuration) {
+    @Override
+    public TarantoolSchemaService createSpace(TarantoolSpaceConfiguration configuration) {
         Map<Value, Value> options = map();
         apply(configuration.id(), value -> options.put(SpaceFields.ID, newInteger(value)));
         apply(configuration.engine(), value -> options.put(SpaceFields.ENGINE, newString(value.name().toLowerCase())));
@@ -36,11 +38,12 @@ public class TarantoolStorageSchemaService {
         apply(configuration.temporary(), value -> options.put(SpaceFields.TEMPORARY, newBoolean(value)));
         apply(configuration.format(), value -> options.put(SpaceFields.FORMAT, writeFormat(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
-        block(storage.mutable().call(SCHEMA_CREATE_STORAGE_SPACE, input));
+        block(clients.mutable().call(SCHEMA_CREATE_STORAGE_SPACE, input));
         return this;
     }
 
-    public TarantoolStorageSchemaService createIndex(TarantoolIndexConfiguration<?, ?> configuration) {
+    @Override
+    public TarantoolSchemaService createIndex(TarantoolIndexConfiguration<?, ?> configuration) {
         Map<Value, Value> options = map();
         apply(configuration.id(), value -> options.put(IndexFields.ID, newInteger(value)));
         apply(configuration.sequence(), value -> options.put(IndexFields.SEQUENCE, newString(value)));
@@ -53,36 +56,41 @@ public class TarantoolStorageSchemaService {
         apply(configuration.ifNotExists(), value -> options.put(IndexFields.IF_NOT_EXISTS, newBoolean(value)));
         options.put(IndexFields.PARTS, newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
         ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
-        block(storage.mutable().call(SCHEMA_CREATE_INDEX, input));
+        block(clients.mutable().call(SCHEMA_CREATE_INDEX, input));
         return this;
     }
 
-    public TarantoolStorageSchemaService formatSpace(String space, TarantoolFormatConfiguration configuration) {
+    @Override
+    public TarantoolSchemaService formatSpace(String space, TarantoolFormatConfiguration configuration) {
         ArrayValue input = newArray(newString(space), writeFormat(configuration));
-        block(storage.mutable().call(SCHEMA_FORMAT, input));
+        block(clients.mutable().call(SCHEMA_FORMAT, input));
         return this;
     }
 
-    public TarantoolStorageSchemaService renameSpace(String from, String to) {
+    @Override
+    public TarantoolSchemaService renameSpace(String from, String to) {
         ArrayValue input = newArray(newString(from), newString(to));
-        block(storage.mutable().call(SCHEMA_RENAME_SPACE, input));
+        block(clients.mutable().call(SCHEMA_RENAME_SPACE, input));
         return this;
     }
 
-    public TarantoolStorageSchemaService dropSpace(String name) {
+    @Override
+    public TarantoolSchemaService dropSpace(String name) {
         ArrayValue input = newArray(newString(name));
-        block(storage.mutable().call(SCHEMA_DROP_SPACE, input));
+        block(clients.mutable().call(SCHEMA_DROP_SPACE, input));
         return this;
     }
 
-    public TarantoolStorageSchemaService dropIndex(String spaceName, String indexName) {
+    @Override
+    public TarantoolSchemaService dropIndex(String spaceName, String indexName) {
         ArrayValue input = newArray(newString(spaceName), newString(indexName));
-        block(storage.mutable().call(SCHEMA_DROP_INDEX, input));
+        block(clients.mutable().call(SCHEMA_DROP_INDEX, input));
         return this;
     }
 
+    @Override
     public ImmutableArray<String> spaces() {
-        Mono<ImmutableArray<String>> spaces = storage
+        Mono<ImmutableArray<String>> spaces = clients
                 .immutable()
                 .call(SCHEMA_SPACES)
                 .map(value -> value.asArrayValue()
@@ -94,8 +102,9 @@ public class TarantoolStorageSchemaService {
         return block(spaces);
     }
 
+    @Override
     public ImmutableArray<String> indices(String space) {
-        Mono<ImmutableArray<String>> spaces = storage
+        Mono<ImmutableArray<String>> spaces = clients
                 .immutable()
                 .call(SCHEMA_INDICES, newArray(newString(space)))
                 .map(value -> value.asArrayValue()
@@ -105,18 +114,6 @@ public class TarantoolStorageSchemaService {
                         .map(StringValue::asString)
                         .collect(immutableArrayCollector()));
         return block(spaces);
-    }
-
-    public boolean hasSpace(String space) {
-        return spaces().stream().anyMatch(space::equals);
-    }
-
-    public boolean hasIndex(String space, String index) {
-        return indices(space).stream().anyMatch(index::equals);
-    }
-
-    public boolean hasIndex(String index) {
-        return spaces().stream().flatMap(space -> indices(space).stream()).anyMatch(index::equals);
     }
 
     private ImmutableMapValue writeFormat(TarantoolFormatConfiguration configuration) {
@@ -137,17 +134,16 @@ public class TarantoolStorageSchemaService {
         return newMap(map);
     }
 
-    private void writeRtreeConfiguration(Map<Value, Value> options, TarantoolIndexConfiguration.TarantoolRtreeIndexConfiguration value) {
+    private void writeRtreeConfiguration(Map<Value, Value> options, TarantoolRtreeIndexConfiguration value) {
         apply(value.dimension(), rtreeValue -> options.put(IndexFields.DIMENSION, newInteger(rtreeValue)));
         apply(value.distance(), rtreeValue -> options.put(IndexFields.DISTANCE, newString(rtreeValue)));
     }
 
-    private void writeVinylConfiguration(Map<Value, Value> options, TarantoolIndexConfiguration.TarantoolVinylIndexConfiguration value) {
+    private void writeVinylConfiguration(Map<Value, Value> options, TarantoolVinylIndexConfiguration value) {
         apply(value.bloomFrp(), vinylValue -> options.put(IndexFields.BLOOM_FPR, newInteger(vinylValue)));
         apply(value.pageSize(), vinylValue -> options.put(IndexFields.PAGE_SIZE, newInteger(vinylValue)));
         apply(value.rangeSize(), vinylValue -> options.put(IndexFields.RANGE_SIZE, newInteger(vinylValue)));
         apply(value.runCountPerLevel(), vinylValue -> options.put(IndexFields.RUN_COUNT_PER_LEVEL, newInteger(vinylValue)));
         apply(value.runSizeRatio(), vinylValue -> options.put(IndexFields.RUN_SIZE_RATIO, newInteger(vinylValue)));
     }
-
 }

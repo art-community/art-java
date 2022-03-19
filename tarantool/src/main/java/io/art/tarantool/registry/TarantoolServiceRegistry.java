@@ -14,7 +14,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 @Builder
 public class TarantoolServiceRegistry {
     private final LazyProperty<ImmutableMap<String, TarantoolBlockingSpaceService<?, ?>>> spaces;
-    private final LazyProperty<ImmutableMap<String, TarantoolStorageSchemaService>> schemas;
+    private final LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas;
     private final LazyProperty<ImmutableMap<String, Indexes<?>>> indexes;
     private final LazyProperty<ImmutableMap<String, Sharders<?>>> sharders;
 
@@ -22,7 +22,7 @@ public class TarantoolServiceRegistry {
         return cast(spaces.get().get(idByDash(type)));
     }
 
-    public TarantoolStorageSchemaService getSchema(Class<? extends Storage> storageType) {
+    public TarantoolSchemaService getSchema(Class<? extends Storage> storageType) {
         return cast(schemas.get().get(idByDash(storageType)));
     }
 

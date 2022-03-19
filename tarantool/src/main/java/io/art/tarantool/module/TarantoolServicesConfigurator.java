@@ -25,7 +25,7 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class TarantoolServicesConfigurator {
     private final Map<String, LazyProperty<TarantoolBlockingSpaceService<?, ?>>> spaceServices = map();
-    private final Map<String, LazyProperty<TarantoolStorageSchemaService>> schemaServices = map();
+    private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
     private final Map<String, LazyProperty<Sharders<?>>> sharders = map();
 
@@ -35,10 +35,13 @@ public class TarantoolServicesConfigurator {
         Class<C> spaceClass = configurator.getSpaceClass();
         Class<? extends Storage> storageClass = configurator.getStorageClass();
         Class<? extends Sharders<C>> sharders = configurator.getSharders();
+        boolean router = configurator.isRouter();
 
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
-        schemaServices.put(storageId, lazy(() -> new TarantoolStorageSchemaService(storages().get(storageId))));
+        schemaServices.put(storageId, lazy(() -> router
+                ? new TarantoolStorageSchemaService(clients().get(storageId))
+                : new TarantoolRouterSchemaService(clients().get(storageId))));
 
         if (nonNull(sharders)) {
             this.sharders.put(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
@@ -56,7 +59,7 @@ public class TarantoolServicesConfigurator {
     }
 
     TarantoolServiceRegistry configure() {
-        LazyProperty<ImmutableMap<String, TarantoolStorageSchemaService>> schemas = lazy(() -> schemaServices
+        LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas = lazy(() -> schemaServices
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
@@ -75,7 +78,7 @@ public class TarantoolServicesConfigurator {
         return TarantoolServiceRegistry.builder().spaces(spaces).schemas(schemas).indexes(indexes).sharders(sharders).build();
     }
 
-    private static ImmutableMap<String, TarantoolClientRegistry> storages() {
+    private static ImmutableMap<String, TarantoolClientRegistry> clients() {
         return tarantoolModule().configuration().getStorageClients();
     }
 
@@ -89,7 +92,7 @@ public class TarantoolServicesConfigurator {
 
     private <C> TarantoolBlockingSpaceService<?, C> spaceServiceByField(MetaType<?> field, Class<C> spaceClass, String storageId) {
         MetaClass<C> spaceDeclaration = declaration(spaceClass);
-        TarantoolClientRegistry clients = storages().get(storageId);
+        TarantoolClientRegistry clients = clients().get(storageId);
         return new TarantoolBlockingSpaceService<>(field, spaceDeclaration, clients);
     }
 }

@@ -17,6 +17,7 @@ public class TarantoolSpaceConfigurator<ModelType> {
     private Supplier<MetaField<? extends MetaClass<ModelType>, ?>> field;
     private Class<? extends Indexes<ModelType>> indexes;
     private Class<? extends Sharders<ModelType>> sharders;
+    private boolean router;
 
     public <M extends MetaClass<ModelType>> TarantoolSpaceConfigurator<ModelType> id(Supplier<MetaField<M, ?>> field) {
         this.field = cast(field);
@@ -28,7 +29,13 @@ public class TarantoolSpaceConfigurator<ModelType> {
         return this;
     }
 
+    public <S extends Sharders<ModelType>> TarantoolSpaceConfigurator<ModelType> router() {
+        router = true;
+        return this;
+    }
+
     public <S extends Sharders<ModelType>> TarantoolSpaceConfigurator<ModelType> sharders(Class<S> sharders) {
+        router = true;
         this.sharders = sharders;
         return this;
     }
