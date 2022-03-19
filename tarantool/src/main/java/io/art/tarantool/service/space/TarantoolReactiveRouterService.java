@@ -25,7 +25,7 @@ import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 
-public class TarantoolReactiveShardService<KeyType, ModelType> implements ReactiveShardService<KeyType, ModelType> {
+public class TarantoolReactiveRouterService<KeyType, ModelType> implements ReactiveShardService<KeyType, ModelType> {
     private final TarantoolModelReader reader;
     private final TarantoolModelWriter writer;
     private final TarantoolUpdateSerializer updateSerializer;
@@ -35,7 +35,7 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     private final MetaType<KeyType> keyMeta;
     private final ThreadLocal<ShardRequest> shard = new ThreadLocal<>();
 
-    public TarantoolReactiveShardService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
+    public TarantoolReactiveRouterService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.keyMeta = keyMeta;
@@ -45,7 +45,7 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
         updateSerializer = new TarantoolUpdateSerializer(writer);
     }
 
-    TarantoolReactiveShardService<KeyType, ModelType> shard(ShardRequest request) {
+    TarantoolReactiveRouterService<KeyType, ModelType> shard(ShardRequest request) {
         shard.set(request);
         return this;
     }
@@ -199,8 +199,9 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public TarantoolReactiveSpaceStream<ModelType> stream() {
-        return TarantoolReactiveSpaceStream.<ModelType>builder()
+    public TarantoolReactiveRouterStream<ModelType> stream() {
+        return TarantoolReactiveRouterStream.<ModelType>builder()
+                .shardRequest(this.shard.get())
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)
@@ -208,8 +209,9 @@ public class TarantoolReactiveShardService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public TarantoolReactiveSpaceStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveSpaceStream.<ModelType>builder()
+    public TarantoolReactiveRouterStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveRouterStream.<ModelType>builder()
+                .shardRequest(this.shard.get())
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)

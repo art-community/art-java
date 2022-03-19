@@ -24,7 +24,7 @@ import java.util.function.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolServicesConfigurator {
-    private final Map<String, LazyProperty<TarantoolBlockingSpaceService<?, ?>>> spaceServices = map();
+    private final Map<String, LazyProperty<TarantoolBlockingStorageService<?, ?>>> spaceServices = map();
     private final Map<String, LazyProperty<TarantoolSchemaService>> schemaServices = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
     private final Map<String, LazyProperty<Sharders<?>>> sharders = map();
@@ -63,7 +63,7 @@ public class TarantoolServicesConfigurator {
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
-        LazyProperty<ImmutableMap<String, TarantoolBlockingSpaceService<?, ?>>> spaces = lazy(() -> spaceServices
+        LazyProperty<ImmutableMap<String, TarantoolBlockingStorageService<?, ?>>> spaces = lazy(() -> spaceServices
                 .entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get())));
@@ -90,9 +90,9 @@ public class TarantoolServicesConfigurator {
                 .type();
     }
 
-    private <C> TarantoolBlockingSpaceService<?, C> spaceServiceByField(MetaType<?> field, Class<C> spaceClass, String storageId) {
+    private <C> TarantoolBlockingStorageService<?, C> spaceServiceByField(MetaType<?> field, Class<C> spaceClass, String storageId) {
         MetaClass<C> spaceDeclaration = declaration(spaceClass);
         TarantoolClientRegistry clients = clients().get(storageId);
-        return new TarantoolBlockingSpaceService<>(field, spaceDeclaration, clients);
+        return new TarantoolBlockingStorageService<>(field, spaceDeclaration, clients);
     }
 }

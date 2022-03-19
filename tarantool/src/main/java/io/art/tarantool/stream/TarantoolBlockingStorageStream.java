@@ -17,10 +17,10 @@ import java.util.function.*;
 import java.util.stream.*;
 
 @SuppressWarnings({VARARGS})
-public class TarantoolBlockingSpaceStream<Type> extends BlockingSpaceStream<Type> {
+public class TarantoolBlockingStorageStream<Type> extends BlockingSpaceStream<Type> {
     private final ReactiveSpaceStream<Type> stream;
 
-    public TarantoolBlockingSpaceStream(MetaType<Type> returningType, ReactiveSpaceStream<Type> stream) {
+    public TarantoolBlockingStorageStream(MetaType<Type> returningType, ReactiveSpaceStream<Type> stream) {
         super(returningType);
         this.stream = stream;
     }

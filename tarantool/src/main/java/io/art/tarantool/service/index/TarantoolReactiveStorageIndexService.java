@@ -25,7 +25,7 @@ import static reactor.core.publisher.Flux.*;
 import java.util.*;
 
 @Public
-public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexService<ModelType> {
+public class TarantoolReactiveStorageIndexService<ModelType> implements ReactiveIndexService<ModelType> {
     private final ImmutableStringValue spaceName;
     private final ImmutableStringValue indexName;
     private final TarantoolClientRegistry clients;
@@ -36,11 +36,11 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     private final TarantoolUpdateSerializer updateSerializer;
 
     @Builder
-    public TarantoolReactiveIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
-                                         MetaType<ModelType> spaceType,
-                                         ImmutableStringValue spaceName,
-                                         ImmutableStringValue indexName,
-                                         TarantoolClientRegistry clients) {
+    public TarantoolReactiveStorageIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
+                                                MetaType<ModelType> spaceType,
+                                                ImmutableStringValue spaceName,
+                                                ImmutableStringValue indexName,
+                                                TarantoolClientRegistry clients) {
         this.fields = fields;
         this.spaceType = spaceType;
         this.clients = clients;
@@ -55,21 +55,21 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     public Mono<ModelType> first(Tuple tuple) {
         ArrayValue input = wrapRequest(serializeTuple(tuple));
         Mono<Value> output = clients.immutable().call(INDEX_FIRST, input);
-        return parseSpaceMono(output);
+        return readSpaceMono(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple) {
         ArrayValue input = wrapRequest(serializeTuple(tuple));
         Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> select(Tuple tuple, int offset, int limit) {
         ArrayValue input = newArray(spaceName, indexName, serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
         Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
@@ -77,7 +77,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
         if (key.size() == 1) {
             ArrayValue input = newArray(spaceName, indexName, serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
             Mono<Value> output = clients.mutable().call(INDEX_SINGLE_UPDATE, input);
-            return parseSpaceMono(output);
+            return readSpaceMono(output);
         }
         return update(linkedListOf(key), updater).next();
     }
@@ -91,7 +91,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
                 updateSerializer.serializeUpdate(cast(updater))
         );
         Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
@@ -103,21 +103,21 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
                 updateSerializer.serializeUpdate(cast(updater))
         );
         Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(Collection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
         if (key.size() == 1) {
             ArrayValue input = wrapRequest(serializeTuple(key));
             Mono<Value> output = clients.mutable().call(INDEX_SINGLE_DELETE, input);
-            return parseSpaceMono(output);
+            return readSpaceMono(output);
         }
         return delete(linkedListOf(key)).next();
     }
@@ -134,19 +134,19 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
     public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
     public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
         ArrayValue input = wrapRequest(newArray(keys.stream().map(this::serializeTuple).collect(listCollector())));
         Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
-        return parseSpaceFlux(output);
+        return readSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(Tuple tuple) {
-        return parseCountMono(clients.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeTuple(tuple))));
+        return readCountMono(clients.immutable().call(INDEX_COUNT, newArray(spaceName, indexName, serializeTuple(tuple))));
     }
 
     @Override
@@ -183,15 +183,15 @@ public class TarantoolReactiveIndexService<ModelType> implements ReactiveIndexSe
         return newArray(spaceName, indexName, serialized);
     }
 
-    private Mono<Long> parseCountMono(Mono<Value> value) {
+    private Mono<Long> readCountMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
+    private Mono<ModelType> readSpaceMono(Mono<Value> value) {
         return value.map(element -> reader.read(spaceType, element));
     }
 
-    private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
+    private Flux<ModelType> readSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()

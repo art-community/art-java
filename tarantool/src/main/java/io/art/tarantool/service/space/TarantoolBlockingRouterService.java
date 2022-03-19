@@ -11,16 +11,16 @@ import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import java.util.*;
 
-public class TarantoolBlockingShardService<KeyType, ModelType> implements BlockingShardService<KeyType, ModelType> {
+public class TarantoolBlockingRouterService<KeyType, ModelType> implements BlockingShardService<KeyType, ModelType> {
     private final MetaType<ModelType> spaceMetaType;
-    private final TarantoolReactiveShardService<KeyType, ModelType> reactive;
+    private final TarantoolReactiveRouterService<KeyType, ModelType> reactive;
 
-    public TarantoolBlockingShardService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
+    public TarantoolBlockingRouterService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.spaceMetaType = spaceMeta.definition();
-        reactive = new TarantoolReactiveShardService<>(keyMeta, spaceMeta, clients);
+        reactive = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, clients);
     }
 
-    TarantoolBlockingShardService<KeyType, ModelType> shard(ShardRequest request) {
+    TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
         reactive.shard(request);
         return this;
     }
@@ -136,17 +136,17 @@ public class TarantoolBlockingShardService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolBlockingSpaceStream<ModelType> stream() {
-        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingRouterStream<ModelType> stream() {
+        return new TarantoolBlockingRouterStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingSpaceStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingRouterStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingRouterStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override
-    public TarantoolReactiveShardService<KeyType, ModelType> reactive() {
+    public TarantoolReactiveRouterService<KeyType, ModelType> reactive() {
         return reactive;
     }
 }

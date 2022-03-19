@@ -17,18 +17,18 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolIndexService<ModelType> implements BlockingIndexService<ModelType> {
+public class TarantoolBlockingStorageIndexService<ModelType> implements BlockingIndexService<ModelType> {
     private final MetaType<ModelType> spaceType;
-    private TarantoolReactiveIndexService<ModelType> reactive;
+    private TarantoolReactiveStorageIndexService<ModelType> reactive;
 
     @Builder
-    public TarantoolIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
-                                 MetaType<ModelType> spaceType,
-                                 ImmutableStringValue spaceName,
-                                 ImmutableStringValue indexName,
-                                 TarantoolClientRegistry clients) {
+    public TarantoolBlockingStorageIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
+                                                MetaType<ModelType> spaceType,
+                                                ImmutableStringValue spaceName,
+                                                ImmutableStringValue indexName,
+                                                TarantoolClientRegistry clients) {
         this.spaceType = spaceType;
-        reactive = TarantoolReactiveIndexService.<ModelType>builder()
+        reactive = TarantoolReactiveStorageIndexService.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceType)
                 .fields(fields)
@@ -103,12 +103,12 @@ public class TarantoolIndexService<ModelType> implements BlockingIndexService<Mo
     }
 
     @Override
-    public TarantoolBlockingSpaceStream<ModelType> stream() {
-        return new TarantoolBlockingSpaceStream<>(spaceType, reactive.stream());
+    public TarantoolBlockingStorageStream<ModelType> stream() {
+        return new TarantoolBlockingStorageStream<>(spaceType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingSpaceStream<ModelType> stream(Tuple baseKey) {
-        return new TarantoolBlockingSpaceStream<>(spaceType, reactive.stream(baseKey));
+    public TarantoolBlockingStorageStream<ModelType> stream(Tuple baseKey) {
+        return new TarantoolBlockingStorageStream<>(spaceType, reactive.stream(baseKey));
     }
 }

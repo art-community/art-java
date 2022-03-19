@@ -13,12 +13,12 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 
 @Builder
 public class TarantoolServiceRegistry {
-    private final LazyProperty<ImmutableMap<String, TarantoolBlockingSpaceService<?, ?>>> spaces;
+    private final LazyProperty<ImmutableMap<String, TarantoolBlockingStorageService<?, ?>>> spaces;
     private final LazyProperty<ImmutableMap<String, TarantoolSchemaService>> schemas;
     private final LazyProperty<ImmutableMap<String, Indexes<?>>> indexes;
     private final LazyProperty<ImmutableMap<String, Sharders<?>>> sharders;
 
-    public <KeyType, ValueType> TarantoolBlockingSpaceService<KeyType, ValueType> getSpace(Class<ValueType> type) {
+    public <KeyType, ValueType> TarantoolBlockingStorageService<KeyType, ValueType> getSpace(Class<ValueType> type) {
         return cast(spaces.get().get(idByDash(type)));
     }
 

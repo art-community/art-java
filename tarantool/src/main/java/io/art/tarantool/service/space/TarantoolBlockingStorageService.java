@@ -21,19 +21,19 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolBlockingSpaceService<KeyType, ModelType> implements BlockingSpaceService<KeyType, ModelType> {
+public class TarantoolBlockingStorageService<KeyType, ModelType> implements BlockingSpaceService<KeyType, ModelType> {
     private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
-    private final TarantoolReactiveSpaceService<KeyType, ModelType> reactive;
-    private final TarantoolBlockingShardService<KeyType, ModelType> sharded;
+    private final TarantoolReactiveStorageService<KeyType, ModelType> reactive;
+    private final TarantoolBlockingRouterService<KeyType, ModelType> sharded;
 
-    public TarantoolBlockingSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
+    public TarantoolBlockingStorageService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.spaceName = newString(idByDash(spaceMeta.definition().type()));
-        reactive = new TarantoolReactiveSpaceService<>(keyMeta, spaceMeta, clients);
-        sharded = new TarantoolBlockingShardService<>(keyMeta, spaceMeta, clients);
+        reactive = new TarantoolReactiveStorageService<>(keyMeta, spaceMeta, clients);
+        sharded = new TarantoolBlockingRouterService<>(keyMeta, spaceMeta, clients);
     }
 
     @Override
@@ -147,23 +147,23 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolBlockingSpaceStream<ModelType> stream() {
-        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream());
+    public TarantoolBlockingStorageStream<ModelType> stream() {
+        return new TarantoolBlockingStorageStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingSpaceStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
+    public TarantoolBlockingStorageStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingStorageStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override
-    public TarantoolReactiveSpaceService<KeyType, ModelType> reactive() {
+    public TarantoolReactiveStorageService<KeyType, ModelType> reactive() {
         return reactive;
     }
 
     @Override
     public final BlockingIndexService<ModelType> index(Index index) {
-        return TarantoolIndexService.<ModelType>builder()
+        return TarantoolBlockingStorageIndexService.<ModelType>builder()
                 .indexName(newString(index.name()))
                 .spaceType(spaceMetaType)
                 .fields(cast(index.fields()))
@@ -173,7 +173,7 @@ public class TarantoolBlockingSpaceService<KeyType, ModelType> implements Blocki
     }
 
     @Override
-    public TarantoolBlockingShardService<KeyType, ModelType> sharded(ShardRequest request) {
+    public TarantoolBlockingRouterService<KeyType, ModelType> sharded(ShardRequest request) {
         return sharded.shard(request);
     }
 }

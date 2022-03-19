@@ -29,7 +29,7 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolReactiveSpaceService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
+public class TarantoolReactiveStorageService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
     private final TarantoolModelReader reader;
     private final TarantoolUpdateSerializer updateSerializer;
     private final ImmutableStringValue spaceName;
@@ -37,9 +37,9 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     private final TarantoolClientRegistry clients;
     private final TarantoolModelWriter writer;
     private final MetaType<KeyType> keyMeta;
-    private final TarantoolReactiveShardService<KeyType, ModelType> sharded;
+    private final TarantoolReactiveRouterService<KeyType, ModelType> sharded;
 
-    public TarantoolReactiveSpaceService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
+    public TarantoolReactiveStorageService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
         this.keyMeta = keyMeta;
@@ -47,7 +47,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
-        sharded = new TarantoolReactiveShardService<>(keyMeta, spaceMeta, clients);
+        sharded = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, clients);
     }
 
     @Override
@@ -199,8 +199,8 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public TarantoolReactiveSpaceStream<ModelType> stream() {
-        return TarantoolReactiveSpaceStream.<ModelType>builder()
+    public TarantoolReactiveStorageStream<ModelType> stream() {
+        return TarantoolReactiveStorageStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)
@@ -208,8 +208,8 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
     }
 
     @Override
-    public TarantoolReactiveSpaceStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveSpaceStream.<ModelType>builder()
+    public TarantoolReactiveStorageStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveStorageStream.<ModelType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
                 .clients(clients)
@@ -219,7 +219,7 @@ public class TarantoolReactiveSpaceService<KeyType, ModelType> implements Reacti
 
     @Override
     public final ReactiveIndexService<ModelType> index(Index index) {
-        return TarantoolReactiveIndexService.<ModelType>builder()
+        return TarantoolReactiveStorageIndexService.<ModelType>builder()
                 .indexName(newString(index.name()))
                 .spaceType(spaceMetaType)
                 .fields(cast(index.fields()))
