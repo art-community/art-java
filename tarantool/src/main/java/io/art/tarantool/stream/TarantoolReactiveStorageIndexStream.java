@@ -54,25 +54,18 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
 
     @Override
     public Flux<ModelType> collect() {
-        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCollect;
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(newArray(serializer.serializeStream(operators)), newArray(operator)),
-                writeOptions()
-        );
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingCollect);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return readSpaceFlux(returningType, result);
     }
 
     @Override
     public Mono<Long> count() {
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(newArray(serializer.serializeStream(operators)), newArray(terminatingFunctions.terminatingCount)),
-                writeOptions()
-        );
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingCount);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return readLongMono(result);
     }
@@ -81,13 +74,9 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts())),
-                writeOptions()
-        );
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return readBooleanMono(result);
     }
@@ -96,13 +85,9 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts())),
-                writeOptions()
-        );
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return readBooleanMono(result);
     }
@@ -111,13 +96,9 @@ public class TarantoolReactiveStorageIndexStream<ModelType> extends ReactiveSpac
     public Mono<Boolean> none(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts())),
-                writeOptions()
-        );
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return readBooleanMono(result);
     }
