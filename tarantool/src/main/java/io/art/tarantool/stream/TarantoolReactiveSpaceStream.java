@@ -54,13 +54,9 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCollect);
         ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
         return readSpaceFlux(returningType, result);
-    }
-
-    private ImmutableArrayValue writeStream(ImmutableArrayValue processing, ImmutableArrayValue terminating, ImmutableValue options) {
-        return newArray(spaceName, newArray(processing, terminating), options);
     }
 
     @Override
@@ -68,7 +64,7 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCount);
         ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
         return readLongMono(result);
     }
@@ -80,7 +76,7 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
         ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
         return readBooleanMono(result);
     }
@@ -92,7 +88,7 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
         ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
         return readBooleanMono(result);
     }
@@ -104,7 +100,7 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
         ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
         ImmutableValue options = writeOptions();
-        ImmutableArrayValue stream = writeStream(processing, terminating, options);
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
         return readBooleanMono(result);
     }
@@ -132,4 +128,5 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
                 .collect(listCollector());
         return newArray(newArray(serialized));
     }
+
 }

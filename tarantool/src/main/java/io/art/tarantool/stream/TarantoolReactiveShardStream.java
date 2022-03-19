@@ -2,6 +2,7 @@ package io.art.tarantool.stream;
 
 import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.storage.constants.StorageConstants.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.sharder.*;
@@ -21,6 +22,7 @@ import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -55,91 +57,92 @@ public class TarantoolReactiveShardStream<ModelType> extends ReactiveSpaceStream
 
     @Override
     public Flux<ModelType> collect() {
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingCollect),
-                writeBaseKey()
-        );
-        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
-        return parseSpaceFlux(returningType, result);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCollect);
+        ImmutableValue options = writeOptions();
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, writeRequest(stream));
+        return readSpaceFlux(returningType, result);
     }
 
     @Override
     public Mono<Long> count() {
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingCount),
-                writeBaseKey()
-        );
-        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
-        return parseLongMono(result);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingCount);
+        ImmutableValue options = writeOptions();
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, writeRequest(stream));
+        return readLongMono(result);
     }
 
     @Override
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts())),
-                writeBaseKey()
-        );
-        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
-        return parseBooleanMono(result);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableValue options = writeOptions();
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, writeRequest(stream));
+        return readBooleanMono(result);
     }
 
     @Override
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts())),
-                writeBaseKey()
-        );
-        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
-        return parseBooleanMono(result);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableValue options = writeOptions();
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, writeRequest(stream));
+        return readBooleanMono(result);
     }
 
     @Override
     public Mono<Boolean> none(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts())),
-                writeBaseKey()
-        );
-        Mono<Value> result = clients.router().call(SPACE_STREAM, stream);
-        return parseBooleanMono(result);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableValue options = writeOptions();
+        ImmutableArrayValue stream = newArray(spaceName, newArray(processing, terminating), options);
+        Mono<Value> result = clients.immutable().call(SPACE_STREAM, writeRequest(stream));
+        return readBooleanMono(result);
     }
 
-    private Mono<Long> parseLongMono(Mono<Value> value) {
+    private Mono<Long> readLongMono(Mono<Value> value) {
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Mono<Boolean> parseBooleanMono(Mono<Value> value) {
+    private Mono<Boolean> readBooleanMono(Mono<Value> value) {
         return value.map(element -> reader.read(booleanType(), element));
     }
 
-    private Flux<ModelType> parseSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
+    private Flux<ModelType> readSpaceFlux(MetaType<ModelType> type, Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
                 .map(element -> reader.read(type, element))));
     }
 
-    private ImmutableValue writeBaseKey() {
-        if (isNull(baseKey)) return newNil();
+    private ImmutableValue writeOptions() {
+        if (isNull(baseKey)) return newArray();
         List<Value> serialized = baseKey.values()
                 .stream()
                 .map(key -> writer.write(definition(key.getClass()), key))
                 .collect(listCollector());
-        return newArray(serialized);
+        return newArray(newArray(serialized));
+    }
+
+    private ImmutableArrayValue writeRequest(ImmutableValue input) {
+        ImmutableArrayValue shardData = newArray(shardRequest.getData()
+                .values()
+                .stream()
+                .map(element -> writer.write(definition(element.getClass()), element))
+                .toArray(Value[]::new), true);
+        ImmutableIntegerValue algorithm = newInteger(0);
+        if (shardRequest.getAlgorithm() == ShardingAlgorithm.CRC_32) algorithm = CRC_32;
+        return newArray(newArray(shardData, algorithm), input);
     }
 }
