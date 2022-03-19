@@ -102,7 +102,7 @@ public class TarantoolReactiveSpaceStream<ModelType> extends ReactiveSpaceStream
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
         ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
-        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingNone, SERIALIZER.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue terminating = newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
         ImmutableValue options = writeOptions();
         ImmutableArrayValue stream = writeStream(processing, terminating, options);
         Mono<Value> result = clients.immutable().call(SPACE_STREAM, stream);
