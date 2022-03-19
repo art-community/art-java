@@ -225,7 +225,7 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
     }
 
     @Override
-    public ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request) {
+    public ReactiveShardService<KeyType, ModelType> shard(ShardRequest request) {
         return sharded.sharded(request);
     }
 

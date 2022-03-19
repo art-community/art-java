@@ -124,29 +124,29 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
     ReactiveIndexService<ModelType> index(Index index);
 
 
-    default <P1> ReactiveShardService<KeyType, ModelType> sharded(Sharder1<ModelType, P1> sharder, P1 input) {
-        return sharded(sharder.shard(input));
+    default <P1> ReactiveShardService<KeyType, ModelType> shard(Sharder1<ModelType, P1> sharder, P1 input) {
+        return shard(sharder.shard(input));
     }
 
-    default <P1, P2> ReactiveShardService<KeyType, ModelType> sharded(Sharder2<ModelType, P1, P2> sharder, P1 input1, P2 input2) {
-        return sharded(sharder.shard(input1, input2));
+    default <P1, P2> ReactiveShardService<KeyType, ModelType> shard(Sharder2<ModelType, P1, P2> sharder, P1 input1, P2 input2) {
+        return shard(sharder.shard(input1, input2));
     }
 
-    default <P1, P2, P3> ReactiveShardService<KeyType, ModelType> sharded(Sharder3<ModelType, P1, P2, P3> sharder, P1 input1, P2 input2, P3 input3) {
-        return sharded(sharder.shard(input1, input2, input3));
+    default <P1, P2, P3> ReactiveShardService<KeyType, ModelType> shard(Sharder3<ModelType, P1, P2, P3> sharder, P1 input1, P2 input2, P3 input3) {
+        return shard(sharder.shard(input1, input2, input3));
     }
 
-    default <P1, P2, P3, P4> ReactiveShardService<KeyType, ModelType> sharded(Sharder4<ModelType, P1, P2, P3, P4> sharder, P1 input1, P2 input2, P3 input3, P4 input4) {
-        return sharded(sharder.shard(input1, input2, input3, input4));
+    default <P1, P2, P3, P4> ReactiveShardService<KeyType, ModelType> shard(Sharder4<ModelType, P1, P2, P3, P4> sharder, P1 input1, P2 input2, P3 input3, P4 input4) {
+        return shard(sharder.shard(input1, input2, input3, input4));
     }
 
-    default <P1, P2, P3, P4, P5> ReactiveShardService<KeyType, ModelType> sharded(Sharder5<ModelType, P1, P2, P3, P4, P5> sharder, P1 input1, P2 input2, P3 input3, P4 input4, P5 input5) {
-        return sharded(sharder.shard(input1, input2, input3, input4, input5));
+    default <P1, P2, P3, P4, P5> ReactiveShardService<KeyType, ModelType> shard(Sharder5<ModelType, P1, P2, P3, P4, P5> sharder, P1 input1, P2 input2, P3 input3, P4 input4, P5 input5) {
+        return shard(sharder.shard(input1, input2, input3, input4, input5));
     }
 
-    default ReactiveShardService<KeyType, ModelType> sharded(Sharder<ModelType> sharder, Tuple input) {
-        return sharded(sharder.shard(input));
+    default ReactiveShardService<KeyType, ModelType> shard(Sharder<ModelType> sharder, Tuple input) {
+        return shard(sharder.shard(input));
     }
 
-    ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request);
+    ReactiveShardService<KeyType, ModelType> shard(ShardRequest request);
 }

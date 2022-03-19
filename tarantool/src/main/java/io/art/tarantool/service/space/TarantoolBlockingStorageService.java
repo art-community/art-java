@@ -167,7 +167,7 @@ public class TarantoolBlockingStorageService<KeyType, ModelType> implements Bloc
     }
 
     @Override
-    public TarantoolBlockingRouterService<KeyType, ModelType> sharded(ShardRequest request) {
+    public TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
         return sharded.shard(request);
     }
 }
