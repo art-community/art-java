@@ -2,26 +2,35 @@ package io.art.tarantool.service.space;
 
 import io.art.core.collection.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
+import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
+import org.msgpack.value.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
+import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static org.msgpack.value.ValueFactory.*;
 import java.util.*;
 
 public class TarantoolBlockingRouterService<KeyType, ModelType> implements BlockingShardService<KeyType, ModelType> {
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolReactiveRouterService<KeyType, ModelType> reactive;
+    private final TarantoolBlockingRouterIndexService<ModelType> index;
 
     public TarantoolBlockingRouterService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.spaceMetaType = spaceMeta.definition();
+        ImmutableStringValue spaceName = newString(idByDash(spaceMeta.definition().type()));
         reactive = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, clients);
+        index = new TarantoolBlockingRouterIndexService<>(spaceMetaType, spaceName, clients);
     }
 
     TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
-        reactive.shard(request);
+        reactive.sharded(request);
+        index.sharded(request);
         return this;
     }
 
@@ -148,5 +157,10 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
     @Override
     public TarantoolReactiveRouterService<KeyType, ModelType> reactive() {
         return reactive;
+    }
+
+    @Override
+    public TarantoolBlockingRouterIndexService<ModelType> index(Index index) {
+        return this.index.indexed(index);
     }
 }

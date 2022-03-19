@@ -12,7 +12,6 @@ import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
 import lombok.*;
 import org.msgpack.value.*;
-import static io.art.core.caster.Caster.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.extensions.ReactiveExtensions.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -22,18 +21,19 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolBlockingStorageService<KeyType, ModelType> implements BlockingSpaceService<KeyType, ModelType> {
-    private final ImmutableStringValue spaceName;
     private final MetaType<ModelType> spaceMetaType;
     private final TarantoolClientRegistry clients;
     private final TarantoolReactiveStorageService<KeyType, ModelType> reactive;
     private final TarantoolBlockingRouterService<KeyType, ModelType> sharded;
+    private final TarantoolBlockingStorageIndexService<ModelType> index;
 
     public TarantoolBlockingStorageService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
         this.clients = clients;
         this.spaceMetaType = spaceMeta.definition();
-        this.spaceName = newString(idByDash(spaceMeta.definition().type()));
+        ImmutableStringValue spaceName = newString(idByDash(spaceMeta.definition().type()));
         reactive = new TarantoolReactiveStorageService<>(keyMeta, spaceMeta, clients);
         sharded = new TarantoolBlockingRouterService<>(keyMeta, spaceMeta, clients);
+        index = new TarantoolBlockingStorageIndexService<>(spaceMetaType, spaceName, clients);
     }
 
     @Override
@@ -163,13 +163,7 @@ public class TarantoolBlockingStorageService<KeyType, ModelType> implements Bloc
 
     @Override
     public final BlockingIndexService<ModelType> index(Index index) {
-        return TarantoolBlockingStorageIndexService.<ModelType>builder()
-                .indexName(newString(index.name()))
-                .spaceType(spaceMetaType)
-                .fields(cast(index.fields()))
-                .clients(clients)
-                .spaceName(spaceName)
-                .build();
+        return this.index.indexed(index);
     }
 
     @Override

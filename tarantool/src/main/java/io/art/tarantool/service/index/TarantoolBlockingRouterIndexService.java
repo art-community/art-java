@@ -4,7 +4,9 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
+import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.stream.*;
@@ -19,20 +21,22 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TarantoolBlockingRouterIndexService<ModelType> implements BlockingIndexService<ModelType> {
     private final MetaType<ModelType> spaceType;
-    private TarantoolReactiveStorageIndexService<ModelType> reactive;
+    private TarantoolReactiveRouterIndexService<ModelType> reactive;
 
     @Builder
-    public TarantoolBlockingRouterIndexService(List<MetaField<? extends MetaClass<ModelType>, ?>> fields,
-                                               MetaType<ModelType> spaceType,
-                                               ImmutableStringValue spaceName,
-                                               ImmutableStringValue indexName,
-                                               TarantoolClientRegistry clients) {
+    public TarantoolBlockingRouterIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
         this.spaceType = spaceType;
-        reactive = TarantoolReactiveStorageIndexService.<ModelType>builder()
-                .spaceName(spaceName)
-                .spaceType(spaceType)
-                .clients(clients)
-                .build();
+        reactive = new TarantoolReactiveRouterIndexService<>(spaceType, spaceName, clients);
+    }
+
+    public TarantoolBlockingRouterIndexService<ModelType> indexed(Index index) {
+        reactive.indexed(index);
+        return this;
+    }
+
+    public TarantoolBlockingRouterIndexService<ModelType> sharded(ShardRequest request) {
+        reactive.sharded(request);
+        return this;
     }
 
     @Override

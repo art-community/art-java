@@ -3,6 +3,7 @@ package io.art.tarantool.service.space;
 import io.art.core.collection.*;
 import io.art.meta.model.*;
 import io.art.storage.constants.StorageConstants.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
@@ -45,7 +46,7 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
         updateSerializer = new TarantoolUpdateSerializer(writer);
     }
 
-    TarantoolReactiveRouterService<KeyType, ModelType> shard(ShardRequest request) {
+    public TarantoolReactiveRouterService<KeyType, ModelType> sharded(ShardRequest request) {
         shard.set(request);
         return this;
     }
@@ -217,6 +218,11 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
                 .clients(clients)
                 .baseKey(tuple(baseKey))
                 .build();
+    }
+
+    @Override
+    public ReactiveIndexService<ModelType> index(Index index) {
+        return null;
     }
 
     private ImmutableArrayValue writeRequest(ImmutableValue input) {

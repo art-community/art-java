@@ -4,6 +4,7 @@ import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.model.*;
 import io.art.meta.model.*;
+import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
 import io.art.tarantool.registry.*;
@@ -24,11 +25,12 @@ public class TarantoolBlockingStorageIndexService<ModelType> implements Blocking
     @Builder
     public TarantoolBlockingStorageIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
         this.spaceType = spaceType;
-        reactive = TarantoolReactiveStorageIndexService.<ModelType>builder()
-                .spaceName(spaceName)
-                .spaceType(spaceType)
-                .clients(clients)
-                .build();
+        reactive = new TarantoolReactiveStorageIndexService<>(spaceType, spaceName, clients);
+    }
+
+    public TarantoolBlockingStorageIndexService<ModelType> indexed(Index index) {
+        reactive.indexed(index);
+        return this;
     }
 
     @Override

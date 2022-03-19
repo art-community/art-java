@@ -49,7 +49,7 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
         sharded = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, clients);
-        index = TarantoolReactiveStorageIndexService.<ModelType>builder().spaceType(spaceMetaType).clients(clients).spaceName(spaceName).build();
+        index = new TarantoolReactiveStorageIndexService<>(spaceMetaType, spaceName, clients);
     }
 
     @Override
@@ -221,12 +221,12 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
 
     @Override
     public final ReactiveIndexService<ModelType> index(Index index) {
-        return this.index.use(index);
+        return this.index.indexed(index);
     }
 
     @Override
     public ReactiveShardService<KeyType, ModelType> sharded(ShardRequest request) {
-        return sharded.shard(request);
+        return sharded.sharded(request);
     }
 
     private Mono<Long> parseLongMono(Mono<Value> value) {

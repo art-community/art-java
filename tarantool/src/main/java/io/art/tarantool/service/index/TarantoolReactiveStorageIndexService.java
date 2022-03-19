@@ -11,8 +11,6 @@ import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
 import io.art.tarantool.stream.*;
-import lombok.*;
-import org.msgpack.value.Value;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -33,10 +31,8 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
     private final TarantoolModelReader reader;
     private final MetaType<ModelType> spaceType;
     private final TarantoolUpdateSerializer updateSerializer;
-    private final TarantoolReactiveRouterIndexService<ModelType> sharded;
     private final ThreadLocal<Index> index = new ThreadLocal<>();
 
-    @Builder
     public TarantoolReactiveStorageIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
         this.spaceType = spaceType;
         this.clients = clients;
@@ -44,11 +40,11 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
-        sharded = TarantoolReactiveRouterIndexService.<ModelType>builder()
-                .clients(clients)
-                .spaceName(spaceName)
-                .spaceType(spaceType)
-                .build();
+    }
+
+    public TarantoolReactiveStorageIndexService<ModelType> indexed(Index index) {
+        this.index.set(index);
+        return this;
     }
 
     @Override
@@ -194,10 +190,5 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
                 .list()
                 .stream()
                 .map(element -> reader.read(spaceType, element))));
-    }
-
-    public ReactiveIndexService<ModelType> use(Index index) {
-        this.index.set(index);
-        return this;
     }
 }
