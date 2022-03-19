@@ -1,10 +1,11 @@
 package io.art.tarantool.stream;
 
 import io.art.core.model.*;
-import io.art.meta.*;
 import io.art.meta.model.*;
+import io.art.storage.constants.*;
 import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
+import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.StreamProtocol.*;
 import io.art.tarantool.descriptor.*;
@@ -16,10 +17,12 @@ import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.collector.ArrayCollector.*;
 import static io.art.core.factory.ListFactory.*;
+import static io.art.meta.Meta.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;
@@ -36,17 +39,20 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
     private final ImmutableStringValue indexName;
     private final TarantoolClientRegistry clients;
     private final TarantoolModelWriter writer;
+    private final ShardRequest shardRequest;
 
     @Builder
     public TarantoolReactiveRouterIndexStream(MetaType<ModelType> spaceType,
                                               ImmutableStringValue spaceName,
                                               ImmutableStringValue indexName,
                                               TarantoolClientRegistry clients,
+                                              ShardRequest shardRequest,
                                               Tuple baseKey) {
         super(spaceType, baseKey);
         this.spaceName = spaceName;
         this.indexName = indexName;
         this.clients = clients;
+        this.shardRequest = shardRequest;
         reader = tarantoolModule().configuration().getReader();
         writer = tarantoolModule().configuration().getWriter();
         serializer = new TarantoolStreamSerializer(writer);
@@ -54,25 +60,18 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
 
     @Override
     public Flux<ModelType> collect() {
-        ImmutableIntegerValue operator = STREAM_PROTOCOL.terminatingFunctions.terminatingCollect;
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(newArray(serializer.serializeStream(operators)), newArray(operator)),
-                writeOptions()
-        );
-        Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingCollect);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
+        Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readSpaceFlux(returningType, result);
     }
 
     @Override
     public Mono<Long> count() {
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(newArray(serializer.serializeStream(operators)), newArray(terminatingFunctions.terminatingCount)),
-                writeOptions()
-        );
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingCount);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
         Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
         return readLongMono(result);
     }
@@ -81,14 +80,10 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
     public Mono<Boolean> all(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts())),
-                writeOptions()
-        );
-        Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingAll, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
+        Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readBooleanMono(result);
     }
 
@@ -96,14 +91,10 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
     public Mono<Boolean> any(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts())),
-                writeOptions()
-        );
-        Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingAny, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
+        Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readBooleanMono(result);
     }
 
@@ -111,14 +102,10 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
     public Mono<Boolean> none(Consumer<Filter<ModelType>> filter) {
         FilterImplementation<ModelType> newFilter = new FilterImplementation<>(AND, linkedList());
         filter.accept(newFilter);
-        ImmutableArrayValue stream = newArray(
-                spaceName,
-                indexName,
-                newArray(serializer.serializeStream(operators)),
-                newArray(terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts())),
-                writeOptions()
-        );
-        Mono<Value> result = clients.immutable().call(INDEX_STREAM, stream);
+        ImmutableArrayValue processing = newArray(serializer.serializeStream(operators));
+        ImmutableArrayValue terminating = newArray(STREAM_PROTOCOL.terminatingFunctions.terminatingNone, serializer.serializeFilter(newFilter.getParts()));
+        ImmutableArrayValue stream = newArray(spaceName, indexName, newArray(processing, terminating), writeOptions());
+        Mono<Value> result = clients.immutable().call(INDEX_STREAM, writeRequest(stream));
         return readBooleanMono(result);
     }
 
@@ -141,8 +128,19 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
         if (isNull(baseKey)) return newNil();
         List<Value> serializedKey = baseKey.values()
                 .stream()
-                .map(key -> writer.write(Meta.definition(key.getClass()), key))
+                .map(key -> writer.write(definition(key.getClass()), key))
                 .collect(listCollector());
         return newArray(newArray(serializedKey));
+    }
+
+    private ImmutableArrayValue writeRequest(ImmutableValue input) {
+        ImmutableArrayValue shardData = newArray(shardRequest.getData()
+                .values()
+                .stream()
+                .map(element -> writer.write(definition(element.getClass()), element))
+                .toArray(Value[]::new), true);
+        ImmutableIntegerValue algorithm = newInteger(0);
+        if (shardRequest.getAlgorithm() == StorageConstants.ShardingAlgorithm.CRC_32) algorithm = CRC_32;
+        return newArray(newArray(shardData, algorithm), input);
     }
 }
