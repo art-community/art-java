@@ -7,7 +7,6 @@ import io.art.storage.filter.implementation.*;
 import io.art.storage.filter.model.*;
 import io.art.storage.sharder.*;
 import io.art.storage.stream.*;
-import io.art.tarantool.constants.TarantoolModuleConstants.StreamProtocol.*;
 import io.art.tarantool.descriptor.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
@@ -33,7 +32,6 @@ import java.util.function.*;
 
 public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpaceStream<ModelType> {
     private final TarantoolStreamSerializer serializer;
-    private final static TerminatingFunctions terminatingFunctions = STREAM_PROTOCOL.terminatingFunctions;
     private final TarantoolModelReader reader;
     private final ImmutableStringValue spaceName;
     private final ImmutableStringValue indexName;
