@@ -300,4 +300,8 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue SPLICE = newString(":");
         ImmutableStringValue ASSIGMENT = newString("=");
     }
+
+    interface ShardingAlgorhtim {
+        ImmutableIntegerValue CRC_32 = newInteger(1);
+    }
 }
