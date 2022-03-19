@@ -1,6 +1,7 @@
 package io.art.storage.service;
 
 import io.art.core.collection.*;
+import io.art.storage.index.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import static java.util.Arrays.*;
@@ -95,4 +96,27 @@ public interface BlockingShardService<KeyType, ModelType> {
     BlockingSpaceStream<ModelType> stream(KeyType baseKey);
 
     ReactiveShardService<KeyType, ModelType> reactive();
+
+
+    default <F1> BlockingIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
+        return new BlockingIndex1Service<>(index((Index) index));
+    }
+
+    default <F1, F2> BlockingIndex2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
+        return new BlockingIndex2Service<>(index((Index) index));
+    }
+
+    default <F1, F2, F3> BlockingIndex3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
+        return new BlockingIndex3Service<>(index((Index) index));
+    }
+
+    default <F1, F2, F3, F4> BlockingIndex4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
+        return new BlockingIndex4Service<>(index((Index) index));
+    }
+
+    default <F1, F2, F3, F4, F5> BlockingIndex5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
+        return new BlockingIndex5Service<>(index((Index) index));
+    }
+
+    BlockingIndexService<ModelType> index(Index index);
 }
