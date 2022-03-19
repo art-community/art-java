@@ -26,6 +26,7 @@ vshard.storage.cfg(cfg, '1e02ae8a-afc0-4e91-ba34-843a356b8ed7')
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })
 box.schema.user.grant('username', 'read,write,execute,create,alter,drop', 'universe', nil, { if_not_exists = true })
+
 require("art-tarantool")
 require("art.storage").initialize()
 
