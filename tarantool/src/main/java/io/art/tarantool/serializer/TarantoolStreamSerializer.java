@@ -70,18 +70,6 @@ public class TarantoolStreamSerializer {
         return serialized;
     }
 
-    private static ImmutableArrayValue serializeSort(SorterImplementation<?, ?> sorter) {
-        StorageConstants.SortOrder order = sorter.getOrder();
-        MetaField<?, ?> field = sorter.getField();
-        switch (order) {
-            case ASCENDANT:
-                return newArray(comparators.comparatorLess, newInteger(field.index() + 1));
-            case DESCENDANT:
-                return newArray(comparators.comparatorMore, newInteger(field.index() + 1));
-        }
-        throw new ImpossibleSituationException();
-    }
-
     public ImmutableArrayValue serializeFilter(List<FilterImplementation.FilterPart> parts) {
         List<ImmutableValue> serialized = linkedList();
         Map<FilterExpressionCacheKey, List<ImmutableValue>> expressionsCache = map();
@@ -139,6 +127,18 @@ public class TarantoolStreamSerializer {
             serialized.add(newArray(serializedPart));
         }
         return newArray(serialized);
+    }
+
+    private static ImmutableArrayValue serializeSort(SorterImplementation<?, ?> sorter) {
+        StorageConstants.SortOrder order = sorter.getOrder();
+        MetaField<?, ?> field = sorter.getField();
+        switch (order) {
+            case ASCENDANT:
+                return newArray(comparators.comparatorLess, newInteger(field.index() + 1));
+            case DESCENDANT:
+                return newArray(comparators.comparatorMore, newInteger(field.index() + 1));
+        }
+        throw new ImpossibleSituationException();
     }
 
     private void serializeFilterSpaceExpressions(Map<FilterExpressionCacheKey, List<ImmutableValue>> expressionsCache, FilterImplementation.FilterPart part) {
