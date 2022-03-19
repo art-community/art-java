@@ -105,12 +105,12 @@ public class TarantoolBlockingRouterIndexService<ModelType> implements BlockingI
     }
 
     @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream() {
-        return new TarantoolBlockingStorageSpaceStream<>(spaceType, reactive.stream());
+    public TarantoolBlockingRouterSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingRouterSpaceStream<>(spaceType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream(Tuple baseKey) {
-        return new TarantoolBlockingStorageSpaceStream<>(spaceType, reactive.stream(baseKey));
+    public TarantoolBlockingRouterSpaceStream<ModelType> stream(Tuple baseKey) {
+        return new TarantoolBlockingRouterSpaceStream<>(spaceType, reactive.stream(baseKey));
     }
 }

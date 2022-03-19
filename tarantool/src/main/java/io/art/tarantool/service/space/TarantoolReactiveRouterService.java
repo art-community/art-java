@@ -61,6 +61,28 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
     }
 
     @Override
+    public TarantoolReactiveRouterSpaceStream<ModelType> stream() {
+        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
+                .shardRequest(this.shard.get())
+                .spaceName(spaceName)
+                .spaceType(spaceMetaType)
+                .clients(clients)
+                .build();
+    }
+
+    @Override
+    public TarantoolReactiveRouterSpaceStream<ModelType> stream(KeyType baseKey) {
+        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
+                .shardRequest(this.shard.get())
+                .spaceName(spaceName)
+                .spaceType(spaceMetaType)
+                .clients(clients)
+                .baseKey(tuple(baseKey))
+                .build();
+    }
+
+
+    @Override
     public Mono<ModelType> first(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
         Mono<Value> output = clients.router().call(SPACE_FIRST, writeRequest(input));
@@ -206,27 +228,6 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
     @Override
     public Mono<Void> truncate() {
         return clients.router().call(SPACE_TRUNCATE, writeRequest(newArray(spaceName))).then();
-    }
-
-    @Override
-    public TarantoolReactiveRouterSpaceStream<ModelType> stream() {
-        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
-                .shardRequest(this.shard.get())
-                .spaceName(spaceName)
-                .spaceType(spaceMetaType)
-                .clients(clients)
-                .build();
-    }
-
-    @Override
-    public TarantoolReactiveRouterSpaceStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
-                .shardRequest(this.shard.get())
-                .spaceName(spaceName)
-                .spaceType(spaceMetaType)
-                .clients(clients)
-                .baseKey(tuple(baseKey))
-                .build();
     }
 
     private ImmutableArrayValue writeRequest(ImmutableValue input) {

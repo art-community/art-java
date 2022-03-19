@@ -53,6 +53,16 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
     }
 
     @Override
+    public ReactiveShardService<KeyType, ModelType> shard(ShardRequest request) {
+        return sharded.sharded(request);
+    }
+
+    @Override
+    public final ReactiveIndexService<ModelType> index(Index index) {
+        return this.index.indexed(index);
+    }
+
+    @Override
     public Mono<ModelType> first(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
         Mono<Value> output = clients.immutable().call(SPACE_FIRST, input);
@@ -217,16 +227,6 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
                 .clients(clients)
                 .baseKey(tuple(baseKey))
                 .build();
-    }
-
-    @Override
-    public final ReactiveIndexService<ModelType> index(Index index) {
-        return this.index.indexed(index);
-    }
-
-    @Override
-    public ReactiveShardService<KeyType, ModelType> shard(ShardRequest request) {
-        return sharded.sharded(request);
     }
 
     private Mono<Long> parseLongMono(Mono<Value> value) {

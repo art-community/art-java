@@ -28,7 +28,7 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
         index = new TarantoolBlockingRouterIndexService<>(spaceMetaType, spaceName, clients);
     }
 
-    TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
+    public TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
         reactive.sharded(request);
         index.sharded(request);
         return this;
@@ -37,6 +37,22 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
     @Override
     public TarantoolBlockingRouterIndexService<ModelType> index(Index index) {
         return this.index.indexed(index);
+    }
+
+
+    @Override
+    public TarantoolBlockingRouterSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingRouterSpaceStream<>(spaceMetaType, reactive.stream());
+    }
+
+    @Override
+    public TarantoolBlockingRouterSpaceStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingRouterSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
+    }
+
+    @Override
+    public TarantoolReactiveRouterService<KeyType, ModelType> reactive() {
+        return reactive;
     }
 
     @Override
@@ -147,20 +163,5 @@ public class TarantoolBlockingRouterService<KeyType, ModelType> implements Block
     @Override
     public ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
-    }
-
-    @Override
-    public TarantoolBlockingRouterSpaceStream<ModelType> stream() {
-        return new TarantoolBlockingRouterSpaceStream<>(spaceMetaType, reactive.stream());
-    }
-
-    @Override
-    public TarantoolBlockingRouterSpaceStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingRouterSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
-    }
-
-    @Override
-    public TarantoolReactiveRouterService<KeyType, ModelType> reactive() {
-        return reactive;
     }
 }

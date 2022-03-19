@@ -36,6 +36,33 @@ public class TarantoolBlockingStorageService<KeyType, ModelType> implements Bloc
         index = new TarantoolBlockingStorageIndexService<>(spaceMetaType, spaceName, clients);
     }
 
+
+    @Override
+    public final TarantoolBlockingStorageIndexService<ModelType> index(Index index) {
+        return this.index.indexed(index);
+    }
+
+    @Override
+    public TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
+        return sharded.shard(request);
+    }
+
+    @Override
+    public TarantoolBlockingStorageSpaceStream<ModelType> stream() {
+        return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream());
+    }
+
+    @Override
+    public TarantoolBlockingStorageSpaceStream<ModelType> stream(KeyType baseKey) {
+        return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
+    }
+
+    @Override
+    public TarantoolReactiveStorageService<KeyType, ModelType> reactive() {
+        return reactive;
+    }
+
+
     @Override
     public ModelType first(KeyType key) {
         return block(reactive.first(key));
@@ -144,30 +171,5 @@ public class TarantoolBlockingStorageService<KeyType, ModelType> implements Bloc
     @Override
     public ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
-    }
-
-    @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream() {
-        return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream());
-    }
-
-    @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream(KeyType baseKey) {
-        return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
-    }
-
-    @Override
-    public TarantoolReactiveStorageService<KeyType, ModelType> reactive() {
-        return reactive;
-    }
-
-    @Override
-    public final BlockingIndexService<ModelType> index(Index index) {
-        return this.index.indexed(index);
-    }
-
-    @Override
-    public TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
-        return sharded.shard(request);
     }
 }
