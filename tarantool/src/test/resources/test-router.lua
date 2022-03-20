@@ -27,8 +27,6 @@ vshard = require('vshard')
 vshard.router.cfg(cfg)
 require("art.router").initialize()
 
-vshard.router.bootstrap()
-
 box.schema.user.create('username', { password = 'password', if_not_exists = true })
 box.schema.user.grant('username', 'read,write,execute,create,alter,drop', 'universe', nil, { if_not_exists = true })
 
@@ -56,3 +54,5 @@ testFilter = function(data)
     return data[9] > 3
 end
 box.schema.func.create("testFilter", { if_not_exists = true })
+
+vshard.router.bootstrap()
