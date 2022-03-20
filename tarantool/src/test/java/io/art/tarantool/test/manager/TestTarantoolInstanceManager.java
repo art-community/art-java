@@ -27,19 +27,10 @@ public class TestTarantoolInstanceManager {
 
     public static void initializeRouter() {
         initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
-        waitTime(ofSeconds(3));
-
         initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
-        waitTime(ofSeconds(3));
-
         initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
-        waitTime(ofSeconds(3));
-
         initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        waitTime(ofSeconds(3));
-
         initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
-        waitTime(ofSeconds(3));
     }
 
     public static void shutdownStorage() {
