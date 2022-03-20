@@ -1,7 +1,7 @@
 local cfg = {
-    listen = 3302,
-    pid_file = "test-router.pid",
-    log = "file:test-router.log",
+    listen = 3304,
+    pid_file = "test-shard-1-replica.pid",
+    log = "file:test-shard-1-replica.log",
     sharding = {
         ['cbf06940-0790-498b-948d-042b62cf3d29'] = {
             replicas = {
@@ -35,20 +35,11 @@ local cfg = {
 
 require("art-tarantool")
 vshard = require('vshard')
-vshard.router.cfg(cfg)
-require("art.router").initialize()
+vshard.storage.cfg(cfg, 'ce1f21d6-a7e3-11ec-b909-0242ac120002')
+require("art.storage").initialize()
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })
 box.schema.user.grant('username', 'read,write,execute,create,alter,drop', 'universe', nil, { if_not_exists = true })
-
-testSubscription = function()
-    local subscription = require("art.storage.subscription")
-    subscription.publish("test", "testEmpty")
-    subscription.publish("test", "testRequest", { 1, "test" })
-    subscription.publish("test", "testChannel", { 1, "test" })
-    subscription.publish("test", "testChannel", { 1, "test" })
-end
-box.schema.func.create("testSubscription", { if_not_exists = true })
 
 testChannel = function()
     box.session.push("test")
@@ -65,7 +56,3 @@ testFilter = function(data)
     return data[9] > 3
 end
 box.schema.func.create("testFilter", { if_not_exists = true })
-
-os.execute("sleep " .. tonumber(3))
-
-vshard.router.bootstrap()
