@@ -1809,7 +1809,7 @@ local function cfg_check_weights(weights)
         if type(zone1) ~= 'number' and type(zone1) ~= 'string' then
             -- Zone1 can be not number or string, if an user made
             -- this: weights = {[{1}] = ...}. In such a case
-            -- {1} is the unaccessible key of a lua table, which
+            -- {1} is the unaccassible key of a lua table, which
             -- is available only via pairs.
             error('Zone identifier must be either string or number')
         end
@@ -2092,7 +2092,7 @@ local json = require('json')
 --
 -- Error messages description.
 -- * name -- Key by which an error code can be retrieved from
---   the exported by the module `code` dictionary.
+--   the expoted by the module `code` dictionary.
 -- * msg -- Error message which can use `args` using
 --   `string.format` notation.
 -- * args -- Names of arguments passed while constructing an
@@ -2277,7 +2277,7 @@ end
 --   oom error, socket error etc. It has type = one of tarantool
 --   error types, trace (file, line), message;
 -- * vshard_error - it is created on sharding errors like
---   replicaset unavailability, master absence etc. It has type =
+--   replicaset unavailability, master absense etc. It has type =
 --   'ShardingError', one of codes below and optional
 --   message.
 --
@@ -2917,7 +2917,7 @@ local function netbox_on_connect(conn)
     end
     if replica == rs.replica and replica == rs.priority_list[1] then
         -- Update replica_up_ts, if the current replica has the
-        -- biggest priority. Really, it is not necessary to
+        -- biggest priority. Really, it is not neccessary to
         -- increase replica connection priority, if the current
         -- one already has the biggest priority. (See failover_f).
         rs.replica_up_ts = fiber_clock()
@@ -3308,7 +3308,7 @@ local function can_backoff_after_error(e, func)
         end
     end
     if e.type == 'ShardingError' then
-        return e.code == lerror.code.STORAGE_IS_DISABLED
+        return e.code == vshard.error.code.STORAGE_IS_DISABLED
     end
     return false
 end
@@ -3328,7 +3328,7 @@ end
 
 --
 -- Template to implement a function able to visit multiple
--- replicas with certain details. One of applications - a function
+-- replicas with certain details. One of applicatinos - a function
 -- making a call on a nearest available replica. It is possible
 -- for 'read' requests only. And if the nearest replica is not
 -- available now, then use master's connection - we can not wait
@@ -3503,7 +3503,7 @@ local function replicaset_update_master(replicaset, old_master_uuid,
     if old_master_uuid == candidate_uuid then
         -- It should not happen ever, but be ready to everything.
         log.warn('Replica %s in replicaset %s reports self as both master '..
-                 'and not master', old_master_uuid, replicaset_uuid)
+                 'and not master', master_uuid, replicaset_uuid)
         return is_auto
     end
     local master = replicaset.master
@@ -5517,7 +5517,7 @@ local function router_info(router)
             bucket_info.available_rw = bucket_info.available_rw +
                                        replicaset.bucket_count
         end
-        -- Not necessary to update the color - it is done above
+        -- No necessarity to update color - it is done above
         -- during replicaset master and replica checking.
         -- If a bucket is unreachable, then replicaset is
         -- unreachable too and color already is red.
@@ -5952,7 +5952,7 @@ if not M then
         ----------------------- Rebalancer -----------------------
         -- Fiber to rebalance a cluster.
         rebalancer_fiber = nil,
-        -- Fiber which applies routes one by one. Its presence and
+        -- Fiber which applies routes one by one. Its presense and
         -- active status means that the rebalancing is in progress
         -- now on the current node.
         rebalancer_applier_fiber = nil,
@@ -5981,7 +5981,7 @@ if not M then
         rebalancer_worker_count = consts.DEFAULT_REBALANCER_WORKER_COUNT,
         -- Map of bucket ro/rw reference counters. These counters
         -- works like bucket pins, but countable and are not
-        -- persisted. Persistence is not needed since the refs are
+        -- persisted. Persistency is not needed since the refs are
         -- used to keep a bucket during a request execution, but
         -- on restart evidently each request fails.
         bucket_refs = {},
@@ -6316,7 +6316,7 @@ local function schema_init_0_1_15_0(username, password)
     }
 
     for _, name in ipairs(storage_api) do
-        box.schema.func.create.create(name, {setuid = true})
+        box.schema.func.create(name, {setuid = true})
         box.schema.user.grant(username, 'execute', 'function', name)
     end
 
@@ -6337,7 +6337,7 @@ local function schema_upgrade_to_0_1_16_0(username)
     -- functions without touching the schema.
     local func = 'vshard.storage._call'
     log.info('Create function %s()', func)
-    box.schema.func.create.create(func, {setuid = true})
+    box.schema.func.create(func, {setuid = true})
     box.schema.user.grant(username, 'execute', 'function', func)
     -- Don't drop old functions in the same version. Removal can
     -- happen only after 0.1.16. Or there should appear support of
@@ -6353,7 +6353,7 @@ local function schema_downgrade_from_0_1_16_0()
 
     local func = 'vshard.storage._call'
     log.info('Remove function %s()', func)
-    box.schema.func.create.drop(func, {if_exists = true})
+    box.schema.func.drop(func, {if_exists = true})
 end
 
 local function schema_current_version()
@@ -7023,7 +7023,7 @@ end
 --        It is set to true when the data portion is last and the
 --        bucket can be activated here.
 --
--- @retval nil, error Error occurred.
+-- @retval nil, error Error occured.
 -- @retval true The data is received ok.
 --
 local function bucket_recv_xc(bucket_id, from, data, opts)
@@ -8826,7 +8826,7 @@ end
 -- (reload is success, if an interpreter came to the 'return'
 -- command).
 --
--- Functions of type 2 can be omitted, because outside of a module
+-- Functions of type 2 can be omited, because outside of a module
 -- they are updated only in a case of successful reload, and
 -- inside of the module they are used only inside functions of the
 -- type 3.
@@ -9207,7 +9207,7 @@ local function ref_session_new(sid)
     local function ref_session_add(self, rid, deadline, now)
         if ref_map[rid] then
             return nil, lerror.vshard(lerror.code.STORAGE_REF_ADD,
-                    'duplicate ref')
+                                      'duplicate ref')
         end
         local ref = {
             deadline = deadline,
@@ -9339,7 +9339,7 @@ local function ref_add(rid, sid, timeout)
     if ok then
         return true
     end
-    :: fail_sched ::
+::fail_sched::
     sched.ref_end(1)
     return nil, err
 end
