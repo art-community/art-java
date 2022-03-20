@@ -1,5 +1,4 @@
 local cfg = {
-    listen = 3305,
     pid_file = "test-shard-2-master.pid",
     log = "file:test-shard-2-master.log",
     sharding = {
@@ -12,7 +11,8 @@ local cfg = {
                 },
                 ['ce1f21d6-a7e3-11ec-b909-0242ac120002'] = {
                     uri = 'username:password@127.0.0.1:3304',
-                    name = 'test-shard-1-replica'
+                    name = 'test-shard-1-replica',
+                    master = false
                 },
             },
         },
@@ -25,7 +25,8 @@ local cfg = {
                 },
                 ['bd13c3f6-a7e3-11ec-b909-0242ac120002'] = {
                     uri = 'username:password@127.0.0.1:3306',
-                    name = 'test-shard-2-replica'
+                    name = 'test-shard-2-replica',
+                    master = false
                 },
             },
         },
