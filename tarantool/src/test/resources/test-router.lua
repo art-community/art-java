@@ -23,10 +23,8 @@ local cfg = {
 }
 
 require("art-tarantool")
-
 vshard = require('vshard')
 vshard.router.cfg(cfg)
-
 require("art.router").initialize()
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })

@@ -22,10 +22,8 @@ local cfg = {
     },
 }
 require("art-tarantool")
-
 vshard = require('vshard')
 vshard.storage.cfg(cfg, '1e02ae8a-afc0-4e91-ba34-843a356b8ed7')
-
 require("art.storage").initialize()
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })

@@ -27,13 +27,14 @@ import java.util.concurrent.*;
 public class TarantoolRouterTest {
     @BeforeAll
     public static void setup() {
-        initializeStorage();
+        initializeRouter();
         initialize(
                 MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
                 TransportActivator.transport(),
                 TarantoolActivator.tarantool(tarantool -> tarantool
                         .storage(TestStorage.class, storage -> storage.client(client -> client
-                                .port(STORAGE_PORT)
+                                .port(ROUTER_PORT)
+                                .router(true)
                                 .username(USERNAME)
                                 .password(PASSWORD)))
                         .subscribe(subscriptions -> subscriptions.onService(TestService.class))
@@ -59,7 +60,7 @@ public class TarantoolRouterTest {
 
     @AfterAll
     public static void cleanup() {
-        shutdownStorage();
+        //shutdownRouter();
         shutdown();
     }
 
