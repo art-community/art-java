@@ -14,6 +14,7 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
@@ -26,10 +27,19 @@ public class TestTarantoolInstanceManager {
 
     public static void initializeRouter() {
         initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
+        waitTime(ofSeconds(3));
+
         initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
+        waitTime(ofSeconds(3));
+
         initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
+        waitTime(ofSeconds(3));
+
         initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
+        waitTime(ofSeconds(3));
+
         initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
+        waitTime(ofSeconds(3));
     }
 
     public static void shutdownStorage() {

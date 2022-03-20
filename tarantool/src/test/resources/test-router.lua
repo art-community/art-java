@@ -68,6 +68,4 @@ testFilter = function(data)
 end
 box.schema.func.create("testFilter", { if_not_exists = true })
 
-os.execute("sleep " .. tonumber(3))
-
 vshard.router.bootstrap()
