@@ -1,7 +1,9 @@
+local current = os.getenv("PWD") or io.popen("cd"):read()
 local cfg = {
     listen = 3302,
-    pid_file = "test-router.pid",
-    log = "file:test-router.log",
+    work_dir = "/tmp/tarantool/test-router",
+    pid_file = current .. "/test-router.pid",
+    log = "file:" .. current .. "/test-router.log",
     sharding = {
         ['cbf06940-0790-498b-948d-042b62cf3d29'] = {
             replicas = {
@@ -69,5 +71,3 @@ box.once("main", function()
     end
     box.schema.func.create("testFilter", { if_not_exists = true })
 end)
-
-vshard.router.bootstrap()

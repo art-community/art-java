@@ -25,11 +25,11 @@ public class TestTarantoolInstanceManager {
     }
 
     public static void initializeRouter() {
-        initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
-        initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
-        initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
-        initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
         initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
+        initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
+        initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
+        initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
+        initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
     }
 
     public static void shutdownStorage() {
@@ -55,13 +55,35 @@ public class TestTarantoolInstanceManager {
                 BASH_ARGUMENT,
                 executable
         };
+
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitCondition(() -> TCP.isPortAvailable(port));
+
+        String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
+                DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
+                (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
+        String[] deleteCommand = {
+                BASH,
+                BASH_ARGUMENT,
+                deleteExecutable
+        };
+        wrapExceptionCall(() -> getRuntime().exec(deleteCommand), TarantoolException::new);
         recursiveDelete(get(directory));
     }
 
     private static void initialize(int port, String directory, String scriptFile) {
         if (!TCP.isPortAvailable(port)) return;
+
+        String directoryExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
+                MKDIR_COMMAND + TEMP_DIRECTORY + SLASH + directory +
+                (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
+        String[] directoryCommand = {
+                BASH,
+                BASH_ARGUMENT,
+                directoryExecutable
+        };
+        wrapExceptionCall(() -> getRuntime().exec(directoryCommand), TarantoolException::new);
+
         Path working = touchDirectory(get(directory));
         InputStream script = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(scriptFile);
         if (isNull(script)) throw new ImpossibleSituationException();
@@ -73,11 +95,13 @@ public class TestTarantoolInstanceManager {
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 instanceCommand(directory) + SPACE + convertToWslPath(scriptPath.toString()) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
+
         String[] command = {
                 BASH,
                 BASH_ARGUMENT,
                 executable
         };
+
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitCondition(() -> !TCP.isPortAvailable(port));
     }

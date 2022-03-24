@@ -1,4 +1,8 @@
+local current = os.getenv("PWD") or io.popen("cd"):read()
 local cfg = {
+    work_dir = "/tmp/tarantool/test-shard-2-master",
+    pid_file = current .. "/test-shard-2-master.pid",
+    log = "file:" .. current .. "/test-shard-2-master.log",
     sharding = {
         ['cbf06940-0790-498b-948d-042b62cf3d29'] = {
             replicas = {

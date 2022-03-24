@@ -1,7 +1,8 @@
+local current = os.getenv("PWD") or io.popen("cd"):read()
 box.cfg {
     listen = 3301,
-    pid_file = "test-storage.pid",
-    log = "file:test-storage.log",
+    pid_file = current .. "/test-storage.pid",
+    log = "file:" .. current .. "/test-storage.log",
 }
 
 require("art-tarantool")
