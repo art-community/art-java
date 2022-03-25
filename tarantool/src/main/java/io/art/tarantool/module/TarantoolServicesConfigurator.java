@@ -45,7 +45,6 @@ public class TarantoolServicesConfigurator {
 
         if (nonNull(sharders)) {
             this.sharders.put(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
-            return this;
         }
 
         if (nonNull(indexes)) {

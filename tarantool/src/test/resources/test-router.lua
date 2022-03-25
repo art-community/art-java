@@ -70,4 +70,9 @@ box.once("main", function()
         return data[9] > 3
     end
     box.schema.func.create("testFilter", { if_not_exists = true })
+
+    bootstrap = function()
+        vshard.router.bootstrap()
+    end
+    box.schema.func.create("bootstrap", { if_not_exists = true })
 end)

@@ -1,6 +1,8 @@
 package io.art.tarantool.test.constants;
 
+import org.msgpack.value.*;
 import static io.art.core.converter.WslPathConverter.*;
+import static org.msgpack.value.ValueFactory.*;
 
 public interface TestTarantoolConstants {
     String STORAGE_DIRECTORY = "test-storage";
@@ -11,6 +13,7 @@ public interface TestTarantoolConstants {
     String ROUTER_DIRECTORY = "test-router";
     String ROUTER_PID = "test-router.pid";
     String ROUTER_SCRIPT = "test-router.lua";
+    ImmutableStringValue ROUTER_BOOTSTRAP_FUNCTION = newString("bootstrap");
     int ROUTER_PORT = 3302;
 
     String SHARD_1_MASTER_DIRECTORY = "test-shard-1-master";
