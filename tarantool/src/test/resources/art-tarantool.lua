@@ -1143,6 +1143,7 @@ local schema = {
         end
         box.schema.space.create(name, configuration):create_index(vshard.storage.internal.shard_index, {
             parts = { { field = bucketIdField, type = 'unsigned' } },
+            id = { 1 },
             unique = true,
             if_not_exists = true
         })
