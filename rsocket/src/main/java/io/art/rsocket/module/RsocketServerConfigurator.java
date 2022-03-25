@@ -4,16 +4,20 @@ import io.art.core.annotation.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.configuration.server.RsocketTcpServerConfiguration.*;
 import io.art.rsocket.configuration.server.RsocketWsServerConfiguration.*;
+import io.art.server.configuration.*;
 import io.art.server.configurator.*;
+import static io.art.core.property.LazyProperty.*;
+import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.function.UnaryOperator.*;
 import java.util.function.*;
 
 @Public
-public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerConfigurator> {
+public class RsocketServerConfigurator {
     private boolean tcp;
     private boolean ws;
     private UnaryOperator<RsocketTcpServerConfigurationBuilder> tcpConfigurator = identity();
     private UnaryOperator<RsocketWsServerConfigurationBuilder> wsConfigurator = identity();
+    private final ServerConfiguratorImplementation delegate = new ServerConfiguratorImplementation();
 
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
@@ -37,19 +41,28 @@ public class RsocketServerConfigurator extends ServerConfigurator<RsocketServerC
         return this;
     }
 
-    RsocketTcpServerConfiguration configureTcp(RsocketTcpServerConfiguration current) {
+    public RsocketServerConfigurator configure(UnaryOperator<ServerConfigurator> configurator) {
+        configurator.apply(delegate);
+        return this;
+    }
+
+    RsocketTcpServerConfiguration createTcpConfiguration(RsocketTcpServerConfiguration current) {
         return tcpConfigurator.apply(current.toBuilder()).build();
     }
 
-    RsocketWsServerConfiguration configureWs(RsocketWsServerConfiguration current) {
+    RsocketWsServerConfiguration createWsConfiguration(RsocketWsServerConfiguration current) {
         return wsConfigurator.apply(current.toBuilder()).build();
     }
 
-    boolean enableTcp() {
+    ServerConfiguration createServerConfiguration(ServerConfiguration current) {
+        return delegate.createConfiguration(lazy(() -> rsocketModule().configuration().getServer()), current);
+    }
+
+    boolean isTcpEnabled() {
         return tcp;
     }
 
-    boolean enableWs() {
+    boolean isWsEnabled() {
         return ws;
     }
 }

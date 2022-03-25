@@ -72,16 +72,19 @@ public class TarantoolClient {
     }
 
     public Mono<Value> call(ImmutableStringValue name, Consumer<ArrayValue> onChunk) {
+        System.out.println("connected: " + connected.hashCode());
         if (connected.get()) return executeCall(name, onChunk);
         return connector.asMono().flatMap(client -> client.executeCall(name, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
     public Mono<Value> call(ImmutableStringValue name, Mono<Value> input, Consumer<ArrayValue> onChunk) {
+        System.out.println("connected: " + connected.hashCode());
         if (connected.get()) return executeCall(name, input, onChunk);
         return connector.asMono().flatMap(client -> client.executeCall(name, input, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
     public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments, Consumer<ArrayValue> onChunk) {
+        System.out.println("connected: " + connected.hashCode());
         if (connected.get()) return executeCall(name, arguments, onChunk);
         return connector.asMono().flatMap(client -> client.executeCall(name, arguments, onChunk)).doOnSubscribe(ignore -> connect());
     }
@@ -103,8 +106,11 @@ public class TarantoolClient {
     }
 
     private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments, Consumer<ArrayValue> onChunk) {
+        System.out.println(name);
         TarantoolReceiver receiver = receivers.allocate(onChunk);
+        System.out.println(receiver.getId());
         emitCall(receiver.getId(), callRequest(name, arguments));
+        System.out.println(receiver.getId());
         return receiver.getSink().asMono().timeout(clientConfiguration.getExecutionTimeout());
     }
 

@@ -23,6 +23,7 @@ public class TarantoolServiceRegistry {
     }
 
     public TarantoolSchemaService getSchema(Class<? extends Storage> storageType) {
+        System.out.println("schemas: " + schemas.hashCode());
         return cast(schemas.get().get(idByDash(storageType)));
     }
 

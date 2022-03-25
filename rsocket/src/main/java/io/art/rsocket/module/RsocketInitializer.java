@@ -19,7 +19,6 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.configuration.*;
-import io.art.communicator.configurator.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
@@ -29,10 +28,7 @@ import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.configuration.server.*;
 import io.art.rsocket.refresher.*;
 import io.art.server.configuration.*;
-import io.art.server.configurator.*;
 import lombok.*;
-import static io.art.core.property.LazyProperty.*;
-import static io.art.rsocket.module.RsocketModule.*;
 import java.util.function.*;
 
 @Public
@@ -40,12 +36,12 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     private final RsocketServerConfigurator serverConfigurator = new RsocketServerConfigurator();
     private final RsocketCommunicatorConfigurator communicatorConfigurator = new RsocketCommunicatorConfigurator();
 
-    public RsocketInitializer server(Function<RsocketServerConfigurator, ? extends ServerConfigurator<RsocketServerConfigurator>> configurator) {
+    public RsocketInitializer server(UnaryOperator<RsocketServerConfigurator> configurator) {
         configurator.apply(serverConfigurator);
         return this;
     }
 
-    public RsocketInitializer communicator(Function<RsocketCommunicatorConfigurator, ? extends CommunicatorConfigurator<RsocketCommunicatorConfigurator>> configurator) {
+    public RsocketInitializer communicator(UnaryOperator<RsocketCommunicatorConfigurator> configurator) {
         configurator.apply(communicatorConfigurator);
         return this;
     }
@@ -54,15 +50,15 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
     public RsocketModuleConfiguration initialize(RsocketModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.enableTcpServer = serverConfigurator.enableTcp();
-        initial.enableWsServer = serverConfigurator.enableWs();
-        initial.tcpServer = serverConfigurator.configureTcp(initial.tcpServer);
-        initial.wsServer = serverConfigurator.configureWs(initial.wsServer);
-        initial.server = serverConfigurator.configure(lazy(() -> rsocketModule().configuration().getServer()), initial.server);
+        initial.enableTcpServer = serverConfigurator.isTcpEnabled();
+        initial.enableWsServer = serverConfigurator.isWsEnabled();
+        initial.tcpServer = serverConfigurator.createTcpConfiguration(initial.tcpServer);
+        initial.wsServer = serverConfigurator.createWsConfiguration(initial.wsServer);
+        initial.server = serverConfigurator.createServerConfiguration(initial.server);
 
         initial.tcpConnectors = communicatorConfigurator.tcpConnectors();
         initial.wsConnectors = communicatorConfigurator.wsConnectors();
-        initial.communicator = communicatorConfigurator.configure(lazy(() -> rsocketModule().configuration().getCommunicator()), initial.communicator);
+        initial.communicator = communicatorConfigurator.createCommunicatorConfiguration(initial.communicator);
 
         return initial;
     }

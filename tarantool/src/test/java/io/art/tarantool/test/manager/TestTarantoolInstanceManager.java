@@ -14,7 +14,6 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
-import static java.time.Duration.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
@@ -70,8 +69,6 @@ public class TestTarantoolInstanceManager {
         };
         wrapExceptionCall(() -> getRuntime().exec(deleteCommand), TarantoolException::new);
         recursiveDelete(get(directory));
-
-        waitTime(ofSeconds(3));
     }
 
     private static void initialize(int port, String directory, String scriptFile) {
@@ -106,9 +103,6 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-
         waitCondition(() -> !TCP.isPortAvailable(port));
-
-        waitTime(ofSeconds(3));
     }
 }

@@ -69,7 +69,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolClientRegistry(entry.getValue())));
 
-        initial.communicator = storageCommunicatorConfigurator.configure(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
+        initial.communicator = storageCommunicatorConfigurator.createConfiguration(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
         initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
 
         initial.services = servicesConfigurator.configure();

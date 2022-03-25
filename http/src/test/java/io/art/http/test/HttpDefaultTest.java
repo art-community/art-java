@@ -29,7 +29,7 @@ public class HttpDefaultTest {
                 meta(() -> new MetaHttpTest(new MetaMetaTest(new MetaHttp()))),
                 transport(),
                 json(),
-                http(http -> http.server(server -> server.file("/file", testFile).configure(serverConfigurator -> serverConfigurator.port(1234))))
+                http(http -> http.server(server -> server.file("/file", testFile).setup(serverConfigurator -> serverConfigurator.port(1234))))
         );
     }
 

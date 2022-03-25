@@ -39,21 +39,23 @@ public class TarantoolServicesConfigurator {
 
         String storageId = idByDash(storageClass);
         String spaceId = idByDash(spaceClass);
-        schemaServices.put(storageId, lazy(() -> router
+
+        System.out.println(schemaServies);
+        schemaServices.putIfAbsent(storageId, lazy(() -> router
                 ? new TarantoolRouterSchemaService(clients().get(storageId))
                 : new TarantoolStorageSchemaService(clients().get(storageId))));
 
         if (nonNull(sharders)) {
-            this.sharders.put(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
+            this.sharders.putIfAbsent(spaceId, lazy(() -> declaration(sharders).creator().singleton()));
         }
 
         if (nonNull(indexes)) {
-            spaceServices.put(spaceId, lazy(() -> spaceServiceByField(idFieldByIndexes(indexes), spaceClass, storageId)));
-            this.indexes.put(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
+            spaceServices.putIfAbsent(spaceId, lazy(() -> spaceServiceByField(idFieldByIndexes(indexes), spaceClass, storageId)));
+            this.indexes.putIfAbsent(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
             return this;
         }
 
-        spaceServices.put(spaceId, lazy(() -> spaceServiceByField(idField.get().type(), spaceClass, storageId)));
+        spaceServices.putIfAbsent(spaceId, lazy(() -> spaceServiceByField(idField.get().type(), spaceClass, storageId)));
         return this;
     }
 

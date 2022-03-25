@@ -19,17 +19,13 @@
 package io.art.http.module;
 
 import io.art.communicator.configuration.*;
-import io.art.communicator.configurator.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
 import io.art.http.configuration.*;
 import io.art.http.refresher.*;
 import io.art.server.configuration.*;
-import io.art.server.configurator.*;
 import lombok.*;
-import static io.art.core.property.LazyProperty.*;
-import static io.art.http.module.HttpModule.*;
 import java.util.function.*;
 
 @Public
@@ -38,13 +34,13 @@ public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguratio
     private final HttpServerConfigurator serverConfigurator = new HttpServerConfigurator();
     private final HttpCommunicatorConfigurator communicatorConfigurator = new HttpCommunicatorConfigurator();
 
-    public HttpInitializer server(Function<HttpServerConfigurator, ? extends ServerConfigurator<HttpServerConfigurator>> configurator) {
+    public HttpInitializer server(UnaryOperator<HttpServerConfigurator> configurator) {
         enableServer = true;
         configurator.apply(serverConfigurator);
         return this;
     }
 
-    public HttpInitializer communicator(Function<HttpCommunicatorConfigurator, ? extends CommunicatorConfigurator<HttpCommunicatorConfigurator>> configurator) {
+    public HttpInitializer communicator(UnaryOperator<HttpCommunicatorConfigurator> configurator) {
         configurator.apply(communicatorConfigurator);
         return this;
     }
@@ -54,11 +50,11 @@ public class HttpInitializer implements ModuleInitializer<HttpModuleConfiguratio
         Initial initial = new Initial(module.getRefresher());
 
         initial.enableServer = enableServer;
-        initial.httpServer = serverConfigurator.configureHttp(initial.httpServer);
-        initial.server = serverConfigurator.configure(lazy(() -> httpModule().configuration().getServer()), initial.server);
+        initial.httpServer = serverConfigurator.createHttpConfiguration(initial.httpServer);
+        initial.server = serverConfigurator.createServerConfiguration(initial.server);
 
         initial.connectors = communicatorConfigurator.connectors();
-        initial.communicator = communicatorConfigurator.configure(lazy(() -> httpModule().configuration().getCommunicator()), initial.communicator);
+        initial.communicator = communicatorConfigurator.createCommunicatorConfiguration(initial.communicator);
 
         return initial;
     }

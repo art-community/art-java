@@ -40,7 +40,7 @@ public class CommunicatorActionConfigurator {
         return this;
     }
 
-    public CommunicatorActionConfiguration configure(CommunicatorActionConfiguration configuration) {
+    CommunicatorActionConfiguration createConfiguration(CommunicatorActionConfiguration configuration) {
         return configuration.toBuilder()
                 .deactivated(deactivated)
                 .inputDecorators(immutableArrayOf(inputDecorators))

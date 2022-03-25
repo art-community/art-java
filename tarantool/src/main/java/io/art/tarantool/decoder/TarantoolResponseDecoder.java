@@ -17,6 +17,7 @@ public class TarantoolResponseDecoder extends ReplayingDecoder<TarantoolResponse
 
     @Override
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf bytes, List<Object> list) {
+        System.out.println(list);
         switch (state()) {
             case LENGTH:
                 size = readTarantoolResponseSize(bytes);

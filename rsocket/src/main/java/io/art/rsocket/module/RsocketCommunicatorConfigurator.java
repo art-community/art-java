@@ -1,6 +1,7 @@
 package io.art.rsocket.module;
 
 import io.art.communicator.*;
+import io.art.communicator.configuration.*;
 import io.art.communicator.configurator.*;
 import io.art.communicator.model.*;
 import io.art.core.annotation.*;
@@ -10,6 +11,7 @@ import io.art.rsocket.configuration.communicator.tcp.*;
 import io.art.rsocket.configuration.communicator.ws.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.core.property.LazyProperty.*;
 import static io.art.rsocket.communicator.RsocketCommunicationFactory.*;
 import static io.art.rsocket.module.RsocketModule.*;
 import static java.util.function.UnaryOperator.*;
@@ -17,9 +19,10 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
-public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<RsocketCommunicatorConfigurator> {
+public class RsocketCommunicatorConfigurator {
     private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
     private final Map<String, RsocketWsConnectorConfiguration> wsConnectors = map();
+    private final CommunicatorConfiguratorImplementation delegate = new CommunicatorConfiguratorImplementation();
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Communicator> communicatorClass) {
         return tcp(() -> idByDash(communicatorClass), communicatorClass, identity());
@@ -50,7 +53,7 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
         RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
         tcpConnectors.put(connector.id(), configuration);
         CommunicatorActionFactory communicatorActionFactory = (connectorId, actionId) -> createManagedTcpCommunication(configuration().tcpConnector(connectorId), actionId);
-        register(connector, communicatorClass, communicatorActionFactory);
+        delegate.register(connector, communicatorClass, communicatorActionFactory);
         return this;
     }
 
@@ -59,7 +62,12 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
         RsocketWsConnectorConfiguration configuration = connectorConfigurator.configure();
         wsConnectors.put(connector.id(), configuration);
         CommunicatorActionFactory communicatorActionFactory = (connectorId, actionId) -> createManagedWsCommunication(configuration().wsConnector(connectorId), actionId);
-        register(connector, communicatorClass, communicatorActionFactory);
+        delegate.register(connector, communicatorClass, communicatorActionFactory);
+        return this;
+    }
+
+    public RsocketCommunicatorConfigurator configure(UnaryOperator<CommunicatorConfigurator> configurator) {
+        configurator.apply(delegate);
         return this;
     }
 
@@ -71,8 +79,11 @@ public class RsocketCommunicatorConfigurator extends CommunicatorConfigurator<Rs
         return immutableMapOf(wsConnectors);
     }
 
+    CommunicatorConfiguration createCommunicatorConfiguration(CommunicatorConfiguration current) {
+        return delegate.createConfiguration(lazy(() -> configuration().getCommunicator()), current);
+    }
+
     private RsocketModuleConfiguration configuration() {
         return rsocketModule().configuration();
     }
-
 }
