@@ -65,8 +65,14 @@ public class TarantoolIndexConfiguration<C, M extends MetaClass<C>> {
     @RequiredArgsConstructor
     public static class TarantoolIndexConfigurator<C, M extends MetaClass<C>> {
         private final M type;
+        private boolean primary;
         private final List<TarantoolIndexPartConfiguration<C, M>> parts = dynamicArray();
         private final List<MetaField<M, ?>> fields = dynamicArray();
+
+        public TarantoolIndexConfigurator<C, M> primary() {
+            this.primary = true;
+            return this;
+        }
 
         public TarantoolIndexConfigurator<C, M> part(TarantoolIndexPartConfiguration<C, M> part) {
             parts.add(part);
@@ -80,10 +86,12 @@ public class TarantoolIndexConfiguration<C, M extends MetaClass<C>> {
         }
 
         public TarantoolIndexConfigurationBuilder<C, M> configure() {
-            return TarantoolIndexConfiguration.<C, M>builder()
+            TarantoolIndexConfigurationBuilder<C, M> builder = TarantoolIndexConfiguration.<C, M>builder()
                     .spaceName(idByDash(type.definition().type()))
                     .indexName(fields.stream().map(MetaField::name).collect(joining()))
-                    .parts(parts);
+                    .parts(this.parts);
+            if (primary) builder.id(0);
+            return builder;
         }
     }
 

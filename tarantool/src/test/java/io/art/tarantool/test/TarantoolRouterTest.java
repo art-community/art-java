@@ -14,7 +14,7 @@ import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.meta.test.TestingMetaModelGenerator.generateTestingModel;
+import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
 import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
@@ -54,6 +54,7 @@ public class TarantoolRouterTest {
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())
                 .createIndex(indexFor(testingMetaModel(), testModelIndexes().id())
+                        .primary()
                         .configure()
                         .ifNotExists(true)
                         .unique(true)
