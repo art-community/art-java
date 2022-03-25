@@ -84,7 +84,7 @@ public class TarantoolRouterTest {
 
     @AfterAll
     public static void cleanup() {
-        //shutdownRouter();
+        shutdownRouter();
         shutdown();
     }
 
