@@ -12,7 +12,7 @@ import java.util.function.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolStorageConnectorConfigurator {
-    private final String connector;
+    private final String storageId;
     private final Set<TarantoolClientConfiguration> clients = set();
     private boolean logging = false;
 
@@ -31,7 +31,7 @@ public class TarantoolStorageConnectorConfigurator {
     }
 
     TarantoolStorageConfiguration configure() {
-        return tarantoolStorageConfiguration(connector)
+        return tarantoolStorageConfiguration(storageId)
                 .toBuilder()
                 .clients(immutableSetOf(clients))
                 .logging(logging)

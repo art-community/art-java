@@ -8,30 +8,30 @@ import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
 
-public interface BlockingShardService<KeyType, ModelType> {
-    ModelType first(KeyType key);
+public interface BlockingShardService<KeyType, SpaceType> {
+    SpaceType first(KeyType key);
 
-    ImmutableArray<ModelType> select(KeyType key);
+    ImmutableArray<SpaceType> select(KeyType key);
 
-    ImmutableArray<ModelType> select(KeyType key, long offset, long limit);
+    ImmutableArray<SpaceType> select(KeyType key, long offset, long limit);
 
-    default ImmutableArray<ModelType> find(KeyType... keys) {
+    default ImmutableArray<SpaceType> find(KeyType... keys) {
         return find(asList(keys));
     }
 
-    ImmutableArray<ModelType> find(Collection<KeyType> keys);
+    ImmutableArray<SpaceType> find(Collection<KeyType> keys);
 
-    ImmutableArray<ModelType> find(ImmutableCollection<KeyType> keys);
+    ImmutableArray<SpaceType> find(ImmutableCollection<KeyType> keys);
 
-    ModelType delete(KeyType key);
+    SpaceType delete(KeyType key);
 
-    default ImmutableArray<ModelType> delete(KeyType... keys) {
+    default ImmutableArray<SpaceType> delete(KeyType... keys) {
         return delete(asList(keys));
     }
 
-    ImmutableArray<ModelType> delete(Collection<KeyType> keys);
+    ImmutableArray<SpaceType> delete(Collection<KeyType> keys);
 
-    ImmutableArray<ModelType> delete(ImmutableCollection<KeyType> keys);
+    ImmutableArray<SpaceType> delete(ImmutableCollection<KeyType> keys);
 
     long count(KeyType key);
 
@@ -39,84 +39,84 @@ public interface BlockingShardService<KeyType, ModelType> {
 
     void truncate();
 
-    ModelType insert(ModelType value);
+    SpaceType insert(SpaceType value);
 
-    default ImmutableArray<ModelType> insert(ModelType... value) {
+    default ImmutableArray<SpaceType> insert(SpaceType... value) {
         return insert(asList(value));
     }
 
-    ImmutableArray<ModelType> insert(Collection<ModelType> value);
+    ImmutableArray<SpaceType> insert(Collection<SpaceType> value);
 
-    ImmutableArray<ModelType> insert(ImmutableCollection<ModelType> value);
+    ImmutableArray<SpaceType> insert(ImmutableCollection<SpaceType> value);
 
-    ModelType put(ModelType value);
+    SpaceType put(SpaceType value);
 
-    default ImmutableArray<ModelType> put(ModelType... value) {
+    default ImmutableArray<SpaceType> put(SpaceType... value) {
         return put(Arrays.asList(value));
     }
 
-    ImmutableArray<ModelType> put(Collection<ModelType> value);
+    ImmutableArray<SpaceType> put(Collection<SpaceType> value);
 
-    ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value);
+    ImmutableArray<SpaceType> put(ImmutableCollection<SpaceType> value);
 
-    default ModelType update(KeyType key, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default SpaceType update(KeyType key, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(key, spaceUpdater);
     }
 
-    ModelType update(KeyType key, Updater<ModelType> updater);
+    SpaceType update(KeyType key, Updater<SpaceType> updater);
 
-    void upsert(ModelType model, Updater<ModelType> updater);
+    void upsert(SpaceType model, Updater<SpaceType> updater);
 
-    default void upsert(ModelType model, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default void upsert(SpaceType model, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         upsert(model, spaceUpdater);
     }
 
-    ImmutableArray<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater);
+    ImmutableArray<SpaceType> update(Collection<KeyType> keys, Updater<SpaceType> updater);
 
-    ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater);
+    ImmutableArray<SpaceType> update(ImmutableCollection<KeyType> keys, Updater<SpaceType> updater);
 
-    default ImmutableArray<ModelType> update(Collection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default ImmutableArray<SpaceType> update(Collection<KeyType> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    default ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default ImmutableArray<SpaceType> update(ImmutableCollection<KeyType> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    BlockingSpaceStream<ModelType> stream();
+    BlockingSpaceStream<SpaceType> stream();
 
-    BlockingSpaceStream<ModelType> stream(KeyType baseKey);
+    BlockingSpaceStream<SpaceType> stream(KeyType baseKey);
 
-    ReactiveShardService<KeyType, ModelType> reactive();
+    ReactiveShardService<KeyType, SpaceType> reactive();
 
 
-    default <F1> BlockingIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
+    default <F1> BlockingIndex1Service<SpaceType, F1> index(Index1<SpaceType, F1> index) {
         return new BlockingIndex1Service<>(index((Index) index));
     }
 
-    default <F1, F2> BlockingIndex2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
+    default <F1, F2> BlockingIndex2Service<SpaceType, F1, F2> index(Index2<SpaceType, F1, F2> index) {
         return new BlockingIndex2Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3> BlockingIndex3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
+    default <F1, F2, F3> BlockingIndex3Service<SpaceType, F1, F2, F3> index(Index3<SpaceType, F1, F2, F3> index) {
         return new BlockingIndex3Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3, F4> BlockingIndex4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
+    default <F1, F2, F3, F4> BlockingIndex4Service<SpaceType, F1, F2, F3, F4> index(Index4<SpaceType, F1, F2, F3, F4> index) {
         return new BlockingIndex4Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3, F4, F5> BlockingIndex5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
+    default <F1, F2, F3, F4, F5> BlockingIndex5Service<SpaceType, F1, F2, F3, F4, F5> index(Index5<SpaceType, F1, F2, F3, F4, F5> index) {
         return new BlockingIndex5Service<>(index((Index) index));
     }
 
-    BlockingIndexService<ModelType> index(Index index);
+    BlockingIndexService<SpaceType> index(Index index);
 }

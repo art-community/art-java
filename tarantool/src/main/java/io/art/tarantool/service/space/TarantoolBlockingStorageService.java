@@ -7,7 +7,7 @@ import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
-import io.art.tarantool.registry.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
 import lombok.*;
@@ -20,87 +20,87 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolBlockingStorageService<KeyType, ModelType> implements BlockingSpaceService<KeyType, ModelType> {
-    private final MetaType<ModelType> spaceMetaType;
-    private final TarantoolClientRegistry clients;
-    private final TarantoolReactiveStorageService<KeyType, ModelType> reactive;
-    private final TarantoolBlockingRouterService<KeyType, ModelType> sharded;
-    private final TarantoolBlockingStorageIndexService<ModelType> index;
+public class TarantoolBlockingStorageService<KeyType, SpaceType> implements BlockingSpaceService<KeyType, SpaceType> {
+    private final MetaType<SpaceType> spaceMetaType;
+    private final TarantoolStorageConnector connector;
+    private final TarantoolReactiveStorageService<KeyType, SpaceType> reactive;
+    private final TarantoolBlockingRouterService<KeyType, SpaceType> sharded;
+    private final TarantoolBlockingStorageIndexService<SpaceType> index;
 
-    public TarantoolBlockingStorageService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
-        this.clients = clients;
+    public TarantoolBlockingStorageService(MetaType<KeyType> keyMeta, MetaClass<SpaceType> spaceMeta, TarantoolStorageConnector connector) {
+        this.connector = connector;
         this.spaceMetaType = spaceMeta.definition();
         ImmutableStringValue spaceName = newString(idByDash(spaceMeta.definition().type()));
-        reactive = new TarantoolReactiveStorageService<>(keyMeta, spaceMeta, clients);
-        sharded = new TarantoolBlockingRouterService<>(keyMeta, spaceMeta, clients);
-        index = new TarantoolBlockingStorageIndexService<>(spaceMetaType, spaceName, clients);
+        reactive = new TarantoolReactiveStorageService<>(keyMeta, spaceMeta, connector);
+        sharded = new TarantoolBlockingRouterService<>(keyMeta, spaceMeta, connector);
+        index = new TarantoolBlockingStorageIndexService<>(spaceMetaType, spaceName, connector);
     }
 
 
     @Override
-    public final TarantoolBlockingStorageIndexService<ModelType> index(Index index) {
+    public final TarantoolBlockingStorageIndexService<SpaceType> index(Index index) {
         return this.index.indexed(index);
     }
 
     @Override
-    public TarantoolBlockingRouterService<KeyType, ModelType> shard(ShardRequest request) {
+    public TarantoolBlockingRouterService<KeyType, SpaceType> shard(ShardRequest request) {
         return sharded.shard(request);
     }
 
     @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream() {
+    public TarantoolBlockingStorageSpaceStream<SpaceType> stream() {
         return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream(KeyType baseKey) {
+    public TarantoolBlockingStorageSpaceStream<SpaceType> stream(KeyType baseKey) {
         return new TarantoolBlockingStorageSpaceStream<>(spaceMetaType, reactive.stream(baseKey));
     }
 
     @Override
-    public TarantoolReactiveStorageService<KeyType, ModelType> reactive() {
+    public TarantoolReactiveStorageService<KeyType, SpaceType> reactive() {
         return reactive;
     }
 
 
     @Override
-    public ModelType first(KeyType key) {
+    public SpaceType first(KeyType key) {
         return block(reactive.first(key));
     }
 
     @Override
-    public ImmutableArray<ModelType> select(KeyType key) {
+    public ImmutableArray<SpaceType> select(KeyType key) {
         return reactive.select(key).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> select(KeyType key, long offset, long limit) {
+    public ImmutableArray<SpaceType> select(KeyType key, long offset, long limit) {
         return reactive.select(key, limit, offset).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> find(Collection<KeyType> keys) {
+    public ImmutableArray<SpaceType> find(Collection<KeyType> keys) {
         return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> find(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<SpaceType> find(ImmutableCollection<KeyType> keys) {
         return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
 
     @Override
-    public ModelType delete(KeyType key) {
+    public SpaceType delete(KeyType key) {
         return block(reactive.delete(key));
     }
 
     @Override
-    public ImmutableArray<ModelType> delete(Collection<KeyType> keys) {
+    public ImmutableArray<SpaceType> delete(Collection<KeyType> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> delete(ImmutableCollection<KeyType> keys) {
+    public ImmutableArray<SpaceType> delete(ImmutableCollection<KeyType> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
@@ -122,54 +122,54 @@ public class TarantoolBlockingStorageService<KeyType, ModelType> implements Bloc
 
 
     @Override
-    public ModelType insert(ModelType value) {
+    public SpaceType insert(SpaceType value) {
         return block(reactive.insert(value));
     }
 
     @Override
-    public ImmutableArray<ModelType> insert(Collection<ModelType> value) {
+    public ImmutableArray<SpaceType> insert(Collection<SpaceType> value) {
         return reactive.insert(value).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> insert(ImmutableCollection<ModelType> value) {
+    public ImmutableArray<SpaceType> insert(ImmutableCollection<SpaceType> value) {
         return reactive.insert(value).toStream().collect(immutableArrayCollector());
     }
 
 
     @Override
-    public ModelType put(ModelType value) {
+    public SpaceType put(SpaceType value) {
         return block(reactive.put(value));
     }
 
 
     @Override
-    public ImmutableArray<ModelType> put(Collection<ModelType> value) {
+    public ImmutableArray<SpaceType> put(Collection<SpaceType> value) {
         return reactive.put(value).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> put(ImmutableCollection<ModelType> value) {
+    public ImmutableArray<SpaceType> put(ImmutableCollection<SpaceType> value) {
         return reactive.put(value).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ModelType update(KeyType key, Updater<ModelType> updater) {
+    public SpaceType update(KeyType key, Updater<SpaceType> updater) {
         return block(reactive.update(key, updater));
     }
 
     @Override
-    public void upsert(ModelType model, Updater<ModelType> updater) {
+    public void upsert(SpaceType model, Updater<SpaceType> updater) {
         block(reactive.upsert(model, updater));
     }
 
     @Override
-    public ImmutableArray<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater) {
+    public ImmutableArray<SpaceType> update(Collection<KeyType> keys, Updater<SpaceType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
+    public ImmutableArray<SpaceType> update(ImmutableCollection<KeyType> keys, Updater<SpaceType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
     }
 }

@@ -7,7 +7,7 @@ import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
-import io.art.tarantool.registry.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.stream.*;
 import lombok.Builder;
 import lombok.*;
@@ -18,73 +18,73 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolBlockingStorageIndexService<ModelType> implements BlockingIndexService<ModelType> {
-    private final MetaType<ModelType> spaceType;
-    private TarantoolReactiveStorageIndexService<ModelType> reactive;
+public class TarantoolBlockingStorageIndexService<SpaceType> implements BlockingIndexService<SpaceType> {
+    private final MetaType<SpaceType> spaceType;
+    private TarantoolReactiveStorageIndexService<SpaceType> reactive;
 
     @Builder
-    public TarantoolBlockingStorageIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
+    public TarantoolBlockingStorageIndexService(MetaType<SpaceType> spaceType, ImmutableStringValue spaceName, TarantoolStorageConnector connector) {
         this.spaceType = spaceType;
-        reactive = new TarantoolReactiveStorageIndexService<>(spaceType, spaceName, clients);
+        reactive = new TarantoolReactiveStorageIndexService<>(spaceType, spaceName, connector);
     }
 
-    public TarantoolBlockingStorageIndexService<ModelType> indexed(Index index) {
+    public TarantoolBlockingStorageIndexService<SpaceType> indexed(Index index) {
         reactive.indexed(index);
         return this;
     }
 
     @Override
-    public ModelType first(Tuple tuple) {
+    public SpaceType first(Tuple tuple) {
         return block(reactive.first(tuple));
     }
 
     @Override
-    public ImmutableArray<ModelType> select(Tuple tuple) {
+    public ImmutableArray<SpaceType> select(Tuple tuple) {
         return reactive.select(tuple).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> select(Tuple tuple, int offset, int limit) {
+    public ImmutableArray<SpaceType> select(Tuple tuple, int offset, int limit) {
         return reactive.select(tuple, offset, limit).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> find(Collection<? extends Tuple> keys) {
+    public ImmutableArray<SpaceType> find(Collection<? extends Tuple> keys) {
         return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
+    public ImmutableArray<SpaceType> find(ImmutableCollection<? extends Tuple> keys) {
         return reactive.find(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ModelType delete(Tuple key) {
+    public SpaceType delete(Tuple key) {
         return block(reactive.delete(key));
     }
 
     @Override
-    public ModelType update(Tuple key, Updater<ModelType> updater) {
+    public SpaceType update(Tuple key, Updater<SpaceType> updater) {
         return block(reactive.update(key, updater));
     }
 
     @Override
-    public ImmutableArray<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater) {
+    public ImmutableArray<SpaceType> update(Collection<? extends Tuple> keys, Updater<SpaceType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater) {
+    public ImmutableArray<SpaceType> update(ImmutableCollection<? extends Tuple> keys, Updater<SpaceType> updater) {
         return reactive.update(keys, updater).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> delete(Collection<? extends Tuple> keys) {
+    public ImmutableArray<SpaceType> delete(Collection<? extends Tuple> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
     @Override
-    public ImmutableArray<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
+    public ImmutableArray<SpaceType> delete(ImmutableCollection<? extends Tuple> keys) {
         return reactive.delete(keys).toStream().collect(immutableArrayCollector());
     }
 
@@ -94,17 +94,17 @@ public class TarantoolBlockingStorageIndexService<ModelType> implements Blocking
     }
 
     @Override
-    public ReactiveIndexService<ModelType> reactive() {
+    public ReactiveIndexService<SpaceType> reactive() {
         return reactive;
     }
 
     @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream() {
+    public TarantoolBlockingStorageSpaceStream<SpaceType> stream() {
         return new TarantoolBlockingStorageSpaceStream<>(spaceType, reactive.stream());
     }
 
     @Override
-    public TarantoolBlockingStorageSpaceStream<ModelType> stream(Tuple baseKey) {
+    public TarantoolBlockingStorageSpaceStream<SpaceType> stream(Tuple baseKey) {
         return new TarantoolBlockingStorageSpaceStream<>(spaceType, reactive.stream(baseKey));
     }
 }

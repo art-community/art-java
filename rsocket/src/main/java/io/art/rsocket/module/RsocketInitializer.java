@@ -56,8 +56,8 @@ public class RsocketInitializer implements ModuleInitializer<RsocketModuleConfig
         initial.wsServer = serverConfigurator.createWsConfiguration(initial.wsServer);
         initial.server = serverConfigurator.createServerConfiguration(initial.server);
 
-        initial.tcpConnectors = communicatorConfigurator.tcpConnectors();
-        initial.wsConnectors = communicatorConfigurator.wsConnectors();
+        initial.tcpConnectors = communicatorConfigurator.tcpConnectorConfigurations();
+        initial.wsConnectors = communicatorConfigurator.wsConnectorConfigurations();
         initial.communicator = communicatorConfigurator.createCommunicatorConfiguration(initial.communicator);
 
         return initial;

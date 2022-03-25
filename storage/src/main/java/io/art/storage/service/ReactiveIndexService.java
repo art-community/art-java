@@ -13,58 +13,58 @@ import java.util.function.*;
 
 @Public
 @SuppressWarnings({VARARGS})
-public interface ReactiveIndexService<ModelType> {
-    Mono<ModelType> first(Tuple tuple);
+public interface ReactiveIndexService<SpaceType> {
+    Mono<SpaceType> first(Tuple tuple);
 
-    Flux<ModelType> select(Tuple tuple);
+    Flux<SpaceType> select(Tuple tuple);
 
-    Flux<ModelType> select(Tuple tuple, int offset, int limit);
+    Flux<SpaceType> select(Tuple tuple, int offset, int limit);
 
-    default Mono<ModelType> update(Tuple key, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Mono<SpaceType> update(Tuple key, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(key, spaceUpdater);
     }
 
-    Mono<ModelType> update(Tuple key, Updater<ModelType> updater);
+    Mono<SpaceType> update(Tuple key, Updater<SpaceType> updater);
 
-    Flux<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater);
+    Flux<SpaceType> update(Collection<? extends Tuple> keys, Updater<SpaceType> updater);
 
-    Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater);
+    Flux<SpaceType> update(ImmutableCollection<? extends Tuple> keys, Updater<SpaceType> updater);
 
-    default Flux<ModelType> update(Collection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Flux<SpaceType> update(Collection<? extends Tuple> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    default Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Flux<SpaceType> update(ImmutableCollection<? extends Tuple> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    default Flux<ModelType> find(Tuple... keys) {
+    default Flux<SpaceType> find(Tuple... keys) {
         return find(asList(keys));
     }
 
-    Flux<ModelType> find(Collection<? extends Tuple> keys);
+    Flux<SpaceType> find(Collection<? extends Tuple> keys);
 
-    Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys);
+    Flux<SpaceType> find(ImmutableCollection<? extends Tuple> keys);
 
-    Mono<ModelType> delete(Tuple key);
+    Mono<SpaceType> delete(Tuple key);
 
-    default Flux<ModelType> delete(Tuple... keys) {
+    default Flux<SpaceType> delete(Tuple... keys) {
         return delete(asList(keys));
     }
 
-    Flux<ModelType> delete(Collection<? extends Tuple> keys);
+    Flux<SpaceType> delete(Collection<? extends Tuple> keys);
 
-    Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
+    Flux<SpaceType> delete(ImmutableCollection<? extends Tuple> keys);
 
     Mono<Long> count(Tuple tuple);
 
-    ReactiveSpaceStream<ModelType> stream();
+    ReactiveSpaceStream<SpaceType> stream();
 
-    ReactiveSpaceStream<ModelType> stream(Tuple baseKey);
+    ReactiveSpaceStream<SpaceType> stream(Tuple baseKey);
 }

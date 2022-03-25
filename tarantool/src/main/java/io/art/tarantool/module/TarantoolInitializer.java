@@ -22,57 +22,40 @@ import io.art.communicator.configuration.*;
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.server.configuration.*;
-import io.art.storage.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
-import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.tarantool.module.TarantoolModule.*;
-import static java.util.function.UnaryOperator.*;
-import java.util.*;
 import java.util.function.*;
 
 @Public
 public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleConfiguration, TarantoolModuleConfiguration.Configurator, TarantoolModule> {
-    private final TarantoolStorageCommunicatorConfigurator storageCommunicatorConfigurator = new TarantoolStorageCommunicatorConfigurator();
-    private final TarantoolServicesConfigurator servicesConfigurator = new TarantoolServicesConfigurator();
+    private final TarantoolStoragesConfigurator storagesConfigurator = new TarantoolStoragesConfigurator();
     private final TarantoolSubscriptionsConfigurator subscriptionsConfigurator = new TarantoolSubscriptionsConfigurator();
 
-    public TarantoolInitializer storage(Class<? extends Storage> storageClass) {
-        return storage(storageClass, identity());
-    }
-
-    public TarantoolInitializer storage(Class<? extends Storage> storageClass, UnaryOperator<TarantoolStorageConnectorConfigurator> configurator) {
-        storageCommunicatorConfigurator.storage(storageClass, configurator);
+    public TarantoolInitializer storages(UnaryOperator<TarantoolStoragesConfigurator> configurator) {
+        configurator.apply(storagesConfigurator);
         return this;
     }
 
-    public TarantoolInitializer subscribe(UnaryOperator<TarantoolSubscriptionsConfigurator> configurator) {
+    public TarantoolInitializer subscriptions(UnaryOperator<TarantoolSubscriptionsConfigurator> configurator) {
         configurator.apply(subscriptionsConfigurator);
         return this;
     }
 
-    public <C> TarantoolInitializer space(Class<? extends Storage> storageClass, Class<C> spaceClass, UnaryOperator<TarantoolSpaceConfigurator<C>> configurator) {
-        servicesConfigurator.space(configurator.apply(new TarantoolSpaceConfigurator<>(storageClass, spaceClass)));
-        return this;
-    }
 
     @Override
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
 
-        initial.storageConfigurations = storageCommunicatorConfigurator.storages();
-        initial.storageClients = initial.storageConfigurations.entrySet()
-                .stream()
-                .collect(immutableMapCollector(Map.Entry::getKey, entry -> new TarantoolClientRegistry(entry.getValue())));
-
-        initial.communicator = storageCommunicatorConfigurator.createConfiguration(lazy(() -> tarantoolModule().configuration().getCommunicator()), initial.communicator);
+        initial.storageConfigurations = storagesConfigurator.storageConfigurations();
+        initial.storages = lazy(storagesConfigurator::createStorages);
+        initial.communicator = storagesConfigurator.createCommunicatorConfiguration(initial.communicator);
         initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
-
-        initial.services = servicesConfigurator.configure();
         initial.subscriptions = new TarantoolSubscriptionRegistry(lazy(subscriptionsConfigurator::configureSubscriptions));
 
         return initial;
@@ -81,12 +64,9 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
         private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = super.getStorageConfigurations();
-        private ImmutableMap<String, TarantoolClientRegistry> storageClients = super.getStorageClients();
-
+        private LazyProperty<ImmutableMap<String, TarantoolStorageRegistry>> storages = lazy(super::storageRegistries);
         private CommunicatorConfiguration communicator = super.getCommunicator();
         private ServerConfiguration server = super.getServer();
-
-        private TarantoolServiceRegistry services = super.getServices();
         private TarantoolSubscriptionRegistry subscriptions = super.getSubscriptions();
 
         public Initial(TarantoolModuleRefresher refresher) {

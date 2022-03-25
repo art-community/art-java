@@ -42,12 +42,14 @@ public class TarantoolStorageTest {
                 TransportActivator.transport(),
                 LoggingActivator.logging(),
                 TarantoolActivator.tarantool(tarantool -> tarantool
-                        .storage(TestStorage.class, storage -> storage.client(client -> client
-                                .port(STORAGE_PORT)
-                                .username(USERNAME)
-                                .password(PASSWORD)))
-                        .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
+                        .storages(storages -> storages
+                                .storage(TestStorage.class, storage -> storage
+                                        .connector(connector -> connector.client(client -> client
+                                                .port(STORAGE_PORT)
+                                                .username(USERNAME)
+                                                .password(PASSWORD)))
+                                        .space(TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))))
+                        .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
                 )
         );
         tarantool()
@@ -432,6 +434,6 @@ public class TarantoolStorageTest {
     }
 
     private static BlockingSpaceService<Integer, TestingMetaModel> current() {
-        return tarantool().space(TestingMetaModel.class);
+        return tarantool().space(TestStorage.class, TestingMetaModel.class);
     }
 }

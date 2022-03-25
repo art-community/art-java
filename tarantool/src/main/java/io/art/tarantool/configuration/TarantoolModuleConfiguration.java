@@ -5,6 +5,7 @@ import io.art.communicator.model.*;
 import io.art.communicator.refresher.*;
 import io.art.core.collection.*;
 import io.art.core.module.*;
+import io.art.core.property.*;
 import io.art.core.source.*;
 import io.art.server.configuration.*;
 import io.art.server.refresher.*;
@@ -34,11 +35,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     @Getter
     private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations;
 
-    @Getter
-    private ImmutableMap<String, TarantoolClientRegistry> storageClients;
-
-    @Getter
-    private TarantoolServiceRegistry services;
+    private LazyProperty<ImmutableMap<String, TarantoolStorageRegistry>> storageRegistries;
 
     @Getter
     private TarantoolSubscriptionRegistry subscriptions;
@@ -65,18 +62,28 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         communicator = communicatorConfiguration(communicatorRefresher);
         server = serverConfiguration(serverRefresher);
         storageConfigurations = emptyImmutableMap();
-        storageClients = emptyImmutableMap();
-        services = TarantoolServiceRegistry.builder()
-                .sharders(lazy(ImmutableMap::emptyImmutableMap))
-                .indexes(lazy(ImmutableMap::emptyImmutableMap))
-                .schemas(lazy(ImmutableMap::emptyImmutableMap))
-                .spaces(lazy(ImmutableMap::emptyImmutableMap))
-                .build();
+        storageRegistries = lazy(ImmutableMap::emptyImmutableMap);
         subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
     }
 
-    public TarantoolStorageConfiguration storage(ConnectorIdentifier identifier) {
-        return storageConfigurations.get(identifier.id());
+    public ImmutableMap<String, TarantoolStorageRegistry> storageRegistries() {
+        return storageRegistries.get();
+    }
+
+    public TarantoolStorageRegistry storageRegistry(ConnectorIdentifier identifier) {
+        return storageRegistry(identifier.id());
+    }
+
+    public TarantoolStorageRegistry storageRegistry(String identifier) {
+        return storageRegistries.get().get(identifier);
+    }
+
+    public TarantoolStorageConfiguration storageConfiguration(ConnectorIdentifier identifier) {
+        return storageConfiguration(identifier.id());
+    }
+
+    public TarantoolStorageConfiguration storageConfiguration(String identifier) {
+        return storageConfigurations.get(identifier);
     }
 
     @RequiredArgsConstructor
@@ -88,8 +95,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.server = configuration.getServer();
             this.configuration.storageConfigurations = configuration.getStorageConfigurations();
-            this.configuration.storageClients = configuration.getStorageClients();
-            this.configuration.services = configuration.getServices();
+            this.configuration.storageRegistries = lazy(configuration::storageRegistries);
             this.configuration.subscriptions = configuration.getSubscriptions();
             return this;
         }

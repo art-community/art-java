@@ -34,11 +34,11 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     }
 
     static TestModelIndexes testModelIndexes() {
-        return tarantool().indexes(TestingMetaModel.class);
+        return tarantool().indexes(TestStorage.class, TestingMetaModel.class);
     }
 
     static TestModelSharders testModelSharders() {
-        return tarantool().sharders(TestingMetaModel.class);
+        return tarantool().sharders(TestStorage.class, TestingMetaModel.class);
     }
 
     @Getter
@@ -49,6 +49,6 @@ public interface TestStorage extends TarantoolStorage<TestStorage> {
     }
 
     static OtherSpaceIndexes otherSpaceIndexes() {
-        return tarantool().indexes(OtherSpace.class);
+        return tarantool().indexes(TestStorage.class, OtherSpace.class);
     }
 }

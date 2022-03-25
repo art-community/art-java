@@ -12,60 +12,60 @@ import java.util.function.*;
 
 @Public
 @SuppressWarnings({VARARGS})
-public interface BlockingIndexService<ModelType> {
-    ModelType first(Tuple tuple);
+public interface BlockingIndexService<SpaceType> {
+    SpaceType first(Tuple tuple);
 
-    ImmutableArray<ModelType> select(Tuple tuple);
+    ImmutableArray<SpaceType> select(Tuple tuple);
 
-    ImmutableArray<ModelType> select(Tuple tuple, int offset, int limit);
+    ImmutableArray<SpaceType> select(Tuple tuple, int offset, int limit);
 
-    default ImmutableArray<ModelType> find(Tuple... keys) {
+    default ImmutableArray<SpaceType> find(Tuple... keys) {
         return find(asList(keys));
     }
 
-    ImmutableArray<ModelType> find(Collection<? extends Tuple> keys);
+    ImmutableArray<SpaceType> find(Collection<? extends Tuple> keys);
 
-    ImmutableArray<ModelType> find(ImmutableCollection<? extends Tuple> keys);
+    ImmutableArray<SpaceType> find(ImmutableCollection<? extends Tuple> keys);
 
-    ModelType delete(Tuple key);
+    SpaceType delete(Tuple key);
 
-    default ModelType update(Tuple key, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default SpaceType update(Tuple key, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(key, spaceUpdater);
     }
 
-    ModelType update(Tuple key, Updater<ModelType> updater);
+    SpaceType update(Tuple key, Updater<SpaceType> updater);
 
-    ImmutableArray<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater);
+    ImmutableArray<SpaceType> update(Collection<? extends Tuple> keys, Updater<SpaceType> updater);
 
-    ImmutableArray<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater);
+    ImmutableArray<SpaceType> update(ImmutableCollection<? extends Tuple> keys, Updater<SpaceType> updater);
 
-    default ImmutableArray<ModelType> update(Collection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default ImmutableArray<SpaceType> update(Collection<? extends Tuple> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    default ImmutableArray<ModelType> update(ImmutableCollection<? extends Tuple> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default ImmutableArray<SpaceType> update(ImmutableCollection<? extends Tuple> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    default ImmutableArray<ModelType> delete(Tuple... keys) {
+    default ImmutableArray<SpaceType> delete(Tuple... keys) {
         return delete(asList(keys));
     }
 
-    ImmutableArray<ModelType> delete(Collection<? extends Tuple> keys);
+    ImmutableArray<SpaceType> delete(Collection<? extends Tuple> keys);
 
-    ImmutableArray<ModelType> delete(ImmutableCollection<? extends Tuple> keys);
+    ImmutableArray<SpaceType> delete(ImmutableCollection<? extends Tuple> keys);
 
     long count(Tuple tuple);
 
-    ReactiveIndexService<ModelType> reactive();
+    ReactiveIndexService<SpaceType> reactive();
 
-    BlockingSpaceStream<ModelType> stream();
+    BlockingSpaceStream<SpaceType> stream();
 
-    BlockingSpaceStream<ModelType> stream(Tuple baseKey);
+    BlockingSpaceStream<SpaceType> stream(Tuple baseKey);
 }

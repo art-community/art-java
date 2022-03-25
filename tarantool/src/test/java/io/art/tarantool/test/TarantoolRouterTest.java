@@ -23,7 +23,6 @@ import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
@@ -39,22 +38,26 @@ public class TarantoolRouterTest {
                 TransportActivator.transport(),
                 LoggingActivator.logging(),
                 TarantoolActivator.tarantool(tarantool -> tarantool
-                        .storage(TestStorage.class, storage -> storage.client(client -> client
-                                .port(ROUTER_PORT)
-                                .router(true)
-                                .username(USERNAME)
-                                .password(PASSWORD)))
-                        .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, space -> space
-                                .indexes(TestModelIndexes.class)
-                                .sharders(TestModelSharders.class))
+                        .storages(storages -> storages
+                                .storage(TestStorage.class, storage -> storage
+                                        .connector(connector -> connector.client(client -> client
+                                                .port(ROUTER_PORT)
+                                                .router(true)
+                                                .username(USERNAME)
+                                                .password(PASSWORD)))
+                                        .space(TestingMetaModel.class, space -> space
+                                                .indexes(TestModelIndexes.class)
+                                                .sharders(TestModelSharders.class))))
+                        .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
                 )
         );
-        tarantoolModule().configuration().getStorageClients()
-                .get(idByDash(TestStorage.class))
+
+        tarantool()
+                .connector(TestStorage.class)
                 .router()
                 .call(ROUTER_BOOTSTRAP_FUNCTION)
                 .block();
+
         tarantool()
                 .schema(TestStorage.class)
                 .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())
@@ -127,6 +130,6 @@ public class TarantoolRouterTest {
     }
 
     private static BlockingSpaceService<Integer, TestingMetaModel> current() {
-        return tarantool().space(TestingMetaModel.class);
+        return tarantool().space(TestStorage.class, TestingMetaModel.class);
     }
 }

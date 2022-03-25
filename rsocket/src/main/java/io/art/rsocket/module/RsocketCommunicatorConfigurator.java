@@ -20,8 +20,8 @@ import java.util.function.*;
 
 @Public
 public class RsocketCommunicatorConfigurator {
-    private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectors = map();
-    private final Map<String, RsocketWsConnectorConfiguration> wsConnectors = map();
+    private final Map<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations = map();
+    private final Map<String, RsocketWsConnectorConfiguration> wsConnectorConfigurations = map();
     private final CommunicatorConfiguratorImplementation delegate = new CommunicatorConfiguratorImplementation();
 
     public RsocketCommunicatorConfigurator tcp(Class<? extends Communicator> communicatorClass) {
@@ -51,7 +51,7 @@ public class RsocketCommunicatorConfigurator {
     public RsocketCommunicatorConfigurator tcp(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
         RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(connector.id()));
         RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
-        tcpConnectors.put(connector.id(), configuration);
+        tcpConnectorConfigurations.put(connector.id(), configuration);
         CommunicatorActionFactory communicatorActionFactory = (connectorId, actionId) -> createManagedTcpCommunication(configuration().tcpConnector(connectorId), actionId);
         delegate.register(connector, communicatorClass, communicatorActionFactory);
         return this;
@@ -60,7 +60,7 @@ public class RsocketCommunicatorConfigurator {
     public RsocketCommunicatorConfigurator ws(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass, UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
         RsocketWsConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(connector.id()));
         RsocketWsConnectorConfiguration configuration = connectorConfigurator.configure();
-        wsConnectors.put(connector.id(), configuration);
+        wsConnectorConfigurations.put(connector.id(), configuration);
         CommunicatorActionFactory communicatorActionFactory = (connectorId, actionId) -> createManagedWsCommunication(configuration().wsConnector(connectorId), actionId);
         delegate.register(connector, communicatorClass, communicatorActionFactory);
         return this;
@@ -71,12 +71,12 @@ public class RsocketCommunicatorConfigurator {
         return this;
     }
 
-    ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectors() {
-        return immutableMapOf(tcpConnectors);
+    ImmutableMap<String, RsocketTcpConnectorConfiguration> tcpConnectorConfigurations() {
+        return immutableMapOf(tcpConnectorConfigurations);
     }
 
-    ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectors() {
-        return immutableMapOf(wsConnectors);
+    ImmutableMap<String, RsocketWsConnectorConfiguration> wsConnectorConfigurations() {
+        return immutableMapOf(wsConnectorConfigurations);
     }
 
     CommunicatorConfiguration createCommunicatorConfiguration(CommunicatorConfiguration current) {

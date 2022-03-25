@@ -7,8 +7,8 @@ import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
-import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
 import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
@@ -29,202 +29,202 @@ import java.util.*;
 
 @Public
 @RequiredArgsConstructor
-public class TarantoolReactiveStorageService<KeyType, ModelType> implements ReactiveSpaceService<KeyType, ModelType> {
+public class TarantoolReactiveStorageService<KeyType, SpaceType> implements ReactiveSpaceService<KeyType, SpaceType> {
     private final TarantoolModelReader reader;
     private final TarantoolUpdateSerializer updateSerializer;
     private final ImmutableStringValue spaceName;
-    private final MetaType<ModelType> spaceMetaType;
-    private final TarantoolClientRegistry clients;
+    private final MetaType<SpaceType> spaceMetaType;
+    private final TarantoolStorageConnector connector;
     private final TarantoolModelWriter writer;
     private final MetaType<KeyType> keyMeta;
-    private final TarantoolReactiveRouterService<KeyType, ModelType> sharded;
-    private final TarantoolReactiveStorageIndexService<ModelType> index;
+    private final TarantoolReactiveRouterService<KeyType, SpaceType> sharded;
+    private final TarantoolReactiveStorageIndexService<SpaceType> index;
 
-    public TarantoolReactiveStorageService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
-        this.clients = clients;
+    public TarantoolReactiveStorageService(MetaType<KeyType> keyMeta, MetaClass<SpaceType> spaceMeta, TarantoolStorageConnector connector) {
+        this.connector = connector;
         this.spaceMetaType = spaceMeta.definition();
         this.keyMeta = keyMeta;
         this.spaceName = newString(idByDash(spaceMeta.definition().type()));
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
-        sharded = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, clients);
-        index = new TarantoolReactiveStorageIndexService<>(spaceMetaType, spaceName, clients);
+        sharded = new TarantoolReactiveRouterService<>(keyMeta, spaceMeta, connector);
+        index = new TarantoolReactiveStorageIndexService<>(spaceMetaType, spaceName, connector);
     }
 
     @Override
-    public ReactiveShardService<KeyType, ModelType> shard(ShardRequest request) {
+    public ReactiveShardService<KeyType, SpaceType> shard(ShardRequest request) {
         return sharded.sharded(request);
     }
 
     @Override
-    public final ReactiveIndexService<ModelType> index(Index index) {
+    public final ReactiveIndexService<SpaceType> index(Index index) {
         return this.index.indexed(index);
     }
 
     @Override
-    public Mono<ModelType> first(KeyType key) {
+    public Mono<SpaceType> first(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.immutable().call(SPACE_FIRST, input);
+        Mono<Value> output = connector.immutable().call(SPACE_FIRST, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> select(KeyType key) {
+    public Flux<SpaceType> select(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.immutable().call(SPACE_SELECT, input);
+        Mono<Value> output = connector.immutable().call(SPACE_SELECT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> select(KeyType key, long offset, long limit) {
+    public Flux<SpaceType> select(KeyType key, long offset, long limit) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key), newArray(newInteger(offset), newInteger(limit)));
-        Mono<Value> output = clients.immutable().call(SPACE_SELECT, input);
+        Mono<Value> output = connector.immutable().call(SPACE_SELECT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(Collection<KeyType> keys) {
+    public Flux<SpaceType> find(Collection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(SPACE_FIND, input);
+        Mono<Value> output = connector.immutable().call(SPACE_FIND, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(ImmutableCollection<KeyType> keys) {
+    public Flux<SpaceType> find(ImmutableCollection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(SPACE_FIND, input);
+        Mono<Value> output = connector.immutable().call(SPACE_FIND, input);
         return parseSpaceFlux(output);
     }
 
 
     @Override
-    public Mono<ModelType> delete(KeyType key) {
+    public Mono<SpaceType> delete(KeyType key) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.immutable().call(SPACE_SINGLE_DELETE, input);
+        Mono<Value> output = connector.immutable().call(SPACE_SINGLE_DELETE, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> delete(Collection<KeyType> keys) {
+    public Flux<SpaceType> delete(Collection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = connector.immutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(ImmutableCollection<KeyType> keys) {
+    public Flux<SpaceType> delete(ImmutableCollection<KeyType> keys) {
         ArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.immutable().call(SPACE_MULTIPLE_DELETE, input);
+        Mono<Value> output = connector.immutable().call(SPACE_MULTIPLE_DELETE, input);
         return parseSpaceFlux(output);
     }
 
 
     @Override
-    public Mono<ModelType> insert(ModelType value) {
+    public Mono<SpaceType> insert(SpaceType value) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_INSERT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_SINGLE_INSERT, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> insert(Collection<ModelType> value) {
+    public Flux<SpaceType> insert(Collection<SpaceType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_INSERT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> insert(ImmutableCollection<ModelType> value) {
+    public Flux<SpaceType> insert(ImmutableCollection<SpaceType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_INSERT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_MULTIPLE_INSERT, input);
         return parseSpaceFlux(output);
     }
 
 
     @Override
-    public Mono<ModelType> put(ModelType value) {
+    public Mono<SpaceType> put(SpaceType value) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_PUT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_SINGLE_PUT, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> put(Collection<ModelType> value) {
+    public Flux<SpaceType> put(Collection<SpaceType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_PUT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> put(ImmutableCollection<ModelType> value) {
+    public Flux<SpaceType> put(ImmutableCollection<SpaceType> value) {
         ArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_PUT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_MULTIPLE_PUT, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Mono<ModelType> update(KeyType key, Updater<ModelType> updater) {
+    public Mono<SpaceType> update(KeyType key, Updater<SpaceType> updater) {
         ArrayValue input = newArray(spaceName, writer.write(keyMeta, key), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_UPDATE, input);
+        Mono<Value> output = connector.mutable().call(SPACE_SINGLE_UPDATE, input);
         return parseSpaceMono(output);
     }
 
     @Override
-    public Mono<Void> upsert(ModelType model, Updater<ModelType> updater) {
+    public Mono<Void> upsert(SpaceType model, Updater<SpaceType> updater) {
         ArrayValue input = newArray(spaceName, writer.write(spaceMetaType, model), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.mutable().call(SPACE_SINGLE_UPSERT, input);
+        Mono<Value> output = connector.mutable().call(SPACE_SINGLE_UPSERT, input);
         return output.then();
     }
 
     @Override
-    public Flux<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater) {
+    public Flux<SpaceType> update(Collection<KeyType> keys, Updater<SpaceType> updater) {
         List<Value> serializedKeys = keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector());
         ArrayValue input = newArray(spaceName, newArray(serializedKeys), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_UPDATE, input);
+        Mono<Value> output = connector.mutable().call(SPACE_MULTIPLE_UPDATE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
+    public Flux<SpaceType> update(ImmutableCollection<KeyType> keys, Updater<SpaceType> updater) {
         List<Value> serializedKeys = keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector());
         ArrayValue input = newArray(spaceName, newArray(serializedKeys), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.mutable().call(SPACE_MULTIPLE_UPDATE, input);
+        Mono<Value> output = connector.mutable().call(SPACE_MULTIPLE_UPDATE, input);
         return parseSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(KeyType key) {
-        Mono<Value> output = clients.immutable().call(SPACE_COUNT, newArray(spaceName, writer.write(keyMeta, key)));
+        Mono<Value> output = connector.immutable().call(SPACE_COUNT, newArray(spaceName, writer.write(keyMeta, key)));
         return parseLongMono(output);
     }
 
     @Override
     public Mono<Long> size() {
-        Mono<Value> output = clients.immutable().call(SPACE_COUNT, newArray(spaceName));
+        Mono<Value> output = connector.immutable().call(SPACE_COUNT, newArray(spaceName));
         return parseLongMono(output);
     }
 
     @Override
     public Mono<Void> truncate() {
-        return clients.mutable().call(SPACE_TRUNCATE, newArray(spaceName)).then();
+        return connector.mutable().call(SPACE_TRUNCATE, newArray(spaceName)).then();
     }
 
     @Override
-    public TarantoolReactiveStorageSpaceStream<ModelType> stream() {
-        return TarantoolReactiveStorageSpaceStream.<ModelType>builder()
+    public TarantoolReactiveStorageSpaceStream<SpaceType> stream() {
+        return TarantoolReactiveStorageSpaceStream.<SpaceType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
-                .clients(clients)
+                .connector(connector)
                 .build();
     }
 
     @Override
-    public TarantoolReactiveStorageSpaceStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveStorageSpaceStream.<ModelType>builder()
+    public TarantoolReactiveStorageSpaceStream<SpaceType> stream(KeyType baseKey) {
+        return TarantoolReactiveStorageSpaceStream.<SpaceType>builder()
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
-                .clients(clients)
+                .connector(connector)
                 .baseKey(tuple(baseKey))
                 .build();
     }
@@ -233,14 +233,14 @@ public class TarantoolReactiveStorageService<KeyType, ModelType> implements Reac
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Flux<ModelType> parseSpaceFlux(Mono<Value> value) {
+    private Flux<SpaceType> parseSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
                 .map(element -> reader.read(spaceMetaType, element))));
     }
 
-    private Mono<ModelType> parseSpaceMono(Mono<Value> value) {
+    private Mono<SpaceType> parseSpaceMono(Mono<Value> value) {
         return value.map(element -> reader.read(spaceMetaType, element));
     }
 

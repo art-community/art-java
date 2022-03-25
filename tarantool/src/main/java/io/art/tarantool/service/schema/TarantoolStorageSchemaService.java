@@ -2,10 +2,10 @@ package io.art.tarantool.service.schema;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.model.TarantoolIndexConfiguration.*;
-import io.art.tarantool.registry.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -23,7 +23,7 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolStorageSchemaService implements TarantoolSchemaService {
-    private final TarantoolClientRegistry clients;
+    private final TarantoolStorageConnector connector;
 
     @Override
     public TarantoolSchemaService createSpace(TarantoolSpaceConfiguration configuration) {
@@ -38,7 +38,7 @@ public class TarantoolStorageSchemaService implements TarantoolSchemaService {
         apply(configuration.temporary(), value -> options.put(SpaceFields.TEMPORARY, newBoolean(value)));
         apply(configuration.format(), value -> options.put(SpaceFields.FORMAT, writeFormat(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
-        block(clients.mutable().call(Functions.SCHEMA_CREATE_SPACE, input));
+        block(connector.mutable().call(Functions.SCHEMA_CREATE_SPACE, input));
         return this;
     }
 
@@ -56,41 +56,41 @@ public class TarantoolStorageSchemaService implements TarantoolSchemaService {
         apply(configuration.ifNotExists(), value -> options.put(IndexFields.IF_NOT_EXISTS, newBoolean(value)));
         options.put(IndexFields.PARTS, newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
         ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
-        block(clients.mutable().call(SCHEMA_CREATE_INDEX, input));
+        block(connector.mutable().call(SCHEMA_CREATE_INDEX, input));
         return this;
     }
 
     @Override
     public TarantoolSchemaService formatSpace(String space, TarantoolFormatConfiguration configuration) {
         ArrayValue input = newArray(newString(space), writeFormat(configuration));
-        block(clients.mutable().call(SCHEMA_FORMAT, input));
+        block(connector.mutable().call(SCHEMA_FORMAT, input));
         return this;
     }
 
     @Override
     public TarantoolSchemaService renameSpace(String from, String to) {
         ArrayValue input = newArray(newString(from), newString(to));
-        block(clients.mutable().call(SCHEMA_RENAME_SPACE, input));
+        block(connector.mutable().call(SCHEMA_RENAME_SPACE, input));
         return this;
     }
 
     @Override
     public TarantoolSchemaService dropSpace(String name) {
         ArrayValue input = newArray(newString(name));
-        block(clients.mutable().call(SCHEMA_DROP_SPACE, input));
+        block(connector.mutable().call(SCHEMA_DROP_SPACE, input));
         return this;
     }
 
     @Override
     public TarantoolSchemaService dropIndex(String spaceName, String indexName) {
         ArrayValue input = newArray(newString(spaceName), newString(indexName));
-        block(clients.mutable().call(SCHEMA_DROP_INDEX, input));
+        block(connector.mutable().call(SCHEMA_DROP_INDEX, input));
         return this;
     }
 
     @Override
     public ImmutableArray<String> spaces() {
-        Mono<ImmutableArray<String>> spaces = clients
+        Mono<ImmutableArray<String>> spaces = connector
                 .immutable()
                 .call(SCHEMA_SPACES)
                 .map(value -> value.asArrayValue()
@@ -104,7 +104,7 @@ public class TarantoolStorageSchemaService implements TarantoolSchemaService {
 
     @Override
     public ImmutableArray<String> indices(String space) {
-        Mono<ImmutableArray<String>> spaces = clients
+        Mono<ImmutableArray<String>> spaces = connector
                 .immutable()
                 .call(SCHEMA_INDICES, newArray(newString(space)))
                 .map(value -> value.asArrayValue()

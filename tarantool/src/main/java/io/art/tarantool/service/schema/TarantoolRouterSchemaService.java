@@ -2,9 +2,9 @@ package io.art.tarantool.service.schema;
 
 import io.art.core.annotation.*;
 import io.art.core.collection.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.constants.TarantoolModuleConstants.*;
 import io.art.tarantool.model.*;
-import io.art.tarantool.registry.*;
 import lombok.*;
 import org.msgpack.value.Value;
 import org.msgpack.value.*;
@@ -23,7 +23,7 @@ import java.util.*;
 @Public
 @RequiredArgsConstructor
 public class TarantoolRouterSchemaService implements TarantoolSchemaService {
-    private final TarantoolClientRegistry clients;
+    private final TarantoolStorageConnector connector;
 
     @Override
     public TarantoolRouterSchemaService createSpace(TarantoolSpaceConfiguration configuration) {
@@ -38,7 +38,7 @@ public class TarantoolRouterSchemaService implements TarantoolSchemaService {
         apply(configuration.temporary(), value -> options.put(SpaceFields.TEMPORARY, newBoolean(value)));
         apply(configuration.format(), value -> options.put(SpaceFields.FORMAT, writeFormat(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
-        block(clients.router().call(SCHEMA_CREATE_SPACE, newArray(input)));
+        block(connector.router().call(SCHEMA_CREATE_SPACE, newArray(input)));
         return this;
     }
 
@@ -56,41 +56,41 @@ public class TarantoolRouterSchemaService implements TarantoolSchemaService {
         apply(configuration.ifNotExists(), value -> options.put(IndexFields.IF_NOT_EXISTS, newBoolean(value)));
         options.put(IndexFields.PARTS, newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
         ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
-        block(clients.router().call(SCHEMA_CREATE_INDEX, newArray(input)));
+        block(connector.router().call(SCHEMA_CREATE_INDEX, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService formatSpace(String space, TarantoolFormatConfiguration configuration) {
         ArrayValue input = newArray(newString(space), writeFormat(configuration));
-        block(clients.router().call(SCHEMA_FORMAT, newArray(input)));
+        block(connector.router().call(SCHEMA_FORMAT, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService renameSpace(String from, String to) {
         ArrayValue input = newArray(newString(from), newString(to));
-        block(clients.router().call(SCHEMA_RENAME_SPACE, newArray(input)));
+        block(connector.router().call(SCHEMA_RENAME_SPACE, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService dropSpace(String name) {
         ArrayValue input = newArray(newString(name));
-        block(clients.router().call(SCHEMA_DROP_SPACE, newArray(input)));
+        block(connector.router().call(SCHEMA_DROP_SPACE, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService dropIndex(String spaceName, String indexName) {
         ArrayValue input = newArray(newString(spaceName), newString(indexName));
-        block(clients.router().call(SCHEMA_DROP_INDEX, newArray(input)));
+        block(connector.router().call(SCHEMA_DROP_INDEX, newArray(input)));
         return this;
     }
 
     @Override
     public ImmutableArray<String> spaces() {
-        Mono<ImmutableArray<String>> spaces = clients
+        Mono<ImmutableArray<String>> spaces = connector
                 .router()
                 .call(SCHEMA_SPACES)
                 .map(value -> value.asArrayValue()
@@ -104,7 +104,7 @@ public class TarantoolRouterSchemaService implements TarantoolSchemaService {
 
     @Override
     public ImmutableArray<String> indices(String space) {
-        Mono<ImmutableArray<String>> spaces = clients
+        Mono<ImmutableArray<String>> spaces = connector
                 .router()
                 .call(SCHEMA_INDICES, newArray(newString(space)))
                 .map(value -> value.asArrayValue()

@@ -21,6 +21,7 @@ package io.art.tarantool.manager;
 
 import io.art.communicator.action.*;
 import io.art.tarantool.configuration.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.registry.*;
 
@@ -43,7 +44,7 @@ public class TarantoolManager {
                 .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::dispose);
-        configuration.getStorageClients().values().forEach(TarantoolClientRegistry::dispose);
+        configuration.storageRegistries().values().stream().map(TarantoolStorageRegistry::getConnector).forEach(TarantoolStorageConnector::dispose);
         configuration.getSubscriptions().forEach(TarantoolSubscription::cancel);
     }
 }

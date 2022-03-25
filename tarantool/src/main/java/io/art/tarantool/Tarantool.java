@@ -6,6 +6,7 @@ import io.art.storage.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.service.schema.*;
 import lombok.*;
 import lombok.experimental.*;
@@ -35,20 +36,24 @@ public class Tarantool {
     @Public
     @NoArgsConstructor(access = PRIVATE)
     public static class TarantoolProvider {
-        public <KeyType, ModelType> BlockingSpaceService<KeyType, ModelType> space(Class<ModelType> spaceType) {
-            return tarantoolModule().configuration().getServices().getSpace(spaceType);
+        public <KeyType, SpaceType> BlockingSpaceService<KeyType, SpaceType> space(Class<? extends Storage> storageType, Class<SpaceType> spaceType) {
+            return tarantoolModule().configuration().storageRegistry(() -> idByDash(storageType)).getSpace(spaceType);
         }
 
         public TarantoolSchemaService schema(Class<? extends Storage> type) {
-            return tarantoolModule().configuration().getServices().getSchema(type);
+            return tarantoolModule().configuration().storageRegistry(() -> idByDash(type)).getSchema();
         }
 
-        public <ModelType, IndexesType extends Indexes<ModelType>> IndexesType indexes(Class<ModelType> spaceType) {
-            return tarantoolModule().configuration().getServices().getIndexes(spaceType);
+        public TarantoolStorageConnector connector(Class<? extends Storage> type) {
+            return tarantoolModule().configuration().storageRegistry(() -> idByDash(type)).getConnector();
         }
 
-        public <ModelType, IndexesType extends Sharders<ModelType>> IndexesType sharders(Class<ModelType> spaceType) {
-            return tarantoolModule().configuration().getServices().getSharders(spaceType);
+        public <SpaceType, IndexesType extends Indexes<SpaceType>> IndexesType indexes(Class<? extends Storage> storageType, Class<SpaceType> spaceType) {
+            return tarantoolModule().configuration().storageRegistry(() -> idByDash(storageType)).getIndexes(spaceType);
+        }
+
+        public <SpaceType, IndexesType extends Sharders<SpaceType>> IndexesType sharders(Class<? extends Storage> storageType, Class<SpaceType> spaceType) {
+            return tarantoolModule().configuration().storageRegistry(() -> idByDash(storageType)).getSharders(spaceType);
         }
     }
 }

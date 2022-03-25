@@ -14,66 +14,66 @@ import java.util.function.*;
 @Public
 @Getter
 @Accessors(fluent = true)
-public class BlockingIndex2Service<ModelType, F1, F2> {
-    private final BlockingIndexService<ModelType> delegate;
-    private final ReactiveIndex2Service<ModelType, F1, F2> reactive;
+public class BlockingIndex2Service<SpaceType, F1, F2> {
+    private final BlockingIndexService<SpaceType> delegate;
+    private final ReactiveIndex2Service<SpaceType, F1, F2> reactive;
 
-    public BlockingIndex2Service(BlockingIndexService<ModelType> delegate) {
+    public BlockingIndex2Service(BlockingIndexService<SpaceType> delegate) {
         this.delegate = delegate;
         reactive = new ReactiveIndex2Service<>(delegate.reactive());
     }
 
-    public ModelType first(F1 key1, F2 key2) {
+    public SpaceType first(F1 key1, F2 key2) {
         return delegate.first(tuple(key1, key2));
     }
 
-    public ModelType update(F1 key1, F2 key2, UnaryOperator<Updater<ModelType>> updater) {
+    public SpaceType update(F1 key1, F2 key2, UnaryOperator<Updater<SpaceType>> updater) {
         return delegate.update(tuple(key1, key2), updater);
     }
 
-    public ImmutableArray<ModelType> update(Collection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<ModelType>> updater) {
+    public ImmutableArray<SpaceType> update(Collection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<SpaceType>> updater) {
         return delegate.update(keys, updater);
     }
 
-    public ImmutableArray<ModelType> update(ImmutableCollection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<ModelType>> updater) {
+    public ImmutableArray<SpaceType> update(ImmutableCollection<Tuple2<F1, F2>> keys, UnaryOperator<Updater<SpaceType>> updater) {
         return delegate.update(keys, updater);
     }
 
-    public ImmutableArray<ModelType> select(F1 key1, F2 key2) {
+    public ImmutableArray<SpaceType> select(F1 key1, F2 key2) {
         return delegate.select(tuple(key1, key2));
     }
 
-    public ImmutableArray<ModelType> select(F1 key1, F2 key2, int offset, int limit) {
+    public ImmutableArray<SpaceType> select(F1 key1, F2 key2, int offset, int limit) {
         return delegate.select(tuple(key1, key2), offset, limit);
     }
 
     @SafeVarargs
-    public final ImmutableArray<ModelType> find(Tuple2<F1, F2>... keys) {
+    public final ImmutableArray<SpaceType> find(Tuple2<F1, F2>... keys) {
         return delegate.find(keys);
     }
 
-    public ImmutableArray<ModelType> find(Collection<Tuple2<F1, F2>> keys) {
+    public ImmutableArray<SpaceType> find(Collection<Tuple2<F1, F2>> keys) {
         return delegate.find(keys);
     }
 
-    public ImmutableArray<ModelType> find(ImmutableCollection<Tuple2<F1, F2>> keys) {
+    public ImmutableArray<SpaceType> find(ImmutableCollection<Tuple2<F1, F2>> keys) {
         return delegate.find(keys);
     }
 
-    public final ModelType delete(F1 key1, F2 key2) {
+    public final SpaceType delete(F1 key1, F2 key2) {
         return delegate.delete(tuple(key1, key2));
     }
 
     @SafeVarargs
-    public final ImmutableArray<ModelType> delete(Tuple2<F1, F2>... keys) {
+    public final ImmutableArray<SpaceType> delete(Tuple2<F1, F2>... keys) {
         return delegate.delete(keys);
     }
 
-    public ImmutableArray<ModelType> delete(Collection<Tuple2<F1, F2>> keys) {
+    public ImmutableArray<SpaceType> delete(Collection<Tuple2<F1, F2>> keys) {
         return delegate.delete(keys);
     }
 
-    public ImmutableArray<ModelType> delete(ImmutableCollection<Tuple2<F1, F2>> keys) {
+    public ImmutableArray<SpaceType> delete(ImmutableCollection<Tuple2<F1, F2>> keys) {
         return delegate.delete(keys);
     }
 
@@ -81,11 +81,11 @@ public class BlockingIndex2Service<ModelType, F1, F2> {
         return delegate.count(tuple(key1, key2));
     }
 
-    public BlockingSpaceStream<ModelType> stream() {
+    public BlockingSpaceStream<SpaceType> stream() {
         return delegate.stream();
     }
 
-    public BlockingSpaceStream<ModelType> stream(F1 key1, F2 key2) {
+    public BlockingSpaceStream<SpaceType> stream(F1 key1, F2 key2) {
         return delegate.stream(tuple(key1, key2));
     }
 }

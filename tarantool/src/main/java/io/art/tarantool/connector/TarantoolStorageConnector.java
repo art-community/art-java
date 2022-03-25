@@ -1,23 +1,27 @@
-package io.art.tarantool.registry;
+package io.art.tarantool.connector;
 
+import io.art.core.collection.*;
 import io.art.core.network.balancer.*;
 import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import static io.art.core.extensions.CollectionExtensions.*;
+import static io.art.tarantool.module.TarantoolModule.*;
 import java.util.*;
 import java.util.function.*;
 
 
-public class TarantoolClientRegistry {
+public class TarantoolStorageConnector {
     private final Balancer<TarantoolClient> immutable;
     private final Balancer<TarantoolClient> routers;
     private final Balancer<TarantoolClient> mutable;
+    private final String storageId;
 
-    public TarantoolClientRegistry(TarantoolStorageConfiguration configuration) {
+    public TarantoolStorageConnector(String storageId) {
+        this.storageId = storageId;
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
         routers = new RoundRobinBalancer<>();
-        initializeClients(configuration);
+        initializeClients();
     }
 
     public TarantoolClient immutable() {
@@ -58,8 +62,9 @@ public class TarantoolClientRegistry {
         return !immutable.endpoints().isEmpty();
     }
 
-    private void initializeClients(TarantoolStorageConfiguration configuration) {
-        for (TarantoolClientConfiguration client : configuration.getClients()) {
+    private void initializeClients() {
+        ImmutableSet<TarantoolClientConfiguration> clients = tarantoolModule().configuration().storageConfiguration(storageId).getClients();
+        for (TarantoolClientConfiguration client : clients) {
             if (client.isRouter()) {
                 routers.addEndpoint(new TarantoolClient(client));
                 continue;

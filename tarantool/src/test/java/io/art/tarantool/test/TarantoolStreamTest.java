@@ -38,13 +38,15 @@ public class TarantoolStreamTest {
                 TransportActivator.transport(),
                 LoggingActivator.logging(),
                 TarantoolActivator.tarantool(tarantool -> tarantool
-                        .storage(TestStorage.class, storage -> storage.client(client -> client
-                                .port(STORAGE_PORT)
-                                .username(USERNAME)
-                                .password(PASSWORD)))
-                        .subscribe(subscriptions -> subscriptions.onService(TestService.class))
-                        .space(TestStorage.class, TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
-                        .space(TestStorage.class, OtherSpace.class, space -> space.indexes(OtherSpaceIndexes.class))
+                        .storages(storages -> storages
+                                .storage(TestStorage.class, storage -> storage
+                                        .space(TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
+                                        .space(OtherSpace.class, space -> space.indexes(OtherSpaceIndexes.class))
+                                        .connector(connector -> connector.client(client -> client
+                                                .port(STORAGE_PORT)
+                                                .username(USERNAME)
+                                                .password(PASSWORD)))))
+                        .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
                 )
         );
         tarantool()
@@ -521,10 +523,10 @@ public class TarantoolStreamTest {
     }
 
     private static BlockingSpaceService<Integer, TestingMetaModel> current() {
-        return tarantool().space(TestingMetaModel.class);
+        return tarantool().space(TestStorage.class, TestingMetaModel.class);
     }
 
     private static BlockingSpaceService<Integer, OtherSpace> other() {
-        return tarantool().space(OtherSpace.class);
+        return tarantool().space(TestStorage.class, OtherSpace.class);
     }
 }

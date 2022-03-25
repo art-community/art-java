@@ -7,8 +7,8 @@ import io.art.meta.model.*;
 import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.updater.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
-import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
 import io.art.tarantool.stream.*;
 import org.msgpack.value.*;
@@ -24,149 +24,149 @@ import static reactor.core.publisher.Flux.*;
 import java.util.*;
 
 @Public
-public class TarantoolReactiveStorageIndexService<ModelType> implements ReactiveIndexService<ModelType> {
+public class TarantoolReactiveStorageIndexService<SpaceType> implements ReactiveIndexService<SpaceType> {
     private final ImmutableStringValue spaceName;
-    private final TarantoolClientRegistry clients;
+    private final TarantoolStorageConnector connector;
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
-    private final MetaType<ModelType> spaceType;
+    private final MetaType<SpaceType> spaceType;
     private final TarantoolUpdateSerializer updateSerializer;
     private final ThreadLocal<Index> index = new ThreadLocal<>();
 
-    public TarantoolReactiveStorageIndexService(MetaType<ModelType> spaceType, ImmutableStringValue spaceName, TarantoolClientRegistry clients) {
+    public TarantoolReactiveStorageIndexService(MetaType<SpaceType> spaceType, ImmutableStringValue spaceName, TarantoolStorageConnector connector) {
         this.spaceType = spaceType;
-        this.clients = clients;
+        this.connector = connector;
         this.spaceName = spaceName;
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
     }
 
-    public TarantoolReactiveStorageIndexService<ModelType> indexed(Index index) {
+    public TarantoolReactiveStorageIndexService<SpaceType> indexed(Index index) {
         this.index.set(index);
         return this;
     }
 
     @Override
-    public Mono<ModelType> first(Tuple tuple) {
+    public Mono<SpaceType> first(Tuple tuple) {
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
-        Mono<Value> output = clients.immutable().call(INDEX_FIRST, input);
+        Mono<Value> output = connector.immutable().call(INDEX_FIRST, input);
         return readSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> select(Tuple tuple) {
+    public Flux<SpaceType> select(Tuple tuple) {
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
-        Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
+        Mono<Value> output = connector.immutable().call(INDEX_SELECT, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> select(Tuple tuple, int offset, int limit) {
+    public Flux<SpaceType> select(Tuple tuple, int offset, int limit) {
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple), newArray(newInteger(offset), newInteger(limit)));
-        Mono<Value> output = clients.immutable().call(INDEX_SELECT, input);
+        Mono<Value> output = connector.immutable().call(INDEX_SELECT, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Mono<ModelType> update(Tuple key, Updater<ModelType> updater) {
+    public Mono<SpaceType> update(Tuple key, Updater<SpaceType> updater) {
         if (key.size() == 1) {
             ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key), updateSerializer.serializeUpdate(cast(updater)));
-            Mono<Value> output = clients.mutable().call(INDEX_SINGLE_UPDATE, input);
+            Mono<Value> output = connector.mutable().call(INDEX_SINGLE_UPDATE, input);
             return readSpaceMono(output);
         }
         return update(linkedListOf(key), updater).next();
     }
 
     @Override
-    public Flux<ModelType> update(Collection<? extends Tuple> keys, Updater<ModelType> updater) {
+    public Flux<SpaceType> update(Collection<? extends Tuple> keys, Updater<SpaceType> updater) {
         ImmutableArrayValue input = newArray(
                 spaceName,
                 newString(this.index.get().name()),
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
                 updateSerializer.serializeUpdate(cast(updater))
         );
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        Mono<Value> output = connector.mutable().call(INDEX_MULTIPLE_UPDATE, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> update(ImmutableCollection<? extends Tuple> keys, Updater<ModelType> updater) {
+    public Flux<SpaceType> update(ImmutableCollection<? extends Tuple> keys, Updater<SpaceType> updater) {
         ImmutableArrayValue input = newArray(
                 spaceName,
                 newString(this.index.get().name()),
                 newArray(keys.stream().map(this::serializeTuple).collect(listCollector())),
                 updateSerializer.serializeUpdate(cast(updater))
         );
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_UPDATE, input);
+        Mono<Value> output = connector.mutable().call(INDEX_MULTIPLE_UPDATE, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(Collection<? extends Tuple> keys) {
+    public Flux<SpaceType> find(Collection<? extends Tuple> keys) {
         ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
-        Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
+        Mono<Value> output = connector.immutable().call(INDEX_FIND, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(ImmutableCollection<? extends Tuple> keys) {
+    public Flux<SpaceType> find(ImmutableCollection<? extends Tuple> keys) {
         ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
-        Mono<Value> output = clients.immutable().call(INDEX_FIND, input);
+        Mono<Value> output = connector.immutable().call(INDEX_FIND, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Mono<ModelType> delete(Tuple key) {
+    public Mono<SpaceType> delete(Tuple key) {
         if (key.size() == 1) {
             ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(key));
-            Mono<Value> output = clients.mutable().call(INDEX_SINGLE_DELETE, input);
+            Mono<Value> output = connector.mutable().call(INDEX_SINGLE_DELETE, input);
             return readSpaceMono(output);
         }
         return delete(linkedListOf(key)).next();
     }
 
     @Override
-    public Flux<ModelType> delete(Collection<? extends Tuple> keys) {
+    public Flux<SpaceType> delete(Collection<? extends Tuple> keys) {
         ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
+        Mono<Value> output = connector.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(ImmutableCollection<? extends Tuple> keys) {
+    public Flux<SpaceType> delete(ImmutableCollection<? extends Tuple> keys) {
         ImmutableArrayValue serializedKeys = newArray(keys.stream().map(this::serializeTuple).collect(listCollector()));
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializedKeys);
-        Mono<Value> output = clients.mutable().call(INDEX_MULTIPLE_DELETE, input);
+        Mono<Value> output = connector.mutable().call(INDEX_MULTIPLE_DELETE, input);
         return readSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(Tuple tuple) {
         ImmutableArrayValue input = newArray(spaceName, newString(this.index.get().name()), serializeTuple(tuple));
-        return readCountMono(clients.immutable().call(INDEX_COUNT, input));
+        return readCountMono(connector.immutable().call(INDEX_COUNT, input));
     }
 
     @Override
-    public TarantoolReactiveStorageIndexStream<ModelType> stream() {
-        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
+    public TarantoolReactiveStorageIndexStream<SpaceType> stream() {
+        return TarantoolReactiveStorageIndexStream.<SpaceType>builder()
                 .spaceName(spaceName)
                 .indexName(newString(this.index.get().name()))
                 .spaceType(spaceType)
-                .clients(clients)
+                .connector(connector)
                 .build();
     }
 
     @Override
-    public TarantoolReactiveStorageIndexStream<ModelType> stream(Tuple baseKey) {
-        return TarantoolReactiveStorageIndexStream.<ModelType>builder()
+    public TarantoolReactiveStorageIndexStream<SpaceType> stream(Tuple baseKey) {
+        return TarantoolReactiveStorageIndexStream.<SpaceType>builder()
                 .spaceName(spaceName)
                 .indexName(newString(this.index.get().name()))
                 .spaceType(spaceType)
-                .clients(clients)
+                .connector(connector)
                 .baseKey(baseKey)
                 .build();
     }
@@ -184,11 +184,11 @@ public class TarantoolReactiveStorageIndexService<ModelType> implements Reactive
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Mono<ModelType> readSpaceMono(Mono<Value> value) {
+    private Mono<SpaceType> readSpaceMono(Mono<Value> value) {
         return value.map(element -> reader.read(spaceType, element));
     }
 
-    private Flux<ModelType> readSpaceFlux(Mono<Value> value) {
+    private Flux<SpaceType> readSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()

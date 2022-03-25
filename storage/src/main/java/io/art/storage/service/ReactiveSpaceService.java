@@ -13,79 +13,79 @@ import java.util.*;
 import java.util.function.*;
 
 @Public
-public interface ReactiveSpaceService<KeyType, ModelType> {
-    Mono<ModelType> first(KeyType key);
+public interface ReactiveSpaceService<KeyType, SpaceType> {
+    Mono<SpaceType> first(KeyType key);
 
-    Flux<ModelType> select(KeyType key);
+    Flux<SpaceType> select(KeyType key);
 
-    Flux<ModelType> select(KeyType key, long offset, long limit);
+    Flux<SpaceType> select(KeyType key, long offset, long limit);
 
-    default Flux<ModelType> find(KeyType... keys) {
+    default Flux<SpaceType> find(KeyType... keys) {
         return find(asList(keys));
     }
 
-    Flux<ModelType> find(Collection<KeyType> keys);
+    Flux<SpaceType> find(Collection<KeyType> keys);
 
-    Flux<ModelType> find(ImmutableCollection<KeyType> keys);
+    Flux<SpaceType> find(ImmutableCollection<KeyType> keys);
 
-    Mono<ModelType> delete(KeyType key);
+    Mono<SpaceType> delete(KeyType key);
 
-    default Flux<ModelType> delete(KeyType... keys) {
+    default Flux<SpaceType> delete(KeyType... keys) {
         return delete(asList(keys));
     }
 
-    Flux<ModelType> delete(Collection<KeyType> keys);
+    Flux<SpaceType> delete(Collection<KeyType> keys);
 
-    Flux<ModelType> delete(ImmutableCollection<KeyType> keys);
+    Flux<SpaceType> delete(ImmutableCollection<KeyType> keys);
 
-    Mono<ModelType> insert(ModelType value);
+    Mono<SpaceType> insert(SpaceType value);
 
-    default Flux<ModelType> insert(ModelType... value) {
+    default Flux<SpaceType> insert(SpaceType... value) {
         return insert(Arrays.asList(value));
     }
 
-    Flux<ModelType> insert(Collection<ModelType> value);
+    Flux<SpaceType> insert(Collection<SpaceType> value);
 
-    Flux<ModelType> insert(ImmutableCollection<ModelType> value);
+    Flux<SpaceType> insert(ImmutableCollection<SpaceType> value);
 
-    Mono<ModelType> put(ModelType value);
+    Mono<SpaceType> put(SpaceType value);
 
-    default Flux<ModelType> put(ModelType... value) {
+    default Flux<SpaceType> put(SpaceType... value) {
         return insert(Arrays.asList(value));
     }
 
-    Flux<ModelType> put(Collection<ModelType> value);
+    Flux<SpaceType> put(Collection<SpaceType> value);
 
-    Flux<ModelType> put(ImmutableCollection<ModelType> value);
+    Flux<SpaceType> put(ImmutableCollection<SpaceType> value);
 
-    default Mono<ModelType> update(KeyType key, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Mono<SpaceType> update(KeyType key, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(key, spaceUpdater);
     }
 
-    Mono<ModelType> update(KeyType key, Updater<ModelType> updater);
+    Mono<SpaceType> update(KeyType key, Updater<SpaceType> updater);
 
-    Mono<Void> upsert(ModelType model, Updater<ModelType> updater);
+    Mono<Void> upsert(SpaceType model, Updater<SpaceType> updater);
 
-    default Mono<Void> upsert(ModelType model, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Mono<Void> upsert(SpaceType model, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return upsert(model, spaceUpdater);
     }
 
-    Flux<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater);
+    Flux<SpaceType> update(Collection<KeyType> keys, Updater<SpaceType> updater);
 
-    Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater);
+    Flux<SpaceType> update(ImmutableCollection<KeyType> keys, Updater<SpaceType> updater);
 
-    default Flux<ModelType> update(Collection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Flux<SpaceType> update(Collection<KeyType> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
 
-    default Flux<ModelType> update(ImmutableCollection<KeyType> keys, UnaryOperator<Updater<ModelType>> updater) {
-        Updater<ModelType> spaceUpdater = new UpdaterImplementation<>();
+    default Flux<SpaceType> update(ImmutableCollection<KeyType> keys, UnaryOperator<Updater<SpaceType>> updater) {
+        Updater<SpaceType> spaceUpdater = new UpdaterImplementation<>();
         updater.apply(spaceUpdater);
         return update(keys, spaceUpdater);
     }
@@ -96,57 +96,57 @@ public interface ReactiveSpaceService<KeyType, ModelType> {
 
     Mono<Void> truncate();
 
-    ReactiveSpaceStream<ModelType> stream();
+    ReactiveSpaceStream<SpaceType> stream();
 
-    ReactiveSpaceStream<ModelType> stream(KeyType baseKey);
+    ReactiveSpaceStream<SpaceType> stream(KeyType baseKey);
 
 
-    default <F1> ReactiveIndex1Service<ModelType, F1> index(Index1<ModelType, F1> index) {
+    default <F1> ReactiveIndex1Service<SpaceType, F1> index(Index1<SpaceType, F1> index) {
         return new ReactiveIndex1Service<>(index((Index) index));
     }
 
-    default <F1, F2> ReactiveIndex2Service<ModelType, F1, F2> index(Index2<ModelType, F1, F2> index) {
+    default <F1, F2> ReactiveIndex2Service<SpaceType, F1, F2> index(Index2<SpaceType, F1, F2> index) {
         return new ReactiveIndex2Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3> ReactiveIndex3Service<ModelType, F1, F2, F3> index(Index3<ModelType, F1, F2, F3> index) {
+    default <F1, F2, F3> ReactiveIndex3Service<SpaceType, F1, F2, F3> index(Index3<SpaceType, F1, F2, F3> index) {
         return new ReactiveIndex3Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3, F4> ReactiveIndex4Service<ModelType, F1, F2, F3, F4> index(Index4<ModelType, F1, F2, F3, F4> index) {
+    default <F1, F2, F3, F4> ReactiveIndex4Service<SpaceType, F1, F2, F3, F4> index(Index4<SpaceType, F1, F2, F3, F4> index) {
         return new ReactiveIndex4Service<>(index((Index) index));
     }
 
-    default <F1, F2, F3, F4, F5> ReactiveIndex5Service<ModelType, F1, F2, F3, F4, F5> index(Index5<ModelType, F1, F2, F3, F4, F5> index) {
+    default <F1, F2, F3, F4, F5> ReactiveIndex5Service<SpaceType, F1, F2, F3, F4, F5> index(Index5<SpaceType, F1, F2, F3, F4, F5> index) {
         return new ReactiveIndex5Service<>(index((Index) index));
     }
 
-    ReactiveIndexService<ModelType> index(Index index);
+    ReactiveIndexService<SpaceType> index(Index index);
 
 
-    default <P1> ReactiveShardService<KeyType, ModelType> shard(Sharder1<ModelType, P1> sharder, P1 input) {
+    default <P1> ReactiveShardService<KeyType, SpaceType> shard(Sharder1<SpaceType, P1> sharder, P1 input) {
         return shard(sharder.shard(input));
     }
 
-    default <P1, P2> ReactiveShardService<KeyType, ModelType> shard(Sharder2<ModelType, P1, P2> sharder, P1 input1, P2 input2) {
+    default <P1, P2> ReactiveShardService<KeyType, SpaceType> shard(Sharder2<SpaceType, P1, P2> sharder, P1 input1, P2 input2) {
         return shard(sharder.shard(input1, input2));
     }
 
-    default <P1, P2, P3> ReactiveShardService<KeyType, ModelType> shard(Sharder3<ModelType, P1, P2, P3> sharder, P1 input1, P2 input2, P3 input3) {
+    default <P1, P2, P3> ReactiveShardService<KeyType, SpaceType> shard(Sharder3<SpaceType, P1, P2, P3> sharder, P1 input1, P2 input2, P3 input3) {
         return shard(sharder.shard(input1, input2, input3));
     }
 
-    default <P1, P2, P3, P4> ReactiveShardService<KeyType, ModelType> shard(Sharder4<ModelType, P1, P2, P3, P4> sharder, P1 input1, P2 input2, P3 input3, P4 input4) {
+    default <P1, P2, P3, P4> ReactiveShardService<KeyType, SpaceType> shard(Sharder4<SpaceType, P1, P2, P3, P4> sharder, P1 input1, P2 input2, P3 input3, P4 input4) {
         return shard(sharder.shard(input1, input2, input3, input4));
     }
 
-    default <P1, P2, P3, P4, P5> ReactiveShardService<KeyType, ModelType> shard(Sharder5<ModelType, P1, P2, P3, P4, P5> sharder, P1 input1, P2 input2, P3 input3, P4 input4, P5 input5) {
+    default <P1, P2, P3, P4, P5> ReactiveShardService<KeyType, SpaceType> shard(Sharder5<SpaceType, P1, P2, P3, P4, P5> sharder, P1 input1, P2 input2, P3 input3, P4 input4, P5 input5) {
         return shard(sharder.shard(input1, input2, input3, input4, input5));
     }
 
-    default ReactiveShardService<KeyType, ModelType> shard(Sharder<ModelType> sharder, Tuple input) {
+    default ReactiveShardService<KeyType, SpaceType> shard(Sharder<SpaceType> sharder, Tuple input) {
         return shard(sharder.shard(input));
     }
 
-    ReactiveShardService<KeyType, ModelType> shard(ShardRequest request);
+    ReactiveShardService<KeyType, SpaceType> shard(ShardRequest request);
 }

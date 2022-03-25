@@ -7,8 +7,8 @@ import io.art.storage.index.*;
 import io.art.storage.service.*;
 import io.art.storage.sharder.*;
 import io.art.storage.updater.*;
+import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
-import io.art.tarantool.registry.*;
 import io.art.tarantool.serializer.*;
 import io.art.tarantool.service.index.*;
 import io.art.tarantool.stream.*;
@@ -27,207 +27,207 @@ import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
 import java.util.*;
 
-public class TarantoolReactiveRouterService<KeyType, ModelType> implements ReactiveShardService<KeyType, ModelType> {
+public class TarantoolReactiveRouterService<KeyType, SpaceType> implements ReactiveShardService<KeyType, SpaceType> {
     private final TarantoolModelReader reader;
     private final TarantoolModelWriter writer;
     private final TarantoolUpdateSerializer updateSerializer;
     private final ImmutableStringValue spaceName;
-    private final MetaType<ModelType> spaceMetaType;
-    private final TarantoolClientRegistry clients;
+    private final MetaType<SpaceType> spaceMetaType;
+    private final TarantoolStorageConnector connector;
     private final MetaType<KeyType> keyMeta;
     private final ThreadLocal<ShardRequest> shard = new ThreadLocal<>();
-    private final TarantoolReactiveRouterIndexService<ModelType> index;
+    private final TarantoolReactiveRouterIndexService<SpaceType> index;
 
-    public TarantoolReactiveRouterService(MetaType<KeyType> keyMeta, MetaClass<ModelType> spaceMeta, TarantoolClientRegistry clients) {
-        this.clients = clients;
+    public TarantoolReactiveRouterService(MetaType<KeyType> keyMeta, MetaClass<SpaceType> spaceMeta, TarantoolStorageConnector connector) {
+        this.connector = connector;
         this.spaceMetaType = spaceMeta.definition();
         this.keyMeta = keyMeta;
         this.spaceName = newString(idByDash(spaceMeta.definition().type()));
         writer = tarantoolModule().configuration().getWriter();
         reader = tarantoolModule().configuration().getReader();
         updateSerializer = new TarantoolUpdateSerializer(writer);
-        index = new TarantoolReactiveRouterIndexService<>(spaceMetaType, spaceName, clients);
+        index = new TarantoolReactiveRouterIndexService<>(spaceMetaType, spaceName, connector);
     }
 
-    public TarantoolReactiveRouterService<KeyType, ModelType> sharded(ShardRequest request) {
+    public TarantoolReactiveRouterService<KeyType, SpaceType> sharded(ShardRequest request) {
         shard.set(request);
         index.sharded(request);
         return this;
     }
 
     @Override
-    public TarantoolReactiveRouterIndexService<ModelType> index(Index index) {
+    public TarantoolReactiveRouterIndexService<SpaceType> index(Index index) {
         return this.index.indexed(index);
     }
 
     @Override
-    public TarantoolReactiveRouterSpaceStream<ModelType> stream() {
-        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
+    public TarantoolReactiveRouterSpaceStream<SpaceType> stream() {
+        return TarantoolReactiveRouterSpaceStream.<SpaceType>builder()
                 .shardRequest(this.shard.get())
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
-                .clients(clients)
+                .connector(connector)
                 .build();
     }
 
     @Override
-    public TarantoolReactiveRouterSpaceStream<ModelType> stream(KeyType baseKey) {
-        return TarantoolReactiveRouterSpaceStream.<ModelType>builder()
+    public TarantoolReactiveRouterSpaceStream<SpaceType> stream(KeyType baseKey) {
+        return TarantoolReactiveRouterSpaceStream.<SpaceType>builder()
                 .shardRequest(this.shard.get())
                 .spaceName(spaceName)
                 .spaceType(spaceMetaType)
-                .clients(clients)
+                .connector(connector)
                 .baseKey(tuple(baseKey))
                 .build();
     }
 
 
     @Override
-    public Mono<ModelType> first(KeyType key) {
+    public Mono<SpaceType> first(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.router().call(SPACE_FIRST, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_FIRST, writeRequest(input));
         return readSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> select(KeyType key) {
+    public Flux<SpaceType> select(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.router().call(SPACE_SELECT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SELECT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> select(KeyType key, long offset, long limit) {
+    public Flux<SpaceType> select(KeyType key, long offset, long limit) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key), newArray(newInteger(offset), newInteger(limit)));
-        Mono<Value> output = clients.router().call(SPACE_SELECT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SELECT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(Collection<KeyType> keys) {
+    public Flux<SpaceType> find(Collection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_FIND, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_FIND, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> find(ImmutableCollection<KeyType> keys) {
+    public Flux<SpaceType> find(ImmutableCollection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_FIND, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_FIND, writeRequest(input));
         return readSpaceFlux(output);
     }
 
 
     @Override
-    public Mono<ModelType> delete(KeyType key) {
+    public Mono<SpaceType> delete(KeyType key) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key));
-        Mono<Value> output = clients.router().call(SPACE_SINGLE_DELETE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SINGLE_DELETE, writeRequest(input));
         return readSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> delete(Collection<KeyType> keys) {
+    public Flux<SpaceType> delete(Collection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_DELETE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_DELETE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> delete(ImmutableCollection<KeyType> keys) {
+    public Flux<SpaceType> delete(ImmutableCollection<KeyType> keys) {
         ImmutableArrayValue input = newArray(spaceName, newArray(keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_DELETE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_DELETE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
 
     @Override
-    public Mono<ModelType> insert(ModelType value) {
+    public Mono<SpaceType> insert(SpaceType value) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = clients.router().call(SPACE_SINGLE_INSERT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SINGLE_INSERT, writeRequest(input));
         return readSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> insert(Collection<ModelType> value) {
+    public Flux<SpaceType> insert(Collection<SpaceType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_INSERT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_INSERT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> insert(ImmutableCollection<ModelType> value) {
+    public Flux<SpaceType> insert(ImmutableCollection<SpaceType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_INSERT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_INSERT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
 
     @Override
-    public Mono<ModelType> put(ModelType value) {
+    public Mono<SpaceType> put(SpaceType value) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(spaceMetaType, value));
-        Mono<Value> output = clients.router().call(SPACE_SINGLE_PUT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SINGLE_PUT, writeRequest(input));
         return readSpaceMono(output);
     }
 
     @Override
-    public Flux<ModelType> put(Collection<ModelType> value) {
+    public Flux<SpaceType> put(Collection<SpaceType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_PUT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_PUT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> put(ImmutableCollection<ModelType> value) {
+    public Flux<SpaceType> put(ImmutableCollection<SpaceType> value) {
         ImmutableArrayValue input = newArray(spaceName, newArray(value.stream().map(element -> writer.write(spaceMetaType, element)).collect(listCollector())));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_PUT, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_PUT, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Mono<ModelType> update(KeyType key, Updater<ModelType> updater) {
+    public Mono<SpaceType> update(KeyType key, Updater<SpaceType> updater) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(keyMeta, key), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(SPACE_SINGLE_UPDATE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SINGLE_UPDATE, writeRequest(input));
         return readSpaceMono(output);
     }
 
     @Override
-    public Mono<Void> upsert(ModelType model, Updater<ModelType> updater) {
+    public Mono<Void> upsert(SpaceType model, Updater<SpaceType> updater) {
         ImmutableArrayValue input = newArray(spaceName, writer.write(spaceMetaType, model), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(SPACE_SINGLE_UPDATE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_SINGLE_UPDATE, writeRequest(input));
         return output.then();
     }
 
     @Override
-    public Flux<ModelType> update(Collection<KeyType> keys, Updater<ModelType> updater) {
+    public Flux<SpaceType> update(Collection<KeyType> keys, Updater<SpaceType> updater) {
         List<Value> serializedKeys = keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector());
         ImmutableArrayValue input = newArray(spaceName, newArray(serializedKeys), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_UPDATE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_UPDATE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
-    public Flux<ModelType> update(ImmutableCollection<KeyType> keys, Updater<ModelType> updater) {
+    public Flux<SpaceType> update(ImmutableCollection<KeyType> keys, Updater<SpaceType> updater) {
         List<Value> serializedKeys = keys.stream().map(key -> writer.write(keyMeta, key)).collect(listCollector());
         ImmutableArrayValue input = newArray(spaceName, newArray(serializedKeys), updateSerializer.serializeUpdate(cast(updater)));
-        Mono<Value> output = clients.router().call(SPACE_MULTIPLE_UPDATE, writeRequest(input));
+        Mono<Value> output = connector.router().call(SPACE_MULTIPLE_UPDATE, writeRequest(input));
         return readSpaceFlux(output);
     }
 
     @Override
     public Mono<Long> count(KeyType key) {
-        Mono<Value> output = clients.router().call(SPACE_COUNT, writeRequest(newArray(spaceName, writer.write(keyMeta, key))));
+        Mono<Value> output = connector.router().call(SPACE_COUNT, writeRequest(newArray(spaceName, writer.write(keyMeta, key))));
         return readLongMono(output);
     }
 
     @Override
     public Mono<Long> size() {
-        Mono<Value> output = clients.router().call(SPACE_COUNT, writeRequest(newArray(spaceName)));
+        Mono<Value> output = connector.router().call(SPACE_COUNT, writeRequest(newArray(spaceName)));
         return readLongMono(output);
     }
 
     @Override
     public Mono<Void> truncate() {
-        return clients.router().call(SPACE_TRUNCATE, writeRequest(newArray(spaceName))).then();
+        return connector.router().call(SPACE_TRUNCATE, writeRequest(newArray(spaceName))).then();
     }
 
     private ImmutableArrayValue writeRequest(ImmutableValue input) {
@@ -246,14 +246,14 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
         return value.map(element -> reader.read(longType(), element));
     }
 
-    private Flux<ModelType> readSpaceFlux(Mono<Value> value) {
+    private Flux<SpaceType> readSpaceFlux(Mono<Value> value) {
         return value.flatMapMany(elements -> fromStream(elements.asArrayValue()
                 .list()
                 .stream()
                 .map(element -> reader.read(spaceMetaType, element))));
     }
 
-    private Mono<ModelType> readSpaceMono(Mono<Value> value) {
+    private Mono<SpaceType> readSpaceMono(Mono<Value> value) {
         return value.map(element -> reader.read(spaceMetaType, element));
     }
 }

@@ -1,7 +1,6 @@
 package io.art.tarantool.module;
 
 import io.art.meta.model.*;
-import io.art.storage.*;
 import io.art.storage.index.*;
 import io.art.storage.sharder.*;
 import lombok.*;
@@ -11,31 +10,23 @@ import java.util.function.*;
 
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor
-public class TarantoolSpaceConfigurator<ModelType> {
-    private final Class<? extends Storage> storageClass;
-    private final Class<ModelType> spaceClass;
-    private Supplier<MetaField<? extends MetaClass<ModelType>, ?>> field;
-    private Class<? extends Indexes<ModelType>> indexes;
-    private Class<? extends Sharders<ModelType>> sharders;
-    private boolean router;
+public class TarantoolSpaceConfigurator<SpaceType> {
+    private final Class<SpaceType> spaceClass;
+    private Supplier<MetaField<? extends MetaClass<SpaceType>, ?>> field;
+    private Class<? extends Indexes<SpaceType>> indexes;
+    private Class<? extends Sharders<SpaceType>> sharders;
 
-    public <M extends MetaClass<ModelType>> TarantoolSpaceConfigurator<ModelType> id(Supplier<MetaField<M, ?>> field) {
+    public <M extends MetaClass<SpaceType>> TarantoolSpaceConfigurator<SpaceType> id(Supplier<MetaField<M, ?>> field) {
         this.field = cast(field);
         return this;
     }
 
-    public <I extends Indexes<ModelType>> TarantoolSpaceConfigurator<ModelType> indexes(Class<I> indexes) {
+    public <I extends Indexes<SpaceType>> TarantoolSpaceConfigurator<SpaceType> indexes(Class<I> indexes) {
         this.indexes = indexes;
         return this;
     }
 
-    public <S extends Sharders<ModelType>> TarantoolSpaceConfigurator<ModelType> router() {
-        router = true;
-        return this;
-    }
-
-    public <S extends Sharders<ModelType>> TarantoolSpaceConfigurator<ModelType> sharders(Class<S> sharders) {
-        router = true;
+    public <S extends Sharders<SpaceType>> TarantoolSpaceConfigurator<SpaceType> sharders(Class<S> sharders) {
         this.sharders = sharders;
         return this;
     }
