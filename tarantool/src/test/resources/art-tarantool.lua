@@ -336,6 +336,7 @@ end
 do
 local _ENV = _ENV
 package.preload[ "art.router.schema" ] = function( ... ) local arg = _G.arg;
+local throw = require("art.router.error-thrower")
 local storageFunctions = require("art.router.constants").storageFunctions
 local configuration = require("art.router.configuration").configuration
 local shards = require("art.router.shard-service")
@@ -350,50 +351,74 @@ local schema = {
             end
         end
         shards.forEach(function(shard)
-            shard:callrw(storageFunctions.schemaCreateIndex, request)
+            local _, error = shard:callrw(storageFunctions.schemaCreateIndex, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     dropIndex = function(request)
         shards.forEach(function(shard)
-            shard:callrw(storageFunctions.schemaDropIndex, request)
+            local _, error = shard:callrw(storageFunctions.schemaDropIndex, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     renameSpace = function(request)
         shards.forEach(function(shard)
-            shard:callrw(storageFunctions.schemaRenameSpace, request)
+            local _, error = shard:callrw(storageFunctions.schemaRenameSpace, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     formatSpace = function(request)
         shards.forEach(function(shard)
-            shard:callrw(storageFunctions.schemaFormat, request)
+            local _, error = shard:callrw(storageFunctions.schemaFormat, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     dropSpace = function(request)
         shards.forEach(function(shard)
-            shard:callrw(storageFunctions.schemaDropIndex, request)
+            local _, error = shard:callrw(storageFunctions.schemaDropIndex, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     createShardSpace = function(request)
         table.insert(request, configuration.bucketIdField)
         shards.forEach(function(shard)
-            shard:callrw(storageFunctions.schemaCreateShardSpace, request)
+            local _, error = shard:callrw(storageFunctions.schemaCreateShardSpace, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     spaces = function(request)
         return shards.flatMap(function(shard)
-            shard:callro(storageFunctions.schemaSpaces, request)
+            local _, error = shard:callro(storageFunctions.schemaSpaces, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 
     indices = function(request)
         return shards.flatMap(function(shard)
-            shard:callro(storageFunctions.schemaIndices, request)
+            local _, error = shard:callro(storageFunctions.schemaIndices, request)
+            if error ~= nil then
+                throw(error)
+            end
         end)
     end,
 }

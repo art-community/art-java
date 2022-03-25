@@ -37,8 +37,8 @@ public class TarantoolRouterSchemaService implements TarantoolSchemaService {
         apply(configuration.user(), value -> options.put(SpaceFields.USER, newString(value)));
         apply(configuration.temporary(), value -> options.put(SpaceFields.TEMPORARY, newBoolean(value)));
         apply(configuration.format(), value -> options.put(SpaceFields.FORMAT, writeFormat(value)));
-        ArrayValue input = newArray(newArray(newString(configuration.name()), newMap(options)));
-        block(clients.router().call(SCHEMA_CREATE_SHARD_SPACE, input));
+        ArrayValue input = newArray(newString(configuration.name()), newMap(options));
+        block(clients.router().call(SCHEMA_CREATE_SHARD_SPACE, newArray(input)));
         return this;
     }
 
@@ -56,35 +56,35 @@ public class TarantoolRouterSchemaService implements TarantoolSchemaService {
         apply(configuration.ifNotExists(), value -> options.put(IndexFields.IF_NOT_EXISTS, newBoolean(value)));
         options.put(IndexFields.PARTS, newArray(configuration.parts().stream().map(this::writeIndexPart).collect(listCollector())));
         ArrayValue input = newArray(newString(configuration.spaceName()), newString(configuration.indexName()), newMap(options));
-        block(clients.router().call(SCHEMA_CREATE_INDEX, input));
+        block(clients.router().call(SCHEMA_CREATE_INDEX, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService formatSpace(String space, TarantoolFormatConfiguration configuration) {
         ArrayValue input = newArray(newString(space), writeFormat(configuration));
-        block(clients.router().call(SCHEMA_FORMAT, input));
+        block(clients.router().call(SCHEMA_FORMAT, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService renameSpace(String from, String to) {
         ArrayValue input = newArray(newString(from), newString(to));
-        block(clients.router().call(SCHEMA_RENAME_SPACE, input));
+        block(clients.router().call(SCHEMA_RENAME_SPACE, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService dropSpace(String name) {
         ArrayValue input = newArray(newString(name));
-        block(clients.router().call(SCHEMA_DROP_SPACE, input));
+        block(clients.router().call(SCHEMA_DROP_SPACE, newArray(input)));
         return this;
     }
 
     @Override
     public TarantoolRouterSchemaService dropIndex(String spaceName, String indexName) {
         ArrayValue input = newArray(newString(spaceName), newString(indexName));
-        block(clients.router().call(SCHEMA_DROP_INDEX, input));
+        block(clients.router().call(SCHEMA_DROP_INDEX, newArray(input)));
         return this;
     }
 

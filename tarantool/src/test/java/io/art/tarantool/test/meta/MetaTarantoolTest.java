@@ -430,9 +430,13 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               private final MetaTestModelIndexesMethod testModelIndexesMethod = register(new MetaTestModelIndexesMethod(this));
 
+              private final MetaTestModelShardersMethod testModelShardersMethod = register(new MetaTestModelShardersMethod(this));
+
               private final MetaOtherSpaceIndexesMethod otherSpaceIndexesMethod = register(new MetaOtherSpaceIndexesMethod(this));
 
               private final MetaOtherSpaceIndexesClass otherSpaceIndexesClass = register(new MetaOtherSpaceIndexesClass());
+
+              private final MetaTestModelShardersClass testModelShardersClass = register(new MetaTestModelShardersClass());
 
               private final MetaTestModelIndexesClass testModelIndexesClass = register(new MetaTestModelIndexesClass());
 
@@ -464,6 +468,10 @@ public class MetaTarantoolTest extends MetaLibrary {
                 return testModelIndexesMethod;
               }
 
+              public MetaTestModelShardersMethod testModelShardersMethod() {
+                return testModelShardersMethod;
+              }
+
               public MetaOtherSpaceIndexesMethod otherSpaceIndexesMethod() {
                 return otherSpaceIndexesMethod;
               }
@@ -476,6 +484,10 @@ public class MetaTarantoolTest extends MetaLibrary {
 
               public MetaOtherSpaceIndexesClass otherSpaceIndexesClass() {
                 return otherSpaceIndexesClass;
+              }
+
+              public MetaTestModelShardersClass testModelShardersClass() {
+                return testModelShardersClass;
               }
 
               public MetaTestModelIndexesClass testModelIndexesClass() {
@@ -581,6 +593,22 @@ public class MetaTarantoolTest extends MetaLibrary {
                 @Override
                 public java.lang.Object invoke() throws Throwable {
                   return io.art.tarantool.test.model.TestStorage.testModelIndexes();
+                }
+              }
+
+              public final class MetaTestModelShardersMethod extends StaticMetaMethod<MetaTestStorageClass, io.art.tarantool.test.model.TestStorage.TestModelSharders> {
+                private MetaTestModelShardersMethod(MetaTestStorageClass owner) {
+                  super("testModelSharders",metaType(io.art.tarantool.test.model.TestStorage.TestModelSharders.class),owner);
+                }
+
+                @Override
+                public java.lang.Object invoke(java.lang.Object[] arguments) throws Throwable {
+                  return io.art.tarantool.test.model.TestStorage.testModelSharders();
+                }
+
+                @Override
+                public java.lang.Object invoke() throws Throwable {
+                  return io.art.tarantool.test.model.TestStorage.testModelSharders();
                 }
               }
 
@@ -737,6 +765,75 @@ public class MetaTarantoolTest extends MetaLibrary {
                       io.art.tarantool.test.model.TestStorage.OtherSpaceIndexes instance) throws
                       Throwable {
                     return instance.valueNumber();
+                  }
+                }
+              }
+
+              public static final class MetaTestModelShardersClass extends MetaClass<io.art.tarantool.test.model.TestStorage.TestModelSharders> {
+                private static final LazyProperty<MetaTestModelShardersClass> self = MetaClass.self(io.art.tarantool.test.model.TestStorage.TestModelSharders.class);
+
+                private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+
+                private final MetaField<MetaTestModelShardersClass, io.art.storage.sharder.Sharder1<io.art.meta.test.TestingMetaModel, java.lang.String>> stringField = register(new MetaField<>("string",metaType(io.art.storage.sharder.Sharder1.class,metaType(io.art.meta.test.TestingMetaModel.class),metaType(java.lang.String.class)),false,this));
+
+                private final MetaStringMethod stringMethod = register(new MetaStringMethod(this));
+
+                private MetaTestModelShardersClass() {
+                  super(metaType(io.art.tarantool.test.model.TestStorage.TestModelSharders.class));
+                }
+
+                public static MetaTestModelShardersClass testModelSharders() {
+                  return self.get();
+                }
+
+                public MetaConstructorConstructor constructor() {
+                  return constructor;
+                }
+
+                public MetaField<MetaTestModelShardersClass, io.art.storage.sharder.Sharder1<io.art.meta.test.TestingMetaModel, java.lang.String>> stringField(
+                    ) {
+                  return stringField;
+                }
+
+                public MetaStringMethod stringMethod() {
+                  return stringMethod;
+                }
+
+                public final class MetaConstructorConstructor extends MetaConstructor<MetaTestModelShardersClass, io.art.tarantool.test.model.TestStorage.TestModelSharders> {
+                  private MetaConstructorConstructor(MetaTestModelShardersClass owner) {
+                    super(metaType(io.art.tarantool.test.model.TestStorage.TestModelSharders.class),owner);
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.TestStorage.TestModelSharders invoke(
+                      java.lang.Object[] arguments) throws Throwable {
+                    return new io.art.tarantool.test.model.TestStorage.TestModelSharders();
+                  }
+
+                  @Override
+                  public io.art.tarantool.test.model.TestStorage.TestModelSharders invoke() throws
+                      Throwable {
+                    return new io.art.tarantool.test.model.TestStorage.TestModelSharders();
+                  }
+                }
+
+                public final class MetaStringMethod extends InstanceMetaMethod<MetaTestModelShardersClass, io.art.tarantool.test.model.TestStorage.TestModelSharders, io.art.storage.sharder.Sharder1<io.art.meta.test.TestingMetaModel, java.lang.String>> {
+                  private MetaStringMethod(MetaTestModelShardersClass owner) {
+                    super("string",metaType(io.art.storage.sharder.Sharder1.class,metaType(io.art.meta.test.TestingMetaModel.class),metaType(java.lang.String.class)),owner);
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.TestModelSharders instance,
+                      java.lang.Object[] arguments) throws Throwable {
+                    return instance.string();
+                  }
+
+                  @Override
+                  public java.lang.Object invoke(
+                      io.art.tarantool.test.model.TestStorage.TestModelSharders instance) throws
+                      Throwable {
+                    return instance.string();
                   }
                 }
               }
