@@ -38,7 +38,7 @@ public class TarantoolRouterSchemaService implements TarantoolSchemaService {
         apply(configuration.temporary(), value -> options.put(SpaceFields.TEMPORARY, newBoolean(value)));
         apply(configuration.format(), value -> options.put(SpaceFields.FORMAT, writeFormat(value)));
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
-        block(clients.router().call(SCHEMA_CREATE_SHARD_SPACE, newArray(input)));
+        block(clients.router().call(SCHEMA_CREATE_SPACE, newArray(input)));
         return this;
     }
 

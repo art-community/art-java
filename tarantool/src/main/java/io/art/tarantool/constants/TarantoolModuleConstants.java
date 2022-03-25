@@ -114,18 +114,13 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue INDEX_MULTIPLE_DELETE = newString("art.index.multiple.delete");
 
         ImmutableStringValue SCHEMA_CREATE_INDEX = newString("art.schema.createIndex");
-        ImmutableStringValue SCHEMA_CREATE_STORAGE_SPACE = newString("art.schema.createStorageSpace");
-        ImmutableStringValue SCHEMA_CREATE_SHARD_SPACE = newString("art.schema.createShardSpace");
+        ImmutableStringValue SCHEMA_CREATE_SPACE = newString("art.schema.createSpace");
         ImmutableStringValue SCHEMA_SPACES = newString("art.schema.spaces");
         ImmutableStringValue SCHEMA_DROP_INDEX = newString("art.schema.dropIndex");
         ImmutableStringValue SCHEMA_RENAME_SPACE = newString("art.schema.renameSpace");
         ImmutableStringValue SCHEMA_DROP_SPACE = newString("art.schema.dropSpace");
         ImmutableStringValue SCHEMA_INDICES = newString("art.schema.indices");
         ImmutableStringValue SCHEMA_FORMAT = newString("art.schema.format");
-
-        ImmutableStringValue ROUTER_MUTABLE_CALL = newString("art.router.mutable.call");
-        ImmutableStringValue ROUTER_IMMUTABLE_CALL = newString("art.router.immutable.call");
-
     }
 
     class StreamProtocol {

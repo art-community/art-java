@@ -4,7 +4,9 @@ import io.art.core.collection.*;
 import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
+import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.service.*;
+import io.art.tarantool.model.*;
 import io.art.tarantool.module.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
@@ -17,6 +19,7 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
 import static io.art.tarantool.Tarantool.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolModule.*;
@@ -58,6 +61,17 @@ public class TarantoolRouterTest {
                         .configure()
                         .ifNotExists(true)
                         .unique(true)
+                        .build())
+                .createIndex(TarantoolIndexConfiguration.<TestingMetaModel, MetaTestingMetaModelClass>builder()
+                        .id(1)
+                        .spaceName(idByDash(TestingMetaModel.class))
+                        .indexName("bucket_id")
+                        .part(TarantoolIndexPartConfiguration.<TestingMetaModel, MetaTestingMetaModelClass>builder()
+                                .field(2)
+                                .type(UNSIGNED)
+                                .build())
+                        .ifNotExists(true)
+                        .unique(false)
                         .build())
                 .createIndex(indexFor(testingMetaModel(), testModelIndexes().f9f16())
                         .configure()

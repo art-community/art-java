@@ -113,8 +113,7 @@ local storageFunctions = {
         update = "art.index.single.update",
     },
     schemaCreateIndex = "art.schema.createIndex",
-    schemaCreateStorageSpace = "art.schema.createStorageSpace",
-    schemaCreateShardSpace = "art.schema.createShardSpace",
+    schemaCreateSpace = "art.schema.createSpace",
     schemaSpaces = "art.schema.spaces",
     schemaDropIndex = "art.schema.dropIndex",
     schemaRenameSpace = "art.schema.renameSpace",
@@ -394,10 +393,10 @@ local schema = {
         end)
     end,
 
-    createShardSpace = function(request)
+    createSpace = function(request)
         table.insert(request, configuration.bucketIdField)
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaCreateShardSpace, request)
+            local _, error = shard:callrw(storageFunctions.schemaCreateSpace, request)
             if error ~= nil then
                 throw(error)
             end
@@ -1130,23 +1129,11 @@ local schema = {
         box.space[space]:drop()
     end,
 
-    createStorageSpace = function(name, configuration)
+    createSpace = function(name, configuration)
         if not configuration then
             configuration = {}
         end
         box.schema.space.create(name, configuration)
-    end,
-
-    createShardSpace = function(name, configuration, bucketIdField)
-        if not configuration then
-            configuration = {}
-        end
-        box.schema.space.create(name, configuration):create_index(vshard.storage.internal.shard_index, {
-            parts = { { field = bucketIdField, type = 'unsigned' } },
-            id = { 1 },
-            unique = true,
-            if_not_exists = true
-        })
     end,
 
     spaces = function()
