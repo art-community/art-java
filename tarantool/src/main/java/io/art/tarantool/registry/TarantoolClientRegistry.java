@@ -46,6 +46,18 @@ public class TarantoolClientRegistry {
         routers.endpoints().forEach(TarantoolClient::dispose);
     }
 
+    public boolean hasRouters() {
+        return !routers.endpoints().isEmpty();
+    }
+
+    public boolean hasMutable() {
+        return !mutable.endpoints().isEmpty();
+    }
+
+    public boolean hasImmutable() {
+        return !immutable.endpoints().isEmpty();
+    }
+
     private void initializeClients(TarantoolStorageConfiguration configuration) {
         for (TarantoolClientConfiguration client : configuration.getClients()) {
             if (client.isRouter()) {

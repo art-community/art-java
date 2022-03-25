@@ -35,7 +35,7 @@ public class TarantoolCommunication implements Communication {
         this.clients = clients;
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
-        this.client = () -> let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
+        this.client = () -> clients.hasRouters() ? clients.router() : let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
                 ? clients.immutable()
                 : clients.mutable();
     }
