@@ -142,6 +142,6 @@ public class TarantoolReactiveRouterIndexStream<ModelType> extends ReactiveSpace
                 .toArray(Value[]::new), true);
         ImmutableIntegerValue algorithm = newInteger(0);
         if (shardRequest.getAlgorithm() == StorageConstants.ShardingAlgorithm.CRC_32) algorithm = CRC_32;
-        return newArray(newArray(shardData, algorithm), input);
+        return newArray(newArray(algorithm, shardData), input);
     }
 }

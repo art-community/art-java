@@ -239,7 +239,7 @@ public class TarantoolReactiveRouterService<KeyType, ModelType> implements React
                 .toArray(Value[]::new), true);
         ImmutableIntegerValue algorithm = newInteger(0);
         if (request.getAlgorithm() == ShardingAlgorithm.CRC_32) algorithm = CRC_32;
-        return newArray(newArray(shardData, algorithm), input);
+        return newArray(newArray(algorithm, shardData), input);
     }
 
     private Mono<Long> readLongMono(Mono<Value> value) {
