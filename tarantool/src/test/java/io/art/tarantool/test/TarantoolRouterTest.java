@@ -73,8 +73,8 @@ public class TarantoolRouterTest {
 
     @Test
     public void testMutable() {
-        TestingMetaModel data1 = generateTestingModel().toBuilder().f16("bucket-1").f1(1).build();
-        TestingMetaModel data2 = generateTestingModel().toBuilder().f16("bucket-2").f1(2).build();
+        TestingMetaModel data1 = generateTestingModel().toBuilder().f1(1).build();
+        TestingMetaModel data2 = generateTestingModel().toBuilder().f1(2).build();
 
         data1.assertEquals(current().shard(testModelSharders().string(), "bucket-1").put(data1));
         data2.assertEquals(current().shard(testModelSharders().string(), "bucket-2").put(data2));
