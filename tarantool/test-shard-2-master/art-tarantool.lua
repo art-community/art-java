@@ -172,7 +172,7 @@ local indexStream = require("art.router.stream").indexStream
 
 local index = {
     first = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexFirst, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexFirst, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -180,7 +180,7 @@ local index = {
     end,
 
     select = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexSelect, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexSelect, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -188,7 +188,7 @@ local index = {
     end,
 
     find = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexFind, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexFind, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -198,7 +198,7 @@ local index = {
     stream = indexStream,
 
     count = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexCount, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexCount, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -224,7 +224,7 @@ local bucketModifier = require("art.router.bucket-id-modifier")
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexMultiple.delete, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexMultiple.delete, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -232,7 +232,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexMultiple.update, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexMultiple.update, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -254,7 +254,7 @@ local bucketModifier = require("art.router.bucket-id-modifier")
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexSingle.delete, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexSingle.delete, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -262,7 +262,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), indexSingle.update, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexSingle.update, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -495,7 +495,7 @@ local spaceStream = require("art.router.stream").spaceStream
 
 local space = {
     first = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceFirst, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceFirst, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -503,7 +503,7 @@ local space = {
     end,
 
     select = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceSelect, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceSelect, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -511,7 +511,7 @@ local space = {
     end,
 
     find = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceFind, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceFind, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -521,7 +521,7 @@ local space = {
     stream = spaceStream,
 
     count = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceCount, functionRequest)
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceCount, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -529,7 +529,7 @@ local space = {
     end,
 
     truncate = function(bucketRequest, functionRequest)
-        local _, error = vshard.rouder.callrw(generateBucket(bucketRequest), storageFunctions.spaceTruncate, functionRequest)
+        local _, error = vshard.router.callrw(generateBucket(bucketRequest), storageFunctions.spaceTruncate, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -554,7 +554,7 @@ local bucketModifier = require("art.router.bucket-id-modifier")
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceMultiple.delete, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceMultiple.delete, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -565,7 +565,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertMultipleBucketIds(functionRequest[2], bucket)
 
-        local result, error = vshard.rouder.callrw(bucket, spaceMultiple.insert, functionRequest)
+        local result, error = vshard.router.callrw(bucket, spaceMultiple.insert, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -577,7 +577,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertMultipleBucketIds(functionRequest[2], bucket)
 
-        local result, error = vshard.rouder.callrw(bucket, spaceMultiple.put, functionRequest)
+        local result, error = vshard.router.callrw(bucket, spaceMultiple.put, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -586,7 +586,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceMultiple.update, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceMultiple.update, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -608,7 +608,7 @@ local bucketModifier = require("art.router.bucket-id-modifier")
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceSingle.delete, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceSingle.delete, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -619,7 +619,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertSingleBucketId(functionRequest[2], bucket)
 
-        local result, error = vshard.rouder.callrw(bucket, spaceSingle.insert, functionRequest)
+        local result, error = vshard.router.callrw(bucket, spaceSingle.insert, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -631,7 +631,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertSingleBucketId(functionRequest[2], bucket)
 
-        local result, error = vshard.rouder.callrw(bucket, spaceSingle.put, functionRequest)
+        local result, error = vshard.router.callrw(bucket, spaceSingle.put, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -640,7 +640,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.rouder.callrw(generateBucket(bucketRequest), spaceSingle.update, functionRequest)
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceSingle.update, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -651,7 +651,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertSingleBucketId(functionRequest[2], bucket)
 
-        local result, error = vshard.rouder.callrw(bucket, spaceSingle.upsert, functionRequest)
+        local result, error = vshard.router.callrw(bucket, spaceSingle.upsert, functionRequest)
         if error ~= nil then
             throw(error)
         end
@@ -692,7 +692,7 @@ local removeBucket = function(operators)
 end
 
 local spaceStream = function(bucketRequest, functionRequest)
-    local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.spaceStream, functionRequest)
+    local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceStream, functionRequest)
     if error ~= nil then
         throw(error)
     end
@@ -705,7 +705,7 @@ local spaceStream = function(bucketRequest, functionRequest)
 end
 
 local indexStream = function(bucketRequest, functionRequest)
-    local result, error = vshard.rouder.callro(generateBucket(bucketRequest), storageFunctions.indexStream, functionRequest)
+    local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexStream, functionRequest)
     if error ~= nil then
         throw(error)
     end
