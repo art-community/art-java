@@ -72,14 +72,17 @@ public class TarantoolClient {
     }
 
     public Mono<Value> call(ImmutableStringValue name, Consumer<ArrayValue> onChunk) {
+        if (connected.get()) return executeCall(name, onChunk);
         return connector.asMono().flatMap(client -> client.executeCall(name, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
     public Mono<Value> call(ImmutableStringValue name, Mono<Value> input, Consumer<ArrayValue> onChunk) {
+        if (connected.get()) return executeCall(name, input, onChunk);
         return connector.asMono().flatMap(client -> client.executeCall(name, input, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
     public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments, Consumer<ArrayValue> onChunk) {
+        if (connected.get()) return executeCall(name, arguments, onChunk);
         return connector.asMono().flatMap(client -> client.executeCall(name, arguments, onChunk)).doOnSubscribe(ignore -> connect());
     }
 
