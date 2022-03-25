@@ -52,7 +52,7 @@ public class TarantoolRouterTest {
                 .block();
         tarantool()
                 .schema(TestStorage.class)
-                .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
+                .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())
                 .createIndex(indexFor(testingMetaModel(), testModelIndexes().id())
                         .configure()
                         .ifNotExists(true)

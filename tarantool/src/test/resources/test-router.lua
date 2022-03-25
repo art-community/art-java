@@ -35,6 +35,7 @@ local cfg = {
         },
     },
     replication_connect_quorum = 0,
+    replication_synchro_quorum = 2,
 }
 
 require("art-tarantool")
