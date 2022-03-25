@@ -26,7 +26,9 @@ public class RsocketDefaultTest {
                 meta(() -> new MetaRsocketTest(new MetaMetaTest())),
                 transport(),
                 messagePack(),
-                rsocket(rsocket -> rsocket.server(server -> server.tcp().service(TestRsocketService.class)))
+                rsocket(rsocket -> rsocket.server(server -> server
+                        .tcp()
+                        .configure(configurator -> configurator.service(TestRsocketService.class))))
         );
     }
 
