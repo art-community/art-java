@@ -33,7 +33,7 @@ public class TarantoolClientRegistry {
     }
 
     public List<TarantoolClient> all() {
-        return combineToList(immutable.endpoints(), mutable.endpoints());
+        return combineToList(immutable.endpoints(), mutable.endpoints(), routers.endpoints());
     }
 
     public void each(Consumer<TarantoolClient> consumer) {
