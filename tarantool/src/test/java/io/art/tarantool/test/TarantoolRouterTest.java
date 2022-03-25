@@ -82,7 +82,7 @@ public class TarantoolRouterTest {
 
     @AfterAll
     public static void cleanup() {
-        //shutdownRouter();
+        shutdownRouter();
         shutdown();
     }
 
@@ -91,19 +91,19 @@ public class TarantoolRouterTest {
         TestingMetaModel data1 = generateTestingModel().toBuilder().f1(1).build();
         TestingMetaModel data2 = generateTestingModel().toBuilder().f1(2).build();
 
-        data1.assertEquals(current().shard(testModelSharders().string(), "1").put(data1));
-        data2.assertEquals(current().shard(testModelSharders().string(), "2").put(data2));
+        data1.assertEquals(current().shard(testModelSharders().string(), "A1").put(data1));
+        data2.assertEquals(current().shard(testModelSharders().string(), "B1").put(data2));
 
-        ImmutableArray<TestingMetaModel> result1 = current().shard(testModelSharders().string(), "1").select(1);
-        ImmutableArray<TestingMetaModel> result2 = current().shard(testModelSharders().string(), "2").select(2);
-        ImmutableArray<TestingMetaModel> emptyResult = current().shard(testModelSharders().string(), "2").select(1);
+        ImmutableArray<TestingMetaModel> result1 = current().shard(testModelSharders().string(), "A1").select(1);
+        ImmutableArray<TestingMetaModel> result2 = current().shard(testModelSharders().string(), "B1").select(2);
+        ImmutableArray<TestingMetaModel> emptyResult = current().shard(testModelSharders().string(), "B1").select(1);
 
         assertEquals(0, emptyResult.size());
 
         assertEquals(1, result1.size());
         data1.assertEquals(result1.get(0));
 
-        assertEquals(2, result2.size());
+        assertEquals(1, result2.size());
         data2.assertEquals(result2.get(0));
     }
 
