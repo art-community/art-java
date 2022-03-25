@@ -20,6 +20,7 @@ package io.art.tarantool.manager;
 
 
 import io.art.communicator.action.*;
+import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.model.*;
 
@@ -30,21 +31,19 @@ public class TarantoolManager {
         this.configuration = configuration;
     }
 
-    public void initializeCommunicators() {
+    public void initialize() {
         configuration.getCommunicator()
                 .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::initialize);
     }
 
-    public void disposeCommunicators() {
+    public void dispose() {
         configuration.getCommunicator()
                 .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::dispose);
-    }
-
-    public void disposeSubscriptions() {
+        configuration.getStorageClients().values().forEach(registry -> registry.each(TarantoolClient::dispose));
         configuration.getSubscriptions().forEach(TarantoolSubscription::cancel);
     }
 }

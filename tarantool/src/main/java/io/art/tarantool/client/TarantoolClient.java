@@ -90,19 +90,19 @@ public class TarantoolClient {
     private Mono<Value> executeCall(ImmutableStringValue name, Consumer<ArrayValue> onChunk) {
         TarantoolReceiver receiver = receivers.allocate(onChunk);
         emitCall(receiver.getId(), callRequest(name, newArray()));
-        return receiver.getSink().asMono();
+        return receiver.getSink().asMono().timeout(clientConfiguration.getExecutionTimeout());
     }
 
     private Mono<Value> executeCall(ImmutableStringValue name, Mono<Value> argument, Consumer<ArrayValue> onChunk) {
         TarantoolReceiver receiver = receivers.allocate(onChunk);
         subscribeInput(name, argument, receiver);
-        return receiver.getSink().asMono();
+        return receiver.getSink().asMono().timeout(clientConfiguration.getExecutionTimeout());
     }
 
     private Mono<Value> executeCall(ImmutableStringValue name, ArrayValue arguments, Consumer<ArrayValue> onChunk) {
         TarantoolReceiver receiver = receivers.allocate(onChunk);
         emitCall(receiver.getId(), callRequest(name, arguments));
-        return receiver.getSink().asMono();
+        return receiver.getSink().asMono().timeout(clientConfiguration.getExecutionTimeout());
     }
 
     private void subscribeInput(ImmutableStringValue name, Mono<Value> argument, TarantoolReceiver receiver) {

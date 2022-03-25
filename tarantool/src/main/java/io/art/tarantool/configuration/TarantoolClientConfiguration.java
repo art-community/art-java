@@ -18,6 +18,7 @@ public class TarantoolClientConfiguration {
     private boolean immutable;
     private boolean router;
     private Duration connectionTimeout;
+    private Duration executionTimeout;
     private boolean logging;
 
     public static TarantoolClientConfiguration tarantoolClientConfiguration() {
@@ -29,6 +30,7 @@ public class TarantoolClientConfiguration {
         configuration.immutable = false;
         configuration.router = false;
         configuration.connectionTimeout = DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
+        configuration.executionTimeout = DEFAULT_TARANTOOL_EXECUTION_TIMEOUT;
         configuration.logging = false;
         return configuration;
     }
@@ -42,6 +44,7 @@ public class TarantoolClientConfiguration {
         configuration.immutable = orElse(source.getBoolean(TARANTOOL_INSTANCE_IMMUTABLE_KEY), false);
         configuration.router = orElse(source.getBoolean(TARANTOOL_INSTANCE_ROUTER_KEY), false);
         configuration.connectionTimeout = orElse(source.getDuration(TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY), DEFAULT_TARANTOOL_CONNECTION_TIMEOUT);
+        configuration.executionTimeout = orElse(source.getDuration(TARANTOOL_INSTANCE_EXECUTION_TIMEOUT_KEY), DEFAULT_TARANTOOL_EXECUTION_TIMEOUT);
         configuration.logging = orElse(source.getBoolean(TARANTOOL_LOGGING_KEY), false);
         return configuration;
     }

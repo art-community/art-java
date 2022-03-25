@@ -1,6 +1,7 @@
 package io.art.tarantool.test;
 
 import io.art.core.collection.*;
+import io.art.logging.module.*;
 import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
@@ -36,6 +37,7 @@ public class TarantoolRouterTest {
         initialize(
                 MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
                 TransportActivator.transport(),
+                LoggingActivator.logging(),
                 TarantoolActivator.tarantool(tarantool -> tarantool
                         .storage(TestStorage.class, storage -> storage.client(client -> client
                                 .port(ROUTER_PORT)
@@ -82,7 +84,7 @@ public class TarantoolRouterTest {
 
     @AfterAll
     public static void cleanup() {
-        shutdownRouter();
+        //shutdownRouter();
         shutdown();
     }
 

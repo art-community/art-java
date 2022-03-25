@@ -1,9 +1,10 @@
 local current = os.getenv("PWD") or io.popen("cd"):read()
 local cfg = {
-    work_dir = "/tmp/tarantool/test-shard-1-master",
-    pid_file = current .. "/test-shard-1-master.pid",
+    listen = 3302,
     bucket_count = 2,
-    log = "file:" .. current .. "/test-shard-1-master.log",
+    work_dir = "/tmp/tarantool/test-router",
+    pid_file = current .. "/test-router.pid",
+    log = "file:" .. current .. "/test-router.log",
     sharding = {
         ['cbf06940-0790-498b-948d-042b62cf3d29'] = {
             replicas = {
@@ -34,7 +35,6 @@ local cfg = {
             },
         },
     },
-    election_mode = "candidate",
     replication_connect_quorum = 0,
     memtx_use_mvcc_engine = true,
     replication_synchro_quorum = 2,
@@ -42,12 +42,21 @@ local cfg = {
 
 require("art-tarantool")
 vshard = require('vshard')
-vshard.storage.cfg(cfg, '8a274925-a26d-47fc-9e1b-af88ce939412')
-require("art.storage").initialize()
+vshard.router.cfg(cfg)
+require("art.router").initialize()
 
 box.once("main", function()
     box.schema.user.create('username', { password = 'password', if_not_exists = true })
     box.schema.user.grant('username', 'read,write,execute,create,alter,drop', 'universe', nil, { if_not_exists = true })
+
+    testSubscription = function()
+        local subscription = require("art.storage.subscription")
+        subscription.publish("test", "testEmpty")
+        subscription.publish("test", "testRequest", { 1, "test" })
+        subscription.publish("test", "testChannel", { 1, "test" })
+        subscription.publish("test", "testChannel", { 1, "test" })
+    end
+    box.schema.func.create("testSubscription", { if_not_exists = true })
 
     testChannel = function()
         box.session.push("test")
@@ -64,4 +73,9 @@ box.once("main", function()
         return data[9] > 3
     end
     box.schema.func.create("testFilter", { if_not_exists = true })
+
+    bootstrap = function()
+        vshard.router.bootstrap()
+    end
+    box.schema.func.create("bootstrap", { if_not_exists = true })
 end)
