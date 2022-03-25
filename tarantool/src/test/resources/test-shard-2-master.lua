@@ -33,7 +33,9 @@ local cfg = {
             },
         },
     },
+    election_mode = "candidate",
     replication_connect_quorum = 0,
+    memtx_use_mvcc_engine = true,
     replication_synchro_quorum = 2,
 }
 
