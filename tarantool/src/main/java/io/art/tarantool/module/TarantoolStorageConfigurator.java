@@ -36,7 +36,6 @@ public class TarantoolStorageConfigurator {
         connector = new TarantoolStorageConnector(storageId);
     }
 
-
     public TarantoolStorageConfigurator router() {
         router = true;
         return this;
@@ -70,7 +69,6 @@ public class TarantoolStorageConfigurator {
     }
 
     TarantoolStorageRegistry createRegistry() {
-
         TarantoolSchemaService schema = router ? new TarantoolRouterSchemaService(connector) : new TarantoolStorageSchemaService(connector);
 
         ImmutableMap<String, TarantoolBlockingStorageService<?, ?>> spaces = this.spaces

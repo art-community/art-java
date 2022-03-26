@@ -29,7 +29,6 @@ import io.art.tarantool.refresher.*;
 import io.art.tarantool.registry.*;
 import lombok.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import java.util.function.*;
 
 @Public
@@ -51,13 +50,11 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     @Override
     public TarantoolModuleConfiguration initialize(TarantoolModule module) {
         Initial initial = new Initial(module.getRefresher());
-
         initial.storageConfigurations = storagesConfigurator.storageConfigurations();
         initial.storageRegistries = lazy(storagesConfigurator::createRegistries);
         initial.communicator = storagesConfigurator.createCommunicatorConfiguration(initial.communicator);
-        initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
+        initial.server = subscriptionsConfigurator.createServerConfiguration(initial.server);
         initial.subscriptions = new TarantoolSubscriptionRegistry(lazy(subscriptionsConfigurator::configureSubscriptions));
-
         return initial;
     }
 

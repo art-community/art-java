@@ -79,10 +79,10 @@ public class TarantoolSubscriptionsConfigurator {
         return subscriptions.build();
     }
 
-    public ServerConfiguration configureServer(LazyProperty<ServerConfiguration> configurationProvider, ServerConfiguration current) {
+    public ServerConfiguration createServerConfiguration(ServerConfiguration current) {
         return current.toBuilder()
                 .configurations(lazy(this::createConfigurations))
-                .methods(lazy(() -> createMethods(configurationProvider)))
+                .methods(lazy(() -> createMethods(lazy(() -> tarantoolModule().configuration().getServer()))))
                 .build();
     }
 
