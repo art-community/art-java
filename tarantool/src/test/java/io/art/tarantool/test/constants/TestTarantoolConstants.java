@@ -42,6 +42,7 @@ public interface TestTarantoolConstants {
     String USERNAME = "username";
     String PASSWORD = "password";
     String MODULE_SCRIPT = "art-tarantool.lua";
+    String SHARDING_SCRIPT = "test-sharding.lua";
     String MKDIR_COMMAND = "mkdir -p ";
     String TEMP_DIRECTORY = "/tmp/tarantool";
     String DELETE_COMMAND = "rm -rf ";

@@ -20,3 +20,7 @@
 dependencies {
     api(project(":communicator"))
 }
+
+tasks.withType<JavaCompile>() {
+    this.options.compilerArgs.add("-Xlint:unchecked")
+}

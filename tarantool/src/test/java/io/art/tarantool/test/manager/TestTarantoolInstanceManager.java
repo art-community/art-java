@@ -89,9 +89,12 @@ public class TestTarantoolInstanceManager {
         if (isNull(script)) throw new ImpossibleSituationException();
         InputStream module = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
         if (isNull(module)) throw new ImpossibleSituationException();
+        InputStream sharding = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(SHARDING_SCRIPT);
+        if (isNull(sharding)) throw new ImpossibleSituationException();
         Path scriptPath = working.resolve(scriptFile).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));
         writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
+        writeFile(working.resolve(get(SHARDING_SCRIPT)), toByteArray(sharding));
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 instanceCommand(directory) + SPACE + convertToWslPath(scriptPath.toString()) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);

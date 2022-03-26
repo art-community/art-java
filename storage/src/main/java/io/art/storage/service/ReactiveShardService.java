@@ -6,11 +6,14 @@ import io.art.storage.index.*;
 import io.art.storage.stream.*;
 import io.art.storage.updater.*;
 import reactor.core.publisher.*;
+import static io.art.core.constants.CompilerSuppressingWarnings.UNCHECKED;
+import static io.art.core.constants.CompilerSuppressingWarnings.VARARGS;
 import static java.util.Arrays.*;
 import java.util.*;
 import java.util.function.*;
 
 @Public
+@SuppressWarnings({UNCHECKED, VARARGS})
 public interface ReactiveShardService<KeyType, SpaceType> {
     Mono<SpaceType> first(KeyType key);
 

@@ -1,4 +1,5 @@
 local current = os.getenv("PWD") or io.popen("cd"):read()
+
 require("art-tarantool")
 box.cfg {
     listen = 3301,
@@ -6,7 +7,6 @@ box.cfg {
     log = "file:" .. current .. "/test-storage.log",
     work_dir = "/tmp/tarantool/test-storage",
 }
-
 require("art.storage").initialize()
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })
