@@ -25,7 +25,7 @@ import java.util.function.*;
 public class TarantoolStorageConfigurator {
     private boolean router;
     private final String storageId;
-    private UnaryOperator<TarantoolStorageConnectorConfigurator> configurator = identity();
+    private UnaryOperator<TarantoolStorageConnectorConfigurator> connectorConfigurator = identity();
     private final Map<String, LazyProperty<TarantoolBlockingStorageService<?, ?>>> spaces = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
     private final Map<String, LazyProperty<Sharders<?>>> sharders = map();
@@ -42,7 +42,7 @@ public class TarantoolStorageConfigurator {
     }
 
     public TarantoolStorageConfigurator connector(UnaryOperator<TarantoolStorageConnectorConfigurator> configurator) {
-        this.configurator = configurator;
+        this.connectorConfigurator = configurator;
         return this;
     }
 
@@ -96,7 +96,7 @@ public class TarantoolStorageConfigurator {
     }
 
     TarantoolStorageConfiguration createConfiguration() {
-        return configurator.apply(new TarantoolStorageConnectorConfigurator(storageId)).configure();
+        return connectorConfigurator.apply(new TarantoolStorageConnectorConfigurator(storageId)).configure();
     }
 
     private static <C> MetaType<?> findIdFieldType(Class<? extends Indexes<C>> indexes) {
