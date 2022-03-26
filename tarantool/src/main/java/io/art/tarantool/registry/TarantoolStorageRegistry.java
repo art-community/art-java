@@ -21,12 +21,12 @@ public class TarantoolStorageRegistry {
 
     public TarantoolStorageConnector getConnector() {
         return connector;
-
     }
 
     public TarantoolSchemaService getSchema() {
+        System.out.println("registry: " + hashCode());
+        System.out.println("schema: " + schema.hashCode());
         return schema;
-
     }
 
     public <SpaceType, IndexesType extends Indexes<SpaceType>> IndexesType getIndexes(Class<SpaceType> spaceType) {

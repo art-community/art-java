@@ -72,6 +72,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     }
 
     public TarantoolStorageRegistry storageRegistry(String identifier) {
+        System.out.println("storageRegistries: " + storageRegistries.hashCode());
         return storageRegistries.get().get(identifier);
     }
 
@@ -94,6 +95,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             this.configuration.storageConfigurations = configuration.getStorageConfigurations();
             this.configuration.storageRegistries = configuration.getStorageRegistries();
             this.configuration.subscriptions = configuration.getSubscriptions();
+            System.out.println("new storageRegistries: " + this.configuration.storageRegistries.hashCode());
             return this;
         }
 

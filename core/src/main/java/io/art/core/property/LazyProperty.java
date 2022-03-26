@@ -41,11 +41,6 @@ public class LazyProperty<T> implements Supplier<T> {
     }
 
     @Override
-    public int hashCode() {
-        return get().hashCode();
-    }
-
-    @Override
     public boolean equals(Object other) {
         if (isNull(other)) {
             return false;
