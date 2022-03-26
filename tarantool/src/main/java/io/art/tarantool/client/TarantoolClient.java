@@ -175,6 +175,7 @@ public class TarantoolClient {
                     .port(clientConfiguration.getPort())
                     .option(CONNECT_TIMEOUT_MILLIS, (int) clientConfiguration.getConnectionTimeout().toMillis())
                     .connect()
+                    .timeout(clientConfiguration.getConnectionTimeout())
                     .subscribe(this::setup);
         }
     }
