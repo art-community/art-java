@@ -2,6 +2,7 @@ package io.art.core.context;
 
 import io.art.core.collection.*;
 import io.art.core.configuration.*;
+import io.art.core.module.*;
 import io.art.core.module.Module;
 import io.art.core.property.*;
 import lombok.*;

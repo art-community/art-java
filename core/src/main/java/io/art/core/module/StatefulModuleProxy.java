@@ -18,7 +18,6 @@
 
 package io.art.core.module;
 
-import io.art.core.context.*;
 import io.art.core.property.*;
 import static io.art.core.caster.Caster.*;
 import static io.art.core.property.DisposableProperty.*;
