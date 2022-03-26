@@ -1,11 +1,12 @@
 local current = os.getenv("PWD") or io.popen("cd"):read()
+local temp = os.getenv("TMPDIR") or "/tmp"
 
 require("art-tarantool")
 box.cfg {
     listen = 3301,
     pid_file = current .. "/test-storage.pid",
     log = "file:" .. current .. "/test-storage.log",
-    work_dir = "/tmp/tarantool/test-storage",
+    work_dir = temp .. "/tarantool/test-storage",
 }
 require("art.storage").initialize()
 

@@ -1,7 +1,9 @@
 package io.art.tarantool.test.constants;
 
 import org.msgpack.value.*;
+import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.converter.WslPathConverter.*;
+import static java.lang.System.*;
 import static org.msgpack.value.ValueFactory.*;
 
 public interface TestTarantoolConstants {
@@ -44,7 +46,7 @@ public interface TestTarantoolConstants {
     String MODULE_SCRIPT = "art-tarantool.lua";
     String SHARDING_SCRIPT = "test-sharding.lua";
     String MKDIR_COMMAND = "mkdir -p ";
-    String TEMP_DIRECTORY = "/tmp/tarantool";
+    String TEMP_DIRECTORY = orElse(getenv("TMPDIR"), "/tmp") + "/tarantool";
     String DELETE_COMMAND = "rm -rf ";
 
     static String instanceCommand(String path) {

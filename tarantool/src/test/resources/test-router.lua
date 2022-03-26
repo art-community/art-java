@@ -1,7 +1,8 @@
 local current = os.getenv("PWD") or io.popen("cd"):read()
+local temp = os.getenv("TMPDIR") or "/tmp"
 local cfg = {
     listen = 3302,
-    work_dir = "/tmp/tarantool/test-router",
+    work_dir = temp .. "/tarantool/test-router",
     pid_file = current .. "/test-router.pid",
     bucket_count = 2,
     log = "file:" .. current .. "/test-router.log",
