@@ -8,6 +8,7 @@ import io.art.tarantool.client.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.connector.*;
 import io.art.tarantool.descriptor.*;
+import io.art.tarantool.registry.*;
 import org.msgpack.value.*;
 import reactor.core.publisher.*;
 import static io.art.core.caster.Caster.*;
@@ -22,7 +23,7 @@ public class TarantoolCommunication implements Communication {
     private final TarantoolModelWriter writer;
     private final TarantoolModelReader reader;
     private final Supplier<TarantoolClient> client;
-    private final TarantoolStorageConnector clients;
+    private final TarantoolStorageConnector connector;
     private final LazyProperty<BiFunction<Flux<Object>, TarantoolClient, Flux<Object>>> caller = lazy(this::call);
 
     private ImmutableStringValue function;
@@ -31,11 +32,13 @@ public class TarantoolCommunication implements Communication {
 
     private final static ThreadLocal<TarantoolCommunicationDecorator> decorator = new ThreadLocal<>();
 
-    public TarantoolCommunication(TarantoolStorageConnector connector, TarantoolModuleConfiguration moduleConfiguration) {
-        this.clients = connector;
+    public TarantoolCommunication(TarantoolStorageRegistry registry, TarantoolModuleConfiguration moduleConfiguration) {
+        this.connector = registry.getConnector();
         this.writer = moduleConfiguration.getWriter();
         this.reader = moduleConfiguration.getReader();
-        this.client = () -> connector.hasRouters() ? connector.router() : let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
+        this.client = () -> registry.isRouter()
+                ? connector.router()
+                : let(decorator.get(), TarantoolCommunicationDecorator::isImmutable, false)
                 ? connector.immutable()
                 : connector.mutable();
     }
@@ -56,7 +59,7 @@ public class TarantoolCommunication implements Communication {
 
     @Override
     public void dispose() {
-        clients.dispose();
+        connector.dispose();
     }
 
     @Override

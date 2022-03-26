@@ -88,6 +88,7 @@ public class TarantoolStorageConfigurator {
 
         return TarantoolStorageRegistry.builder()
                 .connector(connector)
+                .router(router)
                 .schema(schema)
                 .spaces(spaces)
                 .indexes(indexes)

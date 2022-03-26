@@ -10,6 +10,6 @@ public class TarantoolCommunicationFactory {
     public static TarantoolCommunication createTarantoolCommunication(TarantoolStorageConfiguration storageConfiguration) {
         String storage = storageConfiguration.getStorage();
         TarantoolModuleConfiguration moduleConfiguration = tarantoolModule().configuration();
-        return new TarantoolCommunication(moduleConfiguration.storageRegistry(storage).getConnector(), moduleConfiguration);
+        return new TarantoolCommunication(moduleConfiguration.storageRegistry(storage), moduleConfiguration);
     }
 }
