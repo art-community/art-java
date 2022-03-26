@@ -7,7 +7,6 @@ local cfg = {
     bucket_count = 2,
     log = "file:" .. current .. "/test-router.log",
     replication_connect_quorum = 0,
-    memtx_use_mvcc_engine = true,
     replication_synchro_quorum = 2,
     sharding = require("test-sharding")
 }
