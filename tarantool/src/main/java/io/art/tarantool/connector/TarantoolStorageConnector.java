@@ -7,6 +7,7 @@ import io.art.tarantool.configuration.*;
 import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 import java.util.function.*;
 
 
@@ -15,13 +16,13 @@ public class TarantoolStorageConnector {
     private final Balancer<TarantoolClient> routers;
     private final Balancer<TarantoolClient> mutable;
     private final String storageId;
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
 
     public TarantoolStorageConnector(String storageId) {
         this.storageId = storageId;
         immutable = new RoundRobinBalancer<>();
         mutable = new RoundRobinBalancer<>();
         routers = new RoundRobinBalancer<>();
-        initializeClients();
     }
 
     public TarantoolClient immutable() {
@@ -44,6 +45,25 @@ public class TarantoolStorageConnector {
         all().forEach(consumer);
     }
 
+    public void initialize() {
+        if (initialized.compareAndSet(false, true)) {
+            ImmutableSet<TarantoolClientConfiguration> clients = tarantoolModule().configuration().storageConfiguration(storageId).getClients();
+            for (TarantoolClientConfiguration client : clients) {
+                if (client.isRouter()) {
+                    routers.addEndpoint(new TarantoolClient(client));
+                    continue;
+                }
+
+                if (client.isImmutable()) {
+                    immutable.addEndpoint(new TarantoolClient(client));
+                    continue;
+                }
+                immutable.addEndpoint(new TarantoolClient(client));
+                mutable.addEndpoint(new TarantoolClient(client));
+            }
+        }
+    }
+
     public void dispose() {
         immutable.endpoints().forEach(TarantoolClient::dispose);
         mutable.endpoints().forEach(TarantoolClient::dispose);
@@ -60,22 +80,5 @@ public class TarantoolStorageConnector {
 
     public boolean hasImmutable() {
         return !immutable.endpoints().isEmpty();
-    }
-
-    private void initializeClients() {
-        ImmutableSet<TarantoolClientConfiguration> clients = tarantoolModule().configuration().storageConfiguration(storageId).getClients();
-        for (TarantoolClientConfiguration client : clients) {
-            if (client.isRouter()) {
-                routers.addEndpoint(new TarantoolClient(client));
-                continue;
-            }
-
-            if (client.isImmutable()) {
-                immutable.addEndpoint(new TarantoolClient(client));
-                continue;
-            }
-            immutable.addEndpoint(new TarantoolClient(client));
-            mutable.addEndpoint(new TarantoolClient(client));
-        }
     }
 }

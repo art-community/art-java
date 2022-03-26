@@ -47,7 +47,7 @@ public class TarantoolStoragesConfigurator {
         return immutableMapOf(configurations);
     }
 
-    ImmutableMap<String, TarantoolStorageRegistry> createStorages() {
+    ImmutableMap<String, TarantoolStorageRegistry> createRegistries() {
         return registries.entrySet()
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get()));

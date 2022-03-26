@@ -35,6 +35,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
     @Getter
     private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations;
 
+    @Getter
     private LazyProperty<ImmutableMap<String, TarantoolStorageRegistry>> storageRegistries;
 
     @Getter
@@ -66,10 +67,6 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
         subscriptions = new TarantoolSubscriptionRegistry(lazy(ImmutableMap::emptyImmutableMap));
     }
 
-    public ImmutableMap<String, TarantoolStorageRegistry> storageRegistries() {
-        return storageRegistries.get();
-    }
-
     public TarantoolStorageRegistry storageRegistry(ConnectorIdentifier identifier) {
         return storageRegistry(identifier.id());
     }
@@ -95,7 +92,7 @@ public class TarantoolModuleConfiguration implements ModuleConfiguration {
             this.configuration.communicator = configuration.getCommunicator();
             this.configuration.server = configuration.getServer();
             this.configuration.storageConfigurations = configuration.getStorageConfigurations();
-            this.configuration.storageRegistries = lazy(configuration::storageRegistries);
+            this.configuration.storageRegistries = configuration.getStorageRegistries();
             this.configuration.subscriptions = configuration.getSubscriptions();
             return this;
         }

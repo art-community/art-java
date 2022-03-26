@@ -53,7 +53,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
         Initial initial = new Initial(module.getRefresher());
 
         initial.storageConfigurations = storagesConfigurator.storageConfigurations();
-        initial.storages = lazy(storagesConfigurator::createStorages);
+        initial.storageRegistries = lazy(storagesConfigurator::createRegistries);
         initial.communicator = storagesConfigurator.createCommunicatorConfiguration(initial.communicator);
         initial.server = subscriptionsConfigurator.configureServer(lazy(() -> tarantoolModule().configuration().getServer()), initial.server);
         initial.subscriptions = new TarantoolSubscriptionRegistry(lazy(subscriptionsConfigurator::configureSubscriptions));
@@ -64,7 +64,7 @@ public class TarantoolInitializer implements ModuleInitializer<TarantoolModuleCo
     @Getter
     public static class Initial extends TarantoolModuleConfiguration {
         private ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = super.getStorageConfigurations();
-        private LazyProperty<ImmutableMap<String, TarantoolStorageRegistry>> storages = lazy(super::storageRegistries);
+        private LazyProperty<ImmutableMap<String, TarantoolStorageRegistry>> storageRegistries = super.getStorageRegistries();
         private CommunicatorConfiguration communicator = super.getCommunicator();
         private ServerConfiguration server = super.getServer();
         private TarantoolSubscriptionRegistry subscriptions = super.getSubscriptions();

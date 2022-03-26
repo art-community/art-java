@@ -20,6 +20,8 @@ package io.art.tarantool.manager;
 
 
 import io.art.communicator.action.*;
+import io.art.core.collection.*;
+import io.art.core.property.*;
 import io.art.tarantool.configuration.*;
 import io.art.tarantool.connector.*;
 import io.art.tarantool.model.*;
@@ -37,6 +39,9 @@ public class TarantoolManager {
                 .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::initialize);
+        for (TarantoolStorageRegistry registry : configuration.getStorageRegistries().get().values()) {
+            registry.getConnector().initialize();
+        }
     }
 
     public void dispose() {
@@ -44,7 +49,10 @@ public class TarantoolManager {
                 .getCommunicators()
                 .actions()
                 .forEach(CommunicatorAction::dispose);
-        configuration.storageRegistries().values().stream().map(TarantoolStorageRegistry::getConnector).forEach(TarantoolStorageConnector::dispose);
+        LazyProperty<ImmutableMap<String, TarantoolStorageRegistry>> registries = configuration.getStorageRegistries();
+        if (registries.initialized()) {
+            registries.get().values().stream().map(TarantoolStorageRegistry::getConnector).forEach(TarantoolStorageConnector::dispose);
+        }
         configuration.getSubscriptions().forEach(TarantoolSubscription::cancel);
     }
 }

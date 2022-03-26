@@ -11,21 +11,17 @@ import io.art.tarantool.connector.*;
 import io.art.tarantool.registry.*;
 import io.art.tarantool.service.schema.*;
 import io.art.tarantool.service.space.*;
-import lombok.*;
 import static io.art.core.collection.ImmutableMap.*;
 import static io.art.core.factory.MapFactory.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.core.property.LazyProperty.*;
 import static io.art.meta.Meta.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import static java.util.Objects.*;
 import static java.util.function.UnaryOperator.*;
-import static lombok.AccessLevel.*;
 import java.util.*;
 import java.util.function.*;
 
 @Public
-@RequiredArgsConstructor(access = PACKAGE)
 public class TarantoolStorageConfigurator {
     private boolean router;
     private final String storageId;
@@ -33,6 +29,13 @@ public class TarantoolStorageConfigurator {
     private final Map<String, LazyProperty<TarantoolBlockingStorageService<?, ?>>> spaces = map();
     private final Map<String, LazyProperty<Indexes<?>>> indexes = map();
     private final Map<String, LazyProperty<Sharders<?>>> sharders = map();
+    private final TarantoolStorageConnector connector;
+
+    TarantoolStorageConfigurator(String storageId) {
+        this.storageId = storageId;
+        connector = new TarantoolStorageConnector(storageId);
+    }
+
 
     public TarantoolStorageConfigurator router() {
         router = true;
@@ -57,17 +60,18 @@ public class TarantoolStorageConfigurator {
         }
 
         if (nonNull(indexes)) {
-            spaces.putIfAbsent(spaceId, lazy(() -> createSpaceService(findIdFieldType(indexes), spaceClass, storageId)));
+            spaces.putIfAbsent(spaceId, lazy(() -> createSpaceService(findIdFieldType(indexes), spaceClass)));
             this.indexes.putIfAbsent(spaceId, lazy(() -> declaration(indexes).creator().singleton()));
             return this;
         }
 
-        spaces.putIfAbsent(spaceId, lazy(() -> createSpaceService(idField.get().type(), spaceClass, storageId)));
+        spaces.putIfAbsent(spaceId, lazy(() -> createSpaceService(idField.get().type(), spaceClass)));
         return this;
     }
 
     TarantoolStorageRegistry createRegistry() {
-        TarantoolSchemaService schema = router ? new TarantoolRouterSchemaService(connector()) : new TarantoolStorageSchemaService(connector());
+
+        TarantoolSchemaService schema = router ? new TarantoolRouterSchemaService(connector) : new TarantoolStorageSchemaService(connector);
 
         ImmutableMap<String, TarantoolBlockingStorageService<?, ?>> spaces = this.spaces
                 .entrySet()
@@ -84,8 +88,6 @@ public class TarantoolStorageConfigurator {
                 .stream()
                 .collect(immutableMapCollector(Map.Entry::getKey, entry -> entry.getValue().get()));
 
-        TarantoolStorageConnector connector = new TarantoolStorageConnector(storageId);
-
         return TarantoolStorageRegistry.builder()
                 .connector(connector)
                 .schema(schema)
@@ -99,10 +101,6 @@ public class TarantoolStorageConfigurator {
         return configurator.apply(new TarantoolStorageConnectorConfigurator(storageId)).configure();
     }
 
-    private TarantoolStorageConnector connector() {
-        return tarantoolModule().configuration().storageRegistry(storageId).getConnector();
-    }
-
     private static <C> MetaType<?> findIdFieldType(Class<? extends Indexes<C>> indexes) {
         return declaration(indexes).creator()
                 .<Indexes<?>>singleton()
@@ -111,8 +109,8 @@ public class TarantoolStorageConfigurator {
                 .type();
     }
 
-    private <C> TarantoolBlockingStorageService<?, C> createSpaceService(MetaType<?> field, Class<C> spaceClass, String storageId) {
+    private <C> TarantoolBlockingStorageService<?, C> createSpaceService(MetaType<?> field, Class<C> spaceClass) {
         MetaClass<C> spaceDeclaration = declaration(spaceClass);
-        return new TarantoolBlockingStorageService<>(field, spaceDeclaration, connector());
+        return new TarantoolBlockingStorageService<>(field, spaceDeclaration, connector);
     }
 }
