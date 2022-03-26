@@ -1,6 +1,5 @@
 package io.art.tarantool.module;
 
-import io.art.core.collection.*;
 import io.art.core.context.*;
 import io.art.core.module.*;
 import io.art.core.property.*;
@@ -32,8 +31,7 @@ public class TarantoolModule implements StatefulModule<TarantoolModuleConfigurat
     @Override
     public void launch(ContextService contextService) {
         onErrorDropped(emptyConsumer());
-        ImmutableMap<String, TarantoolStorageConfiguration> storageConfigurations = configuration.getStorageConfigurations();
-        if (!storageConfigurations.isEmpty()) {
+        if (!configuration.getStorageConfigurations().isEmpty()) {
             manager.initialize();
         }
     }

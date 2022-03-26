@@ -24,8 +24,6 @@ public class TarantoolStorageRegistry {
     }
 
     public TarantoolSchemaService getSchema() {
-        System.out.println("registry: " + hashCode());
-        System.out.println("schema: " + schema.hashCode());
         return schema;
     }
 

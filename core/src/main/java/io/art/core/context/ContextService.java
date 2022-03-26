@@ -13,25 +13,29 @@ import java.util.*;
 @AllArgsConstructor
 public class ContextService {
     private final ContextConfiguration configuration;
-    private final LazyProperty<ImmutableMap<String, Module<?, ?>>> modules;
+    private final LazyProperty<ImmutableMap<String, ManagedModule>> modules;
 
     public void print(String message) {
         configuration.getPrinter().accept(message);
     }
 
     public void reload() {
-        for (Map.Entry<String, Module<?, ?>> entry : modules.get().entrySet()) {
-            Module<?, ?> module = entry.getValue();
-            apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_START_MESSAGE, module.getId())));
-            module.beforeReload(this);
+        for (Map.Entry<String, ManagedModule> entry : modules.get().entrySet()) {
+            ManagedModule module = entry.getValue();
+            Module<?, ?> delegate = module.getModule();
+            apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_START_MESSAGE, delegate.getId())));
+            delegate.beforeReload(this);
+            module.onBeforeReload(this);
         }
         apply(configuration.getBeforeReload(), Runnable::run);
 
-        for (Module<?, ?> module : modules.get().values()) {
-            apply(configuration.getReload(), reload -> reload.accept(module));
+        for (ManagedModule module : modules.get().values()) {
+            Module<?, ?> delegate = module.getModule();
+            apply(configuration.getReload(), reload -> reload.accept(delegate));
 
-            module.afterReload(this);
-            apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_END_MESSAGE, module.getId())));
+            delegate.afterReload(this);
+            module.onAfterReload(this);
+            apply(configuration.getPrinter(), printer -> printer.accept(format(MODULE_RELOADING_END_MESSAGE, delegate.getId())));
         }
         apply(configuration.getAfterReload(), Runnable::run);
     }

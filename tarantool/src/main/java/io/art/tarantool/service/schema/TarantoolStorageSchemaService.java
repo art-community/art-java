@@ -37,7 +37,6 @@ public class TarantoolStorageSchemaService implements TarantoolSchemaService {
         apply(configuration.user(), value -> options.put(SpaceFields.USER, newString(value)));
         apply(configuration.temporary(), value -> options.put(SpaceFields.TEMPORARY, newBoolean(value)));
         apply(configuration.format(), value -> options.put(SpaceFields.FORMAT, writeFormat(value)));
-        System.out.println("connector: " + connector.hashCode());
         ArrayValue input = newArray(newString(configuration.name()), newMap(options));
         block(connector.mutable().call(Functions.SCHEMA_CREATE_SPACE, input));
         return this;

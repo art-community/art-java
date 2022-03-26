@@ -32,7 +32,6 @@ import static io.art.core.constants.ContextConstants.*;
 import static io.art.core.constants.Errors.*;
 import static io.art.core.constants.LoggingMessages.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
-import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.extensions.ThreadExtensions.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
@@ -56,10 +55,9 @@ public class Context {
     private final AtomicBoolean terminationScheduled = new AtomicBoolean(false);
     private final AtomicBoolean onShutdown = new AtomicBoolean(false);
     private final CountDownLatch terminatorSignal = new CountDownLatch(1);
-    private final Map<String, Module<?, ?>> modules = map();
+    private final Map<String, ManagedModule> modules = map();
     private final ContextConfiguration configuration;
     private final ContextService service;
-    private final List<DisposableProperty<Module<?, ?>>> loadedModules = copyOnWriteList();
 
     private Context(ContextConfiguration configuration) {
         this.configuration = configuration;
@@ -115,14 +113,12 @@ public class Context {
     }
 
     public <C extends ModuleConfiguration> StatelessModuleProxy<C> getStatelessModule(String moduleId) {
-        DisposableProperty<Module<?, ?>> module = disposable(() -> INSTANCE.getModule(moduleId));
-        loadedModules.add(module);
+        DisposableProperty<ManagedModule> module = disposable(() -> INSTANCE.getModule(moduleId));
         return new StatelessModuleProxy<>(cast(module));
     }
 
     public <C extends ModuleConfiguration, S extends ModuleState> StatefulModuleProxy<C, S> getStatefulModule(String moduleId) {
-        DisposableProperty<Module<?, ?>> module = disposable(() -> INSTANCE.getModule(moduleId));
-        loadedModules.add(module);
+        DisposableProperty<ManagedModule> module = disposable(() -> INSTANCE.getModule(moduleId));
         return new StatefulModuleProxy<>(cast(module));
     }
 
@@ -193,8 +189,8 @@ public class Context {
         INSTANCE.unload();
     }
 
-    private Module<?, ?> getModule(String moduleId) {
-        Module<?, ?> module = modules.get(moduleId);
+    private ManagedModule getModule(String moduleId) {
+        ManagedModule module = modules.get(moduleId);
         if (nonNull(module)) {
             return module;
         }
@@ -204,18 +200,22 @@ public class Context {
     private void load(Collection<Module<?, ?>> modules) {
         for (Module<?, ?> module : modules) {
             String moduleId = module.getId();
-            this.modules.put(moduleId, module);
+            this.modules.put(moduleId, new ManagedModule(module));
         }
 
-        for (Module<?, ?> module : this.modules.values()) {
-            module.load(service);
+        for (ManagedModule module : this.modules.values()) {
+            Module<?, ?> delegate = module.getModule();
+            delegate.load(service);
+            module.onLoad(service);
         }
 
         apply(configuration.getPrinter(), printer -> printer.accept(WELCOME_MESSAGE));
         apply(configuration.getOnLoad(), Runnable::run);
 
-        for (Module<?, ?> module : this.modules.values()) {
-            module.launch(service);
+        for (ManagedModule module : this.modules.values()) {
+            Module<?, ?> delegate = module.getModule();
+            delegate.launch(service);
+            module.onLaunch(service);
         }
 
         apply(configuration.getPrinter(), printer -> printer.accept(LAUNCHED_MESSAGE));
@@ -223,26 +223,27 @@ public class Context {
     }
 
     private void unload() {
-        List<Module<?, ?>> modules = linkedListOf(this.modules.values());
+        List<ManagedModule> modules = linkedListOf(this.modules.values());
 
         reverse(modules);
 
-        for (Module<?, ?> module : modules) {
-            module.shutdown(service);
+        for (ManagedModule module : modules) {
+            Module<?, ?> delegate = module.getModule();
+            delegate.shutdown(service);
+            module.onShutdown(service);
         }
 
         apply(configuration.getOnShutdown(), Runnable::run);
         apply(configuration.getPrinter(), printer -> printer.accept(SHUTDOWN_MESSAGE));
 
-        for (Module<?, ?> module : modules) {
-            module.unload(service);
-            this.modules.remove(module.getId());
+        for (ManagedModule module : modules) {
+            Module<?, ?> delegate = module.getModule();
+            delegate.unload(service);
+            module.onUnload(service);
+            this.modules.remove(delegate.getId());
         }
-
-        erase(loadedModules, DisposableProperty::dispose);
 
         apply(configuration.getOnUnload(), Runnable::run);
         INSTANCE = null;
     }
-
 }

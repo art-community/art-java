@@ -18,12 +18,19 @@
 
 package io.art.core.module;
 
+import io.art.core.context.*;
 import io.art.core.property.*;
-import lombok.*;
+import static io.art.core.caster.Caster.*;
+import static io.art.core.property.DisposableProperty.*;
 
-@RequiredArgsConstructor
 public class StatefulModuleProxy<Configuration extends ModuleConfiguration, State extends ModuleState> {
     private final DisposableProperty<StatefulModule<Configuration, ?, State>> module;
+
+    public StatefulModuleProxy(DisposableProperty<ManagedModule> managed) {
+        this.module = disposable(() -> cast(managed.get().getModule()));
+        module.disposed(ignore -> managed.dispose());
+        managed.initialized(initialized -> initialized.onUnload(ignore -> module.dispose()));
+    }
 
     public Configuration configuration() {
         return module.get().getConfiguration();
