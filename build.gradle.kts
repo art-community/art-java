@@ -70,11 +70,6 @@ subprojects {
 
     tasks.test {
         useJUnitPlatform()
-        testLogging {
-            outputs.upToDateWhen { false }
-            showStandardStreams = true
-            events("passed", "skipped", "failed")
-        }
     }
 
     java {
