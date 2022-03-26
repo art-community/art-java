@@ -27,7 +27,6 @@ import static io.art.tarantool.constants.TarantoolModuleConstants.ProtocolConsta
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
 import static io.art.tarantool.descriptor.TarantoolRequestWriter.*;
 import static io.art.tarantool.factory.TarantoolRequestContentFactory.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.service.subscription.TarantoolSubscriptionService.*;
 import static io.netty.channel.ChannelOption.*;
 import static java.util.Objects.*;
@@ -42,7 +41,7 @@ public class TarantoolClient {
     private final static LazyProperty<Logger> logger = lazy(() -> logger(TARANTOOL_LOGGER));
 
     private final TarantoolClientConfiguration clientConfiguration;
-    private final LazyProperty<TarantoolModuleConfiguration> moduleConfiguration = lazy(() -> tarantoolModule().configuration());
+    private final TarantoolModuleConfiguration moduleConfiguration;
 
     private final Sinks.One<TarantoolClient> connector = one();
     private final AtomicBoolean connecting = new AtomicBoolean(false);
@@ -54,20 +53,20 @@ public class TarantoolClient {
     private volatile Disposable disposer;
 
     public Mono<Value> call(ImmutableStringValue name) {
-        TarantoolModelReader reader = moduleConfiguration.get().getReader();
-        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.get().getSubscriptions();
+        TarantoolModelReader reader = moduleConfiguration.getReader();
+        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.getSubscriptions();
         return call(name, payload -> publish(payload, subscriptions, reader));
     }
 
     public Mono<Value> call(ImmutableStringValue name, Mono<Value> input) {
-        TarantoolModelReader reader = moduleConfiguration.get().getReader();
-        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.get().getSubscriptions();
+        TarantoolModelReader reader = moduleConfiguration.getReader();
+        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.getSubscriptions();
         return call(name, input, payload -> publish(payload, subscriptions, reader));
     }
 
     public Mono<Value> call(ImmutableStringValue name, ArrayValue arguments) {
-        TarantoolModelReader reader = moduleConfiguration.get().getReader();
-        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.get().getSubscriptions();
+        TarantoolModelReader reader = moduleConfiguration.getReader();
+        TarantoolSubscriptionRegistry subscriptions = moduleConfiguration.getSubscriptions();
         return call(name, arguments, payload -> publish(payload, subscriptions, reader));
     }
 

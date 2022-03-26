@@ -47,19 +47,20 @@ public class TarantoolStorageConnector {
 
     public void initialize() {
         if (initialized.compareAndSet(false, true)) {
-            ImmutableSet<TarantoolClientConfiguration> clients = tarantoolModule().configuration().storageConfiguration(storageId).getClients();
+            TarantoolModuleConfiguration configuration = tarantoolModule().configuration();
+            ImmutableSet<TarantoolClientConfiguration> clients = configuration.storageConfiguration(storageId).getClients();
             for (TarantoolClientConfiguration client : clients) {
                 if (client.isRouter()) {
-                    routers.addEndpoint(new TarantoolClient(client));
+                    routers.addEndpoint(new TarantoolClient(client, configuration));
                     continue;
                 }
 
                 if (client.isImmutable()) {
-                    immutable.addEndpoint(new TarantoolClient(client));
+                    immutable.addEndpoint(new TarantoolClient(client, configuration));
                     continue;
                 }
-                immutable.addEndpoint(new TarantoolClient(client));
-                mutable.addEndpoint(new TarantoolClient(client));
+                immutable.addEndpoint(new TarantoolClient(client, configuration));
+                mutable.addEndpoint(new TarantoolClient(client, configuration));
             }
         }
     }
