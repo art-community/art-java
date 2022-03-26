@@ -14,6 +14,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: change temp dir
+          run: echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV
+          shell: bash
+
       - if: runner.os == 'Windows'
         uses: Vampire/setup-wsl@v1
         with:
