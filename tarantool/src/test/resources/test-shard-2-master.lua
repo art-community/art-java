@@ -7,8 +7,8 @@ local cfg = {
     log = "file:" .. current .. "/test-shard-2-master.log",
     election_mode = "candidate",
     replication_connect_quorum = 0,
+    memtx_use_mvcc_engine = true,
     replication_synchro_quorum = 2,
-    read_only = false,
     sharding = require("test-sharding")
 }
 
