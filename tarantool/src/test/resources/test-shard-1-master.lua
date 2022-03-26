@@ -8,6 +8,7 @@ local cfg = {
     election_mode = "candidate",
     replication_connect_quorum = 0,
     replication_synchro_quorum = 2,
+    read_only = false,
     sharding = require("test-sharding")
 }
 
