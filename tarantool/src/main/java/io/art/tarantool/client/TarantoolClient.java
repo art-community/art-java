@@ -121,11 +121,6 @@ public class TarantoolClient {
     private void onAuthenticate(boolean authenticated, String error) {
         if (authenticated && this.authenticated.compareAndSet(false, true)) {
             connector.tryEmitValue(this);
-            return;
-        }
-
-        if (connected.compareAndSet(true, false)) {
-            connector.tryEmitError(new TarantoolException(error));
         }
     }
 
