@@ -17,7 +17,7 @@ public class TarantoolStorageRegistry {
     private final ImmutableMap<String, TarantoolBlockingStorageService<?, ?>> spaces;
     private final ImmutableMap<String, Indexes<?>> indexes;
     private final ImmutableMap<String, Sharders<?>> sharders;
-    private boolean router;
+    private final boolean router;
 
     public TarantoolStorageConnector getConnector() {
         return connector;
