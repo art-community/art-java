@@ -19,6 +19,14 @@ public class RsocketServerConfigurator {
     private UnaryOperator<RsocketWsServerConfigurationBuilder> wsConfigurator = identity();
     private final ServerConfiguratorImplementation delegate = new ServerConfiguratorImplementation();
 
+    public RsocketServerConfigurator tcp(Class<?> serviceClass) {
+        return tcp().configure(configurator -> configurator.service(serviceClass));
+    }
+
+    public RsocketServerConfigurator ws(Class<?> serviceClass) {
+        return ws().configure(configurator -> configurator.service(serviceClass));
+    }
+
     public RsocketServerConfigurator tcp() {
         this.tcp = true;
         return this;
