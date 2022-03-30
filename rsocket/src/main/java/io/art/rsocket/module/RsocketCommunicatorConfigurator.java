@@ -48,7 +48,9 @@ public class RsocketCommunicatorConfigurator {
         return ws(() -> idByDash(communicatorClass), communicatorClass, configurator);
     }
 
-    public RsocketCommunicatorConfigurator tcp(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass, UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
+    public RsocketCommunicatorConfigurator tcp(ConnectorIdentifier connector,
+                                               Class<? extends Communicator> communicatorClass,
+                                               UnaryOperator<RsocketTcpConnectorConfigurator> configurator) {
         RsocketTcpConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketTcpConnectorConfigurator(connector.id()));
         RsocketTcpConnectorConfiguration configuration = connectorConfigurator.configure();
         tcpConnectorConfigurations.put(connector.id(), configuration);
@@ -57,7 +59,9 @@ public class RsocketCommunicatorConfigurator {
         return this;
     }
 
-    public RsocketCommunicatorConfigurator ws(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass, UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
+    public RsocketCommunicatorConfigurator ws(ConnectorIdentifier connector,
+                                              Class<? extends Communicator> communicatorClass,
+                                              UnaryOperator<RsocketWsConnectorConfigurator> configurator) {
         RsocketWsConnectorConfigurator connectorConfigurator = configurator.apply(new RsocketWsConnectorConfigurator(connector.id()));
         RsocketWsConnectorConfiguration configuration = connectorConfigurator.configure();
         wsConnectorConfigurations.put(connector.id(), configuration);
