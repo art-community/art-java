@@ -31,11 +31,14 @@ public class HttpCommunicatorConfigurator {
         return connector(connector, communicatorClass, identity());
     }
 
-    public HttpCommunicatorConfigurator connector(Class<? extends Communicator> communicatorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+    public HttpCommunicatorConfigurator connector(Class<? extends Communicator> communicatorClass,
+                                                  UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
         return connector(() -> idByDash(communicatorClass), communicatorClass, configurator);
     }
 
-    public HttpCommunicatorConfigurator connector(ConnectorIdentifier connector, Class<? extends Communicator> communicatorClass, UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
+    public HttpCommunicatorConfigurator connector(ConnectorIdentifier connector,
+                                                  Class<? extends Communicator> communicatorClass,
+                                                  UnaryOperator<HttpConnectorConfigurationBuilder> configurator) {
         HttpConnectorConfiguration configuration = configurator.apply(httpConnectorConfiguration(connector.id()).toBuilder().uri(byCommunicatorAction())).build();
         connectors.put(connector.id(), configuration);
         CommunicatorActionFactory factory = (connectorId, actionId) -> createManagedHttpCommunication(configuration().connector(connectorId));
