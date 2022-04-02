@@ -73,13 +73,13 @@ public class TarantoolStorageTest {
         shutdown();
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testSinglePut() {
         TestingMetaModel data = generateTestingModel();
         data.assertEquals(current().put(data));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testMultiplePut() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -93,13 +93,13 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(2));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testSingleInsert() {
         TestingMetaModel data = generateTestingModel();
         data.assertEquals(current().insert(data));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testMultipleInsert() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -113,7 +113,7 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(2));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testSingleDelete() {
         TestingMetaModel data = generateTestingModel();
         current().insert(data);
@@ -122,7 +122,7 @@ public class TarantoolStorageTest {
         assertEquals(0, current().size());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testMultipleDelete() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -134,7 +134,7 @@ public class TarantoolStorageTest {
         assertEquals(0, current().size());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testSingleUpdate() {
         TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f16("test").f9(10).build();
         current().insert(data);
@@ -149,7 +149,7 @@ public class TarantoolStorageTest {
         assertNull(current().update(data.getF1(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testUpsert() {
         Supplier<TestingMetaModel> generate = () -> generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f9(10).build();
         TestingMetaModel data = generate.get();
@@ -181,7 +181,7 @@ public class TarantoolStorageTest {
         assertNull(current().first(data.getF1()).getF33());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testMultipleUpdate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).build(),
@@ -214,7 +214,7 @@ public class TarantoolStorageTest {
                 .forEach(element -> assertNull(element.getF33()));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testTruncate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -226,7 +226,7 @@ public class TarantoolStorageTest {
         assertEquals(0, current().size());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testCount() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -238,14 +238,14 @@ public class TarantoolStorageTest {
         assertEquals(1, current().count(1));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testFirst() {
         TestingMetaModel data = generateTestingModel();
         current().put(data);
         data.assertEquals(current().first(1));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testSelect() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -258,7 +258,7 @@ public class TarantoolStorageTest {
         data.get(0).assertEquals(result.get(0));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testFind() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -273,7 +273,7 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(2));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexCount() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
@@ -284,7 +284,7 @@ public class TarantoolStorageTest {
         assertEquals(1, current().index(testModelIndexes().f9f16()).count(10, "test"));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexFirst() {
         TestingMetaModel data = generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build();
         current().put(data);
@@ -292,7 +292,7 @@ public class TarantoolStorageTest {
         data.assertEquals(current().index(testModelIndexes().f9f16()).first(10, "test"));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexSelect() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
@@ -310,7 +310,7 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(1));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexFind() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
@@ -331,7 +331,7 @@ public class TarantoolStorageTest {
         data.get(2).assertEquals(result.get(2));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexSingleDelete() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).f16("test").build(),
@@ -348,7 +348,7 @@ public class TarantoolStorageTest {
         assertEquals(1, current().size());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexMultipleDelete() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -363,7 +363,7 @@ public class TarantoolStorageTest {
         assertEquals(1, current().size());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexSingleUpdate() {
         TestingMetaModel data = generateTestingModel().toBuilder().f33(fixedArrayOf("test")).f10((short) 10).f9(10).f16("test").build();
         current().insert(data);
@@ -379,7 +379,7 @@ public class TarantoolStorageTest {
         assertNull(index.update(data.getF9(), data.getF16(), updater -> updater.delete(testingMetaModel().f33Field())).getF33());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testIndexMultipleUpdate() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f10((short) 10).f33(fixedArrayOf("test")).f9(10).f16("test").build(),
@@ -412,13 +412,13 @@ public class TarantoolStorageTest {
                 .forEach(element -> assertNull(element.getF33()));
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testSubscription() {
         tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
     }
 
-    @RepeatedTest(value = 3)
+    @RepeatedTest(3)
     public void testChannel() {
         CountDownLatch waiter = new CountDownLatch(2);
         tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {
