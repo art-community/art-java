@@ -64,7 +64,7 @@ public class TestTarantoolInstanceManager {
         if (!pid.toFile().exists()) return;
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists()) {
-            System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
+            System.out.println(format(SHUTDOWN_LOG_OUTPUT, directory, readFile(logFile)));
         }
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 KILL_COMMAND + readFile(pid) +
@@ -130,6 +130,6 @@ public class TestTarantoolInstanceManager {
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitTime(ofSeconds(3));
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
-        if (logFile.toFile().exists()) System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
+        if (logFile.toFile().exists()) System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile)));
     }
 }
