@@ -7,6 +7,7 @@ import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
+import static io.art.core.network.selector.PortSelector.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +33,7 @@ public class TransportTest {
         CountDownLatch connectLatch = new CountDownLatch(1);
         AtomicReference<DisposableServer> disposableServer = new AtomicReference<>();
         AtomicReference<DisposableChannel> disposableClient = new AtomicReference<>();
-        int port = 9091;
+        int port = findAvailableTcpPort();
 
         Runnable startServer = () -> TcpServer.create()
                 .host(LOCALHOST)
