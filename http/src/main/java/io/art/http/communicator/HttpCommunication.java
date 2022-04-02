@@ -79,7 +79,6 @@ public class HttpCommunication implements Communication {
         if (nonNull(inputMappingType) && (inputMappingType.internalKind() == MONO || inputMappingType.internalKind() == FLUX)) {
             inputMappingType = inputMappingType.parameters().get(0);
         }
-
         outputMappingType = action.getOutputType();
         if (nonNull(outputMappingType) && (outputMappingType.internalKind() == MONO || outputMappingType.internalKind() == FLUX)) {
             outputMappingType = outputMappingType.parameters().get(0);
