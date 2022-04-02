@@ -34,7 +34,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
 
 public class TarantoolRouterTest {
-
     @BeforeEach
     public void setup() {
         try {
@@ -123,13 +122,13 @@ public class TarantoolRouterTest {
         data2.assertEquals(result2.get(0));
     }
 
-    @RepeatedTest(100)
+    @Test
     public void testSubscription() {
         tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
     }
 
-    @RepeatedTest(100)
+    @Test
     public void testChannel() {
         CountDownLatch waiter = new CountDownLatch(2);
         tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {

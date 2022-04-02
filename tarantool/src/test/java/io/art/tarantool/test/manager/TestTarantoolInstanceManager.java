@@ -17,6 +17,7 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
@@ -126,11 +127,9 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        if (!waitCondition(() -> !TCP.isPortAvailable(port))) {
+        if (!waitCondition(ofMinutes(1), () -> !TCP.isPortAvailable(port))) {
             Path logFile = get(directory).resolve(directory + ".log");
-            if (logFile.toFile().exists()) {
-                System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
-            }
+            if (logFile.toFile().exists()) System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
             fail(format(INITIALIZATION_ERROR, directory, port));
         }
     }

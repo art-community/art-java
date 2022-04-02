@@ -63,8 +63,12 @@ local configuration = {
 }
 
 local configure = function(newConfiguration)
-    configuration.bucketIdField = newConfiguration.bucketIdField
-    configuration.callTimeout = newConfiguration.callTimeout
+    if newConfiguration.bucketIdField ~= nil then
+        configuration.bucketIdField = newConfiguration.bucketIdField
+    end
+    if newConfiguration.callTimeout ~= nil then
+        configuration.callTimeout = newConfiguration.callTimeout
+    end
 end
 
 return {
@@ -175,7 +179,7 @@ local configuration = require("art.router.configuration").configuration
 
 local index = {
     first = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexFirst, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexFirst, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -183,7 +187,7 @@ local index = {
     end,
 
     select = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexSelect, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexSelect, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -191,7 +195,7 @@ local index = {
     end,
 
     find = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexFind, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexFind, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -201,7 +205,7 @@ local index = {
     stream = indexStream,
 
     count = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexCount, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexCount, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -228,7 +232,7 @@ local configuration = require("art.router.configuration").configuration
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexMultiple.delete, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexMultiple.delete, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -236,7 +240,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexMultiple.update, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexMultiple.update, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -259,7 +263,7 @@ local configuration = require("art.router.configuration").configuration
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexSingle.delete, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexSingle.delete, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -267,7 +271,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexSingle.update, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), indexSingle.update, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -347,7 +351,6 @@ local storageFunctions = constants.storageFunctions
 local notCreatedMessage = constants.notCreatedMessage
 local configuration = require("art.router.configuration").configuration
 local shards = require("art.router.shard-service")
-local configuration = require("art.router.configuration").configuration
 
 local schema = {
     createIndex = function(request)
@@ -359,7 +362,7 @@ local schema = {
             end
         end
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaCreateIndex, request, { timeout = configuration.timeout })
+            local _, error = shard:callrw(storageFunctions.schemaCreateIndex, request, { timeout = configuration.callTimeout })
             if error ~= nil and error ~= notCreatedMessage then
                 throw(error)
             end
@@ -368,7 +371,7 @@ local schema = {
 
     dropIndex = function(request)
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaDropIndex, request, { timeout = configuration.timeout })
+            local _, error = shard:callrw(storageFunctions.schemaDropIndex, request, { timeout = configuration.callTimeout })
             if error ~= nil then
                 throw(error)
             end
@@ -377,7 +380,7 @@ local schema = {
 
     renameSpace = function(request)
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaRenameSpace, request, { timeout = configuration.timeout })
+            local _, error = shard:callrw(storageFunctions.schemaRenameSpace, request, { timeout = configuration.callTimeout })
             if error ~= nil then
                 throw(error)
             end
@@ -386,7 +389,7 @@ local schema = {
 
     formatSpace = function(request)
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaFormat, request, { timeout = configuration.timeout })
+            local _, error = shard:callrw(storageFunctions.schemaFormat, request, { timeout = configuration.callTimeout })
             if error ~= nil then
                 throw(error)
             end
@@ -395,7 +398,7 @@ local schema = {
 
     dropSpace = function(request)
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaDropIndex, request, { timeout = configuration.timeout })
+            local _, error = shard:callrw(storageFunctions.schemaDropIndex, request, { timeout = configuration.callTimeout })
             if error ~= nil then
                 throw(error)
             end
@@ -405,7 +408,7 @@ local schema = {
     createSpace = function(request)
         table.insert(request, configuration.bucketIdField)
         shards.forEach(function(shard)
-            local _, error = shard:callrw(storageFunctions.schemaCreateSpace, request, { timeout = configuration.timeout })
+            local _, error = shard:callrw(storageFunctions.schemaCreateSpace, request, { timeout = configuration.callTimeout })
             if error ~= nil and error ~= notCreatedMessage then
                 throw(error)
             end
@@ -414,7 +417,7 @@ local schema = {
 
     spaces = function(request)
         return shards.flatMap(function(shard)
-            local _, error = shard:callro(storageFunctions.schemaSpaces, request, { timeout = configuration.timeout })
+            local _, error = shard:callro(storageFunctions.schemaSpaces, request, { timeout = configuration.callTimeout })
             if error ~= nil then
                 throw(error)
             end
@@ -423,7 +426,7 @@ local schema = {
 
     indices = function(request)
         return shards.flatMap(function(shard)
-            local _, error = shard:callro(storageFunctions.schemaIndices, request, { timeout = configuration.timeout })
+            local _, error = shard:callro(storageFunctions.schemaIndices, request, { timeout = configuration.callTimeout })
             if error ~= nil then
                 throw(error)
             end
@@ -504,7 +507,7 @@ local configuration = require("art.router.configuration").configuration
 
 local space = {
     first = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceFirst, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceFirst, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -512,7 +515,7 @@ local space = {
     end,
 
     select = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceSelect, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceSelect, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -520,7 +523,7 @@ local space = {
     end,
 
     find = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceFind, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceFind, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -530,7 +533,7 @@ local space = {
     stream = spaceStream,
 
     count = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceCount, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceCount, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -538,7 +541,7 @@ local space = {
     end,
 
     truncate = function(bucketRequest, functionRequest)
-        local _, error = vshard.router.callrw(generateBucket(bucketRequest), storageFunctions.spaceTruncate, functionRequest, { timeout = configuration.timeout })
+        local _, error = vshard.router.callrw(generateBucket(bucketRequest), storageFunctions.spaceTruncate, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -564,7 +567,7 @@ local configuration = require("art.router.configuration").configuration
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceMultiple.delete, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceMultiple.delete, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -575,7 +578,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertMultipleBucketIds(functionRequest[2], bucket)
 
-        local result, error = vshard.router.callrw(bucket, spaceMultiple.insert, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(bucket, spaceMultiple.insert, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -587,7 +590,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertMultipleBucketIds(functionRequest[2], bucket)
 
-        local result, error = vshard.router.callrw(bucket, spaceMultiple.put, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(bucket, spaceMultiple.put, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -596,7 +599,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceMultiple.update, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceMultiple.update, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -619,7 +622,7 @@ local configuration = require("art.router.configuration").configuration
 
 local transformer = {
     delete = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceSingle.delete, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceSingle.delete, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -630,7 +633,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertSingleBucketId(functionRequest[2], bucket)
 
-        local result, error = vshard.router.callrw(bucket, spaceSingle.insert, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(bucket, spaceSingle.insert, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -642,7 +645,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertSingleBucketId(functionRequest[2], bucket)
 
-        local result, error = vshard.router.callrw(bucket, spaceSingle.put, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(bucket, spaceSingle.put, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -651,7 +654,7 @@ local transformer = {
     end,
 
     update = function(bucketRequest, functionRequest)
-        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceSingle.update, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(generateBucket(bucketRequest), spaceSingle.update, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -662,7 +665,7 @@ local transformer = {
         local bucket = generateBucket(bucketRequest)
         bucketModifier.insertSingleBucketId(functionRequest[2], bucket)
 
-        local result, error = vshard.router.callrw(bucket, spaceSingle.upsert, functionRequest, { timeout = configuration.timeout })
+        local result, error = vshard.router.callrw(bucket, spaceSingle.upsert, functionRequest, { timeout = configuration.callTimeout })
         if error ~= nil then
             throw(error)
         end
@@ -704,7 +707,7 @@ local removeBucket = function(operators)
 end
 
 local spaceStream = function(bucketRequest, functionRequest)
-    local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceStream, functionRequest, { timeout = configuration.timeout })
+    local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.spaceStream, functionRequest, { timeout = configuration.callTimeout })
     if error ~= nil then
         throw(error)
     end
@@ -717,7 +720,7 @@ local spaceStream = function(bucketRequest, functionRequest)
 end
 
 local indexStream = function(bucketRequest, functionRequest)
-    local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexStream, functionRequest, { timeout = configuration.timeout })
+    local result, error = vshard.router.callro(generateBucket(bucketRequest), storageFunctions.indexStream, functionRequest, { timeout = configuration.callTimeout })
     if error ~= nil then
         throw(error)
     end
