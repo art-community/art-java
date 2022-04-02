@@ -8,16 +8,13 @@ local cfg = {
     log = "file:" .. current .. "/test-router.log",
     replication_connect_quorum = 0,
     replication_synchro_quorum = 2,
-    replication_synchro_timeout = 60,
     sharding = require("test-sharding")
 }
 
 require("art-tarantool")
 vshard = require('vshard')
 vshard.router.cfg(cfg)
-require("art.router").initialize({
-    callTimeout = 60
-})
+require("art.router").initialize()
 
 box.schema.user.create('username', { password = 'password', if_not_exists = true })
 box.schema.user.grant('username', 'read,write,execute,create,alter,drop', 'universe', nil, { if_not_exists = true })
