@@ -23,15 +23,14 @@ import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.lock.TarantoolTestLocker.lock;
-import static io.art.tarantool.test.lock.TarantoolTestLocker.unlock;
+import static io.art.tarantool.test.lock.TestTarantoolLocker.lock;
+import static io.art.tarantool.test.lock.TestTarantoolLocker.unlock;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
 import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
-import java.util.concurrent.locks.*;
 
 public class TarantoolStreamTest {
     @BeforeEach

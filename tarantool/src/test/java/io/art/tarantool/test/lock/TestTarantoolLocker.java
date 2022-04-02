@@ -2,7 +2,7 @@ package io.art.tarantool.test.lock;
 
 import java.util.concurrent.locks.*;
 
-public class TarantoolTestLocker {
+public class TestTarantoolLocker {
     private final static ReentrantLock afterLock = new ReentrantLock();
 
     public static void lock() {
