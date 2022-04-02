@@ -60,7 +60,7 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(() -> TCP.isPortAvailable(port))) {
-            fail(format(SHUTDOWN_ERROR, directory, port));
+            fail(format(SHUTDOWN_ERROR, directory, port, readFile(directory + ".log")));
         }
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
@@ -76,7 +76,7 @@ public class TestTarantoolInstanceManager {
     }
 
     private static void initialize(int port, String directory, String scriptFile) {
-        if (!TCP.isPortAvailable(port)) return;
+        if (!TCP.isPortAvailable(port)) fail(format(PORT_IS_BUSY_ERROR, port));
 
         String directoryExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 MKDIR_COMMAND + TEMP_DIRECTORY + SLASH + directory +
@@ -112,7 +112,7 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(() -> !TCP.isPortAvailable(port))) {
-            fail(format(INITIALIZATION_ERROR, scriptFile, port));
+            fail(format(INITIALIZATION_ERROR, scriptFile, port, readFile(directory + ".log")));
         }
     }
 }
