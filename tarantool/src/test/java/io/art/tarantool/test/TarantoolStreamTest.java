@@ -32,8 +32,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.*;
 
 public class TarantoolStreamTest {
-    @BeforeEach
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         try {
             lock();
             initialize(
@@ -87,8 +87,8 @@ public class TarantoolStreamTest {
         }
     }
 
-    @AfterEach
-    public void cleanup() {
+    @AfterAll
+    public static void cleanup() {
         try {
             lock();
             for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {

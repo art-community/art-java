@@ -36,9 +36,8 @@ import java.util.concurrent.*;
 import java.util.function.*;
 
 public class TarantoolStorageTest {
-
-    @BeforeEach
-    public void setup() {
+    @BeforeAll
+    public static void setup() {
         try {
             lock();
             initialize(
@@ -74,8 +73,8 @@ public class TarantoolStorageTest {
         }
     }
 
-    @AfterEach
-    public void cleanup() {
+    @AfterAll
+    public static void cleanup() {
         try {
             lock();
             for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
