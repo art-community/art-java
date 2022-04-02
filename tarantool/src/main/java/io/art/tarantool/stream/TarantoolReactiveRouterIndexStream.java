@@ -22,7 +22,7 @@ import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.storage.constants.StorageConstants.FilterCondition.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorithm.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static java.util.Objects.*;
 import static org.msgpack.value.ValueFactory.*;

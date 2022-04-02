@@ -298,7 +298,7 @@ public interface TarantoolModuleConstants {
         ImmutableStringValue ASSIGMENT = newString("=");
     }
 
-    interface ShardingAlgorhtim {
+    interface ShardingAlgorithm {
         ImmutableIntegerValue CRC_32 = newInteger(1);
     }
 }

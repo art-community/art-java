@@ -21,7 +21,7 @@ import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
 import static io.art.meta.Meta.*;
 import static io.art.meta.registry.BuiltinMetaTypes.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.Functions.*;
-import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorhtim.*;
+import static io.art.tarantool.constants.TarantoolModuleConstants.ShardingAlgorithm.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static org.msgpack.value.ValueFactory.*;
 import static reactor.core.publisher.Flux.*;
