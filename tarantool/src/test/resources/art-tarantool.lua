@@ -59,7 +59,7 @@ local _ENV = _ENV
 package.preload[ "art.router.configuration" ] = function( ... ) local arg = _G.arg;
 local configuration = {
     bucketIdField = 2,
-    callTimeout = 5,
+    callTimeout = 0.5,
 }
 
 local configure = function(newConfiguration)
