@@ -67,7 +67,7 @@ public class TestTarantoolInstanceManager {
     private static void shutdown(int port, String directory, String pidPath) {
         Path pid = get(directory).resolve(pidPath);
         if (!pid.toFile().exists()) return;
-        Path logFile = get(directory).resolve(directory + ".log");
+        Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists()) {
             System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
         }
@@ -134,7 +134,7 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(ofMinutes(1), () -> !TCP.isPortAvailable(port))) {
-            Path logFile = get(directory).resolve(directory + ".log");
+            Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
             if (logFile.toFile().exists()) System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
             fail(format(INITIALIZATION_ERROR, directory, port));
         }

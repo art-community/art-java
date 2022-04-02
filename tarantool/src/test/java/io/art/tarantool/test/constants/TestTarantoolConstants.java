@@ -59,6 +59,7 @@ public interface TestTarantoolConstants {
     String INITIALIZATION_ERROR = "Tarantool instance {0} on port {1,number,#} has not been initialized";
     String SHUTDOWN_ERROR = "Tarantool instance {0} on port {1,number,#} has not been shutdown";
     String LOG_OUTPUT = "Tarantool {0} log content:\n{1}\n\n";
+    String LOG_EXTENSION = ".log";
 
     static String instanceCommand(String path) {
         return "cd " + convertToWslPath(path) + " && tarantool";
