@@ -14,6 +14,7 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
+import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
@@ -109,6 +110,8 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitCondition(() -> !TCP.isPortAvailable(port));
+        if (!waitCondition(() -> !TCP.isPortAvailable(port))) {
+            throw new TarantoolException(format(INITIALIZATION_ERROR, scriptFile, port));
+        }
     }
 }

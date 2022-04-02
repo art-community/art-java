@@ -112,7 +112,6 @@ public class TarantoolRouterTest {
         data2.assertEquals(result2.get(0));
     }
 
-
     @Test
     public void testSubscription() {
         tarantool(TestStorage.class).testSubscription();

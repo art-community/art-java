@@ -50,6 +50,8 @@ public interface TestTarantoolConstants {
     String TEMP_DIRECTORY = orElse(getenv("TMPDIR"), "/tmp") + "/tarantool";
     String DELETE_COMMAND = "rm -rf ";
 
+    String INITIALIZATION_ERROR = "Tarantool instance {0} on port {1} has not been initialized";
+
     static String instanceCommand(String path) {
         return "cd " + convertToWslPath(path) + " && tarantool";
     }
