@@ -50,7 +50,7 @@ public class TarantoolClient {
     private final Sinks.Many<ByteBuf> sender = many().unicast().onBackpressureBuffer();
     private final TarantoolReceiverRegistry receivers = new TarantoolReceiverRegistry(RECEIVERS_POOL_MAXIMUM);
 
-    private volatile Connection connection;
+    private volatile Disposable disposer;
 
     public Mono<Value> call(ImmutableStringValue name) {
         TarantoolModelReader reader = moduleConfiguration.getReader();
@@ -86,7 +86,7 @@ public class TarantoolClient {
     }
 
     public void dispose() {
-        apply(connection, Disposable::dispose);
+        apply(disposer, Disposable::dispose);
     }
 
     private Mono<Value> executeCall(ImmutableStringValue name, Consumer<ArrayValue> onChunk) {
@@ -170,7 +170,7 @@ public class TarantoolClient {
 
     private void connect() {
         if (connecting.compareAndSet(false, true)) {
-            TcpClient.create()
+            disposer = TcpClient.create()
                     .host(clientConfiguration.getHost())
                     .port(clientConfiguration.getPort())
                     .option(CONNECT_TIMEOUT_MILLIS, (int) clientConfiguration.getConnectionTimeout().toMillis())
@@ -183,8 +183,6 @@ public class TarantoolClient {
 
     private void setup(Connection connection) {
         if (connected.compareAndSet(false, true)) {
-            this.connection = connection;
-
             connection.markPersistent(true);
             connection
                     .addHandlerLast(new TarantoolAuthenticationRequester(clientConfiguration.getUsername(), clientConfiguration.getPassword()))
