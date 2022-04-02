@@ -31,7 +31,7 @@ import java.util.*;
 
 public class TarantoolStreamTest {
     @BeforeEach
-    public static void setup() {
+    public  void setup() {
         initializeStorage();
         initialize(
                 MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
@@ -82,7 +82,7 @@ public class TarantoolStreamTest {
     }
 
     @AfterEach
-    public static void cleanup() {
+    public void cleanup() {
         shutdownStorage();
         shutdown();
     }

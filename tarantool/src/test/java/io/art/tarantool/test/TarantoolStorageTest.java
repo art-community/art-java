@@ -35,7 +35,7 @@ import java.util.function.*;
 
 public class TarantoolStorageTest {
     @BeforeEach
-    public static void setup() {
+    public void setup() {
         initializeStorage();
         initialize(
                 MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
@@ -68,7 +68,7 @@ public class TarantoolStorageTest {
     }
 
     @AfterEach
-    public static void cleanup() {
+    public void cleanup() {
         shutdownStorage();
         shutdown();
     }
