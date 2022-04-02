@@ -1,7 +1,6 @@
 package io.art.tarantool.test;
 
 import io.art.core.collection.*;
-import io.art.logging.module.*;
 import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
+import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
@@ -26,13 +26,12 @@ import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.lock.TarantoolTestLocker.lock;
-import static io.art.tarantool.test.lock.TarantoolTestLocker.unlock;
+import static io.art.tarantool.test.lock.TarantoolTestLocker.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
+import static java.time.Duration.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.*;
 
 public class TarantoolRouterTest {
 
@@ -58,12 +57,6 @@ public class TarantoolRouterTest {
                     )
             );
             initializeRouter();
-            tarantool()
-                    .connector(TestStorage.class)
-                    .router()
-                    .call(ROUTER_BOOTSTRAP_FUNCTION)
-                    .block();
-
             tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())

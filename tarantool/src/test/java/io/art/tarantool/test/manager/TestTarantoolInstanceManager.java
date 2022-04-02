@@ -2,6 +2,7 @@ package io.art.tarantool.test.manager;
 
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
+import io.art.tarantool.test.model.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
@@ -11,10 +12,12 @@ import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.network.selector.PortSelector.SocketType.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
+import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
@@ -32,6 +35,13 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
         initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
+        waitTime(ofSeconds(3));
+        tarantool()
+                .connector(TestStorage.class)
+                .router()
+                .call(ROUTER_BOOTSTRAP_FUNCTION)
+                .block();
+        waitTime(ofSeconds(3));
     }
 
     public static void shutdownStorage() {
@@ -47,9 +57,12 @@ public class TestTarantoolInstanceManager {
     }
 
     private static void shutdown(int port, String directory, String pidPath) {
-        System.out.println(format(LOG_OUTPUT, directory, readFile(get(directory).resolve(directory + ".log"))));
         Path pid = get(directory).resolve(pidPath);
         if (!pid.toFile().exists()) return;
+        Path logFile = get(directory).resolve(directory + ".log");
+        if (logFile.toFile().exists()) {
+            System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
+        }
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 KILL_COMMAND + readFile(pid) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
