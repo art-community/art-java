@@ -33,7 +33,7 @@ public class TransportTest {
         CountDownLatch connectLatch = new CountDownLatch(1);
         AtomicReference<DisposableServer> disposableServer = new AtomicReference<>();
         AtomicReference<DisposableChannel> disposableClient = new AtomicReference<>();
-        int port = findAvailableTcpPort();
+        int port = findAvailableTcpPort(9090);
 
         Runnable startServer = () -> TcpServer.create()
                 .host(LOCALHOST)
