@@ -47,7 +47,6 @@ public interface TestTarantoolConstants {
     String[] ADDITIONAL_SCRIPTS = {
             "art-tarantool.lua",
             "test-sharding.lua",
-            "test-shard-initializer.lua",
             "test-shard-initializer.lua"
     };
 
