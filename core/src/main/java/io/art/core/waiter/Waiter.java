@@ -41,7 +41,7 @@ public class Waiter {
         CountDownLatch latch = new CountDownLatch(1);
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
         scheduler.setMaximumPoolSize(1);
-        scheduler.scheduleAtFixedRate(() -> check(scheduler, condition, latch), 0L, checkPeriod.toMillis(), MILLISECONDS);
+        scheduler.scheduleAtFixedRate(() -> check(scheduler, condition, latch), checkPeriod.toMillis(), checkPeriod.toMillis(), MILLISECONDS);
         boolean result = handleException(ignored -> false).call(() -> latch.await(timeout.toMillis(), MILLISECONDS));
         scheduler.shutdownNow();
         return result;
