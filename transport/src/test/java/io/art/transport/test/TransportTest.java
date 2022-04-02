@@ -1,11 +1,11 @@
 package io.art.transport.test;
 
-import io.art.core.network.selector.*;
 import org.junit.jupiter.api.*;
+import reactor.core.*;
 import reactor.netty.tcp.*;
-import static io.art.core.constants.NetworkConstants.LOCALHOST;
+import static io.art.core.constants.NetworkConstants.*;
+import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
-import static io.art.core.network.selector.PortSelector.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
@@ -19,25 +19,31 @@ public class TransportTest {
         );
     }
 
-    @Test
+    @AfterAll
+    public static void cleanup() {
+        shutdown();
+    }
+
+    @RepeatedTest(10)
     public void testRetry() throws InterruptedException {
         AtomicInteger retry = new AtomicInteger(0);
         CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<Disposable> server = new AtomicReference<>();
+        int port = 9091;
 
-        int port = findAvailableTcpPort();
+        Runnable startServer = () -> server.getAndSet(TcpServer.create()
+                .port(port)
+                .doOnConnection(connection -> latch.countDown())
+                .bind()
+                .subscribe());
 
-        TcpClient.create()
+        Disposable client = TcpClient.create()
                 .host(LOCALHOST)
                 .port(port)
                 .doOnConnect(config -> {
-                    if (retry.getAndIncrement() < 2) {
-                        return;
+                    if (retry.incrementAndGet() >= 2) {
+                        startServer.run();
                     }
-                    TcpServer.create()
-                            .port(port)
-                            .doOnConnection(connection -> latch.countDown())
-                            .bind()
-                            .subscribe();
                 })
                 .connect()
                 .retry(3)
@@ -45,5 +51,7 @@ public class TransportTest {
 
         latch.await();
         assertEquals(3, retry.get());
+        client.dispose();
+        server.getAndSet(null).dispose();
     }
 }
