@@ -13,6 +13,7 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -29,8 +30,10 @@ import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArt
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
 import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import java.util.*;
 
+@Execution(SAME_THREAD)
 public class TarantoolStreamTest {
     @BeforeEach
     public  void setup() {

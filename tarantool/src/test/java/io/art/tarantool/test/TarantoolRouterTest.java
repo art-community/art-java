@@ -14,6 +14,7 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -29,8 +30,10 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import java.util.concurrent.*;
 
+@Execution(SAME_THREAD)
 public class TarantoolRouterTest {
     @BeforeEach
     public void setup() {

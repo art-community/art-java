@@ -15,6 +15,7 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.parallel.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
 import static io.art.core.factory.ListFactory.*;
@@ -31,10 +32,12 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 
+@Execution(SAME_THREAD)
 public class TarantoolStorageTest {
     @BeforeEach
     public void setup() {
