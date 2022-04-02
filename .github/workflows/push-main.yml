@@ -14,14 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - if: runner.os == 'macOS' || runner.os == 'Linux'
-        name: Setup temporary directory
-        run: echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV
-
-      - if: runner.os == 'Windows'
-        name: Setup temporary directory
-        run: wsl bash -c \"echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV\"
-
       - if: runner.os == 'Windows'
         uses: Vampire/setup-wsl@v1
         with:
@@ -45,6 +37,14 @@ jobs:
         uses: tarantool/setup-tarantool@v1
         with:
           tarantool-version: '${{ matrix.tarantool }}'
+
+      - if: runner.os == 'macOS' || runner.os == 'Linux'
+        name: Setup temporary directory
+        run: echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV
+
+      - if: runner.os == 'Windows'
+        name: Setup temporary directory
+        run: wsl bash -c \"echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV\"
 
       - uses: actions/setup-java@v1
         with:
