@@ -1,11 +1,13 @@
 package io.art.transport.test;
 
 import org.junit.jupiter.api.*;
-import reactor.core.*;
+import reactor.netty.*;
 import reactor.netty.tcp.*;
 import static io.art.core.constants.NetworkConstants.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
+import static io.art.core.network.selector.PortSelector.SocketType.*;
+import static io.art.core.waiter.Waiter.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
@@ -27,31 +29,34 @@ public class TransportTest {
     @RepeatedTest(10)
     public void testRetry() throws InterruptedException {
         AtomicInteger retry = new AtomicInteger(0);
-        CountDownLatch latch = new CountDownLatch(1);
-        AtomicReference<Disposable> server = new AtomicReference<>();
+        CountDownLatch connectLatch = new CountDownLatch(1);
+        AtomicReference<DisposableServer> disposableServer = new AtomicReference<>();
+        AtomicReference<DisposableChannel> disposableClient = new AtomicReference<>();
         int port = 9091;
 
-        Runnable startServer = () -> server.getAndSet(TcpServer.create()
+        Runnable startServer = () -> TcpServer.create()
+                .host(LOCALHOST)
                 .port(port)
-                .doOnConnection(connection -> latch.countDown())
+                .doOnConnection(connection -> connectLatch.countDown())
                 .bind()
-                .subscribe());
+                .doOnNext(disposableServer::set)
+                .subscribe();
 
-        Disposable client = TcpClient.create()
+        TcpClient.create()
                 .host(LOCALHOST)
                 .port(port)
                 .doOnConnect(config -> {
-                    if (retry.incrementAndGet() >= 2) {
-                        startServer.run();
-                    }
+                    if (retry.incrementAndGet() == 3) startServer.run();
                 })
                 .connect()
+                .doOnNext(disposableClient::set)
                 .retry(3)
                 .subscribe();
 
-        latch.await();
+        connectLatch.await();
         assertEquals(3, retry.get());
-        client.dispose();
-        server.getAndSet(null).dispose();
+        disposableServer.getAndSet(null).disposeNow();
+        disposableClient.getAndSet(null).disposeNow();
+        waitCondition(() -> TCP.isPortAvailable(port));
     }
 }
