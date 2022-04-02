@@ -9,6 +9,7 @@ local cfg = {
     replication_connect_quorum = 0,
     memtx_use_mvcc_engine = true,
     replication_synchro_quorum = 2,
+    replication_synchro_timeout = 60,
     sharding = require("test-sharding")
 }
 

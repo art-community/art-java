@@ -8,6 +8,7 @@ local cfg = {
     log = "file:" .. current .. "/test-router.log",
     replication_connect_quorum = 0,
     replication_synchro_quorum = 2,
+    replication_synchro_timeout = 60,
     sharding = require("test-sharding")
 }
 
