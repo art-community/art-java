@@ -30,8 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
 
 public class TarantoolRouterTest {
-    @BeforeAll
-    public static void setup() {
+    @BeforeEach
+    public void setup() {
         initializeRouter();
         initialize(
                 MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
@@ -85,13 +85,13 @@ public class TarantoolRouterTest {
                         .build());
     }
 
-    @AfterAll
-    public static void cleanup() {
+    @AfterEach
+    public void cleanup() {
         shutdownRouter();
         shutdown();
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testMutable() {
         TestingMetaModel data1 = generateTestingModel().toBuilder().f1(1).build();
         TestingMetaModel data2 = generateTestingModel().toBuilder().f1(2).build();
@@ -112,13 +112,13 @@ public class TarantoolRouterTest {
         data2.assertEquals(result2.get(0));
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testSubscription() {
         tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
     }
 
-    @Test
+    @RepeatedTest(value = 3)
     public void testChannel() {
         CountDownLatch waiter = new CountDownLatch(2);
         tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {

@@ -43,9 +43,14 @@ public interface TestTarantoolConstants {
     String BASH_ARGUMENT = "-c";
     String USERNAME = "username";
     String PASSWORD = "password";
-    String MODULE_SCRIPT = "art-tarantool.lua";
-    String SHARDING_SCRIPT = "test-sharding.lua";
-    String SHARD_INITIALIZER_SCRIPT = "test-shard-initializer.lua";
+
+    String[] ADDITIONAL_SCRIPTS = {
+            "art-tarantool.lua",
+            "test-sharding.lua",
+            "test-master-initializer.lua",
+            "test-replica-initializer.lua"
+    };
+
     String MKDIR_COMMAND = "mkdir -p ";
     String TEMP_DIRECTORY = orElse(getenv("TMPDIR"), "/tmp") + "/tarantool";
     String DELETE_COMMAND = "rm -rf ";

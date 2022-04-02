@@ -16,6 +16,7 @@ import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.util.Objects.*;
+import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.nio.file.*;
 
@@ -86,19 +87,17 @@ public class TestTarantoolInstanceManager {
         wrapExceptionCall(() -> getRuntime().exec(directoryCommand), TarantoolException::new);
 
         Path working = touchDirectory(get(directory));
+
         InputStream script = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(scriptFile);
-        if (isNull(script)) throw new ImpossibleSituationException();
-        InputStream module = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(MODULE_SCRIPT);
-        if (isNull(module)) throw new ImpossibleSituationException();
-        InputStream sharding = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(SHARDING_SCRIPT);
-        if (isNull(sharding)) throw new ImpossibleSituationException();
-        InputStream shardInitializer = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(SHARD_INITIALIZER_SCRIPT);
-        if (isNull(shardInitializer)) throw new ImpossibleSituationException();
         Path scriptPath = working.resolve(scriptFile).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));
-        writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
-        writeFile(working.resolve(get(SHARDING_SCRIPT)), toByteArray(sharding));
-        writeFile(working.resolve(get(SHARD_INITIALIZER_SCRIPT)), toByteArray(shardInitializer));
+
+        for (String additionalScriptPath : ADDITIONAL_SCRIPTS) {
+            InputStream additionalScript = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(additionalScriptPath);
+            if (isNull(script)) throw new ImpossibleSituationException();
+            writeFile(working.resolve(get(additionalScriptPath)), toByteArray(additionalScript));
+        }
+
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 instanceCommand(directory) + SPACE + convertToWslPath(scriptPath.toString()) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
@@ -111,7 +110,7 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(() -> !TCP.isPortAvailable(port))) {
-            throw new TarantoolException(format(INITIALIZATION_ERROR, scriptFile, port));
+            fail(format(INITIALIZATION_ERROR, scriptFile, port));
         }
     }
 }
