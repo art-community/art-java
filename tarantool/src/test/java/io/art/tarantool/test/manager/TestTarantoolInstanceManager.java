@@ -17,7 +17,6 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
-import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
@@ -30,18 +29,20 @@ public class TestTarantoolInstanceManager {
     }
 
     public static void initializeRouter() {
-        initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
         initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
         initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
         initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        waitTime(ofSeconds(3));
+        initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
         tarantool()
                 .connector(TestStorage.class)
                 .router()
                 .call(ROUTER_BOOTSTRAP_FUNCTION)
                 .block();
-        waitTime(ofSeconds(3));
+        tarantool()
+                .connector(TestStorage.class)
+                .shards()
+                .forEach(client -> client.call(STORAGE_WAIT_FUNCTION).block());
     }
 
     public static void shutdownStorage() {

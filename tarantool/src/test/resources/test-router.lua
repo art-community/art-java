@@ -46,6 +46,7 @@ box.schema.func.create("testFilter", { if_not_exists = true })
 
 bootstrap = function()
     vshard.router.bootstrap()
+    vshard.router.sync(30)
 end
 box.schema.func.create("bootstrap", { if_not_exists = true })
 

@@ -16,6 +16,7 @@ public interface TestTarantoolConstants {
     String ROUTER_PID = "test-router.pid";
     String ROUTER_SCRIPT = "test-router.lua";
     ImmutableStringValue ROUTER_BOOTSTRAP_FUNCTION = newString("bootstrap");
+    ImmutableStringValue STORAGE_WAIT_FUNCTION = newString("wait");
     int ROUTER_PORT = 3302;
 
     String SHARD_1_MASTER_DIRECTORY = "test-shard-1-master";

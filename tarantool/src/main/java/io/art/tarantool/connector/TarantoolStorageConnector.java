@@ -41,6 +41,14 @@ public class TarantoolStorageConnector {
         return combineToList(immutable.endpoints(), mutable.endpoints(), routers.endpoints());
     }
 
+    public List<TarantoolClient> shards() {
+        return combineToList(immutable.endpoints(), mutable.endpoints());
+    }
+
+    public List<TarantoolClient> routers() {
+        return combineToList(routers.endpoints());
+    }
+
     public void each(Consumer<TarantoolClient> consumer) {
         all().forEach(consumer);
     }
