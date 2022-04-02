@@ -23,8 +23,7 @@ import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
-import static io.art.tarantool.test.lock.TestTarantoolLocker.lock;
-import static io.art.tarantool.test.lock.TestTarantoolLocker.unlock;
+import static io.art.tarantool.test.lock.TestTarantoolLocker.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
@@ -102,7 +101,7 @@ public class TarantoolStreamTest {
         }
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testCount() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -113,7 +112,7 @@ public class TarantoolStreamTest {
         assertEquals(3, current().stream().count());
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testAny() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).build(),
@@ -124,7 +123,7 @@ public class TarantoolStreamTest {
         assertTrue(current().stream().any(filter -> filter.byNumber(testingMetaModel().f1Field()).equal(2)));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testAll() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -135,7 +134,7 @@ public class TarantoolStreamTest {
         assertTrue(current().stream().all(filter -> filter.byString(testingMetaModel().f16Field()).equal("test")));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testNone() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -146,7 +145,7 @@ public class TarantoolStreamTest {
         assertTrue(current().stream().none(filter -> filter.byString(testingMetaModel().f16Field()).equal("string")));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testRange() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -161,7 +160,7 @@ public class TarantoolStreamTest {
         data.get(2).assertEquals(result.get(1));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testDistinct() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -176,7 +175,7 @@ public class TarantoolStreamTest {
         data.get(3).assertEquals(result.get(1));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testSort() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -192,7 +191,7 @@ public class TarantoolStreamTest {
         data.get(0).assertEquals(result.get(3));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMax() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -205,7 +204,7 @@ public class TarantoolStreamTest {
         data.get(3).assertEquals(result);
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMin() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").build(),
@@ -218,7 +217,7 @@ public class TarantoolStreamTest {
         data.get(0).assertEquals(result);
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMapJoinField() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -235,7 +234,7 @@ public class TarantoolStreamTest {
         assertEquals("test 2", result.get(3));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMapJoinKey() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -256,7 +255,7 @@ public class TarantoolStreamTest {
         assertEquals(otherData.get(1), result.get(2));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMapJoinIndex() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -279,7 +278,7 @@ public class TarantoolStreamTest {
         assertEquals(otherData.get(1), result.get(1));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMapJoinFunction() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -296,7 +295,7 @@ public class TarantoolStreamTest {
         assertEquals("test 2 - mapped", result.get(3));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testFilterField() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("started").f9(2).build(),
@@ -370,7 +369,7 @@ public class TarantoolStreamTest {
         data.get(2).assertEquals(result.get(1));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testFilterFunction() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("started").f9(2).build(),
@@ -388,7 +387,7 @@ public class TarantoolStreamTest {
         data.get(2).assertEquals(result.get(1));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testFilterJoinKey() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -423,7 +422,7 @@ public class TarantoolStreamTest {
         data.get(3).assertEquals(result.get(0));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testFilterJoinIndex() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -458,7 +457,7 @@ public class TarantoolStreamTest {
         data.get(3).assertEquals(result.get(0));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testFilterJoinKeyConditioned() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("test").f9(1).build(),
@@ -502,7 +501,7 @@ public class TarantoolStreamTest {
         data.get(4).assertEquals(result.get(3));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testBaseKey() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f16("not base").f9(2).build(),
@@ -516,7 +515,7 @@ public class TarantoolStreamTest {
         data.get(1).assertEquals(result.get(0));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testIndexStream() {
         List<TestingMetaModel> data = fixedArrayOf(
                 generateTestingModel().toBuilder().f1(1).f9(10).f16("not base").build(),
