@@ -113,7 +113,10 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(() -> !TCP.isPortAvailable(port))) {
-            System.out.println(format(LOG_OUTPUT, directory, readFile(get(directory).resolve(directory + ".log"))));
+            Path logFile = get(directory).resolve(directory + ".log");
+            if (logFile.toFile().exists()) {
+                System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
+            }
             fail(format(INITIALIZATION_ERROR, directory, port));
         }
     }
