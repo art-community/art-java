@@ -26,7 +26,7 @@ public class TransportTest {
         shutdown();
     }
 
-    @RepeatedTest(10)
+    @Test
     public void testRetry() throws InterruptedException {
         AtomicInteger retry = new AtomicInteger(0);
         CountDownLatch connectLatch = new CountDownLatch(1);
