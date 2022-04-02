@@ -39,11 +39,11 @@ jobs:
           tarantool-version: '${{ matrix.tarantool }}'
 
       - if: runner.os == 'macOS' || runner.os == 'Linux'
-        name: Setup temporary directory
+        name: Setup temporary directory on Unix based
         run: echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV
 
       - if: runner.os == 'Windows'
-        name: Setup temporary directory
+        name: Setup temporary directory on WSL
         run: wsl bash -c \"echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV\"
 
       - uses: actions/setup-java@v1
