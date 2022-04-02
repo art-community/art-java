@@ -31,15 +31,10 @@ public class TestTarantoolInstanceManager {
 
     public static void initializeRouter() {
         initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
-        waitTime(ofSeconds(1));
         initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
-        waitTime(ofSeconds(1));
         initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
-        waitTime(ofSeconds(1));
         initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        waitTime(ofSeconds(1));
         initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
-        waitTime(ofSeconds(1));
         tarantool()
                 .connector(TestStorage.class)
                 .router()
@@ -138,5 +133,6 @@ public class TestTarantoolInstanceManager {
             if (logFile.toFile().exists()) System.out.println(format(LOG_OUTPUT, directory, readFile(logFile)));
             fail(format(INITIALIZATION_ERROR, directory, port));
         }
+        waitTime(ofSeconds(1));
     }
 }
