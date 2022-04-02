@@ -99,7 +99,7 @@ public class TarantoolRouterTest {
         }
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testMutable() {
         TestingMetaModel data1 = generateTestingModel().toBuilder().f1(1).build();
         TestingMetaModel data2 = generateTestingModel().toBuilder().f1(2).build();
@@ -120,13 +120,13 @@ public class TarantoolRouterTest {
         data2.assertEquals(result2.get(0));
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testSubscription() {
         tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
     }
 
-    @RepeatedTest(3)
+    @Test
     public void testChannel() {
         CountDownLatch waiter = new CountDownLatch(2);
         tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {
