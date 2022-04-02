@@ -1,6 +1,7 @@
 package io.art.transport.test;
 
 import org.junit.jupiter.api.*;
+import reactor.core.*;
 import reactor.netty.*;
 import reactor.netty.tcp.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -11,6 +12,7 @@ import static io.art.core.network.selector.PortSelector.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.transport.module.TransportActivator.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static reactor.netty.ConnectionObserver.State.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 
@@ -33,7 +35,7 @@ public class TransportTest {
         CountDownLatch connectLatch = new CountDownLatch(1);
         AtomicReference<DisposableServer> disposableServer = new AtomicReference<>();
         AtomicReference<DisposableChannel> disposableClient = new AtomicReference<>();
-        int port = findAvailableTcpPort(9090);
+        int port = 9100;
 
         Runnable startServer = () -> TcpServer.create()
                 .host(LOCALHOST)
@@ -58,6 +60,37 @@ public class TransportTest {
         assertEquals(3, retry.get());
         disposableServer.getAndSet(null).disposeNow();
         disposableClient.getAndSet(null).disposeNow();
+        waitCondition(() -> TCP.isPortAvailable(port));
+    }
+
+    @Test
+    public void testDisposing() throws InterruptedException {
+        int port = 9101;
+        CountDownLatch latch = new CountDownLatch(2);
+        AtomicReference<DisposableServer> server = new AtomicReference<>();
+        AtomicReference<DisposableChannel> client = new AtomicReference<>();
+
+        TcpServer.create()
+                .host(LOCALHOST)
+                .port(port)
+                .observe((connection, newState) -> {
+                    if (newState == CONNECTED) latch.countDown();
+                })
+                .bind()
+                .doOnNext(server::set)
+                .subscribe();
+
+        TcpClient.create()
+                .host(LOCALHOST)
+                .port(port)
+                .doOnConnected(client::set)
+                .doOnConnected(ignore -> latch.countDown())
+                .connect()
+                .subscribe();
+
+        latch.await();
+        client.getAndSet(null).dispose();
+        server.getAndSet(null).disposeNow();
         waitCondition(() -> TCP.isPortAvailable(port));
     }
 }
