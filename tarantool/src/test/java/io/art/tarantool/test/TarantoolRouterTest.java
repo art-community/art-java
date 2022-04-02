@@ -99,7 +99,7 @@ public class TarantoolRouterTest {
         }
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(10)
     public void testMutable() {
         TestingMetaModel data1 = generateTestingModel().toBuilder().f1(1).build();
         TestingMetaModel data2 = generateTestingModel().toBuilder().f1(2).build();
