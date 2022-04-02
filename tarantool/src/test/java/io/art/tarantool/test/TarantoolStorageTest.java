@@ -10,6 +10,7 @@ import io.art.meta.test.meta.*;
 import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.*;
 import io.art.storage.service.*;
 import io.art.tarantool.module.*;
+import io.art.tarantool.registry.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
@@ -25,6 +26,7 @@ import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.Me
 import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
+import static io.art.tarantool.module.TarantoolModule.tarantoolModule;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
@@ -69,6 +71,9 @@ public class TarantoolStorageTest {
 
     @AfterEach
     public void cleanup() {
+        for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
+            registry.getConnector().dispose();
+        }
         shutdownStorage();
         shutdown();
     }
