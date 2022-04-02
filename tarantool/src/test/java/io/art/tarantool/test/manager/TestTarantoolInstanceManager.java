@@ -74,6 +74,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        waitTime(ofSeconds(10));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
