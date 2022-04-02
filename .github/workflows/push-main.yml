@@ -14,9 +14,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup temporary directory
+      - if: runner.os == 'macOS' || runner.os == 'Linux'
+        name: Setup temporary directory
         run: echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV
-        shell: bash
+
+      - if: runner.os == 'Windows'
+        name: Setup temporary directory
+        run: wsl bash -c \"echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV\"
 
       - if: runner.os == 'Windows'
         uses: Vampire/setup-wsl@v1
