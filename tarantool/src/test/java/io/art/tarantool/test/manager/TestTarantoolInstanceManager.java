@@ -121,7 +121,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(3));
+        waitTime(ofSeconds(10));
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
             System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile)));
