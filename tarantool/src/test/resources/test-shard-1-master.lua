@@ -12,7 +12,7 @@ local cfg = {
     sharding = require("test-sharding")
 }
 
-local initializer = require("test-master-initializer")
+local initializer = require("test-shard-initializer")
 require("art-tarantool")
 vshard = require('vshard')
 vshard.storage.cfg(cfg, '8a274925-a26d-47fc-9e1b-af88ce939412')

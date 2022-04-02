@@ -47,8 +47,8 @@ public interface TestTarantoolConstants {
     String[] ADDITIONAL_SCRIPTS = {
             "art-tarantool.lua",
             "test-sharding.lua",
-            "test-master-initializer.lua",
-            "test-replica-initializer.lua"
+            "test-shard-initializer.lua",
+            "test-shard-initializer.lua"
     };
 
     String MKDIR_COMMAND = "mkdir -p ";
