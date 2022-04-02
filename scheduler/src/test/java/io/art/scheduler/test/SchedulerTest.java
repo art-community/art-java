@@ -257,7 +257,7 @@ public class SchedulerTest {
     }
 
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testOneThreadShutdown() {
         DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(1).build();
         CountDownLatch water = new CountDownLatch(1);
@@ -269,7 +269,7 @@ public class SchedulerTest {
         tasks.forEach(task -> assertTrue(task.completed()));
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     public void testTenThreadsShutdown() {
         DeferredExecutor executor = DeferredExecutor.deferredExecutorBuilder().poolSize(10).build();
         CountDownLatch water = new CountDownLatch(8);
