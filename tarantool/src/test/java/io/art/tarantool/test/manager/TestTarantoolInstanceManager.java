@@ -59,7 +59,9 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitCondition(() -> TCP.isPortAvailable(port));
+        if (!waitCondition(() -> TCP.isPortAvailable(port))) {
+            fail(format(SHUTDOWN_ERROR, directory, port));
+        }
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
