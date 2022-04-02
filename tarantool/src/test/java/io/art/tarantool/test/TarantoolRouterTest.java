@@ -120,13 +120,13 @@ public class TarantoolRouterTest {
         data2.assertEquals(result2.get(0));
     }
 
-    @Test
+    @RepeatedTest(10)
     public void testSubscription() {
         tarantool(TestStorage.class).testSubscription();
         assertTrue(TestService.await());
     }
 
-    @Test
+    @RepeatedTest(10)
     public void testChannel() {
         CountDownLatch waiter = new CountDownLatch(2);
         tarantool(TestStorage.class).channel().testChannel().subscribe(value -> {
