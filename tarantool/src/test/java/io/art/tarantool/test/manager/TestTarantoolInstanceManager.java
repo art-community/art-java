@@ -14,6 +14,7 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.file.Paths.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import java.io.*;
 import java.nio.file.*;
@@ -91,10 +92,13 @@ public class TestTarantoolInstanceManager {
         if (isNull(module)) throw new ImpossibleSituationException();
         InputStream sharding = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(SHARDING_SCRIPT);
         if (isNull(sharding)) throw new ImpossibleSituationException();
+        InputStream shardInitializer = TestTarantoolInstanceManager.class.getClassLoader().getResourceAsStream(SHARD_INITIALIZER_SCRIPT);
+        if (isNull(shardInitializer)) throw new ImpossibleSituationException();
         Path scriptPath = working.resolve(scriptFile).toAbsolutePath();
         writeFile(scriptPath, toByteArray(script));
         writeFile(working.resolve(get(MODULE_SCRIPT)), toByteArray(module));
         writeFile(working.resolve(get(SHARDING_SCRIPT)), toByteArray(sharding));
+        writeFile(working.resolve(get(SHARD_INITIALIZER_SCRIPT)), toByteArray(shardInitializer));
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 instanceCommand(directory) + SPACE + convertToWslPath(scriptPath.toString()) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
@@ -107,5 +111,7 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         waitCondition(() -> !TCP.isPortAvailable(port));
+
+        waitTime(ofSeconds(3));
     }
 }

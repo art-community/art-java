@@ -12,12 +12,12 @@ import java.util.function.*;
 @RequiredArgsConstructor
 public class TarantoolSpaceConfigurator<SpaceType> {
     private final Class<SpaceType> spaceClass;
-    private Supplier<MetaField<? extends MetaClass<SpaceType>, ?>> field;
+    private Supplier<MetaField<? extends MetaClass<SpaceType>, ?>> id;
     private Class<? extends Indexes<SpaceType>> indexes;
     private Class<? extends Sharders<SpaceType>> sharders;
 
     public <M extends MetaClass<SpaceType>> TarantoolSpaceConfigurator<SpaceType> id(Supplier<MetaField<M, ?>> field) {
-        this.field = cast(field);
+        this.id = cast(field);
         return this;
     }
 

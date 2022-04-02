@@ -48,7 +48,7 @@ public class TarantoolStorageConfigurator {
 
     public <SpaceType> TarantoolStorageConfigurator space(Class<SpaceType> spaceClass, UnaryOperator<TarantoolSpaceConfigurator<SpaceType>> operator) {
         TarantoolSpaceConfigurator<SpaceType> configurator = operator.apply(new TarantoolSpaceConfigurator<>(spaceClass));
-        Supplier<MetaField<? extends MetaClass<SpaceType>, ?>> idField = configurator.getField();
+        Supplier<MetaField<? extends MetaClass<SpaceType>, ?>> idField = configurator.getId();
         Class<? extends Indexes<SpaceType>> indexes = configurator.getIndexes();
         Class<? extends Sharders<SpaceType>> sharders = configurator.getSharders();
         String spaceId = idByDash(spaceClass);
