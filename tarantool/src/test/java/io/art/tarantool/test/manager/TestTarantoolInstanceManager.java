@@ -9,6 +9,7 @@ import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
+import static io.art.core.network.selector.PortSelector.SocketType.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.Tarantool.*;
@@ -18,6 +19,7 @@ import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Objects.*;
+import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.nio.file.*;
 
@@ -88,7 +90,7 @@ public class TestTarantoolInstanceManager {
     }
 
     private static void initialize(int port, String directory, String scriptFile) {
-        STRING directoryExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
+        String directoryExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 MKDIR_COMMAND + TEMP_DIRECTORY + SLASH + directory +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] directoryCommand = {
