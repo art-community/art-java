@@ -101,6 +101,12 @@ public class TarantoolStreamTest {
         }
     }
 
+    @AfterEach
+    public void truncate() {
+        current().truncate();
+        other().truncate();
+    }
+
     @Test
     public void testCount() {
         List<TestingMetaModel> data = fixedArrayOf(

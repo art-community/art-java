@@ -87,6 +87,11 @@ public class TarantoolStorageTest {
         }
     }
 
+    @AfterEach
+    public void truncate() {
+        current().truncate();
+    }
+
     @Test
     public void testSinglePut() {
         TestingMetaModel data = generateTestingModel();
