@@ -47,6 +47,7 @@ public class TestTarantoolInstanceManager {
     }
 
     private static void shutdown(int port, String directory, String pidPath) {
+        System.out.println(format(LOG_OUTPUT, directory, readFile(get(directory).resolve(directory + ".log"))));
         Path pid = get(directory).resolve(pidPath);
         if (!pid.toFile().exists()) return;
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
@@ -60,7 +61,7 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(() -> TCP.isPortAvailable(port))) {
-            fail(format(SHUTDOWN_ERROR, directory, port, readFile(directory + ".log")));
+            fail(format(SHUTDOWN_ERROR, directory, port));
         }
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
@@ -112,7 +113,8 @@ public class TestTarantoolInstanceManager {
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
         if (!waitCondition(() -> !TCP.isPortAvailable(port))) {
-            fail(format(INITIALIZATION_ERROR, scriptFile, port, readFile(working.resolve(directory + ".log"))));
+            System.out.println(format(LOG_OUTPUT, directory, readFile(get(directory).resolve(directory + ".log"))));
+            fail(format(INITIALIZATION_ERROR, directory, port));
         }
     }
 }

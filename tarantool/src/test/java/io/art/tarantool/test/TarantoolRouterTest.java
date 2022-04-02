@@ -14,7 +14,6 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
@@ -27,76 +26,87 @@ import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
 import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
+import static io.art.tarantool.test.lock.TarantoolTestLocker.lock;
+import static io.art.tarantool.test.lock.TarantoolTestLocker.unlock;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import java.util.concurrent.*;
+import java.util.concurrent.locks.*;
 
-@Execution(SAME_THREAD)
 public class TarantoolRouterTest {
+
     @BeforeEach
     public void setup() {
-        initializeRouter();
-        initialize(
-                MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
-                TransportActivator.transport(),
-                LoggingActivator.logging(),
-                TarantoolActivator.tarantool(tarantool -> tarantool
-                        .storages(storages -> storages
-                                .storage(TestStorage.class, storage -> storage
-                                        .connector(connector -> connector.client(client -> client
-                                                .port(ROUTER_PORT)
-                                                .router(true)
-                                                .username(USERNAME)
-                                                .password(PASSWORD)))
-                                        .space(TestingMetaModel.class, space -> space
-                                                .indexes(TestModelIndexes.class)
-                                                .sharders(TestModelSharders.class))))
-                        .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
-                )
-        );
+        try {
+            lock();
+            initialize(
+                    MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
+                    TransportActivator.transport(),
+                    TarantoolActivator.tarantool(tarantool -> tarantool
+                            .storages(storages -> storages
+                                    .storage(TestStorage.class, storage -> storage
+                                            .connector(connector -> connector.client(client -> client
+                                                    .port(ROUTER_PORT)
+                                                    .router(true)
+                                                    .username(USERNAME)
+                                                    .password(PASSWORD)))
+                                            .space(TestingMetaModel.class, space -> space
+                                                    .indexes(TestModelIndexes.class)
+                                                    .sharders(TestModelSharders.class))))
+                            .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
+                    )
+            );
+            initializeRouter();
+            tarantool()
+                    .connector(TestStorage.class)
+                    .router()
+                    .call(ROUTER_BOOTSTRAP_FUNCTION)
+                    .block();
 
-        tarantool()
-                .connector(TestStorage.class)
-                .router()
-                .call(ROUTER_BOOTSTRAP_FUNCTION)
-                .block();
+            tarantool()
+                    .schema(TestStorage.class)
+                    .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())
+                    .createIndex(indexFor(testingMetaModel(), testModelIndexes().id())
+                            .primary()
+                            .configure()
+                            .ifNotExists(true)
+                            .unique(true)
+                            .build())
+                    .createIndex(TarantoolIndexConfiguration.<TestingMetaModel, MetaTestingMetaModelClass>builder()
+                            .id(1)
+                            .spaceName(idByDash(TestingMetaModel.class))
+                            .indexName("bucket_id")
+                            .part(TarantoolIndexPartConfiguration.<TestingMetaModel, MetaTestingMetaModelClass>builder()
+                                    .field(2)
+                                    .type(UNSIGNED)
+                                    .build())
+                            .ifNotExists(true)
+                            .unique(false)
+                            .build())
+                    .createIndex(indexFor(testingMetaModel(), testModelIndexes().f9f16())
+                            .configure()
+                            .ifNotExists(true)
+                            .unique(false)
+                            .build());
+        } finally {
+            unlock();
+        }
 
-        tarantool()
-                .schema(TestStorage.class)
-                .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())
-                .createIndex(indexFor(testingMetaModel(), testModelIndexes().id())
-                        .primary()
-                        .configure()
-                        .ifNotExists(true)
-                        .unique(true)
-                        .build())
-                .createIndex(TarantoolIndexConfiguration.<TestingMetaModel, MetaTestingMetaModelClass>builder()
-                        .id(1)
-                        .spaceName(idByDash(TestingMetaModel.class))
-                        .indexName("bucket_id")
-                        .part(TarantoolIndexPartConfiguration.<TestingMetaModel, MetaTestingMetaModelClass>builder()
-                                .field(2)
-                                .type(UNSIGNED)
-                                .build())
-                        .ifNotExists(true)
-                        .unique(false)
-                        .build())
-                .createIndex(indexFor(testingMetaModel(), testModelIndexes().f9f16())
-                        .configure()
-                        .ifNotExists(true)
-                        .unique(false)
-                        .build());
     }
 
     @AfterEach
     public void cleanup() {
-        for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
-            registry.getConnector().dispose();
+        try {
+            lock();
+            for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
+                registry.getConnector().dispose();
+            }
+            shutdownRouter();
+            shutdown();
+        } finally {
+            unlock();
         }
-        shutdownRouter();
-        shutdown();
     }
 
     @RepeatedTest(3)

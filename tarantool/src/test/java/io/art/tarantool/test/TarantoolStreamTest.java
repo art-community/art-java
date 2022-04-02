@@ -1,7 +1,6 @@
 package io.art.tarantool.test;
 
 import io.art.core.collection.*;
-import io.art.logging.module.*;
 import io.art.meta.module.*;
 import io.art.meta.test.*;
 import io.art.meta.test.meta.*;
@@ -13,7 +12,6 @@ import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.parallel.*;
 import static io.art.core.collection.ImmutableArray.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.factory.ArrayFactory.*;
@@ -23,76 +21,86 @@ import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.Me
 import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolModule.tarantoolModule;
+import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
+import static io.art.tarantool.test.lock.TarantoolTestLocker.lock;
+import static io.art.tarantool.test.lock.TarantoolTestLocker.unlock;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaOtherSpaceClass.*;
 import static io.art.tarantool.test.meta.MetaTarantoolTest.MetaIoPackage.MetaArtPackage.MetaTarantoolPackage.MetaTestPackage.MetaModelPackage.MetaTestStorageClass.*;
 import static io.art.tarantool.test.model.TestStorage.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.parallel.ExecutionMode.SAME_THREAD;
 import java.util.*;
+import java.util.concurrent.locks.*;
 
-@Execution(SAME_THREAD)
 public class TarantoolStreamTest {
     @BeforeEach
-    public  void setup() {
-        initializeStorage();
-        initialize(
-                MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
-                TransportActivator.transport(),
-                LoggingActivator.logging(),
-                TarantoolActivator.tarantool(tarantool -> tarantool
-                        .storages(storages -> storages
-                                .storage(TestStorage.class, storage -> storage
-                                        .space(TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
-                                        .space(OtherSpace.class, space -> space.indexes(OtherSpaceIndexes.class))
-                                        .connector(connector -> connector.client(client -> client
-                                                .port(STORAGE_PORT)
-                                                .username(USERNAME)
-                                                .password(PASSWORD)))))
-                        .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
-                )
-        );
-        tarantool()
-                .schema(TestStorage.class)
-                .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
-                .createIndex(indexFor(testingMetaModel())
-                        .field(testingMetaModel().f1Field())
-                        .configure()
-                        .ifNotExists(true)
-                        .unique(true)
-                        .build())
-                .createIndex(indexFor(testingMetaModel())
-                        .field(testingMetaModel().f9Field())
-                        .field(testingMetaModel().f16Field())
-                        .configure()
-                        .ifNotExists(true)
-                        .unique(false)
-                        .build())
-                .createSpace(spaceFor(OtherSpace.class).ifNotExists(true).build())
-                .createIndex(indexFor(otherSpace())
-                        .field(otherSpace().keyField())
-                        .configure()
-                        .ifNotExists(true)
-                        .unique(true)
-                        .build())
-                .createIndex(indexFor(otherSpace())
-                        .field(otherSpace().valueField())
-                        .field(otherSpace().numberField())
-                        .configure()
-                        .ifNotExists(true)
-                        .unique(false)
-                        .build());
+    public void setup() {
+        try {
+            lock();
+            initialize(
+                    MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
+                    TransportActivator.transport(),
+                    TarantoolActivator.tarantool(tarantool -> tarantool
+                            .storages(storages -> storages
+                                    .storage(TestStorage.class, storage -> storage
+                                            .space(TestingMetaModel.class, space -> space.indexes(TestModelIndexes.class))
+                                            .space(OtherSpace.class, space -> space.indexes(OtherSpaceIndexes.class))
+                                            .connector(connector -> connector.client(client -> client
+                                                    .port(STORAGE_PORT)
+                                                    .username(USERNAME)
+                                                    .password(PASSWORD)))))
+                            .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
+                    )
+            );
+            initializeStorage();
+            tarantool()
+                    .schema(TestStorage.class)
+                    .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
+                    .createIndex(indexFor(testingMetaModel())
+                            .field(testingMetaModel().f1Field())
+                            .configure()
+                            .ifNotExists(true)
+                            .unique(true)
+                            .build())
+                    .createIndex(indexFor(testingMetaModel())
+                            .field(testingMetaModel().f9Field())
+                            .field(testingMetaModel().f16Field())
+                            .configure()
+                            .ifNotExists(true)
+                            .unique(false)
+                            .build())
+                    .createSpace(spaceFor(OtherSpace.class).ifNotExists(true).build())
+                    .createIndex(indexFor(otherSpace())
+                            .field(otherSpace().keyField())
+                            .configure()
+                            .ifNotExists(true)
+                            .unique(true)
+                            .build())
+                    .createIndex(indexFor(otherSpace())
+                            .field(otherSpace().valueField())
+                            .field(otherSpace().numberField())
+                            .configure()
+                            .ifNotExists(true)
+                            .unique(false)
+                            .build());
+        } finally {
+            unlock();
+        }
     }
 
     @AfterEach
     public void cleanup() {
-        for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
-            registry.getConnector().dispose();
+        try {
+            lock();
+            for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
+                registry.getConnector().dispose();
+            }
+            shutdownStorage();
+            shutdown();
+        } finally {
+            unlock();
         }
-        shutdownStorage();
-        shutdown();
     }
 
     @RepeatedTest(3)

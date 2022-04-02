@@ -56,8 +56,9 @@ public interface TestTarantoolConstants {
     String DELETE_COMMAND = "rm -rf ";
 
     String PORT_IS_BUSY_ERROR = "Tarantool port {0,number,#} is busy";
-    String INITIALIZATION_ERROR = "Tarantool instance {0} on port {1,number,#} has not been initialized\nLog: {3}";
-    String SHUTDOWN_ERROR = "Tarantool instance {0} on port {1,number,#} has not been shutdown\nLog: {3}";
+    String INITIALIZATION_ERROR = "Tarantool instance {0} on port {1,number,#} has not been initialized";
+    String SHUTDOWN_ERROR = "Tarantool instance {0} on port {1,number,#} has not been shutdown";
+    String LOG_OUTPUT = "Tarantool {0} log content:\n{1}\n\n";
 
     static String instanceCommand(String path) {
         return "cd " + convertToWslPath(path) + " && tarantool";
