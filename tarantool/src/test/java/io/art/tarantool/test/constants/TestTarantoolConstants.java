@@ -57,8 +57,8 @@ public interface TestTarantoolConstants {
 
     String PORT_IS_BUSY_ERROR = "Tarantool port {0,number,#} is busy";
     String SHUTDOWN_ERROR = "Tarantool instance {0} on port {1,number,#} has not been shutdown";
-    String INITIALIZATION_LOG_OUTPUT = "Initialization Tarantool {0} log content:\n{1}\n\n";
-    String SHUTDOWN_LOG_OUTPUT = "Shutdown Tarantool {0} log content:\n{1}\n\n";
+    String INITIALIZATION_LOG_OUTPUT = "Initialization Tarantool {0}:\n{1}\n\n";
+    String SHUTDOWN_LOG_OUTPUT = "Shutdown Tarantool {0}:\n{1}\n\n";
     String LOG_EXTENSION = ".log";
 
     static String instanceCommand(String path) {
