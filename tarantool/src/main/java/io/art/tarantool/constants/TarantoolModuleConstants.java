@@ -31,6 +31,7 @@ import java.time.*;
 public interface TarantoolModuleConstants {
     Duration DEFAULT_TARANTOOL_CONNECTION_TIMEOUT = ofSeconds(15);
     Duration DEFAULT_TARANTOOL_EXECUTION_TIMEOUT = ofSeconds(15);
+    int DEFAULT_TARANTOOL_RETRY_COUNT = 3;
     int DEFAULT_TARANTOOL_PORT = 3301;
     int RECEIVERS_INITIAL_SIZE = 8129;
     int RECEIVERS_POOL_MAXIMUM = MAX_VALUE / 2048;
@@ -69,6 +70,7 @@ public interface TarantoolModuleConstants {
     interface ConfigurationKeys {
         String TARANTOOL_SECTION = "tarantool";
         String TARANTOOL_LOGGING_KEY = "logging";
+        String TARANTOOL_RETRY_COUNT_KEY = "retry.count";
         String TARANTOOL_CLUSTERS_SECTION = "clusters";
         String TARANTOOL_INSTANCES_SECTION = "instances";
         String TARANTOOL_INSTANCE_HOST_KEY = "host";
