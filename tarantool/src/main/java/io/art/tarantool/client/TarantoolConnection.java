@@ -43,22 +43,26 @@ public class TarantoolConnection {
     public TarantoolConnection(TarantoolClientConfiguration clientConfiguration, Connection connection, Mono<Void> disposer) {
         this.clientConfiguration = clientConfiguration;
         this.connection = connection;
-        disposer.subscribe(ignore -> connection.disposeNow());
+
         connection
                 .addHandlerLast(new TarantoolAuthenticationRequester(this.clientConfiguration.getUsername(), this.clientConfiguration.getPassword()))
                 .addHandlerLast(new TarantoolResponseDecoder())
                 .addHandlerLast(new TarantoolAuthenticationResponder(this::onAuthenticate));
+
         connection.inbound()
                 .receiveObject()
                 .doOnNext(object -> receive(cast(object)))
                 .doOnError(error -> withLogging(() -> logger.get().error(error)))
                 .subscribe();
+
         connection.outbound()
                 .send(sender.asFlux()
                         .doOnError(error -> withLogging(() -> logger.get().error(error)))
                         .doOnDiscard(ByteBuf.class, NettyBufferExtensions::releaseBuffer))
                 .then()
                 .subscribe();
+
+        disposer.subscribe(ignore -> connection.disposeNow());
     }
 
     public Mono<TarantoolConnection> connect() {
