@@ -8,8 +8,6 @@ import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
-import static io.art.core.network.selector.PortSelector.SocketType.*;
-import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
@@ -36,18 +34,18 @@ public class TestTarantoolInstanceManager {
     }
 
     public static void shutdownStorage() {
-        shutdown(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_PID);
+        shutdown(STORAGE_DIRECTORY, STORAGE_PID);
     }
 
     public static void shutdownRouter() {
-        shutdown(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_PID);
-        shutdown(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_PID);
-        shutdown(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_PID);
-        shutdown(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_PID);
-        shutdown(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_PID);
+        shutdown(ROUTER_DIRECTORY, ROUTER_PID);
+        shutdown(SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_PID);
+        shutdown(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_PID);
+        shutdown(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_PID);
+        shutdown(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_PID);
     }
 
-    private static void shutdown(int port, String directory, String pidPath) {
+    private static void shutdown(String directory, String pidPath) {
         Path pid = get(directory).resolve(pidPath);
         if (!pid.toFile().exists()) return;
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
@@ -64,7 +62,6 @@ public class TestTarantoolInstanceManager {
         };
 
         assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(command).waitFor(), TarantoolException::new));
-        assertTrue(waitCondition(() -> TCP.isPortAvailable(port)));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
