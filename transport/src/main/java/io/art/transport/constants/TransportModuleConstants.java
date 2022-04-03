@@ -28,6 +28,11 @@ public interface TransportModuleConstants {
         BufferType DEFAULT_BUFFER_TYPE = DIRECT;
         int DEFAULT_BUFFER_INITIAL_CAPACITY = 256;
         int DEFAULT_BUFFER_MAX_CAPACITY = MAX_VALUE;
+        long DEFAULT_RETRY_MAX_ATTEMPTS = 10;
+        Duration DEFAULT_RETRY_MIN_BACKOFF = ofSeconds(1);
+        Duration DEFAULT_RETRY_FIXED_DELAY = ofSeconds(1);
+        int DEFAULT_RETRY_MAX = 100;
+        int DEFAULT_RETRY_MAX_IN_ROW = 10;
     }
 
     interface ConfigurationKeys {
@@ -67,6 +72,13 @@ public interface TransportModuleConstants {
         String PASSWORD_KEY = "password";
         String DEACTIVATED_KEY = "deactivated";
         String LOGGING_KEY = "logging";
+        String POLICY_KEY = "policy";
+        String BACKOFF_MAX_ATTEMPTS_KEY = "backoff.maxAttempts";
+        String BACKOFF_MIN_BACKOFF_KEY = "backoff.minBackoff";
+        String FIXED_DELAY_MAX_ATTEMPTS_KEY = "fixedDelay.maxAttempts";
+        String FIXED_DELAY_KEY = "fixedDelay.delay";
+        String MAX_KEY = "max";
+        String MAX_IN_ROW_KEY = "maxInRow";
     }
 
     @Getter
@@ -105,6 +117,27 @@ public interface TransportModuleConstants {
             if (HEAP.type.equalsIgnoreCase(type)) return HEAP;
             if (IO.type.equalsIgnoreCase(type)) return IO;
             if (DIRECT.type.equalsIgnoreCase(type)) return DIRECT;
+            return fallback;
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    enum RetryPolicy {
+        BACKOFF("backoff"),
+        FIXED_DELAY("fixedDelay"),
+        MAX("max"),
+        MAX_IN_A_ROW("maxInARow"),
+        INDEFINITELY("indefinitely");
+
+        private final String policy;
+
+        public static RetryPolicy retryPolicy(String policy, RetryPolicy fallback) {
+            if (BACKOFF.policy.equalsIgnoreCase(policy)) return BACKOFF;
+            if (FIXED_DELAY.policy.equalsIgnoreCase(policy)) return FIXED_DELAY;
+            if (MAX.policy.equalsIgnoreCase(policy)) return MAX;
+            if (MAX_IN_A_ROW.policy.equalsIgnoreCase(policy)) return MAX_IN_A_ROW;
+            if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
             return fallback;
         }
     }

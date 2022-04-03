@@ -94,13 +94,7 @@ public interface RsocketModuleConstants {
         String SESSION_DURATION_KEY = "sessionDuration";
         String STREAM_TIMEOUT_KEY = "streamTimeout";
 
-        String POLICY_KEY = "policy";
-        String BACKOFF_MAX_ATTEMPTS_KEY = "backoff.maxAttempts";
-        String BACKOFF_MIN_BACKOFF_KEY = "backoff.minBackoff";
-        String FIXED_DELAY_MAX_ATTEMPTS_KEY = "fixedDelay.maxAttempts";
-        String FIXED_DELAY_KEY = "fixedDelay.delay";
-        String MAX_KEY = "max";
-        String MAX_IN_ROW_KEY = "maxInRow";
+
         String MAX_INBOUND_PAYLOAD_SIZE_KEY = "maxInboundPayloadSize";
 
         String INTERVAL_KEY = "interval";
@@ -108,11 +102,7 @@ public interface RsocketModuleConstants {
     }
 
     interface Defaults {
-        long DEFAULT_RETRY_MAX_ATTEMPTS = 10;
-        Duration DEFAULT_RETRY_MIN_BACKOFF = ofSeconds(1);
-        Duration DEFAULT_RETRY_FIXED_DELAY = ofSeconds(1);
-        int DEFAULT_RETRY_MAX = 100;
-        int DEFAULT_RETRY_MAX_IN_ROW = 10;
+
         int DEFAULT_PORT = 9000;
         Duration DEFAULT_TIMEOUT = ofSeconds(30);
         Duration DEFAULT_RESUME_SESSION_DURATION = ofHours(1);
@@ -121,27 +111,6 @@ public interface RsocketModuleConstants {
         Duration DEFAULT_KEEP_ALIVE_MAX_LIFE_TIME = ofSeconds(90);
         String DEFAULT_WS_PATH = SLASH;
         String DEFAULT_CONNECTOR_ID = "default";
-    }
-
-    @Getter
-    @AllArgsConstructor
-    enum RetryPolicy {
-        BACKOFF("backoff"),
-        FIXED_DELAY("fixedDelay"),
-        MAX("max"),
-        MAX_IN_A_ROW("maxInARow"),
-        INDEFINITELY("indefinitely");
-
-        private final String policy;
-
-        public static RetryPolicy rsocketRetryPolicy(String policy, RetryPolicy fallback) {
-            if (BACKOFF.policy.equalsIgnoreCase(policy)) return BACKOFF;
-            if (FIXED_DELAY.policy.equalsIgnoreCase(policy)) return FIXED_DELAY;
-            if (MAX.policy.equalsIgnoreCase(policy)) return MAX;
-            if (MAX_IN_A_ROW.policy.equalsIgnoreCase(policy)) return MAX_IN_A_ROW;
-            if (INDEFINITELY.policy.equalsIgnoreCase(policy)) return INDEFINITELY;
-            return fallback;
-        }
     }
 
     @Getter

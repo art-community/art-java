@@ -15,6 +15,7 @@ import io.art.rsocket.configuration.communicator.ws.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.meta.MetaRsocket.MetaIoPackage.MetaArtPackage.MetaRsocketPackage.MetaCommunicatorPackage.*;
 import io.art.transport.constants.TransportModuleConstants.*;
+import io.art.transport.retry.*;
 import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import io.rsocket.transport.netty.client.*;
@@ -80,7 +81,7 @@ public class RsocketDefaultWsCommunicator implements RsocketDefaultCommunicator 
         return this;
     }
 
-    public RsocketDefaultWsCommunicator retry(RsocketRetryConfiguration value) {
+    public RsocketDefaultWsCommunicator retry(RetryConfiguration value) {
         refreshCommunicator();
         commonConnector.retry(value);
         return this;

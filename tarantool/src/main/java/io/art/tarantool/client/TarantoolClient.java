@@ -63,7 +63,7 @@ public class TarantoolClient {
     private Mono<TarantoolConnection> connect() {
         return client
                 .connect()
-                .retry(clientConfiguration.getRetryCount())
+                .retryWhen(clientConfiguration.getRetryConfiguration().toRetry())
                 .timeout(clientConfiguration.getConnectionTimeout())
                 .flatMap(connection -> new TarantoolConnection(clientConfiguration, connection, disposer.asMono()).connect());
     }

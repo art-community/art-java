@@ -70,7 +70,7 @@ public interface TarantoolModuleConstants {
     interface ConfigurationKeys {
         String TARANTOOL_SECTION = "tarantool";
         String TARANTOOL_LOGGING_KEY = "logging";
-        String TARANTOOL_RETRY_COUNT_KEY = "retry.count";
+        String TARANTOOL_RETRY_SECTION = "retry";
         String TARANTOOL_CLUSTERS_SECTION = "clusters";
         String TARANTOOL_INSTANCES_SECTION = "instances";
         String TARANTOOL_INSTANCE_HOST_KEY = "host";

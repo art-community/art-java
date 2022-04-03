@@ -6,6 +6,7 @@ import io.art.core.strategy.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
+import io.art.transport.retry.*;
 import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import lombok.*;
@@ -14,7 +15,6 @@ import static io.art.core.constants.CommonConfigurationKeys.*;
 import static io.art.core.strategy.ServiceMethodStrategy.*;
 import static io.art.rsocket.configuration.common.RsocketKeepAliveConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketResumeConfiguration.*;
-import static io.art.rsocket.configuration.common.RsocketRetryConfiguration.*;
 import static io.art.rsocket.configuration.common.RsocketSslConfiguration.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.ConfigurationKeys.*;
 import static io.art.rsocket.constants.RsocketModuleConstants.Defaults.*;
@@ -22,6 +22,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
+import static io.art.transport.retry.RetryConfiguration.*;
 import static java.util.function.UnaryOperator.*;
 import java.time.*;
 import java.util.function.*;
@@ -36,7 +37,7 @@ public class RsocketCommonConnectorConfiguration {
     private int fragment;
     private RsocketKeepAliveConfiguration keepAlive;
     private RsocketResumeConfiguration resume;
-    private RsocketRetryConfiguration retry;
+    private RetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
     private ServiceMethodStrategy service;
@@ -60,7 +61,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.decorator = identity();
         configuration.keepAlive = rsocketKeepAlive();
         configuration.resume = rsocketResume();
-        configuration.retry = rsocketRetry();
+        configuration.retry = retry();
         return configuration;
     }
 
@@ -77,7 +78,7 @@ public class RsocketCommonConnectorConfiguration {
         configuration.fragment = listener.emit(orElse(source.getInteger(FRAGMENTATION_MTU_KEY), current.fragment));
         configuration.keepAlive = listener.emit(let(source.getNested(KEEP_ALIVE_SECTION), section -> rsocketKeepAlive(section, current.keepAlive), current.keepAlive));
         configuration.resume = listener.emit(let(source.getNested(RESUME_SECTION), section -> rsocketResume(section, current.resume), current.resume));
-        configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> rsocketRetry(section, current.retry), current.retry));
+        configuration.retry = listener.emit(let(source.getNested(RECONNECT_SECTION), section -> retry(section, current.retry), current.retry));
         configuration.payloadDecoderMode = listener.emit(rsocketPayloadDecoder(source.getString(PAYLOAD_DECODER_KEY), current.payloadDecoderMode));
         configuration.maxInboundPayloadSize = listener.emit(orElse(source.getInteger(MAX_INBOUND_PAYLOAD_SIZE_KEY), current.maxInboundPayloadSize));
         configuration.service = listener.emit(let(source.getString(SERVICE_ID_KEY), ServiceMethodStrategy::manual, current.service));
