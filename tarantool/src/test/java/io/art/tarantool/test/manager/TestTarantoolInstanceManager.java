@@ -25,7 +25,6 @@ import java.nio.file.*;
 public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
         initialize(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_SCRIPT);
-        waitCondition(() -> !TCP.isPortAvailable(STORAGE_PORT));
     }
 
     public static void initializeRouter() {
@@ -34,12 +33,6 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
         initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
-
-        waitCondition(() -> !TCP.isPortAvailable(ROUTER_PORT));
-        waitCondition(() -> !TCP.isPortAvailable(SHARD_1_MASTER_PORT));
-        waitCondition(() -> !TCP.isPortAvailable(SHARD_2_MASTER_PORT));
-        waitCondition(() -> !TCP.isPortAvailable(SHARD_1_REPLICA_PORT));
-        waitCondition(() -> !TCP.isPortAvailable(SHARD_2_REPLICA_PORT));
     }
 
     public static void shutdownStorage() {
