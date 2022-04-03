@@ -56,7 +56,7 @@ public class TarantoolStorageTest {
             tarantool()
                     .connector(TestStorage.class)
                     .shards()
-                    .forEach(client -> client.call(STORAGE_WAIT_FUNCTION).block());
+                    .forEach(client -> client.call(STORAGE_AWAIT_FUNCTION).block());
             tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())

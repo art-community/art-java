@@ -37,3 +37,20 @@ testFilter = function(data)
     return data[9] > 3
 end
 box.schema.func.create("testFilter", { if_not_exists = true })
+
+await = function()
+    fiber = require('fiber')
+    yaml = require("yaml")
+    log = require("log")
+    function waiter()
+        local info = box.info()
+        while info.status ~= "running" do
+            log.info(yaml.encode(info))
+            fiber.sleep(1)
+        end
+    end
+    local waiter = fiber.new(waiter)
+    waiter:set_joinable(true)
+    waiter:join()
+end
+box.schema.func.create("await", { if_not_exists = true })
