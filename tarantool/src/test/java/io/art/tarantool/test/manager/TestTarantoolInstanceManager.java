@@ -25,7 +25,7 @@ import java.nio.file.*;
 public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
         initialize(STORAGE_DIRECTORY, STORAGE_SCRIPT);
-        waitTime(ofSeconds(1));
+        waitTime(ofSeconds(5));
     }
 
     public static void initializeRouter() {
@@ -34,12 +34,12 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
         initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
-        waitTime(ofSeconds(1));
+        waitTime(ofSeconds(5));
     }
 
     public static void shutdownStorage() {
         shutdown(STORAGE_DIRECTORY, STORAGE_PID);
-        waitTime(ofSeconds(1));
+        waitTime(ofSeconds(5));
     }
 
     public static void shutdownRouter() {
@@ -48,7 +48,7 @@ public class TestTarantoolInstanceManager {
         shutdown(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_PID);
         shutdown(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_PID);
         shutdown(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_PID);
-        waitTime(ofSeconds(1));
+        waitTime(ofSeconds(5));
     }
 
     private static void shutdown(String directory, String pidPath) {
