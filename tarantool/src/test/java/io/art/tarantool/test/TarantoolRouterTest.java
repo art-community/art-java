@@ -26,7 +26,9 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.lock.TestTarantoolLocker.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
+import static java.time.Duration.ofMinutes;
 import static org.junit.jupiter.api.Assertions.*;
+import java.time.*;
 import java.util.concurrent.*;
 
 public class TarantoolRouterTest {
@@ -43,6 +45,8 @@ public class TarantoolRouterTest {
                                     .storage(TestStorage.class, storage -> storage
                                             .connector(connector -> connector.client(client -> client
                                                     .port(ROUTER_PORT)
+                                                    .connectionTimeout(ofMinutes(5))
+                                                    .executionTimeout(ofMinutes(5))
                                                     .router(true)
                                                     .username(USERNAME)
                                                     .password(PASSWORD)))
