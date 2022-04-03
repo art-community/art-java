@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.net.*;
 import java.time.*;
-import java.util.concurrent.*;
 import java.util.function.*;
 
 public class WaiterTest {
@@ -64,6 +63,7 @@ public class WaiterTest {
                 socket.close();
             } catch (Throwable ignored) {
             }
+            assertTrue(socket.isClosed());
         });
         threadClose.start();
 
