@@ -15,7 +15,6 @@ import org.junit.jupiter.api.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.initializer.Initializer.*;
 import static io.art.core.normalizer.ClassIdentifierNormalizer.*;
-import static io.art.core.waiter.Waiter.waitTime;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.meta.test.TestingMetaModelGenerator.*;
 import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaPackage.MetaTestPackage.MetaTestingMetaModelClass.*;
@@ -27,7 +26,6 @@ import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.lock.TestTarantoolLocker.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
 import static io.art.tarantool.test.model.TestStorage.*;
-import static java.time.Duration.ofSeconds;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.concurrent.*;
 
@@ -59,11 +57,6 @@ public class TarantoolRouterTest {
                     .router()
                     .call(ROUTER_BOOTSTRAP_FUNCTION)
                     .block();
-            tarantool()
-                    .connector(TestStorage.class)
-                    .shards()
-                    .forEach(client -> client.call(STORAGE_WAIT_FUNCTION).block());
-            waitTime(ofSeconds(5));
             tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())

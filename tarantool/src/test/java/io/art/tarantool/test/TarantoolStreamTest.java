@@ -51,6 +51,10 @@ public class TarantoolStreamTest {
                     )
             );
             tarantool()
+                    .connector(TestStorage.class)
+                    .shards()
+                    .forEach(client -> client.call(STORAGE_WAIT_FUNCTION).block());
+            tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
                     .createIndex(indexFor(testingMetaModel())
