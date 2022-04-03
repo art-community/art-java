@@ -59,11 +59,11 @@ public class TarantoolRouterTest {
                     .router()
                     .call(ROUTER_BOOTSTRAP_FUNCTION)
                     .block();
-            waitTime(ofSeconds(3));
             tarantool()
                     .connector(TestStorage.class)
                     .shards()
                     .forEach(client -> client.call(STORAGE_WAIT_FUNCTION).block());
+            waitTime(ofSeconds(5));
             tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())

@@ -2,7 +2,6 @@ package io.art.tarantool.test.manager;
 
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
-import io.art.tarantool.test.model.*;
 import lombok.experimental.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
@@ -11,7 +10,6 @@ import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
-import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.charset.Charset.*;
@@ -33,9 +31,9 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
         initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        waitTime(ofSeconds(3));
+        waitTime(ofSeconds(1));
         initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
-        waitTime(ofSeconds(3));
+        waitTime(ofSeconds(1));
     }
 
     public static void shutdownStorage() {
@@ -67,7 +65,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(3));
+        waitTime(ofSeconds(1));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
@@ -115,7 +113,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(3));
+        waitTime(ofSeconds(1));
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
             System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile, defaultCharset())));
