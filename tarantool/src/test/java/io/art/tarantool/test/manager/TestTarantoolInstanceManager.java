@@ -8,7 +8,6 @@ import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
-import static io.art.core.network.selector.PortSelector.SocketType.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
@@ -18,10 +17,8 @@ import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Objects.*;
-import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.nio.file.*;
-import java.time.*;
 
 @UtilityClass
 public class TestTarantoolInstanceManager {
@@ -66,8 +63,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(1));
-        waitCondition(() -> TCP.isPortAvailable(port));
+        waitTime(ofSeconds(3));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
@@ -115,11 +111,10 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(1));
-        boolean initialized = waitCondition(() -> !TCP.isPortAvailable(port));
+        waitTime(ofSeconds(3));
+
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
             System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile, defaultCharset())));
-        assertTrue(initialized);
     }
 }
