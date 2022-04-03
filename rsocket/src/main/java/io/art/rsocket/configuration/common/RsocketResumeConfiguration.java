@@ -20,7 +20,7 @@ package io.art.rsocket.configuration.common;
 
 import io.art.core.annotation.*;
 import io.art.core.source.*;
-import io.art.transport.retry.*;
+import io.art.transport.configuration.*;
 import io.rsocket.core.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
@@ -36,7 +36,7 @@ public class RsocketResumeConfiguration {
     private boolean cleanupStoreOnKeepAlive;
     private Duration sessionDuration;
     private Duration streamTimeout;
-    private RetryConfiguration retryConfiguration;
+    private TransportRetryConfiguration retryConfiguration;
 
     public Resume toResume() {
         Resume resume = new Resume();
@@ -58,7 +58,7 @@ public class RsocketResumeConfiguration {
 
     public static RsocketResumeConfiguration rsocketResume() {
         return RsocketResumeConfiguration.builder()
-                .retryConfiguration(RetryConfiguration.retry())
+                .retryConfiguration(TransportRetryConfiguration.retry())
                 .sessionDuration(DEFAULT_RESUME_SESSION_DURATION)
                 .streamTimeout(DEFAULT_RESUME_STREAM_TIMEOUT)
                 .build();
@@ -69,7 +69,7 @@ public class RsocketResumeConfiguration {
         configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), false);
         configuration.sessionDuration = orElse(source.getDuration(SESSION_DURATION_KEY), DEFAULT_RESUME_SESSION_DURATION);
         configuration.streamTimeout = orElse(source.getDuration(STREAM_TIMEOUT_KEY), DEFAULT_RESUME_STREAM_TIMEOUT);
-        configuration.retryConfiguration = let(source.getNested(RETRY_SECTION), RetryConfiguration::retry);
+        configuration.retryConfiguration = let(source.getNested(RETRY_SECTION), TransportRetryConfiguration::retry);
         return configuration;
     }
 
@@ -78,7 +78,7 @@ public class RsocketResumeConfiguration {
         configuration.cleanupStoreOnKeepAlive = orElse(source.getBoolean(CLEANUP_STORE_ON_KEEP_ALIVE_KEY), defaults.cleanupStoreOnKeepAlive);
         configuration.sessionDuration = orElse(source.getDuration(SESSION_DURATION_KEY), defaults.sessionDuration);
         configuration.streamTimeout = orElse(source.getDuration(STREAM_TIMEOUT_KEY), defaults.streamTimeout);
-        configuration.retryConfiguration = let(source.getNested(RETRY_SECTION), RetryConfiguration::retry, defaults.retryConfiguration);
+        configuration.retryConfiguration = let(source.getNested(RETRY_SECTION), TransportRetryConfiguration::retry, defaults.retryConfiguration);
         return configuration;
     }
 }

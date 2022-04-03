@@ -1,7 +1,7 @@
 package io.art.tarantool.configuration;
 
 import io.art.core.source.*;
-import io.art.transport.retry.*;
+import io.art.transport.configuration.*;
 import lombok.*;
 import static io.art.core.checker.NullityChecker.*;
 import static io.art.core.constants.NetworkConstants.*;
@@ -19,7 +19,7 @@ public class TarantoolClientConfiguration {
     private boolean immutable;
     private boolean router;
     private Duration connectionTimeout;
-    private RetryConfiguration retryConfiguration;
+    private TransportRetryConfiguration retryConfiguration;
     private Duration executionTimeout;
     private boolean logging;
 
@@ -33,7 +33,7 @@ public class TarantoolClientConfiguration {
         configuration.router = false;
         configuration.connectionTimeout = DEFAULT_TARANTOOL_CONNECTION_TIMEOUT;
         configuration.executionTimeout = DEFAULT_TARANTOOL_EXECUTION_TIMEOUT;
-        configuration.retryConfiguration = RetryConfiguration.retry();
+        configuration.retryConfiguration = TransportRetryConfiguration.retry();
         configuration.logging = false;
         return configuration;
     }
@@ -49,7 +49,7 @@ public class TarantoolClientConfiguration {
         configuration.connectionTimeout = orElse(source.getDuration(TARANTOOL_INSTANCE_CONNECTION_TIMEOUT_KEY), DEFAULT_TARANTOOL_CONNECTION_TIMEOUT);
         configuration.executionTimeout = orElse(source.getDuration(TARANTOOL_INSTANCE_EXECUTION_TIMEOUT_KEY), DEFAULT_TARANTOOL_EXECUTION_TIMEOUT);
         configuration.logging = orElse(source.getBoolean(TARANTOOL_LOGGING_KEY), false);
-        configuration.retryConfiguration = orElse(source.getNested(TARANTOOL_RETRY_SECTION, RetryConfiguration::retry), RetryConfiguration.retry());
+        configuration.retryConfiguration = orElse(source.getNested(TARANTOOL_RETRY_SECTION, TransportRetryConfiguration::retry), TransportRetryConfiguration.retry());
         return configuration;
     }
 }

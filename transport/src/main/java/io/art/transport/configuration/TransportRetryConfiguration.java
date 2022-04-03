@@ -1,4 +1,4 @@
-package io.art.transport.retry;
+package io.art.transport.configuration;
 
 import io.art.core.annotation.*;
 import io.art.core.exception.*;
@@ -17,7 +17,7 @@ import java.time.*;
 @Getter
 @Public
 @Builder(toBuilder = true)
-public class RetryConfiguration {
+public class TransportRetryConfiguration {
     private Duration minBackoff;
     private long backOffMaxAttempts;
     private long fixedDelayMaxAttempts;
@@ -42,14 +42,14 @@ public class RetryConfiguration {
         throw new ImpossibleSituationException();
     }
 
-    public static RetryConfiguration retry() {
-        return RetryConfiguration.builder()
+    public static TransportRetryConfiguration retry() {
+        return TransportRetryConfiguration.builder()
                 .retryPolicy(INDEFINITELY)
                 .build();
     }
 
-    public static RetryConfiguration retry(ConfigurationSource source) {
-        RetryConfiguration configuration = RetryConfiguration.builder().build();
+    public static TransportRetryConfiguration retry(ConfigurationSource source) {
+        TransportRetryConfiguration configuration = TransportRetryConfiguration.builder().build();
         configuration.retryPolicy = retryPolicy(source.getString(POLICY_KEY), INDEFINITELY);
         configuration.backOffMaxAttempts = orElse(source.getLong(BACKOFF_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
         configuration.fixedDelayMaxAttempts = orElse(source.getLong(FIXED_DELAY_MAX_ATTEMPTS_KEY), DEFAULT_RETRY_MAX_ATTEMPTS);
@@ -60,8 +60,8 @@ public class RetryConfiguration {
         return configuration;
     }
 
-    public static RetryConfiguration retry(ConfigurationSource source, RetryConfiguration defaults) {
-        RetryConfiguration configuration = RetryConfiguration.builder().build();
+    public static TransportRetryConfiguration retry(ConfigurationSource source, TransportRetryConfiguration defaults) {
+        TransportRetryConfiguration configuration = TransportRetryConfiguration.builder().build();
         configuration.retryPolicy = retryPolicy(source.getString(POLICY_KEY), defaults.retryPolicy);
         configuration.backOffMaxAttempts = orElse(source.getLong(BACKOFF_MAX_ATTEMPTS_KEY), defaults.backOffMaxAttempts);
         configuration.fixedDelayMaxAttempts = orElse(source.getLong(FIXED_DELAY_MAX_ATTEMPTS_KEY), defaults.fixedDelayMaxAttempts);

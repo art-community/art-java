@@ -6,7 +6,7 @@ import io.art.core.strategy.*;
 import io.art.rsocket.configuration.common.*;
 import io.art.rsocket.constants.RsocketModuleConstants.*;
 import io.art.rsocket.refresher.*;
-import io.art.transport.retry.*;
+import io.art.transport.configuration.*;
 import io.rsocket.core.*;
 import io.rsocket.plugins.*;
 import lombok.*;
@@ -22,7 +22,7 @@ import static io.art.rsocket.constants.RsocketModuleConstants.PayloadDecoderMode
 import static io.art.transport.constants.TransportModuleConstants.ConfigurationKeys.*;
 import static io.art.transport.constants.TransportModuleConstants.*;
 import static io.art.transport.constants.TransportModuleConstants.DataFormat.*;
-import static io.art.transport.retry.RetryConfiguration.*;
+import static io.art.transport.configuration.TransportRetryConfiguration.*;
 import static java.util.function.UnaryOperator.*;
 import java.time.*;
 import java.util.function.*;
@@ -37,7 +37,7 @@ public class RsocketCommonConnectorConfiguration {
     private int fragment;
     private RsocketKeepAliveConfiguration keepAlive;
     private RsocketResumeConfiguration resume;
-    private RetryConfiguration retry;
+    private TransportRetryConfiguration retry;
     private PayloadDecoderMode payloadDecoderMode;
     private int maxInboundPayloadSize;
     private ServiceMethodStrategy service;
