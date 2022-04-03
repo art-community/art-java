@@ -3,12 +3,12 @@ package io.art.tarantool.test.manager;
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
-import org.junit.jupiter.api.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
+import static io.art.core.network.selector.PortSelector.SocketType.*;
 import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
@@ -16,7 +16,6 @@ import static java.lang.Runtime.*;
 import static java.nio.charset.Charset.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
-import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
@@ -25,30 +24,30 @@ import java.nio.file.*;
 @UtilityClass
 public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
-        initialize(STORAGE_DIRECTORY, STORAGE_SCRIPT);
+        initialize(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_SCRIPT);
     }
 
     public static void initializeRouter() {
-        initialize(SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
-        initialize(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
-        initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
-        initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
+        initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
+        initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
+        initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
+        initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
+        initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
     }
 
     public static void shutdownStorage() {
-        shutdown(STORAGE_DIRECTORY, STORAGE_PID);
+        shutdown(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_PID);
     }
 
     public static void shutdownRouter() {
-        shutdown(ROUTER_DIRECTORY, ROUTER_PID);
-        shutdown(SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_PID);
-        shutdown(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_PID);
-        shutdown(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_PID);
-        shutdown(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_PID);
+        shutdown(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_PID);
+        shutdown(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_PID);
+        shutdown(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_PID);
+        shutdown(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_PID);
+        shutdown(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_PID);
     }
 
-    private static void shutdown(String directory, String pidPath) {
+    private static void shutdown(int port, String directory, String pidPath) {
         Path pid = get(directory).resolve(pidPath);
         if (!pid.toFile().exists()) return;
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
@@ -65,7 +64,7 @@ public class TestTarantoolInstanceManager {
         };
 
         assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(command).waitFor(), TarantoolException::new));
-        waitTime(ofSeconds(1));
+        assertTrue(waitCondition(() -> TCP.isPortAvailable(port)));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
@@ -79,7 +78,7 @@ public class TestTarantoolInstanceManager {
         recursiveDelete(get(directory));
     }
 
-    private static void initialize(String directory, String scriptFile) {
+    private static void initialize(int port, String directory, String scriptFile) {
         String directoryExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 MKDIR_COMMAND + TEMP_DIRECTORY + SLASH + directory +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
@@ -113,7 +112,7 @@ public class TestTarantoolInstanceManager {
         };
 
         assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(command).waitFor(), TarantoolException::new));
-        waitTime(ofSeconds(1));
+        assertTrue(waitCondition(() -> !TCP.isPortAvailable(port)));
 
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
