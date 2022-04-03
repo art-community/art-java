@@ -14,7 +14,19 @@ return function()
         end
 
         wait = function()
-            vshard.storage.sync(30)
+            fiber = require('fiber')
+            yaml = require("yaml")
+            log = require("log")
+            function waiter()
+                local info = box.info()
+                while info.status ~= "running" do
+                    log.info(yaml.encode(info))
+                    fiber.sleep(1)
+                end
+            end
+            local waiter = fiber.new(waiter)
+            waiter:set_joinable(true)
+            waiter:join()
         end
 
         if not box.cfg.read_only then

@@ -46,7 +46,32 @@ box.schema.func.create("testFilter", { if_not_exists = true })
 
 bootstrap = function()
     vshard.router.bootstrap()
-    vshard.router.sync(30)
+    fiber = require('fiber')
+    yaml = require("yaml")
+    log = require("log")
+    local function waitFunction()
+        while true do
+            local info = vshard.router.info()
+
+            log.info(yaml.encode(info))
+
+            local available = info["status"] == 0
+
+            for _, set in pairs(info["replicasets"]) do
+                available = available and set["replica"]["status"] == "available"
+            end
+
+            if available then
+                return
+            else
+                fiber.sleep(1)
+            end
+        end
+    end
+    local waiter = fiber.new(waitFunction)
+    waiter:set_joinable(true)
+    waiter:join()
 end
+
 box.schema.func.create("bootstrap", { if_not_exists = true })
 

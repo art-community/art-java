@@ -31,9 +31,7 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
         initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        waitTime(ofSeconds(1));
         initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
-        waitTime(ofSeconds(1));
     }
 
     public static void shutdownStorage() {
