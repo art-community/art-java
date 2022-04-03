@@ -16,10 +16,12 @@ import static java.lang.Runtime.*;
 import static java.nio.charset.Charset.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.nio.file.*;
+import java.time.*;
 
 @UtilityClass
 public class TestTarantoolInstanceManager {
@@ -64,6 +66,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        waitTime(ofSeconds(1));
         waitCondition(() -> TCP.isPortAvailable(port));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
@@ -112,6 +115,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
+        waitTime(ofSeconds(1));
         boolean initialized = waitCondition(() -> !TCP.isPortAvailable(port));
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
