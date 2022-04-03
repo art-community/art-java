@@ -36,16 +36,6 @@ public class TestTarantoolInstanceManager {
         waitTime(ofSeconds(3));
         initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
         waitTime(ofSeconds(3));
-        tarantool()
-                .connector(TestStorage.class)
-                .router()
-                .call(ROUTER_BOOTSTRAP_FUNCTION)
-                .block();
-        waitTime(ofSeconds(3));
-        tarantool()
-                .connector(TestStorage.class)
-                .shards()
-                .forEach(client -> client.call(STORAGE_WAIT_FUNCTION).block());
     }
 
     public static void shutdownStorage() {
