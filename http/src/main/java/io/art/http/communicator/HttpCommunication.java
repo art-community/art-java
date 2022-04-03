@@ -56,18 +56,19 @@ public class HttpCommunication implements Communication {
     private MetaType<?> inputMappingType;
     private MetaType<?> outputMappingType;
     private CommunicatorAction action;
+    private final Sinks.One<Void> disposer = Sinks.one();
 
     private final static ThreadLocal<HttpCommunicationDecorator> decorator = new ThreadLocal<>();
 
     public HttpCommunication(Supplier<HttpClient> client, HttpConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
-        this.client = property(client);
+        this.client = property(client, ignore -> disposer.tryEmitEmpty());
         communication = property(this::communication);
     }
 
     public HttpCommunication(Supplier<HttpClient> client, HttpModuleConfiguration module, HttpConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
-        this.client = property(client).listenConsumer(() -> module.getConsumer()
+        this.client = property(client, ignore -> disposer.tryEmitEmpty()).listenConsumer(() -> module.getConsumer()
                 .connectorConsumers()
                 .consumerFor(connector.getConnector()));
         communication = property(this::communication).listenProperties(this.client);
@@ -152,6 +153,12 @@ public class HttpCommunication implements Communication {
                     .collect(joining(AMPERSAND));
             uri.append(QUESTION).append(parameterString);
         }
+
+        client = client
+                .mapConnect(connection -> connection
+                        .doOnNext(connected -> disposer
+                                .asMono()
+                                .subscribe(ignore -> connected.disposeNow())));
 
         return processCommunication(builder
                 .client(client)
