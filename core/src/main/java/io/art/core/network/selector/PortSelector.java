@@ -76,7 +76,7 @@ public class PortSelector {
             @Override
             public boolean isPortAvailable(int port) {
                 try {
-                    ServerSocket socket = getDefault().createServerSocket(port, 1, getByName(LOCALHOST_IP_ADDRESS));
+                    ServerSocket socket = new ServerSocket(port, 1);
                     socket.setReuseAddress(true);
                     socket.close();
                     return true;
@@ -90,7 +90,7 @@ public class PortSelector {
             @Override
             public boolean isPortAvailable(int port) {
                 try {
-                    DatagramSocket socket = new DatagramSocket(port, getByName(LOCALHOST_IP_ADDRESS));
+                    DatagramSocket socket = new DatagramSocket(port);
                     socket.setReuseAddress(true);
                     socket.close();
                     return true;
