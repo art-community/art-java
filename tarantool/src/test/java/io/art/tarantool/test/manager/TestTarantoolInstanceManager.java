@@ -3,6 +3,7 @@ package io.art.tarantool.test.manager;
 import io.art.core.exception.*;
 import io.art.tarantool.exception.*;
 import lombok.experimental.*;
+import org.junit.jupiter.api.*;
 import static io.art.core.constants.StringConstants.*;
 import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determiner.SystemDeterminer.*;
@@ -17,6 +18,7 @@ import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
 import static java.util.Objects.*;
+import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
 import java.nio.file.*;
 
@@ -62,8 +64,8 @@ public class TestTarantoolInstanceManager {
                 executable
         };
 
-        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(3));
+        assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(command).waitFor(), TarantoolException::new));
+        waitTime(ofSeconds(1));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
@@ -73,7 +75,7 @@ public class TestTarantoolInstanceManager {
                 BASH_ARGUMENT,
                 deleteExecutable
         };
-        wrapExceptionCall(() -> getRuntime().exec(deleteCommand), TarantoolException::new);
+        assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(deleteCommand).waitFor(), TarantoolException::new));
         recursiveDelete(get(directory));
     }
 
@@ -86,7 +88,7 @@ public class TestTarantoolInstanceManager {
                 BASH_ARGUMENT,
                 directoryExecutable
         };
-        wrapExceptionCall(() -> getRuntime().exec(directoryCommand), TarantoolException::new);
+        assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(directoryCommand).waitFor(), TarantoolException::new));
 
         Path working = touchDirectory(get(directory));
 
@@ -110,8 +112,8 @@ public class TestTarantoolInstanceManager {
                 executable
         };
 
-        wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(3));
+        assertEquals(0, wrapExceptionCall(() -> getRuntime().exec(command).waitFor(), TarantoolException::new));
+        waitTime(ofSeconds(1));
 
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
