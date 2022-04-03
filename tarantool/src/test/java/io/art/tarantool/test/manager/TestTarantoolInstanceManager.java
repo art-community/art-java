@@ -32,13 +32,14 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
         initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
+        waitTime(ofSeconds(5));
         initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
         tarantool()
                 .connector(TestStorage.class)
                 .router()
                 .call(ROUTER_BOOTSTRAP_FUNCTION)
                 .block();
-        waitTime(ofSeconds(1));
+        waitTime(ofSeconds(3));
         tarantool()
                 .connector(TestStorage.class)
                 .shards()
@@ -74,7 +75,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(10));
+        waitTime(ofSeconds(1));
 
         String deleteExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 DELETE_COMMAND + TEMP_DIRECTORY + SLASH + directory +
@@ -122,7 +123,7 @@ public class TestTarantoolInstanceManager {
         };
 
         wrapExceptionCall(() -> getRuntime().exec(command), TarantoolException::new);
-        waitTime(ofSeconds(10));
+        waitTime(ofSeconds(1));
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
             System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile)));
