@@ -8,12 +8,14 @@ import static io.art.core.converter.WslPathConverter.*;
 import static io.art.core.determiner.SystemDeterminer.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.InputStreamExtensions.*;
+import static io.art.core.waiter.Waiter.*;
 import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
 import static java.nio.charset.Charset.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
+import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
@@ -23,6 +25,7 @@ import java.nio.file.*;
 public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
         initialize(STORAGE_DIRECTORY, STORAGE_SCRIPT);
+        waitTime(ofSeconds(1));
     }
 
     public static void initializeRouter() {
@@ -31,10 +34,12 @@ public class TestTarantoolInstanceManager {
         initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
         initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
         initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
+        waitTime(ofSeconds(1));
     }
 
     public static void shutdownStorage() {
         shutdown(STORAGE_DIRECTORY, STORAGE_PID);
+        waitTime(ofSeconds(1));
     }
 
     public static void shutdownRouter() {
@@ -43,6 +48,7 @@ public class TestTarantoolInstanceManager {
         shutdown(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_PID);
         shutdown(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_PID);
         shutdown(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_PID);
+        waitTime(ofSeconds(1));
     }
 
     private static void shutdown(String directory, String pidPath) {
