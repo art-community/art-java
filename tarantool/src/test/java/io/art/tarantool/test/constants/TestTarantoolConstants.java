@@ -51,8 +51,6 @@ public interface TestTarantoolConstants {
     String TEMP_DIRECTORY = orElse(getenv("TMPDIR"), "/tmp") + "/tarantool";
     String DELETE_COMMAND = "rm -rf ";
 
-    String PORT_IS_BUSY_ERROR = "Tarantool port {0,number,#} is busy";
-    String SHUTDOWN_ERROR = "Tarantool instance {0} on port {1,number,#} has not been shutted down";
     String INITIALIZATION_LOG_OUTPUT = "Initialization Tarantool {0}:\n{1}\n\n";
     String SHUTDOWN_LOG_OUTPUT = "Shutdown Tarantool {0}:\n{1}\n\n";
     String LOG_EXTENSION = ".log";
