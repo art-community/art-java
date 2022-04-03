@@ -42,9 +42,7 @@ public class Waiter {
         ScheduledThreadPoolExecutor scheduler = new ScheduledThreadPoolExecutor(1);
         scheduler.setMaximumPoolSize(1);
         scheduler.scheduleAtFixedRate(() -> check(scheduler, condition, latch), checkPeriod.toMillis(), checkPeriod.toMillis(), MILLISECONDS);
-        boolean result = handleException(ignored -> false).call(() -> latch.await(timeout.toMillis(), MILLISECONDS));
-        scheduler.shutdownNow();
-        return result;
+        return handleException(ignored -> false).call(() -> latch.await(timeout.toMillis(), MILLISECONDS));
     }
 
     public static void waitTime(Duration time) {
