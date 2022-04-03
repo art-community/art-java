@@ -1,6 +1,7 @@
 local current = os.getenv("PWD") or io.popen("cd"):read()
 local temp = os.getenv("TMPDIR") or "/tmp"
 local cfg = {
+    background = true,
     listen = 3302,
     work_dir = temp .. "/tarantool/test-router",
     pid_file = current .. "/test-router.pid",

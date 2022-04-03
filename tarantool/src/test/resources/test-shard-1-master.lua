@@ -1,6 +1,7 @@
 local current = os.getenv("PWD") or io.popen("cd"):read()
 local temp = os.getenv("TMPDIR") or "/tmp"
 local cfg = {
+    background = true,
     work_dir = temp .. "/tarantool/test-shard-1-master",
     pid_file = current .. "/test-shard-1-master.pid",
     bucket_count = 2,

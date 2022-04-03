@@ -3,6 +3,7 @@ local temp = os.getenv("TMPDIR") or "/tmp"
 
 require("art-tarantool")
 box.cfg {
+    background = true,
     listen = 3301,
     pid_file = current .. "/test-storage.pid",
     log = "file:" .. current .. "/test-storage.log",
