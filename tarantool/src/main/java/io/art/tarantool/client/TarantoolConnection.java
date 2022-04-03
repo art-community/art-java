@@ -85,7 +85,7 @@ public class TarantoolConnection {
         return receiver.getSink()
                 .asMono()
                 .timeout(clientConfiguration.getExecutionTimeout())
-                .doOnCancel(connection::onDispose)
+                .doOnCancel(connection::dispose)
                 .doOnTerminate(connection::dispose);
     }
 
@@ -95,7 +95,7 @@ public class TarantoolConnection {
         return receiver.getSink()
                 .asMono()
                 .timeout(clientConfiguration.getExecutionTimeout())
-                .doOnCancel(connection::onDispose)
+                .doOnCancel(connection::dispose)
                 .doOnTerminate(connection::dispose);
     }
 
