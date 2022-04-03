@@ -22,22 +22,18 @@ public interface TestTarantoolConstants {
     String SHARD_1_MASTER_DIRECTORY = "test-shard-1-master";
     String SHARD_1_MASTER_PID = "test-shard-1-master.pid";
     String SHARD_1_MASTER_SCRIPT = "test-shard-1-master.lua";
-    int SHARD_1_MASTER_PORT = 3303;
 
     String SHARD_1_REPLICA_DIRECTORY = "test-shard-1-replica";
     String SHARD_1_REPLICA_PID = "test-shard-1-replica.pid";
     String SHARD_1_REPLICA_SCRIPT = "test-shard-1-replica.lua";
-    int SHARD_1_REPLICA_PORT = 3304;
 
     String SHARD_2_MASTER_DIRECTORY = "test-shard-2-master";
     String SHARD_2_MASTER_PID = "test-shard-2-master.pid";
     String SHARD_2_MASTER_SCRIPT = "test-shard-2-master.lua";
-    int SHARD_2_MASTER_PORT = 3305;
 
     String SHARD_2_REPLICA_DIRECTORY = "test-shard-2-replica";
     String SHARD_2_REPLICA_PID = "test-shard-2-replica.pid";
     String SHARD_2_REPLICA_SCRIPT = "test-shard-2-replica.lua";
-    int SHARD_2_REPLICA_PORT = 3306;
 
     String KILL_COMMAND = "kill -9 ";
     String BASH = "bash";
