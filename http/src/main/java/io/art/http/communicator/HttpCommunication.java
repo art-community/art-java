@@ -62,17 +62,15 @@ public class HttpCommunication implements Communication {
 
     public HttpCommunication(Supplier<HttpClient> client, HttpConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
-        this.client = property(client, ignore -> disposer.tryEmitEmpty()).initialized(initialized -> initialized.warmup().subscribe());
+        this.client = property(client, ignore -> disposer.tryEmitEmpty());
         communication = property(this::communication);
     }
 
     public HttpCommunication(Supplier<HttpClient> client, HttpModuleConfiguration module, HttpConnectorConfiguration connector) {
         this.connectorConfiguration = connector;
-        this.client = property(client, ignore -> disposer.tryEmitEmpty())
-                .listenConsumer(() -> module.getConsumer()
-                        .connectorConsumers()
-                        .consumerFor(connector.getConnector()))
-                .initialized(initialized -> initialized.warmup().subscribe());
+        this.client = property(client, ignore -> disposer.tryEmitEmpty()).listenConsumer(() -> module.getConsumer()
+                .connectorConsumers()
+                .consumerFor(connector.getConnector()));
         communication = property(this::communication).listenProperties(this.client);
     }
 
@@ -156,11 +154,9 @@ public class HttpCommunication implements Communication {
             uri.append(QUESTION).append(parameterString);
         }
 
-        client = client
-                .mapConnect(connection -> connection
-                        .doOnNext(connected -> disposer
-                                .asMono()
-                                .subscribe(ignore -> connected.disposeNow())));
+        client = client.mapConnect(connection -> connection.doOnNext(connected -> disposer
+                .asMono()
+                .subscribe(ignore -> connected.disposeNow())));
 
         return processCommunication(builder
                 .client(client)

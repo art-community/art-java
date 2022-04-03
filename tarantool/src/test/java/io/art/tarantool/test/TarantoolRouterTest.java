@@ -8,7 +8,6 @@ import io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.MetaMetaP
 import io.art.storage.service.*;
 import io.art.tarantool.model.*;
 import io.art.tarantool.module.*;
-import io.art.tarantool.registry.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
@@ -23,7 +22,6 @@ import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.constants.TarantoolModuleConstants.FieldType.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.lock.TestTarantoolLocker.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
@@ -36,6 +34,7 @@ public class TarantoolRouterTest {
     public void setup() {
         try {
             lock();
+            initializeRouter();
             initialize(
                     MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
                     TransportActivator.transport(),
@@ -53,7 +52,6 @@ public class TarantoolRouterTest {
                             .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
                     )
             );
-            initializeRouter();
             tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).sync(true).build())
@@ -89,9 +87,6 @@ public class TarantoolRouterTest {
     public void cleanup() {
         try {
             lock();
-            for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
-                registry.getConnector().dispose();
-            }
             shutdownRouter();
             shutdown();
         } finally {

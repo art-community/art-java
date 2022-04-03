@@ -7,7 +7,6 @@ import io.art.meta.test.meta.*;
 import io.art.storage.service.*;
 import io.art.storage.sorter.model.*;
 import io.art.tarantool.module.*;
-import io.art.tarantool.registry.*;
 import io.art.tarantool.test.meta.*;
 import io.art.tarantool.test.model.*;
 import io.art.transport.module.*;
@@ -21,7 +20,6 @@ import static io.art.meta.test.meta.MetaMetaTest.MetaIoPackage.MetaArtPackage.Me
 import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.model.TarantoolIndexConfiguration.*;
 import static io.art.tarantool.model.TarantoolSpaceConfiguration.*;
-import static io.art.tarantool.module.TarantoolModule.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static io.art.tarantool.test.lock.TestTarantoolLocker.*;
 import static io.art.tarantool.test.manager.TestTarantoolInstanceManager.*;
@@ -36,6 +34,7 @@ public class TarantoolStreamTest {
     public static void setup() {
         try {
             lock();
+            initializeStorage();
             initialize(
                     MetaActivator.meta(() -> new MetaTarantoolTest(new MetaMetaTest())),
                     TransportActivator.transport(),
@@ -51,7 +50,6 @@ public class TarantoolStreamTest {
                             .subscriptions(subscriptions -> subscriptions.onService(TestService.class))
                     )
             );
-            initializeStorage();
             tarantool()
                     .schema(TestStorage.class)
                     .createSpace(spaceFor(TestingMetaModel.class).ifNotExists(true).build())
@@ -91,9 +89,6 @@ public class TarantoolStreamTest {
     public static void cleanup() {
         try {
             lock();
-            for (TarantoolStorageRegistry registry : tarantoolModule().configuration().getStorageRegistries().get().values()) {
-                registry.getConnector().dispose();
-            }
             shutdownStorage();
             shutdown();
         } finally {
