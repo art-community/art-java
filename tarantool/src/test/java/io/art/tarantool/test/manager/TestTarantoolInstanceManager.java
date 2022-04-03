@@ -14,6 +14,7 @@ import static io.art.core.wrapper.ExceptionWrapper.*;
 import static io.art.tarantool.Tarantool.*;
 import static io.art.tarantool.test.constants.TestTarantoolConstants.*;
 import static java.lang.Runtime.*;
+import static java.nio.charset.Charset.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
 import static java.time.Duration.*;
@@ -64,10 +65,10 @@ public class TestTarantoolInstanceManager {
         if (!pid.toFile().exists()) return;
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists()) {
-            System.out.println(format(SHUTDOWN_LOG_OUTPUT, directory, readFile(logFile)));
+            System.out.println(format(SHUTDOWN_LOG_OUTPUT, directory, readFile(logFile, defaultCharset())));
         }
         String executable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
-                KILL_COMMAND + readFile(pid) +
+                KILL_COMMAND + readFile(pid, defaultCharset()) +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
         String[] command = {
                 BASH,
@@ -127,6 +128,6 @@ public class TestTarantoolInstanceManager {
         waitTime(ofSeconds(3));
         Path logFile = get(directory).resolve(directory + LOG_EXTENSION);
         if (logFile.toFile().exists())
-            System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile)));
+            System.out.println(format(INITIALIZATION_LOG_OUTPUT, directory, readFile(logFile, defaultCharset())));
     }
 }
