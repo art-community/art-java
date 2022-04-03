@@ -16,7 +16,6 @@ import static java.lang.Runtime.*;
 import static java.nio.charset.Charset.*;
 import static java.nio.file.Paths.*;
 import static java.text.MessageFormat.*;
-import static java.time.Duration.*;
 import static java.util.Objects.*;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.*;
@@ -25,15 +24,15 @@ import java.nio.file.*;
 @UtilityClass
 public class TestTarantoolInstanceManager {
     public static void initializeStorage() {
-        initialize(STORAGE_PORT, STORAGE_DIRECTORY, STORAGE_SCRIPT);
+        initialize(STORAGE_DIRECTORY, STORAGE_SCRIPT);
     }
 
     public static void initializeRouter() {
-        initialize(SHARD_1_MASTER_PORT, SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
-        initialize(SHARD_2_MASTER_PORT, SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
-        initialize(SHARD_1_REPLICA_PORT, SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
-        initialize(SHARD_2_REPLICA_PORT, SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
-        initialize(ROUTER_PORT, ROUTER_DIRECTORY, ROUTER_SCRIPT);
+        initialize(SHARD_1_MASTER_DIRECTORY, SHARD_1_MASTER_SCRIPT);
+        initialize(SHARD_2_MASTER_DIRECTORY, SHARD_2_MASTER_SCRIPT);
+        initialize(SHARD_1_REPLICA_DIRECTORY, SHARD_1_REPLICA_SCRIPT);
+        initialize(SHARD_2_REPLICA_DIRECTORY, SHARD_2_REPLICA_SCRIPT);
+        initialize(ROUTER_DIRECTORY, ROUTER_SCRIPT);
     }
 
     public static void shutdownStorage() {
@@ -79,7 +78,7 @@ public class TestTarantoolInstanceManager {
         recursiveDelete(get(directory));
     }
 
-    private static void initialize(int port, String directory, String scriptFile) {
+    private static void initialize(String directory, String scriptFile) {
         String directoryExecutable = (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING) +
                 MKDIR_COMMAND + TEMP_DIRECTORY + SLASH + directory +
                 (isWindows() ? DOUBLE_QUOTES : EMPTY_STRING);
