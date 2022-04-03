@@ -23,6 +23,7 @@ public class TarantoolClient {
                 .host(clientConfiguration.getHost())
                 .port(clientConfiguration.getPort())
                 .option(CONNECT_TIMEOUT_MILLIS, (int) clientConfiguration.getConnectionTimeout().toMillis());
+        client.warmup().subscribe();
     }
 
     public Mono<Value> call(ImmutableStringValue name) {
