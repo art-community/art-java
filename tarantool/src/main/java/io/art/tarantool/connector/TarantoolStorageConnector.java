@@ -67,6 +67,7 @@ public class TarantoolStorageConnector {
                     immutable.addEndpoint(new TarantoolClient(client, configuration));
                     continue;
                 }
+
                 immutable.addEndpoint(new TarantoolClient(client, configuration));
                 mutable.addEndpoint(new TarantoolClient(client, configuration));
             }
