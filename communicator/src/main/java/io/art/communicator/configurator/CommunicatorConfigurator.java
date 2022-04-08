@@ -9,7 +9,9 @@ import java.util.function.*;
 public interface CommunicatorConfigurator {
     CommunicatorConfigurator communicator(Class<?> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator);
 
-    <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator communicator(Supplier<M> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator);
+    <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator
+    communicator(Supplier<M> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator);
 
-    <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator action(Supplier<M> communicatorClass, Supplier<MetaMethod<M, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator);
+    <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator
+    action(Supplier<M> communicatorClass, Supplier<MetaMethod<M, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator);
 }
