@@ -141,7 +141,9 @@ public class CommunicatorConfiguratorImplementation implements CommunicatorConfi
                 .orElse(identity());
     }
 
-    private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> configurationProvider, CommunicatorActionFactory communicationFactory, ActionConfiguration actionConfiguration) {
+    private CommunicatorAction createAction(LazyProperty<CommunicatorConfiguration> configurationProvider,
+                                            CommunicatorActionFactory communicationFactory,
+                                            ActionConfiguration actionConfiguration) {
         MetaClass<? extends Communicator> communicatorClass = actionConfiguration.communicatorClass;
         ImmutableMap<String, MetaParameter<?>> parameters = actionConfiguration.method.parameters();
         MetaType<?> inputType = orNull(() -> immutableArrayOf(parameters.values()).get(0).type(), isNotEmpty(parameters));
