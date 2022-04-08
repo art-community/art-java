@@ -189,7 +189,7 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         proxy.get().getCommunicator().fireAndForget(Mono.empty());
     }
 
-    public void fireAndForget(RsocketDefaultRequest request) {
+    public void fireAndForget(RsocketBlockingRequest request) {
         prepareCommunicator(request.getDataFormat());
         proxy.get().getCommunicator().fireAndForget(Mono.just(request.getInput()));
     }
@@ -200,20 +200,20 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
     }
 
 
-    public RsocketDefaultResponse requestResponse() {
+    public RsocketBlockingResponse requestResponse() {
         prepareCommunicator();
         DataFormat dataFormat = currentTcpConnector.getCommonConfiguration().getDataFormat();
-        return new RsocketDefaultResponse(this, proxy.get().getCommunicator().requestResponse(Mono.empty()).flux(), dataFormat);
+        return new RsocketBlockingResponse(this, proxy.get().getCommunicator().requestResponse(Mono.empty()).flux(), dataFormat);
     }
 
-    public RsocketDefaultResponse requestResponse(RsocketDefaultRequest request) {
+    public RsocketBlockingResponse requestResponse(RsocketBlockingRequest request) {
         prepareCommunicator(request.getDataFormat());
-        return new RsocketDefaultResponse(this, proxy.get().getCommunicator().requestResponse(Mono.just(request.getInput())).flux(), request.getDataFormat());
+        return new RsocketBlockingResponse(this, proxy.get().getCommunicator().requestResponse(Mono.just(request.getInput())).flux(), request.getDataFormat());
     }
 
-    public RsocketDefaultResponse requestResponse(RsocketMonoRequest request) {
+    public RsocketBlockingResponse requestResponse(RsocketMonoRequest request) {
         prepareCommunicator(request.getDataFormat());
-        return new RsocketDefaultResponse(this, proxy.get().getCommunicator().requestResponse(request.getInput()).flux(), request.getDataFormat());
+        return new RsocketBlockingResponse(this, proxy.get().getCommunicator().requestResponse(request.getInput()).flux(), request.getDataFormat());
     }
 
 
@@ -223,7 +223,7 @@ public class RsocketDefaultTcpCommunicator implements RsocketDefaultCommunicator
         return new RsocketReactiveResponse(this, proxy.get().getCommunicator().requestStream(Mono.empty()), dataFormat);
     }
 
-    public RsocketReactiveResponse requestStream(RsocketDefaultRequest request) {
+    public RsocketReactiveResponse requestStream(RsocketBlockingRequest request) {
         prepareCommunicator(request.getDataFormat());
         return new RsocketReactiveResponse(this, proxy.get().getCommunicator().requestStream(Mono.just(request.getInput())), request.getDataFormat());
     }

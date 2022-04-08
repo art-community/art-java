@@ -1,4 +1,4 @@
-package io.art.rsocket.communicator;
+package io.art.http.communicator;
 
 import io.art.core.annotation.*;
 import io.art.meta.model.*;
@@ -6,7 +6,6 @@ import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.netty.buffer.*;
 import lombok.*;
-import reactor.core.publisher.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.NettyBufferExtensions.*;
 import static io.art.meta.Meta.*;
@@ -19,45 +18,44 @@ import java.nio.file.*;
 @Public
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class RsocketDefaultRequest {
+public class HttpBlockingRequest {
     private final byte[] input;
-    private final DataFormat dataFormat;
 
-    public static RsocketDefaultRequest json(Object value) {
+    public static HttpBlockingRequest json(Object value) {
         return create(value, JSON);
     }
 
-    public static RsocketDefaultRequest yaml(Object value) {
+    public static HttpBlockingRequest yaml(Object value) {
         return create(value, YAML);
     }
 
-    public static RsocketDefaultRequest messagePack(Object value) {
+    public static HttpBlockingRequest messagePack(Object value) {
         return create(value, MESSAGE_PACK);
     }
 
-    public static RsocketDefaultRequest string(String value) {
+    public static HttpBlockingRequest string(String value) {
         return create(value, STRING);
     }
 
-    public static RsocketDefaultRequest bytes(byte[] value) {
+    public static HttpBlockingRequest bytes(byte[] value) {
         return create(value, BYTES);
     }
 
-    public static RsocketDefaultRequest buffer(ByteBuf value) {
+    public static HttpBlockingRequest buffer(ByteBuf value) {
         return create(releaseToByteArray(value), BYTES);
     }
 
-    public static RsocketDefaultRequest file(File file) {
+    public static HttpBlockingRequest file(File file) {
         return create(readFileBytes(file.toPath()), BYTES);
     }
 
-    public static RsocketDefaultRequest path(Path path) {
+    public static HttpBlockingRequest path(Path path) {
         return create(readFileBytes(path), BYTES);
     }
 
-    private static RsocketDefaultRequest create(Object value, DataFormat dataFormat) {
+    private static HttpBlockingRequest create(Object value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
         byte[] bytes = releaseToByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
-        return new RsocketDefaultRequest(bytes, dataFormat);
+        return new HttpBlockingRequest(bytes);
     }
 }

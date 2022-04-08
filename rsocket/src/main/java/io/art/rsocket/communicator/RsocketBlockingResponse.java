@@ -22,13 +22,13 @@ import java.nio.file.*;
 
 @Public
 @Getter(value = PACKAGE)
-public class RsocketDefaultResponse {
+public class RsocketBlockingResponse {
     private final RsocketDefaultCommunicator communicator;
     private final Flux<byte[]> output;
     private final RsocketReactiveResponse reactive;
     private final DataFormat dataFormat;
 
-    RsocketDefaultResponse(RsocketDefaultCommunicator communicator, Flux<byte[]> output, DataFormat dataFormat) {
+    RsocketBlockingResponse(RsocketDefaultCommunicator communicator, Flux<byte[]> output, DataFormat dataFormat) {
         this.communicator = communicator;
         this.output = output;
         this.dataFormat = dataFormat;

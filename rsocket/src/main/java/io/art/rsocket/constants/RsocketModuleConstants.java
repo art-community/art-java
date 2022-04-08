@@ -102,7 +102,6 @@ public interface RsocketModuleConstants {
     }
 
     interface Defaults {
-
         int DEFAULT_PORT = 9000;
         Duration DEFAULT_TIMEOUT = ofSeconds(30);
         Duration DEFAULT_RESUME_SESSION_DURATION = ofHours(1);
