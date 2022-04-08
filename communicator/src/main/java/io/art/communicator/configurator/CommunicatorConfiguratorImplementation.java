@@ -44,13 +44,15 @@ public class CommunicatorConfiguratorImplementation implements CommunicatorConfi
     }
 
     @Override
-    public <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator communicator(Supplier<M> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator
+    communicator(Supplier<M> communicatorClass, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         classBased.add(new ClassBasedConfiguration(communicatorClass, cast(decorator)));
         return this;
     }
 
     @Override
-    public <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator action(Supplier<M> communicatorClass, Supplier<MetaMethod<M, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
+    public <M extends MetaClass<? extends Communicator>> CommunicatorConfigurator
+    action(Supplier<M> communicatorClass, Supplier<MetaMethod<M, ?>> actionMethod, UnaryOperator<CommunicatorActionConfigurator> decorator) {
         methodBased.add(new MethodBasedConfiguration(communicatorClass, cast(actionMethod), cast(decorator)));
         return this;
     }
