@@ -22,45 +22,45 @@ import java.nio.file.*;
 @Public
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class HttpReactiveRequest {
+public class HttpDefaultReactiveRequest {
     private final Flux<byte[]> input;
 
-    public static HttpReactiveRequest json(Publisher<Object> value) {
+    public static HttpDefaultReactiveRequest json(Publisher<Object> value) {
         return create(value, JSON);
     }
 
-    public static HttpReactiveRequest yaml(Publisher<Object> value) {
+    public static HttpDefaultReactiveRequest yaml(Publisher<Object> value) {
         return create(value, YAML);
     }
 
-    public static HttpReactiveRequest messagePack(Publisher<Object> value) {
+    public static HttpDefaultReactiveRequest messagePack(Publisher<Object> value) {
         return create(value, MESSAGE_PACK);
     }
 
-    public static HttpReactiveRequest string(Publisher<String> value) {
+    public static HttpDefaultReactiveRequest string(Publisher<String> value) {
         TransportPayloadWriter writer = transportPayloadWriter(STRING);
-        return new HttpReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
+        return new HttpDefaultReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
     }
 
-    public static HttpReactiveRequest bytes(Publisher<byte[]> value) {
+    public static HttpDefaultReactiveRequest bytes(Publisher<byte[]> value) {
         TransportPayloadWriter writer = transportPayloadWriter(BYTES);
-        return new HttpReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
+        return new HttpDefaultReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
     }
 
-    public static HttpReactiveRequest buffer(Publisher<ByteBuf> value) {
+    public static HttpDefaultReactiveRequest buffer(Publisher<ByteBuf> value) {
         return create(from(value).map(NettyBufferExtensions::releaseToByteArray), BYTES);
     }
 
-    public static HttpReactiveRequest file(Publisher<File> files) {
+    public static HttpDefaultReactiveRequest file(Publisher<File> files) {
         return create(from(files).map(file -> readFileBytes(file.toPath())), BYTES);
     }
 
-    public static HttpReactiveRequest path(Publisher<Path> paths) {
+    public static HttpDefaultReactiveRequest path(Publisher<Path> paths) {
         return create(from(paths).map(FileExtensions::readFileBytes), BYTES);
     }
 
-    private static HttpReactiveRequest create(Publisher<Object> value, DataFormat dataFormat) {
+    private static HttpDefaultReactiveRequest create(Publisher<Object> value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
-        return new HttpReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
+        return new HttpDefaultReactiveRequest(from(value).map(element -> releaseToByteArray(writer.write(new TypedObject(definition(element.getClass()), element)))));
     }
 }

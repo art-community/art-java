@@ -16,7 +16,7 @@ import static lombok.AccessLevel.*;
 @Public
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class HttpReactiveResponse {
+public class HttpDefaultReactiveResponse {
     private final Flux<byte[]> output;
 
     public <T> Flux<T> json(Class<T> type) {

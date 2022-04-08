@@ -193,19 +193,19 @@ public class HttpDefaultCommunicator {
         return this;
     }
 
-    public HttpDefaultResponse execute() {
+    public HttpDefaultBlockingResponse execute() {
         Flux<byte[]> output = proxy.get().getCommunicator().decorate(ignore -> decorator).execute(Flux.empty());
-        return new HttpDefaultResponse(this, output);
+        return new HttpDefaultBlockingResponse(this, output);
     }
 
-    public HttpDefaultResponse execute(HttpDefaultRequest body) {
+    public HttpDefaultBlockingResponse execute(HttpDefaultBlockingRequest body) {
         Flux<byte[]> output = proxy.get().getCommunicator().decorate(ignore -> decorator).execute(Flux.just(body.getInput()));
-        return new HttpDefaultResponse(this, output);
+        return new HttpDefaultBlockingResponse(this, output);
     }
 
-    public HttpDefaultResponse execute(HttpReactiveRequest body) {
+    public HttpDefaultBlockingResponse execute(HttpDefaultReactiveRequest body) {
         Flux<byte[]> output = proxy.get().getCommunicator().decorate(ignore -> decorator).execute(body.getInput());
-        return new HttpDefaultResponse(this, output);
+        return new HttpDefaultBlockingResponse(this, output);
     }
 
     public void dispose() {

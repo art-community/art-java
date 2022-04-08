@@ -23,15 +23,15 @@ import java.nio.file.*;
 
 @Public
 @Getter(value = PACKAGE)
-public class HttpDefaultResponse {
+public class HttpDefaultBlockingResponse {
     private final HttpDefaultCommunicator communicator;
     private final Flux<byte[]> output;
-    private final HttpReactiveResponse reactive;
+    private final HttpDefaultReactiveResponse reactive;
 
-    HttpDefaultResponse(HttpDefaultCommunicator communicator, Flux<byte[]> output) {
+    HttpDefaultBlockingResponse(HttpDefaultCommunicator communicator, Flux<byte[]> output) {
         this.communicator = communicator;
         this.output = output;
-        reactive = new HttpReactiveResponse(output);
+        reactive = new HttpDefaultReactiveResponse(output);
     }
 
     public <T> T json(Class<T> type) {
@@ -73,7 +73,7 @@ public class HttpDefaultResponse {
         return path;
     }
 
-    public HttpReactiveResponse reactive() {
+    public HttpDefaultReactiveResponse reactive() {
         return reactive;
     }
 

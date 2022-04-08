@@ -6,7 +6,6 @@ import io.art.transport.constants.TransportModuleConstants.*;
 import io.art.transport.payload.*;
 import io.netty.buffer.*;
 import lombok.*;
-import reactor.core.publisher.*;
 import static io.art.core.extensions.FileExtensions.*;
 import static io.art.core.extensions.NettyBufferExtensions.*;
 import static io.art.meta.Meta.*;
@@ -19,44 +18,44 @@ import java.nio.file.*;
 @Public
 @Getter(value = PACKAGE)
 @RequiredArgsConstructor(access = PACKAGE)
-public class HttpDefaultRequest {
+public class HttpDefaultBlockingRequest {
     private final byte[] input;
 
-    public static HttpDefaultRequest json(Object value) {
+    public static HttpDefaultBlockingRequest json(Object value) {
         return create(value, JSON);
     }
 
-    public static HttpDefaultRequest yaml(Object value) {
+    public static HttpDefaultBlockingRequest yaml(Object value) {
         return create(value, YAML);
     }
 
-    public static HttpDefaultRequest messagePack(Object value) {
+    public static HttpDefaultBlockingRequest messagePack(Object value) {
         return create(value, MESSAGE_PACK);
     }
 
-    public static HttpDefaultRequest string(String value) {
+    public static HttpDefaultBlockingRequest string(String value) {
         return create(value, STRING);
     }
 
-    public static HttpDefaultRequest bytes(byte[] value) {
+    public static HttpDefaultBlockingRequest bytes(byte[] value) {
         return create(value, BYTES);
     }
 
-    public static HttpDefaultRequest buffer(ByteBuf value) {
+    public static HttpDefaultBlockingRequest buffer(ByteBuf value) {
         return create(releaseToByteArray(value), BYTES);
     }
 
-    public static HttpDefaultRequest file(File file) {
+    public static HttpDefaultBlockingRequest file(File file) {
         return create(readFileBytes(file.toPath()), BYTES);
     }
 
-    public static HttpDefaultRequest path(Path path) {
+    public static HttpDefaultBlockingRequest path(Path path) {
         return create(readFileBytes(path), BYTES);
     }
 
-    private static HttpDefaultRequest create(Object value, DataFormat dataFormat) {
+    private static HttpDefaultBlockingRequest create(Object value, DataFormat dataFormat) {
         TransportPayloadWriter writer = transportPayloadWriter(dataFormat);
         byte[] bytes = releaseToByteArray(writer.write(new TypedObject(definition(value.getClass()), value)));
-        return new HttpDefaultRequest(bytes);
+        return new HttpDefaultBlockingRequest(bytes);
     }
 }
