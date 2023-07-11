@@ -9,7 +9,7 @@ ART Java is a kit of modules for developing multifunctional applications for JVM
 
 ## Build and Binaries
 
-Releases are available via [ART Platform nexus](https://nexus.art-platform.io/repository/art-maven/).
+Releases are available via [ART Packages](https://maven.pkg.github.com/art-community/art-packages/).
 
 ## Requirements
 
