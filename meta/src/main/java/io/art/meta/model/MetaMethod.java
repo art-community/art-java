@@ -47,7 +47,7 @@ public abstract class MetaMethod<OwnerType extends MetaClass<?>, ReturnType> {
         this.parameters = map();
     }
 
-    protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
+    protected <P extends MetaParameter<?>> P register(P parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
     }
