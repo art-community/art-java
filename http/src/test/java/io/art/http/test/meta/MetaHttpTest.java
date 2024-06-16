@@ -1,7 +1,5 @@
 package io.art.http.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -20,7 +18,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaHttpTest extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaHttpTest(MetaLibrary... dependencies) {
     super(dependencies);
@@ -31,7 +29,7 @@ public class MetaHttpTest extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -42,7 +40,7 @@ public class MetaHttpTest extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaHttpPackage httpPackage = register(new MetaHttpPackage());
+      private final MetaHttpPackage httpPackage = registerPackage(new MetaHttpPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -53,7 +51,7 @@ public class MetaHttpTest extends MetaLibrary {
       }
 
       public static final class MetaHttpPackage extends MetaPackage {
-        private final MetaTestPackage testPackage = register(new MetaTestPackage());
+        private final MetaTestPackage testPackage = registerPackage(new MetaTestPackage());
 
         private MetaHttpPackage() {
           super("http");
@@ -64,13 +62,13 @@ public class MetaHttpTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaHttpDefaultTestClass httpDefaultTestClass = register(new MetaHttpDefaultTestClass());
+          private final MetaHttpDefaultTestClass httpDefaultTestClass = registerClass(new MetaHttpDefaultTestClass());
 
-          private final MetaWsTestClass wsTestClass = register(new MetaWsTestClass());
+          private final MetaWsTestClass wsTestClass = registerClass(new MetaWsTestClass());
 
-          private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
+          private final MetaCommunicatorPackage communicatorPackage = registerPackage(new MetaCommunicatorPackage());
 
-          private final MetaServicePackage servicePackage = register(new MetaServicePackage());
+          private final MetaServicePackage servicePackage = registerPackage(new MetaServicePackage());
 
           private MetaTestPackage() {
             super("test");
@@ -95,17 +93,17 @@ public class MetaHttpTest extends MetaLibrary {
           public static final class MetaHttpDefaultTestClass extends MetaClass<io.art.http.test.HttpDefaultTest> {
             private static final LazyProperty<MetaHttpDefaultTestClass> self = MetaClass.self(io.art.http.test.HttpDefaultTest.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaHttpDefaultTestClass, java.nio.file.Path> testFileField = register(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false,this));
+            private final MetaField<MetaHttpDefaultTestClass, java.nio.file.Path> testFileField = registerField(new MetaField<>("testFile",metaType(java.nio.file.Path.class),false,this));
 
-            private final MetaField<MetaHttpDefaultTestClass, java.nio.file.Path> downloadedFileField = register(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false,this));
+            private final MetaField<MetaHttpDefaultTestClass, java.nio.file.Path> downloadedFileField = registerField(new MetaField<>("downloadedFile",metaType(java.nio.file.Path.class),false,this));
 
-            private final MetaSetupMethod setupMethod = register(new MetaSetupMethod(this));
+            private final MetaSetupMethod setupMethod = registerMethod(new MetaSetupMethod(this));
 
-            private final MetaCleanupMethod cleanupMethod = register(new MetaCleanupMethod(this));
+            private final MetaCleanupMethod cleanupMethod = registerMethod(new MetaCleanupMethod(this));
 
-            private final MetaTestHttpDefaultCommunicatorMethod testHttpDefaultCommunicatorMethod = register(new MetaTestHttpDefaultCommunicatorMethod(this));
+            private final MetaTestHttpDefaultCommunicatorMethod testHttpDefaultCommunicatorMethod = registerMethod(new MetaTestHttpDefaultCommunicatorMethod(this));
 
             private MetaHttpDefaultTestClass() {
               super(metaType(io.art.http.test.HttpDefaultTest.class));
@@ -214,13 +212,13 @@ public class MetaHttpTest extends MetaLibrary {
           public static final class MetaWsTestClass extends MetaClass<io.art.http.test.WsTest> {
             private static final LazyProperty<MetaWsTestClass> self = MetaClass.self(io.art.http.test.WsTest.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaSetupMethod setupMethod = register(new MetaSetupMethod(this));
+            private final MetaSetupMethod setupMethod = registerMethod(new MetaSetupMethod(this));
 
-            private final MetaCleanupMethod cleanupMethod = register(new MetaCleanupMethod(this));
+            private final MetaCleanupMethod cleanupMethod = registerMethod(new MetaCleanupMethod(this));
 
-            private final MetaTestWsMethod testWsMethod = register(new MetaTestWsMethod(this));
+            private final MetaTestWsMethod testWsMethod = registerMethod(new MetaTestWsMethod(this));
 
             private MetaWsTestClass() {
               super(metaType(io.art.http.test.WsTest.class));
@@ -319,9 +317,9 @@ public class MetaHttpTest extends MetaLibrary {
           }
 
           public static final class MetaCommunicatorPackage extends MetaPackage {
-            private final MetaTestHttpClass testHttpClass = register(new MetaTestHttpClass());
+            private final MetaTestHttpClass testHttpClass = registerClass(new MetaTestHttpClass());
 
-            private final MetaTestWsClass testWsClass = register(new MetaTestWsClass());
+            private final MetaTestWsClass testWsClass = registerClass(new MetaTestWsClass());
 
             private MetaCommunicatorPackage() {
               super("communicator");
@@ -338,47 +336,47 @@ public class MetaHttpTest extends MetaLibrary {
             public static final class MetaTestHttpClass extends MetaClass<io.art.http.test.communicator.TestHttp> {
               private static final LazyProperty<MetaTestHttpClass> self = MetaClass.self(io.art.http.test.communicator.TestHttp.class);
 
-              private final MetaPost1Method post1Method = register(new MetaPost1Method(this));
+              private final MetaPost1Method post1Method = registerMethod(new MetaPost1Method(this));
 
-              private final MetaPost2Method post2Method = register(new MetaPost2Method(this));
+              private final MetaPost2Method post2Method = registerMethod(new MetaPost2Method(this));
 
-              private final MetaPost3Method post3Method = register(new MetaPost3Method(this));
+              private final MetaPost3Method post3Method = registerMethod(new MetaPost3Method(this));
 
-              private final MetaPost4Method post4Method = register(new MetaPost4Method(this));
+              private final MetaPost4Method post4Method = registerMethod(new MetaPost4Method(this));
 
-              private final MetaPost5Method post5Method = register(new MetaPost5Method(this));
+              private final MetaPost5Method post5Method = registerMethod(new MetaPost5Method(this));
 
-              private final MetaPost6Method post6Method = register(new MetaPost6Method(this));
+              private final MetaPost6Method post6Method = registerMethod(new MetaPost6Method(this));
 
-              private final MetaPost7Method post7Method = register(new MetaPost7Method(this));
+              private final MetaPost7Method post7Method = registerMethod(new MetaPost7Method(this));
 
-              private final MetaPost8Method post8Method = register(new MetaPost8Method(this));
+              private final MetaPost8Method post8Method = registerMethod(new MetaPost8Method(this));
 
-              private final MetaPost9Method post9Method = register(new MetaPost9Method(this));
+              private final MetaPost9Method post9Method = registerMethod(new MetaPost9Method(this));
 
-              private final MetaPost10Method post10Method = register(new MetaPost10Method(this));
+              private final MetaPost10Method post10Method = registerMethod(new MetaPost10Method(this));
 
-              private final MetaPost11Method post11Method = register(new MetaPost11Method(this));
+              private final MetaPost11Method post11Method = registerMethod(new MetaPost11Method(this));
 
-              private final MetaPost12Method post12Method = register(new MetaPost12Method(this));
+              private final MetaPost12Method post12Method = registerMethod(new MetaPost12Method(this));
 
-              private final MetaPost13Method post13Method = register(new MetaPost13Method(this));
+              private final MetaPost13Method post13Method = registerMethod(new MetaPost13Method(this));
 
-              private final MetaPost14Method post14Method = register(new MetaPost14Method(this));
+              private final MetaPost14Method post14Method = registerMethod(new MetaPost14Method(this));
 
-              private final MetaPost15Method post15Method = register(new MetaPost15Method(this));
+              private final MetaPost15Method post15Method = registerMethod(new MetaPost15Method(this));
 
-              private final MetaPost16Method post16Method = register(new MetaPost16Method(this));
+              private final MetaPost16Method post16Method = registerMethod(new MetaPost16Method(this));
 
-              private final MetaPost17Method post17Method = register(new MetaPost17Method(this));
+              private final MetaPost17Method post17Method = registerMethod(new MetaPost17Method(this));
 
-              private final MetaPost18Method post18Method = register(new MetaPost18Method(this));
+              private final MetaPost18Method post18Method = registerMethod(new MetaPost18Method(this));
 
-              private final MetaPost19Method post19Method = register(new MetaPost19Method(this));
+              private final MetaPost19Method post19Method = registerMethod(new MetaPost19Method(this));
 
-              private final MetaPost20Method post20Method = register(new MetaPost20Method(this));
+              private final MetaPost20Method post20Method = registerMethod(new MetaPost20Method(this));
 
-              private final MetaGetFileMethod getFileMethod = register(new MetaGetFileMethod(this));
+              private final MetaGetFileMethod getFileMethod = registerMethod(new MetaGetFileMethod(this));
 
               private MetaTestHttpClass() {
                 super(metaType(io.art.http.test.communicator.TestHttp.class));
@@ -1162,41 +1160,41 @@ public class MetaHttpTest extends MetaLibrary {
             public static final class MetaTestWsClass extends MetaClass<io.art.http.test.communicator.TestWs> {
               private static final LazyProperty<MetaTestWsClass> self = MetaClass.self(io.art.http.test.communicator.TestWs.class);
 
-              private final MetaWs1Method ws1Method = register(new MetaWs1Method(this));
+              private final MetaWs1Method ws1Method = registerMethod(new MetaWs1Method(this));
 
-              private final MetaWs2Method ws2Method = register(new MetaWs2Method(this));
+              private final MetaWs2Method ws2Method = registerMethod(new MetaWs2Method(this));
 
-              private final MetaWs3Method ws3Method = register(new MetaWs3Method(this));
+              private final MetaWs3Method ws3Method = registerMethod(new MetaWs3Method(this));
 
-              private final MetaWs4Method ws4Method = register(new MetaWs4Method(this));
+              private final MetaWs4Method ws4Method = registerMethod(new MetaWs4Method(this));
 
-              private final MetaWs5Method ws5Method = register(new MetaWs5Method(this));
+              private final MetaWs5Method ws5Method = registerMethod(new MetaWs5Method(this));
 
-              private final MetaWs6Method ws6Method = register(new MetaWs6Method(this));
+              private final MetaWs6Method ws6Method = registerMethod(new MetaWs6Method(this));
 
-              private final MetaWs7Method ws7Method = register(new MetaWs7Method(this));
+              private final MetaWs7Method ws7Method = registerMethod(new MetaWs7Method(this));
 
-              private final MetaWs8Method ws8Method = register(new MetaWs8Method(this));
+              private final MetaWs8Method ws8Method = registerMethod(new MetaWs8Method(this));
 
-              private final MetaWs9Method ws9Method = register(new MetaWs9Method(this));
+              private final MetaWs9Method ws9Method = registerMethod(new MetaWs9Method(this));
 
-              private final MetaWs10Method ws10Method = register(new MetaWs10Method(this));
+              private final MetaWs10Method ws10Method = registerMethod(new MetaWs10Method(this));
 
-              private final MetaWs11Method ws11Method = register(new MetaWs11Method(this));
+              private final MetaWs11Method ws11Method = registerMethod(new MetaWs11Method(this));
 
-              private final MetaWs12Method ws12Method = register(new MetaWs12Method(this));
+              private final MetaWs12Method ws12Method = registerMethod(new MetaWs12Method(this));
 
-              private final MetaWs13Method ws13Method = register(new MetaWs13Method(this));
+              private final MetaWs13Method ws13Method = registerMethod(new MetaWs13Method(this));
 
-              private final MetaWs14Method ws14Method = register(new MetaWs14Method(this));
+              private final MetaWs14Method ws14Method = registerMethod(new MetaWs14Method(this));
 
-              private final MetaWs15Method ws15Method = register(new MetaWs15Method(this));
+              private final MetaWs15Method ws15Method = registerMethod(new MetaWs15Method(this));
 
-              private final MetaWs16Method ws16Method = register(new MetaWs16Method(this));
+              private final MetaWs16Method ws16Method = registerMethod(new MetaWs16Method(this));
 
-              private final MetaWs17Method ws17Method = register(new MetaWs17Method(this));
+              private final MetaWs17Method ws17Method = registerMethod(new MetaWs17Method(this));
 
-              private final MetaWsEchoMethod wsEchoMethod = register(new MetaWsEchoMethod(this));
+              private final MetaWsEchoMethod wsEchoMethod = registerMethod(new MetaWsEchoMethod(this));
 
               private MetaTestWsClass() {
                 super(metaType(io.art.http.test.communicator.TestWs.class));
@@ -1871,9 +1869,9 @@ public class MetaHttpTest extends MetaLibrary {
           }
 
           public static final class MetaServicePackage extends MetaPackage {
-            private final MetaTestHttpServiceClass testHttpServiceClass = register(new MetaTestHttpServiceClass());
+            private final MetaTestHttpServiceClass testHttpServiceClass = registerClass(new MetaTestHttpServiceClass());
 
-            private final MetaTestWsServiceClass testWsServiceClass = register(new MetaTestWsServiceClass());
+            private final MetaTestWsServiceClass testWsServiceClass = registerClass(new MetaTestWsServiceClass());
 
             private MetaServicePackage() {
               super("service");
@@ -1890,47 +1888,47 @@ public class MetaHttpTest extends MetaLibrary {
             public static final class MetaTestHttpServiceClass extends MetaClass<io.art.http.test.service.TestHttpService> {
               private static final LazyProperty<MetaTestHttpServiceClass> self = MetaClass.self(io.art.http.test.service.TestHttpService.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaPost1Method post1Method = register(new MetaPost1Method(this));
+              private final MetaPost1Method post1Method = registerMethod(new MetaPost1Method(this));
 
-              private final MetaPost2Method post2Method = register(new MetaPost2Method(this));
+              private final MetaPost2Method post2Method = registerMethod(new MetaPost2Method(this));
 
-              private final MetaPost3Method post3Method = register(new MetaPost3Method(this));
+              private final MetaPost3Method post3Method = registerMethod(new MetaPost3Method(this));
 
-              private final MetaPost4Method post4Method = register(new MetaPost4Method(this));
+              private final MetaPost4Method post4Method = registerMethod(new MetaPost4Method(this));
 
-              private final MetaPost5Method post5Method = register(new MetaPost5Method(this));
+              private final MetaPost5Method post5Method = registerMethod(new MetaPost5Method(this));
 
-              private final MetaPost6Method post6Method = register(new MetaPost6Method(this));
+              private final MetaPost6Method post6Method = registerMethod(new MetaPost6Method(this));
 
-              private final MetaPost7Method post7Method = register(new MetaPost7Method(this));
+              private final MetaPost7Method post7Method = registerMethod(new MetaPost7Method(this));
 
-              private final MetaPost8Method post8Method = register(new MetaPost8Method(this));
+              private final MetaPost8Method post8Method = registerMethod(new MetaPost8Method(this));
 
-              private final MetaPost9Method post9Method = register(new MetaPost9Method(this));
+              private final MetaPost9Method post9Method = registerMethod(new MetaPost9Method(this));
 
-              private final MetaPost10Method post10Method = register(new MetaPost10Method(this));
+              private final MetaPost10Method post10Method = registerMethod(new MetaPost10Method(this));
 
-              private final MetaPost11Method post11Method = register(new MetaPost11Method(this));
+              private final MetaPost11Method post11Method = registerMethod(new MetaPost11Method(this));
 
-              private final MetaPost12Method post12Method = register(new MetaPost12Method(this));
+              private final MetaPost12Method post12Method = registerMethod(new MetaPost12Method(this));
 
-              private final MetaPost13Method post13Method = register(new MetaPost13Method(this));
+              private final MetaPost13Method post13Method = registerMethod(new MetaPost13Method(this));
 
-              private final MetaPost14Method post14Method = register(new MetaPost14Method(this));
+              private final MetaPost14Method post14Method = registerMethod(new MetaPost14Method(this));
 
-              private final MetaPost15Method post15Method = register(new MetaPost15Method(this));
+              private final MetaPost15Method post15Method = registerMethod(new MetaPost15Method(this));
 
-              private final MetaPost16Method post16Method = register(new MetaPost16Method(this));
+              private final MetaPost16Method post16Method = registerMethod(new MetaPost16Method(this));
 
-              private final MetaPost17Method post17Method = register(new MetaPost17Method(this));
+              private final MetaPost17Method post17Method = registerMethod(new MetaPost17Method(this));
 
-              private final MetaPost18Method post18Method = register(new MetaPost18Method(this));
+              private final MetaPost18Method post18Method = registerMethod(new MetaPost18Method(this));
 
-              private final MetaPost19Method post19Method = register(new MetaPost19Method(this));
+              private final MetaPost19Method post19Method = registerMethod(new MetaPost19Method(this));
 
-              private final MetaPost20Method post20Method = register(new MetaPost20Method(this));
+              private final MetaPost20Method post20Method = registerMethod(new MetaPost20Method(this));
 
               private MetaTestHttpServiceClass() {
                 super(metaType(io.art.http.test.service.TestHttpService.class));
@@ -2523,43 +2521,43 @@ public class MetaHttpTest extends MetaLibrary {
             public static final class MetaTestWsServiceClass extends MetaClass<io.art.http.test.service.TestWsService> {
               private static final LazyProperty<MetaTestWsServiceClass> self = MetaClass.self(io.art.http.test.service.TestWsService.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaWs1Method ws1Method = register(new MetaWs1Method(this));
+              private final MetaWs1Method ws1Method = registerMethod(new MetaWs1Method(this));
 
-              private final MetaWs2Method ws2Method = register(new MetaWs2Method(this));
+              private final MetaWs2Method ws2Method = registerMethod(new MetaWs2Method(this));
 
-              private final MetaWs3Method ws3Method = register(new MetaWs3Method(this));
+              private final MetaWs3Method ws3Method = registerMethod(new MetaWs3Method(this));
 
-              private final MetaWs4Method ws4Method = register(new MetaWs4Method(this));
+              private final MetaWs4Method ws4Method = registerMethod(new MetaWs4Method(this));
 
-              private final MetaWs5Method ws5Method = register(new MetaWs5Method(this));
+              private final MetaWs5Method ws5Method = registerMethod(new MetaWs5Method(this));
 
-              private final MetaWs6Method ws6Method = register(new MetaWs6Method(this));
+              private final MetaWs6Method ws6Method = registerMethod(new MetaWs6Method(this));
 
-              private final MetaWs7Method ws7Method = register(new MetaWs7Method(this));
+              private final MetaWs7Method ws7Method = registerMethod(new MetaWs7Method(this));
 
-              private final MetaWs8Method ws8Method = register(new MetaWs8Method(this));
+              private final MetaWs8Method ws8Method = registerMethod(new MetaWs8Method(this));
 
-              private final MetaWs9Method ws9Method = register(new MetaWs9Method(this));
+              private final MetaWs9Method ws9Method = registerMethod(new MetaWs9Method(this));
 
-              private final MetaWs10Method ws10Method = register(new MetaWs10Method(this));
+              private final MetaWs10Method ws10Method = registerMethod(new MetaWs10Method(this));
 
-              private final MetaWs11Method ws11Method = register(new MetaWs11Method(this));
+              private final MetaWs11Method ws11Method = registerMethod(new MetaWs11Method(this));
 
-              private final MetaWs12Method ws12Method = register(new MetaWs12Method(this));
+              private final MetaWs12Method ws12Method = registerMethod(new MetaWs12Method(this));
 
-              private final MetaWs13Method ws13Method = register(new MetaWs13Method(this));
+              private final MetaWs13Method ws13Method = registerMethod(new MetaWs13Method(this));
 
-              private final MetaWs14Method ws14Method = register(new MetaWs14Method(this));
+              private final MetaWs14Method ws14Method = registerMethod(new MetaWs14Method(this));
 
-              private final MetaWs15Method ws15Method = register(new MetaWs15Method(this));
+              private final MetaWs15Method ws15Method = registerMethod(new MetaWs15Method(this));
 
-              private final MetaWs16Method ws16Method = register(new MetaWs16Method(this));
+              private final MetaWs16Method ws16Method = registerMethod(new MetaWs16Method(this));
 
-              private final MetaWs17Method ws17Method = register(new MetaWs17Method(this));
+              private final MetaWs17Method ws17Method = registerMethod(new MetaWs17Method(this));
 
-              private final MetaWsEchoMethod wsEchoMethod = register(new MetaWsEchoMethod(this));
+              private final MetaWsEchoMethod wsEchoMethod = registerMethod(new MetaWsEchoMethod(this));
 
               private MetaTestWsServiceClass() {
                 super(metaType(io.art.http.test.service.TestWsService.class));

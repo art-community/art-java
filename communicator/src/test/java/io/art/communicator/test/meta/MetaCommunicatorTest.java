@@ -1,7 +1,5 @@
 package io.art.communicator.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -17,7 +15,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaCommunicatorTest extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaCommunicatorTest(MetaLibrary... dependencies) {
     super(dependencies);
@@ -28,7 +26,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -39,7 +37,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
+      private final MetaCommunicatorPackage communicatorPackage = registerPackage(new MetaCommunicatorPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -50,7 +48,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
       }
 
       public static final class MetaCommunicatorPackage extends MetaPackage {
-        private final MetaTestPackage testPackage = register(new MetaTestPackage());
+        private final MetaTestPackage testPackage = registerPackage(new MetaTestPackage());
 
         private MetaCommunicatorPackage() {
           super("communicator");
@@ -61,7 +59,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaProxyPackage proxyPackage = register(new MetaProxyPackage());
+          private final MetaProxyPackage proxyPackage = registerPackage(new MetaProxyPackage());
 
           private MetaTestPackage() {
             super("test");
@@ -72,7 +70,7 @@ public class MetaCommunicatorTest extends MetaLibrary {
           }
 
           public static final class MetaProxyPackage extends MetaPackage {
-            private final MetaTestCommunicatorClass testCommunicatorClass = register(new MetaTestCommunicatorClass());
+            private final MetaTestCommunicatorClass testCommunicatorClass = registerClass(new MetaTestCommunicatorClass());
 
             private MetaProxyPackage() {
               super("proxy");
@@ -85,37 +83,37 @@ public class MetaCommunicatorTest extends MetaLibrary {
             public static final class MetaTestCommunicatorClass extends MetaClass<io.art.communicator.test.proxy.TestCommunicator> {
               private static final LazyProperty<MetaTestCommunicatorClass> self = MetaClass.self(io.art.communicator.test.proxy.TestCommunicator.class);
 
-              private final MetaM1Method m1Method = register(new MetaM1Method(this));
+              private final MetaM1Method m1Method = registerMethod(new MetaM1Method(this));
 
-              private final MetaM2Method m2Method = register(new MetaM2Method(this));
+              private final MetaM2Method m2Method = registerMethod(new MetaM2Method(this));
 
-              private final MetaM3Method m3Method = register(new MetaM3Method(this));
+              private final MetaM3Method m3Method = registerMethod(new MetaM3Method(this));
 
-              private final MetaM4Method m4Method = register(new MetaM4Method(this));
+              private final MetaM4Method m4Method = registerMethod(new MetaM4Method(this));
 
-              private final MetaM5Method m5Method = register(new MetaM5Method(this));
+              private final MetaM5Method m5Method = registerMethod(new MetaM5Method(this));
 
-              private final MetaM6Method m6Method = register(new MetaM6Method(this));
+              private final MetaM6Method m6Method = registerMethod(new MetaM6Method(this));
 
-              private final MetaM7Method m7Method = register(new MetaM7Method(this));
+              private final MetaM7Method m7Method = registerMethod(new MetaM7Method(this));
 
-              private final MetaM8Method m8Method = register(new MetaM8Method(this));
+              private final MetaM8Method m8Method = registerMethod(new MetaM8Method(this));
 
-              private final MetaM9Method m9Method = register(new MetaM9Method(this));
+              private final MetaM9Method m9Method = registerMethod(new MetaM9Method(this));
 
-              private final MetaM10Method m10Method = register(new MetaM10Method(this));
+              private final MetaM10Method m10Method = registerMethod(new MetaM10Method(this));
 
-              private final MetaM11Method m11Method = register(new MetaM11Method(this));
+              private final MetaM11Method m11Method = registerMethod(new MetaM11Method(this));
 
-              private final MetaM12Method m12Method = register(new MetaM12Method(this));
+              private final MetaM12Method m12Method = registerMethod(new MetaM12Method(this));
 
-              private final MetaM13Method m13Method = register(new MetaM13Method(this));
+              private final MetaM13Method m13Method = registerMethod(new MetaM13Method(this));
 
-              private final MetaM14Method m14Method = register(new MetaM14Method(this));
+              private final MetaM14Method m14Method = registerMethod(new MetaM14Method(this));
 
-              private final MetaM15Method m15Method = register(new MetaM15Method(this));
+              private final MetaM15Method m15Method = registerMethod(new MetaM15Method(this));
 
-              private final MetaM16Method m16Method = register(new MetaM16Method(this));
+              private final MetaM16Method m16Method = registerMethod(new MetaM16Method(this));
 
               private MetaTestCommunicatorClass() {
                 super(metaType(io.art.communicator.test.proxy.TestCommunicator.class));

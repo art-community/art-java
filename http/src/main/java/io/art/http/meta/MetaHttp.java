@@ -1,7 +1,6 @@
 package io.art.http.meta;
 
 import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -17,7 +16,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaHttp extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaHttp(MetaLibrary... dependencies) {
     super(dependencies);
@@ -28,7 +27,7 @@ public class MetaHttp extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -39,7 +38,7 @@ public class MetaHttp extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaHttpPackage httpPackage = register(new MetaHttpPackage());
+      private final MetaHttpPackage httpPackage = registerPackage(new MetaHttpPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -50,7 +49,7 @@ public class MetaHttp extends MetaLibrary {
       }
 
       public static final class MetaHttpPackage extends MetaPackage {
-        private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
+        private final MetaCommunicatorPackage communicatorPackage = registerPackage(new MetaCommunicatorPackage());
 
         private MetaHttpPackage() {
           super("http");
@@ -61,7 +60,7 @@ public class MetaHttp extends MetaLibrary {
         }
 
         public static final class MetaCommunicatorPackage extends MetaPackage {
-          private final MetaHttpBuiltinCommunicatorClass httpBuiltinCommunicatorClass = register(new MetaHttpBuiltinCommunicatorClass());
+          private final MetaHttpBuiltinCommunicatorClass httpBuiltinCommunicatorClass = registerClass(new MetaHttpBuiltinCommunicatorClass());
 
           private MetaCommunicatorPackage() {
             super("communicator");
@@ -74,9 +73,9 @@ public class MetaHttp extends MetaLibrary {
           public static final class MetaHttpBuiltinCommunicatorClass extends MetaClass<io.art.http.communicator.HttpBuiltinCommunicator> {
             private static final LazyProperty<MetaHttpBuiltinCommunicatorClass> self = MetaClass.self(io.art.http.communicator.HttpBuiltinCommunicator.class);
 
-            private final MetaExecuteMethod executeMethod = register(new MetaExecuteMethod(this));
+            private final MetaExecuteMethod executeMethod = registerMethod(new MetaExecuteMethod(this));
 
-            private final MetaDecorateMethod decorateMethod = register(new MetaDecorateMethod(this));
+            private final MetaDecorateMethod decorateMethod = registerMethod(new MetaDecorateMethod(this));
 
             private MetaHttpBuiltinCommunicatorClass() {
               super(metaType(io.art.http.communicator.HttpBuiltinCommunicator.class));

@@ -15,7 +15,7 @@ import io.art.meta.model.StaticMetaMethod;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaMetaTest extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaMetaTest(MetaLibrary... dependencies) {
     super(dependencies);
@@ -26,7 +26,7 @@ public class MetaMetaTest extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -37,7 +37,7 @@ public class MetaMetaTest extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaMetaPackage metaPackage = register(new MetaMetaPackage());
+      private final MetaMetaPackage metaPackage = registerPackage(new MetaMetaPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -48,7 +48,7 @@ public class MetaMetaTest extends MetaLibrary {
       }
 
       public static final class MetaMetaPackage extends MetaPackage {
-        private final MetaTestPackage testPackage = register(new MetaTestPackage());
+        private final MetaTestPackage testPackage = registerPackage(new MetaTestPackage());
 
         private MetaMetaPackage() {
           super("meta");
@@ -59,15 +59,15 @@ public class MetaMetaTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaTestingMetaConfigurationGeneratorClass testingMetaConfigurationGeneratorClass = register(new MetaTestingMetaConfigurationGeneratorClass());
+          private final MetaTestingMetaConfigurationGeneratorClass testingMetaConfigurationGeneratorClass = registerClass(new MetaTestingMetaConfigurationGeneratorClass());
 
-          private final MetaTestingMetaConfigurationClass testingMetaConfigurationClass = register(new MetaTestingMetaConfigurationClass());
+          private final MetaTestingMetaConfigurationClass testingMetaConfigurationClass = registerClass(new MetaTestingMetaConfigurationClass());
 
-          private final MetaTestingShortMetaModelClass testingShortMetaModelClass = register(new MetaTestingShortMetaModelClass());
+          private final MetaTestingShortMetaModelClass testingShortMetaModelClass = registerClass(new MetaTestingShortMetaModelClass());
 
-          private final MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass = register(new MetaTestingMetaModelGeneratorClass());
+          private final MetaTestingMetaModelGeneratorClass testingMetaModelGeneratorClass = registerClass(new MetaTestingMetaModelGeneratorClass());
 
-          private final MetaTestingMetaModelClass testingMetaModelClass = register(new MetaTestingMetaModelClass());
+          private final MetaTestingMetaModelClass testingMetaModelClass = registerClass(new MetaTestingMetaModelClass());
 
           private MetaTestPackage() {
             super("test");
@@ -97,7 +97,7 @@ public class MetaMetaTest extends MetaLibrary {
           public static final class MetaTestingMetaConfigurationGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaConfigurationGenerator> {
             private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationGeneratorClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfigurationGenerator.class);
 
-            private final MetaGenerateTestingConfigurationMethod generateTestingConfigurationMethod = register(new MetaGenerateTestingConfigurationMethod(this));
+            private final MetaGenerateTestingConfigurationMethod generateTestingConfigurationMethod = registerMethod(new MetaGenerateTestingConfigurationMethod(this));
 
             private MetaTestingMetaConfigurationGeneratorClass() {
               super(metaType(io.art.meta.test.TestingMetaConfigurationGenerator.class));
@@ -133,265 +133,265 @@ public class MetaMetaTest extends MetaLibrary {
           public static final class MetaTestingMetaConfigurationClass extends MetaClass<io.art.meta.test.TestingMetaConfiguration> {
             private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfiguration.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f1Field = registerField(new MetaField<>("f1",metaType(int.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f2Field = registerField(new MetaField<>("f2",metaType(short.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f3Field = registerField(new MetaField<>("f3",metaType(double.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f4Field = registerField(new MetaField<>("f4",metaType(float.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f5Field = registerField(new MetaField<>("f5",metaType(long.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f6Field = registerField(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f7Field = registerField(new MetaField<>("f7",metaType(char.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, Byte> f8Field = registerField(new MetaField<>("f8",metaType(byte.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer> f9Field = registerField(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short> f10Field = registerField(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double> f11Field = registerField(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float> f12Field = registerField(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long> f13Field = registerField(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean> f14Field = registerField(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character> f15Field = registerField(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f16Field = registerField(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, int[]> f17Field = registerField(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, short[]> f18Field = registerField(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, double[]> f19Field = registerField(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, float[]> f20Field = registerField(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, long[]> f21Field = registerField(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, boolean[]> f22Field = registerField(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, char[]> f23Field = registerField(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer[]> f24Field = register(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Integer[]> f24Field = registerField(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Short[]> f25Field = registerField(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Double[]> f26Field = registerField(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Float[]> f27Field = registerField(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Long[]> f28Field = registerField(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Boolean[]> f29Field = registerField(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.Character[]> f30Field = registerField(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String[]> f31Field = registerField(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String>> f32Field = register(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String>> f32Field = registerField(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Set<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Set<java.lang.String>> f33Field = registerField(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Collection<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Collection<java.lang.String>> f34Field = registerField(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field = registerField(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field = registerField(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.function.Supplier<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.function.Supplier<java.lang.String>> f37Field = registerField(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field = registerField(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>> f39Field = register(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>> f39Field = registerField(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>> f40Field = registerField(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>[]> f41Field = register(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<int[]>[]> f41Field = registerField(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>[]> f42Field = register(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.lang.String[]>[]> f42Field = registerField(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>>> f43Field = register(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>>> f43Field = registerField(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field = register(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field = registerField(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field = register(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field = registerField(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field = registerField(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field = registerField(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field = register(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field = registerField(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration> f49Field = register(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration> f49Field = registerField(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.time.LocalDateTime> f50Field = register(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.time.LocalDateTime> f50Field = registerField(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.time.ZonedDateTime> f51Field = register(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.time.ZonedDateTime> f51Field = registerField(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.time.Duration> f52Field = register(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.time.Duration> f52Field = registerField(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field = register(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field = registerField(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field = register(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field = registerField(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field = register(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field = registerField(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field = register(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field = registerField(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field = register(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field = registerField(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String>> f58Field = register(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String>> f58Field = registerField(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Flux<java.lang.String>> f59Field = register(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Flux<java.lang.String>> f59Field = registerField(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.util.stream.Stream<java.lang.String>> f60Field = register(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.util.stream.Stream<java.lang.String>> f60Field = registerField(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field = register(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field = registerField(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f62Field = register(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f62Field = registerField(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f63Field = register(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaConfigurationClass, java.lang.String> f63Field = registerField(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
 
-            private final MetaAssertEqualsMethod assertEqualsMethod = register(new MetaAssertEqualsMethod(this));
+            private final MetaAssertEqualsMethod assertEqualsMethod = registerMethod(new MetaAssertEqualsMethod(this));
 
-            private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod(this));
+            private final MetaToBuilderMethod toBuilderMethod = registerMethod(new MetaToBuilderMethod(this));
 
-            private final MetaGetF1Method getF1Method = register(new MetaGetF1Method(this));
+            private final MetaGetF1Method getF1Method = registerMethod(new MetaGetF1Method(this));
 
-            private final MetaGetF2Method getF2Method = register(new MetaGetF2Method(this));
+            private final MetaGetF2Method getF2Method = registerMethod(new MetaGetF2Method(this));
 
-            private final MetaGetF3Method getF3Method = register(new MetaGetF3Method(this));
+            private final MetaGetF3Method getF3Method = registerMethod(new MetaGetF3Method(this));
 
-            private final MetaGetF4Method getF4Method = register(new MetaGetF4Method(this));
+            private final MetaGetF4Method getF4Method = registerMethod(new MetaGetF4Method(this));
 
-            private final MetaGetF5Method getF5Method = register(new MetaGetF5Method(this));
+            private final MetaGetF5Method getF5Method = registerMethod(new MetaGetF5Method(this));
 
-            private final MetaIsF6Method isF6Method = register(new MetaIsF6Method(this));
+            private final MetaIsF6Method isF6Method = registerMethod(new MetaIsF6Method(this));
 
-            private final MetaGetF7Method getF7Method = register(new MetaGetF7Method(this));
+            private final MetaGetF7Method getF7Method = registerMethod(new MetaGetF7Method(this));
 
-            private final MetaGetF8Method getF8Method = register(new MetaGetF8Method(this));
+            private final MetaGetF8Method getF8Method = registerMethod(new MetaGetF8Method(this));
 
-            private final MetaGetF9Method getF9Method = register(new MetaGetF9Method(this));
+            private final MetaGetF9Method getF9Method = registerMethod(new MetaGetF9Method(this));
 
-            private final MetaGetF10Method getF10Method = register(new MetaGetF10Method(this));
+            private final MetaGetF10Method getF10Method = registerMethod(new MetaGetF10Method(this));
 
-            private final MetaGetF11Method getF11Method = register(new MetaGetF11Method(this));
+            private final MetaGetF11Method getF11Method = registerMethod(new MetaGetF11Method(this));
 
-            private final MetaGetF12Method getF12Method = register(new MetaGetF12Method(this));
+            private final MetaGetF12Method getF12Method = registerMethod(new MetaGetF12Method(this));
 
-            private final MetaGetF13Method getF13Method = register(new MetaGetF13Method(this));
+            private final MetaGetF13Method getF13Method = registerMethod(new MetaGetF13Method(this));
 
-            private final MetaGetF14Method getF14Method = register(new MetaGetF14Method(this));
+            private final MetaGetF14Method getF14Method = registerMethod(new MetaGetF14Method(this));
 
-            private final MetaGetF15Method getF15Method = register(new MetaGetF15Method(this));
+            private final MetaGetF15Method getF15Method = registerMethod(new MetaGetF15Method(this));
 
-            private final MetaGetF16Method getF16Method = register(new MetaGetF16Method(this));
+            private final MetaGetF16Method getF16Method = registerMethod(new MetaGetF16Method(this));
 
-            private final MetaGetF17Method getF17Method = register(new MetaGetF17Method(this));
+            private final MetaGetF17Method getF17Method = registerMethod(new MetaGetF17Method(this));
 
-            private final MetaGetF18Method getF18Method = register(new MetaGetF18Method(this));
+            private final MetaGetF18Method getF18Method = registerMethod(new MetaGetF18Method(this));
 
-            private final MetaGetF19Method getF19Method = register(new MetaGetF19Method(this));
+            private final MetaGetF19Method getF19Method = registerMethod(new MetaGetF19Method(this));
 
-            private final MetaGetF20Method getF20Method = register(new MetaGetF20Method(this));
+            private final MetaGetF20Method getF20Method = registerMethod(new MetaGetF20Method(this));
 
-            private final MetaGetF21Method getF21Method = register(new MetaGetF21Method(this));
+            private final MetaGetF21Method getF21Method = registerMethod(new MetaGetF21Method(this));
 
-            private final MetaGetF22Method getF22Method = register(new MetaGetF22Method(this));
+            private final MetaGetF22Method getF22Method = registerMethod(new MetaGetF22Method(this));
 
-            private final MetaGetF23Method getF23Method = register(new MetaGetF23Method(this));
+            private final MetaGetF23Method getF23Method = registerMethod(new MetaGetF23Method(this));
 
-            private final MetaGetF24Method getF24Method = register(new MetaGetF24Method(this));
+            private final MetaGetF24Method getF24Method = registerMethod(new MetaGetF24Method(this));
 
-            private final MetaGetF25Method getF25Method = register(new MetaGetF25Method(this));
+            private final MetaGetF25Method getF25Method = registerMethod(new MetaGetF25Method(this));
 
-            private final MetaGetF26Method getF26Method = register(new MetaGetF26Method(this));
+            private final MetaGetF26Method getF26Method = registerMethod(new MetaGetF26Method(this));
 
-            private final MetaGetF27Method getF27Method = register(new MetaGetF27Method(this));
+            private final MetaGetF27Method getF27Method = registerMethod(new MetaGetF27Method(this));
 
-            private final MetaGetF28Method getF28Method = register(new MetaGetF28Method(this));
+            private final MetaGetF28Method getF28Method = registerMethod(new MetaGetF28Method(this));
 
-            private final MetaGetF29Method getF29Method = register(new MetaGetF29Method(this));
+            private final MetaGetF29Method getF29Method = registerMethod(new MetaGetF29Method(this));
 
-            private final MetaGetF30Method getF30Method = register(new MetaGetF30Method(this));
+            private final MetaGetF30Method getF30Method = registerMethod(new MetaGetF30Method(this));
 
-            private final MetaGetF31Method getF31Method = register(new MetaGetF31Method(this));
+            private final MetaGetF31Method getF31Method = registerMethod(new MetaGetF31Method(this));
 
-            private final MetaGetF32Method getF32Method = register(new MetaGetF32Method(this));
+            private final MetaGetF32Method getF32Method = registerMethod(new MetaGetF32Method(this));
 
-            private final MetaGetF33Method getF33Method = register(new MetaGetF33Method(this));
+            private final MetaGetF33Method getF33Method = registerMethod(new MetaGetF33Method(this));
 
-            private final MetaGetF34Method getF34Method = register(new MetaGetF34Method(this));
+            private final MetaGetF34Method getF34Method = registerMethod(new MetaGetF34Method(this));
 
-            private final MetaGetF35Method getF35Method = register(new MetaGetF35Method(this));
+            private final MetaGetF35Method getF35Method = registerMethod(new MetaGetF35Method(this));
 
-            private final MetaGetF36Method getF36Method = register(new MetaGetF36Method(this));
+            private final MetaGetF36Method getF36Method = registerMethod(new MetaGetF36Method(this));
 
-            private final MetaGetF37Method getF37Method = register(new MetaGetF37Method(this));
+            private final MetaGetF37Method getF37Method = registerMethod(new MetaGetF37Method(this));
 
-            private final MetaGetF38Method getF38Method = register(new MetaGetF38Method(this));
+            private final MetaGetF38Method getF38Method = registerMethod(new MetaGetF38Method(this));
 
-            private final MetaGetF39Method getF39Method = register(new MetaGetF39Method(this));
+            private final MetaGetF39Method getF39Method = registerMethod(new MetaGetF39Method(this));
 
-            private final MetaGetF40Method getF40Method = register(new MetaGetF40Method(this));
+            private final MetaGetF40Method getF40Method = registerMethod(new MetaGetF40Method(this));
 
-            private final MetaGetF41Method getF41Method = register(new MetaGetF41Method(this));
+            private final MetaGetF41Method getF41Method = registerMethod(new MetaGetF41Method(this));
 
-            private final MetaGetF42Method getF42Method = register(new MetaGetF42Method(this));
+            private final MetaGetF42Method getF42Method = registerMethod(new MetaGetF42Method(this));
 
-            private final MetaGetF43Method getF43Method = register(new MetaGetF43Method(this));
+            private final MetaGetF43Method getF43Method = registerMethod(new MetaGetF43Method(this));
 
-            private final MetaGetF44Method getF44Method = register(new MetaGetF44Method(this));
+            private final MetaGetF44Method getF44Method = registerMethod(new MetaGetF44Method(this));
 
-            private final MetaGetF45Method getF45Method = register(new MetaGetF45Method(this));
+            private final MetaGetF45Method getF45Method = registerMethod(new MetaGetF45Method(this));
 
-            private final MetaGetF46Method getF46Method = register(new MetaGetF46Method(this));
+            private final MetaGetF46Method getF46Method = registerMethod(new MetaGetF46Method(this));
 
-            private final MetaGetF47Method getF47Method = register(new MetaGetF47Method(this));
+            private final MetaGetF47Method getF47Method = registerMethod(new MetaGetF47Method(this));
 
-            private final MetaGetF48Method getF48Method = register(new MetaGetF48Method(this));
+            private final MetaGetF48Method getF48Method = registerMethod(new MetaGetF48Method(this));
 
-            private final MetaGetF49Method getF49Method = register(new MetaGetF49Method(this));
+            private final MetaGetF49Method getF49Method = registerMethod(new MetaGetF49Method(this));
 
-            private final MetaGetF50Method getF50Method = register(new MetaGetF50Method(this));
+            private final MetaGetF50Method getF50Method = registerMethod(new MetaGetF50Method(this));
 
-            private final MetaGetF51Method getF51Method = register(new MetaGetF51Method(this));
+            private final MetaGetF51Method getF51Method = registerMethod(new MetaGetF51Method(this));
 
-            private final MetaGetF52Method getF52Method = register(new MetaGetF52Method(this));
+            private final MetaGetF52Method getF52Method = registerMethod(new MetaGetF52Method(this));
 
-            private final MetaGetF53Method getF53Method = register(new MetaGetF53Method(this));
+            private final MetaGetF53Method getF53Method = registerMethod(new MetaGetF53Method(this));
 
-            private final MetaGetF54Method getF54Method = register(new MetaGetF54Method(this));
+            private final MetaGetF54Method getF54Method = registerMethod(new MetaGetF54Method(this));
 
-            private final MetaGetF55Method getF55Method = register(new MetaGetF55Method(this));
+            private final MetaGetF55Method getF55Method = registerMethod(new MetaGetF55Method(this));
 
-            private final MetaGetF56Method getF56Method = register(new MetaGetF56Method(this));
+            private final MetaGetF56Method getF56Method = registerMethod(new MetaGetF56Method(this));
 
-            private final MetaGetF57Method getF57Method = register(new MetaGetF57Method(this));
+            private final MetaGetF57Method getF57Method = registerMethod(new MetaGetF57Method(this));
 
-            private final MetaGetF58Method getF58Method = register(new MetaGetF58Method(this));
+            private final MetaGetF58Method getF58Method = registerMethod(new MetaGetF58Method(this));
 
-            private final MetaGetF59Method getF59Method = register(new MetaGetF59Method(this));
+            private final MetaGetF59Method getF59Method = registerMethod(new MetaGetF59Method(this));
 
-            private final MetaGetF60Method getF60Method = register(new MetaGetF60Method(this));
+            private final MetaGetF60Method getF60Method = registerMethod(new MetaGetF60Method(this));
 
-            private final MetaGetF61Method getF61Method = register(new MetaGetF61Method(this));
+            private final MetaGetF61Method getF61Method = registerMethod(new MetaGetF61Method(this));
 
-            private final MetaGetF62Method getF62Method = register(new MetaGetF62Method(this));
+            private final MetaGetF62Method getF62Method = registerMethod(new MetaGetF62Method(this));
 
-            private final MetaGetF63Method getF63Method = register(new MetaGetF63Method(this));
+            private final MetaGetF63Method getF63Method = registerMethod(new MetaGetF63Method(this));
 
-            private final MetaTestingMetaConfigurationBuilderClass testingMetaConfigurationBuilderClass = register(new MetaTestingMetaConfigurationBuilderClass());
+            private final MetaTestingMetaConfigurationBuilderClass testingMetaConfigurationBuilderClass = registerClass(new MetaTestingMetaConfigurationBuilderClass());
 
             private MetaTestingMetaConfigurationClass() {
               super(metaType(io.art.meta.test.TestingMetaConfiguration.class));
@@ -2534,259 +2534,259 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaTestingMetaConfigurationBuilderClass extends MetaClass<io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder> {
               private static final io.art.core.property.LazyProperty<MetaTestingMetaConfigurationBuilderClass> self = MetaClass.self(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class);
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f1Field = registerField(new MetaField<>("f1",metaType(int.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f2Field = registerField(new MetaField<>("f2",metaType(short.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f3Field = registerField(new MetaField<>("f3",metaType(double.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f4Field = registerField(new MetaField<>("f4",metaType(float.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f5Field = registerField(new MetaField<>("f5",metaType(long.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f6Field = registerField(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f7Field = registerField(new MetaField<>("f7",metaType(char.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, Byte> f8Field = registerField(new MetaField<>("f8",metaType(byte.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer> f9Field = registerField(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short> f10Field = registerField(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double> f11Field = registerField(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float> f12Field = registerField(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long> f13Field = registerField(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean> f14Field = registerField(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character> f15Field = registerField(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f16Field = registerField(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, int[]> f17Field = registerField(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, short[]> f18Field = registerField(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, double[]> f19Field = registerField(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, float[]> f20Field = registerField(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, long[]> f21Field = registerField(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, boolean[]> f22Field = registerField(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, char[]> f23Field = registerField(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer[]> f24Field = register(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Integer[]> f24Field = registerField(new MetaField<>("f24",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Short[]> f25Field = registerField(new MetaField<>("f25",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Double[]> f26Field = registerField(new MetaField<>("f26",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Float[]> f27Field = registerField(new MetaField<>("f27",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Long[]> f28Field = registerField(new MetaField<>("f28",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Boolean[]> f29Field = registerField(new MetaField<>("f29",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.Character[]> f30Field = registerField(new MetaField<>("f30",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String[]> f31Field = registerField(new MetaField<>("f31",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String>> f32Field = register(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String>> f32Field = registerField(new MetaField<>("f32",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<java.lang.String>> f33Field = registerField(new MetaField<>("f33",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Collection<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Collection<java.lang.String>> f34Field = registerField(new MetaField<>("f34",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f35Field = registerField(new MetaField<>("f35",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f36Field = registerField(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.function.Supplier<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.function.Supplier<java.lang.String>> f37Field = registerField(new MetaField<>("f37",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f38Field = registerField(new MetaField<>("f38",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>> f39Field = register(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>> f39Field = registerField(new MetaField<>("f39",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>> f40Field = registerField(new MetaField<>("f40",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>[]> f41Field = register(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<int[]>[]> f41Field = registerField(new MetaField<>("f41",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>[]> f42Field = register(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.lang.String[]>[]> f42Field = registerField(new MetaField<>("f42",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>>> f43Field = register(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>>> f43Field = registerField(new MetaField<>("f43",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field = register(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f44Field = registerField(new MetaField<>("f44",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field = register(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f45Field = registerField(new MetaField<>("f45",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f46Field = registerField(new MetaField<>("f46",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f47Field = registerField(new MetaField<>("f47",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field = register(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f48Field = registerField(new MetaField<>("f48",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration> f49Field = register(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration> f49Field = registerField(new MetaField<>("f49",metaType(io.art.meta.test.TestingMetaConfiguration.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.LocalDateTime> f50Field = register(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.LocalDateTime> f50Field = registerField(new MetaField<>("f50",metaType(java.time.LocalDateTime.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.ZonedDateTime> f51Field = register(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.ZonedDateTime> f51Field = registerField(new MetaField<>("f51",metaType(java.time.ZonedDateTime.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.Duration> f52Field = register(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.time.Duration> f52Field = registerField(new MetaField<>("f52",metaType(java.time.Duration.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field = register(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, io.art.meta.test.TestingMetaConfiguration.ModelEnum> f53Field = registerField(new MetaField<>("f53",metaEnum(io.art.meta.test.TestingMetaConfiguration.ModelEnum.class, io.art.meta.test.TestingMetaConfiguration.ModelEnum::valueOf),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field = register(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f54Field = registerField(new MetaField<>("f54",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field = register(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.List<io.art.meta.test.TestingMetaConfiguration>> f55Field = registerField(new MetaField<>("f55",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field = register(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Set<io.art.meta.test.TestingMetaConfiguration>> f56Field = registerField(new MetaField<>("f56",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field = register(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaConfiguration>> f57Field = registerField(new MetaField<>("f57",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaConfiguration.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f58Field = register(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f58Field = registerField(new MetaField<>("f58",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f59Field = register(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f59Field = registerField(new MetaField<>("f59",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.stream.Stream<java.lang.String>> f60Field = register(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.util.stream.Stream<java.lang.String>> f60Field = registerField(new MetaField<>("f60",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field = register(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f61Field = registerField(new MetaField<>("f61",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f62Field = register(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f62Field = registerField(new MetaField<>("f62",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f63Field = register(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaConfigurationBuilderClass, java.lang.String> f63Field = registerField(new MetaField<>("f63",metaType(java.lang.String.class),false,this));
 
-              private final MetaF1Method f1Method = register(new MetaF1Method(this));
+              private final MetaF1Method f1Method = registerMethod(new MetaF1Method(this));
 
-              private final MetaF2Method f2Method = register(new MetaF2Method(this));
+              private final MetaF2Method f2Method = registerMethod(new MetaF2Method(this));
 
-              private final MetaF3Method f3Method = register(new MetaF3Method(this));
+              private final MetaF3Method f3Method = registerMethod(new MetaF3Method(this));
 
-              private final MetaF4Method f4Method = register(new MetaF4Method(this));
+              private final MetaF4Method f4Method = registerMethod(new MetaF4Method(this));
 
-              private final MetaF5Method f5Method = register(new MetaF5Method(this));
+              private final MetaF5Method f5Method = registerMethod(new MetaF5Method(this));
 
-              private final MetaF6Method f6Method = register(new MetaF6Method(this));
+              private final MetaF6Method f6Method = registerMethod(new MetaF6Method(this));
 
-              private final MetaF7Method f7Method = register(new MetaF7Method(this));
+              private final MetaF7Method f7Method = registerMethod(new MetaF7Method(this));
 
-              private final MetaF8Method f8Method = register(new MetaF8Method(this));
+              private final MetaF8Method f8Method = registerMethod(new MetaF8Method(this));
 
-              private final MetaF9Method f9Method = register(new MetaF9Method(this));
+              private final MetaF9Method f9Method = registerMethod(new MetaF9Method(this));
 
-              private final MetaF10Method f10Method = register(new MetaF10Method(this));
+              private final MetaF10Method f10Method = registerMethod(new MetaF10Method(this));
 
-              private final MetaF11Method f11Method = register(new MetaF11Method(this));
+              private final MetaF11Method f11Method = registerMethod(new MetaF11Method(this));
 
-              private final MetaF12Method f12Method = register(new MetaF12Method(this));
+              private final MetaF12Method f12Method = registerMethod(new MetaF12Method(this));
 
-              private final MetaF13Method f13Method = register(new MetaF13Method(this));
+              private final MetaF13Method f13Method = registerMethod(new MetaF13Method(this));
 
-              private final MetaF14Method f14Method = register(new MetaF14Method(this));
+              private final MetaF14Method f14Method = registerMethod(new MetaF14Method(this));
 
-              private final MetaF15Method f15Method = register(new MetaF15Method(this));
+              private final MetaF15Method f15Method = registerMethod(new MetaF15Method(this));
 
-              private final MetaF16Method f16Method = register(new MetaF16Method(this));
+              private final MetaF16Method f16Method = registerMethod(new MetaF16Method(this));
 
-              private final MetaF17Method f17Method = register(new MetaF17Method(this));
+              private final MetaF17Method f17Method = registerMethod(new MetaF17Method(this));
 
-              private final MetaF18Method f18Method = register(new MetaF18Method(this));
+              private final MetaF18Method f18Method = registerMethod(new MetaF18Method(this));
 
-              private final MetaF19Method f19Method = register(new MetaF19Method(this));
+              private final MetaF19Method f19Method = registerMethod(new MetaF19Method(this));
 
-              private final MetaF20Method f20Method = register(new MetaF20Method(this));
+              private final MetaF20Method f20Method = registerMethod(new MetaF20Method(this));
 
-              private final MetaF21Method f21Method = register(new MetaF21Method(this));
+              private final MetaF21Method f21Method = registerMethod(new MetaF21Method(this));
 
-              private final MetaF22Method f22Method = register(new MetaF22Method(this));
+              private final MetaF22Method f22Method = registerMethod(new MetaF22Method(this));
 
-              private final MetaF23Method f23Method = register(new MetaF23Method(this));
+              private final MetaF23Method f23Method = registerMethod(new MetaF23Method(this));
 
-              private final MetaF24Method f24Method = register(new MetaF24Method(this));
+              private final MetaF24Method f24Method = registerMethod(new MetaF24Method(this));
 
-              private final MetaF25Method f25Method = register(new MetaF25Method(this));
+              private final MetaF25Method f25Method = registerMethod(new MetaF25Method(this));
 
-              private final MetaF26Method f26Method = register(new MetaF26Method(this));
+              private final MetaF26Method f26Method = registerMethod(new MetaF26Method(this));
 
-              private final MetaF27Method f27Method = register(new MetaF27Method(this));
+              private final MetaF27Method f27Method = registerMethod(new MetaF27Method(this));
 
-              private final MetaF28Method f28Method = register(new MetaF28Method(this));
+              private final MetaF28Method f28Method = registerMethod(new MetaF28Method(this));
 
-              private final MetaF29Method f29Method = register(new MetaF29Method(this));
+              private final MetaF29Method f29Method = registerMethod(new MetaF29Method(this));
 
-              private final MetaF30Method f30Method = register(new MetaF30Method(this));
+              private final MetaF30Method f30Method = registerMethod(new MetaF30Method(this));
 
-              private final MetaF31Method f31Method = register(new MetaF31Method(this));
+              private final MetaF31Method f31Method = registerMethod(new MetaF31Method(this));
 
-              private final MetaF32Method f32Method = register(new MetaF32Method(this));
+              private final MetaF32Method f32Method = registerMethod(new MetaF32Method(this));
 
-              private final MetaF33Method f33Method = register(new MetaF33Method(this));
+              private final MetaF33Method f33Method = registerMethod(new MetaF33Method(this));
 
-              private final MetaF34Method f34Method = register(new MetaF34Method(this));
+              private final MetaF34Method f34Method = registerMethod(new MetaF34Method(this));
 
-              private final MetaF35Method f35Method = register(new MetaF35Method(this));
+              private final MetaF35Method f35Method = registerMethod(new MetaF35Method(this));
 
-              private final MetaF36Method f36Method = register(new MetaF36Method(this));
+              private final MetaF36Method f36Method = registerMethod(new MetaF36Method(this));
 
-              private final MetaF37Method f37Method = register(new MetaF37Method(this));
+              private final MetaF37Method f37Method = registerMethod(new MetaF37Method(this));
 
-              private final MetaF38Method f38Method = register(new MetaF38Method(this));
+              private final MetaF38Method f38Method = registerMethod(new MetaF38Method(this));
 
-              private final MetaF39Method f39Method = register(new MetaF39Method(this));
+              private final MetaF39Method f39Method = registerMethod(new MetaF39Method(this));
 
-              private final MetaF40Method f40Method = register(new MetaF40Method(this));
+              private final MetaF40Method f40Method = registerMethod(new MetaF40Method(this));
 
-              private final MetaF41Method f41Method = register(new MetaF41Method(this));
+              private final MetaF41Method f41Method = registerMethod(new MetaF41Method(this));
 
-              private final MetaF42Method f42Method = register(new MetaF42Method(this));
+              private final MetaF42Method f42Method = registerMethod(new MetaF42Method(this));
 
-              private final MetaF43Method f43Method = register(new MetaF43Method(this));
+              private final MetaF43Method f43Method = registerMethod(new MetaF43Method(this));
 
-              private final MetaF44Method f44Method = register(new MetaF44Method(this));
+              private final MetaF44Method f44Method = registerMethod(new MetaF44Method(this));
 
-              private final MetaF45Method f45Method = register(new MetaF45Method(this));
+              private final MetaF45Method f45Method = registerMethod(new MetaF45Method(this));
 
-              private final MetaF46Method f46Method = register(new MetaF46Method(this));
+              private final MetaF46Method f46Method = registerMethod(new MetaF46Method(this));
 
-              private final MetaF47Method f47Method = register(new MetaF47Method(this));
+              private final MetaF47Method f47Method = registerMethod(new MetaF47Method(this));
 
-              private final MetaF48Method f48Method = register(new MetaF48Method(this));
+              private final MetaF48Method f48Method = registerMethod(new MetaF48Method(this));
 
-              private final MetaF49Method f49Method = register(new MetaF49Method(this));
+              private final MetaF49Method f49Method = registerMethod(new MetaF49Method(this));
 
-              private final MetaF50Method f50Method = register(new MetaF50Method(this));
+              private final MetaF50Method f50Method = registerMethod(new MetaF50Method(this));
 
-              private final MetaF51Method f51Method = register(new MetaF51Method(this));
+              private final MetaF51Method f51Method = registerMethod(new MetaF51Method(this));
 
-              private final MetaF52Method f52Method = register(new MetaF52Method(this));
+              private final MetaF52Method f52Method = registerMethod(new MetaF52Method(this));
 
-              private final MetaF53Method f53Method = register(new MetaF53Method(this));
+              private final MetaF53Method f53Method = registerMethod(new MetaF53Method(this));
 
-              private final MetaF54Method f54Method = register(new MetaF54Method(this));
+              private final MetaF54Method f54Method = registerMethod(new MetaF54Method(this));
 
-              private final MetaF55Method f55Method = register(new MetaF55Method(this));
+              private final MetaF55Method f55Method = registerMethod(new MetaF55Method(this));
 
-              private final MetaF56Method f56Method = register(new MetaF56Method(this));
+              private final MetaF56Method f56Method = registerMethod(new MetaF56Method(this));
 
-              private final MetaF57Method f57Method = register(new MetaF57Method(this));
+              private final MetaF57Method f57Method = registerMethod(new MetaF57Method(this));
 
-              private final MetaF58Method f58Method = register(new MetaF58Method(this));
+              private final MetaF58Method f58Method = registerMethod(new MetaF58Method(this));
 
-              private final MetaF59Method f59Method = register(new MetaF59Method(this));
+              private final MetaF59Method f59Method = registerMethod(new MetaF59Method(this));
 
-              private final MetaF60Method f60Method = register(new MetaF60Method(this));
+              private final MetaF60Method f60Method = registerMethod(new MetaF60Method(this));
 
-              private final MetaF61Method f61Method = register(new MetaF61Method(this));
+              private final MetaF61Method f61Method = registerMethod(new MetaF61Method(this));
 
-              private final MetaF62Method f62Method = register(new MetaF62Method(this));
+              private final MetaF62Method f62Method = registerMethod(new MetaF62Method(this));
 
-              private final MetaF63Method f63Method = register(new MetaF63Method(this));
+              private final MetaF63Method f63Method = registerMethod(new MetaF63Method(this));
 
-              private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
+              private final MetaBuildMethod buildMethod = registerMethod(new MetaBuildMethod(this));
 
               private MetaTestingMetaConfigurationBuilderClass() {
                 super(metaType(io.art.meta.test.TestingMetaConfiguration.TestingMetaConfigurationBuilder.class));
@@ -5037,23 +5037,23 @@ public class MetaMetaTest extends MetaLibrary {
           public static final class MetaTestingShortMetaModelClass extends MetaClass<io.art.meta.test.TestingShortMetaModel> {
             private static final io.art.core.property.LazyProperty<MetaTestingShortMetaModelClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaTestingShortMetaModelClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+            private final MetaField<MetaTestingShortMetaModelClass, java.lang.Integer> idField = registerField(new MetaField<>("id",metaType(int.class),false,this));
 
-            private final MetaField<MetaTestingShortMetaModelClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingShortMetaModelClass, java.lang.String> nameField = registerField(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
+            private final MetaField<MetaTestingShortMetaModelClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField = registerField(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
 
-            private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod(this));
+            private final MetaGetIdMethod getIdMethod = registerMethod(new MetaGetIdMethod(this));
 
-            private final MetaGetNameMethod getNameMethod = register(new MetaGetNameMethod(this));
+            private final MetaGetNameMethod getNameMethod = registerMethod(new MetaGetNameMethod(this));
 
-            private final MetaGetInnerMethod getInnerMethod = register(new MetaGetInnerMethod(this));
+            private final MetaGetInnerMethod getInnerMethod = registerMethod(new MetaGetInnerMethod(this));
 
-            private final MetaTestingShortMetaModelBuilderClass testingShortMetaModelBuilderClass = register(new MetaTestingShortMetaModelBuilderClass());
+            private final MetaTestingShortMetaModelBuilderClass testingShortMetaModelBuilderClass = registerClass(new MetaTestingShortMetaModelBuilderClass());
 
-            private final MetaInnerClass innerClass = register(new MetaInnerClass());
+            private final MetaInnerClass innerClass = registerClass(new MetaInnerClass());
 
             private MetaTestingShortMetaModelClass() {
               super(metaType(io.art.meta.test.TestingShortMetaModel.class));
@@ -5187,19 +5187,19 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaTestingShortMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder> {
               private static final io.art.core.property.LazyProperty<MetaTestingShortMetaModelBuilderClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class);
 
-              private final MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+              private final MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.Integer> idField = registerField(new MetaField<>("id",metaType(int.class),false,this));
 
-              private final MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingShortMetaModelBuilderClass, java.lang.String> nameField = registerField(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField = register(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
+              private final MetaField<MetaTestingShortMetaModelBuilderClass, io.art.meta.test.TestingShortMetaModel.Inner> innerField = registerField(new MetaField<>("inner",metaType(io.art.meta.test.TestingShortMetaModel.Inner.class),false,this));
 
-              private final MetaIdMethod idMethod = register(new MetaIdMethod(this));
+              private final MetaIdMethod idMethod = registerMethod(new MetaIdMethod(this));
 
-              private final MetaNameMethod nameMethod = register(new MetaNameMethod(this));
+              private final MetaNameMethod nameMethod = registerMethod(new MetaNameMethod(this));
 
-              private final MetaInnerMethod innerMethod = register(new MetaInnerMethod(this));
+              private final MetaInnerMethod innerMethod = registerMethod(new MetaInnerMethod(this));
 
-              private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
+              private final MetaBuildMethod buildMethod = registerMethod(new MetaBuildMethod(this));
 
               private MetaTestingShortMetaModelBuilderClass() {
                 super(metaType(io.art.meta.test.TestingShortMetaModel.TestingShortMetaModelBuilder.class));
@@ -5342,17 +5342,17 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaInnerClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner> {
               private static final io.art.core.property.LazyProperty<MetaInnerClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.Inner.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaField<MetaInnerClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+              private final MetaField<MetaInnerClass, java.lang.Integer> idField = registerField(new MetaField<>("id",metaType(int.class),false,this));
 
-              private final MetaField<MetaInnerClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaInnerClass, java.lang.String> nameField = registerField(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
-              private final MetaGetIdMethod getIdMethod = register(new MetaGetIdMethod(this));
+              private final MetaGetIdMethod getIdMethod = registerMethod(new MetaGetIdMethod(this));
 
-              private final MetaGetNameMethod getNameMethod = register(new MetaGetNameMethod(this));
+              private final MetaGetNameMethod getNameMethod = registerMethod(new MetaGetNameMethod(this));
 
-              private final MetaInnerBuilderClass innerBuilderClass = register(new MetaInnerBuilderClass());
+              private final MetaInnerBuilderClass innerBuilderClass = registerClass(new MetaInnerBuilderClass());
 
               private MetaInnerClass() {
                 super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.class));
@@ -5449,15 +5449,15 @@ public class MetaMetaTest extends MetaLibrary {
               public static final class MetaInnerBuilderClass extends MetaClass<io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder> {
                 private static final io.art.core.property.LazyProperty<MetaInnerBuilderClass> self = MetaClass.self(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class);
 
-                private final MetaField<MetaInnerBuilderClass, java.lang.Integer> idField = register(new MetaField<>("id",metaType(int.class),false,this));
+                private final MetaField<MetaInnerBuilderClass, java.lang.Integer> idField = registerField(new MetaField<>("id",metaType(int.class),false,this));
 
-                private final MetaField<MetaInnerBuilderClass, java.lang.String> nameField = register(new MetaField<>("name",metaType(java.lang.String.class),false,this));
+                private final MetaField<MetaInnerBuilderClass, java.lang.String> nameField = registerField(new MetaField<>("name",metaType(java.lang.String.class),false,this));
 
-                private final MetaIdMethod idMethod = register(new MetaIdMethod(this));
+                private final MetaIdMethod idMethod = registerMethod(new MetaIdMethod(this));
 
-                private final MetaNameMethod nameMethod = register(new MetaNameMethod(this));
+                private final MetaNameMethod nameMethod = registerMethod(new MetaNameMethod(this));
 
-                private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
+                private final MetaBuildMethod buildMethod = registerMethod(new MetaBuildMethod(this));
 
                 private MetaInnerBuilderClass() {
                   super(metaType(io.art.meta.test.TestingShortMetaModel.Inner.InnerBuilder.class));
@@ -5565,7 +5565,7 @@ public class MetaMetaTest extends MetaLibrary {
           public static final class MetaTestingMetaModelGeneratorClass extends MetaClass<io.art.meta.test.TestingMetaModelGenerator> {
             private static final io.art.core.property.LazyProperty<MetaTestingMetaModelGeneratorClass> self = MetaClass.self(io.art.meta.test.TestingMetaModelGenerator.class);
 
-            private final MetaGenerateTestingModelMethod generateTestingModelMethod = register(new MetaGenerateTestingModelMethod(this));
+            private final MetaGenerateTestingModelMethod generateTestingModelMethod = registerMethod(new MetaGenerateTestingModelMethod(this));
 
             private MetaTestingMetaModelGeneratorClass() {
               super(metaType(io.art.meta.test.TestingMetaModelGenerator.class));
@@ -5599,281 +5599,281 @@ public class MetaMetaTest extends MetaLibrary {
           public static final class MetaTestingMetaModelClass extends MetaClass<io.art.meta.test.TestingMetaModel> {
             private static final io.art.core.property.LazyProperty<MetaTestingMetaModelClass> self = MetaClass.self(io.art.meta.test.TestingMetaModel.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer> f1Field = registerField(new MetaField<>("f1",metaType(int.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Short> f2Field = registerField(new MetaField<>("f2",metaType(short.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Double> f3Field = registerField(new MetaField<>("f3",metaType(double.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Float> f4Field = registerField(new MetaField<>("f4",metaType(float.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Long> f5Field = registerField(new MetaField<>("f5",metaType(long.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f6Field = registerField(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Character> f7Field = registerField(new MetaField<>("f7",metaType(char.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, Byte> f8Field = registerField(new MetaField<>("f8",metaType(byte.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer> f9Field = registerField(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Short> f10Field = registerField(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Double> f11Field = registerField(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Float> f12Field = registerField(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Long> f13Field = registerField(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean> f14Field = registerField(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Character> f15Field = registerField(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f16Field = registerField(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, int[]> f17Field = registerField(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, short[]> f18Field = registerField(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, double[]> f19Field = registerField(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, float[]> f20Field = registerField(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, long[]> f21Field = registerField(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, boolean[]> f22Field = registerField(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, char[]> f23Field = registerField(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, byte[]> f24Field = register(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, byte[]> f24Field = registerField(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Integer[]> f25Field = registerField(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Short[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Short[]> f26Field = registerField(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Double[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Double[]> f27Field = registerField(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Float[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Float[]> f28Field = registerField(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Long[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Long[]> f29Field = registerField(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Boolean[]> f30Field = registerField(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.Character[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.Character[]> f31Field = registerField(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.String[]> f32Field = register(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String[]> f32Field = registerField(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String>> f33Field = registerField(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Set<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Set<java.lang.String>> f34Field = registerField(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Collection<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Collection<java.lang.String>> f35Field = registerField(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field = registerField(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field = registerField(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.function.Supplier<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.function.Supplier<java.lang.String>> f38Field = registerField(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field = register(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field = registerField(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<int[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<int[]>> f40Field = registerField(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>> f41Field = register(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>> f41Field = registerField(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>> f42Field = register(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>> f42Field = registerField(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>[]> f43Field = register(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<byte[]>[]> f43Field = registerField(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<int[]>[]> f44Field = register(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<int[]>[]> f44Field = registerField(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>[]> f45Field = register(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.lang.String[]>[]> f45Field = registerField(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>>> f46Field = registerField(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field = registerField(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field = register(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field = registerField(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field = register(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field = registerField(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field = register(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field = registerField(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field = register(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field = registerField(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field = register(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field = registerField(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel> f53Field = register(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel> f53Field = registerField(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.time.LocalDateTime> f54Field = register(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.time.LocalDateTime> f54Field = registerField(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.time.ZonedDateTime> f55Field = register(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.time.ZonedDateTime> f55Field = registerField(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.time.Duration> f56Field = register(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.time.Duration> f56Field = registerField(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field = register(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
+            private final MetaField<MetaTestingMetaModelClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field = registerField(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field = register(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field = registerField(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field = register(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field = registerField(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field = register(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field = registerField(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field = register(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field = registerField(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String>> f62Field = register(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String>> f62Field = registerField(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Flux<java.lang.String>> f63Field = register(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Flux<java.lang.String>> f63Field = registerField(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.util.stream.Stream<java.lang.String>> f64Field = register(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.util.stream.Stream<java.lang.String>> f64Field = registerField(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field = register(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+            private final MetaField<MetaTestingMetaModelClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field = registerField(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f66Field = register(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f66Field = registerField(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaTestingMetaModelClass, java.lang.String> f67Field = registerField(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
 
-            private final MetaAssertEqualsMethod assertEqualsMethod = register(new MetaAssertEqualsMethod(this));
+            private final MetaAssertEqualsMethod assertEqualsMethod = registerMethod(new MetaAssertEqualsMethod(this));
 
-            private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod(this));
+            private final MetaToBuilderMethod toBuilderMethod = registerMethod(new MetaToBuilderMethod(this));
 
-            private final MetaGetF1Method getF1Method = register(new MetaGetF1Method(this));
+            private final MetaGetF1Method getF1Method = registerMethod(new MetaGetF1Method(this));
 
-            private final MetaGetF2Method getF2Method = register(new MetaGetF2Method(this));
+            private final MetaGetF2Method getF2Method = registerMethod(new MetaGetF2Method(this));
 
-            private final MetaGetF3Method getF3Method = register(new MetaGetF3Method(this));
+            private final MetaGetF3Method getF3Method = registerMethod(new MetaGetF3Method(this));
 
-            private final MetaGetF4Method getF4Method = register(new MetaGetF4Method(this));
+            private final MetaGetF4Method getF4Method = registerMethod(new MetaGetF4Method(this));
 
-            private final MetaGetF5Method getF5Method = register(new MetaGetF5Method(this));
+            private final MetaGetF5Method getF5Method = registerMethod(new MetaGetF5Method(this));
 
-            private final MetaIsF6Method isF6Method = register(new MetaIsF6Method(this));
+            private final MetaIsF6Method isF6Method = registerMethod(new MetaIsF6Method(this));
 
-            private final MetaGetF7Method getF7Method = register(new MetaGetF7Method(this));
+            private final MetaGetF7Method getF7Method = registerMethod(new MetaGetF7Method(this));
 
-            private final MetaGetF8Method getF8Method = register(new MetaGetF8Method(this));
+            private final MetaGetF8Method getF8Method = registerMethod(new MetaGetF8Method(this));
 
-            private final MetaGetF9Method getF9Method = register(new MetaGetF9Method(this));
+            private final MetaGetF9Method getF9Method = registerMethod(new MetaGetF9Method(this));
 
-            private final MetaGetF10Method getF10Method = register(new MetaGetF10Method(this));
+            private final MetaGetF10Method getF10Method = registerMethod(new MetaGetF10Method(this));
 
-            private final MetaGetF11Method getF11Method = register(new MetaGetF11Method(this));
+            private final MetaGetF11Method getF11Method = registerMethod(new MetaGetF11Method(this));
 
-            private final MetaGetF12Method getF12Method = register(new MetaGetF12Method(this));
+            private final MetaGetF12Method getF12Method = registerMethod(new MetaGetF12Method(this));
 
-            private final MetaGetF13Method getF13Method = register(new MetaGetF13Method(this));
+            private final MetaGetF13Method getF13Method = registerMethod(new MetaGetF13Method(this));
 
-            private final MetaGetF14Method getF14Method = register(new MetaGetF14Method(this));
+            private final MetaGetF14Method getF14Method = registerMethod(new MetaGetF14Method(this));
 
-            private final MetaGetF15Method getF15Method = register(new MetaGetF15Method(this));
+            private final MetaGetF15Method getF15Method = registerMethod(new MetaGetF15Method(this));
 
-            private final MetaGetF16Method getF16Method = register(new MetaGetF16Method(this));
+            private final MetaGetF16Method getF16Method = registerMethod(new MetaGetF16Method(this));
 
-            private final MetaGetF17Method getF17Method = register(new MetaGetF17Method(this));
+            private final MetaGetF17Method getF17Method = registerMethod(new MetaGetF17Method(this));
 
-            private final MetaGetF18Method getF18Method = register(new MetaGetF18Method(this));
+            private final MetaGetF18Method getF18Method = registerMethod(new MetaGetF18Method(this));
 
-            private final MetaGetF19Method getF19Method = register(new MetaGetF19Method(this));
+            private final MetaGetF19Method getF19Method = registerMethod(new MetaGetF19Method(this));
 
-            private final MetaGetF20Method getF20Method = register(new MetaGetF20Method(this));
+            private final MetaGetF20Method getF20Method = registerMethod(new MetaGetF20Method(this));
 
-            private final MetaGetF21Method getF21Method = register(new MetaGetF21Method(this));
+            private final MetaGetF21Method getF21Method = registerMethod(new MetaGetF21Method(this));
 
-            private final MetaGetF22Method getF22Method = register(new MetaGetF22Method(this));
+            private final MetaGetF22Method getF22Method = registerMethod(new MetaGetF22Method(this));
 
-            private final MetaGetF23Method getF23Method = register(new MetaGetF23Method(this));
+            private final MetaGetF23Method getF23Method = registerMethod(new MetaGetF23Method(this));
 
-            private final MetaGetF24Method getF24Method = register(new MetaGetF24Method(this));
+            private final MetaGetF24Method getF24Method = registerMethod(new MetaGetF24Method(this));
 
-            private final MetaGetF25Method getF25Method = register(new MetaGetF25Method(this));
+            private final MetaGetF25Method getF25Method = registerMethod(new MetaGetF25Method(this));
 
-            private final MetaGetF26Method getF26Method = register(new MetaGetF26Method(this));
+            private final MetaGetF26Method getF26Method = registerMethod(new MetaGetF26Method(this));
 
-            private final MetaGetF27Method getF27Method = register(new MetaGetF27Method(this));
+            private final MetaGetF27Method getF27Method = registerMethod(new MetaGetF27Method(this));
 
-            private final MetaGetF28Method getF28Method = register(new MetaGetF28Method(this));
+            private final MetaGetF28Method getF28Method = registerMethod(new MetaGetF28Method(this));
 
-            private final MetaGetF29Method getF29Method = register(new MetaGetF29Method(this));
+            private final MetaGetF29Method getF29Method = registerMethod(new MetaGetF29Method(this));
 
-            private final MetaGetF30Method getF30Method = register(new MetaGetF30Method(this));
+            private final MetaGetF30Method getF30Method = registerMethod(new MetaGetF30Method(this));
 
-            private final MetaGetF31Method getF31Method = register(new MetaGetF31Method(this));
+            private final MetaGetF31Method getF31Method = registerMethod(new MetaGetF31Method(this));
 
-            private final MetaGetF32Method getF32Method = register(new MetaGetF32Method(this));
+            private final MetaGetF32Method getF32Method = registerMethod(new MetaGetF32Method(this));
 
-            private final MetaGetF33Method getF33Method = register(new MetaGetF33Method(this));
+            private final MetaGetF33Method getF33Method = registerMethod(new MetaGetF33Method(this));
 
-            private final MetaGetF34Method getF34Method = register(new MetaGetF34Method(this));
+            private final MetaGetF34Method getF34Method = registerMethod(new MetaGetF34Method(this));
 
-            private final MetaGetF35Method getF35Method = register(new MetaGetF35Method(this));
+            private final MetaGetF35Method getF35Method = registerMethod(new MetaGetF35Method(this));
 
-            private final MetaGetF36Method getF36Method = register(new MetaGetF36Method(this));
+            private final MetaGetF36Method getF36Method = registerMethod(new MetaGetF36Method(this));
 
-            private final MetaGetF37Method getF37Method = register(new MetaGetF37Method(this));
+            private final MetaGetF37Method getF37Method = registerMethod(new MetaGetF37Method(this));
 
-            private final MetaGetF38Method getF38Method = register(new MetaGetF38Method(this));
+            private final MetaGetF38Method getF38Method = registerMethod(new MetaGetF38Method(this));
 
-            private final MetaGetF39Method getF39Method = register(new MetaGetF39Method(this));
+            private final MetaGetF39Method getF39Method = registerMethod(new MetaGetF39Method(this));
 
-            private final MetaGetF40Method getF40Method = register(new MetaGetF40Method(this));
+            private final MetaGetF40Method getF40Method = registerMethod(new MetaGetF40Method(this));
 
-            private final MetaGetF41Method getF41Method = register(new MetaGetF41Method(this));
+            private final MetaGetF41Method getF41Method = registerMethod(new MetaGetF41Method(this));
 
-            private final MetaGetF42Method getF42Method = register(new MetaGetF42Method(this));
+            private final MetaGetF42Method getF42Method = registerMethod(new MetaGetF42Method(this));
 
-            private final MetaGetF43Method getF43Method = register(new MetaGetF43Method(this));
+            private final MetaGetF43Method getF43Method = registerMethod(new MetaGetF43Method(this));
 
-            private final MetaGetF44Method getF44Method = register(new MetaGetF44Method(this));
+            private final MetaGetF44Method getF44Method = registerMethod(new MetaGetF44Method(this));
 
-            private final MetaGetF45Method getF45Method = register(new MetaGetF45Method(this));
+            private final MetaGetF45Method getF45Method = registerMethod(new MetaGetF45Method(this));
 
-            private final MetaGetF46Method getF46Method = register(new MetaGetF46Method(this));
+            private final MetaGetF46Method getF46Method = registerMethod(new MetaGetF46Method(this));
 
-            private final MetaGetF47Method getF47Method = register(new MetaGetF47Method(this));
+            private final MetaGetF47Method getF47Method = registerMethod(new MetaGetF47Method(this));
 
-            private final MetaGetF48Method getF48Method = register(new MetaGetF48Method(this));
+            private final MetaGetF48Method getF48Method = registerMethod(new MetaGetF48Method(this));
 
-            private final MetaGetF49Method getF49Method = register(new MetaGetF49Method(this));
+            private final MetaGetF49Method getF49Method = registerMethod(new MetaGetF49Method(this));
 
-            private final MetaGetF50Method getF50Method = register(new MetaGetF50Method(this));
+            private final MetaGetF50Method getF50Method = registerMethod(new MetaGetF50Method(this));
 
-            private final MetaGetF51Method getF51Method = register(new MetaGetF51Method(this));
+            private final MetaGetF51Method getF51Method = registerMethod(new MetaGetF51Method(this));
 
-            private final MetaGetF52Method getF52Method = register(new MetaGetF52Method(this));
+            private final MetaGetF52Method getF52Method = registerMethod(new MetaGetF52Method(this));
 
-            private final MetaGetF53Method getF53Method = register(new MetaGetF53Method(this));
+            private final MetaGetF53Method getF53Method = registerMethod(new MetaGetF53Method(this));
 
-            private final MetaGetF54Method getF54Method = register(new MetaGetF54Method(this));
+            private final MetaGetF54Method getF54Method = registerMethod(new MetaGetF54Method(this));
 
-            private final MetaGetF55Method getF55Method = register(new MetaGetF55Method(this));
+            private final MetaGetF55Method getF55Method = registerMethod(new MetaGetF55Method(this));
 
-            private final MetaGetF56Method getF56Method = register(new MetaGetF56Method(this));
+            private final MetaGetF56Method getF56Method = registerMethod(new MetaGetF56Method(this));
 
-            private final MetaGetF57Method getF57Method = register(new MetaGetF57Method(this));
+            private final MetaGetF57Method getF57Method = registerMethod(new MetaGetF57Method(this));
 
-            private final MetaGetF58Method getF58Method = register(new MetaGetF58Method(this));
+            private final MetaGetF58Method getF58Method = registerMethod(new MetaGetF58Method(this));
 
-            private final MetaGetF59Method getF59Method = register(new MetaGetF59Method(this));
+            private final MetaGetF59Method getF59Method = registerMethod(new MetaGetF59Method(this));
 
-            private final MetaGetF60Method getF60Method = register(new MetaGetF60Method(this));
+            private final MetaGetF60Method getF60Method = registerMethod(new MetaGetF60Method(this));
 
-            private final MetaGetF61Method getF61Method = register(new MetaGetF61Method(this));
+            private final MetaGetF61Method getF61Method = registerMethod(new MetaGetF61Method(this));
 
-            private final MetaGetF62Method getF62Method = register(new MetaGetF62Method(this));
+            private final MetaGetF62Method getF62Method = registerMethod(new MetaGetF62Method(this));
 
-            private final MetaGetF63Method getF63Method = register(new MetaGetF63Method(this));
+            private final MetaGetF63Method getF63Method = registerMethod(new MetaGetF63Method(this));
 
-            private final MetaGetF64Method getF64Method = register(new MetaGetF64Method(this));
+            private final MetaGetF64Method getF64Method = registerMethod(new MetaGetF64Method(this));
 
-            private final MetaGetF65Method getF65Method = register(new MetaGetF65Method(this));
+            private final MetaGetF65Method getF65Method = registerMethod(new MetaGetF65Method(this));
 
-            private final MetaGetF66Method getF66Method = register(new MetaGetF66Method(this));
+            private final MetaGetF66Method getF66Method = registerMethod(new MetaGetF66Method(this));
 
-            private final MetaGetF67Method getF67Method = register(new MetaGetF67Method(this));
+            private final MetaGetF67Method getF67Method = registerMethod(new MetaGetF67Method(this));
 
-            private final MetaTestingMetaModelBuilderClass testingMetaModelBuilderClass = register(new MetaTestingMetaModelBuilderClass());
+            private final MetaTestingMetaModelBuilderClass testingMetaModelBuilderClass = registerClass(new MetaTestingMetaModelBuilderClass());
 
             private MetaTestingMetaModelClass() {
               super(metaType(io.art.meta.test.TestingMetaModel.class));
@@ -8073,275 +8073,275 @@ public class MetaMetaTest extends MetaLibrary {
             public static final class MetaTestingMetaModelBuilderClass extends MetaClass<io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder> {
               private static final io.art.core.property.LazyProperty<MetaTestingMetaModelBuilderClass> self = MetaClass.self(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class);
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f1Field = register(new MetaField<>("f1",metaType(int.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f1Field = registerField(new MetaField<>("f1",metaType(int.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f2Field = register(new MetaField<>("f2",metaType(short.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f2Field = registerField(new MetaField<>("f2",metaType(short.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f3Field = register(new MetaField<>("f3",metaType(double.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f3Field = registerField(new MetaField<>("f3",metaType(double.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f4Field = register(new MetaField<>("f4",metaType(float.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f4Field = registerField(new MetaField<>("f4",metaType(float.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f5Field = register(new MetaField<>("f5",metaType(long.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f5Field = registerField(new MetaField<>("f5",metaType(long.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f6Field = register(new MetaField<>("f6",metaType(boolean.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f6Field = registerField(new MetaField<>("f6",metaType(boolean.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f7Field = register(new MetaField<>("f7",metaType(char.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f7Field = registerField(new MetaField<>("f7",metaType(char.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, Byte> f8Field = register(new MetaField<>("f8",metaType(byte.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, Byte> f8Field = registerField(new MetaField<>("f8",metaType(byte.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f9Field = register(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer> f9Field = registerField(new MetaField<>("f9",metaType(java.lang.Integer.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f10Field = register(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short> f10Field = registerField(new MetaField<>("f10",metaType(java.lang.Short.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f11Field = register(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double> f11Field = registerField(new MetaField<>("f11",metaType(java.lang.Double.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f12Field = register(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float> f12Field = registerField(new MetaField<>("f12",metaType(java.lang.Float.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f13Field = register(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long> f13Field = registerField(new MetaField<>("f13",metaType(java.lang.Long.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f14Field = register(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean> f14Field = registerField(new MetaField<>("f14",metaType(java.lang.Boolean.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f15Field = register(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character> f15Field = registerField(new MetaField<>("f15",metaType(java.lang.Character.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f16Field = register(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f16Field = registerField(new MetaField<>("f16",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, int[]> f17Field = register(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, int[]> f17Field = registerField(new MetaField<>("f17",metaArray(int[].class, int[]::new, metaType(int.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, short[]> f18Field = register(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, short[]> f18Field = registerField(new MetaField<>("f18",metaArray(short[].class, short[]::new, metaType(short.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, double[]> f19Field = register(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, double[]> f19Field = registerField(new MetaField<>("f19",metaArray(double[].class, double[]::new, metaType(double.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, float[]> f20Field = register(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, float[]> f20Field = registerField(new MetaField<>("f20",metaArray(float[].class, float[]::new, metaType(float.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, long[]> f21Field = register(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, long[]> f21Field = registerField(new MetaField<>("f21",metaArray(long[].class, long[]::new, metaType(long.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, boolean[]> f22Field = register(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, boolean[]> f22Field = registerField(new MetaField<>("f22",metaArray(boolean[].class, boolean[]::new, metaType(boolean.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, char[]> f23Field = register(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, char[]> f23Field = registerField(new MetaField<>("f23",metaArray(char[].class, char[]::new, metaType(char.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, byte[]> f24Field = register(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, byte[]> f24Field = registerField(new MetaField<>("f24",metaArray(byte[].class, byte[]::new, metaType(byte.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer[]> f25Field = register(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Integer[]> f25Field = registerField(new MetaField<>("f25",metaArray(java.lang.Integer[].class, java.lang.Integer[]::new, metaType(java.lang.Integer.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short[]> f26Field = register(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Short[]> f26Field = registerField(new MetaField<>("f26",metaArray(java.lang.Short[].class, java.lang.Short[]::new, metaType(java.lang.Short.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double[]> f27Field = register(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Double[]> f27Field = registerField(new MetaField<>("f27",metaArray(java.lang.Double[].class, java.lang.Double[]::new, metaType(java.lang.Double.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float[]> f28Field = register(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Float[]> f28Field = registerField(new MetaField<>("f28",metaArray(java.lang.Float[].class, java.lang.Float[]::new, metaType(java.lang.Float.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long[]> f29Field = register(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Long[]> f29Field = registerField(new MetaField<>("f29",metaArray(java.lang.Long[].class, java.lang.Long[]::new, metaType(java.lang.Long.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean[]> f30Field = register(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Boolean[]> f30Field = registerField(new MetaField<>("f30",metaArray(java.lang.Boolean[].class, java.lang.Boolean[]::new, metaType(java.lang.Boolean.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character[]> f31Field = register(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.Character[]> f31Field = registerField(new MetaField<>("f31",metaArray(java.lang.Character[].class, java.lang.Character[]::new, metaType(java.lang.Character.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String[]> f32Field = register(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String[]> f32Field = registerField(new MetaField<>("f32",metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String>> f33Field = register(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String>> f33Field = registerField(new MetaField<>("f33",metaType(java.util.List.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<java.lang.String>> f34Field = register(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<java.lang.String>> f34Field = registerField(new MetaField<>("f34",metaType(java.util.Set.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Collection<java.lang.String>> f35Field = register(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Collection<java.lang.String>> f35Field = registerField(new MetaField<>("f35",metaType(java.util.Collection.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field = register(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableArray<java.lang.String>> f36Field = registerField(new MetaField<>("f36",metaType(io.art.core.collection.ImmutableArray.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field = register(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableSet<java.lang.String>> f37Field = registerField(new MetaField<>("f37",metaType(io.art.core.collection.ImmutableSet.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.function.Supplier<java.lang.String>> f38Field = register(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.function.Supplier<java.lang.String>> f38Field = registerField(new MetaField<>("f38",metaType(java.util.function.Supplier.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field = register(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.property.LazyProperty<java.lang.String>> f39Field = registerField(new MetaField<>("f39",metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>> f40Field = register(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>> f40Field = registerField(new MetaField<>("f40",metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>> f41Field = register(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>> f41Field = registerField(new MetaField<>("f41",metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>> f42Field = register(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>> f42Field = registerField(new MetaField<>("f42",metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>[]> f43Field = register(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<byte[]>[]> f43Field = registerField(new MetaField<>("f43",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(byte[].class, byte[]::new, metaType(byte.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>[]> f44Field = register(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<int[]>[]> f44Field = registerField(new MetaField<>("f44",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(int[].class, int[]::new, metaType(int.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>[]> f45Field = register(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.lang.String[]>[]> f45Field = registerField(new MetaField<>("f45",metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>>> f46Field = register(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>>> f46Field = registerField(new MetaField<>("f46",metaType(java.util.List.class,metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field = register(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<java.util.List<java.lang.String>[]>> f47Field = registerField(new MetaField<>("f47",metaType(java.util.List.class,metaArray(java.util.List[].class, java.util.List[]::new, metaType(java.util.List.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field = register(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.Integer, java.lang.String>> f48Field = registerField(new MetaField<>("f48",metaType(java.util.Map.class,metaType(java.lang.Integer.class),metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field = register(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.lang.String[]>> f49Field = registerField(new MetaField<>("f49",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field = register(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.List<java.lang.String>>> f50Field = registerField(new MetaField<>("f50",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.util.List.class,metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field = register(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f51Field = registerField(new MetaField<>("f51",metaType(java.util.Map.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field = register(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.core.collection.ImmutableMap<java.lang.String, java.util.Map<java.lang.String, java.lang.String>[]>> f52Field = registerField(new MetaField<>("f52",metaType(io.art.core.collection.ImmutableMap.class,metaType(java.lang.String.class),metaArray(java.util.Map[].class, java.util.Map[]::new, metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel> f53Field = register(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel> f53Field = registerField(new MetaField<>("f53",metaType(io.art.meta.test.TestingMetaModel.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.LocalDateTime> f54Field = register(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.LocalDateTime> f54Field = registerField(new MetaField<>("f54",metaType(java.time.LocalDateTime.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.ZonedDateTime> f55Field = register(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.ZonedDateTime> f55Field = registerField(new MetaField<>("f55",metaType(java.time.ZonedDateTime.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.Duration> f56Field = register(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.time.Duration> f56Field = registerField(new MetaField<>("f56",metaType(java.time.Duration.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field = register(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, io.art.meta.test.TestingMetaModel.ModelEnum> f57Field = registerField(new MetaField<>("f57",metaEnum(io.art.meta.test.TestingMetaModel.ModelEnum.class, io.art.meta.test.TestingMetaModel.ModelEnum::valueOf),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field = register(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Optional<java.util.List<io.art.core.property.LazyProperty<java.lang.String>>>> f58Field = registerField(new MetaField<>("f58",metaType(java.util.Optional.class,metaType(java.util.List.class,metaType(io.art.core.property.LazyProperty.class,metaType(java.lang.String.class)))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field = register(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.List<io.art.meta.test.TestingMetaModel>> f59Field = registerField(new MetaField<>("f59",metaType(java.util.List.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field = register(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Set<io.art.meta.test.TestingMetaModel>> f60Field = registerField(new MetaField<>("f60",metaType(java.util.Set.class,metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field = register(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.Map<java.lang.String, io.art.meta.test.TestingMetaModel>> f61Field = registerField(new MetaField<>("f61",metaType(java.util.Map.class,metaType(java.lang.String.class),metaType(io.art.meta.test.TestingMetaModel.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f62Field = register(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String>> f62Field = registerField(new MetaField<>("f62",metaType(reactor.core.publisher.Mono.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f63Field = register(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Flux<java.lang.String>> f63Field = registerField(new MetaField<>("f63",metaType(reactor.core.publisher.Flux.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.stream.Stream<java.lang.String>> f64Field = register(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.util.stream.Stream<java.lang.String>> f64Field = registerField(new MetaField<>("f64",metaType(java.util.stream.Stream.class,metaType(java.lang.String.class)),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field = register(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, reactor.core.publisher.Mono<java.lang.String[]>> f65Field = registerField(new MetaField<>("f65",metaType(reactor.core.publisher.Mono.class,metaArray(java.lang.String[].class, java.lang.String[]::new, metaType(java.lang.String.class))),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f66Field = register(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f66Field = registerField(new MetaField<>("f66",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f67Field = register(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaTestingMetaModelBuilderClass, java.lang.String> f67Field = registerField(new MetaField<>("f67",metaType(java.lang.String.class),false,this));
 
-              private final MetaF1Method f1Method = register(new MetaF1Method(this));
+              private final MetaF1Method f1Method = registerMethod(new MetaF1Method(this));
 
-              private final MetaF2Method f2Method = register(new MetaF2Method(this));
+              private final MetaF2Method f2Method = registerMethod(new MetaF2Method(this));
 
-              private final MetaF3Method f3Method = register(new MetaF3Method(this));
+              private final MetaF3Method f3Method = registerMethod(new MetaF3Method(this));
 
-              private final MetaF4Method f4Method = register(new MetaF4Method(this));
+              private final MetaF4Method f4Method = registerMethod(new MetaF4Method(this));
 
-              private final MetaF5Method f5Method = register(new MetaF5Method(this));
+              private final MetaF5Method f5Method = registerMethod(new MetaF5Method(this));
 
-              private final MetaF6Method f6Method = register(new MetaF6Method(this));
+              private final MetaF6Method f6Method = registerMethod(new MetaF6Method(this));
 
-              private final MetaF7Method f7Method = register(new MetaF7Method(this));
+              private final MetaF7Method f7Method = registerMethod(new MetaF7Method(this));
 
-              private final MetaF8Method f8Method = register(new MetaF8Method(this));
+              private final MetaF8Method f8Method = registerMethod(new MetaF8Method(this));
 
-              private final MetaF9Method f9Method = register(new MetaF9Method(this));
+              private final MetaF9Method f9Method = registerMethod(new MetaF9Method(this));
 
-              private final MetaF10Method f10Method = register(new MetaF10Method(this));
+              private final MetaF10Method f10Method = registerMethod(new MetaF10Method(this));
 
-              private final MetaF11Method f11Method = register(new MetaF11Method(this));
+              private final MetaF11Method f11Method = registerMethod(new MetaF11Method(this));
 
-              private final MetaF12Method f12Method = register(new MetaF12Method(this));
+              private final MetaF12Method f12Method = registerMethod(new MetaF12Method(this));
 
-              private final MetaF13Method f13Method = register(new MetaF13Method(this));
+              private final MetaF13Method f13Method = registerMethod(new MetaF13Method(this));
 
-              private final MetaF14Method f14Method = register(new MetaF14Method(this));
+              private final MetaF14Method f14Method = registerMethod(new MetaF14Method(this));
 
-              private final MetaF15Method f15Method = register(new MetaF15Method(this));
+              private final MetaF15Method f15Method = registerMethod(new MetaF15Method(this));
 
-              private final MetaF16Method f16Method = register(new MetaF16Method(this));
+              private final MetaF16Method f16Method = registerMethod(new MetaF16Method(this));
 
-              private final MetaF17Method f17Method = register(new MetaF17Method(this));
+              private final MetaF17Method f17Method = registerMethod(new MetaF17Method(this));
 
-              private final MetaF18Method f18Method = register(new MetaF18Method(this));
+              private final MetaF18Method f18Method = registerMethod(new MetaF18Method(this));
 
-              private final MetaF19Method f19Method = register(new MetaF19Method(this));
+              private final MetaF19Method f19Method = registerMethod(new MetaF19Method(this));
 
-              private final MetaF20Method f20Method = register(new MetaF20Method(this));
+              private final MetaF20Method f20Method = registerMethod(new MetaF20Method(this));
 
-              private final MetaF21Method f21Method = register(new MetaF21Method(this));
+              private final MetaF21Method f21Method = registerMethod(new MetaF21Method(this));
 
-              private final MetaF22Method f22Method = register(new MetaF22Method(this));
+              private final MetaF22Method f22Method = registerMethod(new MetaF22Method(this));
 
-              private final MetaF23Method f23Method = register(new MetaF23Method(this));
+              private final MetaF23Method f23Method = registerMethod(new MetaF23Method(this));
 
-              private final MetaF24Method f24Method = register(new MetaF24Method(this));
+              private final MetaF24Method f24Method = registerMethod(new MetaF24Method(this));
 
-              private final MetaF25Method f25Method = register(new MetaF25Method(this));
+              private final MetaF25Method f25Method = registerMethod(new MetaF25Method(this));
 
-              private final MetaF26Method f26Method = register(new MetaF26Method(this));
+              private final MetaF26Method f26Method = registerMethod(new MetaF26Method(this));
 
-              private final MetaF27Method f27Method = register(new MetaF27Method(this));
+              private final MetaF27Method f27Method = registerMethod(new MetaF27Method(this));
 
-              private final MetaF28Method f28Method = register(new MetaF28Method(this));
+              private final MetaF28Method f28Method = registerMethod(new MetaF28Method(this));
 
-              private final MetaF29Method f29Method = register(new MetaF29Method(this));
+              private final MetaF29Method f29Method = registerMethod(new MetaF29Method(this));
 
-              private final MetaF30Method f30Method = register(new MetaF30Method(this));
+              private final MetaF30Method f30Method = registerMethod(new MetaF30Method(this));
 
-              private final MetaF31Method f31Method = register(new MetaF31Method(this));
+              private final MetaF31Method f31Method = registerMethod(new MetaF31Method(this));
 
-              private final MetaF32Method f32Method = register(new MetaF32Method(this));
+              private final MetaF32Method f32Method = registerMethod(new MetaF32Method(this));
 
-              private final MetaF33Method f33Method = register(new MetaF33Method(this));
+              private final MetaF33Method f33Method = registerMethod(new MetaF33Method(this));
 
-              private final MetaF34Method f34Method = register(new MetaF34Method(this));
+              private final MetaF34Method f34Method = registerMethod(new MetaF34Method(this));
 
-              private final MetaF35Method f35Method = register(new MetaF35Method(this));
+              private final MetaF35Method f35Method = registerMethod(new MetaF35Method(this));
 
-              private final MetaF36Method f36Method = register(new MetaF36Method(this));
+              private final MetaF36Method f36Method = registerMethod(new MetaF36Method(this));
 
-              private final MetaF37Method f37Method = register(new MetaF37Method(this));
+              private final MetaF37Method f37Method = registerMethod(new MetaF37Method(this));
 
-              private final MetaF38Method f38Method = register(new MetaF38Method(this));
+              private final MetaF38Method f38Method = registerMethod(new MetaF38Method(this));
 
-              private final MetaF39Method f39Method = register(new MetaF39Method(this));
+              private final MetaF39Method f39Method = registerMethod(new MetaF39Method(this));
 
-              private final MetaF40Method f40Method = register(new MetaF40Method(this));
+              private final MetaF40Method f40Method = registerMethod(new MetaF40Method(this));
 
-              private final MetaF41Method f41Method = register(new MetaF41Method(this));
+              private final MetaF41Method f41Method = registerMethod(new MetaF41Method(this));
 
-              private final MetaF42Method f42Method = register(new MetaF42Method(this));
+              private final MetaF42Method f42Method = registerMethod(new MetaF42Method(this));
 
-              private final MetaF43Method f43Method = register(new MetaF43Method(this));
+              private final MetaF43Method f43Method = registerMethod(new MetaF43Method(this));
 
-              private final MetaF44Method f44Method = register(new MetaF44Method(this));
+              private final MetaF44Method f44Method = registerMethod(new MetaF44Method(this));
 
-              private final MetaF45Method f45Method = register(new MetaF45Method(this));
+              private final MetaF45Method f45Method = registerMethod(new MetaF45Method(this));
 
-              private final MetaF46Method f46Method = register(new MetaF46Method(this));
+              private final MetaF46Method f46Method = registerMethod(new MetaF46Method(this));
 
-              private final MetaF47Method f47Method = register(new MetaF47Method(this));
+              private final MetaF47Method f47Method = registerMethod(new MetaF47Method(this));
 
-              private final MetaF48Method f48Method = register(new MetaF48Method(this));
+              private final MetaF48Method f48Method = registerMethod(new MetaF48Method(this));
 
-              private final MetaF49Method f49Method = register(new MetaF49Method(this));
+              private final MetaF49Method f49Method = registerMethod(new MetaF49Method(this));
 
-              private final MetaF50Method f50Method = register(new MetaF50Method(this));
+              private final MetaF50Method f50Method = registerMethod(new MetaF50Method(this));
 
-              private final MetaF51Method f51Method = register(new MetaF51Method(this));
+              private final MetaF51Method f51Method = registerMethod(new MetaF51Method(this));
 
-              private final MetaF52Method f52Method = register(new MetaF52Method(this));
+              private final MetaF52Method f52Method = registerMethod(new MetaF52Method(this));
 
-              private final MetaF53Method f53Method = register(new MetaF53Method(this));
+              private final MetaF53Method f53Method = registerMethod(new MetaF53Method(this));
 
-              private final MetaF54Method f54Method = register(new MetaF54Method(this));
+              private final MetaF54Method f54Method = registerMethod(new MetaF54Method(this));
 
-              private final MetaF55Method f55Method = register(new MetaF55Method(this));
+              private final MetaF55Method f55Method = registerMethod(new MetaF55Method(this));
 
-              private final MetaF56Method f56Method = register(new MetaF56Method(this));
+              private final MetaF56Method f56Method = registerMethod(new MetaF56Method(this));
 
-              private final MetaF57Method f57Method = register(new MetaF57Method(this));
+              private final MetaF57Method f57Method = registerMethod(new MetaF57Method(this));
 
-              private final MetaF58Method f58Method = register(new MetaF58Method(this));
+              private final MetaF58Method f58Method = registerMethod(new MetaF58Method(this));
 
-              private final MetaF59Method f59Method = register(new MetaF59Method(this));
+              private final MetaF59Method f59Method = registerMethod(new MetaF59Method(this));
 
-              private final MetaF60Method f60Method = register(new MetaF60Method(this));
+              private final MetaF60Method f60Method = registerMethod(new MetaF60Method(this));
 
-              private final MetaF61Method f61Method = register(new MetaF61Method(this));
+              private final MetaF61Method f61Method = registerMethod(new MetaF61Method(this));
 
-              private final MetaF62Method f62Method = register(new MetaF62Method(this));
+              private final MetaF62Method f62Method = registerMethod(new MetaF62Method(this));
 
-              private final MetaF63Method f63Method = register(new MetaF63Method(this));
+              private final MetaF63Method f63Method = registerMethod(new MetaF63Method(this));
 
-              private final MetaF64Method f64Method = register(new MetaF64Method(this));
+              private final MetaF64Method f64Method = registerMethod(new MetaF64Method(this));
 
-              private final MetaF65Method f65Method = register(new MetaF65Method(this));
+              private final MetaF65Method f65Method = registerMethod(new MetaF65Method(this));
 
-              private final MetaF66Method f66Method = register(new MetaF66Method(this));
+              private final MetaF66Method f66Method = registerMethod(new MetaF66Method(this));
 
-              private final MetaF67Method f67Method = register(new MetaF67Method(this));
+              private final MetaF67Method f67Method = registerMethod(new MetaF67Method(this));
 
-              private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
+              private final MetaBuildMethod buildMethod = registerMethod(new MetaBuildMethod(this));
 
               private MetaTestingMetaModelBuilderClass() {
                 super(metaType(io.art.meta.test.TestingMetaModel.TestingMetaModelBuilder.class));

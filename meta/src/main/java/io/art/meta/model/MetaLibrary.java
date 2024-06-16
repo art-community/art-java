@@ -57,12 +57,12 @@ public abstract class MetaLibrary {
         this.dependencies.addAll(linkedListOf(dependencies));
     }
 
-    protected <Meta extends MetaPackage> Meta register(Meta metaPackage) {
+    protected <Meta extends MetaPackage> Meta registerPackage(Meta metaPackage) {
         packages.put(metaPackage.name(), metaPackage);
         return metaPackage;
     }
 
-    protected <Meta extends MetaClass<?>> Meta register(Meta metaClass) {
+    protected <Meta extends MetaClass<?>> Meta registerClass(Meta metaClass) {
         rootClasses.add(metaClass);
         return metaClass;
     }

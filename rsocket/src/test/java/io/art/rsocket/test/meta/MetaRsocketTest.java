@@ -1,7 +1,5 @@
 package io.art.rsocket.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -19,7 +17,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaRsocketTest extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaRsocketTest(MetaLibrary... dependencies) {
     super(dependencies);
@@ -30,7 +28,7 @@ public class MetaRsocketTest extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -41,7 +39,7 @@ public class MetaRsocketTest extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaRsocketPackage rsocketPackage = register(new MetaRsocketPackage());
+      private final MetaRsocketPackage rsocketPackage = registerPackage(new MetaRsocketPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -52,7 +50,7 @@ public class MetaRsocketTest extends MetaLibrary {
       }
 
       public static final class MetaRsocketPackage extends MetaPackage {
-        private final MetaTestPackage testPackage = register(new MetaTestPackage());
+        private final MetaTestPackage testPackage = registerPackage(new MetaTestPackage());
 
         private MetaRsocketPackage() {
           super("rsocket");
@@ -63,11 +61,11 @@ public class MetaRsocketTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaRsocketDefaultTestClass rsocketDefaultTestClass = register(new MetaRsocketDefaultTestClass());
+          private final MetaRsocketDefaultTestClass rsocketDefaultTestClass = registerClass(new MetaRsocketDefaultTestClass());
 
-          private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
+          private final MetaCommunicatorPackage communicatorPackage = registerPackage(new MetaCommunicatorPackage());
 
-          private final MetaServicePackage servicePackage = register(new MetaServicePackage());
+          private final MetaServicePackage servicePackage = registerPackage(new MetaServicePackage());
 
           private MetaTestPackage() {
             super("test");
@@ -88,13 +86,13 @@ public class MetaRsocketTest extends MetaLibrary {
           public static final class MetaRsocketDefaultTestClass extends MetaClass<io.art.rsocket.test.RsocketDefaultTest> {
             private static final LazyProperty<MetaRsocketDefaultTestClass> self = MetaClass.self(io.art.rsocket.test.RsocketDefaultTest.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaSetupMethod setupMethod = register(new MetaSetupMethod(this));
+            private final MetaSetupMethod setupMethod = registerMethod(new MetaSetupMethod(this));
 
-            private final MetaCleanupMethod cleanupMethod = register(new MetaCleanupMethod(this));
+            private final MetaCleanupMethod cleanupMethod = registerMethod(new MetaCleanupMethod(this));
 
-            private final MetaTestDefaultRsocketMethod testDefaultRsocketMethod = register(new MetaTestDefaultRsocketMethod(this));
+            private final MetaTestDefaultRsocketMethod testDefaultRsocketMethod = registerMethod(new MetaTestDefaultRsocketMethod(this));
 
             private MetaRsocketDefaultTestClass() {
               super(metaType(io.art.rsocket.test.RsocketDefaultTest.class));
@@ -195,7 +193,7 @@ public class MetaRsocketTest extends MetaLibrary {
           }
 
           public static final class MetaCommunicatorPackage extends MetaPackage {
-            private final MetaTestRsocketClass testRsocketClass = register(new MetaTestRsocketClass());
+            private final MetaTestRsocketClass testRsocketClass = registerClass(new MetaTestRsocketClass());
 
             private MetaCommunicatorPackage() {
               super("communicator");
@@ -208,37 +206,37 @@ public class MetaRsocketTest extends MetaLibrary {
             public static final class MetaTestRsocketClass extends MetaClass<io.art.rsocket.test.communicator.TestRsocket> {
               private static final LazyProperty<MetaTestRsocketClass> self = MetaClass.self(io.art.rsocket.test.communicator.TestRsocket.class);
 
-              private final MetaM1Method m1Method = register(new MetaM1Method(this));
+              private final MetaM1Method m1Method = registerMethod(new MetaM1Method(this));
 
-              private final MetaM2Method m2Method = register(new MetaM2Method(this));
+              private final MetaM2Method m2Method = registerMethod(new MetaM2Method(this));
 
-              private final MetaM3Method m3Method = register(new MetaM3Method(this));
+              private final MetaM3Method m3Method = registerMethod(new MetaM3Method(this));
 
-              private final MetaM4Method m4Method = register(new MetaM4Method(this));
+              private final MetaM4Method m4Method = registerMethod(new MetaM4Method(this));
 
-              private final MetaM5Method m5Method = register(new MetaM5Method(this));
+              private final MetaM5Method m5Method = registerMethod(new MetaM5Method(this));
 
-              private final MetaM6Method m6Method = register(new MetaM6Method(this));
+              private final MetaM6Method m6Method = registerMethod(new MetaM6Method(this));
 
-              private final MetaM7Method m7Method = register(new MetaM7Method(this));
+              private final MetaM7Method m7Method = registerMethod(new MetaM7Method(this));
 
-              private final MetaM8Method m8Method = register(new MetaM8Method(this));
+              private final MetaM8Method m8Method = registerMethod(new MetaM8Method(this));
 
-              private final MetaM9Method m9Method = register(new MetaM9Method(this));
+              private final MetaM9Method m9Method = registerMethod(new MetaM9Method(this));
 
-              private final MetaM10Method m10Method = register(new MetaM10Method(this));
+              private final MetaM10Method m10Method = registerMethod(new MetaM10Method(this));
 
-              private final MetaM11Method m11Method = register(new MetaM11Method(this));
+              private final MetaM11Method m11Method = registerMethod(new MetaM11Method(this));
 
-              private final MetaM12Method m12Method = register(new MetaM12Method(this));
+              private final MetaM12Method m12Method = registerMethod(new MetaM12Method(this));
 
-              private final MetaM13Method m13Method = register(new MetaM13Method(this));
+              private final MetaM13Method m13Method = registerMethod(new MetaM13Method(this));
 
-              private final MetaM14Method m14Method = register(new MetaM14Method(this));
+              private final MetaM14Method m14Method = registerMethod(new MetaM14Method(this));
 
-              private final MetaM15Method m15Method = register(new MetaM15Method(this));
+              private final MetaM15Method m15Method = registerMethod(new MetaM15Method(this));
 
-              private final MetaM16Method m16Method = register(new MetaM16Method(this));
+              private final MetaM16Method m16Method = registerMethod(new MetaM16Method(this));
 
               private MetaTestRsocketClass() {
                 super(metaType(io.art.rsocket.test.communicator.TestRsocket.class));
@@ -836,9 +834,9 @@ public class MetaRsocketTest extends MetaLibrary {
           }
 
           public static final class MetaServicePackage extends MetaPackage {
-            private final MetaTestRsocketServiceClass testRsocketServiceClass = register(new MetaTestRsocketServiceClass());
+            private final MetaTestRsocketServiceClass testRsocketServiceClass = registerClass(new MetaTestRsocketServiceClass());
 
-            private final MetaBenchmarkRsocketServiceClass benchmarkRsocketServiceClass = register(new MetaBenchmarkRsocketServiceClass());
+            private final MetaBenchmarkRsocketServiceClass benchmarkRsocketServiceClass = registerClass(new MetaBenchmarkRsocketServiceClass());
 
             private MetaServicePackage() {
               super("service");
@@ -855,39 +853,39 @@ public class MetaRsocketTest extends MetaLibrary {
             public static final class MetaTestRsocketServiceClass extends MetaClass<io.art.rsocket.test.service.TestRsocketService> {
               private static final LazyProperty<MetaTestRsocketServiceClass> self = MetaClass.self(io.art.rsocket.test.service.TestRsocketService.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaM1Method m1Method = register(new MetaM1Method(this));
+              private final MetaM1Method m1Method = registerMethod(new MetaM1Method(this));
 
-              private final MetaM2Method m2Method = register(new MetaM2Method(this));
+              private final MetaM2Method m2Method = registerMethod(new MetaM2Method(this));
 
-              private final MetaM3Method m3Method = register(new MetaM3Method(this));
+              private final MetaM3Method m3Method = registerMethod(new MetaM3Method(this));
 
-              private final MetaM4Method m4Method = register(new MetaM4Method(this));
+              private final MetaM4Method m4Method = registerMethod(new MetaM4Method(this));
 
-              private final MetaM5Method m5Method = register(new MetaM5Method(this));
+              private final MetaM5Method m5Method = registerMethod(new MetaM5Method(this));
 
-              private final MetaM6Method m6Method = register(new MetaM6Method(this));
+              private final MetaM6Method m6Method = registerMethod(new MetaM6Method(this));
 
-              private final MetaM7Method m7Method = register(new MetaM7Method(this));
+              private final MetaM7Method m7Method = registerMethod(new MetaM7Method(this));
 
-              private final MetaM8Method m8Method = register(new MetaM8Method(this));
+              private final MetaM8Method m8Method = registerMethod(new MetaM8Method(this));
 
-              private final MetaM9Method m9Method = register(new MetaM9Method(this));
+              private final MetaM9Method m9Method = registerMethod(new MetaM9Method(this));
 
-              private final MetaM10Method m10Method = register(new MetaM10Method(this));
+              private final MetaM10Method m10Method = registerMethod(new MetaM10Method(this));
 
-              private final MetaM11Method m11Method = register(new MetaM11Method(this));
+              private final MetaM11Method m11Method = registerMethod(new MetaM11Method(this));
 
-              private final MetaM12Method m12Method = register(new MetaM12Method(this));
+              private final MetaM12Method m12Method = registerMethod(new MetaM12Method(this));
 
-              private final MetaM13Method m13Method = register(new MetaM13Method(this));
+              private final MetaM13Method m13Method = registerMethod(new MetaM13Method(this));
 
-              private final MetaM14Method m14Method = register(new MetaM14Method(this));
+              private final MetaM14Method m14Method = registerMethod(new MetaM14Method(this));
 
-              private final MetaM15Method m15Method = register(new MetaM15Method(this));
+              private final MetaM15Method m15Method = registerMethod(new MetaM15Method(this));
 
-              private final MetaM16Method m16Method = register(new MetaM16Method(this));
+              private final MetaM16Method m16Method = registerMethod(new MetaM16Method(this));
 
               private MetaTestRsocketServiceClass() {
                 super(metaType(io.art.rsocket.test.service.TestRsocketService.class));
@@ -1362,39 +1360,39 @@ public class MetaRsocketTest extends MetaLibrary {
             public static final class MetaBenchmarkRsocketServiceClass extends MetaClass<io.art.rsocket.test.service.BenchmarkRsocketService> {
               private static final LazyProperty<MetaBenchmarkRsocketServiceClass> self = MetaClass.self(io.art.rsocket.test.service.BenchmarkRsocketService.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaM1Method m1Method = register(new MetaM1Method(this));
+              private final MetaM1Method m1Method = registerMethod(new MetaM1Method(this));
 
-              private final MetaM2Method m2Method = register(new MetaM2Method(this));
+              private final MetaM2Method m2Method = registerMethod(new MetaM2Method(this));
 
-              private final MetaM3Method m3Method = register(new MetaM3Method(this));
+              private final MetaM3Method m3Method = registerMethod(new MetaM3Method(this));
 
-              private final MetaM4Method m4Method = register(new MetaM4Method(this));
+              private final MetaM4Method m4Method = registerMethod(new MetaM4Method(this));
 
-              private final MetaM5Method m5Method = register(new MetaM5Method(this));
+              private final MetaM5Method m5Method = registerMethod(new MetaM5Method(this));
 
-              private final MetaM6Method m6Method = register(new MetaM6Method(this));
+              private final MetaM6Method m6Method = registerMethod(new MetaM6Method(this));
 
-              private final MetaM7Method m7Method = register(new MetaM7Method(this));
+              private final MetaM7Method m7Method = registerMethod(new MetaM7Method(this));
 
-              private final MetaM8Method m8Method = register(new MetaM8Method(this));
+              private final MetaM8Method m8Method = registerMethod(new MetaM8Method(this));
 
-              private final MetaM9Method m9Method = register(new MetaM9Method(this));
+              private final MetaM9Method m9Method = registerMethod(new MetaM9Method(this));
 
-              private final MetaM10Method m10Method = register(new MetaM10Method(this));
+              private final MetaM10Method m10Method = registerMethod(new MetaM10Method(this));
 
-              private final MetaM11Method m11Method = register(new MetaM11Method(this));
+              private final MetaM11Method m11Method = registerMethod(new MetaM11Method(this));
 
-              private final MetaM12Method m12Method = register(new MetaM12Method(this));
+              private final MetaM12Method m12Method = registerMethod(new MetaM12Method(this));
 
-              private final MetaM13Method m13Method = register(new MetaM13Method(this));
+              private final MetaM13Method m13Method = registerMethod(new MetaM13Method(this));
 
-              private final MetaM14Method m14Method = register(new MetaM14Method(this));
+              private final MetaM14Method m14Method = registerMethod(new MetaM14Method(this));
 
-              private final MetaM15Method m15Method = register(new MetaM15Method(this));
+              private final MetaM15Method m15Method = registerMethod(new MetaM15Method(this));
 
-              private final MetaM16Method m16Method = register(new MetaM16Method(this));
+              private final MetaM16Method m16Method = registerMethod(new MetaM16Method(this));
 
               private MetaBenchmarkRsocketServiceClass() {
                 super(metaType(io.art.rsocket.test.service.BenchmarkRsocketService.class));

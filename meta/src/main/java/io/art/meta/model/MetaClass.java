@@ -69,19 +69,19 @@ public abstract class MetaClass<T> {
         mutableRegistry.put(definition().type(), this);
     }
 
-    protected <Meta extends MetaClass<?>, F extends MetaField<Meta, ?>> F register(F field) {
+    protected <Meta extends MetaClass<?>, F extends MetaField<Meta, ?>> F registerField(F field) {
         return cast(computeIfAbsent(fieldsMap, field.name(), () -> cast(field)));
     }
 
-    protected <Meta extends MetaClass<?>, M extends MetaMethod<Meta, ?>> M register(M method) {
+    protected <Meta extends MetaClass<?>, M extends MetaMethod<Meta, ?>> M registerMethod(M method) {
         return cast(computeIfAbsent(methods, cast(method)));
     }
 
-    protected <Meta extends MetaClass<?>, C extends MetaConstructor<Meta, T>> C register(C constructor) {
+    protected <Meta extends MetaClass<?>, C extends MetaConstructor<Meta, T>> C registerConstructor(C constructor) {
         return cast(computeIfAbsent(constructors, cast(constructor)));
     }
 
-    protected <Meta extends MetaClass<?>> Meta register(Meta metaClass) {
+    protected <Meta extends MetaClass<?>> Meta registerClass(Meta metaClass) {
         classes.put(metaClass.definition().type(), metaClass);
         return metaClass;
     }

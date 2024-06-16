@@ -1,7 +1,5 @@
 package io.art.server.test.meta;
 
-import static io.art.meta.model.MetaType.metaArray;
-import static io.art.meta.model.MetaType.metaEnum;
 import static io.art.meta.model.MetaType.metaType;
 
 import io.art.core.property.LazyProperty;
@@ -14,7 +12,7 @@ import io.art.meta.model.StaticMetaMethod;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaServerTest extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaServerTest(MetaLibrary... dependencies) {
     super(dependencies);
@@ -25,7 +23,7 @@ public class MetaServerTest extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -36,7 +34,7 @@ public class MetaServerTest extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaServerPackage serverPackage = register(new MetaServerPackage());
+      private final MetaServerPackage serverPackage = registerPackage(new MetaServerPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -47,7 +45,7 @@ public class MetaServerTest extends MetaLibrary {
       }
 
       public static final class MetaServerPackage extends MetaPackage {
-        private final MetaTestPackage testPackage = register(new MetaTestPackage());
+        private final MetaTestPackage testPackage = registerPackage(new MetaTestPackage());
 
         private MetaServerPackage() {
           super("server");
@@ -58,7 +56,7 @@ public class MetaServerTest extends MetaLibrary {
         }
 
         public static final class MetaTestPackage extends MetaPackage {
-          private final MetaServicePackage servicePackage = register(new MetaServicePackage());
+          private final MetaServicePackage servicePackage = registerPackage(new MetaServicePackage());
 
           private MetaTestPackage() {
             super("test");
@@ -69,9 +67,9 @@ public class MetaServerTest extends MetaLibrary {
           }
 
           public static final class MetaServicePackage extends MetaPackage {
-            private final MetaBenchmarkServiceClass benchmarkServiceClass = register(new MetaBenchmarkServiceClass());
+            private final MetaBenchmarkServiceClass benchmarkServiceClass = registerClass(new MetaBenchmarkServiceClass());
 
-            private final MetaTestServiceClass testServiceClass = register(new MetaTestServiceClass());
+            private final MetaTestServiceClass testServiceClass = registerClass(new MetaTestServiceClass());
 
             private MetaServicePackage() {
               super("service");
@@ -88,39 +86,39 @@ public class MetaServerTest extends MetaLibrary {
             public static final class MetaBenchmarkServiceClass extends MetaClass<io.art.server.test.service.BenchmarkService> {
               private static final LazyProperty<MetaBenchmarkServiceClass> self = MetaClass.self(io.art.server.test.service.BenchmarkService.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaM1Method m1Method = register(new MetaM1Method(this));
+              private final MetaM1Method m1Method = registerMethod(new MetaM1Method(this));
 
-              private final MetaM2Method m2Method = register(new MetaM2Method(this));
+              private final MetaM2Method m2Method = registerMethod(new MetaM2Method(this));
 
-              private final MetaM3Method m3Method = register(new MetaM3Method(this));
+              private final MetaM3Method m3Method = registerMethod(new MetaM3Method(this));
 
-              private final MetaM4Method m4Method = register(new MetaM4Method(this));
+              private final MetaM4Method m4Method = registerMethod(new MetaM4Method(this));
 
-              private final MetaM5Method m5Method = register(new MetaM5Method(this));
+              private final MetaM5Method m5Method = registerMethod(new MetaM5Method(this));
 
-              private final MetaM6Method m6Method = register(new MetaM6Method(this));
+              private final MetaM6Method m6Method = registerMethod(new MetaM6Method(this));
 
-              private final MetaM7Method m7Method = register(new MetaM7Method(this));
+              private final MetaM7Method m7Method = registerMethod(new MetaM7Method(this));
 
-              private final MetaM8Method m8Method = register(new MetaM8Method(this));
+              private final MetaM8Method m8Method = registerMethod(new MetaM8Method(this));
 
-              private final MetaM9Method m9Method = register(new MetaM9Method(this));
+              private final MetaM9Method m9Method = registerMethod(new MetaM9Method(this));
 
-              private final MetaM10Method m10Method = register(new MetaM10Method(this));
+              private final MetaM10Method m10Method = registerMethod(new MetaM10Method(this));
 
-              private final MetaM11Method m11Method = register(new MetaM11Method(this));
+              private final MetaM11Method m11Method = registerMethod(new MetaM11Method(this));
 
-              private final MetaM12Method m12Method = register(new MetaM12Method(this));
+              private final MetaM12Method m12Method = registerMethod(new MetaM12Method(this));
 
-              private final MetaM13Method m13Method = register(new MetaM13Method(this));
+              private final MetaM13Method m13Method = registerMethod(new MetaM13Method(this));
 
-              private final MetaM14Method m14Method = register(new MetaM14Method(this));
+              private final MetaM14Method m14Method = registerMethod(new MetaM14Method(this));
 
-              private final MetaM15Method m15Method = register(new MetaM15Method(this));
+              private final MetaM15Method m15Method = registerMethod(new MetaM15Method(this));
 
-              private final MetaM16Method m16Method = register(new MetaM16Method(this));
+              private final MetaM16Method m16Method = registerMethod(new MetaM16Method(this));
 
               private MetaBenchmarkServiceClass() {
                 super(metaType(io.art.server.test.service.BenchmarkService.class));
@@ -563,39 +561,39 @@ public class MetaServerTest extends MetaLibrary {
             public static final class MetaTestServiceClass extends MetaClass<io.art.server.test.service.TestService> {
               private static final LazyProperty<MetaTestServiceClass> self = MetaClass.self(io.art.server.test.service.TestService.class);
 
-              private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+              private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-              private final MetaM1Method m1Method = register(new MetaM1Method(this));
+              private final MetaM1Method m1Method = registerMethod(new MetaM1Method(this));
 
-              private final MetaM2Method m2Method = register(new MetaM2Method(this));
+              private final MetaM2Method m2Method = registerMethod(new MetaM2Method(this));
 
-              private final MetaM3Method m3Method = register(new MetaM3Method(this));
+              private final MetaM3Method m3Method = registerMethod(new MetaM3Method(this));
 
-              private final MetaM4Method m4Method = register(new MetaM4Method(this));
+              private final MetaM4Method m4Method = registerMethod(new MetaM4Method(this));
 
-              private final MetaM5Method m5Method = register(new MetaM5Method(this));
+              private final MetaM5Method m5Method = registerMethod(new MetaM5Method(this));
 
-              private final MetaM6Method m6Method = register(new MetaM6Method(this));
+              private final MetaM6Method m6Method = registerMethod(new MetaM6Method(this));
 
-              private final MetaM7Method m7Method = register(new MetaM7Method(this));
+              private final MetaM7Method m7Method = registerMethod(new MetaM7Method(this));
 
-              private final MetaM8Method m8Method = register(new MetaM8Method(this));
+              private final MetaM8Method m8Method = registerMethod(new MetaM8Method(this));
 
-              private final MetaM9Method m9Method = register(new MetaM9Method(this));
+              private final MetaM9Method m9Method = registerMethod(new MetaM9Method(this));
 
-              private final MetaM10Method m10Method = register(new MetaM10Method(this));
+              private final MetaM10Method m10Method = registerMethod(new MetaM10Method(this));
 
-              private final MetaM11Method m11Method = register(new MetaM11Method(this));
+              private final MetaM11Method m11Method = registerMethod(new MetaM11Method(this));
 
-              private final MetaM12Method m12Method = register(new MetaM12Method(this));
+              private final MetaM12Method m12Method = registerMethod(new MetaM12Method(this));
 
-              private final MetaM13Method m13Method = register(new MetaM13Method(this));
+              private final MetaM13Method m13Method = registerMethod(new MetaM13Method(this));
 
-              private final MetaM14Method m14Method = register(new MetaM14Method(this));
+              private final MetaM14Method m14Method = registerMethod(new MetaM14Method(this));
 
-              private final MetaM15Method m15Method = register(new MetaM15Method(this));
+              private final MetaM15Method m15Method = registerMethod(new MetaM15Method(this));
 
-              private final MetaM16Method m16Method = register(new MetaM16Method(this));
+              private final MetaM16Method m16Method = registerMethod(new MetaM16Method(this));
 
               private MetaTestServiceClass() {
                 super(metaType(io.art.server.test.service.TestService.class));

@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({"all","unchecked","unused"})
 public class MetaRsocket extends MetaLibrary {
-  private final MetaIoPackage ioPackage = register(new MetaIoPackage());
+  private final MetaIoPackage ioPackage = registerPackage(new MetaIoPackage());
 
   public MetaRsocket(MetaLibrary... dependencies) {
     super(dependencies);
@@ -30,7 +30,7 @@ public class MetaRsocket extends MetaLibrary {
   }
 
   public static final class MetaIoPackage extends MetaPackage {
-    private final MetaArtPackage artPackage = register(new MetaArtPackage());
+    private final MetaArtPackage artPackage = registerPackage(new MetaArtPackage());
 
     private MetaIoPackage() {
       super("io");
@@ -41,7 +41,7 @@ public class MetaRsocket extends MetaLibrary {
     }
 
     public static final class MetaArtPackage extends MetaPackage {
-      private final MetaRsocketPackage rsocketPackage = register(new MetaRsocketPackage());
+      private final MetaRsocketPackage rsocketPackage = registerPackage(new MetaRsocketPackage());
 
       private MetaArtPackage() {
         super("art");
@@ -52,9 +52,9 @@ public class MetaRsocket extends MetaLibrary {
       }
 
       public static final class MetaRsocketPackage extends MetaPackage {
-        private final MetaModelPackage modelPackage = register(new MetaModelPackage());
+        private final MetaModelPackage modelPackage = registerPackage(new MetaModelPackage());
 
-        private final MetaCommunicatorPackage communicatorPackage = register(new MetaCommunicatorPackage());
+        private final MetaCommunicatorPackage communicatorPackage = registerPackage(new MetaCommunicatorPackage());
 
         private MetaRsocketPackage() {
           super("rsocket");
@@ -69,7 +69,7 @@ public class MetaRsocket extends MetaLibrary {
         }
 
         public static final class MetaModelPackage extends MetaPackage {
-          private final MetaRsocketSetupPayloadClass rsocketSetupPayloadClass = register(new MetaRsocketSetupPayloadClass());
+          private final MetaRsocketSetupPayloadClass rsocketSetupPayloadClass = registerClass(new MetaRsocketSetupPayloadClass());
 
           private MetaModelPackage() {
             super("model");
@@ -82,27 +82,27 @@ public class MetaRsocket extends MetaLibrary {
           public static final class MetaRsocketSetupPayloadClass extends MetaClass<io.art.rsocket.model.RsocketSetupPayload> {
             private static final LazyProperty<MetaRsocketSetupPayloadClass> self = MetaClass.self(io.art.rsocket.model.RsocketSetupPayload.class);
 
-            private final MetaConstructorConstructor constructor = register(new MetaConstructorConstructor(this));
+            private final MetaConstructorConstructor constructor = registerConstructor(new MetaConstructorConstructor(this));
 
-            private final MetaField<MetaRsocketSetupPayloadClass, io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField = register(new MetaField<>("dataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
+            private final MetaField<MetaRsocketSetupPayloadClass, io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField = registerField(new MetaField<>("dataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
 
-            private final MetaField<MetaRsocketSetupPayloadClass, io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = register(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
+            private final MetaField<MetaRsocketSetupPayloadClass, io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = registerField(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
 
-            private final MetaField<MetaRsocketSetupPayloadClass, java.lang.String> serviceIdField = register(new MetaField<>("serviceId",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaRsocketSetupPayloadClass, java.lang.String> serviceIdField = registerField(new MetaField<>("serviceId",metaType(java.lang.String.class),false,this));
 
-            private final MetaField<MetaRsocketSetupPayloadClass, java.lang.String> methodIdField = register(new MetaField<>("methodId",metaType(java.lang.String.class),false,this));
+            private final MetaField<MetaRsocketSetupPayloadClass, java.lang.String> methodIdField = registerField(new MetaField<>("methodId",metaType(java.lang.String.class),false,this));
 
-            private final MetaToBuilderMethod toBuilderMethod = register(new MetaToBuilderMethod(this));
+            private final MetaToBuilderMethod toBuilderMethod = registerMethod(new MetaToBuilderMethod(this));
 
-            private final MetaGetDataFormatMethod getDataFormatMethod = register(new MetaGetDataFormatMethod(this));
+            private final MetaGetDataFormatMethod getDataFormatMethod = registerMethod(new MetaGetDataFormatMethod(this));
 
-            private final MetaGetMetadataFormatMethod getMetadataFormatMethod = register(new MetaGetMetadataFormatMethod(this));
+            private final MetaGetMetadataFormatMethod getMetadataFormatMethod = registerMethod(new MetaGetMetadataFormatMethod(this));
 
-            private final MetaGetServiceIdMethod getServiceIdMethod = register(new MetaGetServiceIdMethod(this));
+            private final MetaGetServiceIdMethod getServiceIdMethod = registerMethod(new MetaGetServiceIdMethod(this));
 
-            private final MetaGetMethodIdMethod getMethodIdMethod = register(new MetaGetMethodIdMethod(this));
+            private final MetaGetMethodIdMethod getMethodIdMethod = registerMethod(new MetaGetMethodIdMethod(this));
 
-            private final MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilderClass = register(new MetaRsocketSetupPayloadBuilderClass());
+            private final MetaRsocketSetupPayloadBuilderClass rsocketSetupPayloadBuilderClass = registerClass(new MetaRsocketSetupPayloadBuilderClass());
 
             private MetaRsocketSetupPayloadClass() {
               super(metaType(io.art.rsocket.model.RsocketSetupPayload.class));
@@ -289,23 +289,23 @@ public class MetaRsocket extends MetaLibrary {
             public static final class MetaRsocketSetupPayloadBuilderClass extends MetaClass<io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder> {
               private static final LazyProperty<MetaRsocketSetupPayloadBuilderClass> self = MetaClass.self(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class);
 
-              private final MetaField<MetaRsocketSetupPayloadBuilderClass, io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField = register(new MetaField<>("dataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
+              private final MetaField<MetaRsocketSetupPayloadBuilderClass, io.art.transport.constants.TransportModuleConstants.DataFormat> dataFormatField = registerField(new MetaField<>("dataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
 
-              private final MetaField<MetaRsocketSetupPayloadBuilderClass, io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = register(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
+              private final MetaField<MetaRsocketSetupPayloadBuilderClass, io.art.transport.constants.TransportModuleConstants.DataFormat> metadataFormatField = registerField(new MetaField<>("metadataFormat",metaEnum(io.art.transport.constants.TransportModuleConstants.DataFormat.class, io.art.transport.constants.TransportModuleConstants.DataFormat::valueOf),false,this));
 
-              private final MetaField<MetaRsocketSetupPayloadBuilderClass, java.lang.String> serviceIdField = register(new MetaField<>("serviceId",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaRsocketSetupPayloadBuilderClass, java.lang.String> serviceIdField = registerField(new MetaField<>("serviceId",metaType(java.lang.String.class),false,this));
 
-              private final MetaField<MetaRsocketSetupPayloadBuilderClass, java.lang.String> methodIdField = register(new MetaField<>("methodId",metaType(java.lang.String.class),false,this));
+              private final MetaField<MetaRsocketSetupPayloadBuilderClass, java.lang.String> methodIdField = registerField(new MetaField<>("methodId",metaType(java.lang.String.class),false,this));
 
-              private final MetaDataFormatMethod dataFormatMethod = register(new MetaDataFormatMethod(this));
+              private final MetaDataFormatMethod dataFormatMethod = registerMethod(new MetaDataFormatMethod(this));
 
-              private final MetaMetadataFormatMethod metadataFormatMethod = register(new MetaMetadataFormatMethod(this));
+              private final MetaMetadataFormatMethod metadataFormatMethod = registerMethod(new MetaMetadataFormatMethod(this));
 
-              private final MetaServiceIdMethod serviceIdMethod = register(new MetaServiceIdMethod(this));
+              private final MetaServiceIdMethod serviceIdMethod = registerMethod(new MetaServiceIdMethod(this));
 
-              private final MetaMethodIdMethod methodIdMethod = register(new MetaMethodIdMethod(this));
+              private final MetaMethodIdMethod methodIdMethod = registerMethod(new MetaMethodIdMethod(this));
 
-              private final MetaBuildMethod buildMethod = register(new MetaBuildMethod(this));
+              private final MetaBuildMethod buildMethod = registerMethod(new MetaBuildMethod(this));
 
               private MetaRsocketSetupPayloadBuilderClass() {
                 super(metaType(io.art.rsocket.model.RsocketSetupPayload.RsocketSetupPayloadBuilder.class));
@@ -485,7 +485,7 @@ public class MetaRsocket extends MetaLibrary {
         }
 
         public static final class MetaCommunicatorPackage extends MetaPackage {
-          private final MetaRsocketBuiltinCommunicatorClass rsocketBuiltinCommunicatorClass = register(new MetaRsocketBuiltinCommunicatorClass());
+          private final MetaRsocketBuiltinCommunicatorClass rsocketBuiltinCommunicatorClass = registerClass(new MetaRsocketBuiltinCommunicatorClass());
 
           private MetaCommunicatorPackage() {
             super("communicator");
@@ -498,13 +498,13 @@ public class MetaRsocket extends MetaLibrary {
           public static final class MetaRsocketBuiltinCommunicatorClass extends MetaClass<io.art.rsocket.communicator.RsocketBuiltinCommunicator> {
             private static final LazyProperty<MetaRsocketBuiltinCommunicatorClass> self = MetaClass.self(io.art.rsocket.communicator.RsocketBuiltinCommunicator.class);
 
-            private final MetaFireAndForgetMethod fireAndForgetMethod = register(new MetaFireAndForgetMethod(this));
+            private final MetaFireAndForgetMethod fireAndForgetMethod = registerMethod(new MetaFireAndForgetMethod(this));
 
-            private final MetaRequestResponseMethod requestResponseMethod = register(new MetaRequestResponseMethod(this));
+            private final MetaRequestResponseMethod requestResponseMethod = registerMethod(new MetaRequestResponseMethod(this));
 
-            private final MetaRequestStreamMethod requestStreamMethod = register(new MetaRequestStreamMethod(this));
+            private final MetaRequestStreamMethod requestStreamMethod = registerMethod(new MetaRequestStreamMethod(this));
 
-            private final MetaRequestChannelMethod requestChannelMethod = register(new MetaRequestChannelMethod(this));
+            private final MetaRequestChannelMethod requestChannelMethod = registerMethod(new MetaRequestChannelMethod(this));
 
             private MetaRsocketBuiltinCommunicatorClass() {
               super(metaType(io.art.rsocket.communicator.RsocketBuiltinCommunicator.class));
