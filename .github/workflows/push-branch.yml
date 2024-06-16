@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest, macos-11, windows-latest ]
-        jdk: [ 1.8, 11, 17 ]
+        jdk: [ 21 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
