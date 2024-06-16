@@ -8,7 +8,7 @@ jobs:
     strategy:
       matrix:
         jdk: [ 21 ]
-        jdk: [ 21 ]
+        
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
@@ -34,7 +34,7 @@ jobs:
     strategy:
       matrix:
         jdk: [ 21 ]
-        jdk: [ 21 ]
+        
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
