@@ -30,7 +30,6 @@ import static io.art.core.collection.ImmutableMap.emptyImmutableMap;
 import static io.art.core.property.LazyProperty.*;
 
 @Getter
-@Accessors
 public class MetaModuleConfiguration implements ModuleConfiguration {
     private LazyProperty<? extends MetaLibrary> library;
     private LazyProperty<ImmutableArray<? extends MetaLibrary>> dependencies;
