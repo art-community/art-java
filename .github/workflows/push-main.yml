@@ -9,7 +9,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest, macos-11, windows-latest ]
         jdk: [ 21 ]
-        tarantool: [ 2.8 ]
+        tarantool: [ 2.11 ]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
