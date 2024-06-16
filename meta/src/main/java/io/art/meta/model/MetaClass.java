@@ -69,7 +69,7 @@ public abstract class MetaClass<T> {
         mutableRegistry.put(definition().type(), this);
     }
 
-    protected <Meta extends MetaClass<?>, F> MetaField<Meta, F> register(MetaField<Meta, F> field) {
+    protected <Meta extends MetaClass<?>, F extends MetaField<Meta, ?>> F register(F field) {
         return cast(computeIfAbsent(fieldsMap, field.name(), () -> cast(field)));
     }
 

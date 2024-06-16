@@ -74,17 +74,12 @@ public class YamlReader implements Reader {
         try (YAMLParser parser = yamlFactory.createParser(yaml)) {
             JsonToken nextToken = parser.nextToken();
             if (isNull(nextToken) || nextToken == VALUE_NULL) return null;
-            switch (type.externalKind()) {
-                case MAP:
-                case LAZY_MAP:
-                    return transformer.fromMap(parseMap(type, parser));
-                case ARRAY:
-                case LAZY_ARRAY:
-                    return transformer.fromArray(parseArray(type, parser));
-                case ENTITY:
-                    return cast(parseEntity(type, parser));
-            }
-            throw new ImpossibleSituationException();
+            return switch (type.externalKind()) {
+                case MAP, LAZY_MAP -> transformer.fromMap(parseMap(type, parser));
+                case ARRAY, LAZY_ARRAY -> transformer.fromArray(parseArray(type, parser));
+                case ENTITY -> cast(parseEntity(type, parser));
+                default -> throw new ImpossibleSituationException();
+            };
         } catch (Throwable throwable) {
             throw new YamlException(throwable);
         }
@@ -104,7 +99,7 @@ public class YamlReader implements Reader {
                 currentToken = parser.nextToken();
                 continue;
             }
-            String field = parser.getCurrentName();
+            String field = parser.currentName();
             if (isEmpty(field)) {
                 currentToken = parser.nextToken();
                 continue;
@@ -143,7 +138,7 @@ public class YamlReader implements Reader {
                 currentToken = parser.nextToken();
                 continue;
             }
-            String field = parser.getCurrentName();
+            String field = parser.currentName();
             if (isEmpty(field)) {
                 currentToken = parser.nextToken();
                 continue;
