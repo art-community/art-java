@@ -240,11 +240,11 @@ public class MetaType<T> {
     }
 
 
-    public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, T> enumFactory) {
+    public static <T> MetaType<T> metaEnum(Class<?> type, Function<String, ?> enumFactory) {
         return cast(computeIfAbsent(cache, CacheKey.of(type), () -> MetaType.<T>createTypeBuilder(type)
                 .type(cast(type))
                 .parameters(emptyImmutableArray())
-                .enumFactory(enumFactory)
+                .enumFactory(cast(enumFactory))
                 .build()));
     }
 

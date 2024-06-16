@@ -46,7 +46,7 @@ public abstract class MetaConstructor<OwnerType extends MetaClass<?>, ReturnType
         parameters = map();
     }
 
-    protected <P> MetaParameter<P> register(MetaParameter<P> parameter) {
+    protected <P extends MetaParameter<?>> P register(P parameter) {
         parameters.put(parameter.name(), parameter);
         return parameter;
     }
