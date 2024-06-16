@@ -13,7 +13,6 @@ import static java.lang.Boolean.*;
 import static java.lang.System.*;
 import java.util.*;
 
-@AutomaticFeature
 public class GraalNettyFeature implements Feature {
     @Override
     public void beforeAnalysis(BeforeAnalysisAccess access) {

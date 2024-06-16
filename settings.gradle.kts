@@ -34,7 +34,6 @@ include("http")
 include("tests")
 include("tarantool")
 include("storage")
-//include("metrics")
 
 pluginManagement {
     val internalPluginVersion: String by settings

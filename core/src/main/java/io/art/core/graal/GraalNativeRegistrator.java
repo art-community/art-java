@@ -1,17 +1,21 @@
 package io.art.core.graal;
 
-import com.oracle.svm.core.jdk.*;
-import com.oracle.svm.core.jni.*;
-import com.oracle.svm.hosted.*;
-import com.oracle.svm.hosted.c.*;
-import lombok.experimental.*;
-import org.graalvm.nativeimage.hosted.Feature.*;
-import org.graalvm.nativeimage.hosted.*;
-import static com.oracle.svm.hosted.FeatureImpl.*;
-import static io.art.core.checker.NullityChecker.*;
-import static io.art.core.graal.GraalNativeLibraryConfiguration.Type.*;
-import java.lang.reflect.*;
-import java.util.*;
+import com.oracle.svm.core.jdk.NativeLibrarySupport;
+import com.oracle.svm.core.jdk.PlatformNativeLibrarySupport;
+import com.oracle.svm.core.jni.JNIRuntimeAccess;
+import com.oracle.svm.hosted.FeatureImpl;
+import com.oracle.svm.hosted.c.NativeLibraries;
+import io.art.core.checker.NullityChecker;
+import lombok.experimental.UtilityClass;
+import org.graalvm.nativeimage.hosted.Feature.BeforeAnalysisAccess;
+import org.graalvm.nativeimage.hosted.RuntimeReflection;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.util.Collection;
+
+import static io.art.core.graal.GraalNativeLibraryConfiguration.Type.STATIC;
 
 @UtilityClass
 public class GraalNativeRegistrator {
@@ -57,13 +61,13 @@ public class GraalNativeRegistrator {
     public static void registerNativeLibraries(BeforeAnalysisAccess access, GraalNativeLibraryConfiguration... libraries) {
         NativeLibrarySupport nativeLibrarySupport = NativeLibrarySupport.singleton();
         PlatformNativeLibrarySupport platformNativeLibrarySupport = PlatformNativeLibrarySupport.singleton();
-        NativeLibraries nativeLibraries = ((BeforeAnalysisAccessImpl) access).getNativeLibraries();
+        NativeLibraries nativeLibraries = ((FeatureImpl.BeforeAnalysisAccessImpl) access).getNativeLibraries();
         Collection<String> libraryPaths = nativeLibraries.getLibraryPaths();
         for (GraalNativeLibraryConfiguration library : libraries) {
             libraryPaths.add(library.getLocation().resolve().toString());
             if (library.isBuiltin() && library.getType() == STATIC) {
                 nativeLibrarySupport.preregisterUninitializedBuiltinLibrary(library.getName());
-                forEach(library.getBuiltinSymbolPrefixes(), platformNativeLibrarySupport::addBuiltinPkgNativePrefix);
+                NullityChecker.forEach(library.getBuiltinSymbolPrefixes(), platformNativeLibrarySupport::addBuiltinPkgNativePrefix);
                 nativeLibraries.addStaticJniLibrary(library.getName());
                 continue;
             }
