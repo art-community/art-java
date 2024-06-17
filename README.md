@@ -13,8 +13,8 @@ Releases are available via [ART Packages](https://repsy.io/mvn/antonsh/art-packa
 
 ## Requirements
 
-- Java 8+
-- Gradle 7+
+- Java 21+
+- Gradle 8.5+
 
 ## Bugs and Feedback
 
@@ -26,7 +26,7 @@ Join us on Telegram: https://t.me/art_github
 
 ART
 
-Copyright 2020-2021 ART
+Copyright 2020-2024 ART
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
 License. You may obtain a copy of the License at
