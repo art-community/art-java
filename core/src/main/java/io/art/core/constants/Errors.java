@@ -37,5 +37,5 @@ public interface Errors {
     String UNKNOWN_PROCESSOR_ARCHITECTURE = "Unknown processor architecture: {0}";
     String CONTEXT_NOT_INITIALIZED = "Context is not initialized";
     String EXECUTOR_SERVICE_WAS_NOT_TERMINATED = "Executor service was not terminated during: {0}";
-    String CONFIGURATION_PATH_DOES_NOT_EXIST = "Configuration path does not exist: '{0}'";
+    String CONFIGURATION_PATH_DOES_NOT_EXIST = "Configuration path does not exist: ''{0}''";
 }
