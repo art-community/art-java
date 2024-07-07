@@ -12,6 +12,9 @@ import static io.art.core.extensions.CollectionExtensions.*;
 import static io.art.core.factory.ListFactory.*;
 import static io.art.core.factory.QueueFactory.*;
 import static java.util.Objects.*;
+
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.util.*;
 import java.util.function.*;
 
@@ -19,12 +22,12 @@ import java.util.function.*;
 @SuppressWarnings(SUN_API)
 public class DisposableProperty<T> implements Supplier<T> {
     private static final Object UNINITIALIZED = new Object();
-    private static final sun.misc.Unsafe UNSAFE = UnsafeAccess.UNSAFE;
-    private static final long VALUE_OFFSET;
+    private static final VarHandle VALUE_HANDLE;
 
     static {
         try {
-            VALUE_OFFSET = UNSAFE.objectFieldOffset(DisposableProperty.class.getDeclaredField(VALUE_FIELD_NAME));
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            VALUE_HANDLE = lookup.findVarHandle(DisposableProperty.class, VALUE_FIELD_NAME, Object.class);
         } catch (Throwable throwable) {
             throw new InternalRuntimeException(throwable);
         }
@@ -77,13 +80,13 @@ public class DisposableProperty<T> implements Supplier<T> {
         if (current == UNINITIALIZED) {
             return;
         }
-        current = cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
+        current = cast(VALUE_HANDLE.getVolatile(this));
         if (current == UNINITIALIZED) {
             return;
         }
 
         final T currentValue = current;
-        if (UNSAFE.compareAndSwapObject(this, VALUE_OFFSET, current, UNINITIALIZED)) {
+        if (VALUE_HANDLE.compareAndSet(this, current, UNINITIALIZED)) {
             apply(disposeConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(currentValue)));
         }
     }
@@ -92,12 +95,12 @@ public class DisposableProperty<T> implements Supplier<T> {
     public T get() {
         T localValue = value;
         if (localValue == UNINITIALIZED) {
-            localValue = cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
+            localValue = cast(VALUE_HANDLE.getVolatile(this));
             if (localValue == UNINITIALIZED) {
                 T loaded = orThrow(loader.get(), new InternalRuntimeException(PROPERTY_VALUE_IS_NULL));
-                localValue = UNSAFE.compareAndSwapObject(this, VALUE_OFFSET, UNINITIALIZED, loaded)
+                localValue = VALUE_HANDLE.compareAndSet(this, UNINITIALIZED, loaded)
                         ? loaded
-                        : cast(UNSAFE.getObjectVolatile(this, VALUE_OFFSET));
+                        : cast(VALUE_HANDLE.getVolatile(this));
                 apply(creationConsumers, consumers -> erase(consumers, consumer -> consumer.accept(loaded)));
                 apply(initializationConsumers, consumers -> consumers.forEach(consumer -> consumer.accept(loaded)));
             }
