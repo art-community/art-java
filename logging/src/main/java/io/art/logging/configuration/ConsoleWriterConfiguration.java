@@ -35,6 +35,6 @@ public class ConsoleWriterConfiguration {
     }
 
     public static ConsoleWriterConfiguration defaults() {
-        return ConsoleWriterConfiguration.builder().colored(true).build();
+        return ConsoleWriterConfiguration.builder().colored(false).build();
     }
 }
