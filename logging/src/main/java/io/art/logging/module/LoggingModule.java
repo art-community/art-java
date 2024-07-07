@@ -30,8 +30,6 @@ import lombok.*;
 import static io.art.core.constants.ModuleIdentifiers.*;
 import static io.art.core.context.Context.*;
 import static io.art.core.property.LazyProperty.*;
-import static io.art.logging.netty.NettyLoggerFactory.*;
-import static io.netty.util.internal.logging.InternalLoggerFactory.*;
 import static java.util.logging.LogManager.*;
 import static reactor.util.Loggers.*;
 
