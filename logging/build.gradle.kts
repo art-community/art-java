@@ -18,10 +18,8 @@
 
 dependencies {
     val sl4jVersion: String by project
-    val graalVersion: String by project
 
     api(project(":core"))
 
     api("org.slf4j", "slf4j-api", sl4jVersion)
-    compileOnly("org.graalvm.nativeimage", "svm", graalVersion)
 }
