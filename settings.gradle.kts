@@ -39,7 +39,7 @@ pluginManagement {
     val internalPluginVersion: String by settings
     repositories {
         gradlePluginPortal()
-        maven { url = uri("https://repsy.io/mvn/antonsh/art-packages/") }
+        maven { url = uri("https:/repo.repsy.io/mvn/antonsh/art-packages/") }
     }
     resolutionStrategy {
         eachPlugin {
