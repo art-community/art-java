@@ -2,6 +2,8 @@
 
 ART Java is a kit of modules for developing multifunctional applications for JVM platform with Java Language.
 
+[Documentation](https://deepwiki.com/art-community/art-java/1-overview)
+
 ## Badges
 
 [![ART Java Main](https://github.com/art-community/art-java/actions/workflows/push-main.yml/badge.svg)](https://github.com/art-community/art-java/actions/workflows/push-main.yml)
