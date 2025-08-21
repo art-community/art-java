@@ -7,11 +7,16 @@ jobs:
   gradle-build:
     strategy:
       matrix:
-        os: [ ubuntu-latest ]
-        jdk: [ 21 ]
+        os: [ubuntu-latest]
+        jdk: [21]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
+      - uses: tarantool/setup-tarantool@v4
+        with:
+          tarantool-version: "2.11"
+      - name: Setup temporary directory on Unix based
+        run: echo "TMPDIR=${{ runner.temp }}" >> $GITHUB_ENV
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.jdk }}
